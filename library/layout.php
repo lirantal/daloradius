@@ -390,7 +390,8 @@ EOF;
 
 function print_additional_controls($descriptors) {
     foreach ($descriptors as $d) {
-        printf('<button class="btn btn-primary btn-sm %s ms-1" type="button" onclick="%s">%s</button>', $d['class'], $d['onclick'], $d['label']);
+        $class = (isset($d['class'])) ? $d['class'] : "btn-primary";
+        printf('<button class="btn btn-sm %s ms-1" type="button" onclick="%s">%s</button>', $class, $d['onclick'], $d['label']);
     }
 }
 

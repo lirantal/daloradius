@@ -584,9 +584,25 @@ function refillSessionTraffic() {
                                         'name' => 'disableUser-button'
                                       );
         
-        foreach ($button_descriptors0 as $descr) {
-            print_input_field($descr);
+        // custom actions
+        echo <<<EOF
+    <div class="dropdown dropup">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Actions
+        </button>
+  
+        <ul class="dropdown-menu">
+EOF;
+
+        foreach ($button_descriptors0 as $desc) {
+            printf('<li><a href="#" class="dropdown-item" name="%s" onclick="%s">%s</a></li>', $desc['name'], $desc['onclick'], $desc['value']);
         }
+
+
+        echo <<<EOF
+        </ul>
+    </div>
+EOF;
         
         close_fieldset();
         
@@ -595,7 +611,6 @@ function refillSessionTraffic() {
         // open 1-st tab
         open_tab($navkeys, 1);
         
-        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
         include_once('include/management/userinfo.php');
         
         close_tab($navkeys, 1);
@@ -603,7 +618,6 @@ function refillSessionTraffic() {
         // open 2-nd tab
         open_tab($navkeys, 2);
         
-        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
         include_once('include/management/userbillinfo.php');
         
         close_tab($navkeys, 2);
@@ -615,6 +629,7 @@ function refillSessionTraffic() {
         $groupTerminology = "Profile";
         $groupTerminologyPriority = "ProfilePriority";
         include_once('include/management/groups.php');
+        $selected_options = get_user_group_mappings($dbSocket, $username);
         include('library/closedb.php');
         
         $input_descriptors1 = array();
@@ -629,13 +644,21 @@ function refillSessionTraffic() {
                                         "options" => $options,
                                         "multiple" => true,
                                         "size" => 5,
-                                        "selected_value" => ((isset($failureMsg)) ? $newgroups : ""),
+                                        "selected_value" => $selected_options,
                                         "tooltipText" => t('Tooltip','groupTooltip')
                                      );
+        
+        $fieldset3_descriptor = array(
+                                        "title" => "Manage Profiles",
+                                     );
+
+        open_fieldset($fieldset3_descriptor);
         
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
+        
+        close_fieldset();
         
         close_tab($navkeys, 3);
         
@@ -697,7 +720,6 @@ EOF;
     print_back_to_previous_page();
     
     include('include/config/logging.php');
-    
     
     print_footer_and_html_epilogue($inline_extra_js);
 ?>
