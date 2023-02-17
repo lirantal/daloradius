@@ -63,14 +63,20 @@
                 $failureMsg = "Invalid input";
             } else {
             
-                $sql = sprintf("INSERT INTO %s (name, mac, geocode) VALUES (?, ?, ?)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+                $currDate = date('Y-m-d H:i:s');
+                $currBy = $_SESSION['operator_user'];
+            
+                $hotspot_name_enc = htmlspecialchars($hotspot_name, ENT_QUOTES, 'UTF-8');
+            
+                $sql = sprintf("INSERT INTO %s (name, mac, geocode, creationdate, creationby, updatedate, updateby)
+                                VALUES (?, ?, ?, ?, ?, NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
                 $stmt = $dbSocket->prepare($sql);
-                $data = array($hotspot_name, $hotspot_mac, $hotspot_geo);
+                $data = array($hotspot_name, $hotspot_mac, $hotspot_geo, $currDate, $currBy);
                 $res = $dbSocket->execute($stmt, $data);
                 $logDebugSQL .= "$sql;\n";
 
-                $successMsg = sprintf("Added new Hotspot's Geo-Location information for hotspot: <strong>%s</strong>",
-                                      htmlspecialchars($hotspot_name, ENT_QUOTES, 'UTF-8'));
+                $successMsg = sprintf("Added new geolocation information for hotspot <strong>%s</strong>. "
+                                    . '<a href="mng-hs-edit.php?name=%s" title="Edit">Edit</a>', $hotspot_name_enc, urlencode($hotspot_name_enc));
             }
         }
 
@@ -79,13 +85,20 @@
             if (array_key_exists('hotspotid', $_POST) && !empty($_POST['hotspotid']) && intval($_POST['hotspotid']) > 0) {
                 $hotspot_id = intval($_POST['hotspotid']);
                 
+                // get name
+                $sql = sprintf("SELECT name FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+                $stmt = $dbSocket->prepare($sql);
+                $res = $dbSocket->execute($stmt, $hotspot_id);
+                
+                $hotspot_name = $res->fetchrow()[0];
+                $hotspot_name_enc = htmlspecialchars($hotspot_name, ENT_QUOTES, 'UTF-8');
+                
                 $sql = sprintf("DELETE FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
                 $stmt = $dbSocket->prepare($sql);
                 $res = $dbSocket->execute($stmt, $hotspot_id);
                 $logDebugSQL .= "$sql;\n";
 
-                $successMsg = sprintf("Deleted Hotspot's Geo-Location information for hotspot ID: <strong>%d</strong>",
-                                      $hotspot_id);
+                $successMsg = sprintf("Deleted geolocation information for hotspot <strong>%s</strong>.", $hotspot_name_enc);
                 
             } else {
                 $failureMsg = "Invalid input";

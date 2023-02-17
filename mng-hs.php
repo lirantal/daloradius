@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -25,23 +25,20 @@
     $operator = $_SESSION['operator_user'];
 
     include_once('library/config_read.php');
-    $log = "visited page: ";
 
     include_once("lang/main.php");
-    
     include("library/layout.php");
+
+    $log = "visited page: ";
 
     // print HTML prologue
     $title = t('Intro','mngmain.php');
     $help = "";
-    
+
     print_html_prologue($title, $langCode);
 
-    
-    
-
     print_title_and_help($title, $help);
-    
+
     include('include/config/logging.php');
 
     print_footer_and_html_epilogue();

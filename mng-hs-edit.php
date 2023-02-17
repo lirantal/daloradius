@@ -89,29 +89,32 @@
                     $currDate = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
 
-                    $geocode = (array_key_exists('geocode', $_POST) && isset($_POST['geocode'])) ? trim($_POST['geocode']) : "";
-                    $hotspot_type = (array_key_exists('hotspot_type', $_POST) && isset($_POST['hotspot_type'])) ? trim($_POST['hotspot_type']) : "";
+                    $geocode = (array_key_exists('geocode', $_POST) && !empty(trim($_POST['geocode']))) ? trim($_POST['geocode']) : "";
+                    $hotspot_type = (array_key_exists('hotspot_type', $_POST) && !empty(trim($_POST['hotspot_type']))) ? trim($_POST['hotspot_type']) : "";
 
-                    $owner = (array_key_exists('owner', $_POST) && isset($_POST['owner'])) ? trim($_POST['owner']) : "";
-                    $manager = (array_key_exists('manager', $_POST) && isset($_POST['manager'])) ? trim($_POST['manager']) : "";
-                    $email_manager = (array_key_exists('email_manager', $_POST) && isset($_POST['email_manager'])) ? trim($_POST['email_manager']) : "";
-                    $email_owner = (array_key_exists('email_owner', $_POST) && isset($_POST['email_owner'])) ? trim($_POST['email_owner']) : "";
-                    $address = (array_key_exists('address', $_POST) && isset($_POST['address'])) ? trim($_POST['address']) : "";
-                    $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? trim($_POST['company']) : "";
-                    $phone1 = (array_key_exists('phone1', $_POST) && isset($_POST['phone1'])) ? trim($_POST['phone1']) : "";
-                    $phone2 = (array_key_exists('phone2', $_POST) && isset($_POST['phone2'])) ? trim($_POST['phone2']) : "";
+                    $ownername = (array_key_exists('ownername', $_POST) && !empty(trim($_POST['ownername']))) ? trim($_POST['ownername']) : "";
+                    $managername = (array_key_exists('managername', $_POST) && !empty(trim($_POST['managername']))) ? trim($_POST['managername']) : "";
+                    $emailmanager = (array_key_exists('emailmanager', $_POST) && !empty(trim($_POST['emailmanager'])) &&
+                                     filter_var(trim($_POST['emailmanager']), FILTER_VALIDATE_EMAIL)) ? trim($_POST['emailmanager']) : "";
+                    $emailowner = (array_key_exists('emailowner', $_POST) && !empty(trim($_POST['emailowner'])) &&
+                                   filter_var(trim($_POST['emailowner']), FILTER_VALIDATE_EMAIL)) ? trim($_POST['emailowner']) : "";
+                    $address = (array_key_exists('address', $_POST) && !empty(trim($_POST['address']))) ? trim($_POST['address']) : "";
+                    $company = (array_key_exists('company', $_POST) && !empty(trim($_POST['company']))) ? trim($_POST['company']) : "";
+                    $phone1 = (array_key_exists('phone1', $_POST) && !empty(trim($_POST['phone1']))) ? trim($_POST['phone1']) : "";
+                    $phone2 = (array_key_exists('phone2', $_POST) && !empty(trim($_POST['phone2']))) ? trim($_POST['phone2']) : "";
 
-                    $companyphone = (array_key_exists('companyphone', $_POST) && isset($_POST['companyphone'])) ? trim($_POST['companyphone']) : "";
-                    $companywebsite = (array_key_exists('companywebsite', $_POST) && isset($_POST['companywebsite'])) ? trim($_POST['companywebsite']) : "";
-                    $companyemail = (array_key_exists('companyemail', $_POST) && isset($_POST['companyemail'])) ? trim($_POST['companyemail']) : "";
-                    $companycontact = (array_key_exists('companycontact', $_POST) && isset($_POST['companycontact'])) ? trim($_POST['companycontact']) : "";
+                    $companyphone = (array_key_exists('companyphone', $_POST) && !empty(trim($_POST['companyphone']))) ? trim($_POST['companyphone']) : "";
+                    $companywebsite = (array_key_exists('companywebsite', $_POST) && !empty(trim($_POST['companywebsite']))) ? trim($_POST['companywebsite']) : "";
+                    $companyemail = (array_key_exists('companyemail', $_POST) && !empty(trim($_POST['companyemail'])) &&
+                                     filter_var(trim($_POST['companyemail']), FILTER_VALIDATE_EMAIL)) ? trim($_POST['companyemail']) : "";
+                    $companycontact = (array_key_exists('companycontact', $_POST) && !empty(trim($_POST['companycontact']))) ? trim($_POST['companycontact']) : "";
 
                     $sql = sprintf("UPDATE %s SET mac='%s', geocode='%s', owner='%s', email_owner='%s', manager='%s', email_manager='%s',
                                                   address='%s', company='%s', phone1='%s', phone2='%s', type='%s', companywebsite='%s',
                                                   companyemail='%s', companycontact='%s', companyphone='%s', updatedate='%s', updateby='%s'
                                             WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                                   $dbSocket->escapeSimple($macaddress), $dbSocket->escapeSimple($geocode), $dbSocket->escapeSimple($owner),
-                                   $dbSocket->escapeSimple($email_owner), $dbSocket->escapeSimple($manager), $dbSocket->escapeSimple($email_manager),
+                                   $dbSocket->escapeSimple($macaddress), $dbSocket->escapeSimple($geocode), $dbSocket->escapeSimple($ownername),
+                                   $dbSocket->escapeSimple($emailowner), $dbSocket->escapeSimple($managername), $dbSocket->escapeSimple($emailmanager),
                                    $dbSocket->escapeSimple($address), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
                                    $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($hotspot_type), $dbSocket->escapeSimple($companywebsite),
                                    $dbSocket->escapeSimple($companyemail) , $dbSocket->escapeSimple($companycontact),
@@ -166,8 +169,8 @@
         $logDebugSQL .= "$sql;\n";
 
         list(
-                $id, $name, $macaddress, $geocode, $owner, $email_owner, $manager, $email_manager, $address, $company, $phone1,
-                $phone2, $type, $companywebsite, $companyemail, $companycontact, $companyphone,
+                $id, $name, $macaddress, $geocode, $ownername, $emailowner, $managername, $emailmanager, $address,
+                $company, $phone1, $phone2, $type, $companywebsite, $companyemail, $companycontact, $companyphone,
                 $creationdate, $creationby, $updatedate, $updateby
             ) = $res->fetchRow();
     }
@@ -176,16 +179,10 @@
 
 
     // print HTML prologue
-    $extra_css = array();
-
-    $extra_js = array(
-        "static/js/pages_common.js",
-    );
-
     $title = t('Intro','mnghsedit.php');
     $help = t('helpPage','mnghsedit');
 
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
+    print_html_prologue($title, $langCode);
 
     if (!empty($name_enc)) {
         $title .= " :: $name_enc";
