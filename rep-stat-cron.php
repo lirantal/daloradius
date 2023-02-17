@@ -33,30 +33,44 @@
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
 
+    $cronUser = shell_exec('whoami');
+    $valid_cmds = array( "enable" => "crontab is enabled", "disable" => "crontab is disabled" );
+    $failureMsg = "";
 
-    $cronUser = get_current_user();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
-    // validating params
-    $cmd = (isset($_GET['cmd']) && !empty(trim($_GET['cmd'])) &&
-            in_array(strtolower(trim($_GET['cmd'])), array( "enable", "disable" )))
-         ? strtolower($_GET['cmd']) : "";
+            // validating params
+            $cmd = (isset($_POST['cmd']) && !empty(trim($_POST['cmd'])) &&
+                    in_array(strtolower(trim($_POST['cmd'])), array_keys($valid_cmds)))
+                 ? strtolower(trim($_POST['cmd'])) : "";
 
-    $dalo_crontab_file = dirname(__FILE__) . '/contrib/scripts/dalo-crontab';
+            $dalo_crontab_file = dirname(__FILE__) . '/contrib/scripts/dalo-crontab';
 
-    $exec = "";
+            $exec = "";
 
-    switch ($cmd) {
-        case "disable":
-        $exec = sprintf("$(which crontab || command -v crontab) -u %s -r", escapeshellarg($cronUser));
-        break;
+            switch ($cmd) {
+                case "disable":
+                //~ $exec = sprintf("$(which crontab || command -v crontab) -u %s -r", escapeshellarg($cronUser));
+                $exec = '$(which crontab || command -v crontab) -r';
+                break;
 
-        case "enable":
-        $exec = sprintf("$(which crontab || command -v crontab) -u %s %s", escapeshellarg($cronUser), $dalo_crontab_file);
-        break;
-    }
+                case "enable":
+                //~ $exec = sprintf("$(which crontab || command -v crontab) -u %s %s", escapeshellarg($cronUser), $dalo_crontab_file);
+                $exec = sprintf('$(which crontab || command -v crontab) %s', $dalo_crontab_file);
+                break;
+            }
 
-    if (!empty($exec)) {
-        exec($exec);
+            if (!empty($exec)) {
+                exec($exec);
+            }
+
+        } else {
+            // csrf
+            $cmd = "";
+            $failureMsg = sprintf("CSRF token error");
+            $logAction .= sprintf("CSRF token error on page: ");
+        }
     }
 
     // print HTML prologue
@@ -67,42 +81,97 @@
 
     print_title_and_help($title, $help);
 
-    $failureMsg = "";
-
-    $exec = sprintf("$(which crontab || command -v crontab) -u %s -l 2>&1", escapeshellarg($cronUser));
+    $exec = '$(which crontab || command -v crontab) -l 2>&1';
     exec($exec, $output, $retStatus);
 
     if ($retStatus !== 0) {
-        $failureMsg = '<strong>Error</strong> no crontab is configured for this user or user does not exist';
+        $cmd = "disable";
+        $valid_cmds["enable"] = "enable crontab";
+
+        if (!empty($failureMsg)) {
+            $failureMsg .= str_repeat("<br>", 2);
+        }
+
+        $failureMsg .= sprintf('<strong>Error</strong>: crontab is not configured for <strong>%s</strong>', $cronUser);
 
         if (!empty($output)) {
-            $failureMsg .= '<pre>';
-            foreach ($output as $line) {
-                $line = trim($line);
-                if (empty($line)) {
-                    continue;
-                }
-                $failureMsg .= htmlspecialchars($line, ENT_QUOTES, 'UTF-8');
-            }
-            $failureMsg .= '</pre>';
+            $text = htmlspecialchars(trim($output[0]), ENT_QUOTES, 'UTF-8');
+
+            $failureMsg .= sprintf('<br><strong>Details</strong>: %s', $text)
+                        .  ((count($output) > 1) ?  "&hellip;" : ".");
         }
 
     } else {
-        $i = 1;
-        foreach($output as $text) {
-            printf('<strong>#%d</strong>: %s', $i, htmlspecialchars($text, ENT_QUOTES, 'UTF-8'));
-            $i++;
+        $successMsg = sprintf('<strong>Success</strong>: crontab is configured for <strong>%s</strong>', $cronUser);
+
+        $cmd = "enable";
+        $valid_cmds["disable"] = "disable crontab";
+
+        $crontabContent = "";
+
+        foreach($output as $i => $text) {
+            $crontabContent .= sprintf('<strong>%02d</strong>: %s' . "\n", $i+1, htmlspecialchars($text, ENT_QUOTES, 'UTF-8'));
         }
     }
 
-    if (!empty($failureMsg)) {
-        include_once('include/management/actionMessages.php');
+    include_once('include/management/actionMessages.php');
+
+    $form_name = "form_" . rand();
+
+    $form0_descriptor = array(
+                                "name" => $form_name
+                             );
+
+    $fieldset0_descriptor = array(
+                                    "title" => "enable/disable crontab"
+                                 );
+
+    $input_descriptors0 = array();
+
+    $options = $valid_cmds;
+    array_unshift($options, "");
+
+    $input_descriptors0[] = array(
+                                    "type" => "select",
+                                    "options" => $options,
+                                    "caption" => "status/action",
+                                    "name" => "cmd",
+                                    "selected_value" => (isset($cmd) ? $cmd : ""),
+                                    "onchange" => sprintf("document.getElementById('%s').submit()", $form_name),
+                                 );
+
+    $input_descriptors0[] = array(
+                                        "type" => "hidden",
+                                        "value" => dalo_csrf_token(),
+                                        "name" => "csrf_token"
+                                     );
+
+    open_form($form0_descriptor);
+
+    // open 0-th fieldset
+    open_fieldset($fieldset0_descriptor);
+
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
     }
 
-    echo '<div class="btn-group my-3" role="group">';
-    echo '<a class="btn btn-success" href="?cmd=enable">Enable CRON</a>';
-    echo '<a class="btn btn-danger" href="?cmd=disable">Disable CRON</a>';
-    echo '</div>';
+    close_fieldset();
+
+    close_form();
+
+    if (isset($crontabContent)) {
+        $fieldset0_descriptor = array(
+                                    "title" => "crontab content"
+                                 );
+
+        open_fieldset($fieldset0_descriptor);
+
+        echo '<pre class="font-monospace m-1 bg-light">';
+        echo $crontabContent;
+        echo '</pre>';
+
+        close_fieldset();
+    }
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
