@@ -1,12 +1,11 @@
-#/*
-# *********************************************************************************************************
-# * daloRADIUS - RADIUS Web Platform
-# * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
-# *
-# *
-# * daloRADIUS Crontab script entries
-# *
-# */
+#
+# daloRADIUS - RADIUS Web Platform
+# Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+#
+#
+# daloRADIUS Crontab script entries
+#
+#
 
 # -- configuration start
 
@@ -19,8 +18,11 @@ DALO_DIR="/var/www/daloradius/contrib/scripts"
 # -- configuration end
 
 
-# Clean Stale Sessions, run every minute
-* * * * * /usr/bin/php $DALO_DIR/maintenance/cleanStaleSessions.php 2>&1 >/dev/null
+# This job cleans stale sessions. It runs every minute.
+* * * * * /usr/bin/php $DALO_DIR/maintenance/cleanStaleSessions.php >/dev/null 2>&1
 
-# Monitor Nodes, run every 15 minutes
-#/15 * * * * /usr/bin/php $DALO_DIR/maintenance/monitorNodes.php 2>&1 >/dev/null
+# This job cleans expired accounts. It runs every day at midnight.
+#0 0 * * * /usr/bin/php $DALO_DIR/maintenance/cleanExpiredAccounts.php >/dev/null 2>&1
+
+# This job monitors nodes. It runs every 15 minutes.
+#/15 * * * * /usr/bin/php $DALO_DIR/monitorNodes.php >/dev/null 2>&1
