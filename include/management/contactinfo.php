@@ -29,13 +29,13 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/contactinfo.php') !== fals
 
 $_input_descriptors1 = array();
 $_input_descriptors1[] = array( "name" => "ownername", "caption" => t('ContactInfo','OwnerName'),
-                                "type" => "text", "value" => ((isset($owner)) ? $owner : ""), );
+                                "type" => "text", "value" => ((isset($ownername)) ? $ownername : ""), );
 $_input_descriptors1[] = array( "name" => "emailowner", "caption" => t('ContactInfo','OwnerEmail'),
-                                "type" => "text", "value" => ((isset($email_owner)) ? $email_owner : "") , );
+                                "type" => "text", "value" => ((isset($emailowner)) ? $emailowner : "") , );
 $_input_descriptors1[] = array( "name" => "managername", "caption" => t('ContactInfo','ManagerName'),
-                                "type" => "text", "value" => ((isset($manager)) ? $manager : "") , );
+                                "type" => "text", "value" => ((isset($managername)) ? $managername : "") , );
 $_input_descriptors1[] = array( "name" => "emailmanager", "caption" => t('ContactInfo','ManagerEmail'),
-                                "type" => "text", "value" => ((isset($email_manager)) ? $email_manager : "") , );
+                                "type" => "text", "value" => ((isset($emailmanager)) ? $emailmanager : "") , );
 $_input_descriptors1[] = array( "name" => "company", "caption" => t('ContactInfo','Company'),
                                 "type" => "text", "value" => ((isset($company)) ? $company : "") , );
 $_input_descriptors1[] = array( "name" => "address", "caption" => t('ContactInfo','Address'),

@@ -24,7 +24,11 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
+    include_once('library/config_read.php');
     include('library/check_operator_perm.php');
+
+    include_once("lang/main.php");
+    include("library/layout.php");
 
     // init logging variables
     $logAction = "";
@@ -32,28 +36,28 @@
     $log = "visited page: ";
 
     include('library/opendb.php');
-    
+
     // init field_name and values (all, valid and to delete)
     $field_name = 'name';
-    
+
     $valid_values = array();
-    
+
     $sql = sprintf("SELECT DISTINCT(%s) FROM %s", $field_name, $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
-    
+
     while ($row = $res->fetchRow()) {
         $valid_values[] = $row[0];
     }
-    
+
     if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-    
+
         $values = array();
         $deleted_values = array();
-        
+
         // validate values
         if (array_key_exists($field_name, $_POST) && isset($_POST[$field_name])) {
-            
+
             $tmp = (!is_array($_POST[$field_name])) ? array($_POST[$field_name]) : $_POST[$field_name];
             foreach ($tmp as $value) {
                 if (in_array($value, $valid_values)) {
@@ -61,7 +65,7 @@
                 }
             }
         }
-        
+
         // use valid values for updating db,
         // update deleted_values as a valid value has been removed
         if (count($values) > 0) {
@@ -70,13 +74,13 @@
                                                                $field_name, $dbSocket->escapeSimple($value));
                 $result = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
-                
+
                 if ($result > 0) {
                     $deleted_values[] = $value;
                 }
             }
         }
-        
+
         $success = $_SERVER['REQUEST_METHOD'] == 'POST' && count($values) > 0 && count($deleted_values) > 0;
 
         // present results
@@ -85,7 +89,7 @@
             foreach ($deleted_values as $deleted_value) {
                 $tmp[] = htmlspecialchars($deleted_value, ENT_QUOTES, 'UTF-8');
             }
-            
+
             $successMsg = sprintf("Deleted hotspot(s): <strong>%s</strong>", implode(", ", $tmp));
             $logAction .= sprintf("Successfully deleted hotspot(s) [%s] on page: ", implode(", ", $deleted_values));
         } else {
@@ -97,32 +101,25 @@
         $failureMsg = "CSRF token error";
         $logAction .= "$failureMsg on page: ";
     }
-    
+
     include('library/closedb.php');
 
-    include_once('library/config_read.php');
-    include_once("lang/main.php");
-    include("library/layout.php");
 
     // print HTML prologue
-    
     $title = t('Intro','mnghsdel.php');
     $help = t('helpPage','mnghsdel');
-    
+
     print_html_prologue($title, $langCode);
 
-    
-    
+     print_title_and_help($title, $help);
 
-    print_title_and_help($title, $help);
-    
     if ($_SERVER['REQUEST_METHOD'] != 'GET') {
         include_once('include/management/actionMessages.php');
     }
-    
+
     if (!$success) {
         $options = $valid_values;
-        
+
         $input_descriptors1 = array();
 
         $input_descriptors1[] = array(
@@ -146,28 +143,28 @@
                                         'name' => 'submit',
                                         'value' => t('buttons','apply')
                                      );
-                                     
+
         $fieldset1_descriptor = array(
                                         "title" => t('title','HotspotRemoval'),
                                         "disabled" => (count($options) == 0)
                                      );
 
         open_form();
-        
+
         open_fieldset($fieldset1_descriptor);
 
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         close_form();
 
     }
-    
+
     print_back_to_previous_page();
-    
+
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

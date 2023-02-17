@@ -26,6 +26,7 @@
 
     include('library/check_operator_perm.php');
     include_once('library/config_read.php');
+
     include_once("lang/main.php");
     include("library/layout.php");
 
