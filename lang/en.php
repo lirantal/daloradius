@@ -429,6 +429,8 @@ $l['all']['BusinessEmail'] = "Business Email";
 $l['all']['BusinessContactPerson'] = "Business Contact Person";
 $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
 
+$l['all']['Calling Station ID'] = "Calling Station ID";
+$l['all']['Framed IP Address'] = "Framed IP Address";
 
 /* **********************************************************************************
  * Tooltips

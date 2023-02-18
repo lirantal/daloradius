@@ -430,6 +430,8 @@ $l['all']['BusinessEmail'] = "البريد الاكتروني للعمل";
 $l['all']['BusinessContactPerson'] = "فرد الاتصال للعمل";
 $l['all']['DBPasswordEncryption'] = "نظام تشفير كلمة سر قاعدة البيانات";
 
+$l['all']['Calling Station ID'] = "ماك العميل";
+$l['all']['Framed IP Address'] = "آيبي العميل";
 
 /* **********************************************************************************
  * Tooltips
@@ -672,7 +674,7 @@ $l['button']['RemovePayment'] = "حذف دفع";
 $l['button']['NewUsers'] = "مستخدمين جدد";
 
 $l['button']['ClearSessions'] = "ازالة الجلسات";
-$l['button']['Dashboard'] = "صفحة البداية";
+$l['button']['Dashboard'] = "لوحة التحكم";
 $l['button']['MailSettings'] = "اعدادات البريد الإلكتروني";
 
 $l['button']['Batch'] = "دفعة";
