@@ -128,25 +128,25 @@ $l['all']['RetryCount'] = "Retry Count";
 $l['all']['DefaultFallback'] = "Default Fallback";
 
 
-$l['all']['Firmware'] = "Firmware";
-$l['all']['NASMAC'] = "NAS MAC";
+$l['all']['Firmware'] = "نظام التشغيل";
+$l['all']['NASMAC'] = "ماك خادم الوصول";
 
-$l['all']['WanIface'] = "Wan Iface";
-$l['all']['WanMAC'] = "Wan MAC";
-$l['all']['WanIP'] = "Wan IP";
-$l['all']['WanGateway'] = "Wan Gateway";
+$l['all']['WanIface'] = "بورت الإنترنت";
+$l['all']['WanMAC'] = "ماك بورت الإنترنت";
+$l['all']['WanIP'] = "آيبي بورت الإنترنت";
+$l['all']['WanGateway'] = "آيبي الراوتر";
 
-$l['all']['LanIface'] = "Lan Iface";
-$l['all']['LanMAC'] = "Lan MAC";
-$l['all']['LanIP'] = "Lan IP";
+$l['all']['LanIface'] = "بورت اللان";
+$l['all']['LanMAC'] = "ماك اللان";
+$l['all']['LanIP'] = "آيبي اللان";
 
-$l['all']['WifiIface'] = "Wifi Iface";
-$l['all']['WifiMAC'] = "Wifi MAC";
-$l['all']['WifiIP'] = "Wifi IP";
+$l['all']['WifiIface'] = "كارت الوايفاي";
+$l['all']['WifiMAC'] = "ماك الوايفاي";
+$l['all']['WifiIP'] = "آيبي الوايفاي";
 
-$l['all']['WifiSSID'] = "Wifi SSID";
-$l['all']['WifiKey'] = "Wifi Key";
-$l['all']['WifiChannel'] = "Wifi Channel";
+$l['all']['WifiSSID'] = "اسم شبكة الوايفاي";
+$l['all']['WifiKey'] = "باسورد الوايفاي";
+$l['all']['WifiChannel'] = "قناة الوايفي";
 
 $l['all']['CheckinTime'] = "آخر إتصال";
 
@@ -694,7 +694,7 @@ $l['button']['RemovePlan'] = "إزالة الخطة";
 $l['button']['ListInvoices'] = "قائمة الفواتير";
 $l['button']['NewInvoice'] = "فاتورة جديدة";
 $l['button']['EditInvoice'] = "تعديل الفاتورة";
-$l['button']['RemoveInvoice'] = "إزالة الفاتنورة";
+$l['button']['RemoveInvoice'] = "إزالة الفاتورة";
 
 $l['button']['ListRealms'] = "List Realms";
 $l['button']['NewRealm'] = "New Realm";
@@ -794,7 +794,7 @@ $l['button']['History'] = "تاريخي";
 $l['button']['ServerStatus'] = "حالة الخادم";
 $l['button']['ServicesStatus'] = "حالة الخدمات";
 
-$l['button']['WitRADIUSLog'] = "سجل ويت راديوس";
+$l['button']['daloRADIUSLog'] = "سجل دالوراديوس";
 $l['button']['RadiusLog'] = "سجل الراديوس";
 $l['button']['SystemLog'] = "سجل النظام";
 $l['button']['BootLog'] = "سجل بدء التشغيل";
@@ -844,7 +844,7 @@ $l['button']['ProcessQuery'] = "استعلام عن عملية";
 $l['title']['ImportUsers'] = "استيراد مستخدمين";
 
 
-$l['title']['Dashboard'] = "صفحة البداية";
+$l['title']['Dashboard'] = "لوحة التحكم";
 $l['title']['DashboardAlerts'] = "تنبيهات";
 
 $l['title']['Invoice'] = "فاتورة";
@@ -867,7 +867,7 @@ $l['title']['BatchRemoval'] = "حذف دفعة";
 
 $l['title']['Backups'] = "النسخ الاحتياطية";
 $l['title']['FreeRADIUSTables'] = "جداول الراديوس";
-$l['title']['WitRADIUSTables'] = "جداول دالوراديوس";
+$l['title']['daloRADIUSTables'] = "جداول دالوراديوس";
 
 $l['title']['IPPoolInfo'] = "IP-Pool معلومات";
 
@@ -1120,7 +1120,7 @@ $l['Intro']['replogsdaloradius.php'] = "سجل ويت راديوس";
 $l['Intro']['replogsboot.php'] = "سجل بدء التشغيل";
 $l['Intro']['replogs.php'] = "سجلات";
 $l['Intro']['rephb.php'] = "Heartbeat";
-$l['Intro']['rephbdashboard.php'] = "WitRADIUS NAS Dashboard";
+$l['Intro']['rephbdashboard.php'] = "لوحة تحكم دالوراديوس";
 $l['Intro']['repbatch.php'] = "حزمة";
 $l['Intro']['mngbatchlist.php'] = "إدارة الحزم";
 $l['Intro']['repbatchlist.php'] = "قائمة حزم الكروت";
