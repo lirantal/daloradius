@@ -114,7 +114,7 @@ if (!empty($detect_category) && count($subnav[$detect_category]) > 0) {
         <ul class="nav ms-4">
 <?php
             foreach ($subnav[$detect_category] as $label => $href) {
-                $label = htmlspecialchars(strip_tags($label), ENT_QUOTES, 'UTF-8');
+                $label = htmlspecialchars(strip_tags(trim(t('submenu', $label))), ENT_QUOTES, 'UTF-8');
                 printf('<li><a class="nav-link link-dark px-2" href="%s">%s</a></li>', urlencode($href), $label);
             }
 ?>
