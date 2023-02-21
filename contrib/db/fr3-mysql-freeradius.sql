@@ -176,23 +176,22 @@ CREATE TABLE IF NOT EXISTS nas (
 
 #
 # Table structure for table 'radippool'
-#
 
-CREATE TABLE radippool (
-  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  pool_name VARCHAR(30) NOT NULL,
-  framedipaddress VARCHAR(15) NOT NULL DEFAULT '',
-  nasipaddress VARCHAR(15) NOT NULL DEFAULT '',
-  calledstationid VARCHAR(30) NOT NULL,
-  callingstationid VARCHAR(30) NOT NULL,
-  expiry_time DATETIME NULL DEFAULT NULL,
-  username VARCHAR(64) NOT NULL DEFAULT '',
-  pool_key VARCHAR(30) NOT NULL DEFAULT '',
+CREATE TABLE IF NOT EXISTS radippool (
+  id                    int(11) unsigned NOT NULL auto_increment,
+  pool_name             varchar(30) NOT NULL,
+  framedipaddress       varchar(15) NOT NULL default '',
+  nasipaddress          varchar(15) NOT NULL default '',
+  calledstationid       VARCHAR(30) NOT NULL default '',
+  callingstationid      VARCHAR(30) NOT NULL default '',
+  expiry_time           DATETIME NOT NULL default NOW(),
+  username              varchar(64) NOT NULL default '',
+  pool_key              varchar(30) NOT NULL default '',
   PRIMARY KEY (id),
   KEY radippool_poolname_expire (pool_name, expiry_time),
   KEY framedipaddress (framedipaddress),
   KEY radippool_nasip_poolkey_ipaddress (nasipaddress, pool_key, framedipaddress)
-);
+) ENGINE=InnoDB;
 
 #
 # Table structure for table 'wimax' (WiMAX),
