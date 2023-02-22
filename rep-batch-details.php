@@ -378,12 +378,21 @@
                 
                 $status = sprintf('<span class="badge bg-%s ms-1">%s</span>', $badge, (($active !== '0') ? "active" : "not active"));
                 
+                // check if user is disabled
+                $disabled = in_array('daloRADIUS-Disabled-Users',
+                                     get_user_group_mappings($dbSocket, $username));
+                
+                $img_format = '<i class="bi bi-%s-circle-fill text-%s me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="%s"></i>';
+
+                $img = ($disabled)
+                     ? sprintf($img_format, 'dash', 'danger', 'disabled')
+                     : sprintf($img_format, 'check', 'success', 'enabled');
                 
                 $ajax_id = "divContainerUserInfo_" . $count;
                 $param = sprintf('username=%s', urlencode($username));
                 $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
                 $tooltip = array(
-                                    'subject' => $username,
+                                    'subject' => $img . $username,
                                     'onclick' => $onclick,
                                     'ajax_id' => $ajax_id,
                                     'actions' => array(),

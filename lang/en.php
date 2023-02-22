@@ -257,7 +257,7 @@ $l['all']['ClientName'] = "Client Name";
 $l['all']['Date'] = "Date";
 
 $l['all']['edit'] = "edit";
-$l['all']['del'] = "del";
+$l['all']['del'] = "Delete";
 $l['all']['groupslist'] = "groups-list";
 $l['all']['TestUser'] = "Test User";
 $l['all']['Accounting'] = "Accounting";
@@ -1528,7 +1528,7 @@ $l['helpPage']['repbatch'] = "";
 $l['helpPage']['repbatchlist'] = "";
 $l['helpPage']['mngbatchlist'] = "";
 $l['helpPage']['mngbatchdel'] = "";
-$l['helpPage']['repbatchdetails'] = "Provides a list of active users of this batch instance";
+$l['helpPage']['repbatchdetails'] = "Provides details on a specific batch";
 $l['helpPage']['replogs'] = "
 <b>Logs</b><br/>
 <h200><b>daloRADIUS Log</b></h200> - Monitor daloRADIUS's Logfile.<br/>
@@ -1725,32 +1725,31 @@ $l['helpPage']['giseditmap'] = "
     database.
 <br/>
 ";
-$l['helpPage']['gisviewmap'] = "
-    View Map Mode - in this mode you are able to browse the Hotspots as they are layed out
-    in icons across the maps provided by GoogleMaps service.<br/><br/>
+$l['helpPage']['gisviewmap'] = <<<EOF
+<p>The <strong>view map feature</strong> enables you to browse hotspots as they are layed out in icons across the map.</p>
+<p>When <strong>selecting a hotspot</strong> which can be achieved just by clicking on it, you will be provided with more
+in-depth detail on the hotspot such as contact information for the hotspot and other details.</p>
+EOF;
 
-    <b> Clicking a Hotspot </b> -Will provide you with more in-depth detail on the hotspot.
-    Such as the contact information for the hotspot, and statistics details.
-<br/>
-";
-$l['helpPage']['gismain'] = "
-<b> General Information </b>
-GIS Mapping provides visual mappings of the hotspot location across the world's map using Google Maps API. <br/>
-In the Management page you are able to add new hotspot entries to the database where there is also a field
-called Geolocation, this is the numeric value that the Google Maps API uses in order to pin-point the exact
-location of that hotspot on the map.<br/><br/>
+$l['helpPage']['gismain'] = <<<EOF
+<p>The <strong>GIS feature</strong> provides visual mappings of the hotspot location across the world's map.</p>
 
-<h200><b>2 Modes of Operation are provided:</b></h200>
-One is the <b>View MAP</b> mode which enables 'surfing' through the world map
-and view the current locations of the hotspots in the database and another one - <b>Edit MAP</b> - which is the mode
-that one can use in order to create hotspot's visually by simply left-clicking on the map or removing
-existing hotspot entries by left-clicking on existing hotspot flags.<br/><br/>
+<p>When adding a new hotspot you can specify its geolocation, i.e. the [latitude, longitude] pair used in order to
+   pin-point the exact location of that hotspot on the map.</p>
 
-Another important issue is that each computer on the network requires a unique Registration code which you
-can obtain from Google Maps API page by providing the complete web address to the hosted directory of
-daloRADIUS application on your server. Once you have obtained that code from Google, simply paste it in the
-Registration box and click the 'Register code' button to write it.
-Then you may be able to use Google Maps services. <br/><br/>";
+<p><strong>2 different modes of operation are provided</strong>:
+    <ul>
+        <li>the <strong>View MAP</strong> mode which enables <em>surfing</em> through the world map and viewing
+            the current locations of the hotspots in the database;</li>
+        <li>the <strong>Edit MAP</strong> mode which can be used for:
+            <ul>
+                <li>visually adding new hotspots, just by simply left-clicking on the map;</li>
+                <li>visaully removing existing hotspots, by left-clicking on existing hotspot.</li>
+            </ul>
+        </li>
+    </ul>
+</p>
+EOF;
 
 /* ********************************************************************************** */
 
