@@ -14,18 +14,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 
+ *
  * Description:    Arabic language file
  *
  * Authors:        Liran Tal <liran@enginx.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
- *				   Muhammed AL-Qadhy <witradius@gmail.com>	
+ *                 Muhammed AL-Qadhy <witradius@gmail.com>
  *
  *********************************************************************************************************
  */
 
 // prevent this file to be directly accessed
-if (strpos($_SERVER['PHP_SELF'], '/lang/en.php') !== false) {
+if (strpos($_SERVER['PHP_SELF'], '/lang/ar.php') !== false) {
     header("Location: ../index.php");
     exit;
 }
@@ -490,13 +490,13 @@ $l['Tooltip']['EditRate'] = "تحرير التسعير";
 $l['Tooltip']['RemoveRate'] = "حذف التسعير";
 
 $l['Tooltip']['rateNameTooltip'] = "اسم التسعير,<br/>
-					لوصف الغرض من التسعير";
+                    لوصف الغرض من التسعير";
 $l['Tooltip']['rateTypeTooltip'] = "نوع التسعير<br/>
-					لوصف عملية التسعير";
+                    لوصف عملية التسعير";
 $l['Tooltip']['rateCostTooltip'] = "تكلفة التسعير";
 
 $l['Tooltip']['planNameTooltip'] = "اسم الخطة<br/>
-					لوصف خصائص الخطة";
+                    لوصف خصائص الخطة";
 $l['Tooltip']['planIdTooltip'] = "";
 $l['Tooltip']['planTimeTypeTooltip'] = "";
 $l['Tooltip']['planTimeBankTooltip'] = "";
@@ -612,41 +612,41 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you spec
 
 
 $l['Tooltip']['usernameTooltip'] = "اسم المستخدم الذي سيقوم بالاتصال بالنظام";
-$l['Tooltip']['passwordTypeTooltip'] = "نوع كلمة السر المستخدمة في عملية المصادقة";					
+$l['Tooltip']['passwordTypeTooltip'] = "نوع كلمة السر المستخدمة في عملية المصادقة";
 $l['Tooltip']['passwordTooltip'] = "كلمة السر حساسة للحروف الكبيرة والصغيرة في بعض الأنظمة لذا يرجى توخي الحذر";
 $l['Tooltip']['groupTooltip'] = "سيتم إضافة المستخدم إلى هذه المجموعة بتعيين مستخدم إلى مجموعة محددة سيكون المستخدم خاضع لسمات المجموعة";
 $l['Tooltip']['macaddressTooltip'] = "مثال- 00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp;&nbsp;
-					طريقة كتابة الماك يجب أن تكون بهذه الطريقة<br/>&nbsp;&nbsp;&nbsp;
-					كما يقوم خادم شبكة الاتصال بارساله<br/>&nbsp;&nbsp;&nbsp;
-					بدون زيادات في الحروف.";
+                    طريقة كتابة الماك يجب أن تكون بهذه الطريقة<br/>&nbsp;&nbsp;&nbsp;
+                    كما يقوم خادم شبكة الاتصال بارساله<br/>&nbsp;&nbsp;&nbsp;
+                    بدون زيادات في الحروف.";
 $l['Tooltip']['pincodeTooltip'] = "مثال : khrivnxufi101<br/>; هذا هو الرمز السري الذي سيقوم المستخدم بكتابته للدخول<br/>; يمكنك استخدام حروف وأرقام بدون الخضوع للحروف الكبيرة والصغيرة";
 $l['Tooltip']['usernamePrefixTooltip'] = "مثال: TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
-					سيتم إضافة بادئة اسم المستخدم هذاإلى<br/>&nbsp;&nbsp;&nbsp;
-					ما سيتم توليده من أسماء مستخدمين";
+                    سيتم إضافة بادئة اسم المستخدم هذاإلى<br/>&nbsp;&nbsp;&nbsp;
+                    ما سيتم توليده من أسماء مستخدمين";
 $l['Tooltip']['instancesToCreateTooltip'] = "مثال: 100<br/>&nbsp;&nbsp;&nbsp;
-					عدد المستخدمين المطلوب انشائهم<br/>&nbsp;&nbsp;&nbsp;
-					مع ملف شخصي محدد";
+                    عدد المستخدمين المطلوب انشائهم<br/>&nbsp;&nbsp;&nbsp;
+                    مع ملف شخصي محدد";
 $l['Tooltip']['lengthOfUsernameTooltip'] = "مثال: 8<br/>&nbsp;&nbsp;&nbsp;
-					طول أحرف اسم المستخدم<br/>&nbsp;&nbsp;&nbsp;
-					المراد انشائها - الأفضل من 8 إلى 12 حرف";
+                    طول أحرف اسم المستخدم<br/>&nbsp;&nbsp;&nbsp;
+                    المراد انشائها - الأفضل من 8 إلى 12 حرف";
 $l['Tooltip']['lengthOfPasswordTooltip'] = "مثال: 8<br/>&nbsp;&nbsp;&nbsp;
-					طول أحرف كلمة السر<br/>&nbsp;&nbsp;&nbsp;
-					المراد انشائها - الأفضل من 8 إلى 12 حرف";
+                    طول أحرف كلمة السر<br/>&nbsp;&nbsp;&nbsp;
+                    المراد انشائها - الأفضل من 8 إلى 12 حرف";
 
 
 $l['Tooltip']['hotspotNameTooltip'] = "مثال: Hotspot-1<br/>&nbsp;&nbsp;&nbsp;
-					اسم نقطة الوصول<br/>";
+                    اسم نقطة الوصول<br/>";
 
 $l['Tooltip']['hotspotMacaddressTooltip'] = "مثال: 00-aa-bb-cc-dd-ee<br/>&nbsp;&nbsp;&nbsp;
-					الماك الخاص بسيرفر الوصول للشبكة<br/>";
+                    الماك الخاص بسيرفر الوصول للشبكة<br/>";
 
 $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
-					This is the GooleMaps location code used<br/>&nbsp;&nbsp;&nbsp;
-					to pin the Hotspot/NAS on the map (see GIS).";
+                    This is the GooleMaps location code used<br/>&nbsp;&nbsp;&nbsp;
+                    to pin the Hotspot/NAS on the map (see GIS).";
 
 $l['Tooltip']['reassignplanprofiles'] = "If toggled on, when applying user information <br/>
-					the Profiles listed in the Profiles tab will be ignored and <br/>
-					profiles will be re-assigned based on the Plans profile association";
+                    the Profiles listed in the Profiles tab will be ignored and <br/>
+                    profiles will be re-assigned based on the Plans profile association";
 
 /* ********************************************************************************** */
 
@@ -831,8 +831,8 @@ $l['button']['RemoveOperator'] = "حذف مدير";
 
 $l['button']['ProcessQuery'] = "استعلام عن عملية";
 
- 
- 
+
+
 /* ********************************************************************************** */
 
 
@@ -856,7 +856,7 @@ $l['title']['Items'] = "العناصر";
 $l['title']['PayTypeInfo'] = "معلومات نوع الدفع";
 $l['title']['PaymentInfo'] = "معلومات الدفع";
 
- 
+
 $l['title']['RateInfo'] = "معلومات تسعير";
 $l['title']['PlanInfo'] = "معلومات الخطة";
 $l['title']['TimeSettings'] = "اعدادات الوقت";
@@ -924,7 +924,7 @@ $l['title']['Optional'] = "Optional";
 /* ********************************************************************************** */
 
 /* **********************************************************************************
- * Graphs 
+ * Graphs
  * General graphing text
  ************************************************************************************/
 $l['graphs']['Day'] = "يوم";
@@ -959,7 +959,7 @@ $l['text']['LoginPlease'] = "التسجيل";
 
 
 /* **********************************************************************************
- * Contact Info 
+ * Contact Info
  * Related to all contact info text, user info, hotspot owner contact information etc
  ************************************************************************************/
 
@@ -1226,7 +1226,7 @@ $l['captions']['detailsofnewrate'] = "إملاء بيانات التسعير";
 $l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rate entry";
 
 /* **********************************************************************************
- * Help Pages Info 
+ * Help Pages Info
  * Each page has a header which is the Intro class, when clicking on the header
  * it will reveal/hide a helpPage div content which is a description of a specific
  * page, basically your expanded tool-tip.
@@ -1376,7 +1376,7 @@ default are not used, and the password encryption type in the database.<br/>
 <h200><b>Global Settings</b></h200> - Database Storage Engine<br/>
 <h200><b>Tables Settings</b></h200> - If not using the default FreeRADIUS schema you may change the names
 of the table names<br/>
-<h200><b>Advanced Settings</b></h200> - If you wish to store passwords for users in the database not in 
+<h200><b>Advanced Settings</b></h200> - If you wish to store passwords for users in the database not in
 plain text but rather have it encrypted somehow you may choose one of MD5 or Crypt<br/>
 ";
 $l['helpPage']['configlang'] = "
@@ -1530,7 +1530,7 @@ radius attributes";
 
 // accounting section
 $l['helpPage']['acctactive'] = "
-    Provides information that would prove useful for tracking Active or Expired users in the database 
+    Provides information that would prove useful for tracking Active or Expired users in the database
     in terms of users which have an Expiration attribute or a Max-All-Session attribute.
 <br/>
 ";
@@ -1550,32 +1550,32 @@ $l['helpPage']['acctipaddress'] = "
 $l['helpPage']['acctplans'] = "";
 $l['helpPage']['acctmain'] = "
 <b>General Accounting</b><br/>
-<h200><b>User Accounting</b></h200> - 
+<h200><b>User Accounting</b></h200> -
     Provides full accounting information for all sessions in the database for a particular user.
 <br/>
-<h200><b>IP Accounting</b></h200> - 
+<h200><b>IP Accounting</b></h200> -
     Provides full accounting information for all sessions that originated with a particular IP Address.
 <br/>
-<h200><b>NAS Accounting</b></h200> - 
+<h200><b>NAS Accounting</b></h200> -
     Provides full accounting information for all the sessions that the specific NAS IP address has handled.
 <br/>
-<h200><b>Date Accounting</b></h200> - 
+<h200><b>Date Accounting</b></h200> -
     Provides full accounting information for all sessions between the given 2 dates for a particular user.
 <br/>
-<h200><b>All Accounting Records</b></h200> - 
+<h200><b>All Accounting Records</b></h200> -
     Provides full accounting information for all sessions in the database.
 <br/>
-<h200><b>Active Records Accounting</b></h200> - 
-    Provides information that would prove useful for tracking Active or Expired users in the database 
+<h200><b>Active Records Accounting</b></h200> -
+    Provides information that would prove useful for tracking Active or Expired users in the database
     in terms of users which have an Expiration attribute or a Max-All-Session attribute.
 <br/>
 
 <br/>
 <b>Sub-Category Accounting</b><br/>
-<h200><b>Custom</b></h200> - 
+<h200><b>Custom</b></h200> -
     Provides the most flexible custom query to run on the database.
 <br/>
-<h200><b>Hotspots</b></h200> - 
+<h200><b>Hotspots</b></h200> -
     Provides information on the different managed hotspots, comparison, and other useful information.
 <br/>
 ";
@@ -1612,17 +1612,17 @@ $l['helpPage']['accthotspotcompare'] = "
 <br/>
 ";
 $l['helpPage']['accthotspot'] = "
-<h200><b>Hotspot Accounting</b></h200> - 
+<h200><b>Hotspot Accounting</b></h200> -
     Provides full accounting information for all sessions which originated from this specific Hotspot.
 <br/>
-<h200><b>Hotspot Comparison</b></h200> - 
+<h200><b>Hotspot Comparison</b></h200> -
     Provides basic accounting information for comparison between all the active hotspots found in the database.
     Provides a graph plot of different comparisons made.
 <br/>
 ";
 // accounting custom queries section
 $l['helpPage']['acctcustom'] = "
-<h200><b>Custom</b></h200> - 
+<h200><b>Custom</b></h200> -
     Provides the most flexible custom query to run on the database.<br/>
     You may adjust the query to it's max by modifying the settings in the left sidebar.<br/>
 <br/>
@@ -1642,12 +1642,12 @@ $l['helpPage']['acctcustom'] = "
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
-<h200><b>Cleanup stale-sessions</b></h200> - 
+<h200><b>Cleanup stale-sessions</b></h200> -
     Stale-sesions may often exist because the NAS was unable to provide an accounting STOP record for the <br/>
     user session, resulting in a stale open session in the accounting records which simulates a fake logged-in user
     record (false positive).
 <br/>
-<h200><b>Delete accounting records</b></h200> - 
+<h200><b>Delete accounting records</b></h200> -
     Deletion of accounting records in the database. It may not be wise to perform this or to allow other users
     except for a supervised administrator access to this page.
 <br/>
@@ -1658,7 +1658,7 @@ $l['helpPage']['acctmaintenancecleanup'] = "
     This is normally caused by a lost disconnect message from the NAS to FreeRADIUS.</br></br>
     You have two choices to cleanup stale sessions, use them with caution:<br/>
     &nbsp;&bullet; By Username: This option will <b>CLOSE</b> all opened sessions for a username in the FreeRADIUS database.<br/>
-    &nbsp;&bullet; By Date: This option will <b>DELETE</b> all opened sessions older than a date in the FreeRADIUS database.<br/>    
+    &nbsp;&bullet; By Date: This option will <b>DELETE</b> all opened sessions older than a date in the FreeRADIUS database.<br/>
 ";
 $l['helpPage']['acctmaintenancedelete'] = "";
 
@@ -1671,7 +1671,7 @@ $l['helpPage']['giseditmap'] = "
     the hotspot's name and it's MAC address. These are 2 crucial details later used to identify this hotspot
     in the accounting table. Always provide the correct MAC Address!
 <br/><br/>
-    <b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the 
+    <b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the
     database.
 <br/>
 ";
@@ -1687,16 +1687,16 @@ $l['helpPage']['gismain'] = "
 <b> General Information </b>
 GIS Mapping provides visual mappings of the hotspot location across the world's map using Google Maps API. <br/>
 In the Management page you are able to add new hotspot entries to the database where there is also a field
-called Geolocation, this is the numeric value that the Google Maps API uses in order to pin-point the exact 
+called Geolocation, this is the numeric value that the Google Maps API uses in order to pin-point the exact
 location of that hotspot on the map.<br/><br/>
 
 <h200><b>2 Modes of Operation are provided:</b></h200>
-One is the <b>View MAP</b> mode which enables 'surfing' through the world map 
+One is the <b>View MAP</b> mode which enables 'surfing' through the world map
 and view the current locations of the hotspots in the database and another one - <b>Edit MAP</b> - which is the mode
-that one can use in order to create hotspot's visually by simply left-clicking on the map or removing 
+that one can use in order to create hotspot's visually by simply left-clicking on the map or removing
 existing hotspot entries by left-clicking on existing hotspot flags.<br/><br/>
 
-Another important issue is that each computer on the network requires a unique Registration code which you 
+Another important issue is that each computer on the network requires a unique Registration code which you
 can obtain from Google Maps API page by providing the complete web address to the hosted directory of
 daloRADIUS application on your server. Once you have obtained that code from Google, simply paste it in the
 Registration box and click the 'Register code' button to write it.

@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 
+ *
  * Description:    Main language file control
  *
  * Authors:        Liran Tal <liran@enginx.com>
@@ -60,7 +60,7 @@ if($langConf != $langDefault) {
 
     if(is_file($langFileConf)) {
         require_once($langFileConf);
-        
+
         $langFile = $langFileConf;
     }
 }
@@ -74,21 +74,21 @@ function t($a, $b = null, $c = null, $d = null) {
 
     // added a static null at the end of the $arr
     $arr = array( $a, $b, $c, $d, null );
-    
+
     // dictionary will be modified by the for loop
     $t = $l;
-    
+
     // count($arr) - 1 == 4
     for ($i = 0; $i < 4; $i++) {
-        
+
         $current = $arr[$i];
         $next = $arr[$i+1];
-        
-        
+
+
         if ($next == null && isset($t[$current])) {
             return $t[$current];
         }
-            
+
         $t = $t[$current];
     }
 

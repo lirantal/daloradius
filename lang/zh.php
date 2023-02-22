@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 
+ *
  * Description:    中文语言文件
  *
  * Authors:        Liran Tal <liran@enginx.com>
@@ -23,7 +23,7 @@
  *
  *********************************************************************************************************
  */
- 
+
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/lang/zh.php') !== false) {
     header("Location: ../index.php");
@@ -611,7 +611,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "如果指�
 
 $l['Tooltip']['usernameTooltip'] = "准确的用户名，用户将<br/>&nbsp;&nbsp;&nbsp;
                     用来连接系统";
-$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";                    
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";
 $l['Tooltip']['passwordTooltip'] = "密码实例包含在系统里<br/>&nbsp;&nbsp;&nbsp;
                     所以要格外小心";
 $l['Tooltip']['groupTooltip'] = "用户将被添加到这个组<br/>&nbsp;&nbsp;&nbsp;
@@ -835,8 +835,8 @@ $l['button']['RemoveOperator'] = "移除操作人";
 
 $l['button']['ProcessQuery'] = "查询进程";
 
- 
- 
+
+
 /*********************************************************************************** */
 
 
@@ -862,7 +862,7 @@ $l['title']['Items'] = "项目";
 $l['title']['PayTypeInfo'] = "支付类型信息";
 $l['title']['PaymentInfo'] = "支付信息";
 
- 
+
 $l['title']['RateInfo'] = "价格信息";
 $l['title']['PlanInfo'] = "计划信息";
 $l['title']['TimeSettings'] = "时间设置";
@@ -1569,7 +1569,7 @@ $l['helpPage']['replogs'] = "
 ";
 $l['helpPage']['repmain'] = "
 <b>普通的报告</b><br/>
-<h200><b>在线用户</b></h200> - 提供了一个清单的所有用户 
+<h200><b>在线用户</b></h200> - 提供了一个清单的所有用户
 发现在线通过会计表在数据库中。为用户正在执行的检查
 没有结束时间(AcctStopTime)。重要的是要注意,这些用户也会过期的会话
 这当NASs由于某种原因未能发送accounting-stop包。.<br/>
@@ -1625,32 +1625,32 @@ $l['helpPage']['acctipaddress'] = "
 $l['helpPage']['acctplans'] = "";
 $l['helpPage']['acctmain'] = "
 <b>General Accounting</b><br/>
-<h200><b>User Accounting</b></h200> - 
+<h200><b>User Accounting</b></h200> -
     为数据库中的一个特定用户的所有会话的完整的会计信息。
 <br/>
-<h200><b>IP Accounting</b></h200> - 
+<h200><b>IP Accounting</b></h200> -
     为起源与特定IP地址的所有会话的完整的会计信息。
 <br/>
-<h200><b>NAS Accounting</b></h200> - 
+<h200><b>NAS Accounting</b></h200> -
     为所有的特定NAS的IP地址已办理了全面的会话计费信息。
 <br/>
-<h200><b>Date Accounting</b></h200> - 
+<h200><b>Date Accounting</b></h200> -
     Provides对于给定的2日期为特定用户之间的所有会话完整的会计信息。
 <br/>
-<h200><b>All Accounting Records</b></h200> - 
+<h200><b>All Accounting Records</b></h200> -
     为数据库中的所有会话的完整的会计信息。
 <br/>
-<h200><b>Active Records Accounting</b></h200> - 
+<h200><b>Active Records Accounting</b></h200> -
     规定，将被证明是用于跟踪活动或过期的数据库中的用户有用的信息
 其中有一个到期属性或 Max-All-Session（最大-所有-会话）属性的用户而言。
 <br/>
 
 <br/>
 <b>Sub-Category Accounting</b><br/>
-<h200><b>Custom</b></h200> - 
+<h200><b>Custom</b></h200> -
     提供了最灵活的自定义查询到数据库上运行。
 <br/>
-<h200><b>Hotspots</b></h200> - 
+<h200><b>Hotspots</b></h200> -
     提供不同的管理热点信息、比较,和其他有用的信息。
 <br/>
 ";
@@ -1687,17 +1687,17 @@ $l['helpPage']['accthotspotcompare'] = "
 <br/>
 ";
 $l['helpPage']['accthotspot'] = "
-<h200><b>Hotspot Accounting</b></h200> - 
+<h200><b>Hotspot Accounting</b></h200> -
     提供完整的会计信息的所有会话起源于这个特定的热点。
 <br/>
-<h200><b>Hotspot Comparison</b></h200> - 
+<h200><b>Hotspot Comparison</b></h200> -
     提供了基本的会计信息比较数据库中找到的所有活跃的热点。
 提供了一个图块不同的比较。
 <br/>
 ";
 // 会计自定义查询部分
 $l['helpPage']['acctcustom'] = "
-<h200><b>Custom</b></h200> - 
+<h200><b>Custom</b></h200> -
     提供最灵活的自定义查询数据库上运行。< br / >
 你可以调整查询的max通过修改设置在左侧栏。< br / >
 <br/>
@@ -1717,12 +1717,12 @@ $l['helpPage']['acctcustom'] = "
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
-<h200><b>清理过期会话</b></h200> - 
+<h200><b>清理过期会话</b></h200> -
     ‘过期会话’可能经常存在因为会影响NAS无法提供计费停止纪录<<br/>
     如不不清理长时间的过期用户会话，会导致假的用户登录记录的存在
     记录 (false positive).
 <br/>
-<h200><b>删除会计记录</b></h200> - 
+<h200><b>删除会计记录</b></h200> -
     删除数据库中的会计记录。要执行该操作，或者要允许其他用户。
     除了管理员访问这个页面。
 <br/>
@@ -1758,7 +1758,7 @@ GIS热点位置的提供了可视化世界各地的地图使用Google Maps API�
 称为地理位置,这是Google Maps API使用以有定位的准确数值
 位置在地图上的热点。<br/><br/>
 
-<h200><b>2 提供的操作模式:</b></h200> 
+<h200><b>2 提供的操作模式:</b></h200>
 一个是<b>查看地图</b>模式使“网上冲浪”通过世界地图
 查看当前位置的热点在数据库和另一个<b>编辑地图</b> -该模式
 一个可以使用以创建热点的直观简单的左点击地图或删除
@@ -1820,4 +1820,35 @@ $l['menu']['Graphs'] = "图表";
 $l['menu']['Config'] = "配置";
 $l['menu']['Help'] = "帮助";
 
+// TODO translation needed.
+// once translated, delete these comment lines.
+$l['submenu']['General'] = "General";
+$l['submenu']['Reporting'] = "Reporting";
+$l['submenu']['Maintenance'] = "Maintenance";
+$l['submenu']['Operators'] = "Operators";
+$l['submenu']['Backup'] = "Backup";
+$l['submenu']['Logs'] = "Logs";
+$l['submenu']['Status'] = "Status";
+$l['submenu']['Batch Users'] = "Batch Users";
+$l['submenu']['Dashboard'] = "Dashboard";
+$l['submenu']['Users'] = "Users";
+$l['submenu']['Hotspots'] = "Hotspots";
+$l['submenu']['Nas'] = "Nas";
+$l['submenu']['User-Groups'] = "User-Groups";
+$l['submenu']['Profiles'] = "Profiles";
+$l['submenu']['HuntGroups'] = "HuntGroups";
+$l['submenu']['Attributes'] = "Attributes";
+$l['submenu']['Realm/Proxy'] = "Realm/Proxy";
+$l['submenu']['IP-Pool'] = "IP-Pool";
+$l['submenu']['POS'] = "POS";
+$l['submenu']['Plans'] = "Plans";
+$l['submenu']['Rates'] = "Rates";
+$l['submenu']['Merchant-Transactions'] = "Merchant-Transactions";
+$l['submenu']['Billing-History'] = "Billing-History";
+$l['submenu']['Invoices'] = "Invoices";
+$l['submenu']['Payments'] = "Payments";
+$l['submenu']['Custom'] = "Custom";
+$l['submenu']['Hotspot'] = "Hotspot";
+
 ?>
+

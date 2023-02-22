@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 
+ *
  * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
@@ -53,7 +53,7 @@ $valid_radiusReplys = array( "Any", "Access-Accept", "Access-Reject" );
 
 $valid_backupActions = array( "download" => t('all','Download'), "rollback" => t('all','Rollback'), "delete" => "Delete");
 
-$valid_authTypes = array( 
+$valid_authTypes = array(
                             "userAuth" => "Based on username and password",
                             "macAuth" => "Based on MAC address",
                             "pincodeAuth" => "Based on PIN code"
@@ -99,7 +99,7 @@ $valid_db_engines = array(
                             "msql" => "MsQL",
                             "sybase" => "Sybase",
                             "sqlite" => "Sqlite",
-                            "oci8" => "Oci8 ",
+                            "oci8" => "Oci8",
                             "ibase" => "ibase",
                             "fbsql" => "fbsql",
                             "informix" => "informix"
@@ -215,7 +215,7 @@ $bill_merchant_transactions_options_all = array(
                                                     "payment_address_status" => t('all','PaymentAddressStatus'),
                                                     "vendor_type" => t('all','VendorType')
                                                );
-                                               
+
 $bill_merchant_transactions_options_default = array(
                                                         "username",
                                                         "planName",
@@ -236,8 +236,8 @@ $bill_merchant_transactions_options_default = array(
 // validating values
 
 $valid_paymentStatus = array(
-                              "Any", "Completed",  "Denied",  "Expired",  "Failed",  "In-Progress",  "Pending", 
-                              "Processed",  "Refunded",  "Reversed",  "Canceled-Reversal",  "Voided", 
+                              "Any", "Completed",  "Denied",  "Expired",  "Failed",  "In-Progress",  "Pending",
+                              "Processed",  "Refunded",  "Reversed",  "Canceled-Reversal",  "Voided",
                             );
 $valid_vendorTypes = array( "Any", "2Checkout", "PayPal" );
 $valid_billactions = array( "Any", "Refill Session Time", "Refill Session Traffic" );
@@ -253,18 +253,19 @@ $valid_planTimeTypes = array( "Accumulative", "Time-To-Finish" );
 
 $valid_timeUnits = array( "second", "minute", "hour", "day", "week", "month", );
 
+// ordered by country code
 $valid_languages = array(
-							"ar" => "Arabic",
-                            "en" => "English", 
-                            "it" => "Italian", 
-                            "hu" => "Hungarian", 
-                            "ro" => "Romanian",
-                            "tr" => "Turkish",
-                            "ru" => "Russian", 
+                            "ar" => "Arabic",
+                            "en" => "English",
+                            "es_ve" => "Spanish - Venezuelan",
+                            "hu" => "Hungarian",
+                            "it" => "Italian",
                             "ja" => "Japanese",
-                            "zh" => "Chinese",
-                            "es_ve" => "Spanish - Venezuelan", 
                             "pt_br" => "Portuguese - Brazilian",
+                            "ro" => "Romanian",
+                            "ru" => "Russian",
+                            "tr" => "Turkish",
+                            "zh" => "Chinese",
                         );
 
 ?>
