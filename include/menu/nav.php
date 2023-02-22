@@ -88,12 +88,12 @@ if (!in_array($detect_category, array_keys($nav))) {
                 <ul class="dropdown-menu text-small">
                     <li>
                         <span class="dropdown-item">
-                            Welcome, <strong><?= htmlspecialchars($_SESSION['operator_user'], ENT_QUOTES, 'UTF-8') ?></strong>.
+                            Welcome, <strong><?= htmlspecialchars($_SESSION['operator_user'], ENT_QUOTES, 'UTF-8') ?></strong>
                         </span>
                     </li>
                     <li>
                         <span class="dropdown-item">
-                            Location: <strong><?= htmlspecialchars($_SESSION['location_name'], ENT_QUOTES, 'UTF-8') ?></strong>.
+                            Location: <strong><?= htmlspecialchars($_SESSION['location_name'], ENT_QUOTES, 'UTF-8') ?></strong>
                         </span>
                     </li>
                     <li><hr class="dropdown-divider"></li>
