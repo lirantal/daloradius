@@ -34,7 +34,7 @@ $l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VER
 $l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
 $l['all']['copyright1'] = 'Administraci&oacute;n RADIUS, Reportes, Conteo y Facturaci&oacute;n desarrollado por '
                         . '<a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
-$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-2022 by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y') . ' by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
                         . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.';
 
 $l['all']['ID'] = "ID";
