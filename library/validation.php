@@ -254,6 +254,7 @@ $valid_planTimeTypes = array( "Accumulative", "Time-To-Finish" );
 $valid_timeUnits = array( "second", "minute", "hour", "day", "week", "month", );
 
 $valid_languages = array(
+							"ar" => "Arabic",
                             "en" => "English", 
                             "it" => "Italian", 
                             "hu" => "Hungarian", 
