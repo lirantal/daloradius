@@ -51,7 +51,7 @@ define("ALLOWED_RANDOM_CHARS_REGEX", DB_TABLE_NAME_REGEX);
 $valid_radiusReplys = array( "Any", "Access-Accept", "Access-Reject" );
 
 
-$valid_backupActions = array( "download" => t('all','Download'), "rollback" => t('all','Rollback'), "delete" => "Delete");
+$valid_backupActions = array( "download" => t('all','Download'), "rollback" => t('all','Rollback'), "delete" => t('all','del'));
 
 $valid_authTypes = array(
                             "userAuth" => "Based on username and password",
