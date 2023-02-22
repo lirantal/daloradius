@@ -281,7 +281,7 @@
                                 'colspan' => $colspan,
                                 'multiple_pages' => $drawNumberLinks
                            );
-        $descriptor = array(  'form' => $form_descriptor, 'table_foot' => $table_foot );
+        $descriptor = array( 'form' => $form_descriptor, 'table_foot' => $table_foot );
         print_table_bottom($descriptor);
 
         // get and print "links"
