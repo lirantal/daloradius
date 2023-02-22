@@ -348,12 +348,12 @@
                                   );
 
             $additional_controls[] = array(
-                                    'onclick' => sprintf("disableCheckbox('%s','include/management/userOperations.php')", $form_name),
+                                    'onclick' => sprintf("disableCheckbox('%s','library/ajax/user_actions.php')", $form_name),
                                     'label' => 'Disable',
                                     'class' => 'btn-primary',
                                   );
             $additional_controls[] = array(
-                                    'onclick' => sprintf("enableCheckbox('%s','include/management/userOperations.php')", $form_name),
+                                    'onclick' => sprintf("enableCheckbox('%s','library/ajax/user_actions.php')", $form_name),
                                     'label' => 'Enable',
                                     'class' => 'btn-secondary',
                                   );
@@ -422,7 +422,7 @@
                 
                 $ajax_id = "divContainerUserInfo_" . $count;
                 $param = sprintf('username=%s', urlencode($username));
-                $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+                $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
                 $tooltip = array(
                                     'subject' => $img . $username,
                                     'onclick' => $onclick,

@@ -21,11 +21,11 @@
  *********************************************************************************************************
  */
 
-include('../../library/checklogin.php');
+include('../checklogin.php');
 
 
 // username and divContainer are required
-if (array_key_exists('hotspot', $_GET) && isset($_GET['hotspot']) &&
+if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
     array_key_exists('divContainer', $_GET) && isset($_GET['divContainer'])) {
     
     // divContainer id must begin with a letter ([A-Za-z]) and may be followed by any number of letters,
@@ -35,47 +35,33 @@ if (array_key_exists('hotspot', $_GET) && isset($_GET['hotspot']) &&
     }
     
     $divContainer = $_GET['divContainer'];
-    $hotspot = str_replace("%", "", trim($_GET['hotspot']));
+    
+    // user should exist
+    $username = str_replace("%", "", trim($_GET['username']));
     
     // at the moment we have only one action
     $action = "";
-    if (isset($_GET['retHotspotGeneralStat'])) {
-        $action = 'retHotspotGeneralStat';
+    if (isset($_GET['retBandwidthInfo'])) {
+        $action = 'retBandwidthInfo';
     } else {
-        $action = 'retHotspotGeneralStat';
+        $action = 'retBandwidthInfo';
     }
-
-    include('../../library/opendb.php');
-    include_once('pages_common.php');
+    
+    include('../opendb.php');
+    include_once('../../include/management/pages_common.php');
     
     switch ($action) {
         
         default:
-        case 'retHotspotGeneralStat':
-            $sql = sprintf("SELECT COUNT(ra.radacctid) AS totalhits,
-                                   SUM(ra.AcctInputOctets) AS sumInputOctets,
-                                   SUM(ra.AcctOutputOctets) AS sumOutputOctets
-                              FROM %s AS ra JOIN %s AS hs ON ra.calledstationid=hs.mac
-                             WHERE hs.name='%s'
-                             GROUP BY hs.name",
-                           $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                           $dbSocket->escapeSimple($hotspot));
-                           
+        case 'retBandwidthInfo':
+        
+            $sql = sprintf("SELECT SUM(AcctInputOctets) AS Upload, SUM(AcctOutputOctets) AS Download FROM %s WHERE username='%s'",
+                           $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
             $res = $dbSocket->query($sql);
             $row = $res->fetchRow();
             
-            list( $totalhits, $upload, $download ) = $row;
-            
-            if (empty($totalhits)) {
-                $totalhits = "(n/a)";
-            } else {
-                $totalhits = intval($totalhits);
-                
-                if ($upload < 0) {
-                    $upload = 0;
-                }
-            }
-            
+            list( $upload, $download ) = $row;
+        
             if (empty($upload)) {
                 $upload = "(n/a)";
             } else {
@@ -99,22 +85,18 @@ if (array_key_exists('hotspot', $_GET) && isset($_GET['hotspot']) &&
                 
                 $download = toxbyte($download);
             }
-            
+        
             echo <<<EOF
     var divContainer = document.getElementById('$divContainer');
-    divContainer.innerHTML = '<span style="font-weight: normal">Total Uploads:</span> $upload';
+    divContainer.innerHTML = '<span style="font-weight: normal">Upload:</span> $upload';
     divContainer.innerHTML += '<br>';
-    divContainer.innerHTML += '<span style="font-weight: normal">Total Downloads:</span> $download';
-    divContainer.innerHTML += '<br>';
-    divContainer.innerHTML += '<span style="font-weight: normal">Total Hits:</span> $totalhits';
-
+    divContainer.innerHTML += '<span style="font-weight: normal">Download:</span> $download';
 EOF;
-            
-            break;
         
+            break;
     }
-
-    include('../../library/closedb.php');
+    
+    include('../closedb.php');
 
 }
 

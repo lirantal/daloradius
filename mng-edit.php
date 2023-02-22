@@ -367,14 +367,14 @@
         $inline_extra_js .= '
 function disableUser() {
     if (confirm("You are about to disable this user account\nDo you want to continue?"))  {
-        ajaxGeneric("include/management/userOperations.php", "userDisable=true", "returnMessages", strUsername);
+        ajaxGeneric("library/ajax/user_actions.php", "userDisable=true", "returnMessages", strUsername);
         return true;
     }
 }
 
 function enableUser() {
     if (confirm("You are about to enable this user account\nDo you want to continue?"))  {
-        ajaxGeneric("include/management/userOperations.php", "userEnable=true", "returnMessages", strUsername);
+        ajaxGeneric("library/ajax/user_actions.php", "userEnable=true", "returnMessages", strUsername);
         return true;
     }
 }' . "\n";
@@ -747,7 +747,7 @@ EOF;
 
 window.onload = function() {
     setupAccordion();
-    ajaxGeneric("include/management/userOperations.php", "checkDisabled=true", "returnMessages", strUsername);
+    ajaxGeneric("library/ajax/user_actions.php", "checkDisabled=true", "returnMessages", strUsername);
 };
 
 EOF;

@@ -156,7 +156,7 @@
 
             $ajax_id = "divContainerHotspotInfo" . $count;
             $param = sprintf('hotspot=%s', urlencode($name));
-            $onclick = "ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','$ajax_id','$param')";
+            $onclick = "ajaxGeneric('library/ajax/hotspot_info.php','retHotspotGeneralStat','$ajax_id','$param')";
             $tooltip = array(
                                 'subject' => $name,
                                 'onclick' => $onclick,

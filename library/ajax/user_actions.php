@@ -25,7 +25,7 @@
  *********************************************************************************************************
  */
 
-include_once('../../library/checklogin.php');
+include_once('../checklogin.php');
 
 // name of the group of disabled users
 $disabled_groupname = 'daloRADIUS-Disabled-Users';
@@ -75,8 +75,8 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
         $action = 'userEnable';
     }
     
-    include_once('pages_common.php');
-    include_once('../../library/opendb.php');
+    include('../opendb.php');
+    include_once('../../include/management/pages_common.php');
     
     // further escape usernames for safe db queries
     foreach ($usernames as $i => $username) {
@@ -244,7 +244,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                     if ($refillCost > 0 && !empty($id)) {
             
                         // if the user id indeed set in the userbillinfo table
-                        include_once("userBilling.php");
+                        include_once('../../include/management/userBilling.php');
                 
                         $invoiceInfo['notes'] = 'refill user account';
                         
@@ -322,7 +322,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                     // if the refill cost is anything beyond the amount 0, we create an invoice for it.
                     if ($refillCost > 0 && !empty($id)) {
                         // if the user id indeed set in the userbillinfo table
-                        include_once("userBilling.php");
+                        include_once('../../include/management/userBilling.php');
                 
                         $invoiceInfo['notes'] = 'refill user account';
                         
@@ -353,7 +353,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
     
     }
 
-    include('../../library/closedb.php');
+    include('../closedb.php');
     
     // output message
     if (isset($message) && isset($class)) {

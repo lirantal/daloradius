@@ -145,24 +145,24 @@
         // we prepare the "controls bar" (aka the table prologue bar)
         $additional_controls = array();
         $additional_controls[] = array(
-                                'onclick' => "disableCheckbox('listall','include/management/userOperations.php')",
+                                'onclick' => "disableCheckbox('listall','library/ajax/user_actions.php')",
                                 'label' => 'Disable',
                                 'class' => 'btn-primary',
                               );
         $additional_controls[] = array(
-                                'onclick' => "enableCheckbox('listall','include/management/userOperations.php')",
+                                'onclick' => "enableCheckbox('listall','library/ajax/user_actions.php')",
                                 'label' => 'Enable',
                                 'class' => 'btn-secondary',
                               );
 
         $additional_controls[] = array(
-                                'onclick' => "refillSessionTimeCheckbox('listall', 'include/management/userOperations.php')",
+                                'onclick' => "refillSessionTimeCheckbox('listall', 'library/ajax/user_actions.php')",
                                 'label' => 'Refill Session Time',
                                 'class' => 'btn-secondary',
                               );
                               
         $additional_controls[] = array(
-                                'onclick' => "refillSessionTrafficCheckbox('listall', 'include/management/userOperations.php')",
+                                'onclick' => "refillSessionTrafficCheckbox('listall', 'library/ajax/user_actions.php')",
                                 'label' => 'Refill Session Traffic',
                                 'class' => 'btn-secondary',
                               );
@@ -247,7 +247,7 @@
             
             $ajax_id = "divContainerUserInfo_" . $count;
             $param = sprintf('username=%s', urlencode($username));
-            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
             $tooltip = array(
                                 'subject' => sprintf('%s%s<span class="badge bg-primary ms-1">%s</span>', $img, $badge, $username),
                                 'onclick' => $onclick,

@@ -23,9 +23,9 @@
  *********************************************************************************************************
  */
 
-include('../../library/checklogin.php');
+include('../checklogin.php');
 include_once('../../lang/main.php');
-include_once('../../library/validation.php');
+include_once('../validation.php');
 
 //
 // functions
@@ -302,8 +302,8 @@ if (isset($_GET['getVendorsList'])) {
     $action = 'getVendorsList';
 }
 
-include_once('pages_common.php');
-include_once('../../library/opendb.php');
+include_once('../../include/management/pages_common.php');
+include_once('../opendb.php');
 
 
 switch ($action) {
@@ -521,6 +521,6 @@ switch ($action) {
 }
 
 
-include_once('../../library/closedb.php');
+include_once('../closedb.php');
 
 ?>

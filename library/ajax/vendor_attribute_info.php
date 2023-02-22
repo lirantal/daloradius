@@ -21,7 +21,7 @@
  *********************************************************************************************************
  */
 
-include('../../library/checklogin.php');
+include('../checklogin.php');
 
 
 // attribute and divContainer are required
@@ -45,7 +45,7 @@ if (array_key_exists('attribute', $_GET) && isset($_GET['attribute']) &&
         $action = 'retAttributeInfo';
     }
 
-    include('../../library/opendb.php');
+    include('../opendb.php');
 
     switch ($action) {
         
@@ -64,7 +64,7 @@ EOF;
             break;
     }
 
-    include('../../library/closedb.php');
+    include('../closedb.php');
 
 }
 
