@@ -30,6 +30,7 @@
     include_once("lang/main.php");
     include("library/validation.php");
     include("library/layout.php");
+    include_once("include/management/functions.php");
 
     // validate this parameter before including menu
     $batch_name = (array_key_exists('batch_name', $_GET) && !empty(str_replace("%", "", trim($_GET['batch_name']))))
@@ -58,9 +59,10 @@
 
     // table2
     $cols2 = array(
+                    'selected',
                     'username' => t('all','Username'),
-                    'status' => t('all','Status'),
-                    'acctstarttime' => t('all','StartTime')
+                    'status' => "Accounted",
+                    'acctstarttime' => "First accounted on"
                   );
     $colspan2 = count($cols2);
     $half_colspan2 = intval($colspan2 / 2);
@@ -98,6 +100,7 @@
 
     // start printing content
     print_title_and_help($title, $help);
+    echo '<div id="returnMessages"></div>';
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -106,7 +109,7 @@
     $batch_id = -1;
 
     if ($batch_name) {
-        $sql = sprintf("SELECT bh.id FROM %s AS bh WHERE bh.batch_name = '%s' LIMIT 1",
+        $sql = sprintf("SELECT bh.id FROM %s AS bh WHERE bh.batch_name='%s' LIMIT 1",
                        $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'], $dbSocket->escapeSimple($batch_name));
         $res = $dbSocket->query($sql);
         $numrows = $res->numRows();
@@ -246,7 +249,7 @@
             $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
         }
 
-        $sql = "SELECT ubi.username, IFNULL(ra.radacctid, '0') AS status, ra.acctstarttime
+        $sql = "SELECT ubi.username, IFNULL(ra.acctstarttime, '0') AS status, MIN(ra.acctstarttime)
                   FROM %s AS ubi LEFT JOIN %s AS ra ON ubi.username=ra.username, %s AS bh 
                  WHERE %s GROUP BY ubi.username";
 
@@ -263,8 +266,8 @@
         $logDebugSQL .= "$sql;\n";
 
         echo "<h4>Users in this batch</h4>";
-            
-        $form0_descriptor = array( "method" => "GET", );
+        
+        $form0_descriptor = array( "method" => "GET", "name" => "form_" . rand(), );
         open_form($form0_descriptor);
         
         $input_descriptors0 = array();
@@ -297,7 +300,8 @@
         $input_descriptors0[] = array(
                                         "type" => "submit",
                                         "value" => t('button','SearchUsers'),
-                                        "icon" => "search"
+                                        "icon" => "search",
+                                        "name" => "button_" . rand(),
                                      );
         
         foreach ($input_descriptors0 as $input_descriptor) {
@@ -330,6 +334,34 @@
             // and for being passed to setupNumbering and setupLinks functions
             $partial_query_string = ((count($partial_query_params) > 0) ? "&" . implode("&", $partial_query_params)  : "");
 
+            // this can be passed as form attribute and
+            // printTableFormControls function parameter
+            $action = "mng-del.php";
+            $form_name = "form_" . rand();
+
+            // we prepare the "controls bar" (aka the table prologue bar)
+            $additional_controls = array();
+            $additional_controls[] = array(
+                                    'onclick' => sprintf("removeCheckbox('%s','mng-del.php')", $form_name),
+                                    'label' => 'Delete',
+                                    'class' => 'btn-danger',
+                                  );
+
+            $additional_controls[] = array(
+                                    'onclick' => sprintf("disableCheckbox('%s','include/management/userOperations.php')", $form_name),
+                                    'label' => 'Disable',
+                                    'class' => 'btn-primary',
+                                  );
+            $additional_controls[] = array(
+                                    'onclick' => sprintf("enableCheckbox('%s','include/management/userOperations.php')", $form_name),
+                                    'label' => 'Enable',
+                                    'class' => 'btn-secondary',
+                                  );
+
+            $descriptors = array();
+
+            $descriptors['start'] = array( 'common_controls' => 'username[]', 'additional_controls' => $additional_controls );
+
             $params = array(
                                 'num_rows' => $numrows,
                                 'rows_per_page' => $rowsPerPage,
@@ -340,16 +372,16 @@
                             );
             $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
             
-            $additional_controls = array();
-            $additional_controls[] = array(
+            $descriptors['end'] = array();
+            $descriptors['end'][] = array(
                                             'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
                                             'label' => 'Active Users CSV Export',
                                             'class' => 'btn-light',
                                          );
 
-            $descriptors = array( 'end' => $additional_controls );
-
             print_table_prologue($descriptors);
+
+            $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => $form_name ), );
 
             // print table top
             print_table_top($form_descriptor);
@@ -376,7 +408,7 @@
                     $starttime = "(n/a)";
                 }
                 
-                $status = sprintf('<span class="badge bg-%s ms-1">%s</span>', $badge, (($active !== '0') ? "active" : "not active"));
+                $status = sprintf('<span class="badge bg-%s ms-1">%s</span>', $badge, (($active !== '0') ? "yes" : "no"));
                 
                 // check if user is disabled
                 $disabled = in_array('daloRADIUS-Disabled-Users',
@@ -405,7 +437,11 @@
                 // create tooltip
                 $tooltip = get_tooltip_list_str($tooltip);
                 
-                $table_row = array( $tooltip, $status, $starttime );
+                // create checkbox
+                $d = array( 'name' => 'username[]', 'value' => $username );
+                $checkbox = get_checkbox_str($d);
+                
+                $table_row = array( $checkbox, $tooltip, $status, $starttime );
 
                 // print table row
                 print_table_row($table_row);
@@ -422,7 +458,7 @@
                                     'colspan' => $colspan2,
                                     'multiple_pages' => $drawNumberLinks
                                );
-            $descriptor = array( 'table_foot' => $table_foot );
+            $descriptor = array( 'form' => $form_descriptor, 'table_foot' => $table_foot );
 
             print_table_bottom($descriptor);
 
