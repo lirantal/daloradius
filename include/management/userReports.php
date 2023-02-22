@@ -17,7 +17,7 @@
  *
  * Description:    returns user Connection Status, Subscription Analysis, Account Status etc.
  *                 (concept borrowed from Joachim's capture pages)
- * 
+ *
  * Authors:        Liran Tal <liran@enginx.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
@@ -38,7 +38,7 @@ function open_accordion_item($descriptor) {
     $key = (isset($descriptor['key'])) ? $descriptor['key'] : "key-" . rand();
     $show = (isset($descriptor['open']) && $descriptor['open']) ? " show" : "";
     $expanded = (isset($descriptor['open']) && $descriptor['open']) ? "true" : "false";
-    
+
     echo <<<EOF
 <div class="accordion-item">
     <h2 class="accordion-header" id="{$key}-head">
@@ -47,7 +47,7 @@ function open_accordion_item($descriptor) {
             {$label}
         </button>
     </h2>
-    
+
     <div id="{$key}-content" class="accordion-collapse collapse{$show}" aria-labelledby="{$key}-head" data-bs-parent="#{$parent_id}">
         <div class="accordion-body">
 EOF;
@@ -67,7 +67,7 @@ EOF;
  * userSubscriptionAnalysis
  * $username            username to provide information of
  * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
- * 
+ *
  * provides information for user's subscription (packages or session limits) such as Max-All-Session,
  * Max-Monthly-Session, Max-Daily-Session, Expiration attribute, etc...
  *********************************************************************************************************
@@ -78,9 +78,9 @@ function userSubscriptionAnalysis($username, $drawTable) {
     include('library/opendb.php');
 
     $username = $dbSocket->escapeSimple($username);
-    
+
     $keys = array("Logins", "SUMSession", "SUMDownload", "SUMUpload", "SUMTraffic", );
-    
+
     $data1 = array(
                     "Logins" => array( "Label" => "Login Count", "Global" => "(n/a)", "Daily" => "(n/a)", "Weekly" => "(n/a)", "Monthly" => "(n/a)",  ),
                     "SUMSession" => array( "Label" => "Session Time", "Global" => "(n/a)", "Daily" => "(n/a)", "Weekly" => "(n/a)", "Monthly" => "(n/a)",  ),
@@ -104,8 +104,10 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
     foreach ($keys as $key) {
         $value = "(n/a)";
-        
+
         if (isset($row[$key])) {
+            $row[$key] = intval($row[$key]);
+
             if ($key == "SUMSession") {
                 $value = time2str($row[$key]);
             } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
@@ -114,7 +116,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                 $value = $row[$key];
             }
         }
-        
+
         $data1[$key]["Global"] = $value;
     }
 
@@ -138,8 +140,10 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
     foreach ($keys as $key) {
         $value = "(n/a)";
-        
+
         if (isset($row[$key])) {
+            $row[$key] = intval($row[$key]);
+
             if ($key == "SUMSession") {
                 $value = time2str($row[$key]);
             } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
@@ -148,7 +152,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                 $value = $row[$key];
             }
         }
-        
+
         $data1[$key]["Monthly"] = $value;
     }
 
@@ -171,8 +175,10 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
     foreach ($keys as $key) {
         $value = "(n/a)";
-        
+
         if (isset($row[$key])) {
+            $row[$key] = intval($row[$key]);
+
             if ($key == "SUMSession") {
                 $value = time2str($row[$key]);
             } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
@@ -181,7 +187,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                 $value = $row[$key];
             }
         }
-        
+
         $data1[$key]["Weekly"] = $value;
     }
 
@@ -201,12 +207,14 @@ function userSubscriptionAnalysis($username, $drawTable) {
                                                               $nextDay, $currDay, $username);
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-    
+
     if ($row) {
         foreach ($keys as $key) {
             $value = "(n/a)";
-            
+
             if (isset($row[$key])) {
+                $row[$key] = intval($row[$key]);
+
                 if ($key == "SUMSession") {
                     $value = time2str($row[$key]);
                 } else if (in_array($key, array("SUMDownload", "SUMUpload", "SUMTraffic"))) {
@@ -215,17 +223,17 @@ function userSubscriptionAnalysis($username, $drawTable) {
                     $value = $row[$key];
                 }
             }
-            
+
             $data1[$key]["Daily"] = $value;
         }
     }
-    
+
     $data2 = array(
                     "Expiration" => "(n/a)",
                     "Session-Timeout" => "(n/a)",
                     "Idle-Timeout" => "(n/a)",
                   );
-    
+
     /*
      *********************************************************************************************************
      * Expiration calculations
@@ -264,7 +272,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
                     SELECT Value AS 'Idle-Timeout' FROM %s AS rgr
                      WHERE Attribute='Idle-Timeout'
                        AND GroupName IN (SELECT groupname FROM %s rug WHERE username='%s' ORDER BY priority)
-                     LIMIT 1", 
+                     LIMIT 1",
                     $configValues['CONFIG_DB_TBL_RADREPLY'], $username, $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
                     $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $username);
     $res = $dbSocket->query($sql);
@@ -275,57 +283,57 @@ function userSubscriptionAnalysis($username, $drawTable) {
     }
 
     include('library/closedb.php');
-    
+
     if ($drawTable == 1) {
 
         // print headings
         $labels = array("", "Global", "Monthly", "Weekly", "Daily", );
-        
+
         // accordion
         $d = array( 'label' => 'Subscription Analysis', 'parent_id' => 'accordion-parent', 'open' => false );
         open_accordion_item($d);
-    
+
         echo '<table class="table table-striped">'
            . '<tr>';
-        
+
         echo '<th style="width: 25%"></th>';
         foreach ($labels as $label) {
             if (empty($label)) {
                 continue;
             }
-            
+
             $label = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
             printf('<th>%s</th>', $label);
         }
-        
+
         echo '</tr>';
-        
+
         // print other lines
         foreach ($data1 as $arr) {
             echo '<tr>';
-            
+
             printf('<th style="width: 25%%;">%s</th>', $arr["Label"]);
             for ($i = 1; $i < count($labels); $i++) {
                 $label = $labels[$i];
                 printf('<td>%s</td>', htmlspecialchars($arr[$label], ENT_QUOTES, 'UTF-8'));
             }
-            
+
             echo '</tr>';
         }
-        
+
         echo '</table>';
-        
+
         // print other table
         echo '<table class="table table-striped">';
-        
+
         foreach ($data2 as $label => $value) {
             $label = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
             $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
             printf('<tr><th style="width: 25%%;text-align: right">%s</th><td style="text-align: left">%s</td></tr>', $label, $value);
         }
-        
+
         echo '</table>';
-        
+
         close_accordion_item();
     }
 }
@@ -336,7 +344,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
  * userPlanInformation
  * $username            username to provide information of
  * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
- * 
+ *
  * returns user plan information: name, cost, bandwidth, data volume cap/remaining, time cap/remaining
  *
  *********************************************************************************************************
@@ -345,9 +353,9 @@ function userPlanInformation($username, $drawTable) {
 
     include_once('include/management/pages_common.php');
     include('library/opendb.php');
-    
+
     $username = $dbSocket->escapeSimple($username);
-    
+
     /*
      *********************************************************************************************************
      * check which kind of subscription does the user have
@@ -370,70 +378,70 @@ function userPlanInformation($username, $drawTable) {
                     "planBandwidthUp" => array( "Label" => "Plan Bandwidth Upload", "Value" => "(n/a)", ),
                  );
     $fields = array_keys($data2);
-    
+
     foreach ($fields as $field) {
         if (!empty($row[$field])) {
             $data2[$field]["Value"] = $row[$field];
         }
     }
 
-    
-    $planTimeBank = empty($row['planTimeBank']) ? 0 : $row['planTimeBank'];
-        
-    $planTrafficTotal = (isset($row['planTrafficTotal'])) ? $row['planTrafficTotal'] : "(n/a)";
-    $planTrafficDown = (isset($row['planTrafficDown'])) ? $row['planTrafficDown'] : 0;
-    $planTrafficUp = (isset($row['planTrafficUp'])) ? $row['planTrafficUp'] : 0;
+
+    $planTimeBank = (isset($row['planTimeBank'])) ? intval($row['planTimeBank']) : 0;
+
+    $planTrafficTotal = (isset($row['planTrafficTotal'])) ? intval($row['planTrafficTotal']) : 0;
+    $planTrafficDown = (isset($row['planTrafficDown'])) ? intval($row['planTrafficDown']) : 0;
+    $planTrafficUp = (isset($row['planTrafficUp'])) ? intval($row['planTrafficUp']) : 0;
 
     $userLimitAccessPeriod = (isset($row['Access-Period'])) ? time2str($row['Access-Period']) : "none";
-    
-    
+
+
     $sql = sprintf("SELECT SUM(AcctSessionTime), SUM(AcctOutputOctets), SUM(AcctInputOctets)
                       FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow();
-    $totalTimeUsed = isset($row[0]) ? $row[0] : 0;
-    $totalTrafficDown = isset($row[1]) ? $row[1] : 0;
-    $totalTrafficUp = isset($row[2]) ? $row[2] : 0;
-    
-    $timeDiff = ($planTimeBank - $totalTimeUsed);
+    $totalTimeUsed = isset($row[0]) ? intval($row[0]) : 0;
+    $totalTrafficDown = isset($row[1]) ? intval($row[1]) : 0;
+    $totalTrafficUp = isset($row[2]) ? intval($row[2]) : 0;
+
+    $timeDiff = $planTimeBank - $totalTimeUsed;
     $trafficDownDiff = ($planTrafficDown != 0) ? ($planTrafficDown - $totalTrafficDown) : 0;
     $trafficUpDiff = ($planTrafficUp != 0) ? ($planTrafficUp - $totalTrafficUp) : 0;
-    
-    
+
+
     $table_header = array( "Item", "Allowed by plan", "Used", "Remainning", );
-    
+
     $table_body = array(
                             array( "Session Time", time2str($planTimeBank), time2str($totalTimeUsed), time2str($timeDiff), ),
                             array( "Session Download", toxbyte($planTrafficDown), toxbyte($totalTrafficDown), toxbyte($trafficDownDiff), ),
                             array( "Session Upload", toxbyte($planTrafficUp), toxbyte($totalTrafficUp), toxbyte($trafficUpDiff), ),
                        );
-    
+
     include('library/closedb.php');
-    
+
     /*
      *********************************************************************************************************
      * Plan Usage calculations
      *********************************************************************************************************
-     */    
-    
+     */
+
     if ($drawTable == 1) {
         // accordion
         $d = array( 'label' => 'Plan Information', 'parent_id' => 'accordion-parent', 'open' => false );
         open_accordion_item($d);
-        
+
         echo '<table class="table table-striped">'
            . '<tr>';
-        
+
         // print header
         foreach ($table_header as $label) {
             $label = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
             printf('<th style="width: 25%%">%s</th>', $label);
         }
-        
+
         echo '</tr>';
-        
+
         // print body
-        
+
         foreach ($table_body as $arr) {
             echo '<tr>';
             foreach ($arr as $value) {
@@ -442,23 +450,23 @@ function userPlanInformation($username, $drawTable) {
             }
             echo '</tr>';
         }
-        
+
         echo '</table>';
 
         // print other table
         echo '<table class="table table-striped">';
-        
+
         foreach ($data2 as $field => $arr) {
             $label = htmlspecialchars($arr["Label"], ENT_QUOTES, 'UTF-8');
             $value = htmlspecialchars($arr["Value"], ENT_QUOTES, 'UTF-8');
             printf('<tr><th style="width: 25%%;text-align: right">%s</th><td style="text-align: left">%s</td></tr>',
                    $label, $value);
         }
-        
+
         echo '</table>';
-        
+
         close_accordion_item();
-    }        
+    }
 }
 
 
@@ -467,7 +475,7 @@ function userPlanInformation($username, $drawTable) {
  * userConnectionStatus
  * $username            username to provide information of
  * $drawTable           if set to 1 (enabled) a toggled on/off table will be drawn
- * 
+ *
  * returns user connection information: uploads, download, last connectioned, total online time,
  * whether user is now connected or not.
  *
@@ -480,7 +488,8 @@ function userConnectionStatus($username, $drawTable) {
     include_once('include/management/pages_common.php');
     include('library/opendb.php');
 
-    $username = $dbSocket->escapeSimple($username);            // sanitize variable for sql statement
+    // sanitize variable for sql statement
+    $username = $dbSocket->escapeSimple($username);
 
     $sql = sprintf("SELECT AcctStartTime,
                            CASE WHEN AcctStopTime IS NULL THEN timestampdiff(SECOND,AcctStartTime,NOW())
@@ -491,7 +500,7 @@ function userConnectionStatus($username, $drawTable) {
                       FROM %s WHERE Username='%s'
                      ORDER BY RadAcctId DESC LIMIT 1",
                     "Station ID", "Station ID", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
-    
+
     $res = $dbSocket->query($sql);
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
@@ -499,19 +508,19 @@ function userConnectionStatus($username, $drawTable) {
                     "userStatus" => array( "Label" => "User Status", "Value" => $userStatus, ),
                     "AcctStartTime" => array( "Label" => "Last Connection", "Value" => "(n/a)", ),
                     "AcctSessionTime" => array( "Label" => "Online Time", "Value" => "(n/a)", ),
-                    
+
                     "NAS_IP_ID" => array( "Label" => "Network Access Server (NAS)", "Value" => "(n/a)", ),
                     "User_IP_ID" => array( "Label" => "User Device", "Value" => "(n/a)", ),
-                    
+
                     "AcctInputOctets" => array( "Label" => "User Upload", "Value" => "(n/a)", ),
-                    "AcctOutputOctets" => array( "Label" => "User Download", "Value" => "(n/a)", ),                    
+                    "AcctOutputOctets" => array( "Label" => "User Download", "Value" => "(n/a)", ),
                  );
 
     $fields = array_keys($data);
-    
+
     foreach ($fields as $field) {
         if (isset($row) && array_key_exists($field, $row) && !empty($row[$field])) {
-            
+
             if ($field == "AcctSessionTime") {
                 $value = time2str($row[$field]);
             } else if (in_array($field, array("AcctInputOctets", "AcctOutputOctets"))) {
@@ -519,7 +528,7 @@ function userConnectionStatus($username, $drawTable) {
             } else {
                 $value = $row[$field];
             }
-            
+
             $data[$field]["Value"] = $value;
         }
     }
@@ -530,18 +539,18 @@ function userConnectionStatus($username, $drawTable) {
         // accordion
         $d = array( 'label' => 'Session Information', 'parent_id' => 'accordion-parent', 'open' => true );
         open_accordion_item($d);
-        
+
         echo '<table class="table table-striped">';
-        
+
         foreach ($data as $field => $arr) {
             $label = htmlspecialchars($arr["Label"], ENT_QUOTES, 'UTF-8');
             $value = htmlspecialchars($arr["Value"], ENT_QUOTES, 'UTF-8');
             printf('<tr><th style="width: 25%%;text-align: right">%s</th><td style="text-align: left">%s</td></tr>',
                    $label, $value);
         }
-        
+
         echo '</table>';
-        
+
         close_accordion_item();
     }
 }
