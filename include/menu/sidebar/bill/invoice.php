@@ -55,6 +55,7 @@ include_once("include/management/populate_selectbox.php");
 include_once("library/validation.php");
 
 $menu_invoice_status_id = get_invoice_status_id();
+$menu_invoice_status_id[] = "";
 $descriptors1 = array();
 
 $components = array();

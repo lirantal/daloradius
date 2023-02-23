@@ -1180,7 +1180,7 @@ $l['Intro']['configlang.php'] = "Language Configuration";
 $l['Intro']['configlogging.php'] = "Logging Configuration";
 $l['Intro']['configinterface.php'] = "Web Interface Configuration";
 $l['Intro']['configmainttestuser.php'] = "Test User Connectivity";
-$l['Intro']['configmain.php'] = "Database Configuration";
+$l['Intro']['configmain.php'] = "System Configuration";
 $l['Intro']['configmaint.php'] = "Maintenance";
 $l['Intro']['configmaintdisconnectuser.php'] = "Disconnect User";
 $l['Intro']['configbusiness.php'] = "Business Details";
@@ -1284,109 +1284,123 @@ $l['helpPage']['mngradusergrouplist'] = "";
 $l['helpPage']['mngradusergrouplistuser'] = "";
 $l['helpPage']['mngradusergroupedit'] = "";
 
+// profiles help pages
+$l['helpPage']['mngradprofilesnew'] = <<<EOF
+<h2 class="fs-6">New Profile</h2>
+<p>Use this feature to create a new profile. You will need to specify the Reply and Check attributes that should be associated with the profile. Once you have created the profile, it will be available for use by users in the system.</p>
+EOF;
+$l['helpPage']['mngradprofileslist'] = <<<EOF
+<h2 class="fs-6">List Profiles</h2>
+<p>This feature allows you to view a list of all available profiles in the system. You can select a profile to view its details or to edit or delete it.</p>
+EOF;
+$l['helpPage']['mngradprofiles'] = <<<EOF
+<h1 class="fs-5">Profiles Management</h1>
+<p>Profiles are used to manage sets of Reply Attributes and Check Attributes for users.<br>
+Essentially, a profile is a combination of a Group Reply and a Group Check.</p>
+EOF;
+$l['helpPage']['mngradprofilesedit'] = <<<EOF
+<h2 class="fs-6">Edit Profile</h2>
+<p>If you need to make changes to an existing profile, you can use this feature. You will be able to modify the Reply and Check attributes associated with the profile.</p>
+EOF;
+$l['helpPage']['mngradprofilesduplicate'] = <<<EOF
+<h2 class="fs-6">Duplicate Profile</h2>
+<p>This feature allows you to quickly create a new profile based on an existing one.
+   Simply select the profile you want to duplicate, provide a new name for the duplicated profile and click on the "Duplicate" button.
+   The new profile will have the same Reply Attributes and Check Attributes as the original profile, allowing you to easily make adjustments as needed.</p>
+EOF;
+$l['helpPage']['mngradprofilesdel'] = <<<EOF
+<h2 class="fs-6">Delete Profile</h2>
+<p>If you no longer need a profile, you can delete it using this feature. Be aware that deleting a profile will also remove any associations between the profile and users in the system.</p>
+EOF;
 
-$l['helpPage']['mngradprofiles'] = "
-<b>Profiles Management</b> - Manage Profiles for Users by composing a set of Reply Attributes and Check Attributes <br/>
-Profiles can be thought of as the composition of Group Reply and Group Check. <br/>
-<h200><b>List Profiles </b></h200> - List Profiles <br/>
-<h200><b>New Profile </b></h200> - Add a Profile <br/>
-<h200><b>Edit Profile </b></h200> - Edit a Profile <br/>
-<h200><b>Delete Profile </b></h200> - Delete a Profile <br/>
-";
-$l['helpPage']['mngradprofilesedit'] = "
-<h200><b>Edit Profile </b></h200> - Edit a Profile <br/>
-";
-$l['helpPage']['mngradprofilesdel'] = "
-<h200><b>Delete Profile </b></h200> - Delete a Profile <br/>
-";
-$l['helpPage']['mngradprofilesduplicate'] = "
-<h200><b>Duplicate Profile </b></h200> - Duplicate a Profile's set of attributes to a new one with a different profile name <br/>
-";
-$l['helpPage']['mngradprofileslist'] = "
-<h200><b>List Profiles </b></h200> - List Profiles <br/>
-";
-$l['helpPage']['mngradprofilesnew'] = "
-<h200><b>New Profile </b></h200> - Add a Profile <br/>
-";
+$l['helpPage']['mngradprofiles'] .= $l['helpPage']['mngradprofilesnew'] . $l['helpPage']['mngradprofileslist']
+                                  . $l['helpPage']['mngradprofilesedit'] . $l['helpPage']['mngradprofilesduplicate']
+                                  . $l['helpPage']['mngradprofilesdel'];
 
-$l['helpPage']['mngradgroups'] = "
-<b>Groups Management</b> - Manage Group Reply and Group Check mappings (radgroupreply/radgroupcheck tables).<br/>
-<h200><b>List Group Reply/Check </b></h200> - List Group Reply/Check Mappings<br/>
-<h200><b>Search Group Reply/Check </b></h200> - Search a Group Reply/Check Mapping (you may use wildcards) <br/>
-<h200><b>New Group Reply/Check </b></h200> - Add a Group Reply/Check Mapping <br/>
-<h200><b>Edit Group Reply/Check </b></h200> - Edit a Group Reply/Check Mapping <br/>
-<h200><b>Delete Group Reply/Check </b></h200> - Delete a Group Reply/Check Mapping <br/>
-";
+// group check/reply help pages
+$l['helpPage']['mngradgroupchecknew'] = <<<EOF
+<h2 class="fs-6">Add a New Group Reply/Check Mapping</h2>
+<p>Create a new Group Reply/Check Mapping with ease using the intuitive interface.</p>
+EOF;
+$l['helpPage']['mngradgroupreplynew'] = $l['helpPage']['mngradgroupchecknew'];
 
+$l['helpPage']['mngradgroupchecklist'] = <<<EOF
+<h2 class="fs-6">List Group Reply/Check Mappings</h2>
+<p>Quickly view a list of all existing Group Reply/Check Mappings.</p>
+EOF;
+$l['helpPage']['mngradgroupreplylist'] = $l['helpPage']['mngradgroupchecklist'];
 
-$l['helpPage']['mngradgroupchecknew'] = "
-<h200><b>New Group Check </b></h200> - Add a Group Check Mapping <br/>
-";
-$l['helpPage']['mngradgroupcheckdel'] = "
-<h200><b>Delete Group Check </b></h200> - Delete a Group Check Mapping <br/>
-";
+$l['helpPage']['mngradgroupchecksearch'] = <<<EOF
+<h2 class="fs-6">Search Group Reply/Check Mappings</h2>
+<p>Search for specific Group Reply/Check Mappings using the name, attribute, or value. A wildcard character is automatically added as a suffix to the search text to help refine your search results.</p>
+EOF;
+$l['helpPage']['mngradgroupreplysearch'] = $l['helpPage']['mngradgroupchecksearch'];
 
-$l['helpPage']['mngradgroupchecklist'] = "
-<h200><b>List Group Check </b></h200> - List Group Check Mappings<br/>
-";
-$l['helpPage']['mngradgroupcheckedit'] = "
-<h200><b>Edit Group Check </b></h200> - Edit a Group Check Mapping <br/>
-";
-$l['helpPage']['mngradgroupchecksearch'] = "
-<h200><b>Search Group Check </b></h200> - Search a Group Check Mapping <br/>
-to use a wildcard you may either type the % character which is familiar in SQL or you may use the more common *
-for convenience reasons and daloRADIUS will translate it to %
-";
+$l['helpPage']['mngradgroupcheckedit'] = <<<EOF
+<h2 class="fs-6">Edit Group Reply/Check Mappings</h2>
+<p>Make modifications to existing Group Reply/Check Mappings to ensure that your network is operating efficiently.</p>
+EOF;
+$l['helpPage']['mngradgroupreplyedit'] = $l['helpPage']['mngradgroupcheckedit'];
 
-$l['helpPage']['mngradgroupreplynew'] = "
-<h200><b>New Group Reply </b></h200> - Add a Group Reply Mapping <br/>
-";
-$l['helpPage']['mngradgroupreplydel'] = "
-<h200><b>Delete Group Reply </b></h200> - Delete a Group Reply Mapping <br/>
-";
-$l['helpPage']['mngradgroupreplylist'] = "
-<h200><b>List Group Reply </b></h200> - List Group Reply Mappings<br/>
-";
-$l['helpPage']['mngradgroupreplyedit'] = "
-<h200><b>Edit Group Reply </b></h200> - Edit a Group Reply Mapping <br/>
-";
-$l['helpPage']['mngradgroupreplysearch'] = "
-<h200><b>Search Group Reply </b></h200> - Search a Group Reply </ Mapping <br/>
-to use a wildcard you may either type the % character which is familiar in SQL or you may use the more common *
-for convenience reasons and daloRADIUS will translate it to %
-";
+$l['helpPage']['mngradgroupcheckdel'] = <<<EOF
+<h2 class="fs-6">Delete Group Reply/Check Mappings</h2>
+<p>Remove unnecessary Group Reply/Check Mappings to keep your database up-to-date and organized.</p>
+EOF;
+$l['helpPage']['mngradgroupreplydel'] = $l['helpPage']['mngradgroupcheckdel'];
 
+$l['helpPage']['mngradgroups'] = <<<EOF
+<h1 class="fs-5">Groups Management</h1>
+<p>Efficiently manage Group Reply and Group Check mappings within the radgroupreply/radgroupcheck tables.</p>
+EOF;
+$l['helpPage']['mngradgroups'] .= $l['helpPage']['mngradgroupreplynew'] . $l['helpPage']['mngradgroupreplylist']
+                                . $l['helpPage']['mngradgroupchecksearch'] . $l['helpPage']['mngradgroupcheckedit']
+                                . $l['helpPage']['mngradgroupcheckdel'];
 
-$l['helpPage']['mngradippool'] = "
-<h200><b>List IP Pools</b></h200> - List Configured IP Pools and their assigned IP Addresses <br/>
-<h200><b>New IP Pool</b></h200> - Add a new IP Address to a configured IP Pool <br/>
-<h200><b>Edit IP Pool</b></h200> - Edit an IP Address for a configured IP Pool <br/>
-<h200><b>Remove IP Pool</b></h200> - Remove an IP Address from a configured IP Pool <br/>
-";
-$l['helpPage']['mngradippoollist'] = "<h200><b>List IP Pools</b></h200> - List Configured IP Pools and their assigned IP Addresses <br/>";
-$l['helpPage']['mngradippoolnew'] = "<h200><b>New IP Pool</b></h200> - Add a new IP Address to a configured IP Pool <br/>";
-$l['helpPage']['mngradippooledit'] = "<h200><b>Edit IP Pool</b></h200> - Edit an IP Address for a configured IP Pool <br/>";
-$l['helpPage']['mngradippooldel'] = "<h200><b>Remove IP Pool</b></h200> - Remove an IP Address from a configured IP Pool <br/>";
+// ip pool help pages
+$l['helpPage']['mngradippoolnew'] = <<<EOF
+<h2 class="fs-6">New IP Pool</h2>
+<p>Add a new IP address to an already configured IP Pool.</p>
+EOF;
+$l['helpPage']['mngradippoollist'] = <<<EOF
+<h2 class="fs-6">List IP Pools</h2>
+<p>List all the configured IP Pools and their assigned IP addresses.</p>
+EOF;
+$l['helpPage']['mngradippooledit'] = <<<EOF
+<h2 class="fs-6">Edit IP Pool</h2>
+<p>Edit an IP address for an already configured IP Pool.</p>
+EOF;
+$l['helpPage']['mngradippooldel'] = <<<EOF
+<h2 class="fs-6">Remove IP Pool</h2>
+<p>Remove an IP address from an already configured IP Pool.</p>
+EOF;
 
+$l['helpPage']['mngradippool'] = <<<EOF
+<h1 class="fs-5">IP pools Management</h1>
+<p>IP pools are groups of IP addresses that can be assigned to various devices, virtual machines, or applications within a network. Managing IP pools is important to ensure that there are enough IP addresses available for all devices that need them, while also avoiding the use of duplicate or invalid IP addresses.</p>
+EOF;
 
+$l['helpPage']['mngradippool'] .= $l['helpPage']['mngradippoolnew'] . $l['helpPage']['mngradippoollist']
+                                . $l['helpPage']['mngradippooledit'] . $l['helpPage']['mngradippooldel'];
+
+// nas help pages
 $l['helpPage']['mngradnas'] = "";
 $l['helpPage']['mngradnasdel'] = "To remove a nas ip/host entry from the database you must provide the ip/host of the account";
 $l['helpPage']['mngradnasnew'] = "";
 $l['helpPage']['mngradnaslist'] = "";
 $l['helpPage']['mngradnasedit'] = "";
 
-$l['helpPage']['mngradhunt'] = "Before starting work with HuntGroup, please read <a href='http://wiki.freeradius.org/SQL_Huntgroup_HOWTO' target='_blank'>http://wiki.freeradius.org/SQL_Huntgroup_HOWTO</a>.
-<br/>
-In particular:
-...
-<i>Locate the authorize section in your radiusd.conf or sites-enabled/defaut configuration file and edit it. At the top of the authorize section after the preprocess module insert these lines:</i>
-<br/>
+// huntgroup help pages
+$l['helpPage']['mngradhunt'] = <<<EOF
+<p>Before starting work with HuntGroup, please read the <a href="https://wiki.freeradius.org/guide/SQL-Huntgroup-HOWTO" target="_blank">SQL_Huntgroup_HOWTO</a> on the FreeRADIUS wiki.</p>
+<p>In particular:</p>
+<p><i>Locate the authorize section in your radiusd.conf or sites-enabled/default configuration file and edit it. At the top of the authorize section after the preprocess module insert these lines:</i></p>
 <pre>
 update request {
-    Huntgroup-Name := \"%{sql:select groupname from radhuntgroup where nasipaddress=\\\"%{NAS-IP-Address}\\\"}\"
+    Huntgroup-Name := "%{sql:select groupname from radhuntgroup where nasipaddress=\"%{NAS-IP-Address}\"}"
 }
 </pre>
-<i> What this does is perform a lookup in the radhuntgroup table using the ip-address as a key to return the huntgroup name. It then adds an attribute/value pair to the request where the name of the attribute is Huntgroup-Name and it's value is whatever was returned from the SQL query. If the query did not find anything then the value is the empty string. </i>";
+<p><i>What this does is perform a lookup in the radhuntgroup table using the IP address as a key to return the huntgroup name. It then adds an attribute/value pair to the request where the name of the attribute is Huntgroup-Name and its value is whatever was returned from the SQL query. If the query did not find anything, then the value is the empty string.</i></p>
+EOF;
 
 
 $l['helpPage']['mngradhuntdel'] = "To remove a huntgroup entry from the database you must provide the ip/host and port id of the huntgroup";
@@ -1394,125 +1408,146 @@ $l['helpPage']['mngradhuntnew'] = "";
 $l['helpPage']['mngradhuntlist'] = "";
 $l['helpPage']['mngradhuntedit'] = "";
 
+// hotspots help pages
 $l['helpPage']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
 $l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br/>";
 $l['helpPage']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
 $l['helpPage']['mnghslist'] = "List of all hotspots in the database. You may use the quick links to edit or delete a hotspot from the database.";
 
-$l['helpPage']['configdb'] = "
-<b>Database Settings</b> - Configure database engine, connection settings, tables names if the
-default are not used, and the password encryption type in the database.<br/>
-<h200><b>Global Settings</b></h200> - Database Storage Engine<br/>
-<h200><b>Tables Settings</b></h200> - If not using the default FreeRADIUS schema you may change the names
-of the table names<br/>
-<h200><b>Advanced Settings</b></h200> - If you wish to store passwords for users in the database not in
-plain text but rather have it encrypted somehow you may choose one of MD5 or Crypt<br/>
-";
-$l['helpPage']['configlang'] = "
-<h200><b>Language Settings</b></h200> - Configure interface language.<br/>
-";
-$l['helpPage']['configuser'] = "
-<h200><b>User Settings</b></h200> - Configure user management behavior.<br/>
-";
-$l['helpPage']['configmail'] = "
-<h200><b>User Settings</b></h200> - Configure mailing settings.<br/>
-";
-$l['helpPage']['configlogging'] = "
-<h200><b>Logging Settings</b></h200> - Configure logging rules and facilities <br/>
-Please make sure that the filename that you specify has write permissions by the webserver<br/>";
-$l['helpPage']['configinterface'] = "
-<h200><b>Interface Settings</b></h200> - Configure interface layout settings and behvaiour <br/>
-";
-$l['helpPage']['configmain'] = "
-<b>Global Settings</b><br/>
-<h200><b>Database Settings</b></h200> - Configure database engine, connection settings, tables names if the
-default are not used, and the password encryption type in the database.<br/>
-<h200><b>Language Settings</b></h200> - Configure interface language.<br/>
-<h200><b>Logging Settings</b></h200> - Configure logging rules and facilities <br/>
-<h200><b>Interface Settings</b></h200> - Configure interface layout settings and behvaiour <br/>
 
-<b>Sub-Category Configuration</b>
-<h200><b>Maintenance </b></h200> - Maintenance options for Testing users connections or terminating their sessions <br/>
-<h200><b>Operators</b></h200> - Configure Operators Access Control List (ACL) <br/>
-";
-$l['helpPage']['configbusiness'] = "
-<b>Business Information</b><br/>
-<h200><b>Business Contact</b></h200> - set the business contact information (owners, title, address, phone, etc)<br/>
-";
-$l['helpPage']['configbusinessinfo'] = "";
-$l['helpPage']['configmaint'] = "
-<b>Maintenance</b><br/>
-<h200><b>Test User Connectivity</b></h200> - Send an Access-Request to the RADIUS Server to check if a user credentials are valid<br/>
-<h200><b>Disconnect User</b></h200> - Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server
-to disconnect a user and terminate his/her session in a given NAS.<br/>
-";
-$l['helpPage']['configmainttestuser'] = "
-<h200><b>Test User Connectivity</b></h200> - Send an Access-Request to the RADIUS Server to check if a user credentials are valid.<br/>
-daloRADIUS uses the radclient binary utility to perform the test and returns the results of the command after it finishes. <br/>
-daloRADIUS counts on the radclient binary being available in your \$PATH environment variable, if it is not, please make
-corrections to the library/extensions/maintenance_radclient.php file.<br/><br/>
+$l['helpPage']['configuser'] = <<<EOF
+<h2 class="fs-6">User Settings</h2>
+<p>Choose if cleartext passwords are allowed in the database and what characters are allowed for randomly creating passwords and/or usernames.</p>
+EOF;
 
-Please note that it may take a while for the test to finish (up to several seconds [10-20 seconds or so]) because of failures and
-radclient will retransmit the packets.
+$l['helpPage']['configdb_short'] = <<<EOF
+<h2 class="fs-6">Database Settings</h2>
+<p>Configure the database engine, connection settings, and table names if not using the default ones.</p>
+EOF;
 
-In the Advanced tab it is possible to fine-tune the options for the test:<br/>
-Timeout - Wait 'timeout' seconds before retrying (may be a floating point number) <br/>
-Retries - If timeout, retry sending the packet 'retries' times. <br/>
-Count - Send each packet 'count' times <br/>
-Requests -  Send 'num' packets from a file in parallel <br/>
-";
-$l['helpPage']['configmaintdisconnectuser'] = "
-<h200><b>Disconnect User</b></h200> - Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server to disconnect a user and terminate his/her session in a given NAS.<br/>
-For terminating a user's session it is required that the NAS support the PoD or CoA packet types, please consult your NAS vendor or
-documentation for this. Moreover, it is required to know the NAS ports for PoD or CoA packets, whereas newer NASs use port 3799
-while other ones are configured to receive the packet on port 1700.
+$l['helpPage']['configdb'] = $l['helpPage']['configdb_short'];
+$l['helpPage']['configdb'] .= <<<EOF
+<h3 class="fs-6">Global Settings</h3>
+<p>Select the database storage engine</p>
+<h3 class="fs-6">Tables Settings</h3>
+<p>If not using the default FreeRADIUS schema, you can change the table names</p>
+EOF;
 
-daloRADIUS uses the radclient binary utility to perform the test and returns the results of the command after it finishes. <br/>
-daloRADIUS counts on the radclient binary being available in your \$PATH environment variable, if it is not, please make
-corrections to the library/extensions/maintenance_radclient.php file.<br/><br/>
+$l['helpPage']['configlang'] = <<<EOF
+<h2 class="fs-6">Language Settings</h2>
+<p>Configure the interface language.</p>
+EOF;
 
-Please note that it may take a while for the test to finish (up to several seconds [10-20 seconds or so]) because of failures and
-radclient will retransmit the packets.
+$l['helpPage']['configlogging'] = <<<EOF
+<h2 class="fs-6">Logging Settings</h2>
+<p>Configure logging rules and facilities.<br>Please make sure that the filename that you specify has write permissions by the webserver</p>
+EOF;
 
-In the Advanced tab it is possible to fine-tune the options for the test:<br/>
-Timeout - Wait 'timeout' seconds before retrying (may be a floating point number) <br/>
-Retries - If timeout, retry sending the packet 'retries' times. <br/>
-Count - Send each packet 'count' times <br/>
-Requests -  Send 'num' packets from a file in parallel <br/>
+$l['helpPage']['configinterface'] = <<<EOF
+<h2 class="fs-6">Interface Settings</h2>
+<p>Configure interface layout settings and behavior.</p>
+EOF;
 
+$l['helpPage']['configmail'] = <<<EOF
+<h2 class="fs-6">Mail Settings</h2>
+<p>Configure mail settings.</p>
+EOF;
 
-";
+$l['helpPage']['configmaint'] = <<<EOF
+<h1 class="fs-5">Maintenance</h1>
+<h6>Test User Connectivity</h6>
+<p>Send an Access-Request to the RADIUS Server to check if a user's credentials are valid.</p>
+<h6>Disconnect User</h6>
+<p>Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server to disconnect a user and terminate their session in a given NAS.</p>
+EOF;
+
+$l['helpPage']['configmainttestuser'] = <<<EOF
+<h1 class="fs-5">Test User Connectivity</h1>
+<p>Send an Access-Request to the RADIUS Server to check if a user's credentials are valid.</p>
+<p>daloRADIUS uses the radclient binary utility to perform the test and returns the results of the command after it finishes.</p>
+<p>daloRADIUS relies on the radclient binary being available in your <code>\$PATH</code> environment variable. If it is not, please make corrections to the <code>library/extensions/maintenance_radclient.php</code> file.</p>
+<p>Please note that it may take a while for the test to finish (up to several seconds [10-20 seconds or so]) because of failures and radclient will retransmit the packets.</p>
+<p>In the Advanced tab, it is possible to fine-tune the options for the test:</p>
+<ul>
+<li>Timeout - Wait 'timeout' seconds before retrying (may be a floating point number)</li>
+<li>Retries - If timeout, retry sending the packet 'retries' times</li>
+<li>Count - Send each packet 'count' times</li>
+<li>Requests - Send 'num' packets from a file in parallel</li>
+</ul>
+EOF;
+
+$l['helpPage']['configmaintdisconnectuser'] = <<<EOF
+<h1 class="fs-5">Disconnect User</h1>
+<p>Send a PoD (Packet of Disconnect) or CoA (Change of Authority) packets to the NAS server to disconnect a user and terminate his/her session in a given NAS.</p>
+<p>For terminating a user's session it is required that the NAS support the PoD or CoA packet types, please consult your NAS vendor or documentation for this. Moreover, it is required to know the NAS ports for PoD or CoA packets, whereas newer NASs use port 3799 while other ones are configured to receive the packet on port 1700.</p>
+<p>daloRADIUS uses the radclient binary utility to perform the test and returns the results of the command after it finishes.</p>
+<p>daloRADIUS counts on the radclient binary being available in your <code>\$PATH</code> environment variable, if it is not, please make corrections to the <code>library/extensions/maintenance_radclient.php</code> file.</p>
+<p>Please note that it may take a while for the test to finish (up to several seconds [10-20 seconds or so]) because of failures and radclient will retransmit the packets.</p>
+<p>In the Advanced tab it is possible to fine-tune the options for the test:</p>
+<ul>
+<li>Timeout - Wait 'timeout' seconds before retrying (may be a floating point number)</li>
+<li>Retries - If timeout, retry sending the packet 'retries' times</li>
+<li>Count - Send each packet 'count' times</li>
+<li>Requests - Send 'num' packets from a file in parallel</li>
+</ul>
+EOF;
+
+$l['helpPage']['configoperators'] = <<<EOF
+<h1 class="fs-5">Operators</h1>
+<p>Configure operators settings and behavior.</p>
+EOF;
+
 $l['helpPage']['configoperatorsdel'] = "To remove an operator from the database you must provide the username.";
 $l['helpPage']['configoperatorsedit'] = "Edit the operator user details below";
 $l['helpPage']['configoperatorsnew'] = "You may fill below details for a new operator user addition to database";
 $l['helpPage']['configoperatorslist'] = "Listing all Operators in database";
-$l['helpPage']['configoperators'] = "Operators Configuration";
-$l['helpPage']['configbackup'] = "Perform Backup";
+
+$l['helpPage']['configbackup'] = <<<EOF
+<h1 class="fs-5">Backup</h1>
+<p>Manage database backups</p>
+EOF;
 $l['helpPage']['configbackupcreatebackups'] = "Create Backups";
 $l['helpPage']['configbackupmanagebackups'] = "Manage Backups";
 
+$l['helpPage']['configmain'] = <<<EOF
+<h1 class="fs-5">Global Settings</h1>
+EOF;
+$l['helpPage']['configmain'] .= $l['helpPage']['configuser'] . $l['helpPage']['configdb_short']
+                              . $l['helpPage']['configlang'] . $l['helpPage']['configlogging']
+                              . $l['helpPage']['configinterface'] . $l['helpPage']['configmail']
+                              . $l['helpPage']['configmaint'] . $l['helpPage']['configoperators']
+                              . $l['helpPage']['configbackup'];
 
-$l['helpPage']['graphmain'] = "
-<b>Graphs</b><br/>
-<h200><b>Overall Logins/Hits</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
-The amount of Logins (or 'hits' to the NAS) are displayed in a graph as well as accompanied by a table listing.<br/>
-<h200><b>Overall Download Statistics</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
-The amount of data Downloaded by the client is the value which is being calculated. The graph is accompanied by a table listing<br/>
-<h200><b>Overall Upload Statistics</b></h200> - Plots a graphical chart of the usage for a specific user per a given period of time.
-The amount of data Upload by the client is the value which is being calculated. The graph is accompanied by a table listing<br/>
-<br/>
-<h200><b>Alltime Logins/Hits</b></h200> - Plots a graphical chart of the Logins to the server for a given period of time.<br/>
-<h200><b>Alltime Traffic Comparison</b></h200> - Plots a graphical chart of the Downloaded and Uploaded statisticse.</br>
-<h200><b>Logged Users</b></h200> - Plots a graphical chart of the logged in users in the specified period.
-Filter by day, month and year to graph a hourly graph or filter only by month and year (select \"---\" on the day field) to graph the minimum and maximum logged in users over the selected month.
-";
-$l['helpPage']['graphsalltimelogins'] = "An All-Time statistics of Logins to the server based on a distribution over a period of time";
-$l['helpPage']['graphsalltimetrafficcompare'] = "An All-Time statistics of Traffic through the server based on a distribution over a period of time.";
-$l['helpPage']['graphsloggedusers'] = "Plots a graphical chart of the total logged in users";
-$l['helpPage']['graphsoveralldownload'] = "Plots a graphical chart of the Downloaded bytes to the server";
-$l['helpPage']['graphsoverallupload'] = "Plots a graphical chart of the Uploaded bytes to the server";
-$l['helpPage']['graphsoveralllogins'] = "Plots a graphical chart of the Login attempts to the server";
+// graphs help pages
+$l['helpPage']['graphsalltimelogins'] = <<<EOF
+<h2 class="fs-6">All-time Logins/Hits</h2>
+<p>Generates a graphical chart showing the number of logins to the server over a given period of time.</p>
+EOF;
+$l['helpPage']['graphsoveralldownload'] = <<<EOF
+<h2 class="fs-6">Overall Download Statistics</h2>
+<p>Generates a graphical chart showing the amount of data downloaded by a specific user over a given period of time. The chart is accompanied by a table listing.</p>
+EOF;
+$l['helpPage']['graphsoverallupload'] = <<<EOF
+<h2 class="fs-6">Overall Upload Statistics</h2>
+<p>Generates a graphical chart showing the amount of data uploaded by a specific user over a given period of time. The chart is accompanied by a table listing.</p>
+EOF;
+$l['helpPage']['graphsoveralllogins'] = <<<EOF
+<h2 class="fs-6">Overall Logins/Hits</h2>
+<p>Generates a graphical chart showing the usage of a specific user over a given period of time. The chart displays the number of logins (or 'hits' to the NAS) and is accompanied by a table listing.</p>
+EOF;
+$l['helpPage']['graphsalltimetrafficcompare'] = <<<EOF
+<h2 class="fs-6">All-time Traffic Comparison</h2>
+<p>Generates a graphical chart comparing the amount of data downloaded and uploaded over a given period of time.</p>
+EOF;
+$l['helpPage']['graphsloggedusers'] = <<<EOF
+<h2 class="fs-6">Logged Users</h2>
+<p>Generates a graphical chart showing the number of logged-in users over a specified period. Users can be filtered by day, month, and year to create an hourly graph, or filtered only by month and year (select "―" on the day field) to graph the minimum and maximum logged-in users over the selected month.</p>
+EOF;
 
+$l['helpPage']['graphmain'] = '<h1 class="fs-5">Graphs</h1>'
+                            . $l['helpPage']['graphsoveralllogins'] . $l['helpPage']['graphsoveralldownload']
+                            . $l['helpPage']['graphsoverallupload'] . $l['helpPage']['graphsoveralllogins']
+                            . $l['helpPage']['graphsalltimetrafficcompare'] . $l['helpPage']['graphsloggedusers'];
 
 
 $l['helpPage']['rephistory'] = "Lists all activity performed on management items and provides information on <br/>
@@ -1529,42 +1564,43 @@ $l['helpPage']['repbatchlist'] = "";
 $l['helpPage']['mngbatchlist'] = "";
 $l['helpPage']['mngbatchdel'] = "";
 $l['helpPage']['repbatchdetails'] = "Provides details on a specific batch";
-$l['helpPage']['replogs'] = "
-<b>Logs</b><br/>
-<h200><b>daloRADIUS Log</b></h200> - Monitor daloRADIUS's Logfile.<br/>
-<h200><b>RADIUS Log</b></h200> - Monitor FreeRADIUS's Logfile - equivalent to /var/log/freeradius/radius.log or /usr/local/var/log/radius/radius.log.
-Other possible locations for the logfile may take place, if this is the case please adjust the configuration accordingly.<br/>
-<h200><b>System Log</b></h200> - Monitor Operating System Logfile - equivalent to /var/log/syslog or /var/log/message on most platform.
-Other possible locations for the logfile may take place, if this is the case please adjust the configuration accordingly.<br/>
-<h200><b>Boot Log</b></h200> - Monitor Operating System Boot log - equivalent to running the dmesg command.
-";
-$l['helpPage']['repmain'] = "
-<b>General Reports</b><br/>
-<h200><b>Online Users</b></h200> - Provides a listing of all users which are
-found to be online through the accounting table in the database. The check which is being performed is for users
-with no ending time (AcctStopTime) set. It is important to notice that these users may also be of stale sessions
-which happens when NASs for some reason fail to send the accounting-stop packets.<br/>
-<h200><b>Last Connection Attempts</b></h200> - Provides a listing of all Access-Accept and Access-Reject (accepted and failed) logins
-for users. <br/> These are pulled from the database's postauth table which is required to be defined
-in FreeRADIUS's config file to actually log these.<br/>
-<h200><b>Top User</b></h200> - Provides a listing of the top N users for bandwidth consumption and session time used<br/><br/>
-<b>Sub-Category Reports</b><br/>
-<h200><b>Logs</b></h200> - Provides access to daloRADIUS logfile, FreeRADIUSs logfile, System's logfile and Boot logfile<br/>
-<h200><b>Status</b></h200> - Provides information on server status and RADIUS Components status";
+$l['helpPage']['replogs'] = <<<EOF
+<h1 class="fs-5">Logs</h1>
+<h2 class="fs-6">daloRADIUS Log</h2>
+<p>Monitors the daloRADIUS logfile.</p>
+<h2 class="fs-6">RADIUS Log</h2>
+<p>Monitors the FreeRADIUS logfile, equivalent to <code>/var/log/freeradius/radius.log</code> or <code>/usr/local/var/log/radius/radius.log</code>. Other possible locations for the logfile may be used, so please adjust the configuration accordingly.</p>
+<h2 class="fs-6">System Log</h2>
+<p>Monitors the operating system logfile, equivalent to <code>/var/log/syslog</code> or <code>/var/log/messages</code> on most platforms. Other possible locations for the logfile may be used, so please adjust the configuration accordingly.</p>
+<h2 class="fs-6">Boot Log</h2>
+<p>Monitors the operating system boot log, equivalent to running the <code>dmesg</code> command.</p>
+EOF;
+$l['helpPage']['repmain'] = <<<EOF
+<h1 class="fs-5">General Reports</h1>
+<h2 class="fs-6">Online Users</h2>
+<p>Provides a list of all users currently online by checking the accounting table in the database. The check is for users with no end time (AcctStopTime) set. It's important to note that some of these users may have stale sessions due to NAS failures in sending accounting-stop packets. Note that this tab will only be visible if there are online users.</p>
+<h2 class="fs-6">Last Connection Attempts</h2>
+<p>Provides a list of all Access-Accept and Access-Reject (successful and failed) logins for users. These are retrieved from the database's postauth table, which must be defined in FreeRADIUS's config file to enable logging.</p>
+<h2 class="fs-6">Top Users</h2>
+<p>Provides a list of the top N users for bandwidth consumption and session time used.</p>
+<h1 class="fs-5">Sub-Category Reports</h1>
+<h2 class="fs-6">Logs</h2>
+<p>Provides access to the daloRADIUS logfile, FreeRADIUS's logfile, the system's logfile, and the boot logfile.</p>
+<h2 class="fs-6">Status</h2>
+<p>Provides information on server status and RADIUS component status.</p>
+EOF;
 $l['helpPage']['repstatradius'] = "Provides general information about the FreeRADIUS daemon and MySQL/MariaDB Database server";
 $l['helpPage']['repstatserver'] = "Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.";
-$l['helpPage']['repstatus'] = "<b>Status</b><br/>
-<h200><b>Server Status</b></h200> - Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.<br/>
-<h200><b>RADIUS Status</b></h200> - Provides general information about the FreeRADIUS daemon and MySQL Database server";
-$l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session
-time or bandwidth usage. Listing users of category: ";
+$l['helpPage']['repstatus'] = <<<EOF
+<h1 class="fs-5">Status</h1>
+<h2 class="fs-6">Server Status</h2>
+<p>Displays general information about the server, including CPU usage, number of running processes, uptime, memory usage, and more.</p>
+<h2 class="fs-6">RADIUS Status</h2>
+<p>Displays general information about the FreeRADIUS daemon and the MySQL database server.</p>
+EOF;
+$l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session time or bandwidth usage. Listing users of category: ";
 $l['helpPage']['repusername'] = "Records found for user:";
-$l['helpPage']['reponline'] = "
-The following table lists users who are currently connected to
-the system. It is very much possible that there are stale connections,
-meaning that users got disconnected but the NAS didn't send or wasn't
-able to send a STOP accounting packet to the RADIUS server.
-";
+$l['helpPage']['reponline'] = "The following table lists users who are currently connected to the system. It is very much possible that there are stale connections, meaning that users got disconnected but the NAS didn't send or wasn't able to send a STOP accounting packet to the RADIUS server.";
 
 
 $l['helpPage']['mnglistall'] = "Listing users in database";
@@ -1579,64 +1615,68 @@ The amount of time specified in Time Credit will be used as the Session-Timeout 
 radius attributes";
 
 // accounting section
-$l['helpPage']['acctactive'] = "
-    Provides information that would prove useful for tracking Active or Expired users in the database
-    in terms of users which have an Expiration attribute or a Max-All-Session attribute.
-<br/>
-";
-$l['helpPage']['acctall'] = "
-    Provides full accounting information for all sessions in the database.
-<br/>
-";
-$l['helpPage']['acctdate'] = "
-    Provides full accounting information for all sessions between the given 2 dates for a particular user.
-<br/>
-";
-$l['helpPage']['acctipaddress'] = "
-    Provides full accounting information for all sessions that originated with a particular IP Address.
-<br/>
-";
+$l['helpPage']['acctusername'] = <<<EOF
+<h2 class="fs-6">User Accounting</h2>
+<p>Provides detailed accounting information for all sessions in the database associated with a specific user.</p>
+EOF;
+
+$l['helpPage']['acctdate'] = <<<EOF
+<h2 class="fs-6">Date Accounting</h2>
+<p>Provides detailed accounting information for all sessions between two specified dates for a particular user.</p>
+EOF;
+
+$l['helpPage']['acctipaddress'] = <<<EOF
+<h2 class="fs-6">IP Accounting</h2>
+<p>Provides detailed accounting information for all sessions originating from a specific IP address.</p>
+EOF;
+
+$l['helpPage']['acctnasipaddress'] = <<<EOF
+<h2 class="fs-6">NAS Accounting</h2>
+<p>Provides detailed accounting information for all sessions handled by a specific NAS IP address.</p>
+EOF;
+
+$l['helpPage']['acctactive'] = <<<EOF
+<h2 class="fs-6">Active Accounting Records</h2>
+<p>Provides information that would be useful for tracking active or expired users in the database, such as users with an expiration attribute or a max-all-session attribute.</p>
+EOF;
+
+$l['helpPage']['acctall'] = <<<EOF
+<h2 class="fs-6">All Accounting Records</h2>
+<p>Provides detailed accounting information for all sessions in the database.</p>
+EOF;
+
+$l['helpPage']['acctcustom_short'] = <<<EOF
+<h1 class="fs-5">Custom Query</h1>
+<p>Provides the most flexible custom query to run on the database. You can adjust the query settings in the left sidebar to your advantage.</p>
+EOF;
+
+
+$l['helpPage']['acctcustom'] = $l['helpPage']['acctcustom_short'] . <<<EOF
+<p>Provides the most flexible custom query to run on the database. You can adjust the query settings in the left sidebar to your maximum advantage.</p>
+<h2 class="fs-6">Between Dates</h2>
+<p>Set the beginning and ending date to retrieve data within the specified range.</p>
+<h2 class="fs-6">Where</h2>
+<p>Set the field in the database that you want to match, like a key. Choose whether the value to match should be equal (=) or contain part of the value you search for, like a regex. If you choose to use the Contains operator, you shouldn't add any wildcards like the common form "*", but rather the value you input will automatically be searched in this form: *value* (or in mysql style: %value%).</p>
+<h2 class="fs-6">Query Accounting Fields</h2>
+<p>You may choose which fields you would like to present in the resulting list.</p>
+<h2 class="fs-6">Order By</h2>
+<p>Choose by which field you would like to order the results and its type, either ascending or descending.</p>
+EOF;
+$l['helpPage']['acctcustomquery'] = "";
+
 
 $l['helpPage']['acctplans'] = "";
-$l['helpPage']['acctmain'] = "
-<b>General Accounting</b><br/>
-<h200><b>User Accounting</b></h200> -
-    Provides full accounting information for all sessions in the database for a particular user.
-<br/>
-<h200><b>IP Accounting</b></h200> -
-    Provides full accounting information for all sessions that originated with a particular IP Address.
-<br/>
-<h200><b>NAS Accounting</b></h200> -
-    Provides full accounting information for all the sessions that the specific NAS IP address has handled.
-<br/>
-<h200><b>Date Accounting</b></h200> -
-    Provides full accounting information for all sessions between the given 2 dates for a particular user.
-<br/>
-<h200><b>All Accounting Records</b></h200> -
-    Provides full accounting information for all sessions in the database.
-<br/>
-<h200><b>Active Records Accounting</b></h200> -
-    Provides information that would prove useful for tracking Active or Expired users in the database
-    in terms of users which have an Expiration attribute or a Max-All-Session attribute.
-<br/>
+$l['helpPage']['acctmain'] = '<h1 class="fs-5">General Accounting</h1>'
+                           . $l['helpPage']['acctusername'] . $l['helpPage']['acctdate']
+                           . $l['helpPage']['acctipaddress'] . $l['helpPage']['acctnasipaddress']
+                           . $l['helpPage']['acctall'] . $l['helpPage']['acctactive']
+                           . $l['helpPage']['acctcustom_short'] . <<<EOF
+<h1 class="fs-5">Hotspots</h1>
+<p>Provides information on different managed hotspots, comparison, and other useful information.</p>
+EOF;
 
-<br/>
-<b>Sub-Category Accounting</b><br/>
-<h200><b>Custom</b></h200> -
-    Provides the most flexible custom query to run on the database.
-<br/>
-<h200><b>Hotspots</b></h200> -
-    Provides information on the different managed hotspots, comparison, and other useful information.
-<br/>
-";
-$l['helpPage']['acctnasipaddress'] = "
-    Provides full accounting information for all the sessions that the specific NAS IP address has handled.
-<br/>
-";
-$l['helpPage']['acctusername'] = "
-    Provides full accounting information for all sessions in the database for a particular user.
-<br/>
-";
+
+
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = "
     Provides full accounting information for all sessions which originated from this specific Hotspot.
@@ -1644,23 +1684,28 @@ $l['helpPage']['accthotspotaccounting'] = "
     field which match a Hotspot's MAC Address entry in the Hotspot's management database.
 <br/>
 ";
-$l['helpPage']['accthotspotcompare'] = "
-    Provides basic accounting information for comparison between all the active hotspots found in the database.
-    Accounting information provided: <br/><br/>
-    Hotspot Name - The Hotspot's name <br/>
-    Unique Users - Users that have logined only through this hotspot <br/>
-    Total Hits - The total logins that were performed from this hotspot (unique and non unique) <br/>
-    Average Time - The average time a user spent in this hotspot <br/>
-    Total Time - The accumolated spent time of all users in this hotspot <br/>
-
-<br/>
-    Provides a graph plot of different comparisons made <br/>
-    Graphs: <br/><br/>
-    Distribution of Unique users per hotspot <br/>
-    Distribution of Hits per hotspot <br/>
-    Distribution of Time usage per hotspot <br/>
-<br/>
-";
+$l['helpPage']['accthotspotcompare'] = <<<EOF
+<h1 class="fs-5">Hotspot Comparison</h1>
+<h2 class="fs-6">Basic Information</h2>
+<p>This section provides basic accounting information for comparing all active hotspots found in the database. The following accounting information is included: 
+<ul>
+<li>Hotspot Name: The name of the hotspot</li>
+<li>Unique Users: The number of users who have logged in only through this hotspot</li>
+<li>Total Hits: The total number of logins performed from this hotspot (unique and non-unique)</li>
+<li>Average Time: The average time a user spent in this hotspot</li>
+<li>Total Time: The accumulated time spent by all users in this hotspot</li>
+</ul>
+</p>
+<h2 class="fs-6">Graphs</h2>
+<p>
+This section provides graphical comparisons for the different hotspots. The following graphs are available: 
+<ul>
+<li>Distribution of Unique Users per hotspot</li>
+<li>Distribution of Hits per hotspot</li>
+<li>Distribution of Time Usage per hotspot</li>
+</ul>
+</p>
+EOF;
 $l['helpPage']['accthotspot'] = "
 <h200><b>Hotspot Accounting</b></h200> -
     Provides full accounting information for all sessions which originated from this specific Hotspot.
@@ -1670,85 +1715,49 @@ $l['helpPage']['accthotspot'] = "
     Provides a graph plot of different comparisons made.
 <br/>
 ";
-// accounting custom queries section
-$l['helpPage']['acctcustom'] = "
-<h200><b>Custom</b></h200> -
-    Provides the most flexible custom query to run on the database.<br/>
-    You may adjust the query to it's max by modifying the settings in the left sidebar.<br/>
-<br/>
-    <b> Between Dates </b> - Set the beginning and ending date.
-<br/>
-    <b> Where </b> - Set the field in the database you wish to match (like a key), choose if the value
-    to match to should be Equal (=) or it Contains part of the value you search for (like a regex). If you
-    choose to use the Contains operator you shouldn't add any wildcards of the common form '*' but rather
-    the value you input will automatically be searched in this form: *value* (or in mysql style: %value%).
-<br/>
-    <b> Query Accounting Fields </b> - You may choose which fields you would like to present in the resulting
-    list.
-<br/>
-    <b> Order By </b> - Choose by which field you would like to order the results and it's type (Ascending
-    or descending)
-<br/>
-";
-$l['helpPage']['acctcustomquery'] = "";
-$l['helpPage']['acctmaintenance'] = "
-<h200><b>Cleanup stale-sessions</b></h200> -
-    Stale-sesions may often exist because the NAS was unable to provide an accounting STOP record for the <br/>
-    user session, resulting in a stale open session in the accounting records which simulates a fake logged-in user
-    record (false positive).
-<br/>
-<h200><b>Delete accounting records</b></h200> -
-    Deletion of accounting records in the database. It may not be wise to perform this or to allow other users
-    except for a supervised administrator access to this page.
-<br/>
-";
-$l['helpPage']['acctmaintenancecleanup'] = "
-<h200><b>Cleanup Stale Sessions</b></h200> - Cleanup Stale Sessions by username or date.<br/><br/>
-    A stale session occurs when a user connection remains as active in FreeRADIUS (so, in daloRADIUS), but it does not exists in the NAS.
-    This is normally caused by a lost disconnect message from the NAS to FreeRADIUS.</br></br>
-    You have two choices to cleanup stale sessions, use them with caution:<br/>
-    &nbsp;&bullet; By Username: This option will <b>CLOSE</b> all opened sessions for a username in the FreeRADIUS database.<br/>
-    &nbsp;&bullet; By Date: This option will <b>DELETE</b> all opened sessions older than a date in the FreeRADIUS database.<br/>
-";
+
+$l['helpPage']['acctmaintenance'] = <<<EOF
+<h2 class="fs-6">Cleanup stale-sessions</h2> 
+<p>Stale-sessions can often exist when the NAS is unable to provide an accounting STOP record for the user session. This results in a stale open session in the accounting records, which simulates a fake logged-in user record, leading to false positive results.</p>
+<h2 class="fs-6">Delete accounting records</h2>
+<p>This page allows deletion of accounting records from the database. It is recommended to only allow supervised administrators to access this page as it may not be wise to perform this action without careful consideration.</p>
+EOF;
+$l['helpPage']['acctmaintenancecleanup'] = <<<EOF
+<h2 class="fs-6">Cleanup Stale Sessions</h2>
+<p>This feature is used to clean up stale user sessions that remain active in FreeRADIUS (and thus in daloRADIUS), even though the user is no longer connected to the NAS. Stale sessions can occur when the NAS fails to provide an accounting STOP record, resulting in false positive logged-in user records.</p>
+<p>There are two ways to clean up stale sessions:
+<ul>
+<li>Cleanup by Username: This option will <b>close</b> all open sessions for a specific username in the FreeRADIUS database. Use this option with caution.</li>
+<li>Cleanup by Date: This option will <b>delete</b> all open sessions that are older than a specified date in the FreeRADIUS database. Use this option with caution as well.</li>
+</ul>
+</p>
+EOF;
 $l['helpPage']['acctmaintenancedelete'] = "";
 
 
 
-$l['helpPage']['giseditmap'] = "
-    Edit Map Mode - in this mode you are able to either Add or Delete Hotspots simply by clicking
-    on a location of the map or by clicking on a hotspot (respectively).<br/><br/>
-    <b> Adding Hotspot </b> - Simply click on a clear location of the map, you will be asked to provide
-    the hotspot's name and it's MAC address. These are 2 crucial details later used to identify this hotspot
-    in the accounting table. Always provide the correct MAC Address!
-<br/><br/>
-    <b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the
-    database.
-<br/>
-";
+$l['helpPage']['giseditmap'] = <<<EOF
+<h1 class="fs-5">Edit Map Mode</h1>
+<p>This mode allows you to add or delete hotspots by clicking on the map or a hotspot icon respectively.</p>
+<h2 class="fs-6">Adding Hotspot</h2>
+<p>To add a hotspot, click on a clear location on the map. You will be prompted to provide the hotspot's name and MAC address, which are crucial details used to identify the hotspot in the accounting table. Make sure to provide the correct MAC Address!</p>
+<h2 class="fs-6">Deleting Hotspot</h2>
+<p>To delete a hotspot, simply click on the hotspot's icon and confirm the deletion from the database.</p>
+EOF;
 $l['helpPage']['gisviewmap'] = <<<EOF
-<p>The <strong>view map feature</strong> enables you to browse hotspots as they are layed out in icons across the map.</p>
-<p>When <strong>selecting a hotspot</strong> which can be achieved just by clicking on it, you will be provided with more
-in-depth detail on the hotspot such as contact information for the hotspot and other details.</p>
+<h1 class="fs-5">View Map Mode</h1>
+<p>In this mode, you can browse hotspots laid out as icons across the map.</p>
+<p>By clicking on a hotspot, you can access more detailed information about it, including contact information and other relevant details.</p>
 EOF;
 
 $l['helpPage']['gismain'] = <<<EOF
-<p>The <strong>GIS feature</strong> provides visual mappings of the hotspot location across the world's map.</p>
-
-<p>When adding a new hotspot you can specify its geolocation, i.e. the [latitude, longitude] pair used in order to
-   pin-point the exact location of that hotspot on the map.</p>
-
-<p><strong>2 different modes of operation are provided</strong>:
-    <ul>
-        <li>the <strong>View MAP</strong> mode which enables <em>surfing</em> through the world map and viewing
-            the current locations of the hotspots in the database;</li>
-        <li>the <strong>Edit MAP</strong> mode which can be used for:
-            <ul>
-                <li>visually adding new hotspots, just by simply left-clicking on the map;</li>
-                <li>visaully removing existing hotspots, by left-clicking on existing hotspot.</li>
-            </ul>
-        </li>
-    </ul>
-</p>
+<p>The <strong>GIS feature</strong> provides visual mappings of hotspot locations around the world.</p>
+<p>When adding a new hotspot, you can specify its geolocation by providing its latitude and longitude coordinates, which are used to pinpoint its exact location on the map.</p>
+<p>The GIS feature offers two different modes of operation:</p>
+<ul>
+    <li>in <strong>View MAP</strong> mode, you can explore the world map and view the current locations of all hotspots in the database by simply clicking on their icons;</li>
+    <li>in <strong>Edit MAP</strong> mode, you can visually add new hotspots to the map by left-clicking on any clear location, or remove existing hotspots by left-clicking on their icons.</li>
+</ul>
 EOF;
 
 /* ********************************************************************************** */
@@ -1783,7 +1792,7 @@ $l['messages']['gismain3'] = "Check file permissions. The file should be writabl
 $l['messages']['gisviewwelcome'] = "Welcome to Enginx Visual Maps";
 
 $l['messages']['loginerror'] = <<<EOF
-<h5>Cannot log in.</h5>
+<h1 class="fs-5">Cannot log in.</h1>
 <p>This usually happens for one of these reasons:
     <ul>
         <li>wrong username and/or password;</li>
