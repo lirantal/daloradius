@@ -15,15 +15,16 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
-echo '
-	<p><br/> '.t('all','copyright2').'
-	<br />
-	</p>
-';
 
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/page-footer.php') !== false) {
+    header("Location: /index.php");
+    exit;
+}
 ?>
+<div style="margin: 15px auto; text-align: right"><?= t('all','copyright2') ?></div>

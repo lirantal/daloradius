@@ -15,185 +15,165 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
+
     include ("library/checklogin.php");
-    $login = $_SESSION['login_user'];
+    $login_user = $_SESSION['login_user'];
 
-	isset($_POST['currentpassword']) ? $currentpassword = $_POST['currentpassword'] : $currentpassword = "";
-	isset($_POST['newpassword']) ? $newpassword = $_POST['newpassword'] : $newpassword = "";
-	isset($_POST['verifypassword']) ? $verifypassword = $_POST['verifypassword'] : $verifypassword = "";
+    include_once('library/config_read.php');
 
-	$logAction = "";
-	$logDebugSQL = "";
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
 
-	if (isset($_POST['submit'])) {
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
-		$currentPassword = $_POST['currentpassword'];
-		$newPassword = $_POST['newpassword'];
-		$verifyPassword = $_POST['verifypassword'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            include('library/opendb.php');
 
-		if ($newPassword == $verifyPassword) {
+            $current_password = (isset($_POST['current_password']) && !empty(trim($_POST['current_password']))) ? trim($_POST['current_password']) : "";
 
-			if (trim($currentPassword) != "") {
+            if (empty($current_password)) {
+                $numrows = 0;
+            } else {
+                // check if current password is valid
+                $sql = sprintf("SELECT COUNT(id) FROM %s WHERE username='%s' AND portalloginpassword='%s'",
+                               $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($login_user),
+                               $dbSocket->escapeSimple($current_password));
 
-				include 'library/opendb.php';
-				
-				$sql = "SELECT portalloginpassword FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-					" WHERE username='".$dbSocket->escapeSimple($login)."'";
-				$res = $dbSocket->query($sql);
-				$row = $res->fetchRow();
-	
-				$logDebugSQL .= $sql . "\n";
-				
-				if ( ($res->numRows() == 1) && ($row[0] == $currentPassword) ) {
-	
-					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-						" SET portalloginpassword='".$dbSocket->escapeSimple($newPassword)."'".
-						" WHERE UserName='".$dbSocket->escapeSimple($login)."'";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+                $numrows = intval($res->fetchRow()[0]);
+            }
 
-					$successMsg = "Updated password for user: <b>$login</b>";
-					$logAction .= "Successfully update password for user [$login] on page: ";
+            if ($numrows === 1) {
 
-					include 'library/closedb.php';
+                $new_password1 = (isset($_POST['new_password1']) && !empty(trim($_POST['new_password1']))) ? trim($_POST['new_password1']) : "";
+                $new_password2 = (isset($_POST['new_password2']) && !empty(trim($_POST['new_password2']))) ? trim($_POST['new_password2']) : "";
 
-				} else {
+                $error = false;
+                if (empty($new_password1)) {
+                    $error = true;
+                    $failureMsg = "The new password you provided is empty or invalid";
+                } else if (empty($new_password2)) {
+                    $error = true;
+                    $failureMsg = "The new password (confirmation) you provided is empty or invalid";
+                } else if ($new_password1 !== $new_password2) {
+                    $error = true;
+                    $failureMsg = "Password and password (confirmation) should match";
+                }
 
-					$failureMsg = "Failed updating password, possibly wrong password entered for user: <b>$login</b>";
-					$logAction .= "Failed updating password, possibly wrong password entered for user [$login] on page: ";
+                if (!$error) {
+                    $sql = sprintf("UPDATE %s SET portalloginpassword='%s' WHERE username='%s'",
+                                   $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($new_password1),
+                                   $dbSocket->escapeSimple($login_user));
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
 
-				}
-				
-			} else {
-				$failureMsg = "New Password field was left empty, please provide a new password to change to";
-				$logAction .= "Failed changing user password, empty current password for user [$login] on page: ";
-			} // if (trim($currentPassword) != "")
+                    if (!DB::isError($res)) {
+                        // success
+                        $successMsg = "The password for logging into the user portal has been changed";
+                        $logAction = "User $login_user has changed their password for logging into the user portal";
+                    } else {
+                        // failed
+                        $failureMsg = "Something went wrong while attempting to change your password for logging into the user portal.";
+                        $logAction = "User $login_user failed to change their password for logging into the user portal [db error]";
+                    }
+                }
 
-		} else {
-			$failureMsg = "Passwords do not match, please type the new password and re-type it again to verify";
-			$logAction .= "Failed changing user password, passwords do not match for user [$login] on page: ";
-		} // if ($newPassword == $verifyPassword)
-			
-	} // if (is submit)
-	
+            } else {
+                // wrong password
+                $failureMsg = "In order to proceed you have to correctly provide your current password for logging into the user portal.";
+                $logAction = "Wrong current password provided by user $login_user while attempting to change their password for logging into the user portal";
+            }
+
+            include('library/closedb.php');
+
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
 
 
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-	
-?>
+    // print HTML prologue
+    $title = t('Intro','prefpasswordedit.php');
+    $help = t('helpPage','prefpasswordedit');
 
+    print_html_prologue($title, $langCode);
 
+    print_title_and_help($title, $help);
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script type="text/javascript">
+    include_once('include/management/actionMessages.php');
 
+    $input_descriptors0 = array();
+
+    $input_descriptors0[] = array(
+                                    "name" => "current_password",
+                                    "caption" => t('all','CurrentPassword'),
+                                    "type" => "password",
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "name" => "new_password1",
+                                    "caption" => t('all','NewPassword'),
+                                    "type" => "password",
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "name" => "new_password2",
+                                    "caption" => t('all','VerifyPassword'),
+                                    "type" => "password",
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "type" => "button",
+                                    "name" => "submit",
+                                    "value" => "Change portal login password",
+                                    "onclick" => "return verifyPassword('new_password1', 'new_password2')",
+                                 );
+
+    // open form
+    open_form();
+
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+
+    close_form();
+
+    $inline_extra_js = <<<EOF
 function verifyPassword(passwordStr1, passwordStr2) {
 
-	objPasswordStr1 = document.getElementById(passwordStr1);
-	objPassword1Val = objPasswordStr1.value;
-	objPasswordStr2 = document.getElementById(passwordStr2);
-	objPassword2Val = objPasswordStr2.value;
+    objPasswordStr1 = document.getElementById(passwordStr1);
+    objPassword1Val = objPasswordStr1.value;
+    objPasswordStr2 = document.getElementById(passwordStr2);
+    objPassword2Val = objPasswordStr2.value;
 
-	if (objPassword1Val == objPassword2Val) {
-		document.forms[0].submit();
-	} else { 
-		alert("Passwords do not match, please re-type your new password and verify it");
-		return false;
-	}
+    if (objPassword1Val == objPassword2Val) {
+        document.forms[0].submit();
+    } else {
+        alert("Passwords do not match, please re-type your new password and verify it");
+        return false;
+    }
 }
+EOF;
 
-</script> 
-<?php
+    include('include/config/logging.php');
 
-	include ("menu-preferences.php");
-	
-?>		
-	<div id="contentnorightbar">
-
-		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','prefpasswordedit.php') ?>
-		:: <?php if (isset($login)) { echo $login; } ?><h144>&#x2754;</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','prefpasswordedit') ?>
-			<br/>
-		</div>
-		<?php
-				include_once('include/management/actionMessages.php');
-		?>
-
-		<form name="prefpasswordedit" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-
-        <fieldset>
-
-			<h302> <?php echo t('title','ChangePassword'); ?> </h302>
-			<br/>
-
-			<ul>
-
-
-			<li class='fieldset'>
-			<label for='currentpassword' class='form'><?php echo t('all','CurrentPassword') ?></label>
-			<input name='currentpassword' type='password' id='currentpassword' value='<?php echo $currentpassword ?>' 
-				tabindex=101 />
-			</li>
-
-			<li class='fieldset'>
-			<label for='newpassword' class='form'><?php echo t('all','NewPassword') ?></label>
-			<input name='newpassword' type='password' id='newpassword' value='<?php echo $newpassword ?>' 
-				tabindex=101 />
-			</li>
-
-			<li class='fieldset'>
-			<label for='verifypassword' class='form'><?php echo t('all','VerifyPassword') ?></label>
-			<input name='verifypassword' type='password' id='verifypassword' value='<?php echo $verifypassword ?>' 
-				tabindex=101 />
-			</li>
-
-
-
-			<li class='fieldset'>
-			<br/>
-			<hr><br/>
-			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
-					class='button' onClick="return verifyPassword('newpassword','verifypassword');" />
-		</li>
-
-		<ul>
-
-        </fieldset>
-
-		</form>
-
-<?php
-	include('include/config/logging.php');
-?>
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
-
-</body>
-</html>
+    print_footer_and_html_epilogue($inline_extra_js);

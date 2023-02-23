@@ -1,115 +1,61 @@
 <?php
-/*********************************************************************
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
  *
- * Filename: fileExport.php
- * Author: Liran Tal <liran.tal@gmail.com>
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * Description:
- * The purpose of this extension is to handle exports of different
- * formats like CSV and PDF to the user's desktop
- *********************************************************************/
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ *  Description:   the purpose of this extension is to handle CSV exports to the user's desktop.
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-session_start();
+include('../../library/checklogin.php');
 
-if (isset($_GET['reportFormat'])) {
+if (isset($_SESSION['export_items']) && isset($_SESSION['export_query'])) {
+    $output = "";
 
-	$reportFormat = $_GET['reportFormat'];			// reportFormat is either CSV or PDF
-	$reportType = $_SESSION['reportType'];			// reportType defines the sql query string
-	$reportQuery = $_SESSION['reportQuery'];		// reportQuery adds the WHERE fields for page-specific 
-								// reports
-	$reportTable = $_SESSION['reportTable'];		// get table name (radacct/radcheck/etc)
+    include_once('../../library/opendb.php');
 
-	switch ($reportType) {
+    $sql = $_SESSION['export_query'];
+    $res = $dbSocket->query($sql);
+    $numrows = $res->numRows();
 
-		case "accountingGeneric":
+    if ($numrows > 0) {
 
-				include_once('../../library/opendb.php');
+        // this is the output title and header
+        if (isset($_SESSION['export_title']) && !empty(trim($_SESSION['export_title']))) {
+            $output .= sprintf("# %s\n", trim($_SESSION['export_title']));
+        }
+        
+        $output .= implode(", ", $_SESSION['export_items']) . "\n";
 
-				$outputHeader = "Id,NAS/Hotspot,UserName,IP Address,Start Time,Stop Time,".
-						"Total Session Time (seconds),Total Upload (bytes),Total Downloads (bytes),".
-						"Termination Cause,NAS IP Address".
-						"\n";
-				$outputContent = "";
+        // this is the remaining part of the output content
+        while($row = $res->fetchRow()) {
+            $output .= implode(",", $row) . "\n";
+        }
+    }
 
-				$sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].
-					".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-			                ".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			                ".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-		        	        ".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			                ".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			                ".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			                ".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			                ".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			                ".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			                ".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			                ".NASIPAddress FROM $reportTable".
-			                " LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-			                " ON ".$configValues['CONFIG_DB_TBL_RADACCT'].
-			                ".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].
-			                ".mac $reportQuery ORDER BY RadAcctId DESC";
-
-				if ($reportFormat == "csv") {
-
-				        $res = $dbSocket->query($sql);
-
-				        while($row = $res->fetchRow()) {
-						$outputContent .= "$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],".
-									"$row[7],$row[8],$row[9],$row[10]\n";
-					}
+    include_once('../../library/closedb.php');
 
 
-					$output = $outputHeader . $outputContent;
-					exportCSVFile($output);	
+    if (!empty($output)) {
+        header("Content-type: text/csv");
+        header(sprintf("Content-disposition: attachment; filename=daloradius__%s.csv; size=%s", date("Ymd"), strlen($output)));
+        print $output;
+    }
 
-					include_once('../../library/closedb.php');
-				}
-
-				break;
-
-
-                case "usernameListGeneric":
-				include_once('../../library/opendb.php');
-
-				$outputHeader = "Id,Username,Attribute,Value".
-						"\n";
-				$outputContent = "";
-
-                                $sql = "SELECT Id, Username, Attribute, Value FROM ".
-                                        $configValues['CONFIG_DB_TBL_RADCHECK'].
-                                        " $reportQuery ORDER BY Username ASC";
-
-
-				if ($reportFormat == "csv") {
-
-				        $res = $dbSocket->query($sql);
-
-				        while($row = $res->fetchRow()) {
-						$outputContent .= "$row[0],$row[1],$row[2]\n";
-					}
-
-					$output = $outputHeader . $outputContent;
-					exportCSVFile($output);	
-
-					include_once('../../library/closedb.php');
-				}
-
-                                break;
-
-	}
-
-
-	exit;
 }
-
-
-
-
-
-function exportCSVFile($output) {
-
-	header("Content-type: application/vnd.ms-excel");
-	header("Content-disposition: csv; filename=daloradius__" . date("Ymd") . ".csv; size=" . strlen($output));
-	print $output;
-	
-}
-

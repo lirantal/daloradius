@@ -15,51 +15,28 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
-    include ("library/checklogin.php");
-    $login = $_SESSION['login_user'];
-	
-	include_once('library/config_read.php');
+
+    include("library/checklogin.php");
+    $login_user = $_SESSION['login_user'];
+
+    include_once('library/config_read.php');
     $log = "visited page: ";
 
-?>
+    include_once("lang/main.php");
+    include("library/layout.php");
 
-<?php
-	include("menu-accounting.php");	
-?>		
+    // print HTML prologue
+    $title = t('Intro','acctmain.php');
+    $help = t('helpPage','acctmain');
 
-	<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctmain.php');?>
-		<h144>&#x2754;</h144></a></h2>
-				
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','acctmain') ?>
-			<br/>
-		</div>
-		<br/>
+    print_html_prologue($title, $langCode);
 
-<?php
-	include('include/config/logging.php');
-?>
+    print_title_and_help($title, $help);
 
-		</div>
-		
-		<div id="footer">
-		
-<?php
-	include 'page-footer.php';
-?>
-	
-		</div>
-		
-</div>
-</div>
-
-
-</body>
-</html>
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();

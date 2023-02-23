@@ -14,50 +14,58 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *******************************************************************************
- * Description:
- * 		performs the logging-in authorization. First creates a random
- *      session_id to be assigned to this session and then validates the
- *      operators credentials in the database
+ * 
+ * Description:    logs in users by validating credentials and checking
+ *                 authorization in the database
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:	       Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *******************************************************************************
  */
 
 include('library/sessions.php');
+include_once('library/config_read.php');
 
 dalo_session_start();
-dalo_session_regenerate_id();
 
 $errorMessage = '';
-include('library/opendb.php');
 
-$login_user = $_POST['login_user'];
-$login_pass = $_POST['login_pass'];
+// we interact with the db, ONLY IF user provided
+// both operator_user and operator_pass params
+if (array_key_exists('login_user', $_POST) && !empty($_POST['login_user']) && 
+    array_key_exists('login_pass', $_POST) && !empty($_POST['login_pass'])) {
 
-$sqlFormat = "select * from %s where username='%s' "
-    . "and portalloginpassword='%s' and enableportallogin=1";
-$sql = sprintf($sqlFormat,
-    $configValues['CONFIG_DB_TBL_DALOUSERINFO'], 
-    $dbSocket->escapeSimple($login_user),
-    $dbSocket->escapeSimple($login_pass));
-$res = $dbSocket->query($sql);
+    $login_user = $_POST['login_user'];
+    $login_pass = $_POST['login_pass'];
+    
+    include('library/opendb.php');
+    
+    $sql = sprintf("SELECT * FROM %s WHERE username='%s' AND portalloginpassword='%s' AND enableportallogin=1",
+                   $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                   $dbSocket->escapeSimple($login_user),
+                   $dbSocket->escapeSimple($login_pass));
+    $res = $dbSocket->query($sql);
+    $numRows = $res->numRows();
+    
+    // we only accept ONE AND ONLY ONE RECORD as result
+    if ($numRows === 1) {
+        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+        $_SESSION['logged_in'] = true;
+        $_SESSION['login_user'] = $login_user;
+    }
+    
+    include('library/closedb.php');
+        
+}
 
-$numRows = $res->numRows();
-include('library/closedb.php');
+// if everything went fine logged_in session param has been set to true,
+// so we can check it for deciding where and how redirect user browser
+$header_location = "index.php";
 
-if ($numRows != 1) {
-    $_SESSION['logged_in'] = false;
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] !== true) {
+    $header_location = "login.php";
     $_SESSION['login_error'] = true;
-    header('Location: login.php');
-    exit;
 }
 
-if (array_key_exists('login_error', $_SESSION)) {
-    unset($_SESSION['login_error']);
-}
-$_SESSION['logged_in'] = true;
-$_SESSION['login_user'] = $login_user;
-header('Location: index.php');
-
-?>
+header("Location: $header_location");

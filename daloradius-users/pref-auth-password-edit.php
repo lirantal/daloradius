@@ -15,216 +15,223 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
+
     include ("library/checklogin.php");
-    $login = $_SESSION['login_user'];
+    $login_user = $_SESSION['login_user'];
 
-	isset($_POST['currentpassword']) ? $currentpassword = $_POST['currentpassword'] : $currentpassword = "";
-	isset($_POST['newpassword']) ? $newpassword = $_POST['newpassword'] : $newpassword = "";
-	isset($_POST['verifypassword']) ? $verifypassword = $_POST['verifypassword'] : $verifypassword = "";
+    include_once('library/config_read.php');
 
-	$logAction = "";
-	$logDebugSQL = "";
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
 
-	if (isset($_POST['submit'])) {
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
-		$currentPassword = $_POST['currentpassword'];
-		$newPassword = $_POST['newpassword'];
-		$verifyPassword = $_POST['verifypassword'];
+    // if $attribute is a Password attribute,
+    // return an hashed version of $value
+    // otherwise false
+    // if $attribute refers to a non-supported
+    // hashing method, it just returns $value
+    function hashPasswordAttribute($attribute, $value) {
+        if (preg_match("/-Password$/", $attribute) === false) {
+            return false;
+        }
+        
+        switch ($attribute) {
+            case "Crypt-Password":
+                return crypt($value, 'SALT_DALORADIUS');
+                
+            case "MD5-Password":
+                return strtoupper(md5($value));
+            
+            case "SHA1-Password":
+                return sha1($value);
+            
+            case "NT-Password":
+                return strtoupper(bin2hex(mhash(MHASH_MD4, iconv('UTF-8', 'UTF-16LE', $value))));
 
-		if ($newPassword === $verifyPassword) {
+            default:
+            // TODO
+            //~ case "CHAP-Password":
+            case "User-Password":
+            case "Cleartext-Password":
+                return $value;
+        }
+    }
 
-			if (trim($currentPassword) != "") {
-
-				include 'library/opendb.php';
-				
-				global $configValues;
-
-				if ( !empty($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) && $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] === 'crypt') {
-
-					$sqlTestPassword = "SELECT ENCRYPT('".$dbSocket->escapeSimple($currentPassword)."', 'SALT_DALORADIUS') as Password";
-					$res = $dbSocket->query($sqlTestPassword);
-					$row = $res->fetchRow();
-
-					$passwordCryptEval = $row[0];
-
-					$logDebugSQL .= $sqlTestPassword . "\n";
-
-				}
-				
-				$sql = "SELECT value, id FROM ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-					" WHERE username='".$dbSocket->escapeSimple($login)."' AND".
-					" attribute LIKE '%-Password'";
-				$res = $dbSocket->query($sql);
-				$row = $res->fetchRow();
-				
-				$passwordRowId = $row[1];
-	
-				$logDebugSQL .= $sql . "\n";
-				
-				if ( ($res->numRows() == 1) && ($row[0] == $currentPassword) ) {
-	
-					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-						" SET value='".$dbSocket->escapeSimple($newPassword)."'".
-						" WHERE id='$passwordRowId'";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-
-					$successMsg = "Updated password for user: <b>$login</b>";
-					$logAction .= "Successfully update authentication password for user [$login] on page: ";
-
-					include 'library/closedb.php';
-
-				} elseif ( ($res->numRows() == 1) && ($passwordCryptEval == $row[0]) ) {
-	
-					$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_RADCHECK'].
-						" SET value=ENCRYPT('".$dbSocket->escapeSimple($newPassword)."', 'SALT_DALORADIUS')".
-						" WHERE id='$passwordRowId'";
-					$res = $dbSocket->query($sql);
-					$logDebugSQL .= $sql . "\n";
-
-					$successMsg = "Updated password for user: <b>$login</b>";
-					$logAction .= "Successfully update authentication password for user [$login] on page: ";
-
-					include 'library/closedb.php';
+    function has_password_like_attributes($dbSocket, $username) {
+        global $configValues, $logDebugSQL;
+        
+        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE op=':=' AND username='%s' AND attribute LIKE '%%-Password'",
+                       $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($username));
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        return intval($res->fetchrow()[0]) > 0;        
+    }
 
 
-				} else {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            
+            include('library/opendb.php');
+            
+            if (!has_password_like_attributes($dbSocket, $login_user)) {
+                // error
+            } else {
+                
+                $current_password = (isset($_POST['current_password']) && !empty(trim($_POST['current_password']))) ? trim($_POST['current_password']) : "";
+                
+                if (empty($current_password)) {
+                    // error
+                } else {
+                    $new_password1 = (isset($_POST['new_password1']) && !empty(trim($_POST['new_password1']))) ? trim($_POST['new_password1']) : "";
+                    $new_password2 = (isset($_POST['new_password2']) && !empty(trim($_POST['new_password2']))) ? trim($_POST['new_password2']) : "";
 
-					$failureMsg = "Failed updating authentication password, possibly wrong password entered for user: <b>$login</b>";
-					$logAction .= "Failed updating authentication password, possibly wrong password entered for user [$login] on page: ";
+                    $error = false;
+                    if (empty($new_password1)) {
+                        $error = true;
+                        $failureMsg = "The new password you provided is empty or invalid";
+                    } else if (empty($new_password2)) {
+                        $error = true;
+                        $failureMsg = "The new password (confirmation) you provided is empty or invalid";
+                    } else if ($new_password1 !== $new_password2) {
+                        $error = true;
+                        $failureMsg = "Password and password (confirmation) should match";
+                    }
+                    
+                    if (!$error) {
+                    
+                        // get all password like attributes
+                        $sql = sprintf("SELECT id, attribute, value FROM %s WHERE op=':=' AND username='%s' AND attribute LIKE '%%-Password'",
+                                       $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($login_user));
+                        $res0 = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                        
+                        $count = 0;
+                        while ($row = $res0->fetchRow()) {
+                            list($id, $password_type, $password_value) = $row;
+                            $id = intval($id);
+                            
+                            $current_hashed_password = hashPasswordAttribute($password_type, $current_password);
+                            
+                            if ($current_hashed_password === false || $current_hashed_password !== $password_value) {
+                                continue;
+                            }
+                            $new_hashed_password = hashPasswordAttribute($password_type, $new_password1);
+                            
+                            // we can procede
+                            $sql = sprintf("UPDATE %s SET value='%s' WHERE id=%d", $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                          $new_hashed_password, $id);
+                            $res1 = $dbSocket->query($sql);
+                            $logDebugSQL .= "$sql;\n";
+                            
+                            if (!DB::isError($res1)) {
+                                // success
+                                $count++;
+                            }
+                        }
+                        
+                        if ($count > 0) {
+                            // success
+                            $successMsg = "$count auth password(s) have been changed";
+                            $logAction = "User $login_user has changed their auth password(s) [num. $count]";
+                        } else {
+                            // failed
+                            $failureMsg = "Something went wrong while attempting to change your auth password(s)";
+                            $logAction = "User $login_user failed to change their auth password(s)";
+                        }
+                    }
+                }
+            }
+            
+            include('library/closedb.php');
+            
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+        
+    }
 
-				}
-				
-			} else {
-				$failureMsg = "New Password field was left empty, please provide a new password to change to";
-				$logAction .= "Failed changing user authentication password, empty current password for user [$login] on page: ";
-			} // if (trim($currentPassword) != "")
+    // print HTML prologue
+    $title = t('Intro','prefpasswordedit.php');
+    $help = t('helpPage','prefpasswordedit');
 
-		} else {
-			$failureMsg = "Passwords do not match, please type the new password and re-type it again to verify";
-			$logAction .= "Failed changing user password, passwords do not match for user [$login] on page: ";
-		} // if ($newPassword == $verifyPassword)
-			
-	} // if (is submit)
-	
+    print_html_prologue($title, $langCode);
 
+    print_title_and_help($title, $help);
 
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-	
-?>
+    include_once('include/management/actionMessages.php');
 
+    $input_descriptors0 = array();
 
+    $input_descriptors0[] = array(
+                                    "name" => "current_password",
+                                    "caption" => t('all','CurrentPassword'),
+                                    "type" => "password",
+                                 );
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script type="text/javascript">
+    $input_descriptors0[] = array(
+                                    "name" => "new_password1",
+                                    "caption" => t('all','NewPassword'),
+                                    "type" => "password",
+                                 );
 
+    $input_descriptors0[] = array(
+                                    "name" => "new_password2",
+                                    "caption" => t('all','VerifyPassword'),
+                                    "type" => "password",
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
+
+    $input_descriptors0[] = array(
+                                    "type" => "button",
+                                    "name" => "submit",
+                                    "value" => "Change authentication password(s)",
+                                    "onclick" => "return verifyPassword('new_password1', 'new_password2')",
+                                 );
+
+    // open form
+    open_form();
+
+    foreach ($input_descriptors0 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+
+    close_form();
+
+    $inline_extra_js = <<<EOF
 function verifyPassword(passwordStr1, passwordStr2) {
 
-	objPasswordStr1 = document.getElementById(passwordStr1);
-	objPassword1Val = objPasswordStr1.value;
-	objPasswordStr2 = document.getElementById(passwordStr2);
-	objPassword2Val = objPasswordStr2.value;
+    objPasswordStr1 = document.getElementById(passwordStr1);
+    objPassword1Val = objPasswordStr1.value;
+    objPasswordStr2 = document.getElementById(passwordStr2);
+    objPassword2Val = objPasswordStr2.value;
 
-	if (objPassword1Val == objPassword2Val) {
-		document.forms[0].submit();
-	} else { 
-		alert("Passwords do not match, please re-type your new password and verify it");
-		return false;
-	}
+    if (objPassword1Val == objPassword2Val) {
+        document.forms[0].submit();
+    } else {
+        alert("Passwords do not match, please re-type your new password and verify it");
+        return false;
+    }
 }
+EOF;
 
-</script> 
-<?php
+    include('include/config/logging.php');
 
-	include ("menu-preferences.php");
-	
-?>		
-	<div id="contentnorightbar">
-
-		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','prefpasswordedit.php') ?>
-		:: <?php if (isset($login)) { echo $login; } ?><h144>&#x2754;</h144></a></h2>
-
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','prefpasswordedit') ?>
-			<br/>
-		</div>
-		<?php
-				include_once('include/management/actionMessages.php');
-		?>
-
-		<form name="prefpasswordedit" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-
-        <fieldset>
-
-			<h302> <?php echo t('title','ChangePassword'); ?> </h302>
-			<br/>
-
-			<ul>
-
-
-			<li class='fieldset'>
-			<label for='currentpassword' class='form'><?php echo t('all','CurrentPassword') ?></label>
-			<input name='currentpassword' type='password' id='currentpassword' value='<?php echo $currentpassword ?>' 
-				tabindex=101 />
-			</li>
-
-			<li class='fieldset'>
-			<label for='newpassword' class='form'><?php echo t('all','NewPassword') ?></label>
-			<input name='newpassword' type='password' id='newpassword' value='<?php echo $newpassword ?>' 
-				tabindex=101 />
-			</li>
-
-			<li class='fieldset'>
-			<label for='verifypassword' class='form'><?php echo t('all','VerifyPassword') ?></label>
-			<input name='verifypassword' type='password' id='verifypassword' value='<?php echo $verifypassword ?>' 
-				tabindex=101 />
-			</li>
-
-
-
-			<li class='fieldset'>
-			<br/>
-			<hr><br/>
-			<input type='submit' name='submit' value='<?php echo t('buttons','apply') ?>' tabindex=10000
-					class='button' onClick="return verifyPassword('newpassword','verifypassword');" />
-		</li>
-
-		<ul>
-
-        </fieldset>
-
-		</form>
-
-<?php
-	include('include/config/logging.php');
-?>
-		</div>
-
-		<div id="footer">
-
-<?php
-	include 'page-footer.php';
-?>
-
-
-		</div>
-
-</div>
-</div>
-
-
-</body>
-</html>
+    print_footer_and_html_epilogue($inline_extra_js);

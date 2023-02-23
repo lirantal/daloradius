@@ -21,87 +21,83 @@
  */
 
     include ("library/checklogin.php");
-    $login = $_SESSION['login_user'];
-
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "username";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-
-	$username = $login;
-	$type = $_REQUEST['type'];
-
-	//feed the sidebar variables
-	$overall_logins_username = $username;
+    $login_user = $_SESSION['login_user'];
 
 	include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    include("library/layout.php");
+
+    // validate (or pre-validate) parameters
+    $goto_stats = (array_key_exists('goto_stats', $_GET) && isset($_GET['goto_stats']));
+
+    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+             in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+          ? strtolower($_GET['type']) : "daily";
+
+    $username = $login_user;
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+
+	// init logging variables
     $log = "visited page: ";
     $logQuery = "performed query for user [$username] of type [$type] on page: ";
+    
+    // print HTML prologue
+    $title = t('Intro','graphsoveralllogins.php');
+    $help = t('helpPage','graphsoveralllogins');
 
+    print_html_prologue($title, $langCode);
 
-?>
+    print_title_and_help($title, $help);
+    
+    // set navbar stuff
+    $navkeys = array(
+                        array( 'Graphs', t('menu', 'Graphs') ),
+                        array( 'Statistics', t('all', 'Statistics') ),
+                    );
 
-<?php
-        include_once ("library/tabber/tab-layout.php");
-?>
+    // print navbar controls
+    print_tab_header($navkeys);
 
-<?php
-	
-	include ("menu-graphs.php");
-	
-?>
-		
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','graphsoveralllogins.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
+    // open tab wrapper
+    open_tab_wrapper();
 
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','graphsoveralllogins') ?>
-			<br/>
-		</div>
-		<br/>
+    // tab 0
+    open_tab($navkeys, 0, true);
 
-<div class="tabber">
+    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
+    $src = sprintf("library/graphs/overall_users_data.php?category=login&type=%s", $type);
+    $alt = sprintf("Your %s login/hit statistics", $type);
+    printf($img_format, $src, $alt);
 
-     <div class="tabbertab" title="Graph">
-        <br/>
+    close_tab($navkeys, 0);
 
-<?php
-	echo "<center>";
-	echo "<img src=\"library/graphs-overall-users-login.php?type=$type&user=$username\" />";
-	echo "</center>";
-?>
-	</div>
-	<div class="tabbertab" title="Statistics">
-	<br/>
+    // tab 1
+    open_tab($navkeys, 1);
 
-<?php
-	include 'library/tables-overall-users-login.php';
-?>
+    echo '<div class="my-3 text-center">';
+    include('library/tables/overall_users_login.php');
+    echo '</div>';
 
-	</div>
-</div>		
+    close_tab($navkeys, 1);
 
+    // close tab wrapper
+    close_tab_wrapper();
 
-<?php
-	include('include/config/logging.php');
-?>
+    // required javascript
+    $inline_extra_js = "";
+    if ($goto_stats) {
+        $button_id = sprintf("%s-button", strtolower($navkeys[1][0]));
+        $inline_extra_js = <<<EOF
 
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
+window.addEventListener('load', function() {
+    document.getElementById('{$button_id}').click();
+});
 
-		
-		</div>
-		
-</div>
-</div>
+EOF;
 
+    }
 
-</body>
-</html>
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue($inline_extra_js);
+
