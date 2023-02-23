@@ -55,8 +55,8 @@
                     "acctstarttime" => t('all','StartTime'),
                     "acctstoptime" => t('all','StopTime'),
                     "acctsessiontime" => t('all','TotalTime'),
-                    "acctinputoctets" => sprintf("%s (%s)", t('all','Upload'), t('all','Bytes')),
-                    "acctoutputoctets" => sprintf("%s (%s)", t('all','Download'), t('all','Bytes')),
+                    "acctinputoctets" => t('all','Upload'),
+                    "acctoutputoctets" => t('all','Download'),
                     "acctterminatecause" => t('all','Termination'),
                  );
     $colspan = count($cols);
@@ -185,11 +185,6 @@
 
             // table content
             $count = 0;
-
-
-            $li_style = 'margin: 7px auto';
-            $trs = array();
-
             while ($row = $res->fetchRow()) {                
                 $rowlen = count($row);
 
@@ -243,31 +238,38 @@
             }
 
             // close tbody,
-        // print tfoot
-        // and close table + form (if any)
-        $table_foot = array(
-                                'num_rows' => $numrows,
-                                'rows_per_page' => $per_page_numrows,
-                                'colspan' => $colspan,
-                                'multiple_pages' => $drawNumberLinks
-                           );
-        $descriptor = array(  'table_foot' => $table_foot );
+            // print tfoot
+            // and close table + form (if any)
+            $table_foot = array(
+                                    'num_rows' => $numrows,
+                                    'rows_per_page' => $per_page_numrows,
+                                    'colspan' => $colspan,
+                                    'multiple_pages' => $drawNumberLinks
+                               );
+            $descriptor = array( 'table_foot' => $table_foot );
 
-        print_table_bottom($descriptor);
+            print_table_bottom($descriptor);
 
-        // get and print "links"
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
-        printLinks($links, $drawNumberLinks);
+            // get and print "links"
+            $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+            printLinks($links, $drawNumberLinks);
             
         } else {
             $failureMsg = "Nothing to display";
         }
     
+        // main accordion
         echo '<div class="accordion m-2" id="accordion-parent">';
         include_once('include/management/userReports.php');
+        
         userPlanInformation($username, 1);
-        userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
-        userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
+        
+        // userSubscriptionAnalysis with argument set to 1 for drawing the table
+        userSubscriptionAnalysis($username, 1);                 
+        
+        // userConnectionStatus (same as above)
+        userConnectionStatus($username, 1);                     
+        
         echo '</div>';
     
     } else {
@@ -279,8 +281,5 @@
     include('library/closedb.php');
 
     include('include/config/logging.php');
-    
-    $inline_extra_js = "window.onload = function() { setupAccordion() };";
-    
-    print_footer_and_html_epilogue($inline_extra_js);
+    print_footer_and_html_epilogue();
 ?>
