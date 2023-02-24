@@ -176,16 +176,15 @@ CREATE TABLE IF NOT EXISTS nas (
 
 #
 # Table structure for table 'radippool'
-#
 
-CREATE TABLE radippool (
+CREATE TABLE IF NOT EXISTS radippool (
   id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   pool_name VARCHAR(30) NOT NULL,
   framedipaddress VARCHAR(15) NOT NULL DEFAULT '',
   nasipaddress VARCHAR(15) NOT NULL DEFAULT '',
-  calledstationid VARCHAR(30) NOT NULL,
-  callingstationid VARCHAR(30) NOT NULL,
-  expiry_time DATETIME NULL DEFAULT NULL,
+  calledstationid VARCHAR(30) NOT NULL DEFAULT '',
+  callingstationid VARCHAR(30) NOT NULL DEFAULT '',
+  expiry_time DATETIME NOT NULL DEFAULT NOW(),
   username VARCHAR(64) NOT NULL DEFAULT '',
   pool_key VARCHAR(30) NOT NULL DEFAULT '',
   PRIMARY KEY (id),
