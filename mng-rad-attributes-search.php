@@ -161,7 +161,7 @@
             // define tooltip
             $ajax_id = "divContainerAttributeInfo_" . $count;
             $param = sprintf('attribute=%s', urlencode($this_attribute));
-            $onclick = "ajaxGeneric('include/management/retVendorAttributeInfo.php','retAttributeInfo','$ajax_id','$param')";
+            $onclick = "ajaxGeneric('library/ajax/vendor_attribute_info.php','retAttributeInfo','$ajax_id','$param')";
             $tooltip = array(
                                 'subject' => $this_id,
                                 'onclick' => $onclick,

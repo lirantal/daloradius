@@ -21,7 +21,7 @@
  *
  *********************************************************************************************************
  */
- 
+
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/lang/it.php') !== false) {
     header("Location: ../index.php");
@@ -31,7 +31,7 @@ if (strpos($_SERVER['PHP_SELF'], '/lang/it.php') !== false) {
 $l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
 $l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
 $l['all']['copyright1'] = 'Rapporti, Fatturazione e Gestione RADIUS by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
-$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-2022 by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y') . ' by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
                         . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.';
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Nome Pool";
@@ -241,51 +241,30 @@ $l['Tooltip']['BusinessEmailTooltip'] = "";
 $l['Tooltip']['BusinessContactPersonTooltip'] = "";
 
 $l['Tooltip']['proxyNameTooltip'] = "Nome Proxy";
-$l['Tooltip']['proxyRetryDelayTooltip'] = "Il tempo (in secondi)da aspettare<br/>
-                    per una risposta dal proxy, <br/>
-                    prima di rispedire la rischiesta al proxy.";
-$l['Tooltip']['proxyRetryCountTooltip'] = "Numero delle prove di spedizione<br/>
-                    prima di rinunciare, e mandare un<br/>
-                    messaggio di reject al NAS.";
-$l['Tooltip']['proxyDeadTimeTooltip'] = "Se l'home server non risponde<br/>
-                    a nessuna delle prove multiple, <br/>
-                    allora FreeRADIUS smetter&aacute; di mandare<br/>
-                    richieste proxy, e lo marcher&aacute; come 'dead'.";
-$l['Tooltip']['proxyDefaultFallbackTooltip'] = "If all exact matching realms <br/>
-                        did not respond, we can try the <br/>
-                        ";
+$l['Tooltip']['proxyRetryDelayTooltip'] = "Il tempo di attesa (in secondi) per una risposta dal proxy, prima di rispedire la rischiesta al proxy.";
+$l['Tooltip']['proxyRetryCountTooltip'] = "Numero di tentativi di invio prima di rinunciare, e mandare un messaggio di reject al NAS.";
+$l['Tooltip']['proxyDeadTimeTooltip'] = "Se l'home server non risponde a nessuna delle prove multiple, "
+                                      . "allora FreeRADIUS smetterà di mandare richieste proxy, e lo marcherà come 'dead'.";
+$l['Tooltip']['proxyDefaultFallbackTooltip'] = "If all exact matching realms did not respond, we can try the";
 $l['Tooltip']['realmNameTooltip'] = "Nome Realm";
 $l['Tooltip']['realmTypeTooltip'] = "Imposta su radius per default";
 $l['Tooltip']['realmSecretTooltip'] = "Realm RADIUS shared secret";
 $l['Tooltip']['realmAuthhostTooltip'] = "Host autenticazione Realm";
 $l['Tooltip']['realmAccthostTooltip'] = "Accounting host Realm";
-$l['Tooltip']['realmLdflagTooltip'] = "Abilita per il load balancing<br/>
-                    I valori abilitati sono 'fail_over' <br/>
-                    e 'round_robin'.";
-$l['Tooltip']['realmNostripTooltip'] = "Se togliere o no il<br/>
-                    suffisso realm";
+$l['Tooltip']['realmLdflagTooltip'] = "Abilita per il load balancing. I valori abilitati sono 'fail_over' e 'round_robin'.";
+$l['Tooltip']['realmNostripTooltip'] = "Se togliere o no il suffisso realm";
 $l['Tooltip']['realmHintsTooltip'] = "";
 $l['Tooltip']['realmNotrealmTooltip'] = "";
 
 
-$l['Tooltip']['vendorNameTooltip'] = "Esempio: Cisco<br/>&nbsp;&nbsp;&nbsp;
-                                        Il nome del Fornitore.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['typeTooltip'] = "Esempio: string<br/>&nbsp;&nbsp;&nbsp;
-                                        Il tipo variabile attributi<br/>&nbsp;&nbsp;&nbsp;
-                    (string, integer, date, ipaddr).";
-$l['Tooltip']['attributeTooltip'] = "Esempio: Framed-IPAddress<br/>&nbsp;&nbsp;&nbsp;
-                                        Il nome esatto dell'attributo.<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['vendorNameTooltip'] = "Esempio: Cisco<br/>" . "Il nome del Fornitore.";
+$l['Tooltip']['typeTooltip'] = "Esempio: string<br/>" . "Il tipo variabile attributi (string, integer, date, ipaddr).";
+$l['Tooltip']['attributeTooltip'] = "Esempio: Framed-IPAddress<br/>" . "Il nome esatto dell'attributo.";
 
-$l['Tooltip']['RecommendedOPTooltip'] = "Esempio: :=<br/>&nbsp;&nbsp;&nbsp;
-                                        L'operatore dell'attributo raccomandato.<br/>&nbsp;&nbsp;&nbsp;
-                    (one of: := == != etc...)";
-$l['Tooltip']['RecommendedTableTooltip'] = "Esempio: check<br/>&nbsp;&nbsp;&nbsp;
-                                        L'obiettivo tabella raccomandato.<br/>&nbsp;&nbsp;&nbsp;
-                    (l'uno o l'altro: check, reply).";
-$l['Tooltip']['RecommendedTooltipTooltip'] = "Esempio: L'indirizzo ip per l'utente<br/>&nbsp;&nbsp;&nbsp;
-                                        Il consiglio raccomandato.<br/>&nbsp;&nbsp;&nbsp;";
-$l['Tooltip']['RecommendedHelperTooltip'] = "La funzione di aiuto che sarà<br/>&nbsp;&nbsp;&nbsp;
-                                        disponibile quando si aggiungerà questo attributo<br/>&nbsp;&nbsp;&nbsp;";
+$l['Tooltip']['RecommendedOPTooltip'] = "Esempio: :=<br/>" . "L'operatore consigliato per quest'attributo. (uno tra: :=, ==, !=, ecc.)";
+$l['Tooltip']['RecommendedTableTooltip'] = "Esempio: check<br/>" . "La tabella obiettivo consigliata. (uno tra: check, reply).";
+$l['Tooltip']['RecommendedTooltipTooltip'] = "Esempio: L'indirizzo IP per l'utente";
+$l['Tooltip']['RecommendedHelperTooltip'] = "La funzione di aiuto che sarà disponibile quando si aggiungerà questo attributo";
 
 
 
@@ -318,7 +297,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se specific
 
 $l['Tooltip']['usernameTooltip'] = "Il nome utente esatto<br/>&nbsp;&nbsp;&nbsp;
                     così come l'utente userà connettersi al sistema";
-$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";                    
+$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";
 $l['Tooltip']['passwordTooltip'] = "Le password sono sensibili alle maiuscole<br/>&nbsp;&nbsp;&nbsp;
                     in certi sistemi. Prestare attenzione";
 $l['Tooltip']['groupTooltip'] = "L'utente verrà aggiunto a questo gruppo.<br/>&nbsp;&nbsp;&nbsp;
@@ -483,8 +462,8 @@ $l['button']['RemoveOperator'] = "Cancella Operatore";
 
 $l['button']['ProcessQuery'] = "Elabora Query";
 
- 
- 
+
+
 /* ********************************************************************************** */
 
 
@@ -547,15 +526,15 @@ $l['title']['Optional'] = "Opzionale";
  * General text information that is used through-out the pages
  ************************************************************************************/
 
-$l['text']['LoginRequired'] = "Login Obbligatorio";
-$l['text']['LoginPlease'] = "Login per favore";
+$l['text']['LoginRequired'] = "Effettuare il login";
+$l['text']['LoginPlease'] = "Login";
 
 /* ********************************************************************************** */
 
 
 
 /* **********************************************************************************
- * Contact Info 
+ * Contact Info
  * Related to all contact info text, user info, hotspot owner contact information etc
  ************************************************************************************/
 
@@ -740,7 +719,7 @@ $l['captions']['detailsofnewrate'] = "E' possibile riempire di sotto i dettagli 
 $l['captions']['filldetailsofnewrate'] = "Riempire sotto i dettagli per la nuova tariffa";
 
 /* **********************************************************************************
- * Help Pages Info 
+ * Help Pages Info
  * Each page has a header which is the Intro class, when clicking on the header
  * it will reveal/hide a helpPage div content which is a description of a specific
  * page, basically your expanded tool-tip.
@@ -843,7 +822,7 @@ $l['helpPage']['mngradgroupreplyedit'] = "
 ";
 $l['helpPage']['mngradgroupreplysearch'] = "
 <h200><b>Cerca Group Reply </b></h200> - Cerca una Mappa Group Reply <br/>
-Per usare un carattere jolly è possibile scrivere il carattere % che è familiare in SQL o si può utilizzare il più comune * 
+Per usare un carattere jolly è possibile scrivere il carattere % che è familiare in SQL o si può utilizzare il più comune *
 per ragioni di convenienza e daloRADIUS lo tradurrà in %
 ";
 
@@ -879,7 +858,7 @@ default non vengono usate, e il tipo di criptazione delle passwords nel database
 <h200><b>Impostazioni Globali</b></h200> - Motore Storage Database <br/>
 <h200><b>Impostazioni Tabelle</b></h200> - Se non usi lo schema di default di FreeRADIUS potresti voler cambiare i nomi
 delle tabelle<br/>
-<h200><b>Impostazioni Avanzate</b></h200> - Se intendi conservare le passwords degli utenti del database non in 
+<h200><b>Impostazioni Avanzate</b></h200> - Se intendi conservare le passwords degli utenti del database non in
 chiaro ma in modo criptato puoi scegliere tra MD5 o Crypt<br/>
 ";
 $l['helpPage']['configlang'] = "
@@ -934,10 +913,10 @@ la documentazione. Inoltre, si richiede la conoscenza delle porte NAS per PoD o 
 mentre gli altri sono configurati sulla porta 1700.
 
 daloRADIUS utilizza l'utilità radclient per effettuare test e ritorna i risultati del comando dopo che questo ha finito. <br/>
-daloRADIUS conta sul fato che il binaario radclient sia disponibile nella variabile \$PATH, se così non è, si devono 
+daloRADIUS conta sul fato che il binaario radclient sia disponibile nella variabile \$PATH, se così non è, si devono
 effettuare correzioni al file library/extensions/maintenance_radclient.php.<br/><br/>
 
-Si tenga presente che potrebbe metterci un pò (10 - 20 secondi o più) perchè nel caso di errori 
+Si tenga presente che potrebbe metterci un pò (10 - 20 secondi o più) perchè nel caso di errori
 radclient ritrasmetterà i pacchetti.
 
 Nella finestra Avanzate è possibile regolare con precisione le opzioni per i test:<br/>
@@ -993,10 +972,10 @@ Potrebbero esistere altri posti per i file di log, se questo è il caso modifica
 ";
 $l['helpPage']['repmain'] = "
 <b>Rapporti Generali</b><br/>
-<h200><b>Utenti Online</b></h200> - Fornisce una lista di tutti gli utenti che risultano 
+<h200><b>Utenti Online</b></h200> - Fornisce una lista di tutti gli utenti che risultano
 online secondo la tabella di accounting del database. Il controllo che viene eseguito è per utenti dove non è stata impostata la voce di fine connessione (AcctStopTime). E' importante tenere presente che questi utenti potrebbero anche essere delle sessioni stantie (stale sessions)
 che succede quando il NASs per qualche ragione non riesce a mandare i pacchetti di accounting-stop, i quali comunicano la fine della sessione.<br/>
-<h200><b>Ultimi Tentativi di Connessione</b></h200> - Fornisce una lista di tutti i login con 'Access-Accept' (accesso accettato) e 'Access-Reject' (accesso rifiutato) 
+<h200><b>Ultimi Tentativi di Connessione</b></h200> - Fornisce una lista di tutti i login con 'Access-Accept' (accesso accettato) e 'Access-Reject' (accesso rifiutato)
 per gli utenti. <br/> Questi sono presi dalla tabella postauth del database che si richiede di definire nel file di configurazione di FreeRADIUS.<br/>
 <h200><b>Top Utenti</b></h200> - Fornisce un lista della Top N Utenti per consumo di banda e tempo di connessione<br/><br/>
 <b>Rapporti Sotto-Categoria</b><br/>
@@ -1028,7 +1007,7 @@ L'ammontare del tempo specificato in Time Credit (Credito di tempo) verrà usato
 
 // accounting section
 $l['helpPage']['acctactive'] = "
-    Fornisce informazioni che potrebbero essere funzionali per tracciare utenti attivi o scaduti nel database 
+    Fornisce informazioni che potrebbero essere funzionali per tracciare utenti attivi o scaduti nel database
     in termini di utenti che hanno un attributo di Scadenza (Expiration) o un attributo di Massimo-numero-sessioni (Max-All-Session).
 <br/>
 ";
@@ -1046,32 +1025,32 @@ $l['helpPage']['acctipaddress'] = "
 ";
 $l['helpPage']['acctmain'] = "
 <b>Accounting Generale</b><br/>
-<h200><b>Accounting Utente</b></h200> - 
+<h200><b>Accounting Utente</b></h200> -
     Fornisce informazioni complete per tutte le sessioni nel database per un particolare utente.
 <br/>
-<h200><b>Accounting IP</b></h200> - 
+<h200><b>Accounting IP</b></h200> -
     Fornisce informazioni complete di accounting per tutte le sessioni che sono state avviate da un particolare indirizzo IP.
 <br/>
-<h200><b>Accounting NAS</b></h200> - 
+<h200><b>Accounting NAS</b></h200> -
     Fornisce informazioni complete per tutte le sessioni che uno specifico indirizzo NAS ha gestito.
 <br/>
-<h200><b>Accounting Date</b></h200> - 
+<h200><b>Accounting Date</b></h200> -
     Fornisce informazioni complete di accounting per tutte le sessioni tra due date di un paricolare utente.
 <br/>
-<h200><b>Tutti i Records di Accounting</b></h200> - 
+<h200><b>Tutti i Records di Accounting</b></h200> -
     Fornisce informazioni complete per tutte le sessioni di accounting nel database.
 <br/>
-<h200><b>Records di Accounting Attivi</b></h200> - 
-    Fornisce informazioni che potrebbero essere comode per tracciare utenti attivi o scaduti nel database 
+<h200><b>Records di Accounting Attivi</b></h200> -
+    Fornisce informazioni che potrebbero essere comode per tracciare utenti attivi o scaduti nel database
     in termini di utenti che hanno un attributo di scadenza (Expiration) o un attributo Max-All-session.
 <br/>
 
 <br/>
 <b>Sottocategoria Accounting</b><br/>
-<h200><b>Personalizzazioni</b></h200> - 
+<h200><b>Personalizzazioni</b></h200> -
     Fornisce la query personalizzata più flessibile che si possa lanciare nel database.
 <br/>
-<h200><b>Hotspots</b></h200> - 
+<h200><b>Hotspots</b></h200> -
     Fornisce informazioni sui differenti hotspot gestiti, confronti, e altre comode informazioni.
 <br/>
 ";
@@ -1107,25 +1086,25 @@ $l['helpPage']['accthotspotcompare'] = "
 <br/>
 ";
 $l['helpPage']['accthotspot'] = "
-<h200><b>Accounting Hotspot</b></h200> - 
+<h200><b>Accounting Hotspot</b></h200> -
     Fornisce informazioni complete per tutte le sessioni che sono state avviate da uno specifico Hotspot.
 <br/>
-<h200><b>Confronto Hotspot</b></h200> - 
+<h200><b>Confronto Hotspot</b></h200> -
     Fornisce informazioni di base sull'accounting per confronto tra gli hotspot attivi nel database.
     Fornisce un grafico dei differenti confronti possibili.
 <br/>
 ";
 // accounting custom queries section
 $l['helpPage']['acctcustom'] = "
-<h200><b>Custom</b></h200> - 
+<h200><b>Custom</b></h200> -
     Fornisce la più flessibile query personalizzata da lanciare sul database.<br/>
     E' possibile regolare la query modificando le impostazioni sulla barra a sinistra.<br/>
 <br/>
     <b> Tra le Date </b> - Imposta la data di inizio e di fine.
 <br/>
-    <b> Dove </b> - Imposta il campo nel database che si desidera far corrispondere (come una chiave), scegliere se il valore 
+    <b> Dove </b> - Imposta il campo nel database che si desidera far corrispondere (come una chiave), scegliere se il valore
     da far corrispondere deve essere Uguale (=) o deve Contenere parte del valore che si cerca (come una regex). Se si sceglie
-    di usare l'operatore Contiene non si devono aggiungere caratteri jolly della comune forma '*' 
+    di usare l'operatore Contiene non si devono aggiungere caratteri jolly della comune forma '*'
     il valore che si inserisce verrà automaticamente cercato in questa forma: *value* (o in stile mysql: %valore%).
 <br/>
     <b> Query Campi Accounting </b> - E' possibile scegliere quali campi si vogliono mostrare nella lista risultante.
@@ -1135,11 +1114,11 @@ $l['helpPage']['acctcustom'] = "
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
-<h200><b>Pulisci sessioni stantie (stale-sessions)</b></h200> - 
+<h200><b>Pulisci sessioni stantie (stale-sessions)</b></h200> -
     Le sessioni stantie si formano quando il NAS non è capace di forntire un Accounting-STOP per la sessione utente <br/>
     risultante in un record di sessione aperta che simula un utente connesso in un record utente (falso positivo).
 <br/>
-<h200><b>Cancella Record accounting</b></h200> - 
+<h200><b>Cancella Record accounting</b></h200> -
     Cancellazione di un Record di accounting nel database. Potrebbe non essere saggio farlo o permettere di farlo ad altri utenti eccetto l'amministratore o un gruppo controllato.
 <br/>
 ";
@@ -1170,12 +1149,12 @@ Le Mappature GIS forniscono mappature visuali del luogo dell'hotspot attraverso 
 Nella pagina Gestione è possibile aggiungere nuove voci hotspot al database dove c'è anche un campo chiamato Geolocation, questo è un valore numerico che la API di Google Maps usa per segnare (pin-point) il luogo esatto di un hotspot nella mappa.<br/><br/>
 
 <h200><b>Vengono fornite 2 Modalità Operative:</b></h200>
-Una è la modalità <b>Vedi MAPPA</b> che abilita il 'surfing' attraverso la mappa mondiale 
+Una è la modalità <b>Vedi MAPPA</b> che abilita il 'surfing' attraverso la mappa mondiale
 e vede i luoghi degli hotspots nel database, un'altra è - <b>Modifica MAPPA</b> - che è la modalità
-che si può utilizzare per creare hotspot in modo visuale semplicemente con un click sinistro sulla mappa o cancellando 
+che si può utilizzare per creare hotspot in modo visuale semplicemente con un click sinistro sulla mappa o cancellando
 hotspot esistenti sempre con un click sinistro su una bandierina di un hotspot esistente.<br/><br/>
 
-Un'altra importante questione è che ogni computer sul network richiede un codice di registrazione unico 
+Un'altra importante questione è che ogni computer sul network richiede un codice di registrazione unico
 che può essere ottenuto dalla pagina API di Google Maps fornendo l'indirizzo completo della directory ospitata
 dall'applicazione daloRADIUS sul server. Una volta ottenuto il codice da Google, si deve incollarlo nel campo di Registrazione (Registration box) e cliccare il bottone 'Register code' per salvarlo.
 A questo punto dovresti essere in grado di utilizzare i servizi di Google Maps. <br/><br/>";
@@ -1211,11 +1190,16 @@ $l['messages']['gismain2'] = "errore: non si pu&oacute aprire il file in scrittu
 $l['messages']['gismain3'] = "Verificare i permessi sui file. Il file dovrebbe essere scrivibile dall'utente/gruppo del webserver";
 $l['messages']['gisviewwelcome'] = "Benvenuto nelle mappe visuali Enginx";
 
-$l['messages']['loginerror'] = "<br/><br/>qualcuno dei seguenti:<br/>
-1. username/password sbagliate<br/>
-2. un amministratore &egrave; già loggato (è permessa una sola istanza per volta) <br/>
-3. sembra esserci pi&ugrave; di un 'administrator' nel database<br/>
-";
+$l['messages']['loginerror'] = <<<EOF
+<h5>Impossibile accedere.</h5>
+<p>Di solito questo accade per uno dei seguenti motivi:
+    <ul>
+        <li>username e/o password errati;</li>
+        <li>un amministratore è già loggato<br>(è consentita solo un'istanza per volta);</li>
+        <li>sembra che ci sia più di un utente 'administrator' nel database.</li>
+    </ul>
+</p>
+EOF;
 
 $l['buttons']['savesettings'] = "Salva Impostazioni";
 $l['buttons']['apply'] = "Applica";
@@ -1229,4 +1213,33 @@ $l['menu']['Gis'] = "GIS";
 $l['menu']['Graphs'] = "Grafici";
 $l['menu']['Config'] = "Config";
 $l['menu']['Help'] = "Aiuto";
+
+$l['submenu']['General'] = "Generale";
+$l['submenu']['Reporting'] = "Reporting";
+$l['submenu']['Maintenance'] = "Maintenance";
+$l['submenu']['Operators'] = "Operatori";
+$l['submenu']['Backup'] = "Backup";
+$l['submenu']['Logs'] = "Logs";
+$l['submenu']['Status'] = "Status";
+$l['submenu']['Batch Users'] = "Batch Users";
+$l['submenu']['Dashboard'] = "Dashboard";
+$l['submenu']['Users'] = "Utenti";
+$l['submenu']['Hotspots'] = "Hotspots";
+$l['submenu']['Nas'] = "Nas";
+$l['submenu']['User-Groups'] = "User-Groups";
+$l['submenu']['Profiles'] = "Profili";
+$l['submenu']['HuntGroups'] = "HuntGroups";
+$l['submenu']['Attributes'] = "Attributi";
+$l['submenu']['Realm/Proxy'] = "Realm/Proxy";
+$l['submenu']['IP-Pool'] = "IP-Pool";
+$l['submenu']['POS'] = "POS";
+$l['submenu']['Plans'] = "Piani";
+$l['submenu']['Rates'] = "Rates";
+$l['submenu']['Merchant-Transactions'] = "Merchant-Transactions";
+$l['submenu']['Billing-History'] = "Billing-History";
+$l['submenu']['Invoices'] = "Invoices";
+$l['submenu']['Payments'] = "Payments";
+$l['submenu']['Custom'] = "Custom";
+$l['submenu']['Hotspot'] = "Hotspot";
+
 ?>

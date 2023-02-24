@@ -15,170 +15,145 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@enginx.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
- 
+
     include ("library/checklogin.php");
-    $login = $_SESSION['login_user'];
+    $login_user = $_SESSION['login_user'];
 
-	$logAction = "";
-	$logDebugSQL = "";
+    include_once('library/config_read.php');
 
-	if (isset($_POST['submit'])) {
+    include_once("lang/main.php");
+    include_once("library/validation.php");
+    include("library/layout.php");
 
-		include 'library/opendb.php';
+    // init logging variables
+    $log = "visited page: ";
+    $logAction = "";
+    $logDebugSQL = "";
 
-		$sql = "SELECT changeuserinfo ".
-			" FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-			" WHERE UserName='".$dbSocket->escapeSimple($login)."'";
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
+    function can_change_userinfo($dbSocket, $username) {
+        global $configValues, $logDebugSQL;
 
-		$row = $res->fetchRow();
-		$ui_changeuserinfo = $row[0];
+        $sql = sprintf("SELECT changeuserinfo FROM %s WHERE username='%s'",
+                       $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($username));
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
 
-		if ($ui_changeuserinfo == 1) {
+        return intval($res->fetchrow()[0]) === 1;
+    }
 
-			$firstname = $_POST['firstname'];
-			$lastname = $_POST['lastname'];
-			$email = $_POST['email'];
-			$department = $_POST['department'];
-			$company = $_POST['company'];
-			$workphone = $_POST['workphone'];
-			$homephone = $_POST['homephone'];
-			$mobilephone = $_POST['mobilephone'];
-			$address = $_POST['address'];
-			$city = $_POST['city'];
-			$state = $_POST['state'];
-			$country = $_POST['country'];
-			$zip = $_POST['zip'];
+    include('library/opendb.php');
 
-			$sql = "UPDATE ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." SET firstname='".
-				$dbSocket->escapeSimple($firstname).
-					"', lastname='".$dbSocket->escapeSimple($lastname).
-					"', email='".$dbSocket->escapeSimple($email).
-					"', department='".$dbSocket->escapeSimple($department).
-					"', company='".$dbSocket->escapeSimple($company).
-					"', workphone='".$dbSocket->escapeSimple($workphone).
-					"', homephone='".$dbSocket->escapeSimple($homephone).
-					"', mobilephone='".$dbSocket->escapeSimple($mobilephone).
-					"', address='".$dbSocket->escapeSimple($address).
-					"', city='".$dbSocket->escapeSimple($city).
-					"', state='".$dbSocket->escapeSimple($state).
-					"', country='".$dbSocket->escapeSimple($country).
-					"', zip='".$dbSocket->escapeSimple($zip).
-					"' WHERE username='".$dbSocket->escapeSimple($login)."'";
-			$res = $dbSocket->query($sql);
-			$logDebugSQL .= $sql . "\n";
-		
-			$successMsg = "Updated user information for user: <b>$login</b>";
-			$logAction .= "Successfully updated user information for user [$login] on page: ";
-	
-			include 'library/closedb.php';
-		} else {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
-			$failureMsg = "Failure updating user information, you are not permitted to do that.";
-			$logAction .= "Failed updating user information for user [$login], not permitted to do that on page: ";
+            if (can_change_userinfo($dbSocket, $login_user)) {
 
-		} // checking user permission to update his settings
+                $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? $_POST['firstname'] : "";
+                $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? $_POST['lastname'] : "";
+                $email = (array_key_exists('email', $_POST) && isset($_POST['email'])) ? $_POST['email'] : "";
+                $department = (array_key_exists('department', $_POST) && isset($_POST['department'])) ? $_POST['department'] : "";
+                $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? $_POST['company'] : "";
+                $workphone = (array_key_exists('workphone', $_POST) && isset($_POST['workphone'])) ? $_POST['workphone'] : "";
+                $homephone = (array_key_exists('homephone', $_POST) && isset($_POST['homephone'])) ? $_POST['homephone'] : "";
+                $mobilephone = (array_key_exists('mobilephone', $_POST) && isset($_POST['mobilephone'])) ? $_POST['mobilephone'] : "";
+                $address = (array_key_exists('address', $_POST) && isset($_POST['address'])) ? $_POST['address'] : "";
+                $city = (array_key_exists('city', $_POST) && isset($_POST['city'])) ? $_POST['city'] : "";
+                $state = (array_key_exists('state', $_POST) && isset($_POST['state'])) ? $_POST['state'] : "";
+                $country = (array_key_exists('country', $_POST) && isset($_POST['country'])) ? $_POST['country'] : "";
+                $zip = (array_key_exists('zip', $_POST) && isset($_POST['zip'])) ? $_POST['zip'] : "";
 
-	} // if (is submit)
+                // update user information table
+                $sql = sprintf("UPDATE %s SET firstname='%s', lastname='%s', email='%s', department='%s', company='%s', workphone='%s',
+                                              homephone='%s', mobilephone='%s', address='%s', city='%s', state='%s', country='%s',
+                                              zip='%s' WHERE username='%s'",
+                               $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($firstname),
+                               $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($email),
+                               $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company),
+                               $dbSocket->escapeSimple($workphone), $dbSocket->escapeSimple($homephone),
+                               $dbSocket->escapeSimple($mobilephone), $dbSocket->escapeSimple($address),
+                               $dbSocket->escapeSimple($city), $dbSocket->escapeSimple($state),
+                               $dbSocket->escapeSimple($country), $dbSocket->escapeSimple($zip),
+                               $dbSocket->escapeSimple($username));
 
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
 
+                if (!DB::isError($res)) {
+                    // success
+                    $successMsg = "User info have been updated";
+                    $logAction = "User $login_user has updated their user info";
+                } else {
+                    // failed
+                    $failureMsg = "Something went wrong while attempting to update your user info";
+                    $logAction = "User $login_user failed to update their user info [db error]";
+                }
 
-
-	include 'library/opendb.php';	
-
-	/* fill-in all the user info details */
-
-	$sql = "SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city, state, country, zip".
-			" FROM ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-			" WHERE UserName='".$dbSocket->escapeSimple($login)."'";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL .= $sql . "\n";
-
-	$row = $res->fetchRow();
-
-	$ui_firstname = $row[0];
-	$ui_lastname = $row[1];
-	$ui_email = $row[2];
-	$ui_department = $row[3];
-	$ui_company = $row[4];
-	$ui_workphone = $row[5];
-	$ui_homephone = $row[6];
-	$ui_mobilephone = $row[7];
-	$ui_address = $row[8];
-	$ui_city = $row[9];
-	$ui_state = $row[10];
-	$ui_country = $row[11];
-	$ui_zip = $row[12];
-
-	include 'library/closedb.php';	
-
-
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-	
-?>
+            } else {
+                // err
+                $failureMsg = "You are not allowed to update your user info";
+                $logAction = "User $login_user failed to update their user info [not allowed]";
+            }
 
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-<title>daloRADIUS</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="css/1.css" type="text/css" media="screen,projection" />
-</head>
-<script src="library/javascript/pages_common.js" type="text/javascript"></script>
-<script type="text/javascript">
-</script> 
-<?php
+        } else {
+            // csrf
+            $failureMsg = "CSRF token error";
+            $logAction .= "$failureMsg on page: ";
+        }
+    }
 
-	include ("menu-preferences.php");
-	
-?>		
-	<div id="contentnorightbar">
+    $sql = sprintf("SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone,
+                           address, city, state, country, zip
+                      FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                                                    $dbSocket->escapeSimple($login_user));
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
 
-		<h2 id="Intro" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','prefuserinfoedit.php') ?>
-		:: <?php if (isset($login)) { echo $login; } ?><h144>&#x2754;</h144></a></h2>
+    list( $ui_firstname, $ui_lastname, $ui_email, $ui_department, $ui_company, $ui_workphone, $ui_homephone,
+          $ui_mobilephone, $ui_address, $ui_city, $ui_state, $ui_country, $ui_zip ) = $res->fetchRow();
 
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','prefuserinfoedit') ?>
-			<br/>
-		</div>
-		<?php
-			include_once('include/management/actionMessages.php');
-		?>
+    include('library/closedb.php');
 
-		<form name="prefuserinfoedit" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+    // print HTML prologue
+    $title = t('Intro','prefuserinfoedit.php');
+    $help = t('helpPage','prefuserinfoedit');
 
-	<?php
-		include_once('include/management/userinfo.php');
-	?>
+    print_html_prologue($title, $langCode);
 
+    print_title_and_help($title, $help);
 
-		</form>
+    include_once('include/management/actionMessages.php');
 
-<?php
-	include('include/config/logging.php');
-?>
+    // open form
+    open_form();
 
-		</div>
+    include_once('include/management/userinfo.php');
 
-		<div id="footer">
+    $input_descriptors0 = array();
 
-<?php
-	include 'page-footer.php';
-?>
+    $input_descriptors0[] = array(
+                                    "name" => "csrf_token",
+                                    "type" => "hidden",
+                                    "value" => dalo_csrf_token(),
+                                 );
 
-		</div>
+    $input_descriptors0[] = array(
+                                    "type" => "submit",
+                                    "name" => "submit",
+                                    "value" => "Update user info",
+                                 );
+                                 
+    foreach ($input_descriptors0 as $input_descriptor) {
+    print_form_component($input_descriptor);
+}
 
-</div>
-</div>
+    close_form();
 
-
-</body>
-</html>
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();

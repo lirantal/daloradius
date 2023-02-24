@@ -15,240 +15,220 @@
  *
  *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@enginx.com>
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
-    $login = $_SESSION['login_user'];
+    include("library/checklogin.php");
+    $login_user = $_SESSION['login_user'];
+    include_once('library/config_read.php');
 
-	//setting values for the order by and order type variables
-	isset($_GET['orderBy']) ? $orderBy = $_GET['orderBy'] : $orderBy = "radacctid";
-	isset($_GET['orderType']) ? $orderType = $_GET['orderType'] : $orderType = "asc";
+    include_once("lang/main.php");
+    include("library/validation.php");
+    include("library/layout.php");
+    
+    $username = $login_user;
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
-	$username = $login;
+    // validate this parameter before including menu
+    $startdate = (array_key_exists('startdate', $_GET) && !empty(trim($_GET['startdate'])) &&
+                  preg_match(DATE_REGEX, trim($_GET['startdate']), $m) !== false &&
+                  checkdate($m[2], $m[3], $m[1]))
+               ? trim($_GET['startdate']) : "";
 
-	isset($_GET['startdate']) ? $startdate = $_GET['startdate'] : $startdate = "";
-	isset($_GET['enddate']) ? $enddate = $_GET['enddate'] : $enddate = "";
+    $enddate = (array_key_exists('enddate', $_GET) && !empty(trim($_GET['enddate'])) &&
+                preg_match(DATE_REGEX, trim($_GET['enddate']), $m) !== false &&
+                checkdate($m[2], $m[3], $m[1]))
+             ? trim($_GET['enddate']) : "";
+    
+    $cols = array(
+                    "radacctid" => t('all','ID'),
+                    "hotspot" => t('all','HotSpot'),
+                    "nasipaddress" => t('all','NASIPAddress'),
+                    "framedipaddress" => t('all','IPAddress'),
+                    "acctstarttime" => t('all','StartTime'),
+                    "acctstoptime" => t('all','StopTime'),
+                    "acctsessiontime" => t('all','TotalTime'),
+                    "acctinputoctets" => t('all','Upload'),
+                    "acctoutputoctets" => t('all','Download'),
+                    "acctterminatecause" => t('all','Termination'),
+                 );
+    $colspan = count($cols);
+    $half_colspan = intval($colspan / 2);
+    
+    $orderBy = (array_key_exists('orderBy', $_GET) && !empty($_GET['orderBy']) &&
+                in_array($_GET['orderBy'], array_keys($cols)))
+             ? $_GET['orderBy'] : array_keys($cols)[0];
+
+    $orderType = (array_key_exists('orderType', $_GET) && !empty($_GET['orderType']) &&
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
+               ? strtolower($_GET['orderType']) : "asc";
+    
+    // init logging variables
+    $log = "visited page: ";
+    $logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
+    $logDebugSQL = "";
 	
-	//feed the sidebar variables
-	$accounting_date_username = $username;
-	$accounting_date_startdate = $startdate;
-	$accounting_date_enddate = $enddate;
+	$title = t('Intro','acctdate.php');
+    $help = t('helpPage','acctdate');
 
-	include_once('library/config_read.php');
-	$log = "visited page: ";
-	$logQuery = "performed query for user [$username] and start date [$startdate] and end date [$enddate] on page: ";
+    print_html_prologue($title, $langCode);
 
-?>
+    print_title_and_help($title, $help);
 
-<?php
-	
-	include("menu-accounting.php");
-	
-?>
+    // we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object
+    include('library/opendb.php');
+    include('include/management/pages_common.php');
 
-		
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','acctdate.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
-				
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','acctdate') ?>
-			<br/>
-		</div>
-		<br/>
+    $sql_WHERE = array();
+    $partial_query_params = array();
 
+    if (!empty($startdate)) {
+        $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
+        $partial_query_params[] = sprintf("startdate=%s", $startdate);
+    }
 
+    if (!empty($enddate)) {
+        $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
+        $partial_query_params[] = sprintf("enddate=%s", $enddate);
+    }
+    
+    $sql_WHERE[] = sprintf("username='%s'", $dbSocket->escapeSimple($username));
+    $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
 
-<?php
+    $sql = sprintf("SELECT COUNT(radacctid) FROM %s", $configValues['CONFIG_DB_TBL_RADACCT']);
+    if (count($sql_WHERE) > 0) {
+        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
+    }
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+    
+    $numrows = $res->fetchrow()[0];
 
-	include 'library/opendb.php';
-	include 'include/management/pages_common.php';
-	include 'include/management/pages_numbering.php';		// must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-	// we can only use the $dbSocket after we have included 'library/opendb.php' which initialzes the connection and the $dbSocket object	
-	$username = $dbSocket->escapeSimple($username);
-	$startdate = $dbSocket->escapeSimple($startdate);
-	$enddate = $dbSocket->escapeSimple($enddate);
-
+    if ($numrows > 0) {
+        /* START - Related to pages_numbering.php */
+            
+        // when $numrows is set, $maxPage is calculated inside this include file
+        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        
+        // here we decide if page numbers should be shown
+        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+        
+        $sql = sprintf("SELECT ra.RadAcctId, dhs.name AS hotspot, ra.NASIPAddress, ra.FramedIPAddress,
+                               ra.AcctStartTime, ra.AcctStopTime, ra.AcctSessionTime, ra.AcctInputOctets,
+                               ra.AcctOutputOctets, ra.AcctTerminateCause
+                          FROM %s AS ra LEFT JOIN %s AS dhs ON ra.calledstationid=dhs.mac",
+                       $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+        if (count($sql_WHERE) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
+        }
 
         // setup php session variables for exporting
-        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = " WHERE AcctStartTime>'$startdate' AND AcctStartTime<'$enddate' AND UserName LIKE '$username'";
-        $_SESSION['reportType'] = "accountingGeneric";
+        $_SESSION["export_items"] = array_keys($cols);
+        $_SESSION["export_query"] = $sql;
+        
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= "$sql;\n";
+        
+        $per_page_numrows = $res->numRows();
 
-	
-	//orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-    $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE AcctStartTime>'$startdate' and AcctStartTime<'$enddate' and UserName like '$username';";
-	$res = $dbSocket->query($sql);
-	$numrows = $res->numRows();
+        $partial_query_string = (count($partial_query_params) > 0)
+                              ? ("&" . implode("&", $partial_query_params)) : "";
+                              
+        $descriptors = array();
 
-	
-    $sql = "SELECT ".$configValues['CONFIG_DB_TBL_RADACCT'].".RadAcctId, ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".name as hotspot, ".$configValues['CONFIG_DB_TBL_RADACCT'].".UserName, ".$configValues['CONFIG_DB_TBL_RADACCT'].".FramedIPAddress, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStartTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctStopTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctSessionTime, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctInputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctOutputOctets, ".$configValues['CONFIG_DB_TBL_RADACCT'].".AcctTerminateCause, ".$configValues['CONFIG_DB_TBL_RADACCT'].".NASIPAddress FROM ".$configValues['CONFIG_DB_TBL_RADACCT']." LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS']." ON ".$configValues['CONFIG_DB_TBL_RADACCT'].".calledstationid = ".$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'].".mac WHERE AcctStartTime>'$startdate' and AcctStartTime<'$enddate' and UserName like '$username' ORDER BY $orderBy $orderType LIMIT $offset, $rowsPerPage;";
-	$res = $dbSocket->query($sql);
-	$logDebugSQL = "";
-	$logDebugSQL .= $sql . "\n";
-
-	/* START - Related to pages_numbering.php */
-	$maxPage = ceil($numrows/$rowsPerPage);
-	/* END */
-
-	$counter=0;
-	$bytesin=0;
-	$bytesout=0;
-	$megabytesout=0;
-	$megabytesin=0;
-	$session_seconds=0;
-	$session_minutes=0;
-
-	echo "<table border='0' class='table1'>\n";
-        echo "
-                <thead>
-                        <tr>
-                        <th colspan='12' align='left'>
-
-                        <input class='button' type='button' value='CSV Export'
-                        onClick=\"javascript:window.location.href='include/management/fileExport.php?reportFormat=csv'\"
-                        />
-                        <br/>
-                <br/>
-        ";
-
-	if ($configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] == "yes")
-		setupNumbering($numrows, $rowsPerPage, $pageNum, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
-
-	echo " </th></tr>
-			</thead>
-	";
-
-	if ($orderType == "asc") {
-			$orderType = "desc";
-	} else  if ($orderType == "desc") {
-			$orderType = "asc";
-	}
-	
-        echo "<thread> <tr>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=radacctid&orderType=$orderType\">
-		".t('all','ID')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=hotspot&orderType=$orderType\">
-		".t('all','HotSpot')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=username&orderType=$orderType\">
-		".t('all','Username')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=framedipaddress&orderType=$orderType\">
-		".t('all','IPAddress')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstarttime&orderType=$orderType\">
-		".t('all','StartTime')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctstoptime&orderType=$orderType\">
-		".t('all','StopTime')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctsessiontime&orderType=$orderType\">
-		".t('all','TotalTime')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctinputoctets&orderType=$orderType\">
-		".t('all','Upload')." (".t('all','Bytes').")</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctoutputoctets&orderType=$orderType\">
-		".t('all','Download')." (".t('all','Bytes').")</a>
-		</th>
-		<th scope='col'>
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=acctterminatecause&orderType=$orderType\">
-		 ".t('all','Termination')."</a>
-		</th>
-		<th scope='col'> 
-		<br/>
-		<a class='novisit' href=\"" . $_SERVER['PHP_SELF'] . "?username=$username&startdate=$startdate&enddate=$enddate&orderBy=nasipaddress&orderType=$orderType\">
-		".t('all','NASIPAddress')."</a>
-		</th>
-                </tr> </thread>";
-
-	while($row = $res->fetchRow()) {
-		printqn("<tr>
-				<td> $row[0] </td>
-		                <td> $row[1] </td>
-	                        <td> $row[2] </td>
-				<td> $row[3] </td>
-				<td> $row[4] </td>
-				<td> $row[5] </td>
-				<td> ".time2str($row[6])." </td>
-				<td> ".toxbyte($row[7])."</td>
-				<td> ".toxbyte($row[8])."</td>
-				<td> $row[9] </td>
-				<td> $row[10] </td>
-		</tr>");
-
-	}
-
-        echo "
-                                        <tfoot>
-                                                        <tr>
-                                                        <th colspan='12' align='left'>
-        ";
-	setupLinks($pageNum, $maxPage, $orderBy, $orderType,"&username=$username&startdate=$startdate&enddate=$enddate");
-        echo "
-                                                        </th>
-                                                        </tr>
-                                        </tfoot>
-                ";
-
-	echo "</table>";
-
-	include 'library/closedb.php';
-?>
-			
-		</div>
+        $params = array(
+                            'num_rows' => $numrows,
+                            'rows_per_page' => $rowsPerPage,
+                            'page_num' => $pageNum,
+                            'order_by' => $orderBy,
+                            'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string
+                        );
+        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
 
-<?php
-	include('include/config/logging.php');
-?>
+        $descriptors['end'] = array();
+        $descriptors['end'][] = array(
+                                        'onclick' => "window.location.assign('include/management/fileExport.php')",
+                                        'label' => 'CSV Export',
+                                        'class' => 'btn-light',
+                                     );
+        print_table_prologue($descriptors);
 
-	<div id="footer">
-		
-<?php
-	include 'page-footer.php';
-?>
+        // print table top
+        print_table_top();
 
+        // second line of table header
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
 
-		</div>
+        // closes table header, opens table body
+        print_table_middle();
 
-</div>
-</div>
+        // table content
+        $count = 0;
+        
+        while ($row = $res->fetchRow()) {                
+            $rowlen = count($row);
 
-<script type="text/javascript">
-        var tooltipObj = new DHTMLgoodies_formTooltip();
-        tooltipObj.setTooltipPosition('right');
-        tooltipObj.setPageBgColor('#EEEEEE');
-        tooltipObj.setTooltipCornerSize(15);
-        tooltipObj.initFormFieldTooltip();
-</script>
+            // escape row elements
+            for ($i = 0; $i < $rowlen; $i++) {
+                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            }
+            
+            list($radAcctId, $hotspot, $nasIPAddress, $framedIPAddress, $acctStartTime, $acctStopTime,
+                 $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause) = $row;
+            
+            $acctSessionTime = intval($acctSessionTime);
+            if ($acctSessionTime === 0) {
+                $acctSessionTime = "(n/d)";
+            } else {
+                $acctSessionTime = time2str($acctSessionTime);
+            }
+            
+            $acctInputOctets = toxbyte($acctInputOctets);
+            $acctOutputOctets = toxbyte($acctOutputOctets);
+            
+            $hotspot = (!empty($hotspot)) ? $hotspot : "(n/a)";
+            
+            // define table row
+            $table_row = array( $radAcctId, $hotspot, $nasIPAddress, $framedIPAddress, $acctStartTime,
+                                $acctStopTime, $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause);
 
-</body>
-</html>
+            // print table row
+            print_table_row($table_row);
+
+            $count++;
+        }
+        
+        // close tbody,
+        // print tfoot
+        // and close table + form (if any)
+        $table_foot = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $per_page_numrows,
+                                'colspan' => $colspan,
+                                'multiple_pages' => $drawNumberLinks
+                           );
+        $descriptor = array( 'table_foot' => $table_foot );
+
+        print_table_bottom($descriptor);
+
+        // get and print "links"
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
+        printLinks($links, $drawNumberLinks);
+                
+    } else {
+        $failureMsg = "Nothing to display";
+    }
+
+    include_once("include/management/actionMessages.php");
+
+    include('library/closedb.php');
+    
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue();

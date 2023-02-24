@@ -30,13 +30,18 @@
     include_once("lang/main.php");
     include("library/validation.php");
     include("library/layout.php");
+    include_once("include/management/functions.php");
 
     // validate this parameter before including menu
     $batch_name = (array_key_exists('batch_name', $_GET) && !empty(str_replace("%", "", trim($_GET['batch_name']))))
                 ? str_replace("%", "", trim($_GET['batch_name'])) : "";
     $batch_name_enc = (!empty($batch_name)) ? htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8') : "";
 
-     // first table
+    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
+              ? str_replace("%", "", trim($_GET['username'])) : "";
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+
+    // table1
     $cols1 = array(
                     t('all','BatchName'),
                     t('all','HotSpot'),
@@ -52,11 +57,12 @@
     $colspan1 = count($cols1);
     $half_colspan1 = intval($colspan1 / 2);
 
-    // second table
+    // table2
     $cols2 = array(
-                    "batch_name" => t('all','BatchName'),
-                    t('all','Username'),
-                    t('all','StartTime')
+                    'selected',
+                    'username' => t('all','Username'),
+                    'status' => "Accounted",
+                    'acctstarttime' => "First accounted on"
                   );
     $colspan2 = count($cols2);
     $half_colspan2 = intval($colspan2 / 2);
@@ -82,13 +88,19 @@
 
    
     // print HTML prologue
+    $extra_js = array(
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js"
+    );
+    
     $title = t('Intro','repbatchdetails.php');
     $help = t('helpPage','repbatchdetails');
 
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, array(), $extra_js);
 
     // start printing content
     print_title_and_help($title, $help);
+    echo '<div id="returnMessages"></div>';
 
     include('library/opendb.php');
     include('include/management/pages_common.php');
@@ -97,7 +109,7 @@
     $batch_id = -1;
 
     if ($batch_name) {
-        $sql = sprintf("SELECT bh.id FROM %s AS bh WHERE bh.batch_name = '%s' LIMIT 1",
+        $sql = sprintf("SELECT bh.id FROM %s AS bh WHERE bh.batch_name='%s' LIMIT 1",
                        $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'], $dbSocket->escapeSimple($batch_name));
         $res = $dbSocket->query($sql);
         $numrows = $res->numRows();
@@ -128,6 +140,8 @@
                              $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
                              $configValues['CONFIG_DB_TBL_RADACCT'],
                              $dbSocket->escapeSimple($batch_name));
+
+
 
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
@@ -163,7 +177,7 @@
         // closes table header, opens table body
         print_table_middle();
 
-        // table content
+        // table1 content
         $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
@@ -223,18 +237,26 @@
         $_SESSION['reportQuery'] = "";
         $_SESSION['reportType'] = "reportsBatchActiveUsers";
 
-        //orig: used as method to get total rows - this is required for the pages_numbering.php page
-        $sql = "SELECT ubi.id, ubi.username, ra.acctstarttime, bh.batch_name
-                  FROM %s AS ubi, %s AS ra, %s AS bh
-                 WHERE ubi.batch_id=bh.id
-                   AND ubi.batch_id=%s
-                   AND ubi.username=ra.username
-                 GROUP BY ubi.username";
+        // the partial query is built starting from user input
+        // and for being passed to setupNumbering and setupLinks functions
+        $partial_query_params = array( sprintf('batch_name=%s', urlencode($batch_name_enc)) );
+
+        $sql_WHERE = array( "ubi.batch_id=bh.id" );
+        $sql_WHERE[] = sprintf("ubi.batch_id=%d", $batch_id);
+        
+        if (!empty($username)) {
+            $sql_WHERE[] = sprintf("ubi.username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+            $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
+        }
+
+        $sql = "SELECT ubi.username, IFNULL(ra.acctstarttime, '0') AS status, MIN(ra.acctstarttime)
+                  FROM %s AS ubi LEFT JOIN %s AS ra ON ubi.username=ra.username, %s AS bh 
+                 WHERE %s GROUP BY ubi.username";
 
         $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
                              $configValues['CONFIG_DB_TBL_RADACCT'],
                              $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
-                             $batch_id);
+                             implode(" AND ", $sql_WHERE));
 
         // assigning the session reportQuery
         $_SESSION['reportQuery'] = $sql;
@@ -243,7 +265,53 @@
         $numrows = $res->numRows();
         $logDebugSQL .= "$sql;\n";
 
+        echo "<h4>Users in this batch</h4>";
+        
+        $form0_descriptor = array( "method" => "GET", "name" => "form_" . rand(), );
+        open_form($form0_descriptor);
+        
+        $input_descriptors0 = array();
+
+        $input_descriptors0[] = array(
+                                        "type" => "hidden",
+                                        "name" => "orderBy",
+                                        "value" => $orderBy,
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "type" => "hidden",
+                                        "name" => "orderType",
+                                        "value" => $orderType,
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        "type" => "hidden",
+                                        "name" => "batch_name",
+                                        "value" => $batch_name,
+                                     );
+                                     
+        $input_descriptors0[] = array(
+                                        "type" => "text",
+                                        "name" => "username",
+                                        "value" => $username,
+                                        "caption" => t('button','SearchUsers'),
+                                     );
+        
+        $input_descriptors0[] = array(
+                                        "type" => "submit",
+                                        "value" => t('button','SearchUsers'),
+                                        "icon" => "search",
+                                        "name" => "button_" . rand(),
+                                     );
+        
+        foreach ($input_descriptors0 as $input_descriptor) {
+            print_form_component($input_descriptor);
+        }
+        
+        close_form();
+
         if ($numrows > 0) {
+            
             /* START - Related to pages_numbering.php */
 
             // when $numrows is set, $maxPage is calculated inside this include file
@@ -262,35 +330,70 @@
 
             $per_page_numrows = $res->numRows();
 
+            // the partial query is built starting from user input
+            // and for being passed to setupNumbering and setupLinks functions
+            $partial_query_string = ((count($partial_query_params) > 0) ? "&" . implode("&", $partial_query_params)  : "");
+
+            // this can be passed as form attribute and
+            // printTableFormControls function parameter
+            $action = "mng-del.php";
+            $form_name = "form_" . rand();
+
+            // we prepare the "controls bar" (aka the table prologue bar)
+            $additional_controls = array();
+            $additional_controls[] = array(
+                                    'onclick' => sprintf("removeCheckbox('%s','mng-del.php')", $form_name),
+                                    'label' => 'Delete',
+                                    'class' => 'btn-danger',
+                                  );
+
+            $additional_controls[] = array(
+                                    'onclick' => sprintf("disableCheckbox('%s','library/ajax/user_actions.php')", $form_name),
+                                    'label' => 'Disable',
+                                    'class' => 'btn-primary',
+                                  );
+            $additional_controls[] = array(
+                                    'onclick' => sprintf("enableCheckbox('%s','library/ajax/user_actions.php')", $form_name),
+                                    'label' => 'Enable',
+                                    'class' => 'btn-secondary',
+                                  );
+
+            $descriptors = array();
+
+            $descriptors['start'] = array( 'common_controls' => 'username[]', 'additional_controls' => $additional_controls );
+
             $params = array(
                                 'num_rows' => $numrows,
                                 'rows_per_page' => $rowsPerPage,
                                 'page_num' => $pageNum,
                                 'order_by' => $orderBy,
                                 'order_type' => $orderType,
+                                'partial_query_string' => $partial_query_string
                             );
             $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
-
-            $additional_controls[] = array(
+            
+            $descriptors['end'] = array();
+            $descriptors['end'][] = array(
                                             'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
                                             'label' => 'Active Users CSV Export',
                                             'class' => 'btn-light',
                                          );
 
-            $descriptors = array( 'end' => $additional_controls );
-
             print_table_prologue($descriptors);
+
+            $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => $form_name ), );
 
             // print table top
             print_table_top($form_descriptor);
 
-            // second line of table header
-            printTableHead($cols, $orderBy, $orderType);
+            // second line of table2 header
+            printTableHead($cols2, $orderBy, $orderType, $partial_query_string);
 
             // closes table header, opens table body
             print_table_middle();
 
-            // table content
+            // table2 content
+            $count = 0;
             while ($row = $res->fetchRow()) {
                 $rowlen = count($row);
 
@@ -299,18 +402,68 @@
                     $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
                 }
 
-                echo "<tr>";
-                // simply print row elements
-                for ($i = 1; $i < $rowlen; $i++) {
-                    echo "<td>" . $row[$i] . "</td>";
+                list($username, $active, $starttime) = $row;
+                $badge = ($active !== '0') ? "success" : "danger";
+                if (empty($starttime)) {
+                    $starttime = "(n/a)";
                 }
-                echo "</tr>";
+                
+                $status = sprintf('<span class="badge bg-%s ms-1">%s</span>', $badge, (($active !== '0') ? "yes" : "no"));
+                
+                // check if user is disabled
+                $disabled = in_array('daloRADIUS-Disabled-Users',
+                                     get_user_group_mappings($dbSocket, $username));
+                
+                $img_format = '<i class="bi bi-%s-circle-fill text-%s me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="%s"></i>';
+
+                $img = ($disabled)
+                     ? sprintf($img_format, 'dash', 'danger', 'disabled')
+                     : sprintf($img_format, 'check', 'success', 'enabled');
+                
+                $ajax_id = "divContainerUserInfo_" . $count;
+                $param = sprintf('username=%s', urlencode($username));
+                $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
+                $tooltip = array(
+                                    'subject' => $img . $username,
+                                    'onclick' => $onclick,
+                                    'ajax_id' => $ajax_id,
+                                    'actions' => array(),
+                                );
+                $tooltip['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+                if ($active !== '0') {
+                    $tooltip['actions'][] = array( 'href' => sprintf('acct-username.php?username=%s', urlencode($username), ), 'label' => t('all','Accounting'), );
+                }
+                
+                // create tooltip
+                $tooltip = get_tooltip_list_str($tooltip);
+                
+                // create checkbox
+                $d = array( 'name' => 'username[]', 'value' => $username );
+                $checkbox = get_checkbox_str($d);
+                
+                $table_row = array( $checkbox, $tooltip, $status, $starttime );
+
+                // print table row
+                print_table_row($table_row);
+                
+                $count++;
             }
+
+            // close tbody,
+            // print tfoot
+            // and close table + form (if any)
+            $table_foot = array(
+                                    'num_rows' => $numrows,
+                                    'rows_per_page' => $per_page_numrows,
+                                    'colspan' => $colspan2,
+                                    'multiple_pages' => $drawNumberLinks
+                               );
+            $descriptor = array( 'form' => $form_descriptor, 'table_foot' => $table_foot );
 
             print_table_bottom($descriptor);
 
             // get and print "links"
-            $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+            $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
             printLinks($links, $drawNumberLinks);
 
         } else {

@@ -1,90 +1,109 @@
 <?php
-/*********************************************************************
-* Name: userinfo.php
-* Author: Liran tal <liran.tal@gmail.com>
-* 
-* This file extends the user management pages (new user, batch add
-* users, edit user, quick add user and possibly others) by adding
-* a section for user information
-*
-*********************************************************************/
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Description:    This file extends the user management pages
+ *                 (new user, batch addusers, edit user, quick add user and possibly others)
+ *                 by adding a section for user information
+ * 
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 
-echo "
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/include/management/userinfo.php') !== false) {
+    header("Location: ../../index.php");
+    exit;
+}
 
-<fieldset>
-	
-	<h302> Contact Info </h302>
-	<br/>
+$_input_descriptors0 = array();
+$_input_descriptors0[] = array(
+                                'id' => 'firstname',
+                                'name' => 'firstname',
+                                'caption' => t('ContactInfo','FirstName'),
+                                'type' => 'text',
+                                'value' => ((isset($ui_firstname)) ? $ui_firstname : ''),
+                            );
 
-	<h301> Personal </h301>
-	<br/>
+$_input_descriptors0[] = array(
+                                'id' => 'lastname',
+                                'name' => 'lastname',
+                                'caption' => t('ContactInfo','LastName'),
+                                'type' => 'text',
+                                'value' => ((isset($ui_lastname)) ? $ui_lastname : ''),
+                            );
 
-	<label for='username' class='form'>".t('ContactInfo','FirstName')."</label>
-        <input value='"; if (isset($ui_firstname)) echo $ui_firstname; echo "' name='firstname' tabindex=300 />
-	<br/>
-	
-	<label for='lastname' class='form'>".t('ContactInfo','LastName')."</label>
-        <input value='"; if (isset($ui_lastname)) echo $ui_lastname; echo "' name='lastname' tabindex=301 />
-	<br/>
+$_input_descriptors0[] = array(
+                                'id' => 'email',
+                                'name' => 'email',
+                                'caption' => t('ContactInfo','Email'),
+                                'type' => 'email',
+                                'value' => ((isset($ui_email)) ? $ui_email : ''),
+                            );
+                            
+$_input_descriptors1 = array();
+$_input_descriptors1[] = array( 'id' => 'department', 'caption' => t('ContactInfo','Department'), 'type' => 'text',
+                               'value' => ((isset($ui_department)) ? $ui_department : ''), 'name' => 'department' );
+$_input_descriptors1[] = array( 'id' => 'company', 'caption' => t('ContactInfo','Company'), 'type' => 'text',
+                               'value' => ((isset($ui_company)) ? $ui_company : ''), 'name' => 'company' );
+$_input_descriptors1[] = array( 'id' => 'workphone', 'caption' => t('ContactInfo','WorkPhone'), 'type' => 'text',
+                               'value' => ((isset($ui_workphone)) ? $ui_workphone : ''), 'name' => 'workphone' );
+$_input_descriptors1[] = array( 'id' => 'homephone', 'caption' => t('ContactInfo','HomePhone'), 'type' => 'text',
+                               'value' => ((isset($ui_homephone)) ? $ui_homephone : ''), 'name' => 'homephone' );
+$_input_descriptors1[] = array( 'id' => 'mobilephone', 'caption' => t('ContactInfo','MobilePhone'), 'type' => 'text',
+                               'value' => ((isset($ui_mobilephone)) ? $ui_mobilephone : ''), 'name' => 'mobilephone' );
+$_input_descriptors1[] = array( 'id' => 'address', 'caption' => t('ContactInfo','Address'), 'type' => 'text',
+                               'value' => ((isset($ui_address)) ? $ui_address : ''), 'name' => 'address' );
+$_input_descriptors1[] = array( 'id' => 'city', 'caption' => t('ContactInfo','City'), 'type' => 'text',
+                               'value' => ((isset($ui_city)) ? $ui_city : ''), 'name' => 'city' );
+$_input_descriptors1[] = array( 'id' => 'state', 'caption' => t('ContactInfo','State'), 'type' => 'text',
+                               'value' => ((isset($ui_state)) ? $ui_state : ''), 'name' => 'state' );
+$_input_descriptors1[] = array( 'id' => 'country', 'caption' => t('ContactInfo','Country'), 'type' => 'text',
+                               'value' => ((isset($ui_country)) ? $ui_country : ''), 'name' => 'country' );
+$_input_descriptors1[] = array( 'id' => 'zip', 'caption' => t('ContactInfo','Zip'), 'type' => 'text',
+                               'value' => ((isset($ui_zip)) ? $ui_zip : ''), 'name' => 'zip' );
 
-	<label for='email' class='form'>".t('ContactInfo','Email')."</label>
-        <input value='"; if (isset($ui_email)) echo $ui_email; echo "' name='email' tabindex=302 />
-        <br/>
+// fieldset
+$_fieldset0_descriptor = array(
+                                "title" => t('title','ContactInfo'),
+                              );
+                              
+open_fieldset($_fieldset0_descriptor);
 
-	<br/>
-	<h301> Business </h301>
-	<br/>
+foreach ($_input_descriptors0 as $input_descriptor) {
+    print_form_component($input_descriptor);
+}
 
-	<label for='department' class='form'>".t('ContactInfo','Department')."</label>
-        <input value='"; if (isset($ui_department)) echo $ui_department; echo "' name='department' tabindex=303 />
-        <br/>
+close_fieldset();
 
-	<label for='company' class='form'>".t('ContactInfo','Company')."</label>
-	<input value='"; if (isset($ui_company)) echo $ui_company; echo "' name='company' tabindex=304 />
-        <br/>
+unset($_input_descriptors0);
 
-	<label for='workphone' class='form'>".t('ContactInfo','WorkPhone')."</label>
-	<input value='"; if (isset($ui_workphone)) echo $ui_workphone; echo "' name='workphone' tabindex=305 />
-        <br/>
+// fieldset
+$_fieldset1_descriptor = array(
+                                "title" => "Business Info",
+                              );
 
-	<label for='homephone' class='form'>".t('ContactInfo','HomePhone')."</label>
-	<input value='"; if (isset($ui_homephone)) echo $ui_homephone; echo "' name='homephone' tabindex=306 />
-        <br/>
+open_fieldset($_fieldset1_descriptor);
 
-	<label for='mobilephone' class='form'>".t('ContactInfo','MobilePhone')."</label>
-	<input value='"; if (isset($ui_mobilephone)) echo $ui_mobilephone; echo "' name='mobilephone' tabindex=307 />
-        <br/>
+foreach ($_input_descriptors1 as $input_descriptor) {
+    print_form_component($input_descriptor);
+}
 
-        <label for='address' class='form'>".t('ContactInfo','Address')."</label>
-        <input value='"; if (isset($ui_address)) echo $ui_address; echo "' name='address' tabindex=308 />
-        <br/>
+close_fieldset();
 
-        <label for='city' class='form'>".t('ContactInfo','City')."</label>
-        <input value='"; if (isset($ui_city)) echo $ui_city; echo "' name='city' tabindex=309 />
-        <br/>
-
-        <label for='state' class='form'>".t('ContactInfo','State')."</label>
-        <input value='"; if (isset($ui_state)) echo $ui_state; echo "' name='state' tabindex=310 />
-        <br/>
-
-        <label for='country' class='form'>".t('ContactInfo','Country')."</label>
-        <input value='"; if (isset($ui_country)) echo $ui_country; echo "' name='country' tabindex=310 />
-        <br/>
-        
-        <label for='zip' class='form'>".t('ContactInfo','Zip')."</label>
-        <input value='"; if (isset($ui_zip)) echo $ui_zip; echo "' name='zip' tabindex=311 />
-        <br/>
-
-
-	<br/>
-	<hr><br/>
-
-	<input type='submit' name='submit' value=".t('buttons','apply')." class='button' />
-
-</fieldset>
-
-";
-
-
-
-?>
+unset($_input_descriptors1);

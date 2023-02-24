@@ -21,85 +21,84 @@
  */
 
     include ("library/checklogin.php");
-    $login = $_SESSION['login_user'];
+    $login_user = $_SESSION['login_user'];
 	
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "username";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
+    include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    include("library/layout.php");
 
-	$username = $login;
-	$type = $_REQUEST['type'];
+    // validate (or pre-validate) parameters
+    $goto_stats = (array_key_exists('goto_stats', $_GET) && isset($_GET['goto_stats']));
 
-	//feed the sidebar variables
-	$overall_download_username = $username;
+    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+             in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+          ? strtolower($_GET['type']) : "daily";
 
-	include_once('library/config_read.php');
+    $size = (array_key_exists('size', $_GET) && isset($_GET['size']) &&
+             in_array(strtolower($_GET['size']), array( "gigabytes", "megabytes" )))
+          ? strtolower($_GET['size']) : "megabytes";
+
+    $username = $login_user;
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+
+    // init logging variables
     $log = "visited page: ";
-    $logQuery = "performed query for user [$username] of type [$type] on page: ";
-
-?>
-
-
-<?php
-        include_once ("library/tabber/tab-layout.php");
-?>
+    if (!empty($username)) {
+        $logQuery = "performed query for user [$username] of type [$type] on page: ";
+    }
 
 
-<?php
-	include ("menu-graphs.php");	
-?>
-		
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','graphsoveralldownload.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
+    // print HTML prologue
+    $title = t('Intro','graphsoveralldownload.php');
+    $help = t('helpPage','graphsoveralldownload');
 
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','graphsoveralldownload') ?>
-			<br/>
-		</div>
-		<br/>
+    print_html_prologue($title, $langCode);
 
-<div class="tabber">
+    print_title_and_help($title, $help);
 
-     <div class="tabbertab" title="Graph">
-        <br/>
+    // set navbar stuff
+    $navkeys = array(
+                        array( 'Graphs', t('menu', 'Graphs') ),
+                        array( 'Statistics', t('all', 'Statistics') ),
+                    );
 
-<?php
-    echo "<center>";
-    echo "<img src=\"library/graphs-overall-users-download.php?type=$type&user=$username\" />";
-    echo "</center>";
-?>
+    // print navbar controls
+    print_tab_header($navkeys);
 
-     </div>
-     <div class="tabbertab" title="Statistics">
-        <br/>
-<?php
-    include 'library/tables-overall-users-download.php';
-?>
-	</div>
-</div>		
+    // open tab wrapper
+    open_tab_wrapper();
 
+    // tab 0
+    open_tab($navkeys, 0, true);
 
-<?php
-	include('include/config/logging.php');
-?>
+    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
+    $src = sprintf("library/graphs/overall_users_data.php?category=download&type=%s&size=%s", $type, $size);
+    $alt = sprintf("traffic downloaded by user %s", $username_enc);
+    printf($img_format, $src, $alt);
+    
+    close_tab($navkeys, 0);
+	
+    // tab 1
+    open_tab($navkeys, 1);
 
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
+    echo '<div class="my-3 text-center">';
+    include('library/tables/overall_users_download.php');
+    echo '</div>';
 
-		
-		</div>
-		
-</div>
-</div>
+    close_tab($navkeys, 1);
 
+    $inline_extra_js = "";
+    if ($goto_stats) {
+        $button_id = sprintf("%s-button", strtolower($navkeys[1][0]));
+        $inline_extra_js = <<<EOF
 
-</body>
-</html>
+window.addEventListener('load', function() {
+    document.getElementById('{$button_id}').click();
+});
+
+EOF;
+    }
+ 
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue($inline_extra_js);

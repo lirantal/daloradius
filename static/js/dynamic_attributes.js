@@ -12,7 +12,7 @@ function getVendorsList(sel) {
 	ajax[index] = new sack();
 
     // Specifying which file to get
-    ajax[index].requestFile = 'include/management/dynamic_attributes.php?getVendorsList=yes';
+    ajax[index].requestFile = 'library/ajax/attributes.php?getVendorsList=yes';
 
     // Specify function that will be executed after file has been processed
     ajax[index].onCompletion = function(){ createVendors(index,sel) };
@@ -42,7 +42,7 @@ function getAttributesList(sel, attributesSel) {
         ajax[index] = new sack();
 
         // Specifying which file to get
-        ajax[index].requestFile = `include/management/dynamic_attributes.php?vendorAttributes=${vendorName}`;
+        ajax[index].requestFile = `library/ajax/attributes.php?vendorAttributes=${vendorName}`;
 
         // Specify function that will be executed after file has bee$
         ajax[index].onCompletion = function(){ createAttributes(index,attributesSel) };
@@ -92,7 +92,7 @@ function getValuesList(sel, valuesSel, opSel, tableSel, attrTooltip, attrType, a
         ajax[index] = new sack();
         
         // Specifying which file to get
-        ajax[index].requestFile = `include/management/dynamic_attributes.php?getValuesForAttribute=${attributeName}&instanceNum=${num}&dictValueId=${valuesSel}`;    
+        ajax[index].requestFile = `library/ajax/attributes.php?getValuesForAttribute=${attributeName}&instanceNum=${num}&dictValueId=${valuesSel}`;    
         
         // Specify function that will be executed after file has been found
         ajax[index].onCompletion = function(){ createValues(index,valuesSel,opSel,tableSel,attrTooltip,attrType,attrHelper) };   

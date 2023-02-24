@@ -367,7 +367,7 @@ function disableCheckbox(formName,pageDst) {
 
         if (confirm("You are about to disable " + count + " users\nDo you want to continue?"))  {
 
-        ajaxGeneric("include/management/userOperations.php","userDisable","returnMessages",strUsernames);
+        ajaxGeneric("library/ajax/user_actions.php","userDisable","returnMessages",strUsernames);
 
         return true;
 
@@ -414,7 +414,7 @@ function enableCheckbox(formName,pageDst) {
 
         if (confirm("You are about to enable " + count + " users\nDo you want to continue?"))  {
 
-        ajaxGeneric("include/management/userOperations.php","userEnable","returnMessages",strUsernames);
+        ajaxGeneric("library/ajax/user_actions.php","userEnable","returnMessages",strUsernames);
 
         return true;
 
@@ -495,7 +495,7 @@ function refillSessionTimeCheckbox(formName,pageDst) {
 
         if (confirm("You are about to refill session time for a total of " + count + " users\nDo you want to continue?\n\nSuch action will also bill the user!"))  {
 
-        ajaxGeneric("include/management/userOperations.php","refillSessionTime","returnMessages",strUsernames);
+        ajaxGeneric("library/ajax/user_actions.php","refillSessionTime","returnMessages",strUsernames);
 
         return true;
 
@@ -522,21 +522,19 @@ function refillSessionTimeCheckbox(formName,pageDst) {
  *
  ***********************************************************************/
 function refillSessionTrafficCheckbox(formName,pageDst) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
+    var count = 0;
+    var form = document.getElementsByTagName('input');
     var values = "";
 
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox' && e.checked) {
+    for (var i=0; i < form.length; ++i) {
+        var e = form[i];
+        if (e.type == 'checkbox' && e.checked) {
             values += "username[]=" + e.value + "&";
-                    ++count;
+            ++count;
         }
-        }
+    }
 
     var strUsernames = values.substr(0,values.length-1);
-
 
     // if no items were checked there's no reason to submit the form
     if (count == 0) {
@@ -544,16 +542,16 @@ function refillSessionTrafficCheckbox(formName,pageDst) {
         return;
     }
 
+    var message = "You are about to refill session traffic fora total of " + count + " users\n"
+                + "Do you want to continue?\n\n"
+                + "Such action will also bill the user!";
 
-        if (confirm("You are about to refill session traffic fora total of " + count + " users\nDo you want to continue?\n\nSuch action will also bill the user!"))  {
-
-        ajaxGeneric("include/management/userOperations.php","refillSessionTraffic","returnMessages",strUsernames);
-
+    if (confirm(message))  {
+        ajaxGeneric("library/ajax/user_actions.php", "refillSessionTraffic", "returnMessages", strUsernames);
         return true;
+    }
 
-        }
-
-        return false;
+    return false;
 }
 
 

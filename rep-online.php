@@ -264,7 +264,7 @@
 
             $ajax_id = "divContainerUserInfo_" . $count;
             $param = sprintf('username=%s', urlencode($this_username));
-            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
             $tooltip2 = array(
                                 'subject' => $this_username,
                                 'onclick' => $onclick,

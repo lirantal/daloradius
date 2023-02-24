@@ -21,85 +21,85 @@
  */
 
     include ("library/checklogin.php");
-    $login = $_SESSION['login_user'];
-
-	//setting values for the order by and order type variables
-	isset($_REQUEST['orderBy']) ? $orderBy = $_REQUEST['orderBy'] : $orderBy = "username";
-	isset($_REQUEST['orderType']) ? $orderType = $_REQUEST['orderType'] : $orderType = "asc";
-
-	$username = $login;
-	$type = $_REQUEST['type'];
-
-	//feed the sidebar variables
-	$overall_upload_username = $username;
+    $login_user = $_SESSION['login_user'];
 
 	include_once('library/config_read.php');
+    
+    include_once("lang/main.php");
+    include("library/layout.php");
+
+    // validate (or pre-validate) parameters
+    $goto_stats = (array_key_exists('goto_stats', $_GET) && isset($_GET['goto_stats']));
+
+    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+             in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
+          ? strtolower($_GET['type']) : "daily";
+
+    $size = (array_key_exists('size', $_GET) && isset($_GET['size']) &&
+             in_array(strtolower($_GET['size']), array( "gigabytes", "megabytes" )))
+          ? strtolower($_GET['size']) : "megabytes";
+
+    $username = $login_user;
+    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+
+    // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query for user [$username] of type [$type] on page: ";
+    
+    
+    // print HTML prologue
+    $title = t('Intro','graphsoverallupload.php');
+    $help = t('helpPage','graphsoverallupload');
 
+    print_html_prologue($title, $langCode);
 
-?>
+    print_title_and_help($title, $help);
 
-<?php
-        include_once ("library/tabber/tab-layout.php");
-?>
+    // set navbar stuff
+    $navkeys = array(
+                        array( 'Graphs', t('menu', 'Graphs') ),
+                        array( 'Statistics', t('all', 'Statistics') ),
+                    );
 
-<?php
-	
-	include ("menu-graphs.php");
-	
-?>		
-		
-		
-		<div id="contentnorightbar">
-		
-		<h2 id="Intro"><a href="#" onclick="javascript:toggleShowDiv('helpPage')"><?php echo t('Intro','graphsoverallupload.php'); ?>
-		<h144>&#x2754;</h144></a></h2>
+    // print navbar controls
+    print_tab_header($navkeys);
 
-		<div id="helpPage" style="display:none;visibility:visible" >
-			<?php echo t('helpPage','graphsoverallupload') ?>
-			<br/>
-		</div>
-		<br/>
+    // open tab wrapper
+    open_tab_wrapper();
 
-<div class="tabber">
+    // tab 0
+    open_tab($navkeys, 0, true);
 
-     <div class="tabbertab" title="Graph">
-        <br/>
+    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
+    $src = sprintf("library/graphs/overall_users_data.php?category=upload&type=%s&size=%s", $type, $size);
+    $alt = sprintf("traffic uploaded by user %s", $username_enc);
+    printf($img_format, $src, $alt);
+        
+    close_tab($navkeys, 0);
 
-<?php
-    echo "<center>";
-    echo "<img src=\"library/graphs-overall-users-upload.php?type=$type&user=$username\" />";
-    echo "</center>";
-?>
-	</div>
-     <div class="tabbertab" title="Statistics">
-	<br/>
-<?php
-    include 'library/tables-overall-users-upload.php';
-?>
-	</div>
-</div>
+    // tab 1
+    open_tab($navkeys, 1);
 
+    echo '<div class="my-3 text-center">';
+    include('library/tables/overall_users_upload.php');
+    echo '</div>';
 
-<?php
-	include('include/config/logging.php');
-?>
+    close_tab($navkeys, 1);
 
-		</div>
-		
-		<div id="footer">
-		
-								<?php
-        include 'page-footer.php';
-?>
+    // close tab wrapper
+    close_tab_wrapper();
 
-		
-		</div>
-		
-</div>
-</div>
+    $inline_extra_js = "";
+    if ($goto_stats) {
+        $button_id = sprintf("%s-button", strtolower($navkeys[1][0]));
+        $inline_extra_js = <<<EOF
 
+window.addEventListener('load', function() {
+    document.getElementById('{$button_id}').click();
+});
 
-</body>
-</html>
+EOF;
+    }
+    
+    include('include/config/logging.php');
+    print_footer_and_html_epilogue($inline_extra_js);

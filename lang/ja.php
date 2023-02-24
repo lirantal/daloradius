@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 
+ *
  * Description:    Japanese language file
  *
  * Authors:        Liran Tal <liran@enginx.com>
@@ -33,7 +33,7 @@ $l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VER
 $l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
 $l['all']['copyright1'] = 'RADIUS は <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>'
                         . 'によって管理、レポート、アカウンティング、課金されています。';
-$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-2022 by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y') . ' by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
                         . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.';
 
 $l['all']['ID'] = "ID";
@@ -1021,7 +1021,7 @@ $l['title']['Optional'] = "オプション";
 /* ********************************************************************************** */
 
 /* **********************************************************************************
-* Graphs 
+* Graphs
 * General graphing text
 ************************************************************************************/
 $l['graphs']['Day'] = "日";
@@ -1056,7 +1056,7 @@ $l['text']['LoginPlease'] = "ログインしてください";
 
 
 /* **********************************************************************************
-* Contact Info 
+* Contact Info
 * Related to all contact info text, user info, hotspot owner contact information etc
 ************************************************************************************/
 
@@ -1364,7 +1364,7 @@ $l['captions']['detailsofnewrate'] = "新しいレートの詳細を記入する
 $l['captions']['filldetailsofnewrate'] = "新しいレートエントリの詳細を記入してください";
 
 /************************************************************************************
-* Help Pages Info 
+* Help Pages Info
 * Each page has a header which is the Intro class, when clicking on the header
 * it will reveal/hide a helpPage div content which is a description of a specific
 * page, basically your expanded tool-tip.
@@ -1756,7 +1756,7 @@ $l['helpPage']['repmain'] = "
 <h200><b>オンラインユーザ</b></h200> - データベースのアカウンティングテーブルからオンラインであるとされた全てのユーザを一覧表示します。
 終了時間 (AcctStopTime) がセットされていないユーザであるかを確認することでオンライン判定されています。
 注意点は、NASが何らかの理由でアカウンティング停止パケットを送ることに失敗したときに、これらのユーザが古いセッションを持っていることが起こるということです。<br/>
-<h200><b>最終接続</b></h200> - ユーザログインの全ての Access-Accept と Access-Reject (成功と失敗) を一覧表示します<br/> 
+<h200><b>最終接続</b></h200> - ユーザログインの全ての Access-Accept と Access-Reject (成功と失敗) を一覧表示します<br/>
 これらはデータベースの postauth テーブルから引かれます。これらを実際にログ出力させるためには、postauth テーブルが FreeRADIUS の設定ファイルで定義されていなければなりません。<br/>
 <h200><b>トップユーザ</b></h200> - 上位N位までのユーザについて、帯域使用状況とセッション利用時間を一覧表示します<br/><br/>
 <b>レポートページの下位カテゴリ</b><br/>
@@ -1822,31 +1822,31 @@ $l['helpPage']['acctplans'] = "";
 
 $l['helpPage']['acctmain'] = "
 <b>アカウンティング概要</b><br/>
-<h200><b>ユーザアカウンティング</b></h200> - 
+<h200><b>ユーザアカウンティング</b></h200> -
 特定ユーザのデータベースの全てのセッションの全てのアカウンティング情報を表示します
 <br/>
-<h200><b>IPアカウンティング</b></h200> - 
+<h200><b>IPアカウンティング</b></h200> -
 特定IPアドレスからの全てのセッションの全てのアカウンティング情報を表示します
 <br/>
-<h200><b>NASアカウンティング</b></h200> - 
+<h200><b>NASアカウンティング</b></h200> -
 特定のNAS IPアドレスが使われた全てのセッションの全てのアカウンティング情報を表示します
 <br/>
-<h200><b>日付アカウンティング/b></h200> - 
+<h200><b>日付アカウンティング/b></h200> -
 与えられた2つの日付と指定されたユーザの全てのセッションの全てのアカウンティング情報を表示します
 <br/>
-<h200><b>全レコード</b></h200> - 
+<h200><b>全レコード</b></h200> -
 データベースの全てのセッションの全てのアカウンティング情報を表示します
 <br/>
-<h200><b>アクティブレコード</b></h200> - 
+<h200><b>アクティブレコード</b></h200> -
 Expiration属性またはMax-All-Session属性を持つユーザに関して、データベースのアクティブユーザと期限切れユーザを追跡するために役立つ情報を表示します
 <br/>
 
 <br/>
 <b>アカウンティングページの下位カテゴリ</b><br/>
-<h200><b>カスタム</b></h200> - 
+<h200><b>カスタム</b></h200> -
 データベースで動作する非常に柔軟性のあるカスタムクエリを提供します。
 <br/>
-<h200><b>ホットスポット</b></h200> - 
+<h200><b>ホットスポット</b></h200> -
 異なる管理されたホットスポット、比較、その他の役立つ情報を表示します。
 <br/>
 ";
@@ -1887,10 +1887,10 @@ $l['helpPage']['accthotspotcompare'] = "
 ";
 
 $l['helpPage']['accthotspot'] = "
-<h200><b>ホットスポットアカウンティング</b></h200> - 
+<h200><b>ホットスポットアカウンティング</b></h200> -
 特定ホットスポットからの全てのセッションの全てのアカウンティング情報を表示します。
 <br/>
-<h200><b>ホットスポット比較</b></h200> - 
+<h200><b>ホットスポット比較</b></h200> -
 データベースに登録されている全てのアクティブなホットスポットの間の比較のための基礎的なアカウンティング情報を表示します。
 差異を比較したグラフを表示します
 <br/>
@@ -1898,7 +1898,7 @@ $l['helpPage']['accthotspot'] = "
 // accounting custom queries section
 
 $l['helpPage']['acctcustom'] = "
-<h200><b>カスタム</b></h200> - 
+<h200><b>カスタム</b></h200> -
 データベースで動作する非常に柔軟性のあるカスタムクエリを提供します。<br/>
 左のサイドバーの設定を変更することでクエリを最大まで調節できます。<br/>
 <br/>
@@ -1917,12 +1917,12 @@ Contains を選択した場合、「*」文字のワイルドカードを入力�
 $l['helpPage']['acctcustomquery'] = "";
 
 $l['helpPage']['acctmaintenance'] = "
-<h200><b>古いセッションのクリア</b></h200> - 
+<h200><b>古いセッションのクリア</b></h200> -
 NASがユーザセッションにアカウンティングSTOP レコードを送信することができなかったとき、
 アカウンティングレコードに古いセッション開始が残り、ログインユーザレコードが虚偽の判定（偽陽性判定）
 をするため、古いセッションがときどき存在します。
 <br/>
-<h200><b>アカウンティングレコードの削除</b></h200> - 
+<h200><b>アカウンティングレコードの削除</b></h200> -
 データベースのアカウントレコードの削除。上位の管理者以外のユーザがこのページにアクセスできるように許可することはふさわしくないかもしれません
 <br/>
 ";
@@ -2009,4 +2009,35 @@ $l['menu']['Gis'] = "地理情報(G)";
 $l['menu']['Graphs'] = "グラフ(G)";
 $l['menu']['Config'] = "設定(C)";
 $l['menu']['Help'] = "ヘルプ(H)";
+
+// TODO translation needed.
+// once translated, delete these comment lines.
+$l['submenu']['General'] = "General";
+$l['submenu']['Reporting'] = "Reporting";
+$l['submenu']['Maintenance'] = "Maintenance";
+$l['submenu']['Operators'] = "Operators";
+$l['submenu']['Backup'] = "Backup";
+$l['submenu']['Logs'] = "Logs";
+$l['submenu']['Status'] = "Status";
+$l['submenu']['Batch Users'] = "Batch Users";
+$l['submenu']['Dashboard'] = "Dashboard";
+$l['submenu']['Users'] = "Users";
+$l['submenu']['Hotspots'] = "Hotspots";
+$l['submenu']['Nas'] = "Nas";
+$l['submenu']['User-Groups'] = "User-Groups";
+$l['submenu']['Profiles'] = "Profiles";
+$l['submenu']['HuntGroups'] = "HuntGroups";
+$l['submenu']['Attributes'] = "Attributes";
+$l['submenu']['Realm/Proxy'] = "Realm/Proxy";
+$l['submenu']['IP-Pool'] = "IP-Pool";
+$l['submenu']['POS'] = "POS";
+$l['submenu']['Plans'] = "Plans";
+$l['submenu']['Rates'] = "Rates";
+$l['submenu']['Merchant-Transactions'] = "Merchant-Transactions";
+$l['submenu']['Billing-History'] = "Billing-History";
+$l['submenu']['Invoices'] = "Invoices";
+$l['submenu']['Payments'] = "Payments";
+$l['submenu']['Custom'] = "Custom";
+$l['submenu']['Hotspot'] = "Hotspot";
+
 ?>

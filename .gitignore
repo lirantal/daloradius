@@ -4,3 +4,4 @@
 invoice_preview.html
 .DS_Store
 library/daloradius.conf.php
+daloradius-users/library/daloradius.conf.php

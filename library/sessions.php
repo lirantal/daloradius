@@ -63,7 +63,7 @@ function dalo_session_start() {
     ini_set('session.use_strict_mode', 1);
     
     // Change PHPSESSID for better security, remove this if set in php.ini
-    session_name('daloradius_sid');
+    session_name('daloradius_operator_sid');
 
     // Secure session_set_cookie_params
     session_set_cookie_params(0, '/', null, null, true);
@@ -92,8 +92,9 @@ function dalo_session_regenerate_id() {
         session_start();
     }
     
+    $id = 'daloRADIUS-operator';
     $session_id = (function_exists('session_create_id'))
-        ? session_create_id('daloRADIUS-') : uniqid('daloRADIUS-');
+        ? session_create_id($id) : uniqid($id);
     
     $_SESSION['time'] = time();
     

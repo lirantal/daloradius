@@ -180,7 +180,7 @@
             
             $ajax_id = "divContainerHotspotInfo_" . $count;
             $param = sprintf('hotspot=%s', urlencode($hotspot));
-            $onclick = "ajaxGeneric('include/management/retHotspotInfo.php','retHotspotGeneralStat','$ajax_id','$param')";
+            $onclick = "ajaxGeneric('library/ajax/hotspot_info.php','retHotspotGeneralStat','$ajax_id','$param')";
             $tooltip1 = array(
                                 'subject' => $hotspot,
                                 'onclick' => $onclick,
@@ -193,7 +193,7 @@
             
             $ajax_id = "divContainerUserInfo_" . $count;
             $param = sprintf('username=%s', urlencode($username));
-            $onclick = "ajaxGeneric('include/management/retUserInfo.php','retBandwidthInfo','$ajax_id','$param')";
+            $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
             $tooltip2 = array(
                                 'subject' => $username,
                                 'onclick' => $onclick,

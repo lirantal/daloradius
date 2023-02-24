@@ -14,11 +14,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * 
+ *
  * Description:    Spanish language file
  *
  * Authors:        Liran Tal <liran@enginx.com>
- *                 Irving Bermudez (bigchirv@gmail.com)
+ *                 Irving Bermudez <bigchirv@gmail.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
@@ -29,12 +29,12 @@ if (strpos($_SERVER['PHP_SELF'], '/lang/es_VE.php') !== false) {
     header("Location: ../index.php");
     exit;
 }
- 
+
 $l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
 $l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
 $l['all']['copyright1'] = 'Administraci&oacute;n RADIUS, Reportes, Conteo y Facturaci&oacute;n desarrollado por '
                         . '<a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
-$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-2022 by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y') . ' by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
                         . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.';
 
 $l['all']['ID'] = "ID";
@@ -579,8 +579,8 @@ $l['button']['RemoveOperator'] = "Eliminar operador";
 
 $l['button']['ProcessQuery'] = "Procesar consulta";
 
- 
- 
+
+
 /* ********************************************************************************** */
 
 
@@ -666,7 +666,7 @@ $l['text']['LoginPlease'] = "Por favor, acceda al sistema";
 
 
 /* **********************************************************************************
- * Contact Info 
+ * Contact Info
  * Related to all contact info text, user info, hotspot owner contact information etc
  ************************************************************************************/
 
@@ -885,7 +885,7 @@ $l['captions']['detailsofnewrate'] = "Ahora complete los detelles de la nueva ta
 $l['captions']['filldetailsofnewrate'] = "Complete los detelles de la nueva tarifa";
 
 /* **********************************************************************************
- * Help Pages Info 
+ * Help Pages Info
  * Each page has a header which is the Intro class, when clicking on the header
  * it will reveal/hide a helpPage div content which is a description of a specific
  * page, basically your expanded tool-tip.
@@ -1047,7 +1047,7 @@ default are not used, and the password encryption type in the database.<br/>
 <h200><b>Global Settings</b></h200> - Database Storage Engine<br/>
 <h200><b>Tables Settings</b></h200> - If not using the default FreeRADIUS schema you may change the names
 of the table names<br/>
-<h200><b>Advanced Settings</b></h200> - If you wish to store passwords for users in the database not in 
+<h200><b>Advanced Settings</b></h200> - If you wish to store passwords for users in the database not in
 plain text but rather have it encrypted somehow you may choose one of MD5 or Crypt<br/>
 ";
 $l['helpPage']['configlang'] = "
@@ -1166,7 +1166,7 @@ Other possible locations for the logfile may take place, if this is the case ple
 ";
 $l['helpPage']['repmain'] = "
 <b>General Reports</b><br/>
-<h200><b>Online Users</b></h200> - Provides a listing of all users which are 
+<h200><b>Online Users</b></h200> - Provides a listing of all users which are
 found to be online through the accounting table in the database. The check which is being performed is for users
 with no ending time (AcctStopTime) set. It is important to notice that these users may also be of stale sessions
 which happens when NASs for some reason fail to send the accounting-stop packets.<br/>
@@ -1183,7 +1183,7 @@ $l['helpPage']['repstatserver'] = "Provides general information about the FreeRA
 $l['helpPage']['repstatus'] = "<b>Status</b><br/>
 <h200><b>Server Status</b></h200> - Provides general information about the server itself: CPU Usage, Processes, Uptime, Memory usage, etc.<br/>
 <h200><b>RADIUS Status</b></h200> - Provides general information about the FreeRADIUS daemon and MySQL Database server";
-$l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session 
+$l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session
 time or bandwidth usage. Listing users of category: ";
 $l['helpPage']['repusername'] = "Records found for user:";
 $l['helpPage']['reponline'] = "
@@ -1207,7 +1207,7 @@ radius attributes";
 
 // accounting section
 $l['helpPage']['acctactive'] = "
-    Provides information that would prove useful for tracking Active or Expired users in the database 
+    Provides information that would prove useful for tracking Active or Expired users in the database
     in terms of users which have an Expiration attribute or a Max-All-Session attribute.
 <br/>
 ";
@@ -1225,32 +1225,32 @@ $l['helpPage']['acctipaddress'] = "
 ";
 $l['helpPage']['acctmain'] = "
 <b>General Accounting</b><br/>
-<h200><b>User Accounting</b></h200> - 
+<h200><b>User Accounting</b></h200> -
     Provides full accounting information for all sessions in the database for a particular user.
 <br/>
-<h200><b>IP Accounting</b></h200> - 
+<h200><b>IP Accounting</b></h200> -
     Provides full accounting information for all sessions that originated with a particular IP Address.
 <br/>
-<h200><b>NAS Accounting</b></h200> - 
+<h200><b>NAS Accounting</b></h200> -
     Provides full accounting information for all the sessions that the specific NAS IP address has handled.
 <br/>
-<h200><b>Date Accounting</b></h200> - 
+<h200><b>Date Accounting</b></h200> -
     Provides full accounting information for all sessions between the given 2 dates for a particular user.
 <br/>
-<h200><b>All Accounting Records</b></h200> - 
+<h200><b>All Accounting Records</b></h200> -
     Provides full accounting information for all sessions in the database.
 <br/>
-<h200><b>Active Records Accounting</b></h200> - 
-    Provides information that would prove useful for tracking Active or Expired users in the database 
+<h200><b>Active Records Accounting</b></h200> -
+    Provides information that would prove useful for tracking Active or Expired users in the database
     in terms of users which have an Expiration attribute or a Max-All-Session attribute.
 <br/>
 
 <br/>
 <b>Sub-Category Accounting</b><br/>
-<h200><b>Custom</b></h200> - 
+<h200><b>Custom</b></h200> -
     Provides the most flexible custom query to run on the database.
 <br/>
-<h200><b>Hotspots</b></h200> - 
+<h200><b>Hotspots</b></h200> -
     Provides information on the different managed hotspots, comparison, and other useful information.
 <br/>
 ";
@@ -1287,17 +1287,17 @@ $l['helpPage']['accthotspotcompare'] = "
 <br/>
 ";
 $l['helpPage']['accthotspot'] = "
-<h200><b>Hotspot Accounting</b></h200> - 
+<h200><b>Hotspot Accounting</b></h200> -
     Provides full accounting information for all sessions which originated from this specific Hotspot.
 <br/>
-<h200><b>Hotspot Comparison</b></h200> - 
+<h200><b>Hotspot Comparison</b></h200> -
     Provides basic accounting information for comparison between all the active hotspots found in the database.
     Provides a graph plot of different comparisons made.
 <br/>
 ";
 // accounting custom queries section
 $l['helpPage']['acctcustom'] = "
-<h200><b>Custom</b></h200> - 
+<h200><b>Custom</b></h200> -
     Provides the most flexible custom query to run on the database.<br/>
     You may adjust the query to it's max by modifying the settings in the left sidebar.<br/>
 <br/>
@@ -1317,12 +1317,12 @@ $l['helpPage']['acctcustom'] = "
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
-<h200><b>Cleanup stale-sessions</b></h200> - 
+<h200><b>Cleanup stale-sessions</b></h200> -
     Stale-sesions may often exist because the NAS was unable to provide an accounting STOP record for the <br/>
     user session, resulting in a stale open session in the accounting records which simulates a fake logged-in user
     record (false positive).
 <br/>
-<h200><b>Delete accounting records</b></h200> - 
+<h200><b>Delete accounting records</b></h200> -
     Deletion of accounting records in the database. It may not be wise to perform this or to allow other users
     except for a supervised administrator access to this page.
 <br/>
@@ -1339,7 +1339,7 @@ $l['helpPage']['giseditmap'] = "
     the hotspot's name and it's MAC address. These are 2 crucial details later used to identify this hotspot
     in the accounting table. Always provide the correct MAC Address!
 <br/><br/>
-    <b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the 
+    <b> Deleting Hotspot </b> - Simply click on a hotspot's icon and you confirm the deletion of it from the
     database.
 <br/>
 ";
@@ -1355,16 +1355,16 @@ $l['helpPage']['gismain'] = "
 <b> General Information </b>
 GIS Mapping provides visual mappings of the hotspot location across the world's map using Google Maps API. <br/>
 In the Management page you are able to add new hotspot entries to the database where there is also a field
-called Geolocation, this is the numeric value that the Google Maps API uses in order to pin-point the exact 
+called Geolocation, this is the numeric value that the Google Maps API uses in order to pin-point the exact
 location of that hotspot on the map.<br/><br/>
 
 <h200><b>2 Modes of Operation are provided:</b></h200>
-One is the <b>View MAP</b> mode which enables 'surfing' through the world map 
+One is the <b>View MAP</b> mode which enables 'surfing' through the world map
 and view the current locations of the hotspots in the database and another one - <b>Edit MAP</b> - which is the mode
-that one can use in order to create hotspot's visually by simply left-clicking on the map or removing 
+that one can use in order to create hotspot's visually by simply left-clicking on the map or removing
 existing hotspot entries by left-clicking on existing hotspot flags.<br/><br/>
 
-Another important issue is that each computer on the network requires a unique Registration code which you 
+Another important issue is that each computer on the network requires a unique Registration code which you
 can obtain from Google Maps API page by providing the complete web address to the hosted directory of
 daloRADIUS application on your server. Once you have obtained that code from Google, simply paste it in the
 Registration box and click the 'Register code' button to write it.
@@ -1419,4 +1419,35 @@ $l['menu']['Gis'] = "GIS";
 $l['menu']['Graphs'] = "Gr&aacute;ficos";
 $l['menu']['Config'] = "Configuraci&oacute;n";
 $l['menu']['Help'] = "Ayuda";
+
+// TODO translation needed.
+// once translated, delete these comment lines.
+$l['submenu']['General'] = "General";
+$l['submenu']['Reporting'] = "Reporting";
+$l['submenu']['Maintenance'] = "Maintenance";
+$l['submenu']['Operators'] = "Operators";
+$l['submenu']['Backup'] = "Backup";
+$l['submenu']['Logs'] = "Logs";
+$l['submenu']['Status'] = "Status";
+$l['submenu']['Batch Users'] = "Batch Users";
+$l['submenu']['Dashboard'] = "Dashboard";
+$l['submenu']['Users'] = "Users";
+$l['submenu']['Hotspots'] = "Hotspots";
+$l['submenu']['Nas'] = "Nas";
+$l['submenu']['User-Groups'] = "User-Groups";
+$l['submenu']['Profiles'] = "Profiles";
+$l['submenu']['HuntGroups'] = "HuntGroups";
+$l['submenu']['Attributes'] = "Attributes";
+$l['submenu']['Realm/Proxy'] = "Realm/Proxy";
+$l['submenu']['IP-Pool'] = "IP-Pool";
+$l['submenu']['POS'] = "POS";
+$l['submenu']['Plans'] = "Plans";
+$l['submenu']['Rates'] = "Rates";
+$l['submenu']['Merchant-Transactions'] = "Merchant-Transactions";
+$l['submenu']['Billing-History'] = "Billing-History";
+$l['submenu']['Invoices'] = "Invoices";
+$l['submenu']['Payments'] = "Payments";
+$l['submenu']['Custom'] = "Custom";
+$l['submenu']['Hotspot'] = "Hotspot";
+
 ?>
