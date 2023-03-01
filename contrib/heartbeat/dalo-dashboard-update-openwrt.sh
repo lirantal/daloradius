@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # daloRADIUS Heartbeat agent
-# @version 1.0
+# @version 1.1
 # @author Muhammed Al-Qadhy <witradius@gmail.com>
 
 #debbug oprions
@@ -17,8 +17,8 @@ DALO_HEARTBEAT_ADDR="http://daloradius.com/heartbeat.php"
 
 # This is Auto Set NAS MAC to the MAC address of LAN connected openwrt node
 # MAC address format, according to how the NAS sends this information. For example: 00-aa-bb or 00:aa:bb
-# Need a way to convert this output from 00:aa:bb to 00-aa-bb as chilli (NAS) sends the MAC in this format.
-NAS_MAC=`ifconfig br-lan | awk '/HWaddr/{print substr ($5,1)}'`
+# Extracting NAS MAC from uci chilli config.
+NAS_MAC=`uci get chilli.chilli1.radiusnasid |awk '/''/{print substr ($1,1)}'`
 
 # Set to a unique, hard-to-figure-out key across all of your NASes.
 # This key is saved in daloRADIUS's configuration and so should also
