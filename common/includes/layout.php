@@ -1243,10 +1243,20 @@ function menu_print_input_field($input_descriptor) {
         printf(' pattern="%s"', $input_descriptor['pattern']);
     }
 
-    if (array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist']) &&
-        !empty($input_descriptor['datalist'])) {
-        $datalist_id = sprintf("%s-%d-list", $input_descriptor['id'], rand());
-        printf(' list="%s"', $datalist_id);
+    $datalist = array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist']) && !empty($input_descriptor['datalist']);
+    $shared_datalist = array_key_exists('shared_datalist', $input_descriptor) && !empty($input_descriptor['shared_datalist']);
+
+    if ($datalist || $shared_datalist) {
+        if ($datalist) {
+            $seed_id = $input_descriptor['id'];
+        } else if ($shared_datalist) {
+            $seed_id = $input_descriptor['shared_datalist'];
+        }
+
+        if (isset($seed_id)) {
+            $datalist_id = sprintf("%s_list", $seed_id);
+            printf(' list="%s"', $datalist_id);
+        }
     }
 
     if (array_key_exists('tooltipText', $input_descriptor)) {
@@ -1266,6 +1276,7 @@ function menu_print_input_field($input_descriptor) {
         }
         echo '</datalist>';
     }
+
 
     echo '</div>';
 }
