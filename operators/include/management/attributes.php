@@ -160,7 +160,6 @@ $_input_descriptors2[] = array(
                                 "name" => "dictAttributesCustom",
                                 "caption" => "Custom Attribute",
                                 "type" => "text",
-                                "onclick" => "toggleAttributeCustom()",
                                 "datalist" => $attributes,
                               );
 
@@ -184,50 +183,6 @@ unset($_input_descriptors2);
 
 close_fieldset();
 
-//~ $_input_descriptors0[] = array(
-                                //~ "name" => "vendor_attribute_selection_type",
-                                //~ "caption" => "Select attribute from vendor/attribute list",
-                                //~ "type" => "radio",
-                                //~ "onclick" => "toggleAttributeSelectbox()",
-                                //~ "checked" => true
-                              //~ );
-
-//~ $_input_descriptors0[] = array(
-                                //~ "name" => "dictVendors0",
-                                //~ "caption" => "Vendor",
-                                //~ "type" => "select",
-                                //~ "onchange" => "getAttributesList(this,'dictAttributesDatabase')",
-                                //~ "options" => $vendors,
-                              //~ );
-
-//~ $_input_descriptors0[] = array(
-                                //~ "name" => "reloadAttributes",
-                                //~ "value" => "Reload Vendors",
-                                //~ "type" => "button",
-                                //~ "onclick" => "getVendorsList('dictVendors0')",
-                              //~ );
-
-//~ $_input_descriptors0[] = array(
-                                //~ "name" => "dictAttributesDatabase",
-                                //~ "caption" => "Attribute",
-                                //~ "type" => "select",
-                              //~ );
-
-
-
-//~ $_fieldset1_descriptor = array(
-                                //~ "title" => t('title','Attributes') . " (custom)",
-                             //~ );
-
-//~ $_input_descriptors1[] = array(
-                                //~ "name" => "vendor_attribute_selection_type",
-                                //~ "caption" => "Use autocomplete to select the attribute",
-                                //~ "type" => "radio",
-                                //~ "onclick" => "toggleAttributeCustom()"
-                              //~ );
-
-
-
 $_input_descriptors3 = array();
 
 $_input_descriptors3[] = array(
@@ -235,23 +190,6 @@ $_input_descriptors3[] = array(
                                 "value" => "0",
                                 "type" => "hidden",
                               );
-
-
-//~ open_fieldset($_fieldset0_descriptor);
-
-//~ foreach ($_input_descriptors0 as $input_descriptor) {
-    //~ print_form_component($input_descriptor);
-//~ }
-
-//~ close_fieldset();
-
-//~ open_fieldset($_fieldset1_descriptor);
-
-//~ foreach ($_input_descriptors1 as $input_descriptor) {
-    //~ print_form_component($input_descriptor);
-//~ }
-
-//~ close_fieldset();
 
 foreach ($_input_descriptors3 as $input_descriptor) {
     print_form_component($input_descriptor);
