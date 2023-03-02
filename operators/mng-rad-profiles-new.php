@@ -26,7 +26,7 @@
 
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
-    
+
     // init logging variables
     $logAction = "";
     $logDebugSQL = "";
@@ -37,29 +37,29 @@
     include("../common/includes/layout.php");
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
+
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-    
+
             $profile = (array_key_exists('profile', $_POST) && !empty(str_replace("%", "", trim($_POST['profile']))))
                      ? str_replace("%", "", trim($_POST['profile'])) : "";
             $profile_enc = (!empty($profile)) ? htmlspecialchars($profile, ENT_QUOTES, 'UTF-8') : "";
-        
+
             if (empty($profile)) {
                 // profile required
                 $failureMsg = "The specified profile name is empty or invalid";
                 $logAction .= "Failed creating profile [empty or invalid profile name] on page: ";
             } else {
-                
+
                 include_once('include/management/populate_selectbox.php');
                 $groups = array_keys(get_groups());
                 include('../common/includes/db_open.php');
-                
+
                 if (in_array($profile, $groups)) {
                     // invalid profile name
                     $failureMsg = "This profile name [<strong>$profile_enc</strong>] is already in use";
                     $logAction .= "Failed creating profile [$profile, name already in use] on page: ";
                 } else {
-        
+
                     include("library/attributes.php");
                     $skipList = array( "profile", "submit", "csrf_token" );
                     $count = handleAttributes($dbSocket, $profile, $skipList, true, 'group');
@@ -75,52 +75,44 @@
                     }
 
                 } // profile non-existent
-                
+
                 include('../common/includes/db_close.php');
-                
+
             } // profile name not empty
-        
+
         } else {
             // csrf
             $failureMsg = "CSRF token error";
             $logAction .= "$failureMsg on page: ";
         }
-        
+
     }
 
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
-    
+    $extra_css = array();
+
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/dynamic_attributes.js",
         "static/js/ajaxGeneric.js",
         "static/js/productive_funcs.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
-    
+
     $title = t('Intro','mngradprofilesnew.php');
     $help = t('helpPage','mngradprofilesnew');
-    
-    print_html_prologue($title, $langCode, $extra_css, $extra_js);
-    
-    
 
+    print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     print_title_and_help($title, $help);
-    
+
     include_once('include/management/actionMessages.php');
-    
+
     if (!isset($successMsg)) {
-    
+
         // set form component descriptors
         $input_descriptors0 = array();
-        
+
         $input_descriptors0[] = array(
                                         "name" => "profile",
                                         "caption" => "Profile Name",
@@ -141,31 +133,31 @@
                                         "name" => "submit",
                                         "value" => t('buttons','apply')
                                      );
-                                     
+
         open_form();
-        
+
         $fieldset0_descriptor = array( "title" => t('title','ProfileInfo') );
-        
+
         open_fieldset($fieldset0_descriptor);
-        
+
         foreach ($input_descriptors0 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         include_once('include/management/attributes.php');
-        
+
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_form();
 
     }
-    
+
     print_back_to_previous_page();
-    
+
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>

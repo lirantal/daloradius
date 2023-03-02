@@ -23,10 +23,10 @@
 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-    
+
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
-    
+
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
@@ -69,19 +69,19 @@
                                           $dbSocket->escapeSimple($current_groupname));
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
-    
+
     $old_mapping_inplace = intval($res->fetchrow()[0]) > 0;
-    
+
     if (!$old_mapping_inplace) {
         // if the mapping is not in place we reset user and group
         $username = "";
         $current_groupname = "";
     }
-    
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
+
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-    
+
             if (empty($username) || empty($groupname) || empty($current_groupname)) {
                 // username and groupname are required
                 $failureMsg = "Username and groupname are required.";
@@ -95,7 +95,7 @@
                 $logDebugSQL .= "$sql;\n";
 
                 $new_mapping_inplace = intval($res->fetchrow()[0]) > 0;
-                
+
                 if ($new_mapping_inplace) {
                     // error
                     $failureMsg = "The chosen user mapping ($username_enc - $groupname_enc) is already in place.";
@@ -107,7 +107,7 @@
                                    $dbSocket->escapeSimple($current_groupname));
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
-                    
+
                     if (!DB::isError($res)) {
                         $successMsg = "Updated user-group mapping [$username_enc, from $current_groupname_enc to $groupname_enc]";
                         $logAction .= "Updated user-group mapping [$username, from $current_groupname to $groupname]: ";
@@ -123,7 +123,7 @@
             $logAction .= "$failureMsg on page: ";
         }
     }
-    
+
     if (empty($username) || empty($current_groupname)) {
         $failureMsg = "the user-group you have specified is empty or invalid";
         $logAction .= "Failed updating user-group [empty or invalid user-group] on page: ";
@@ -134,50 +134,42 @@
                        $dbSocket->escapeSimple($current_groupname));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
-        
+
         list($this_username, $this_groupname, $this_priority) = $res->fetchRow();
     }
 
     include('../common/includes/db_close.php');
 
-    
+
     include_once("lang/main.php");
-    
+
     include("../common/includes/layout.php");
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
-    
+    $extra_css = array();
+
     $extra_js = array(
         "static/js/productive_funcs.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
-    
+
     $title = t('Intro','mngradusergroupedit');
     $help = t('helpPage','mngradusergroupedit');
-    
+
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
-    
+
     if (!empty($username_enc)) {
         $title .= " $username_enc";
     }
-    
-    
-    
 
     print_title_and_help($title, $help);
-    
+
     include_once('include/management/actionMessages.php');
-    
+
     if (!empty($username) && !empty($current_groupname)) {
         include_once('include/management/populate_selectbox.php');
 
         $input_descriptors0 = array();
-        
+
         $input_descriptors0[] = array(
                                         "name" => "username-presentation",
                                         "caption" => t('all','Username'),
@@ -192,7 +184,7 @@
                                         "type" => "hidden",
                                         "value" => $this_username,
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "groupname-presentation",
                                         "caption" => (t('all','Groupname') . " (current)"),
@@ -200,7 +192,7 @@
                                         "value" => $this_groupname,
                                         "disabled" => true,
                                      );
-                                     
+
         $input_descriptors0[] = array(
                                         "name" => "current_group",
                                         "type" => "hidden",
@@ -217,7 +209,7 @@
                                         "selected_value" => $this_groupname,
                                         "tooltipText" => t('Tooltip','groupTooltip')
                                      );
-                                     
+
         $input_descriptors0[] = array(
                                         "id" => "priority",
                                         "name" => "priority",
@@ -240,17 +232,17 @@
                                      );
 
         $fieldset0_descriptor = array( "title" => t('title','GroupInfo') );
-        
+
         open_form();
-        
+
         open_fieldset($fieldset0_descriptor);
-        
+
         foreach ($input_descriptors0 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         close_form();
 
     }
