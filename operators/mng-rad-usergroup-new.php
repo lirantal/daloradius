@@ -115,10 +115,10 @@
                                     "id" => "username",
                                     "name" => "username",
                                     "caption" => t('all','Username'),
-                                    "type" => "select",
-                                    "selected_value" => ((isset($failureMsg)) ? $username : ""),
+                                    "type" => "text",
+                                    "value" => ((isset($failureMsg)) ? $username : ""),
                                     "tooltipText" => t('Tooltip','usernameTooltip'),
-                                    "options" => $options,
+                                    "datalist" => $options,
                                  );
 
     $options = get_groups();

@@ -111,6 +111,12 @@
                     if (!DB::isError($res)) {
                         $successMsg = "Updated user-group mapping [$username_enc, from $current_groupname_enc to $groupname_enc]";
                         $logAction .= "Updated user-group mapping [$username, from $current_groupname to $groupname]: ";
+
+                        // reset variables
+                        $current_groupname = $groupname;
+                        $groupname = "";
+                        $groupname_enc = "";
+
                     } else {
                         $failureMsg = "DB Error when updating the chosen user mapping ($username_enc, from $current_groupname_enc to $groupname_enc)";
                         $logAction .= "Failed updating user-group mapping [$username, from $current_groupname to $groupname, db error]: ";
