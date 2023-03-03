@@ -34,44 +34,53 @@
     $logQuery = "performed query on page: ";
 
     $cronUser = shell_exec('whoami');
-    $valid_cmds = array( "enable" => "crontab is enabled", "disable" => "crontab is disabled" );
-    $failureMsg = "";
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+    $dalo_crontab_file = realpath(__DIR__ . '/../contrib/scripts/dalo-crontab');
+    $is_crontab_file_accessible = (file_exists($dalo_crontab_file) && is_readable($dalo_crontab_file));
 
-            // validating params
-            $cmd = (isset($_POST['cmd']) && !empty(trim($_POST['cmd'])) &&
-                    in_array(strtolower(trim($_POST['cmd'])), array_keys($valid_cmds)))
-                 ? strtolower(trim($_POST['cmd'])) : "";
+    if ($is_crontab_file_accessible) {
 
-            $dalo_crontab_file = dirname(__FILE__) . '/contrib/scripts/dalo-crontab';
+        $valid_cmds = array( "enable" => "crontab is enabled", "disable" => "crontab is disabled" );
+        $failureMsg = "";
 
-            $exec = "";
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
-            switch ($cmd) {
-                case "disable":
-                //~ $exec = sprintf("$(which crontab || command -v crontab) -u %s -r", escapeshellarg($cronUser));
-                $exec = '$(which crontab || command -v crontab) -r';
-                break;
+                // validating params
+                $cmd = (isset($_POST['cmd']) && !empty(trim($_POST['cmd'])) &&
+                        in_array(strtolower(trim($_POST['cmd'])), array_keys($valid_cmds)))
+                     ? strtolower(trim($_POST['cmd'])) : "";
 
-                case "enable":
-                //~ $exec = sprintf("$(which crontab || command -v crontab) -u %s %s", escapeshellarg($cronUser), $dalo_crontab_file);
-                $exec = sprintf('$(which crontab || command -v crontab) %s', $dalo_crontab_file);
-                break;
+                $exec = "";
+
+                switch ($cmd) {
+                    case "disable":
+                    $exec = '$(which crontab || command -v crontab) -r';
+                    break;
+
+                    case "enable":
+                    $exec = sprintf('$(which crontab || command -v crontab) %s', $dalo_crontab_file);
+                    break;
+                }
+
+                if (!empty($exec)) {
+                    exec($exec);
+                }
+
+            } else {
+                // csrf
+                $cmd = "";
+                $failureMsg = "CSRF token error";
+                $logAction .= "$failureMsg on page: ";
             }
-
-            if (!empty($exec)) {
-                exec($exec);
-            }
-
-        } else {
-            // csrf
-            $cmd = "";
-            $failureMsg = sprintf("CSRF token error");
-            $logAction .= sprintf("CSRF token error on page: ");
         }
+    } else {
+        $cmd = "";
+        $failureMsg = sprintf("Error. User <strong>%s</strong> is not able to access/locate the <strong>dalo-crontab</strong> file "
+                            . "in the subdirectory <strong>contrib/scripts</strong>", $cronUser);
+        $logAction .= sprintf("User %s is not able to access/locate dalo-crontab file on page: ", $cronUser);
     }
+
 
     // print HTML prologue
     $title = "CRON Status";
@@ -81,36 +90,39 @@
 
     print_title_and_help($title, $help);
 
-    $exec = '$(which crontab || command -v crontab) -l 2>&1';
-    exec($exec, $output, $retStatus);
+    if ($is_crontab_file_accessible) {
 
-    if ($retStatus !== 0) {
-        $cmd = "disable";
-        $valid_cmds["enable"] = "enable crontab";
+        $exec = '$(which crontab || command -v crontab) -l 2>&1';
+        exec($exec, $output, $retStatus);
 
-        if (!empty($failureMsg)) {
-            $failureMsg .= str_repeat("<br>", 2);
-        }
+        if ($retStatus !== 0) {
+            $cmd = "disable";
+            $valid_cmds["enable"] = "enable crontab";
 
-        $failureMsg .= sprintf('<strong>Error</strong>: crontab is not configured for <strong>%s</strong>', $cronUser);
+            if (!empty($failureMsg)) {
+                $failureMsg .= str_repeat("<br>", 2);
+            }
 
-        if (!empty($output)) {
-            $text = htmlspecialchars(trim($output[0]), ENT_QUOTES, 'UTF-8');
+            $failureMsg .= sprintf('<strong>Error</strong>: crontab is not configured for <strong>%s</strong>', $cronUser);
 
-            $failureMsg .= sprintf('<br><strong>Details</strong>: %s', $text)
-                        .  ((count($output) > 1) ?  "&hellip;" : ".");
-        }
+            if (!empty($output)) {
+                $text = htmlspecialchars(trim($output[0]), ENT_QUOTES, 'UTF-8');
 
-    } else {
-        $successMsg = sprintf('<strong>Success</strong>: crontab is configured for <strong>%s</strong>', $cronUser);
+                $failureMsg .= sprintf('<br><strong>Details</strong>: %s', $text)
+                            .  ((count($output) > 1) ?  "&hellip;" : ".");
+            }
 
-        $cmd = "enable";
-        $valid_cmds["disable"] = "disable crontab";
+        } else {
+            $successMsg = sprintf('<strong>Success</strong>: crontab is configured for <strong>%s</strong>', $cronUser);
 
-        $crontabContent = "";
+            $cmd = "enable";
+            $valid_cmds["disable"] = "disable crontab";
 
-        foreach($output as $i => $text) {
-            $crontabContent .= sprintf('<strong>%02d</strong>: %s' . "\n", $i+1, htmlspecialchars($text, ENT_QUOTES, 'UTF-8'));
+            $crontabContent = "";
+
+            foreach($output as $i => $text) {
+                $crontabContent .= sprintf('<strong>%02d</strong>: %s' . "\n", $i+1, htmlspecialchars($text, ENT_QUOTES, 'UTF-8'));
+            }
         }
     }
 
