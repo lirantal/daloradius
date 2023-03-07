@@ -60,11 +60,16 @@ if (count($menu_users) > 0) {
                             "sidebar" => true,
                           );
 
-    $components[0]['id'] = "id_" . rand();
+    $id1 = "id_" . rand();
+    $components[0]['id'] = $id1;
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUser'), 'action' => 'mng-edit.php', 'method' => 'GET',
                              'icon' => 'person-fill-gear', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
     
     $components[0]['id'] = "id_" . rand();
+    unset($components[0]["datalist"]);
+    // this means that this component should use the datalist
+    // that has been previously loaded by the component that has $id1 as its id
+    $components[0]['shared_datalist'] = $id1;
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SearchUsers'), 'action' => 'mng-search.php', 'method' => 'GET',
                              'icon' => 'search', 'img' => array( 'src' => 'static/images/icons/userSearch.gif', ), 'form_components' => $components, );
 

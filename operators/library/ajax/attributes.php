@@ -25,7 +25,7 @@
 
 include('../checklogin.php');
 include_once('../../lang/main.php');
-include_once('../validation.php');
+include_once('../../../common/includes/validation.php');
 
 //
 // functions
@@ -46,7 +46,6 @@ function populateOPs() {
     global $valid_ops;
     
     foreach ($valid_ops as $op) {
-        //~ $op = htmlspecialchars($op, ENT_QUOTES, 'UTF-8');
         printf("objOP.add(new Option('%s', '%s'));\n", $op, $op);
     }
 }
@@ -224,7 +223,6 @@ function drawKBitPerSecond($num) {
 function drawAuthType($num) {
     // setup options
     $options = array(
-                        //~ '' => 'Select...',
                         'Local' => 'Local',
                         'System' => 'System',
                         'Accept' => 'Accept',
@@ -255,7 +253,6 @@ function drawAuthType($num) {
 function drawServiceType($num) {
     // setup options
     $options = array(
-                        //~ '' => 'Select...',
                         'Login-User' => 'Login-User',
                         'Framed-User' => 'Framed-User',
                         'Callback-Login-User' => 'Callback-Login-User',
@@ -419,11 +416,6 @@ switch ($action) {
                 printf("objOP.add(new Option('%s', '%s'));\n", $RecommendedOP, $RecommendedOP);
             }
             
-            // then we populate the dictOP select box with the normal possible values for it:
-            populateOPs();
-            /*******************************************************************************************************/
-
-
             /*******************************************************************************************************/
             /* RecommendedTable
             /* next up we set as the first option of the select box the default target table for this attribute
@@ -432,11 +424,6 @@ switch ($action) {
                 printf("objTable.add(new Option('%s', '%s'));\n", $RecommendedTable, $RecommendedTable);
             }
             
-            // and ofcourse populate it also with the possible tables
-            populateTables();
-            /*******************************************************************************************************/
-
-
             /*******************************************************************************************************/
             /* setting the dictValue to be empty
             /*******************************************************************************************************/
@@ -516,6 +503,14 @@ switch ($action) {
         } else {
             echo "alert('Warning. Attribute non-existent or inconsistency in your vendor/attribute dictionary.');";
         }
+        
+        // of course we always populate possible tables
+        populateTables();
+        /*******************************************************************************************************/
+        
+        // then we populate the dictOP select box with the normal possible values for it:
+        populateOPs();
+        /*******************************************************************************************************/
         
         break;
 }

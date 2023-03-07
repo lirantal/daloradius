@@ -16,7 +16,7 @@
  *********************************************************************************************************
  *
  * Description:    provides user billing information input fields
- * 
+ *
  * Authors:        Liran Tal <liran@enginx.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
@@ -83,7 +83,7 @@ $_input_descriptors3 = array();
 
 $_input_descriptors3[] = array(
                                 'type' => 'textarea',
-                                'name' => 'notes',
+                                'name' => 'bi_notes',
                                 'caption' => t('ContactInfo','Notes'),
                                 'content' => ((isset($bi_notes)) ? $bi_notes : '')
                              );
@@ -101,7 +101,7 @@ $_input_descriptors3[] = array( 'caption' => t('all','BillDue'), 'type' => 'text
                                'value' => ((isset($bi_billdue)) ? $bi_billdue : '') );
 $_input_descriptors3[] = array( 'caption' => t('all','NextInvoiceDue'), 'type' => 'text', 'name' => 'bi_nextinvoicedue',
                                'value' => ((isset($bi_nextinvoicedue)) ? $bi_nextinvoicedue : '') );
-                               
+
 $_input_descriptors3[] = array( 'caption' => t('all','CreationDate'), 'type' => 'text', 'name' => 'bi_creationdate',
                                'disabled' => true, 'value' =>((isset($bi_creationdate)) ? $bi_creationdate : '') );
 $_input_descriptors3[] = array( 'caption' => t('all','CreationBy'), 'type' => 'text', 'name' => 'bi_creationby',
@@ -127,7 +127,7 @@ $_input_descriptors2[] = array( 'caption' => t('all','OrderTaker'), 'type' => 't
 $_fieldset0_descriptor = array(
                                 "title" => "Billing Information",
                               );
-                              
+
 open_fieldset($_fieldset0_descriptor);
 
 foreach ($_input_descriptors0 as $input_descriptor) {
@@ -142,7 +142,7 @@ unset($_input_descriptors0);
 $_fieldset1_descriptor = array(
                                 "title" => "Payment Details",
                               );
-                              
+
 open_fieldset($_fieldset1_descriptor);
 
 foreach ($_input_descriptors1 as $input_descriptor) {
@@ -157,7 +157,7 @@ unset($_input_descriptors1);
 $_fieldset2_descriptor = array(
                                 "title" => "Promotion Details",
                               );
-                              
+
 open_fieldset($_fieldset2_descriptor);
 
 foreach ($_input_descriptors2 as $input_descriptor) {
@@ -172,7 +172,7 @@ unset($_input_descriptors2);
 $_fieldset3_descriptor = array(
                                 "title" => "Other",
                               );
-                              
+
 open_fieldset($_fieldset3_descriptor);
 
 foreach ($_input_descriptors3 as $input_descriptor) {

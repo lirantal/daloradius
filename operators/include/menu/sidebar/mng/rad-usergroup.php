@@ -58,7 +58,8 @@ if (count($menu_usernames) > 0) {
                             "sidebar" => true,
                           );
                           
-    $components[0]['id'] = "id_" . rand();
+    $id1 = "id_" . rand();
+    $components[0]['id'] = $id1;
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListUsersGroup'), 'action' => 'mng-rad-usergroup-list-user.php', 'method' => 'GET',
                              'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
                              
@@ -74,6 +75,10 @@ if (count($menu_usernames) > 0) {
                           );
     
     $components[0]['id'] = "id_" . rand();
+    unset($components[0]["datalist"]);
+    // this means that this component should use the datalist
+    // that has been previously loaded by the component that has $id1 as its id
+    $components[0]['shared_datalist'] = $id1;
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUserGroup'), 'action' => 'mng-rad-usergroup-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
 

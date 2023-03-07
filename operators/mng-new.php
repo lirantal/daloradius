@@ -23,10 +23,10 @@
 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-    
+
     include('../common/includes/config_read.php');
     include('library/check_operator_perm.php');
-    
+
     include_once("lang/main.php");
     include("../common/includes/validation.php");
     include("../common/includes/layout.php");
@@ -37,20 +37,20 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // if cleartext passwords are not allowed, 
+    // if cleartext passwords are not allowed,
     // we remove Cleartext-Password from the $valid_passwordTypes array
     if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
         strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) !== 'yes') {
         $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
     }
-    
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-    
+
             // required later
             $currDate = date('Y-m-d H:i:s');
             $currBy = $operator;
-    
+
             // TODO validate user input
             $username = (array_key_exists('username', $_POST) && !empty(str_replace("%", "", trim($_POST['username']))))
                       ? str_replace("%", "", trim($_POST['username'])) : "";
@@ -58,15 +58,15 @@
 
             $authType = (array_key_exists('authType', $_POST) && isset($_POST['authType']) &&
                          in_array($_POST['authType'], array_keys($valid_authTypes))) ? $_POST['authType'] : array_keys($valid_authTypes)[0];
-            
+
             $password = (array_key_exists('password', $_POST) && isset($_POST['password'])) ? $_POST['password'] : "";
-            
+
             $passwordType = (array_key_exists('passwordType', $_POST) && !empty(trim($_POST['passwordType'])) &&
                              in_array(trim($_POST['passwordType']), $valid_passwordTypes)) ? trim($_POST['passwordType']) : $valid_passwordTypes[0];
-            
+
             $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
                            filter_var(trim(strtoupper($_POST['macaddress'])), FILTER_VALIDATE_MAC)) ? trim(strtoupper($_POST['macaddress'])) : "";
-                           
+
             $pincode = (array_key_exists('pincode', $_POST) && isset($_POST['pincode'])) ? trim($_POST['pincode']) : "";
 
             // this can be used for all authTypes
@@ -85,7 +85,7 @@
             $bi_postalinvoice = (array_key_exists('bi_postalinvoice', $_POST) && isset($_POST['bi_postalinvoice'])) ? $_POST['bi_postalinvoice'] : "";
             $bi_faxinvoice = (array_key_exists('bi_faxinvoice', $_POST) && isset($_POST['bi_faxinvoice'])) ? $_POST['bi_faxinvoice'] : "";
             $bi_emailinvoice = (array_key_exists('bi_emailinvoice', $_POST) && isset($_POST['bi_emailinvoice'])) ? $_POST['bi_emailinvoice'] : "";
-            
+
             $bi_paymentmethod = (array_key_exists('bi_paymentmethod', $_POST) && isset($_POST['bi_paymentmethod'])) ? $_POST['bi_paymentmethod'] : "";
             $bi_cash = (array_key_exists('bi_cash', $_POST) && isset($_POST['bi_cash'])) ? $_POST['bi_cash'] : "";
             $bi_creditcardname = (array_key_exists('bi_creditcardname', $_POST) && isset($_POST['bi_creditcardname'])) ? $_POST['bi_creditcardname'] : "";
@@ -93,21 +93,21 @@
             $bi_creditcardverification = (array_key_exists('bi_creditcardverification', $_POST) && isset($_POST['bi_creditcardverification'])) ? $_POST['bi_creditcardverification'] : "";
             $bi_creditcardtype = (array_key_exists('bi_creditcardtype', $_POST) && isset($_POST['bi_creditcardtype'])) ? $_POST['bi_creditcardtype'] : "";
             $bi_creditcardexp = (array_key_exists('bi_creditcardexp', $_POST) && isset($_POST['bi_creditcardexp'])) ? $_POST['bi_creditcardexp'] : "";
-            
+
             $bi_lead = (array_key_exists('bi_lead', $_POST) && isset($_POST['bi_lead'])) ? $_POST['bi_lead'] : "";
             $bi_coupon = (array_key_exists('bi_coupon', $_POST) && isset($_POST['bi_coupon'])) ? $_POST['bi_coupon'] : "";
             $bi_ordertaker = (array_key_exists('bi_ordertaker', $_POST) && isset($_POST['bi_ordertaker'])) ? $_POST['bi_ordertaker'] : "";
-            
+
             $bi_notes = (array_key_exists('bi_notes', $_POST) && isset($_POST['bi_notes'])) ? $_POST['bi_notes'] : "";
             $bi_changeuserbillinfo = (array_key_exists('changeUserBillInfo', $_POST) && isset($_POST['changeUserBillInfo'])) ? $_POST['changeUserBillInfo'] : "0";
-            
+
             //~ isset($_POST['bi_billstatus']) ? $bi_billstatus = $_POST['bi_billstatus'] : $bi_billstatus = "";
             //~ isset($_POST['bi_lastbill']) ? $bi_lastbill = $_POST['bi_lastbill'] : $bi_lastbill = "";
             //~ isset($_POST['bi_nextbill']) ? $bi_nextbill = $_POST['bi_nextbill'] : $bi_nextbill = "";
             $bi_nextinvoicedue = (array_key_exists('bi_nextinvoicedue', $_POST) && isset($_POST['bi_nextinvoicedue'])) ? $_POST['bi_nextinvoicedue'] : "";
             $bi_billdue = (array_key_exists('bi_billdue', $_POST) && isset($_POST['bi_billdue'])) ? $_POST['bi_billdue'] : "";
-            
-            
+
+
             // user info variables
             $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? $_POST['firstname'] : "";
             $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? $_POST['lastname'] : "";
@@ -122,20 +122,20 @@
             $state = (array_key_exists('state', $_POST) && isset($_POST['state'])) ? $_POST['state'] : "";
             $country = (array_key_exists('country', $_POST) && isset($_POST['country'])) ? $_POST['country'] : "";
             $zip = (array_key_exists('zip', $_POST) && isset($_POST['zip'])) ? $_POST['zip'] : "";
-            $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
+            $notes = (isset($_POST['notes']) && !empty(trim($_POST['notes']))) ? trim($_POST['notes']) : "";
             $ui_changeuserinfo = (array_key_exists('changeuserinfo', $_POST) && isset($_POST['changeuserinfo'])) ? $_POST['changeuserinfo'] : "0";
             $ui_enableUserPortalLogin = (array_key_exists('enableUserPortalLogin', $_POST) && isset($_POST['enableUserPortalLogin'])) ? $_POST['enableUserPortalLogin'] : "0";
             $ui_PortalLoginPassword = (array_key_exists('portalLoginPassword', $_POST) && isset($_POST['portalLoginPassword'])) ? $_POST['portalLoginPassword'] : "";
-            
+
             isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";
-    
+
             include('../common/includes/db_open.php');
 
             // we will have a $username_to_check, only
             // if required arguments have been supplied
             // according to the chosen $authType
             $username_to_check = "";
-            
+
             if ($authType == "userAuth") {
                 // we can add a new record to the check table
                 // only if $username and $password are not empty
@@ -143,7 +143,7 @@
                     $username_to_check = $username;
                 } else {
                     $failureMsg = "Username and/or password are invalid";
-                    
+
                 }
             } else if ($authType == "macAuth") {
                 if (!empty($macaddress)) {
@@ -165,12 +165,12 @@
             if (empty($username_to_check)) {
                 // failure message has been set above
                 $logAction .= "Failed adding a new user ($failureMsg) on page: ";
-                
+
             } else {
-                
+
                 // we can proceed and check if username/mac address/pincode is already present in the radcheck table
                 $exists = user_exists($dbSocket, $username_to_check);
-                
+
                 // we proceed only if username/mac address/pincode is not present
                 if ($exists) {
                     // user exists
@@ -178,35 +178,35 @@
                                           htmlspecialchars($username_to_check, ENT_QUOTES, 'UTF-8'));
                     $logAction .= "Failed adding new user already existing in database [$username_to_check] on page: ";
                 } else {
-                    
+
                     if ($authType == "userAuth") {
                         // we prepare a password attribute for the "injection" (see below)
                         // and the success/log messages
-                        
+
                         $attribute = $passwordType;
                         $value = $password;
-                        
+
                         $u = $username;
                         $what = "user";
 
                     } else if ($authType == "macAuth" || $authType == "pincodeAuth") {
                         // we prepare an auth attribute for the "injection" (see below)
                         // and the success/log messages
-                        
+
                         $attribute = 'Auth-Type';
                         $value = 'Accept';
-                        
+
                         if ($authType == "macAuth") {
                             $u = $macaddress;
                             $what = "MAC address";
-                            
+
                         } else {
                             $u = $pincode;
                             $what = "PIN code";
                         }
 
-                    } 
-                   
+                    }
+
                     // we "inject" the prepared password/auth attribute in the $_POST array.
                     // handleAttributes() - called later - will take care of it.
                     $_POST['injected_attribute'] = array( $attribute, $value, ':=', 'check' );
@@ -226,9 +226,9 @@
                                      );
 
                     $attributesCount = handleAttributes($dbSocket, $u, $skipList);
-                    
+
                     $groupsCount = insert_multiple_user_group_mappings($dbSocket, $u, $groups);
-                    
+
                     // adding user info
                     $params = array(
                                         "firstname" => $firstname,
@@ -251,9 +251,9 @@
                                         "creationdate" => $currDate,
                                         "creationby" => $currBy,
                                    );
-                    
+
                     $addedUserInfo = (add_user_info($dbSocket, $u, $params)) ? "stored" : "nothing to store";
-                    
+
                     // adding billing info
                     $params = array(
                                         //~ "planName" => $planName,
@@ -269,7 +269,7 @@
                                         "postalinvoice" => $bi_postalinvoice,
                                         "faxinvoice" => $bi_faxinvoice,
                                         "emailinvoice" => $bi_emailinvoice,
-                                        
+
                                         "paymentmethod" => $bi_paymentmethod,
                                         "cash" => $bi_cash,
                                         "creditcardname" => $bi_creditcardname,
@@ -277,24 +277,24 @@
                                         "creditcardverification" => $bi_creditcardverification,
                                         "creditcardtype" => $bi_creditcardtype,
                                         "creditcardexp" => $bi_creditcardexp,
-                                        
+
                                         "lead" => $bi_lead,
                                         "coupon" => $bi_coupon,
                                         "ordertaker" => $bi_ordertaker,
-                                        
+
                                         "notes" => $bi_notes,
                                         "changeuserbillinfo" => $bi_changeuserbillinfo,
-                                        
+
                                         //~ "billstatus" => $bi_billstatus,
                                         //~ "lastbill" => $bi_lastbill,
                                         //~ "nextbill" => $bi_nextbill,
                                         "billdue" => $bi_billdue,
                                         "nextinvoicedue" => $bi_nextinvoicedue,
-                                        
+
                                         "creationdate" => $currDate,
                                         "creationby" => $currBy,
                                    );
-                    
+
                     $addedBillingInfo = (add_user_billing_info($dbSocket, $u, $params)) ? "stored" : "nothing to store";
 
                     $u_enc = htmlspecialchars($u, ENT_QUOTES, 'UTF-8');
@@ -307,11 +307,11 @@
                                 . sprintf("<li><strong>user info</strong>: %s</li>", $addedUserInfo)
                                 . sprintf("<li><strong>billing info</strong>: %s</li>", $addedBillingInfo)
                                 . "</ul>";
-                    
+
                     $logAction .= sprintf("Successfully inserted new %s [%s] on page: ", $what, $u);
                 }
             }
-            
+
             include('../common/includes/db_close.php');
         } else {
             // csrf
@@ -322,33 +322,33 @@
 
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
                     ? 'password' : 'text';
-    
-    
+
+
     // print HTML prologue
     $extra_css = array();
-    
+
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/dynamic_attributes.js",
         "static/js/ajaxGeneric.js",
         "static/js/productive_funcs.js",
     );
-    
+
     $title = t('Intro','mngnew.php');
     $help = t('helpPage','mngnew');
-    
+
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
-    
+
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-    
+
     if (!isset($successMsg)) {
-    
+
         include_once('include/management/populate_selectbox.php');
-        
+
         $input_descriptors0 = array();
-        
+
         $input_descriptors0[] = array(
                                         "type" =>"select",
                                         "name" => "authType",
@@ -374,7 +374,7 @@
 
 
         $input_descriptors1 = array();
-        
+
         $input_descriptors1[] = array(
                                         "id" => "username",
                                         "name" => "username",
@@ -384,7 +384,7 @@
                                         "value" => ((isset($failureMsg)) ? $username : ""),
                                         "tooltipText" => t('Tooltip','usernameTooltip')
                                      );
-                                    
+
         $input_descriptors1[] = array(
                                         "id" => "password",
                                         "name" => "password",
@@ -403,7 +403,7 @@
 
 
         $input_descriptors2 = array();
-        
+
         $input_descriptors2[] = array(
                                         "name" => "macaddress",
                                         "caption" => t('all','MACAddress'),
@@ -413,7 +413,7 @@
                                         "pattern" => trim(MACADDR_REGEX, "/"),
                                         "title" => "you should provide a valid MAC address"
                                      );
-                                     
+
 
         $input_descriptors3 = array();
 
@@ -425,94 +425,94 @@
                                         "tooltipText" => t('Tooltip','pincodeTooltip'),
                                         "random" => true,
                                      );
-        
+
         // fieldset
         $fieldset0_descriptor = array(
                                         "title" => "Common parameters",
                                      );
-                                 
+
         $fieldset1_descriptor = array(
                                         "title" => "Username/password info",
                                         "id" => "userAuth-fieldset",
                                      );
-                                 
+
         $fieldset2_descriptor = array(
                                         "title" => "MAC Address info",
                                         "id" => "macAuth-fieldset",
                                      );
-                                 
+
         $fieldset3_descriptor = array(
                                         "title" => "PIN code info",
                                         "id" => "pincodeAuth-fieldset",
                                      );
-        
+
         // set navbar stuff
         $navkeys = array( 'AccountInfo', 'UserInfo', 'BillingInfo', 'Attributes' );
 
         // print navbar controls
         print_tab_header($navkeys);
-        
+
         open_form();
-        
+
         // open tab wrapper
         open_tab_wrapper();
-        
+
         // open 0-th tab (shown)
         open_tab($navkeys, 0, true);
-        
+
         // open 0-th fieldset
         open_fieldset($fieldset0_descriptor);
 
         foreach ($input_descriptors0 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         // open 1-st fieldset
         open_fieldset($fieldset1_descriptor);
 
         foreach ($input_descriptors1 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         // open 2-st fieldset
         open_fieldset($fieldset2_descriptor);
 
         foreach ($input_descriptors2 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
-        
+
+
         // open 3-st fieldset
         open_fieldset($fieldset3_descriptor);
 
         foreach ($input_descriptors3 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         close_tab();
-        
-        
+
+
         //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
-        
+
         // open 1-th tab (shown)
         open_tab($navkeys, 1);
         include_once('include/management/userinfo.php');
         close_tab($navkeys, 1);
-        
-        
+
+
         // open 2-th tab (shown)
         open_tab($navkeys, 2);
         include_once('include/management/userbillinfo.php');
         close_tab($navkeys, 2);
-        
+
         // open 3-th tab (shown)
         open_tab($navkeys, 3);
         include_once('include/management/attributes.php');
@@ -527,7 +527,7 @@
                                         "type" => "hidden",
                                         "value" => dalo_csrf_token(),
                                      );
-        
+
         $input_descriptors4[] = array(
                                         'type' => 'submit',
                                         'name' => 'submit',
@@ -541,20 +541,20 @@
         close_form();
 
     }
-    
+
     print_back_to_previous_page();
-    
+
     include('include/config/logging.php');
-    
+
     $inline_extra_js = '
 function switchAuthType() {
     var switcher = document.getElementById("authType");
-    
+
     for (var i=0; i<switcher.length; i++) {
         var fieldset_id = switcher[i].value + "-fieldset",
             disabled = switcher.value != switcher[i].value,
             fieldset = document.getElementById(fieldset_id);
-        
+
         fieldset.disabled = disabled;
         fieldset.style.display = (disabled) ? "none" : "block";
     }
@@ -562,6 +562,6 @@ function switchAuthType() {
 
 window.addEventListener("load", function() { switchAuthType(); });
 ';
-    
+
     print_footer_and_html_epilogue($inline_extra_js);
 ?>

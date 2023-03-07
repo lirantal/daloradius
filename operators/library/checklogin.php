@@ -25,7 +25,8 @@
  */
 
 // prevent this file to be directly accessed
-if (strpos($_SERVER['PHP_SELF'], '/library/checklogin.php') !== false) {
+$this_filename = '/library/checklogin.php';
+if (strpos($_SERVER['PHP_SELF'], $this_filename) !== false) {
     header("Location: ../index.php");
     exit;
 }
@@ -33,16 +34,25 @@ if (strpos($_SERVER['PHP_SELF'], '/library/checklogin.php') !== false) {
 include('sessions.php');
 dalo_session_start();
 
-
 if (!array_key_exists('daloradius_logged_in', $_SESSION) || $_SESSION['daloradius_logged_in'] !== true) {
     $_SESSION['daloradius_logged_in'] = false;
 
-    // implement a sort of "dynamic redirect finder" based on the number of "/" in the PHP_SELF value
-    $count = substr_count($_SERVER['PHP_SELF'], "/", 1) - 1;
-    $location = str_repeat("../", $count) . "login.php";
+    // from the document root, we strip out this_filename set above
+    // this will tell us what is our "document root"
+    $my_document_root = str_replace($this_filename, "", __FILE__);
 
-    header("Location: " . $location);
+    // we try to detect if there are extra directories
+    // in between the root and the requested file
+    $extra_directory = str_replace($_SERVER['DOCUMENT_ROOT'], "", $my_document_root);
+
+    // we strip out this extra directory from the requested file
+    $my_php_self = str_replace($extra_directory, "", $_SERVER['PHP_SELF']);
+
+    // we implement a sort of "dynamic redirect finder" based on the number of "/" found in our "php_self" value
+    $count = substr_count($my_php_self, "/", 1);
+    $location = str_repeat("../", $count) . "login.php";
+    $header = sprintf("Location: %s", $location);
+
+    header($header);
     exit;
 }
-
-?>

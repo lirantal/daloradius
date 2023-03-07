@@ -117,18 +117,28 @@ function createValues(index, valuesSel, opSel, tableSel, attrTooltip, attrType, 
 
 
 function parseAttribute(attrElement) {
-    
-    var attributeCustom = document.getElementById('dictAttributesCustom');
-	var attributeCustomVal = attributeCustom.value;
-
-	if (attrElement == 1) {
-        var attributeOfDatabase = document.getElementById('dictAttributesDatabase');
+  
+    if (attrElement == 1) {
+        var attrId = 'dictAttributesDatabase';
+        
+        var attributeOfDatabase = document.getElementById(attrId);
         var attributeOfDatabaseVal = attributeOfDatabase.options[attributeOfDatabase.selectedIndex].value;
-		addElement(1, 'dictAttributesDatabase');
+        
+        var shouldAdd = attributeOfDatabaseVal != '';
+		
 	} else {
-		addElement(1, 'dictAttributesCustom');
+        var attrId = 'dictAttributesCustom';
+        
+        var attributeCustom = document.getElementById(attrId);
+        var attributeCustomVal = attributeCustom.value;
+		
+        var shouldAdd = attributeCustomVal != '';
+        
 	}
-
+    
+    if (shouldAdd) {
+        addElement(1, attrId);
+    }
 }
 
 function addElement(enableTable, elementId) {

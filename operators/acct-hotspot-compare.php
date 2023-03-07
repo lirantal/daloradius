@@ -62,16 +62,11 @@
 
 
     // print HTML prologue
-    $extra_css = array(
-        // css tabs stuff
-        "static/css/tabs.css"
-    );
+    $extra_css = array();
 
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/dynamic_attributes.js",
-        // js tabs stuff
-        "static/js/tabs.js"
     );
 
     $title = t('Intro','accthotspotcompare.php');

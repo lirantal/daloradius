@@ -18,7 +18,7 @@
  * Description:    This file extends the user management pages
  *                 (new user, batch addusers, edit user, quick add user and possibly others)
  *                 by adding a section for user information
- * 
+ *
  * Authors:        Liran Tal <liran@enginx.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
@@ -124,12 +124,12 @@ $_input_descriptors2[] = array( 'name' => 'updatedate', 'caption' => t('all','Up
 
 $_input_descriptors2[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',
                                'disabled' => true, 'value' => ((isset($ui_updateby)) ? $ui_updateby : '') );
-                               
+
 // fieldset
 $_fieldset0_descriptor = array(
                                 "title" => t('title','ContactInfo'),
                               );
-                              
+
 open_fieldset($_fieldset0_descriptor);
 
 foreach ($_input_descriptors0 as $input_descriptor) {
@@ -159,7 +159,7 @@ unset($_input_descriptors1);
 $_fieldset2_descriptor = array(
                                 "title" => "Other",
                               );
-                              
+
 open_fieldset($_fieldset2_descriptor);
 
 foreach ($_input_descriptors2 as $input_descriptor) {
