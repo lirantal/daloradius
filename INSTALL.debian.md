@@ -131,7 +131,8 @@ mysql -u root raddb < /var/www/daloradius/contrib/db/mysql-daloradius.sql
 19. Clone the sample configuration file
 ```
 cd /var/www/daloradius/common/includes/
-sudo cp daloradius.conf.php.sample daloradius.conf.php
+cp daloradius.conf.php.sample daloradius.conf.php
+chown www-data:www-data daloradius.conf.php
 ```
 20. Edit the configuration file to reflect freeRADIUS and db configuration. In this example:
 ```
