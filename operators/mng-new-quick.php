@@ -26,7 +26,7 @@
 
     include('../common/includes/config_read.php');
     include('library/check_operator_perm.php');
-    
+
     include_once("lang/main.php");
     include("../common/includes/validation.php");
     include("../common/includes/layout.php");
@@ -37,20 +37,20 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // if cleartext passwords are not allowed, 
+    // if cleartext passwords are not allowed,
     // we remove Cleartext-Password from the $valid_passwordTypes array
     if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
         strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) !== 'yes') {
         $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
     }
-    
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
+
             // required later
             $currDate = date('Y-m-d H:i:s');
             $currBy = $operator;
-        
+
             // TODO validate user input
             $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
                       ? trim(str_replace("%", "", $_POST['username'])) : "";
@@ -87,9 +87,16 @@
             $country = (array_key_exists('country', $_POST) && isset($_POST['country'])) ? $_POST['country'] : "";
             $zip = (array_key_exists('zip', $_POST) && isset($_POST['zip'])) ? $_POST['zip'] : "";
             $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
-            $ui_changeuserinfo = (array_key_exists('changeuserinfo', $_POST) && isset($_POST['changeuserinfo'])) ? $_POST['changeuserinfo'] : "0";
-            $ui_enableUserPortalLogin = (array_key_exists('enableUserPortalLogin', $_POST) && isset($_POST['enableUserPortalLogin'])) ? $_POST['enableUserPortalLogin'] : "0";
-            $ui_PortalLoginPassword = (array_key_exists('portalLoginPassword', $_POST) && isset($_POST['portalLoginPassword'])) ? $_POST['portalLoginPassword'] : "";
+
+            // first we check user portal login password
+            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) && !empty(trim($_POST['portalLoginPassword'])))
+                                    ? trim($_POST['portalLoginPassword']) : "";
+
+            // these are forced to 0 (disabled) if user portal login password is empty
+            $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
+                               ? '1' : '0';
+            $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) &&  isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+                                      ? '1' : '0';
 
             // billing info variables
             $bi_contactperson = (array_key_exists('bi_contactperson', $_POST) && isset($_POST['bi_contactperson'])) ? $_POST['bi_contactperson'] : "";
@@ -109,10 +116,13 @@
             $bi_creditcardtype = (array_key_exists('bi_creditcardtype', $_POST) && isset($_POST['bi_creditcardtype'])) ? $_POST['bi_creditcardtype'] : "";
             $bi_creditcardexp = (array_key_exists('bi_creditcardexp', $_POST) && isset($_POST['bi_creditcardexp'])) ? $_POST['bi_creditcardexp'] : "";
             $bi_notes = (array_key_exists('bi_notes', $_POST) && isset($_POST['bi_notes'])) ? $_POST['bi_notes'] : "";
-            $bi_changeuserbillinfo = (array_key_exists('changeUserBillInfo', $_POST) && isset($_POST['changeUserBillInfo'])) ? $_POST['changeUserBillInfo'] : "0";
-            
+
+            // this is forced to 0 (disabled) if user portal login password is empty
+            $bi_changeuserbillinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
+                                   ? '1' : '0';
+
             include('../common/includes/db_open.php');
-            
+
             // check if username is already present in the radcheck table
             $userExists = user_exists($dbSocket, $username);
 
@@ -120,19 +130,19 @@
                 $failureMsg = "user already exist in database: <b> $username_enc </b>";
                 $logAction .= "Failed adding new user already existing in database [$username] on page: ";
             } else {
-                
+
                 // username and password are required
                 if (empty($username) || empty($password)) {
                     $failureMsg = "username and/or password are empty";
                     $logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
                 } else {
-                
+
                     // we "inject" specified attribute in the $_POST array.
                     // handleAttributes() - called later - will take care of it.
                     $injected_attribute = array();
-                    
+
                     $injected_attribute[$passwordType] = $password;
-                    
+
                     if ($maxallsession) {
                         $injected_attribute['Max-All-Session'] = $maxallsession;
                     }
@@ -152,7 +162,7 @@
                     if ($simultaneoususe) {
                         $injected_attribute['Simultaneous-Use'] = $simultaneoususe;
                     }
-                    
+
                     if ($framedipaddress) {
                         $injected_attribute['Framed-IP-Address'] = $framedipaddress;
                     }
@@ -177,10 +187,10 @@
                                        "changeUserBillInfo", "csrf_token", "submit"
                                      );
                     $attributesCount = handleAttributes($dbSocket, $username, $skipList);
-                    
+
                     // check if any group should be added
                     $groupsCount = insert_multiple_user_group_mappings($dbSocket, $username, $groups);
-                    
+
                     // adding user info
                     $params = array(
                                         "firstname" => $firstname,
@@ -203,9 +213,9 @@
                                         "creationdate" => $currDate,
                                         "creationby" => $currBy,
                                    );
-                    
+
                     $addedUserInfo = (add_user_info($dbSocket, $username, $params)) ? "stored" : "nothing to store";
-                    
+
                     // adding billing info
                     $params = array(
                                         //~ "planName" => $planName,
@@ -221,7 +231,7 @@
                                         "postalinvoice" => $bi_postalinvoice,
                                         "faxinvoice" => $bi_faxinvoice,
                                         "emailinvoice" => $bi_emailinvoice,
-                                        
+
                                         "paymentmethod" => $bi_paymentmethod,
                                         "cash" => $bi_cash,
                                         "creditcardname" => $bi_creditcardname,
@@ -229,26 +239,26 @@
                                         "creditcardverification" => $bi_creditcardverification,
                                         "creditcardtype" => $bi_creditcardtype,
                                         "creditcardexp" => $bi_creditcardexp,
-                                        
+
                                         "lead" => $bi_lead,
                                         "coupon" => $bi_coupon,
                                         "ordertaker" => $bi_ordertaker,
-                                        
+
                                         "notes" => $bi_notes,
                                         "changeuserbillinfo" => $bi_changeuserbillinfo,
-                                        
+
                                         //~ "billstatus" => $bi_billstatus,
                                         //~ "lastbill" => $bi_lastbill,
                                         //~ "nextbill" => $bi_nextbill,
                                         "billdue" => $bi_billdue,
                                         "nextinvoicedue" => $bi_nextinvoicedue,
-                                        
+
                                         "creationdate" => $currDate,
                                         "creationby" => $currBy,
                                    );
-                    
+
                     $addedBillingInfo = (add_user_billing_info($dbSocket, $username, $params)) ? "stored" : "nothing to store";
-                    
+
                     $successMsg = 'Inserted new <strong>user</strong>: '
                                 . sprintf('<a href="mng-edit.php?username=%s" title="Edit">%s</a>', $username_enc, $username_enc)
                                 . '<ul style="color: black">'
@@ -257,11 +267,11 @@
                                 . sprintf("<li><strong>user info</strong>: %s</li>", $addedUserInfo)
                                 . sprintf("<li><strong>billing info</strong>: %s</li>", $addedBillingInfo)
                                 . "</ul>";
-                    
+
                     $logAction .= sprintf("Successfully inserted new user [%s] on page: ", $username);
-                    
+
                 } // if (empty($username) || empty($password)) {
-            
+
             } // if ($userExists) {
 
             include('../common/includes/db_close.php');
@@ -278,46 +288,46 @@
 
     // print HTML prologue
     $extra_css = array();
-    
+
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/ajaxGeneric.js",
         "static/js/productive_funcs.js",
     );
-    
+
     $title = t('Intro','mngnewquick.php');
     $help = t('helpPage','mngnewquick');
-    
+
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
     print_title_and_help($title, $help);
-    
+
     include_once('include/management/actionMessages.php');
-    
+
     // set navbar stuff
     $navkeys = array( 'AccountInfo', 'UserInfo', 'BillingInfo' );
 
     // print navbar controls
     print_tab_header($navkeys);
-    
+
     open_form();
-    
+
     // open tab wrapper
     open_tab_wrapper();
-    
+
     // open 0-th tab (shown)
     open_tab($navkeys, 0, true);
-    
+
     // open 0-th fieldset
     $fieldset0_descriptor = array(
                                     "title" => t('title','AccountInfo'),
                                  );
 
     open_fieldset($fieldset0_descriptor);
-    
-    
+
+
     $input_descriptors0 = array();
-    
+
     $input_descriptors0[] = array(
                                     "id" => "username",
                                     "name" => "username",
@@ -327,7 +337,7 @@
                                     "random" => true,
                                     "tooltipText" => t('Tooltip','usernameTooltip')
                                  );
-                                
+
     $input_descriptors0[] = array(
                                     "id" => "password",
                                     "name" => "password",
@@ -344,7 +354,7 @@
                                     "options" => $valid_passwordTypes,
                                     "type" => "select"
                                 );
-                  
+
     include_once('include/management/populate_selectbox.php');
     $options = get_groups();
     array_unshift($options, '');
@@ -359,21 +369,21 @@
                                     "selected_value" => ((isset($failureMsg)) ? $groups : ""),
                                     "tooltipText" => t('Tooltip','groupTooltip')
                                  );
-    
+
     foreach ($input_descriptors0 as $input_descriptor) {
         print_form_component($input_descriptor);
     }
-    
+
     close_fieldset();
-    
-    
+
+
     // open 1-th fieldset
     $fieldset1_descriptor = array(
                                     "title" => t('title','Attributes'),
                                  );
 
     open_fieldset($fieldset1_descriptor);
-    
+
     $input_descriptors1 = array();
 
     $input_descriptors1[] = array(
@@ -387,7 +397,7 @@
                                     "caption" => t('all','SimultaneousUse'),
                                     "type" => "number",
                                 );
-    
+
     $input_descriptors1[] = array(
                                     "name" => "framedipaddress",
                                     "caption" => t('all','FramedIPAddress'),
@@ -395,7 +405,7 @@
                                     "pattern" => trim(IP_REGEX, "/"),
                                     "title" => "you should provide a valid IP address"
                                 );
-    
+
     $input_descriptors1[] = array(
                                     "id" => "expiration",
                                     "name" => "expiration",
@@ -403,11 +413,11 @@
                                     "type" => "date",
                                     "min" => date('Y-m-d', strtotime('+1 day')), // tomorrow
                                 );
-    
+
     foreach ($input_descriptors1 as $input_descriptor) {
         print_form_component($input_descriptor);
     }
-    
+
     $time_values = array(
                             "0" => "calculate time",
                             "1" => "seconds",
@@ -417,9 +427,9 @@
                             "604800" => "weeks",
                             "2592000" => "months (30 days)",
                         );
-                        
+
     $select_descriptors = array();
-    
+
     $select_descriptors[] = array(
                                     "id" => "sessiontimeout",
                                     "name" => "sessiontimeout",
@@ -427,7 +437,7 @@
                                     "type" => "number",
                                     "options" => $time_values
                                  );
-                                 
+
     $select_descriptors[] = array(
                                     "id" => "idletimeout",
                                     "name" => "idletimeout",
@@ -435,7 +445,7 @@
                                     "type" => "number",
                                     "options" => $time_values
                                  );
-                                 
+
     $select_descriptors[] = array(
                                 "id" => "maxallsession",
                                 "name" => "idletimeout",
@@ -443,14 +453,14 @@
                                 "type" => "number",
                                 "options" => $time_values
                              );
-                             
-    
+
+
     foreach ($select_descriptors as $select_descriptor) {
         print_calculated_select($select_descriptor);
     }
-    
+
     close_fieldset();
-    
+
     $button_descriptor = array(
                                 'type' => 'submit',
                                 'name' => 'submit',
@@ -459,33 +469,33 @@
                                                                       document.newuser.password.value,
                                                                       document.newuser.maxallsession.value)'
                               );
-    
+
     print_form_component($button_descriptor);
-    
+
     close_tab($navkeys, 0);
 
     // open 1-th tab
     open_tab($navkeys, 1);
-    
+
     $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" ', t('buttons','apply'))
                        . 'onclick="javascript:small_window(document.newuser.username.value, '
                        . 'document.newuser.password.value, document.newuser.maxallsession.value);" '
                        . 'class="button">';
     include_once('include/management/userinfo.php');
-    
+
     close_tab($navkeys, 1);
-    
+
     // open 2-th tab
     open_tab($navkeys, 2);
-    
+
     $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
     include_once('include/management/userbillinfo.php');
-    
+
     close_tab($navkeys, 2);
-    
+
     // close tab wrapper
     close_tab_wrapper();
-    
+
     close_form();
 
     print_back_to_previous_page();

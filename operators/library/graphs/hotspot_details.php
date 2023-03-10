@@ -80,8 +80,8 @@
 
     include('../../../common/includes/db_close.php');
 
-    include_once('jpgraph/jpgraph.php');
-    include_once('jpgraph/jpgraph_pie.php');
+    include_once('../../../common/library/jpgraph/jpgraph.php');
+    include_once('../../../common/library/jpgraph/jpgraph_pie.php');
 
     $graph = new PieGraph(1024, 768);
     $graph->SetShadow();
