@@ -902,6 +902,10 @@ function print_select($select_descriptor) {
                                  : $select_descriptor['selected_value'];
 
                 foreach ($selected_values as $selected_value) {
+                    if (array_key_exists('integer_value', $select_descriptor) && $select_descriptor['integer_value'] !== false) {
+                        $selected_value = intval($selected_value);
+                    }
+
                     if ($selected_value === $value) {
                         echo ' selected';
                         break;

@@ -88,9 +88,15 @@ $_input_descriptors3[] = array(
                                 'content' => ((isset($bi_notes)) ? $bi_notes : '')
                              );
 
-$_input_descriptors3[] = array( 'caption' => t('ContactInfo','EnableUserUpdate'), 'name' => 'bi_changeuserbillinfo',
-                               'type' => 'checkbox', 'value' => '1',
-                               'checked' => (isset($bi_changeuserbillinfo) && $bi_changeuserbillinfo == 1) );
+$_input_descriptors3[] = array(
+                                    'type' => 'select',
+                                    'name' => 'bi_changeuserbillinfo',
+                                    'caption' => t('ContactInfo','EnableUserUpdate'),
+                                    'options' => array( "0" => "no", "1" => "yes" ),
+                                    'integer_value' => true,
+                                    'selected_value' => (isset($bi_changeuserbillinfo) && intval($bi_changeuserbillinfo) == 1) ? '1' : '0',
+                              );
+
 $_input_descriptors3[] = array( 'caption' => t('all','BillStatus'), 'type' => 'text',  'name' => 'bi_billstatus',
                                'value' => ((isset($bi_billstatus)) ? $bi_billstatus : ''), 'disabled' => true );
 $_input_descriptors3[] = array( 'caption' => t('all','LastBill'), 'type' => 'text',  'name' => 'bi_lastbill',
@@ -102,11 +108,11 @@ $_input_descriptors3[] = array( 'caption' => t('all','BillDue'), 'type' => 'text
 $_input_descriptors3[] = array( 'caption' => t('all','NextInvoiceDue'), 'type' => 'text', 'name' => 'bi_nextinvoicedue',
                                'value' => ((isset($bi_nextinvoicedue)) ? $bi_nextinvoicedue : '') );
 
-$_input_descriptors3[] = array( 'caption' => t('all','CreationDate'), 'type' => 'text', 'name' => 'bi_creationdate',
+$_input_descriptors3[] = array( 'caption' => t('all','CreationDate'), 'type' => 'datetime-local', 'name' => 'bi_creationdate',
                                'disabled' => true, 'value' =>((isset($bi_creationdate)) ? $bi_creationdate : '') );
 $_input_descriptors3[] = array( 'caption' => t('all','CreationBy'), 'type' => 'text', 'name' => 'bi_creationby',
                                'disabled' => true, 'value' =>((isset($bi_creationby)) ? $bi_creationby : '') );
-$_input_descriptors3[] = array( 'caption' => t('all','UpdateDate'), 'type' => 'text', 'name' => 'bi_updatedate',
+$_input_descriptors3[] = array( 'caption' => t('all','UpdateDate'), 'type' => 'datetime-local', 'name' => 'bi_updatedate',
                                'disabled' => true, 'value' =>((isset($bi_updatedate)) ? $bi_updatedate : '') );
 $_input_descriptors3[] = array( 'caption' => t('all','UpdateBy'), 'type' => 'text', 'name' => 'bi_updateby',
                                'disabled' => true, 'value' =>((isset($bi_updateby)) ? $bi_updateby : '') );
