@@ -89,21 +89,33 @@ $_input_descriptors1[] = array( 'id' => 'zip', 'caption' => t('ContactInfo','Zip
 
 $_input_descriptors2 = array();
 
-$_input_descriptors2[] = array( 'id' => 'userupdate', 'caption' => t('ContactInfo','EnableUserUpdate'),
-                               'type' => 'checkbox', 'name' => 'changeUserInfo',
-                               'value' => ((isset($ui_changeuserinfo)) ? $ui_changeuserinfo : ''),
-                               'checked' => (isset($ui_changeuserinfo) && $ui_changeuserinfo == 1)
-                             );
+$_input_descriptors2[] = array(
+                                    'id' => 'portalLoginPassword',
+                                    'caption' => t('ContactInfo','PortalLoginPassword'),
+                                    'type' => 'text',
+                                    'name' => 'portalLoginPassword',
+                                    'value' => ((isset($ui_PortalLoginPassword)) ? $ui_PortalLoginPassword : ''),
+                                    'tooltipText' => sprintf('If this field is empty then fields "%s" and "%s" are forced to "no"',
+                                                              t('ContactInfo','EnableUserUpdate'), t('ContactInfo','EnablePortalLogin')),
+                              );
 
-$_input_descriptors2[] = array( 'id' => 'userupdate', 'caption' => t('ContactInfo','EnablePortalLogin'),
-                               'type' => 'checkbox', 'name' => 'enableUserPortalLogin',
-                               'value' => ((isset($ui_enableUserPortalLogin)) ? $ui_enableUserPortalLogin : ''),
-                               'checked' => (isset($ui_enableUserPortalLogin) && $ui_enableUserPortalLogin == 1)
-                             );
-
-$_input_descriptors2[] = array( 'id' => 'portalLoginPassword', 'caption' => t('ContactInfo','PortalLoginPassword'),
-                               'type' => 'text', 'name' => 'portalLoginPassword',
-                               'value' => ((isset($ui_PortalLoginPassword)) ? $ui_PortalLoginPassword : '') );
+$_input_descriptors2[] = array(
+                                    'type' => 'select',
+                                    'name' => 'changeUserInfo',
+                                    'caption' => t('ContactInfo','EnableUserUpdate'),
+                                    'options' => array( "0" => "no", "1" => "yes" ),
+                                    'integer_value' => true,
+                                    'selected_value' => (isset($ui_changeuserinfo) && intval($ui_changeuserinfo) == 1) ? '1' : '0',
+                              );
+                              
+$_input_descriptors2[] = array(
+                                    'type' => 'select',
+                                    'name' => 'enableUserPortalLogin',
+                                    'caption' => t('ContactInfo','EnablePortalLogin'),
+                                    'options' => array( "0" => "no", "1" => "yes" ),
+                                    'integer_value' => true,
+                                    'selected_value' => (isset($ui_enableUserPortalLogin) && intval($ui_enableUserPortalLogin) == 1) ? '1' : '0',
+                              );
 
 $_input_descriptors2[] = array(
                                 "type" => "textarea",
@@ -113,13 +125,13 @@ $_input_descriptors2[] = array(
                                 "content" => ((isset($ui_notes)) ? $ui_notes : "")
                              );
 
-$_input_descriptors2[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'text',
+$_input_descriptors2[] = array( 'name' => 'creationdate', 'caption' => t('all','CreationDate'), 'type' => 'datetime-local',
                                'disabled' => true, 'value' => ((isset($ui_creationdate)) ? $ui_creationdate : '') );
 
 $_input_descriptors2[] = array( 'name' => 'creationby', 'caption' => t('all','CreationBy'), 'type' => 'text',
                                'disabled' => true, 'value' => ((isset($ui_creationby)) ? $ui_creationby : '') );
 
-$_input_descriptors2[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'text',
+$_input_descriptors2[] = array( 'name' => 'updatedate', 'caption' => t('all','UpdateDate'), 'type' => 'datetime-local',
                                'disabled' => true, 'value' => ((isset($ui_updatedate)) ? $ui_updatedate : '') );
 
 $_input_descriptors2[] = array( 'name' => 'updateby', 'caption' => t('all','UpdateBy'), 'type' => 'text',

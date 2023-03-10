@@ -31,21 +31,21 @@
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-    
+
     include_once("lang/main.php");
     include("../common/includes/validation.php");
     include("../common/includes/layout.php");
     include_once("include/management/functions.php");
-    
-    
+
+
     include('../common/includes/db_open.php');
-    
+
     // updates old plan profile with a new one
     // or simply add a new plan profile
     function addPlanProfile($dbSocket, $username, $planName, $oldplanName) {
         global $logDebugSQL;
         global $configValues;
-        
+
         if ($planName == $oldplanName) {
             return;
         }
@@ -57,7 +57,7 @@
         $logDebugSQL .= "$sql;\n";
 
         $oldplanGroup = $res->fetchRow()[0];
-        
+
         if (!empty($oldplanGroup)) {
             $sql = sprintf("DELETE FROM %s WHERE username='%s' AND groupname='%s'",
                            $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
@@ -71,7 +71,7 @@
                         $dbSocket->escapeSimple($planName));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
-        
+
         $planGroup = $res->fetchRow()[0];
 
         if (!empty($planGroup)) {
@@ -117,7 +117,7 @@
 
             // TODO validate user input
             $groups = (isset($_POST['groups']) && is_array($_POST['groups'])) ? $_POST['groups'] : array();
-            
+
             $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? $_POST['firstname'] : "";
             $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? $_POST['lastname'] : "";
             $email = (array_key_exists('email', $_POST) && isset($_POST['email'])) ? $_POST['email'] : "";
@@ -133,9 +133,15 @@
             $zip = (array_key_exists('zip', $_POST) && isset($_POST['zip'])) ? $_POST['zip'] : "";
             $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
 
-            $ui_changeuserinfo = (array_key_exists('changeuserinfo', $_POST) && isset($_POST['changeuserinfo'])) ? $_POST['changeuserinfo'] : "0";
-            $ui_enableUserPortalLogin = (array_key_exists('enableUserPortalLogin', $_POST) && isset($_POST['enableUserPortalLogin'])) ? $_POST['enableUserPortalLogin'] : "0";
-            $ui_PortalLoginPassword = (array_key_exists('portalLoginPassword', $_POST) && isset($_POST['portalLoginPassword'])) ? $_POST['portalLoginPassword'] : "";
+            // first we check user portal login password
+            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) && !empty(trim($_POST['portalLoginPassword'])))
+                                    ? trim($_POST['portalLoginPassword']) : "";
+
+            // these are forced to 0 (disabled) if user portal login password is empty
+            $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
+                               ? '1' : '0';
+            $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) &&  isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+                                      ? '1' : '0';
 
             $bi_contactperson = (array_key_exists('bi_contactperson', $_POST) && isset($_POST['bi_contactperson'])) ? $_POST['bi_contactperson'] : "";
             $bi_company = (array_key_exists('bi_company', $_POST) && isset($_POST['bi_company'])) ? $_POST['bi_company'] : "";
@@ -166,9 +172,11 @@
             $bi_postalinvoice = (array_key_exists('bi_postalinvoice', $_POST) && isset($_POST['bi_postalinvoice'])) ? $_POST['bi_postalinvoice'] : "";
             $bi_faxinvoice = (array_key_exists('bi_faxinvoice', $_POST) && isset($_POST['bi_faxinvoice'])) ? $_POST['bi_faxinvoice'] : "";
             $bi_emailinvoice = (array_key_exists('bi_emailinvoice', $_POST) && isset($_POST['bi_emailinvoice'])) ? $_POST['bi_emailinvoice'] : "";
-            
-            $bi_changeuserbillinfo = (array_key_exists('changeUserBillInfo', $_POST) && isset($_POST['changeUserBillInfo'])) ? $_POST['changeUserBillInfo'] : "0";
-            
+
+            // this is forced to 0 (disabled) if user portal login password is empty
+            $bi_changeuserbillinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
+                                   ? '1' : '0';
+
             $planName = (array_key_exists('planName', $_POST) && isset($_POST['planName'])) ? trim($_POST['planName']) : "";
             $oldplanName = (array_key_exists('oldplanName', $_POST) && isset($_POST['oldplanName'])) ? trim($_POST['oldplanName']) : "";
 
@@ -178,11 +186,11 @@
             }
 
             if (!empty($username)) {
-                
+
                 // dealing with attributes
                 include("library/attributes.php");
 
-                $skipList = array( "username", "submit", "groups", "planName", "oldplanName", 
+                $skipList = array( "username", "submit", "groups", "planName", "oldplanName",
                                    "copycontact", "firstname", "lastname", "email", "department", "company", "workphone",
                                    "homephone", "mobilephone", "address", "city", "state", "country", "zip", "notes",
                                    "changeUserInfo", "bi_contactperson", "bi_company", "bi_email", "bi_phone", "bi_address",
@@ -194,12 +202,12 @@
                                    "csrf_token", "submit"
                                  );
 
-                
+
                 handleAttributes($dbSocket, $username, $skipList, false);
-                
+
                 // insert or update user info
                 $userinfoExist = user_exists($dbSocket, $username, 'CONFIG_DB_TBL_DALOUSERINFO');
-                
+
                 $params = array(
                                     "firstname" => $firstname,
                                     "lastname" => $lastname,
@@ -216,10 +224,10 @@
                                     "zip" => $zip,
                                     "notes" => $notes,
                                     "changeuserinfo" => $ui_changeuserinfo,
-                                    "enableuserportallogin" => $ui_enableUserPortalLogin,
+                                    "enableportallogin" => $ui_enableUserPortalLogin,
                                     "portalloginpassword" => $ui_PortalLoginPassword,
                                );
-                               
+
                 if ($userinfoExist) {
                     $params["updatedate"] = $currDate;
                     $params["updateby"] = $currBy;
@@ -229,11 +237,11 @@
                     $params["creationby"] = $currBy;
                     $addedUserInfo = (add_user_info($dbSocket, $username, $params)) ? "updated" : "nothing to update";
                 }
-                
-                
+
+
                 // insert or update billing info
                 $billinfoExist = user_exists($dbSocket, $username, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
-                
+
                 $params = array(
                                     "contactperson" => $bi_contactperson,
                                     "company" => $bi_company,
@@ -247,7 +255,7 @@
                                     "postalinvoice" => $bi_postalinvoice,
                                     "faxinvoice" => $bi_faxinvoice,
                                     "emailinvoice" => $bi_emailinvoice,
-                                    
+
                                     "paymentmethod" => $bi_paymentmethod,
                                     "cash" => $bi_cash,
                                     "creditcardname" => $bi_creditcardname,
@@ -255,24 +263,24 @@
                                     "creditcardverification" => $bi_creditcardverification,
                                     "creditcardtype" => $bi_creditcardtype,
                                     "creditcardexp" => $bi_creditcardexp,
-                                    
+
                                     "lead" => $bi_lead,
                                     "coupon" => $bi_coupon,
                                     "ordertaker" => $bi_ordertaker,
-                                    
+
                                     "notes" => $bi_notes,
                                     "changeuserbillinfo" => $bi_changeuserbillinfo,
-                                    
+
                                     //~ "billstatus" => $bi_billstatus,
                                     //~ "lastbill" => $bi_lastbill,
                                     //~ "nextbill" => $bi_nextbill,
                                     "billdue" => $bi_billdue,
                                     "nextinvoicedue" => $bi_nextinvoicedue,
-                                    
+
                                     "creationdate" => $currDate,
                                     "creationby" => $currBy,
                                );
-                
+
                 if ($billinfoExist) {
                     $params["planName"] = $planName;
                     $params["updatedate"] = $currDate;
@@ -283,33 +291,33 @@
                     $params["creationby"] = $currBy;
                     $addedBillinfo = (add_user_billing_info($dbSocket, $username, $params)) ? "updated" : "nothing to update";
                 }
-                
+
                 // update group mappings
                 if (delete_user_group_mappings($dbSocket, $username)) {
-                    if (count($groups) > 0) {                    
+                    if (count($groups) > 0) {
                         foreach ($groups as $group) {
                             list($groupname, $priority) = $group;
                             insert_single_user_group_mapping($dbSocket, $username, $groupname, $priority);
                         }
                     }
                 }
-                
+
                 addPlanProfile($dbSocket, $username, $planName, $oldplanName);
 
                 $successMsg = sprintf("Successfully updated user <strong>%s</strong>", $username_enc);
                 $logAction .= sprintf("Successfully updated user %s on page: ", $username);
-            
+
             } else { // if username != ""
                 $failureMsg = "You have specified an empty or invalid username";
                 $logAction .= "empty or invalid username on page: ";
             }
-        
+
         } else {
             // csrf
             $failureMsg = "CSRF token error";
             $logAction .= "$failureMsg on page: ";
         }
-        
+
     }
 
 
@@ -334,7 +342,7 @@
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
-        list( 
+        list(
               $ui_firstname, $ui_lastname, $ui_email, $ui_department, $ui_company, $ui_workphone, $ui_homephone,
               $ui_mobilephone, $ui_address, $ui_city, $ui_state, $ui_country, $ui_zip, $ui_notes, $ui_changeuserinfo,
               $ui_PortalLoginPassword, $ui_enableUserPortalLogin, $ui_creationdate, $ui_creationby, $ui_updatedate,
@@ -360,10 +368,10 @@
                 $bi_billdue, $bi_postalinvoice, $bi_faxinvoice, $bi_emailinvoice, $bi_creationdate, $bi_creationby,
                 $bi_updatedate, $bi_updateby
             ) = $res->fetchRow();
-            
+
         // inline extra javascript
         $inline_extra_js = sprintf("var strUsername = 'username=%s';\n", $username_enc);
-    
+
         $inline_extra_js .= '
 function disableUser() {
     if (confirm("You are about to disable this user account\nDo you want to continue?"))  {
@@ -384,11 +392,11 @@ function enableUser() {
 
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
                     ? 'password' : 'text';
-    
-    
+
+
     // print HTML prologue
     $extra_css = array();
-    
+
     $extra_js = array(
         "static/js/ajax.js",
         "static/js/ajaxGeneric.js",
@@ -396,10 +404,10 @@ function enableUser() {
         "static/js/pages_common.js",
         "static/js/dynamic_attributes.js",
     );
-    
+
     $title = t('Intro','mngedit.php');
     $help = t('helpPage','mngedit');
-    
+
     print_html_prologue($title, $langCode, $extra_css, $extra_js, "", $inline_extra_js);
 
     if (!empty($username_enc)) {
@@ -409,37 +417,37 @@ function enableUser() {
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-    
+
     $inline_extra_js = "";
     if (!empty($username)) {
-    
+
         // ajax return div
         echo '<div id="returnMessages"></div>';
         include_once('include/management/populate_selectbox.php');
-    
+
         // we have more than one form in this page so we can reuse many times the same csrf_token value
         $csrf_token = dalo_csrf_token();
-        
+
         $submit_descriptor = array(
                                     "type" => "submit",
                                     "name" => "submit",
                                     "value" => t('buttons','apply')
                                   );
-        
+
         $input_descriptors0 = array();
-        
+
         $input_descriptors0[] = array(
                                         "type" => "hidden",
                                         "value" => $csrf_token,
                                         "name" => "csrf_token"
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "type" => "hidden",
                                         "value" => $username_enc,
                                         "name" => "username"
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "username_presentation",
                                         "caption" => t('all','Username'),
@@ -448,7 +456,7 @@ function enableUser() {
                                         "disabled" => true,
                                         "tooltipText" => t('Tooltip','usernameTooltip')
                                       );
-                                    
+
         $input_descriptors0[] = array(
                                         "id" => "password",
                                         "name" => "password",
@@ -458,10 +466,10 @@ function enableUser() {
                                         "disabled" => true,
                                         "tooltipText" => t('Tooltip','passwordTooltip')
                                      );
-        
+
         $input_descriptors0[] = array( 'name' => 'oldplanName', 'type' => 'hidden',
                                                  'value' => ((isset($bi_planname)) ? $bi_planname : "") );
-                        
+
         $options = get_active_plans();
         array_unshift($options, '');
         $input_descriptors0[] = array(
@@ -472,22 +480,22 @@ function enableUser() {
                                          'options' => $options,
                                          'selected_value' => ((isset($bi_planname)) ? $bi_planname : "")
                                      );
-        
+
         // set navbar stuff
-        $navkeys = array( 
+        $navkeys = array(
                           'AccountInfo', 'RADIUSCheck', 'RADIUSReply', 'UserInfo', 'BillingInfo',
                           'Groups', 'Attributes', array( 'OtherInfo', "Other Info" )
                         );
 
         // print navbar controls
         print_tab_header($navkeys);
-        
+
         // open form
         open_form();
-        
+
         // open tab wrapper
         open_tab_wrapper();
-        
+
         // open first tab (shown)
         open_tab($navkeys, 0, true);
 
@@ -497,43 +505,43 @@ function enableUser() {
                                      );
 
         open_fieldset($fieldset0_descriptor);
-        
+
         foreach ($input_descriptors0 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         // open a fieldset
         $fieldset0_descriptor = array(
                                         "title" => "Actions",
                                      );
-        
+
         open_fieldset($fieldset0_descriptor);
-        
+
         include('include/management/buttons.php');
-    
+
         $button_descriptors1[] = array(
                                         'type' => 'button',
                                         'value' => 'Enable User',
                                         'onclick' => 'javascript:enableUser()',
                                         'name' => 'enableUser-button'
                                       );
-                          
+
         $button_descriptors1[] = array(
                                         'type' => 'button',
                                         'value' => 'Disable User',
                                         'onclick' => 'javascript:disableUser()',
                                         'name' => 'disableUser-button'
                                       );
-    
+
         // custom actions
         echo <<<EOF
     <div class="dropdown dropup">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Actions
         </button>
-  
+
         <ul class="dropdown-menu">
 EOF;
 
@@ -546,21 +554,21 @@ EOF;
         </ul>
     </div>
 EOF;
-        
+
         close_fieldset();
-        
+
         close_tab($navkeys, 0);
-        
-        
+
+
         // open 1-st tab (not shown)
         open_tab($navkeys, 1);
-        
+
         // open 1-st fieldset
         $fieldset1_descriptor = array(
                                         "title" => t('title','RADIUSCheck'),
                                      );
         open_fieldset($fieldset1_descriptor);
-        
+
         $hashing_algorithm_notice = '<small class="mt-4 d-block">'
                                   . 'Notice that for supported password-like attributes, you can just specify a plaintext value. '
                                   . 'The system will take care of correctly hashing it.'
@@ -584,7 +592,7 @@ EOF;
             printf('<div class="alert alert-info" role="alert">%s</div>', t('messages','noCheckAttributesForUser'));
         } else {
             while ($row = $res->fetchRow()) {
-                
+
                 foreach ($row as $i => $v) {
                     $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
                 }
@@ -594,32 +602,32 @@ EOF;
                 $name = sprintf('editValues%s[]', $id);
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
                 $onclick = sprintf("document.getElementById('form-%d-radcheck').submit()", $id);
-                
+
                 $descriptor = array( 'onclick' => $onclick, 'attribute' => $row[0], 'select_name' => $name, 'selected_option' => $row[1],
                                      'id__attribute' => $id__attribute, 'type' => $type, 'value' => $row[2], 'name' => $name,
                                      'attr_type' => $row[3], 'attr_desc' => $row[4], 'table' => 'radcheck');
-                
+
                 print_edit_attribute($descriptor);
             }
-            
+
             echo $hashing_algorithm_notice;
         }
-        
+
         echo '</div><!-- .container -->';
-        
+
         close_fieldset();
-        
+
         close_tab($navkeys, 1);
-                        
+
         // open 2-nd tab (not shown)
         open_tab($navkeys, 2);
-        
+
         // open 2-nd fieldset
         $fieldset1_descriptor = array(
                                         "title" => t('title','RADIUSReply'),
                                      );
         open_fieldset($fieldset1_descriptor);
-        
+
         $sql = sprintf("SELECT rad.attribute, rad.op, rad.value, dd.type, dd.recommendedTooltip, rad.id
                           FROM %s AS rad LEFT JOIN %s AS dd ON rad.attribute = dd.attribute AND dd.value IS NULL
                          WHERE rad.username='%s' ORDER BY rad.id ASC", $configValues['CONFIG_DB_TBL_RADREPLY'],
@@ -628,13 +636,13 @@ EOF;
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
-        
+
         echo '<div class="container">';
         if ($res->numRows() == 0) {
             printf('<div class="alert alert-info" role="alert">%s</div>', t('messages','noReplyAttributesForUser'));
         } else {
             while ($row = $res->fetchRow()) {
-                
+
                 foreach ($row as $i => $v) {
                     $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
                 }
@@ -644,30 +652,30 @@ EOF;
                 $name = sprintf('editValues%s[]', $id);
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
                 $onclick = sprintf("document.getElementById('form-%d-radreply').submit()", $id);
-                
+
                 $descriptor = array( 'onclick' => $onclick, 'attribute' => $row[0], 'select_name' => $name, 'selected_option' => $row[1],
                                      'id__attribute' => $id__attribute, 'type' => $type, 'value' => $row[2], 'name' => $name,
                                      'attr_type' => $row[3], 'attr_desc' => $row[4], 'table' => 'radreply');
-                                     
+
                 print_edit_attribute($descriptor);
             }
-            
-            
+
+
             echo $hashing_algorithm_notice;
         }
-        
+
         echo '</div><!-- .container -->';
 
         close_fieldset();
-        
+
         close_tab($navkeys, 2);
 
         // open 3-rd tab (not shown)
         open_tab($navkeys, 3);
         include_once('include/management/userinfo.php');
         close_tab($navkeys, 3);
-        
-        
+
+
         // open 4-th tab (not shown)
         open_tab($navkeys, 4);
         include_once('include/management/userbillinfo.php');
@@ -679,7 +687,7 @@ EOF;
         include('../common/includes/db_open.php');
         include_once('include/management/groups.php');
         include('../common/includes/db_close.php');
-        
+
         close_tab($navkeys, 5);
 
         open_tab($navkeys, 6);
@@ -687,7 +695,7 @@ EOF;
         include_once('include/management/attributes.php');
 
         close_tab($navkeys, 6);
-        
+
         open_tab($navkeys, 7);
 
         // accordion
@@ -723,14 +731,14 @@ EOF;
             $logDebugSQL .= "$sql;\n";
 
             if ($res->numRows() > 0) {
-                
+
                 while ($row = $res->fetchrow()) {
                     list($id, $attribute, $value) = $row;
                     $id = intval($id);
-                    
+
                     $formId = sprintf("form-%d-%s", $id, $table_value);
                     $id__attribute = sprintf("%d__%s", $id, htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8'));
-                    
+
                     printf('<form id="%s" style="display: none" method="POST" action="mng-del.php">', $formId);
                     printf('<input type="hidden" name="username" value="%s">', $username_enc);
                     printf('<input type="hidden" name="attribute" value="%s">', $id__attribute);
@@ -740,7 +748,7 @@ EOF;
                 }
             }
         }
-        
+
         include('../common/includes/db_close.php');
 
         $inline_extra_js = <<<EOF
@@ -753,11 +761,11 @@ window.onload = function() {
 EOF;
 
     }
-    
+
     print_back_to_previous_page();
 
     include('include/config/logging.php');
-    
+
     print_footer_and_html_epilogue($inline_extra_js);
 
 ?>
