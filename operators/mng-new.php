@@ -95,7 +95,7 @@
             // these are forced to 0 (disabled) if user portal login password is empty
             $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
                                ? '1' : '0';
-            $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) &&  isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+            $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                                       ? '1' : '0';
 
             isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";
@@ -230,7 +230,7 @@
                                        "bi_creditcardname", "bi_creditcardnumber", "bi_creditcardverification", "bi_creditcardtype",
                                        "bi_creditcardexp", "bi_notes", "bi_lead", "bi_coupon", "bi_ordertaker", "bi_billstatus",
                                        "bi_lastbill", "bi_nextbill", "bi_nextinvoicedue", "bi_billdue", "bi_postalinvoice", "bi_faxinvoice",
-                                       "bi_emailinvoice", "changeUserBillInfo", "changeUserInfo", "copycontact", "portalLoginPassword",
+                                       "bi_emailinvoice", "bi_changeuserbillinfo", "changeUserInfo", "copycontact", "portalLoginPassword",
                                        "enableUserPortalLogin", "csrf_token", "submit"
                                      );
 
@@ -255,7 +255,7 @@
                                         "zip" => $zip,
                                         "notes" => $notes,
                                         "changeuserinfo" => $ui_changeuserinfo,
-                                        "enableuserportallogin" => $ui_enableUserPortalLogin,
+                                        "enableportallogin" => $ui_enableUserPortalLogin,
                                         "portalloginpassword" => $ui_PortalLoginPassword,
                                         "creationdate" => $currDate,
                                         "creationby" => $currBy,

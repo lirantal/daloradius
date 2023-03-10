@@ -175,7 +175,7 @@
                 // these are forced to 0 (disabled) if user portal login password is empty
                 $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
                                    ? '1' : '0';
-                $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) &&  isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+                $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                                           ? '1' : '0';
 
                 /* variables for userbillinfo */
@@ -339,8 +339,10 @@
                                                 "zip" => $zip,
                                                 "notes" => $notes,
                                                 "changeuserinfo" => $ui_changeuserinfo,
-                                                "enableuserportallogin" => $ui_enableUserPortalLogin,
+                                                "enableportallogin" => $ui_enableUserPortalLogin,
                                                 "portalloginpassword" => $ui_PortalLoginPassword,
+                                                "creationdate" => $currDate,
+                                                "creationby" => $currBy,
                                            );
 
                             if (add_user_info($dbSocket, $username, $params) === false) {
@@ -382,7 +384,7 @@
                                                 "hotspot_id" => $hotspot_id,
                                                 "batch_id" => $sql_batch_id,
                                                 "creationdate" => $currDate,
-                                                "creationby" => $operator
+                                                "creationby" => $currBy
                                            );
 
                             if (add_user_billing_info($dbSocket, $username, $params) === false) {
@@ -400,7 +402,7 @@
                                                "bi_zip", "bi_paymentmethod", "bi_cash", "bi_creditcardname", "bi_creditcardnumber",
                                                "bi_creditcardverification", "bi_creditcardtype", "bi_creditcardexp", "bi_notes", "bi_lead",
                                                "bi_coupon", "bi_ordertaker", "bi_billstatus", "bi_lastbill", "bi_nextbill", "bi_postalinvoice",
-                                               "bi_faxinvoice", "bi_emailinvoice", "bi_batch_id", "changeUserBillInfo", "changeUserInfo",
+                                               "bi_faxinvoice", "bi_emailinvoice", "bi_batch_id", "bi_changeuserbillinfo", "changeUserInfo",
                                                "batch_description", "batch_name", "hotspot", "hotspot_id", "copycontact",
                                                "enableUserPortalLogin", "portalLoginPassword", "csrf_token"
                                              );

@@ -196,7 +196,7 @@
                                    "changeUserInfo", "bi_contactperson", "bi_company", "bi_email", "bi_phone", "bi_address",
                                    "bi_city", "bi_state", "bi_country", "bi_zip", "bi_paymentmethod", "bi_cash", "bi_creditcardname",
                                    "bi_creditcardnumber", "bi_creditcardverification", "bi_creditcardtype", "bi_creditcardexp",
-                                   "bi_notes", "changeUserBillInfo", "bi_lead", "bi_coupon", "bi_ordertaker", "bi_billstatus",
+                                   "bi_notes", "bi_changeuserbillinfo", "bi_lead", "bi_coupon", "bi_ordertaker", "bi_billstatus",
                                    "bi_lastbill", "bi_nextbill", "bi_nextinvoicedue", "bi_billdue", "bi_postalinvoice", "bi_faxinvoice",
                                    "bi_emailinvoice", "bi_planname", "portalLoginPassword", "enableUserPortalLogin",
                                    "csrf_token", "submit"

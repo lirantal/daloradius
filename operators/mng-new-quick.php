@@ -95,7 +95,7 @@
             // these are forced to 0 (disabled) if user portal login password is empty
             $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
                                ? '1' : '0';
-            $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) &&  isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+            $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                                       ? '1' : '0';
 
             // billing info variables
@@ -184,7 +184,7 @@
                                        "bi_email", "bi_phone", "bi_address", "bi_city", "bi_state", "bi_country", "bi_zip",
                                        "bi_paymentmethod", "bi_cash", "bi_creditcardname", "bi_creditcardnumber",
                                        "bi_creditcardverification", "bi_creditcardtype", "bi_creditcardexp", "bi_notes",
-                                       "changeUserBillInfo", "csrf_token", "submit"
+                                       "bi_changeuserbillinfo", "csrf_token", "submit"
                                      );
                     $attributesCount = handleAttributes($dbSocket, $username, $skipList);
 
@@ -208,7 +208,7 @@
                                         "zip" => $zip,
                                         "notes" => $notes,
                                         "changeuserinfo" => $ui_changeuserinfo,
-                                        "enableuserportallogin" => $ui_enableUserPortalLogin,
+                                        "enableportallogin" => $ui_enableUserPortalLogin,
                                         "portalloginpassword" => $ui_PortalLoginPassword,
                                         "creationdate" => $currDate,
                                         "creationby" => $currBy,
