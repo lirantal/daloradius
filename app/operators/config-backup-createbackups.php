@@ -202,8 +202,17 @@
                     $failureMsg = "Failed creating backup due to file write error, check your disk space";
                     $logAction .= "Failed creating backup due to file write error on page: ";
                 } else {
-                    $successMsg = sprintf("Successfully created backup for %d table(s) [%s]", count($tables), implode(", ", $tables));
-                    $logAction .= sprintf("Successfully created backup file [%s] on page: ", $fileName);
+                    
+                    $fileSize = filesize($fileName);
+                    if ($fileSize > 0) {
+                        $successMsg = sprintf("Successfully created backup for %d table(s) [%s]", count($tables), implode(", ", $tables));
+                        $logAction .= sprintf("Successfully created backup file [%s] on page: ", $fileName);
+                    } else {
+                        unlink($fileName);
+                        
+                        $failureMsg = "Failed creating backup due to file write error (empty file)";
+                        $logAction .= "Failed creating backup due to file write error (empty file) on page: ";
+                    }
                 }
             }
         

@@ -1,4 +1,5 @@
 
+
 # How to install daloRADIUS on Debian 11
 This guide will walk you through the steps to install daloRADIUS on a Debian system.
 
@@ -84,12 +85,16 @@ EOF
 cat <<EOF > /etc/apache2/sites-available/operators.conf
 <VirtualHost *:8000>
     ServerAdmin operators@localhost
-    DocumentRoot /var/www/daloradius/operators
+    DocumentRoot /var/www/daloradius/app/operators
 
-    <Directory /var/www/daloradius/operators>
+    <Directory /var/www/daloradius/app/operators>
         Options -Indexes +FollowSymLinks
         AllowOverride None
         Require all granted
+    </Directory>
+
+    <Directory /var/www/daloradius>
+        Require all denied
     </Directory>
 
     ErrorLog \${APACHE_LOG_DIR}/daloradius/operators/error.log
@@ -100,12 +105,16 @@ EOF
 cat <<EOF > /etc/apache2/sites-available/users.conf
 <VirtualHost *:80>
     ServerAdmin users@localhost
-    DocumentRoot /var/www/daloradius/users
+    DocumentRoot /var/www/daloradius/app/users
 
-    <Directory /var/www/daloradius/users>
+    <Directory /var/www/daloradius/app/users>
         Options -Indexes +FollowSymLinks
         AllowOverride None
         Require all granted
+    </Directory>
+
+    <Directory /var/www/daloradius>
+        Require all denied
     </Directory>
 
     ErrorLog \${APACHE_LOG_DIR}/daloradius/users/error.log
@@ -116,8 +125,7 @@ EOF
 
 14. Create log directories:
 ```
-mkdir -p /var/log/apache2/daloradius/operators
-mkdir -p /var/log/apache2/daloradius/users
+mkdir -p /var/log/apache2/daloradius/{operators,users}
 ```
 
 15. Enable the created virtual hosts:
@@ -145,11 +153,18 @@ mysql -u root raddb < /var/www/daloradius/contrib/db/mysql-daloradius.sql
 ```
 19. Clone the sample configuration file
 ```
-cd /var/www/daloradius/common/includes/
+cd /var/www/daloradius/app/common/includes/
 cp daloradius.conf.php.sample daloradius.conf.php
 chown www-data:www-data daloradius.conf.php
 ```
-20. Edit the configuration file to reflect freeRADIUS and db configuration. In this example:
+20. Create `var` directory and its subdirectories, then change their ownership:
+```
+cd /var/www/daloradius/
+mkdir var/{log,backup}
+chown -R www-data:www-data var
+```
+
+22. Edit the configuration file to reflect FreeRADIUS and db configuration. In this example:
 ```
 $configValues['FREERADIUS_VERSION'] = '3';
 $configValues['CONFIG_DB_ENGINE'] = 'mysqli';
@@ -159,9 +174,9 @@ $configValues['CONFIG_DB_USER'] = 'raduser';
 $configValues['CONFIG_DB_PASS'] = 'radpass';
 $configValues['CONFIG_DB_NAME'] = 'raddb';
 ```
-21. Enable and start Apache:
+23. Enable and start Apache:
 ```
 systemctl enable apache2
 systemctl restart apache2
 ```
-22. Check if the system is working fine just by visiting `http://<ip>:8000/` for the RADIUS management application or `http://<ip>` for the user portal application.
+24. Check if the system is working fine just by visiting `http://<ip>:8000/` for the RADIUS management application or `http://<ip>` for the user portal application.

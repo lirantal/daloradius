@@ -35,7 +35,7 @@
 
     $cronUser = shell_exec('whoami');
 
-    $dalo_crontab_file = realpath(__DIR__ . '/../contrib/scripts/dalo-crontab');
+    $dalo_crontab_file = realpath(__DIR__ . '/../../contrib/scripts/dalo-crontab');
     $is_crontab_file_accessible = (file_exists($dalo_crontab_file) && is_readable($dalo_crontab_file));
 
     if ($is_crontab_file_accessible) {
