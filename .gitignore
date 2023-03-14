@@ -3,4 +3,6 @@
 *.db
 invoice_preview.html
 .DS_Store
-common/includes/daloradius.conf.php
+app/common/includes/daloradius.conf.php
+var/log/*.log
+var/backup/*.sql
