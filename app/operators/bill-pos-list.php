@@ -208,7 +208,7 @@
             
             // we try to get the type of this user
             if ($attribute == 'Auth-Type' && $row['auth'] == 'Accept') {
-                if (filter_var($username, FILTER_VALIDATE_MAC)) {
+                if (preg_match(MACADDR_REGEX, $username) || preg_match(IP_REGEX, $username)) {
                     $type = 'MAC';
                 } else {
                     $type = 'PIN';

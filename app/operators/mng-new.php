@@ -64,8 +64,8 @@
             $passwordType = (array_key_exists('passwordType', $_POST) && !empty(trim($_POST['passwordType'])) &&
                              in_array(trim($_POST['passwordType']), $valid_passwordTypes)) ? trim($_POST['passwordType']) : $valid_passwordTypes[0];
 
-            $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
-                           filter_var(trim(strtoupper($_POST['macaddress'])), FILTER_VALIDATE_MAC)) ? trim(strtoupper($_POST['macaddress'])) : "";
+            $macaddress = (isset($_POST['macaddress']) && !empty(trim($_POST['macaddress'])) &&
+                           preg_match(MACADDR_REGEX, trim($_POST['macaddress']))) ? trim($_POST['macaddress']) : "";
 
             $pincode = (array_key_exists('pincode', $_POST) && isset($_POST['pincode'])) ? trim($_POST['pincode']) : "";
 

@@ -72,9 +72,9 @@
 
             if (!empty($name)) {
                 $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
-                               (filter_var($_POST['macaddress'], FILTER_VALIDATE_MAC) ||
-                                filter_var($_POST['macaddress'], FILTER_VALIDATE_IP)))
-                            ? $_POST['macaddress'] : "";
+                               (preg_match(MACADDR_REGEX, trim($_POST['macaddress'])) ||
+                                preg_match(IP_REGEX, trim($_POST['macaddress']))))
+                            ? trim($_POST['macaddress']) : "";
 
                 // we check that this MAC/IP addr is not assigned to any other HS
                 $sql = sprintf("SELECT COUNT(id) FROM %s WHERE mac='%s' AND name<>'%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],

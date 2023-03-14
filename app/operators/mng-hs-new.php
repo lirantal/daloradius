@@ -42,9 +42,9 @@
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
             $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
-                           (filter_var($_POST['macaddress'], FILTER_VALIDATE_MAC) ||
-                            filter_var($_POST['macaddress'], FILTER_VALIDATE_IP)))
-                        ? $_POST['macaddress'] : "";
+                           (preg_match(MACADDR_REGEX, trim($_POST['macaddress'])) ||
+                            preg_match(IP_REGEX, trim($_POST['macaddress']))))
+                        ? trim($_POST['macaddress']) : "";
 
             $name = (array_key_exists('name', $_POST) && !empty(str_replace("%", "", trim($_POST['name']))))
                   ? str_replace("%", "", trim($_POST['name'])) : "";
