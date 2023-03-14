@@ -33,7 +33,7 @@ $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
 global $username;
 
 include_once("include/management/populate_selectbox.php");
-$menu_users = get_users('CONFIG_DB_TBL_DALOUSERINFO');
+$menu_users = get_users('CONFIG_DB_TBL_RADCHECK');
 
 
 // define descriptors
@@ -50,26 +50,30 @@ if (count($menu_users) > 0) {
 
     $components = array();
     $components[] = array(
+                            // this will produce a random id
+                            "id" => 'random',
                             "name" => "username",
                             "type" => "text",
                             "value" => ((isset($username)) ? $username : ""),
                             "required" => true,
-                            "datalist" => (($autocomplete) ? $menu_users : array()),
+                            "datalist" => array(
+                                                    'type' => 'ajax',
+                                                    'url' => 'library/ajax/json_api.php',
+                                                    'search_param' => 'username',
+                                                    'params' => array(
+                                                                        'datatype' => 'usernames',
+                                                                        'action' => 'list',
+                                                                        'table' => 'CONFIG_DB_TBL_RADCHECK',
+                                                                     ),
+                                               ),
                             "tooltipText" => t('Tooltip','usernameTooltip'),
                             "caption" => t('all','Username'),
                             "sidebar" => true,
                           );
 
-    $id1 = "id_" . rand();
-    $components[0]['id'] = $id1;
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUser'), 'action' => 'mng-edit.php', 'method' => 'GET',
                              'icon' => 'person-fill-gear', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
-    
-    $components[0]['id'] = "id_" . rand();
-    unset($components[0]["datalist"]);
-    // this means that this component should use the datalist
-    // that has been previously loaded by the component that has $id1 as its id
-    $components[0]['shared_datalist'] = $id1;
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SearchUsers'), 'action' => 'mng-search.php', 'method' => 'GET',
                              'icon' => 'search', 'img' => array( 'src' => 'static/images/icons/userSearch.gif', ), 'form_components' => $components, );
 

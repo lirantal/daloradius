@@ -36,14 +36,15 @@ $menu_planNames = get_plans();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewPlan'), 'href' =>'bill-plans-new.php',
-                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'plus-circle-fill', );
 
 if (count($menu_planNames) > 0) {
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListPlans'), 'href' => 'bill-plans-list.php',
-                             'icon' => 'list', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+                             'icon' => 'list', );
 
     $components = array();
     $components[] = array(
+                            "id" => 'random',
                             "name" => "planName",
                             "type" => "select",
                             "selected_value" => ((isset($planName)) ? $planName : ""),
@@ -54,10 +55,10 @@ if (count($menu_planNames) > 0) {
                           );
 
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditPlan'), 'action' => 'bill-plans-edit.php', 'method' => 'GET',
-                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'form_components' => $components, );
 
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemovePlan'), 'href' => 'bill-plans-del.php',
-                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+                             'icon' => 'x-circle-fill', );
 }
 
 $sections = array();

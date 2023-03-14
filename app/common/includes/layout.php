@@ -714,9 +714,52 @@ function print_input_field($input_descriptor) {
         printf(' onclick="%s"', $input_descriptor['onclick']);
     }
 
-    if (array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist'])) {
-        $datalist_id = sprintf("%s-%d-list", $input_descriptor['id'], rand());
-        printf(' list="%s"', $datalist_id);
+    $datalist = array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist']) && !empty($input_descriptor['datalist']);
+    if ($datalist) {
+        // allowed types of datalists
+        $datalist_types = array( 'traditional', 'shared', 'ajax' );
+
+        $datalist_descriptor = $input_descriptor['datalist'];
+
+        if (isset($datalist_descriptor['type']) && in_array(strtolower(trim($datalist_descriptor['type'])), $datalist_types)) {
+            $datalist_descriptor['type'] = strtolower(trim($datalist_descriptor['type']));
+        } else {
+            $datalist_descriptor['options'] = $datalist_descriptor;
+            $datalist_descriptor['type'] = 'traditional';
+        }
+
+        switch ($datalist_descriptor['type']) {
+            default:
+            case 'traditional':
+                $seed_id = $input_descriptor['id'];
+                break;
+
+            case 'ajax':
+                $seed_id = $input_descriptor['id'];
+
+                $datalist_url = $datalist_descriptor['url'];
+                $datalist_searchparam = $datalist_descriptor['search_param'];
+
+                $datalist_querystring = "";
+                $tmp = array();
+                foreach ($datalist_descriptor['params'] as $key => $value) {
+                    $tmp[] = "$key=$value";
+                }
+                $datalist_querystring = implode("&", $tmp);
+
+                break;
+
+            case 'shared':
+                $seed_id = $datalist_descriptor['id'];
+                break;
+        }
+
+        if (isset($seed_id)) {
+            $datalist_id = sprintf("%s_list", $seed_id);
+            printf(' list="%s" autocomplete="off"', $datalist_id);
+            $input_descriptor['datalist_id'] = $datalist_id;
+        }
+
     }
 
     if (array_key_exists('tooltipText', $input_descriptor)) {
@@ -749,14 +792,69 @@ function print_input_field($input_descriptor) {
 
     }
 
-    if (array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist'])) {
-        printf('<datalist id="%s">', $datalist_id);
-        foreach ($input_descriptor['datalist'] as $value) {
-            $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-            printf('<option value="%s">' . "\n", $value);
+    if ($datalist && isset($datalist_id)) {
+        switch ($datalist_descriptor['type']) {
+            default:
+            case 'traditional':
+                printf('<datalist id="%s">', $datalist_id);
+                foreach ($datalist_descriptor['options'] as $value) {
+                    $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                    printf('<option value="%s">' . "\n", $value);
+                }
+                echo '';
+                break;
+
+            case 'ajax':
+
+                printf('<datalist id="%s"></datalist>', $datalist_id);
+
+                $input_ = "input_" . rand();
+                $datalist_ = "datalist_" . rand();
+                $searchparam_ = "searchparam_" . rand();
+
+                echo <<<EOF
+<script>
+var {$input_} = document.getElementById('{$input_descriptor['id']}'),
+    {$datalist_} = document.getElementById('{$input_descriptor['datalist_id']}');
+
+{$input_}.oninput = function(){
+
+    var {$searchparam_} = {$input_}.value;
+
+    if ({$searchparam_}.length >= 3) {
+
+        {$datalist_}.innerHTML = '';
+
+        var url = `{$datalist_url}?{$datalist_querystring}&{$datalist_searchparam}=\${{$searchparam_}}`;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.getResponseHeader("Content-type", "application/json");
+
+        xhr.onload = function() {
+            const json = JSON.parse(this.responseText);
+
+            json.forEach(function(item) {
+                var option = document.createElement('option');
+                option.value = item;
+                {$datalist_}.appendChild(option);
+            });
         }
-        echo '</datalist>';
+        xhr.send();
     }
+};
+</script>
+
+EOF;
+
+                break;
+
+            case 'shared':
+                // nothing to do
+                break;
+        }
+    }
+
 }
 
 
@@ -1080,8 +1178,11 @@ function print_form_component($descriptor) {
  */
 // this function can be used for printing, in the menu (ie. sidebar), a select field
 function menu_print_select($select_descriptor) {
-    if (!array_key_exists('id', $select_descriptor) || empty($select_descriptor['id'])) {
+
+    if (!isset($select_descriptor['id']) || empty($select_descriptor['id'])) {
         $select_descriptor['id'] = $select_descriptor['name'];
+    } else if (strtolower(trim($select_descriptor['id'])) == 'random') {
+        $select_descriptor['id'] = "id_" . rand();
     }
 
     echo '<div class="text-start">';
@@ -1180,8 +1281,10 @@ EOF;
 function menu_print_input_field($input_descriptor) {
     global $configValues;
 
-    if (!array_key_exists('id', $input_descriptor) || empty($input_descriptor['id'])) {
+    if (!isset($input_descriptor['id']) || empty($input_descriptor['id'])) {
         $input_descriptor['id'] = $input_descriptor['name'];
+    } else if (strtolower(trim($input_descriptor['id'])) == 'random') {
+        $input_descriptor['id'] = "id_" . rand();
     }
 
     $input_descriptor['type'] = (!array_key_exists('type', $input_descriptor))
@@ -1248,19 +1351,51 @@ function menu_print_input_field($input_descriptor) {
     }
 
     $datalist = array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist']) && !empty($input_descriptor['datalist']);
-    $shared_datalist = array_key_exists('shared_datalist', $input_descriptor) && !empty($input_descriptor['shared_datalist']);
+    if ($datalist) {
+        // allowed types of datalists
+        $datalist_types = array( 'traditional', 'shared', 'ajax' );
 
-    if ($datalist || $shared_datalist) {
-        if ($datalist) {
-            $seed_id = $input_descriptor['id'];
-        } else if ($shared_datalist) {
-            $seed_id = $input_descriptor['shared_datalist'];
+        $datalist_descriptor = $input_descriptor['datalist'];
+
+        if (isset($datalist_descriptor['type']) && in_array(strtolower(trim($datalist_descriptor['type'])), $datalist_types)) {
+            $datalist_descriptor['type'] = strtolower(trim($datalist_descriptor['type']));
+        } else {
+            $datalist_descriptor['options'] = $datalist_descriptor;
+            $datalist_descriptor['type'] = 'traditional';
+        }
+
+        switch ($datalist_descriptor['type']) {
+            default:
+            case 'traditional':
+                $seed_id = $input_descriptor['id'];
+                break;
+
+            case 'ajax':
+                $seed_id = $input_descriptor['id'];
+
+                $datalist_url = $datalist_descriptor['url'];
+                $datalist_searchparam = $datalist_descriptor['search_param'];
+
+                $datalist_querystring = "";
+                $tmp = array();
+                foreach ($datalist_descriptor['params'] as $key => $value) {
+                    $tmp[] = "$key=$value";
+                }
+                $datalist_querystring = implode("&", $tmp);
+
+                break;
+
+            case 'shared':
+                $seed_id = $datalist_descriptor['id'];
+                break;
         }
 
         if (isset($seed_id)) {
             $datalist_id = sprintf("%s_list", $seed_id);
-            printf(' list="%s"', $datalist_id);
+            printf(' list="%s" autocomplete="off"', $datalist_id);
+            $input_descriptor['datalist_id'] = $datalist_id;
         }
+
     }
 
     if (array_key_exists('tooltipText', $input_descriptor)) {
@@ -1271,16 +1406,68 @@ function menu_print_input_field($input_descriptor) {
 
     echo '>';
 
-    if (array_key_exists('datalist', $input_descriptor) && is_array($input_descriptor['datalist']) &&
-        !empty($input_descriptor['datalist'])) {
-        printf('<datalist id="%s">', $datalist_id);
-        foreach ($input_descriptor['datalist'] as $value) {
-            $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-            printf('<option value="%s">' . "\n", $value);
-        }
-        echo '</datalist>';
-    }
+    if ($datalist && isset($datalist_id)) {
+        switch ($datalist_descriptor['type']) {
+            default:
+            case 'traditional':
+                printf('<datalist id="%s">', $datalist_id);
+                foreach ($datalist_descriptor['options'] as $value) {
+                    $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                    printf('<option value="%s">' . "\n", $value);
+                }
+                echo '';
+                break;
 
+            case 'ajax':
+
+                printf('<datalist id="%s"></datalist>', $datalist_id);
+
+                $input_ = "input_" . rand();
+                $datalist_ = "datalist_" . rand();
+                $searchparam_ = "searchparam_" . rand();
+
+                echo <<<EOF
+<script>
+var {$input_} = document.getElementById('{$input_descriptor['id']}'),
+    {$datalist_} = document.getElementById('{$input_descriptor['datalist_id']}');
+
+{$input_}.oninput = function(){
+
+    var {$searchparam_} = {$input_}.value;
+
+    if ({$searchparam_}.length >= 3) {
+
+        {$datalist_}.innerHTML = '';
+
+        var url = `{$datalist_url}?{$datalist_querystring}&{$datalist_searchparam}=\${{$searchparam_}}`;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.getResponseHeader("Content-type", "application/json");
+
+        xhr.onload = function() {
+            const json = JSON.parse(this.responseText);
+
+            json.forEach(function(item) {
+                var option = document.createElement('option');
+                option.value = item;
+                {$datalist_}.appendChild(option);
+            });
+        }
+        xhr.send();
+    }
+};
+</script>
+
+EOF;
+
+                break;
+
+            case 'shared':
+                // nothing to do
+                break;
+        }
+    }
 
     echo '</div>';
 }
@@ -1486,11 +1673,9 @@ function print_tab_navbuttons($button_descriptors) {
             $count++;
         }
 
-
         echo '</div>' . "\n";
     }
 }
-
 
 
 function print_tab_header($keywords=array(), $active=0) {
@@ -1578,5 +1763,3 @@ function close_tab($keywords=array(), $index=0) {
     echo "\n";
 }
 
-
-?>

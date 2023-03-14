@@ -40,9 +40,9 @@ $menu_groups = get_groups();
 // init select components
 function get_select_options($item_table, $item_prefix) {
     global $options_format;
-    
+
     include('../common/includes/db_open.php');
-    
+
     $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s ORDER BY groupname, attribute DESC", $item_table);
     $res = $dbSocket->query($sql);
 
@@ -55,7 +55,7 @@ function get_select_options($item_table, $item_prefix) {
     }
 
     include('../common/includes/db_close.php');
-    
+
     return $result;
 }
 
@@ -64,6 +64,7 @@ $radgroupreply_options = get_select_options($configValues['CONFIG_DB_TBL_RADGROU
 $radgroupcheck_options = get_select_options($configValues['CONFIG_DB_TBL_RADGROUPCHECK'], "groupcheck-");
 
 $menu_radgroupreply_select = array(
+                                    'id' => 'random',
                                     'name' => 'item',
                                     'type' => 'select',
                                     'caption' => $caption,
@@ -72,6 +73,7 @@ $menu_radgroupreply_select = array(
                                   );
 
 $menu_radgroupcheck_select = array(
+                                    'id' => 'random',
                                     'name' => 'item',
                                     'type' => 'select',
                                     'caption' => $caption,
@@ -92,6 +94,7 @@ if (count($menu_groups) > 0 && count($radgroupcheck_options) > 0) {
 
     $components = array();
     $components[] = array(
+                            "id" => 'random',
                             "name" => "groupname",
                             "type" => "text",
                             "value" => ((isset($groupname)) ? $groupname : ""),
@@ -101,14 +104,12 @@ if (count($menu_groups) > 0 && count($radgroupcheck_options) > 0) {
                             "sidebar" => true,
                           );
 
-    $components[0]['id'] = "id_" . rand();
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SearchGroupCheck'), 'action' => 'mng-rad-groupcheck-search.php', 'method' => 'GET',
                              'img' => array( 'src' => 'static/images/icons/groupsList.png', ), 'form_components' => $components, );
 
     $components = array();
     $components[] = $menu_radgroupcheck_select;
-    $components[0]['id'] = "id_" . rand();
-    
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditGroupReply'), 'action' => 'mng-rad-groupcheck-edit.php', 'method' => 'GET',
                              'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveGroupCheck'), 'href' => 'mng-rad-groupcheck-del.php',
@@ -126,7 +127,7 @@ if (count($menu_groups) > 0 && count($radgroupreply_options) > 0) {
 
     $components = array();
     $components[] = array(
-                            "id" => "groupname_menu1",
+                            "id" => 'random',
                             "name" => "groupname",
                             "type" => "text",
                             "value" => ((isset($groupname)) ? $groupname : ""),
@@ -135,15 +136,13 @@ if (count($menu_groups) > 0 && count($radgroupreply_options) > 0) {
                             "tooltipText" => t('Tooltip','GroupName'),
                             "sidebar" => true,
                           );
-                          
-    $components[0]['id'] = "id_" . rand();
+
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','SearchGroupReply'), 'action' => 'mng-rad-groupreply-search.php', 'method' => 'GET',
                              'img' => array( 'src' => 'static/images/icons/groupsList.png', ), 'form_components' => $components, );
 
     $components = array();
     $components[] = $menu_radgroupreply_select;
-    $components[0]['id'] = "id_" . rand();
-    
+
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditGroupReply'), 'action' => 'mng-rad-groupreply-edit.php', 'method' => 'GET',
                              'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
     $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemoveGroupReply'), 'href' => 'mng-rad-groupreply-del.php',

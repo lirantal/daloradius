@@ -29,13 +29,13 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/rep/status.php') !== fal
 
 // define descriptors
 $descriptors1 = array();
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServerStatus'), 'href' => 'rep-stat-server.php', 
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServerStatus'), 'href' => 'rep-stat-server.php',
                          'icon' => 'pc', 'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServicesStatus'), 'href' => 'rep-stat-services.php',
                          'icon' => 'server', 'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
 
 $descriptors2 = array();
-$descriptors2[] = array( 'type' => 'link', 'label' => 'CRON Status', 'href' => 'rep-stat-cron.php', 
+$descriptors2[] = array( 'type' => 'link', 'label' => 'CRON Status', 'href' => 'rep-stat-cron.php',
                          'icon' => 'calendar-date', 'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
 $descriptors2[] = array( 'type' => 'link', 'label' => 'UPS Status', 'href' => 'rep-stat-ups.php',
                          'icon' => 'battery-charging', 'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );

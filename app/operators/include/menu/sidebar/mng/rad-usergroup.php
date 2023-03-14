@@ -52,33 +52,45 @@ if (count($menu_usernames) > 0) {
                             "type" => "text",
                             "value" => ((isset($username)) ? $username : ""),
                             "required" => true,
-                            "datalist" => (($autocomplete) ? $menu_usernames : array()),
+                            "datalist" => array(
+                                                    'type' => 'traditional',
+                                                    'options' => (($autocomplete) ? $menu_usernames : array()),
+                                               ),
                             "tooltipText" => t('Tooltip','Username'),
                             "caption" => t('all','Username'),
                             "sidebar" => true,
                           );
-                          
-    $id1 = "id_" . rand();
-    $components[0]['id'] = $id1;
+
+    // we fix the components[0] id
+    $id0 = "id_" . rand();
+    $components[0]['id'] = $id0;
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListUsersGroup'), 'action' => 'mng-rad-usergroup-list-user.php', 'method' => 'GET',
                              'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
-                             
+
     $components[] = array(
+                            "id" => 'random',
                             "name" => "current_group",
                             "type" => "text",
                             "value" => ((isset($current_groupname)) ? $current_groupname : ""),
                             "required" => true,
-                            "datalist" => (($autocomplete) ? $menu_groupnames : array()),
+                            "datalist" => array(
+                                                    'type' => 'traditional',
+                                                    'options' => (($autocomplete) ? $menu_groupnames : array()),
+                                               ),
                             "tooltipText" => t('Tooltip','GroupName'),
                             "caption" => t('all','Groupname'),
                             "sidebar" => true,
                           );
-    
-    $components[0]['id'] = "id_" . rand();
-    unset($components[0]["datalist"]);
-    // this means that this component should use the datalist
-    // that has been previously loaded by the component that has $id1 as its id
-    $components[0]['shared_datalist'] = $id1;
+
+    // in order to reuse it, we reset the components[0] id
+    $components[0]['id'] = 'random';
+    // we plan to share datalist related to components[0]
+    // with this new component (that has a random id)
+    $components[0]["datalist"] = array(
+                                        'type' => 'shared',
+                                        'id' => $id0,
+                                      );
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUserGroup'), 'action' => 'mng-rad-usergroup-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), 'form_components' => $components, );
 

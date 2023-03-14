@@ -43,10 +43,10 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewProfile'), 
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
-    
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListProfiles'), 'href' => 'mng-rad-profiles-list.php',
                              'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
-                             
+
     $components = array();
     $components[] = array(
                             "name" => "profile_name",
@@ -56,13 +56,13 @@ if (count($menu_options) > 0) {
                             "caption" => t('all','Profile'),
                             "tooltipText" => "Please select a " . t('all','Profile'),
                           );
-    
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditProfile'), 'action' => 'mng-rad-profiles-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
 
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DuplicateProfile'), 'href' =>'mng-rad-profiles-duplicate.php',
                              'icon' => 'gear', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), );
-    
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveProfile'), 'href' =>'mng-rad-profiles-del.php',
                              'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }

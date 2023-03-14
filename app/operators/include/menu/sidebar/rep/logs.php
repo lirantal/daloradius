@@ -38,6 +38,7 @@ $count_options = array(
                        );
 
 $count_select = array(
+                            "id" => 'random',
                             "name" => "count",
                             "type" => "select",
                             "selected_value" => ((isset($count)) ? $count : ""),
@@ -51,7 +52,7 @@ $daloradius_options = array(
                                 "",
                                 "QUERY" => "Query Only",
                                 "NOTICE" => "Notice Only",
-                                "INSERT" => "SQL INSERT Only", 
+                                "INSERT" => "SQL INSERT Only",
                                 "SELECT" => "SQL SELECT Only",
                            );
 
@@ -66,7 +67,7 @@ $descriptors1 = array();
 
 $components = array();
 $components[] = array(
-                        "id" => "filter_menu0",
+                        "id" => 'random',
                         "name" => "filter",
                         "type" => "select",
                         "selected_value" => ((isset($filter)) ? $filter : ""),
@@ -74,16 +75,15 @@ $components[] = array(
                         "caption" => "Filter",
                      );
 
-$count_select["id"] = "count_menu" . rand();
 $components[] = $count_select;
-                     
-$descriptors1[] = array( 'type' => 'form', 'title' => t('button','daloRADIUSLog'), 'action' => 'rep-logs-daloradius.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
+
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','daloRADIUSLog'),
+                         'action' => 'rep-logs-daloradius.php', 'method' => 'GET', 'form_components' => $components, );
 
 
 $components = array();
 $components[] = array(
-                        "id" => "filter_menu1",
+                        "id" => 'random',
                         "name" => "filter",
                         "type" => "select",
                         "selected_value" => ((isset($filter)) ? $filter : ""),
@@ -91,16 +91,15 @@ $components[] = array(
                         "caption" => "Filter",
                      );
 
-$count_select["id"] = "count_menu" . rand();
 $components[] = $count_select;
-                     
-$descriptors1[] = array( 'type' => 'form', 'title' => t('button','RadiusLog'), 'action' => 'rep-logs-radius.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
+
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','RadiusLog'),
+                         'action' => 'rep-logs-radius.php', 'method' => 'GET', 'form_components' => $components, );
 
 
 $components = array();
 $components[] = array(
-                        "id" => "filter_menu2",
+                        "id" => 'random',
                         "name" => "filter",
                         "type" => "text",
                         "value" => ((isset($filter)) ? $filter : ""),
@@ -109,18 +108,13 @@ $components[] = array(
                         "sidebar" => true,
                      );
 
-$count_select["id"] = "count_menu" . rand();
 $components[] = $count_select;
-                     
-$descriptors1[] = array( 'type' => 'form', 'title' => t('button','SystemLog'), 'action' => 'rep-logs-system.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
-              
-// update filter and count ids
-$components[0]['id'] = "filter_menu3";
-$components[1]['id'] = "count_menu" . rand();
 
-$descriptors1[] = array( 'type' => 'form', 'title' => t('button','BootLog'), 'action' => 'rep-logs-boot.php', 'method' => 'GET',
-                         'img' => array( 'src' => 'static/images/icons/reportsLogs.png', ), 'form_components' => $components, );
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','SystemLog'),
+                         'action' => 'rep-logs-system.php', 'method' => 'GET', 'form_components' => $components, );
+
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','BootLog'),
+                         'action' => 'rep-logs-boot.php', 'method' => 'GET', 'form_components' => $components, );
 
 $sections = array();
 $sections[] = array( 'title' => 'Log Files', 'descriptors' => $descriptors1 );

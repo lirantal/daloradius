@@ -41,38 +41,55 @@ array_unshift($menu_usernames, "");
 
 // define descriptors
 $descriptors1 = array();
- 
+
 $components = array();
 
 $components[] = array(
-                            "id" => "username_menu",
-                            "name" => "username",
-                            "type" => "text",
-                            "value" => ((isset($username)) ? $username : ""),
-                            "datalist" => (($autocomplete) ? $menu_usernames : array()),
-                            "caption" => t('all','Username'),
-                            "tooltipText" => t('Tooltip','Username'),
-                            "sidebar" => true,
+                        // this will produce a random id
+                        "id" => 'random',
+                        "name" => "username",
+                        "type" => "text",
+                        "value" => ((isset($username)) ? $username : ""),
+                        "required" => true,
+                        "datalist" => array(
+                                                'type' => 'ajax',
+                                                'url' => 'library/ajax/json_api.php',
+                                                'search_param' => 'username',
+                                                'params' => array(
+                                                                    'datatype' => 'usernames',
+                                                                    'action' => 'list',
+                                                                    'table' => 'CONFIG_DB_TBL_RADCHECK',
+                                                                 ),
+                                           ),
+                        "tooltipText" => t('Tooltip','usernameTooltip'),
+                        "caption" => t('all','Username'),
+                        "sidebar" => true,
+                      );
+
+$components[] = array(
+                        // this will produce a random id
+                        "id" => 'random',
+                        "name" => "startdate",
+                        "type" => "date",
+                        "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                        "caption" => t('all','StartingDate'),
+                        "tooltipText" => t('Tooltip','Date'),
                      );
 
 $components[] = array(
-                            "name" => "startdate",
-                            "type" => "date",
-                            "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
-                            "caption" => t('all','StartingDate'),
-                            "tooltipText" => t('Tooltip','Date'),
+                        // this will produce a random id
+                        "id" => 'random',
+                        "name" => "enddate",
+                        "type" => "date",
+                        "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                        "caption" => t('all','EndingDate'),
+                        "tooltipText" => t('Tooltip','Date'),
                      );
-                     
-$components[] = array(
-                            "name" => "enddate",
-                            "type" => "date",
-                            "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
-                            "caption" => t('all','EndingDate'),
-                            "tooltipText" => t('Tooltip','Date'),
-                     );
-                            
+
 
 $components[] = array(
+                        // this will produce a random id
+                        "id" => 'random',
                         "name" => "planname",
                         "type" => "select",
                         "selected_value" => ((isset($planname)) ? $planname : ""),
@@ -81,8 +98,8 @@ $components[] = array(
                         "tooltipText" => t('Tooltip','PlanName'),
                      );
 
-$descriptors1[] = array( 'type' => 'form', 'title' => t('button','PlanUsage'), 'action' => 'acct-plans-usage.php', 'method' => 'GET',
-                         'icon' => 'card-list', 'form_components' => $components, );
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','PlanUsage'), 'action' => 'acct-plans-usage.php',
+                         'method' => 'GET', 'icon' => 'card-list', 'form_components' => $components, );
 
 
 $sections = array();

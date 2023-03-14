@@ -45,7 +45,7 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewVendorAttri
 
 if (count($menu_vendors) > 0 && count($menu_attributes) > 0) {
     array_unshift($menu_vendors, "");
- 
+
     $components = array();
     $components[] = array(
                             "name" => "vendor",
@@ -57,39 +57,48 @@ if (count($menu_vendors) > 0 && count($menu_attributes) > 0) {
                             "tooltipText" => t('Tooltip','VendorName'),
                             "sidebar" => true,
                           );
-    
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListAttributesforVendor'), 'action' => 'mng-rad-attributes-list.php', 'method' => 'GET',
                              'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), 'form_components' => $components, );
-                             
-    $components[] = array(
+
+        $components[] = array(
                             "name" => "attribute",
                             "type" => "text",
-                            "selected_value" => ((isset($attribute)) ? $attribute : ""),
+                            "value" => ((isset($attribute)) ? $attribute : ""),
                             "required" => true,
-                            "datalist" => $menu_attributes,
+                            "datalist" => array(
+                                                    'type' => 'traditional',
+                                                    'options' => $menu_attributes,
+                                               ),
                             "tooltipText" => t('Tooltip','AttributeName'),
                             "sidebar" => true,
                           );
-    
-    $components[1]['id'] = "id_" . rand();
+
+    // we fix the components[1] id
+    $id1 = "id_" . rand();
+    $components[1]['id'] = $id1;
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditVendorAttribute'), 'action' => 'mng-rad-attributes-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
-    
+
     $components = array();
     $components[] = array(
+                            "id" => 'random',
                             "name" => "attribute",
                             "type" => "text",
-                            "selected_value" => ((isset($attribute)) ? $attribute : ""),
+                            "value" => ((isset($attribute)) ? $attribute : ""),
                             "required" => true,
-                            "datalist" => $menu_attributes,
+                            "datalist" => array(
+                                                    'type' => 'shared',
+                                                    'id' => $id1,
+                                               ),
                             "tooltipText" => t('Tooltip','AttributeName'),
                             "sidebar" => true,
                           );
-    
-    $components[0]['id'] = "id_" . rand();
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','SearchVendorAttribute'), 'action' =>'mng-rad-attributes-search.php', 'method' => 'GET',
                              'icon' => 'search', 'form_components' => $components, );
-    
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveVendorAttribute'), 'href' => 'mng-rad-attributes-del.php',
                              'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }

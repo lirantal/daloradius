@@ -43,12 +43,13 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewHG'), 'href
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
-    
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListHG'), 'href' => 'mng-rad-hunt-list.php',
                              'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
 
     $components = array();
     $components[] = array(
+                            "id" => 'random',
                             "name" => "item",
                             "type" => "select",
                             "selected_value" => ((isset($item)) ? $item : ""),
@@ -57,10 +58,10 @@ if (count($menu_options) > 0) {
                             "caption" => "Huntgroup",
                             "tooltipText" => "Please select a Huntgroup",
                           );
-    
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditHG'), 'action' => 'mng-rad-hunt-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
-                             
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveHG'), 'href' => 'mng-rad-hunt-del.php',
                              'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }

@@ -59,17 +59,27 @@ $descriptors1 = array();
 
 $components = array();
 $components[] = array(
-                        "id" => "username_menu0",
+                        "id" => 'random',
                         "name" => "username",
                         "type" => "text",
                         "value" => ((isset($username)) ? $username : ""),
-                        "datalist" => (($autocomplete) ? array_values($menu_users) : array()),
+                        "datalist" => array(
+                                                'type' => 'ajax',
+                                                'url' => 'library/ajax/json_api.php',
+                                                'search_param' => 'username',
+                                                'params' => array(
+                                                                    'datatype' => 'usernames',
+                                                                    'action' => 'list',
+                                                                    'table' => 'CONFIG_DB_TBL_DALOUSERINFO',
+                                                                 ),
+                                           ),
+                        "tooltipText" => t('Tooltip','Username'),
                         "caption" => t('all','Username'),
-                        "tooltipText" => t('Tooltip','usernameTooltip'),
                         "sidebar" => true,
                      );
 
 $components[] = array(
+                        "id" => 'random',
                         "name" => "invoice_status_id",
                         "caption" => "Invoice Status",
                         "type" => "select",
@@ -85,6 +95,7 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListInvoices')
 
 $components = array();
 $components[] = array(
+                        "id" => 'random',
                         "name" => "user_id",
                         "caption" => t('all','Username'),
                         "type" => "select",
@@ -100,6 +111,7 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','NewInvoice'), 
 
 $components = array();
 $components[] = array(
+                        "id" => 'random',
                         "name" => "invoice_id",
                         "type" => "number",
                         "value" => ((isset($invoice_id)) ? $invoice_id : ""),
@@ -117,24 +129,27 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveInvoice'
 $components = array();
 
 $components[] = array(
-                            "name" => "startdate",
-                            "type" => "date",
-                            "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
-                            "caption" => t('all','StartingDate'),
-                            "tooltipText" => t('Tooltip','Date'),
-                            "sidebar" => true
+                        "id" => 'random',
+                        "name" => "startdate",
+                        "type" => "date",
+                        "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                        "caption" => t('all','StartingDate'),
+                        "tooltipText" => t('Tooltip','Date'),
+                        "sidebar" => true
                      );
 
 $components[] = array(
-                            "name" => "enddate",
-                            "type" => "date",
-                            "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
-                            "caption" => t('all','EndingDate'),
-                            "tooltipText" => t('Tooltip','Date'),
-                            "sidebar" => true
+                        "id" => 'random',
+                        "name" => "enddate",
+                        "type" => "date",
+                        "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                        "caption" => t('all','EndingDate'),
+                        "tooltipText" => t('Tooltip','Date'),
+                        "sidebar" => true
                      );
 
 $components[] = array(
+                        "id" => 'random',
                         "name" => "invoice_status_id",
                         "caption" => "Invoice Status",
                         "type" => "select",
@@ -146,19 +161,28 @@ $components[] = array(
                      );
 
 $components[] = array(
-                        "id" => "username_menu1",
+                        "id" => 'random',
                         "name" => "username",
                         "type" => "text",
                         "value" => ((isset($username)) ? $username : ""),
-                        "datalist" => (($autocomplete) ? array_values($menu_users) : array()),
-                        "tooltipText" => t('Tooltip','usernameTooltip'),
+                        "datalist" => array(
+                                                'type' => 'ajax',
+                                                'url' => 'library/ajax/json_api.php',
+                                                'search_param' => 'username',
+                                                'params' => array(
+                                                                    'datatype' => 'usernames',
+                                                                    'action' => 'list',
+                                                                    'table' => 'CONFIG_DB_TBL_DALOUSERINFO',
+                                                                 ),
+                                           ),
+                        "tooltipText" => t('Tooltip','Username'),
                         "caption" => t('all','Username'),
-                        "sidebar" => true
+                        "sidebar" => true,
                      );
 
 $descriptors2 = array();
-$descriptors2[] = array( 'type' => 'form', 'title' => t('button','GenerateReport'), 'action' => 'bill-invoice-report.php', 'method' => 'GET',
-                         'icon' => 'database-gear', 'form_components' => $components, );
+$descriptors2[] = array( 'type' => 'form', 'title' => t('button','GenerateReport'), 'action' => 'bill-invoice-report.php',
+                         'method' => 'GET', 'icon' => 'database-gear', 'form_components' => $components, );
 
 $sections = array();
 $sections[] = array( 'title' => 'Invoice Management', 'descriptors' => $descriptors1 );

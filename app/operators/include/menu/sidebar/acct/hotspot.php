@@ -38,6 +38,7 @@ $descriptors1 = array();
 
 $components = array();
 $components[] = array(
+                        "id" => 'random',
                         "name" => "hotspot[]",
                         "type" => "select",
                         "selected_value" => ((isset($hotspot)) ? $hotspot : ""),
@@ -49,11 +50,12 @@ $components[] = array(
                         "show_controls" => true,
                       );
 
-$descriptors1[] = array( 'type' => 'form', 'title' => t('button','HotspotAccounting'), 'action' => 'acct-hotspot-accounting.php', 'method' => 'GET',
+$descriptors1[] = array( 'type' => 'form', 'title' => t('button','HotspotAccounting'),
+                         'action' => 'acct-hotspot-accounting.php', 'method' => 'GET',
                          'icon' => 'router-fill', 'form_components' => $components, );
 
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','HotspotsComparison'), 'href' => 'acct-hotspot-compare.php',
-                         'icon' => 'router-fill', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','HotspotsComparison'),
+                         'href' => 'acct-hotspot-compare.php', 'icon' => 'router-fill', );
 
 $sections = array();
 $sections[] = array( 'title' => 'Hotspots Accounting', 'descriptors' => $descriptors1 );

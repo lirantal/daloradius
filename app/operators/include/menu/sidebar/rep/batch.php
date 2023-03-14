@@ -41,11 +41,15 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','BatchHistory')
                          'icon' => 'clock-history', );
 
 $components[] = array(
+                        "id" => 'random',
                         "name" => "batch_name",
                         "type" => "text",
                         "value" => ((isset($batch_name)) ? $batch_name : ""),
                         "required" => true,
-                        "datalist" => (($autocomplete) ? $menu_datalist : array()),
+                        "datalist" => array(
+                                                'type' => 'traditional',
+                                                'options' => (($autocomplete) ? $menu_datalist : array()),
+                                           ),
                         "tooltipText" => t('Tooltip','BatchName'),
                         "caption" => t('all','BatchName'),
                         "sidebar" => true,

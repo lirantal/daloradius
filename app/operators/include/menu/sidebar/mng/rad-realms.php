@@ -43,7 +43,7 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewRealm'), 'h
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
-    
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListRealms'), 'href' => 'mng-rad-realms-list.php',
                              'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
 
@@ -57,10 +57,10 @@ if (count($menu_options) > 0) {
                             "caption" => t('all','Realm'),
                             "tooltipText" => "Please select a " . t('all','Realm'),
                           );
-    
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditRealm'), 'action' => 'mng-rad-realms-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
-                             
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveRealm'), 'href' => 'mng-rad-realms-del.php',
                              'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }
@@ -76,7 +76,7 @@ $descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewProxy'), 'h
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
-    
+
     $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListProxys'), 'href' => 'mng-rad-proxys-list.php',
                              'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
 
@@ -90,10 +90,10 @@ if (count($menu_options) > 0) {
                             "caption" => t('all','Proxy'),
                             "tooltipText" => "Please select a " . t('all','Proxy'),
                           );
-    
+
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditProxy'), 'action' => 'mng-rad-proxys-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
-                             
+
     $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemoveProxy'), 'href' => 'mng-rad-proxys-del.php',
                              'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }

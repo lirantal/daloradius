@@ -37,6 +37,7 @@ $menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
 $menu_ratenames = get_ratenames();
 
 $ratename_select = array(
+                            "id" => 'random',
                             "name" => "ratename",
                             "type" => "select",
                             "selected_value" => ((isset($ratename)) ? $ratename : ""),
@@ -54,17 +55,27 @@ $components = array();
 $components[] = $ratename_select;
 
 $components[] = array(
-                        "id" => "username_menu",
+                        "id" => 'random',
                         "name" => "username",
                         "type" => "text",
                         "value" => ((isset($username)) ? $username : ""),
-                        "datalist" => (($autocomplete) ? $menu_usernames : array()),
+                        "datalist" => array(
+                                                'type' => 'ajax',
+                                                'url' => 'library/ajax/json_api.php',
+                                                'search_param' => 'username',
+                                                'params' => array(
+                                                                    'datatype' => 'usernames',
+                                                                    'action' => 'list',
+                                                                    'table' => 'CONFIG_DB_TBL_DALOUSERBILLINFO',
+                                                                 ),
+                                           ),
                         "tooltipText" => t('Tooltip','Username'),
                         "caption" => t('all','Username'),
                         "sidebar" => true,
                      );
 
 $components[] = array(
+                        "id" => 'random',
                         "name" => "startdate",
                         "type" => "date",
                         "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
@@ -72,8 +83,9 @@ $components[] = array(
                         "tooltipText" => t('Tooltip','Date'),
                         "sidebar" => true,
                      );
-                     
+
 $components[] = array(
+                        "id" => 'random',
                         "name" => "enddate",
                         "type" => "date",
                         "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
@@ -85,7 +97,7 @@ $components[] = array(
 $descriptors1[] = array( 'type' => 'form', 'title' => t('button','DateAccounting'), 'action' => 'bill-rates-date.php', 'method' => 'GET',
                          'icon' => 'calendar-range', 'form_components' => $components, );
 
-$descriptors2 = array();                         
+$descriptors2 = array();
 $descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewRate'), 'href' =>'bill-rates-new.php',
                          'icon' => 'plus-circle-fill', );
 

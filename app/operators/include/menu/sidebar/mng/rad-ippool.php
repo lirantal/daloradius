@@ -43,7 +43,7 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewIPPool'), '
 
 if (count($menu_options) > 0) {
     array_unshift($menu_options, "");
-    
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListIPPools'), 'href' => 'mng-rad-ippool-list.php',
                              'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/groupsList.png', ), );
 
@@ -57,10 +57,10 @@ if (count($menu_options) > 0) {
                             "caption" => sprintf("%s - %s", t('all','PoolName'), t('all','IPAddress')),
                             "tooltipText" => sprintf("Please select a %s - %s pair", t('all','PoolName'), t('all','IPAddress')),
                           );
-    
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditIPPool'), 'action' => 'mng-rad-ippool-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/groupsEdit.png', ), 'form_components' => $components, );
-                             
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveIPPool'), 'href' => 'mng-rad-ippool-del.php',
                              'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/groupsRemove.png', ), );
 }

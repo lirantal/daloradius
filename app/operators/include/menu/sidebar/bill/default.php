@@ -40,12 +40,13 @@ $menu_plannames = get_plans();
 $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUser'), 'href' =>'bill-pos-new.php',
-                         'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+                         'icon' => 'person-fill-add', );
 
 
 if (count($menu_plannames) > 0) {
     $components = array();
     $components[] = array(
+                            "id" => 'random',
                             "name" => "planname",
                             "type" => "select",
                             "selected_value" => ((isset($planname)) ? $planname : ""),
@@ -56,29 +57,38 @@ if (count($menu_plannames) > 0) {
                           );
 
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListUsers'), 'action' => 'bill-pos-list.php', 'method' => 'GET',
-                             'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             'icon' => 'person-lines-fill', 'form_components' => $components, );
 }
 
 if (count($menu_usernames) > 0) {
     $components = array();
 
     $components[] = array(
-                            "id" => "username_menu",
+                            "id" => 'random',
                             "name" => "username",
                             "type" => "text",
                             "value" => ((isset($username)) ? $username : ""),
-                            "datalist" => (($autocomplete) ? $menu_usernames : array()),
+                            "datalist" => array(
+                                                    'type' => 'ajax',
+                                                    'url' => 'library/ajax/json_api.php',
+                                                    'search_param' => 'username',
+                                                    'params' => array(
+                                                                        'datatype' => 'usernames',
+                                                                        'action' => 'list',
+                                                                        'table' => 'CONFIG_DB_TBL_DALOUSERBILLINFO',
+                                                                     ),
+                                               ),
                             "tooltipText" => t('Tooltip','Username'),
                             "caption" => t('all','Username'),
                             "sidebar" => true,
                          );
 
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditUser'), 'action' => 'bill-pos-edit.php', 'method' => 'GET',
-                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+                             'icon' => 'pencil-square', 'form_components' => $components, );
 
 
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveUsers'), 'href' => 'bill-pos-del.php',
-                             'icon' => 'person-fill-x', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+                             'icon' => 'person-fill-x', );
 }
 
 $sections = array();

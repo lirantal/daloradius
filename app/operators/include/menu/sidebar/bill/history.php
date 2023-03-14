@@ -35,25 +35,29 @@ $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
 global $username, $billaction, $sqlfields, $orderBy, $orderType, $valid_billactions, $bill_history_query_options_default,
        $bill_history_query_options_all;
 
-
-include_once("include/management/populate_selectbox.php");
-$menu_users = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
-
-
 $components = array();
 $components[] = array(
-                        "id" => "username_menu",
+                        "id" => 'random',
                         "name" => "username",
                         "type" => "text",
                         "value" => ((isset($username)) ? $username : ""),
-                        "required" => true,
-                        "datalist" => (($autocomplete) ? $menu_users : array()),
-                        "tooltipText" => t('Tooltip','usernameTooltip'),
+                        "datalist" => array(
+                                                'type' => 'ajax',
+                                                'url' => 'library/ajax/json_api.php',
+                                                'search_param' => 'username',
+                                                'params' => array(
+                                                                    'datatype' => 'usernames',
+                                                                    'action' => 'list',
+                                                                    'table' => 'CONFIG_DB_TBL_DALOUSERBILLINFO',
+                                                                 ),
+                                           ),
+                        "tooltipText" => t('Tooltip','Username'),
                         "caption" => t('all','Username'),
-                        "sidebar" => true
+                        "sidebar" => true,
                      );
 
 $components[] = array(
+                        "id" => 'random',
                         "caption" => t('all','BillAction'),
                         "type" => "select",
                         "name" => "billaction",
@@ -62,10 +66,10 @@ $components[] = array(
                      );
 
 $components[] = array(
+                        "id" => 'random',
                         "caption" => t('button','AccountingFieldsinQuery'),
                         "type" => "select",
                         "name" => "sqlfields[]",
-                        "id" => "sqlfields",
                         "options" => $bill_history_query_options_all,
                         "selected_value" => ((isset($sqlfields)) ? $sqlfields : $bill_history_query_options_default),
                         "multiple" => true,
@@ -74,6 +78,7 @@ $components[] = array(
                      );
 
 $components[] = array(
+                        "id" => 'random',
                         "caption" => t('button','OrderBy'),
                         "type" => "select",
                         "name" => "orderBy",
@@ -82,6 +87,7 @@ $components[] = array(
                      );
 
 $components[] = array(
+                        "id" => 'random',
                         "caption" => "Order Type",
                         "type" => "select",
                         "name" => "orderType",

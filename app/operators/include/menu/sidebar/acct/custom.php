@@ -38,75 +38,82 @@ global $startdate, $enddate, $acct_custom_query_options_all, $where_field, $oper
 $components = array();
 
 $components[] = array(
-                            "name" => "startdate",
-                            "type" => "date",
-                            "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
-                            "caption" => t('all','StartingDate'),
-                            "tooltipText" => t('Tooltip','Date'),
-                            "sidebar" => true
+                        "id" => 'random',
+                        "name" => "startdate",
+                        "type" => "date",
+                        "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                        "caption" => t('all','StartingDate'),
+                        "tooltipText" => t('Tooltip','Date'),
+                        "sidebar" => true
                      );
 
 $components[] = array(
-                            "name" => "enddate",
-                            "type" => "date",
-                            "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
-                            "caption" => t('all','EndingDate'),
-                            "tooltipText" => t('Tooltip','Date'),
-                            "sidebar" => true
+                        "id" => 'random',
+                        "name" => "enddate",
+                        "type" => "date",
+                        "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                        "caption" => t('all','EndingDate'),
+                        "tooltipText" => t('Tooltip','Date'),
+                        "sidebar" => true
                      );
 
 $components[] = array(
-                            "caption" => t('button','Where'),
-                            "type" => "select",
-                            "name" => "where_field",
-                            "options" => $acct_custom_query_options_all,
-                            "selected_value" => ((isset($where_field)) ? $where_field : $acct_custom_query_options_all[0]),
+                        "id" => 'random',
+                        "caption" => t('button','Where'),
+                        "type" => "select",
+                        "name" => "where_field",
+                        "options" => $acct_custom_query_options_all,
+                        "selected_value" => ((isset($where_field)) ? $where_field : $acct_custom_query_options_all[0]),
                      );
 
 $components[] = array(
-                            "caption" => "Operator",
-                            "type" => "select",
-                            "name" => "operator",
-                            "options" => array("equals", "contains"),
-                            "selected_value" => ((isset($operator)) ? $operator : "equals"),
+                        "id" => 'random',
+                        "caption" => "Operator",
+                        "type" => "select",
+                        "name" => "operator",
+                        "options" => array("equals", "contains"),
+                        "selected_value" => ((isset($operator)) ? $operator : "equals"),
                      );
 
 $components[] = array(
-                            "type" => "text",
-                            "name" => "where_value",
-                            "caption" => "Filter",
-                            "tooltipText" => t('Tooltip','Filter'),
-                            "sidebar" => true,
-                            "value" => ((isset($accounting_custom_value)) ? $accounting_custom_value : ""),
+                        "id" => 'random',
+                        "type" => "text",
+                        "name" => "where_value",
+                        "caption" => "Filter",
+                        "tooltipText" => t('Tooltip','Filter'),
+                        "sidebar" => true,
+                        "value" => ((isset($accounting_custom_value)) ? $accounting_custom_value : ""),
 
                      );
 
 $components[] = array(
-                            "caption" => t('button','AccountingFieldsinQuery'),
-                            "type" => "select",
-                            "name" => "sqlfields[]",
-                            "id" => "sqlfields",
-                            "options" => $acct_custom_query_options_all,
-                            "selected_value" => ((isset($sqlfields)) ? $sqlfields : $acct_custom_query_options_default),
-                            "multiple" => true,
-                            "size" => 7,
-                            "show_controls" => true,
+                        "id" => 'random',
+                        "caption" => t('button','AccountingFieldsinQuery'),
+                        "type" => "select",
+                        "name" => "sqlfields[]",
+                        "options" => $acct_custom_query_options_all,
+                        "selected_value" => ((isset($sqlfields)) ? $sqlfields : $acct_custom_query_options_default),
+                        "multiple" => true,
+                        "size" => 7,
+                        "show_controls" => true,
                      );
 
 $components[] = array(
-                            "caption" => t('button','OrderBy'),
-                            "type" => "select",
-                            "name" => "orderBy",
-                            "options" => $acct_custom_query_options_all,
-                            "selected_value" => ((isset($orderBy)) ? $orderBy : $acct_custom_query_options_all[0])
+                        "id" => 'random',
+                        "caption" => t('button','OrderBy'),
+                        "type" => "select",
+                        "name" => "orderBy",
+                        "options" => $acct_custom_query_options_all,
+                        "selected_value" => ((isset($orderBy)) ? $orderBy : $acct_custom_query_options_all[0])
                      );
 
 $components[] = array(
-                            "caption" => "Order Type",
-                            "type" => "select",
-                            "name" => "orderType",
-                            "options" => array("asc" => "Ascending", "desc" => "Descending"),
-                            "selected_value" => ((isset($orderType)) ? $orderType : "asc")
+                        "id" => 'random',
+                        "caption" => "Order Type",
+                        "type" => "select",
+                        "name" => "orderType",
+                        "options" => array("asc" => "Ascending", "desc" => "Descending"),
+                        "selected_value" => ((isset($orderType)) ? $orderType : "asc")
                      );
 
 $descriptors1 = array();

@@ -29,10 +29,10 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/acct/maintenance.php') !
 
 // define descriptors
 $descriptors1 = array();
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','CleanupStaleSessions'), 'href' => 'acct-maintenance-cleanup.php',
-                         'icon' => 'tools', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','DeleteAccountingRecords'), 'href' => 'acct-maintenance-delete.php',
-                         'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','CleanupStaleSessions'),
+                         'href' => 'acct-maintenance-cleanup.php', 'icon' => 'tools', );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','DeleteAccountingRecords'),
+                         'href' => 'acct-maintenance-delete.php', 'icon' => 'x-circle-fill', );
 
 $sections = array();
 $sections[] = array( 'title' => 'Maintenance', 'descriptors' => $descriptors1 );

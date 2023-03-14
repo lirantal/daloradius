@@ -33,11 +33,13 @@ $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
 global $startdate, $enddate, $valid_vendorTypes, $billing_paypal_vendor_type, $billing_paypal_payeremail,
-       $valid_paymentStatus, $bill_merchant_transactions_options_all, $sqlfields, $orderBy, $orderType;
+       $valid_paymentStatus, $bill_merchant_transactions_options_all, $bill_merchant_transactions_options_default,
+       $sqlfields, $orderBy, $orderType;
 
 $components = array();
 
 $components[] = array(
+                            "id" => 'random',
                             "name" => "startdate",
                             "type" => "date",
                             "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
@@ -47,6 +49,7 @@ $components[] = array(
                      );
 
 $components[] = array(
+                            "id" => 'random',
                             "name" => "enddate",
                             "type" => "date",
                             "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
@@ -56,6 +59,7 @@ $components[] = array(
                      );
 
 $components[] = array(
+                            "id" => 'random',
                             "caption" => t('all','VendorType'),
                             "type" => "select",
                             "name" => "vendor_type",
@@ -64,6 +68,7 @@ $components[] = array(
                      );
 
 $components[] = array(
+                            "id" => 'random',
                             "caption" => t('all','PayerEmail'),
                             "type" => "email",
                             "name" => "payer_email",
@@ -71,6 +76,7 @@ $components[] = array(
                      );
 
 $components[] = array(
+                            "id" => 'random',
                             "caption" => t('all','PaymentStatus'),
                             "type" => "select",
                             "name" => "payment_status",
@@ -79,18 +85,19 @@ $components[] = array(
                      );
 
 $components[] = array(
+                            "id" => 'random',
                             "caption" => t('button','AccountingFieldsinQuery'),
                             "type" => "select",
                             "name" => "sqlfields[]",
-                            "id" => "sqlfields",
                             "options" => $bill_merchant_transactions_options_all,
-                            "selected_value" => ((isset($bill_merchant_transactions_options_all)) ? $sqlfields : $bill_merchant_transactions_options_default),
+                            "selected_value" => ((isset($sqlfields)) ? $sqlfields : $bill_merchant_transactions_options_default),
                             "multiple" => true,
                             "size" => 7,
                             "show_controls" => true,
                      );
 
 $components[] = array(
+                            "id" => 'random',
                             "caption" => t('button','OrderBy'),
                             "type" => "select",
                             "name" => "orderBy",
@@ -99,6 +106,7 @@ $components[] = array(
                      );
 
 $components[] = array(
+                            "id" => 'random',
                             "caption" => "Order Type",
                             "type" => "select",
                             "name" => "orderType",

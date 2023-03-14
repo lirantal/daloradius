@@ -33,17 +33,25 @@ $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
 global $username, $invoice_id, $payment_id, $paymentname;
 
 include_once("include/management/populate_selectbox.php");
-$menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
 $menu_paymentnames = get_payment_types();
 
 $username_select = array(
-                            "id" => "username_menu",
+                            "id" => 'random',
                             "name" => "username",
                             "type" => "text",
                             "value" => ((isset($username)) ? $username : ""),
-                            "datalist" => (($autocomplete) ? $menu_usernames : array()),
+                            "datalist" => array(
+                                                    'type' => 'ajax',
+                                                    'url' => 'library/ajax/json_api.php',
+                                                    'search_param' => 'username',
+                                                    'params' => array(
+                                                                        'datatype' => 'usernames',
+                                                                        'action' => 'list',
+                                                                        'table' => 'CONFIG_DB_TBL_DALOUSERBILLINFO',
+                                                                     ),
+                                               ),
+                            "tooltipText" => t('Tooltip','Username'),
                             "caption" => t('all','Username'),
-                            "tooltipText" => t('Tooltip','usernameTooltip'),
                             "sidebar" => true,
                         );
 
@@ -58,6 +66,7 @@ $components = array();
 $components[] = $username_select;
 
 $components[] = array(
+                        "id" => 'random',
                         "name" => "invoice_id",
                         "type" => "number",
                         "value" => ((isset($invoice_id)) ? $invoice_id : ""),
@@ -72,6 +81,7 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ListPayments')
 $components = array();
 
 $components[] = array(
+                        "id" => 'random',
                         "name" => "payment_id",
                         "type" => "number",
                         "value" => ((isset($payment_id)) ? $payment_id : ""),
@@ -94,9 +104,10 @@ $descriptors2[] = array( 'type' => 'link', 'label' => t('button','NewPayType'), 
 if (count($menu_paymentnames) > 0) {
     $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ListPayTypes'), 'href' => 'bill-payment-types-list.php',
                              'icon' => 'list', );
-    
+
     $components = array();
     $components[] = array(
+                                "id" => 'random',
                                 "name" => "paymentname",
                                 "type" => "select",
                                 "selected_value" => ((isset($paymentname)) ? $paymentname : ""),
@@ -109,7 +120,7 @@ if (count($menu_paymentnames) > 0) {
 
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditPayType'), 'action' => 'bill-payment-types-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'form_components' => $components, );
- 
+
     $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemovePayType'), 'href' => 'bill-payment-types-del.php',
                              'icon' => 'x-circle-fill', );
 }

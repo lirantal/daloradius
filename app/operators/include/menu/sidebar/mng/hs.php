@@ -47,19 +47,23 @@ if (count($menu_datalist) > 0) {
 
     $components = array();
     $components[] = array(
+                            "id" => 'random',
                             "name" => "name",
                             "type" => "text",
                             "value" => ((isset($name)) ? $name : ""),
                             "required" => true,
-                            "datalist" => (($autocomplete) ? $menu_datalist : array()),
+                            "datalist" => array(
+                                                    'type' => 'traditional',
+                                                    'options' => (($autocomplete) ? $menu_datalist : array()),
+                                               ),
                             "tooltipText" => t('Tooltip','HotspotName'),
                             "caption" => t('all','HotSpot'),
                             "sidebar" => true
                           );
-    
+
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditHotspot'), 'action' => 'mng-hs-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
-                             
+
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveHotspot'), 'href' => 'mng-hs-del.php',
                              'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 }

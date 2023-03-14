@@ -38,30 +38,34 @@ $menu_nasnames = get_nas_names();
 // define descriptors
 $descriptors1 = array();
 
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewNAS'), 'href' =>'mng-rad-nas-new.php',
-                         'icon' => 'plus-circle-fill', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewNAS'),
+                         'href' =>'mng-rad-nas-new.php', 'icon' => 'plus-circle-fill', );
 
 if (count($menu_nasnames) > 0) {
-    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListNAS'), 'href' => 'mng-rad-nas-list.php',
-                             'icon' => 'list-ul', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListNAS'),
+                             'href' => 'mng-rad-nas-list.php', 'icon' => 'list-ul', );
 
     $components = array();
     $components[] = array(
+                            "id" => 'random',
                             "name" => "nasname",
                             "type" => "text",
                             "value" => ((isset($nasname)) ? $nasname : ""),
                             "required" => true,
-                            "datalist" => (($autocomplete) ? $menu_nasnames : array()),
+                            "datalist" => array(
+                                                    'type' => 'traditional',
+                                                    'options' => (($autocomplete) ? $menu_nasnames : array()),
+                                               ),
                             "tooltipText" => "Please insert a valid " . t('all','NasIPHost'),
                             "caption" => t('all','NasIPHost'),
                             "sidebar" => true,
                           );
 
-    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditNAS'), 'action' => 'mng-rad-nas-edit.php', 'method' => 'GET',
-                             'icon' => 'pencil-square', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), 'form_components' => $components, );
+    $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditNAS'), 'action' => 'mng-rad-nas-edit.php',
+                             'method' => 'GET', 'icon' => 'pencil-square', 'form_components' => $components, );
 
-    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveNAS'), 'href' => 'mng-rad-nas-del.php',
-                             'icon' => 'x-circle-fill', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
+    $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveNAS'),
+                             'href' => 'mng-rad-nas-del.php', 'icon' => 'x-circle-fill', );
 }
 
 $sections = array();
