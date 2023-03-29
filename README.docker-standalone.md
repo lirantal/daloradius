@@ -16,5 +16,5 @@ docker build -t daloradius-standalone -f Dockerfile-standalone
 next, run the image
 
 ```bash
-docker run --name daloradius-standalone -v /path/to/daloradius:/var/www/html -v /path/to/daloradius.conf.php:/var/www/html/library/daloradius.conf.php -d daloradius-standalone
+docker run --name daloradius-standalone -v /path/to/daloradius:/var/www/html -v /path/to/daloradius.conf.php:/var/www/html/library/daloradius.conf.php -p 80:80 -d daloradius-standalone
 ```
