@@ -47,6 +47,7 @@ services:
       - radius-mysql
     ports:
       - '80:80'
+      - '8000:8000'
     environment:
       - MYSQL_HOST=radius-mysql
       - MYSQL_PORT=3306
@@ -63,3 +64,4 @@ services:
 
     volumes:
       - ./data/daloradius:/data
+      - ./internal_data:/internal_data
