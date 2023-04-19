@@ -1,6 +1,6 @@
-FROM debian:stable-slim AS source
+FROM alpine AS source
 
-RUN apt-get update && apt-get install -y git ca-certificates --no-install-recommends
+RUN apk add git
 
 WORKDIR /tmp/
 
