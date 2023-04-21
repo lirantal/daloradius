@@ -3,7 +3,7 @@ version: "3"
 services:
 
   radius-mysql:
-    image: mariadb:10.3
+    image: mariadb:10
     container_name: radius-mysql
     restart: unless-stopped
     environment:

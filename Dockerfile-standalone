@@ -30,6 +30,7 @@ RUN pear channel-update pear.php.net \
  && pear install -a -f Mail_Mime
 
 COPY --from=source /tmp/daloradius/app/ /var/www/html/daloradius
+COPY --from=source /tmp/daloradius/app/common/includes/daloradius.conf.php.sample /var/www/html/daloradius/common/includes/daloradius.conf.php
 
 COPY ./contrib/scripts/apache-config.sh /usr/local/bin
 
