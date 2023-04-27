@@ -1,5 +1,4 @@
-# run freeradius as a standalone container
-
+# run daloradius as a standalone container
 ## prerequisite
 
 1. mysql server and freeradius (in docker or on-premise) server that has been configured properly
