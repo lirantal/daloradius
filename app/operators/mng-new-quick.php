@@ -448,7 +448,7 @@
 
     $select_descriptors[] = array(
                                 "id" => "maxallsession",
-                                "name" => "idletimeout",
+                                "name" => "maxallsession",
                                 "caption" => t('all','MaxAllSession'),
                                 "type" => "number",
                                 "options" => $time_values

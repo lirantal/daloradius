@@ -6,3 +6,5 @@ invoice_preview.html
 app/common/includes/daloradius.conf.php
 var/log/*.log
 var/backup/*.sql
+data/
+internal_data/

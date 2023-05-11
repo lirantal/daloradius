@@ -7,7 +7,7 @@
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `batch_history`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `batch_history` (
   `id` INT(32) NOT NULL AUTO_INCREMENT,
   `batch_name` VARCHAR(64) DEFAULT NULL COMMENT 'an identifier name of the batch instance',
@@ -34,7 +34,7 @@ CREATE TABLE `batch_history` (
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `batch_name` (`batch_name`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -52,7 +52,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `billing_history`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `billing_history` (
   `id` INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(128) DEFAULT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE `billing_history` (
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -95,7 +95,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `billing_merchant`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `billing_merchant` (
   `id` INT(8) NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(128) NOT NULL DEFAULT '',
@@ -136,7 +136,7 @@ CREATE TABLE `billing_merchant` (
   `payer_status` VARCHAR(200) NOT NULL DEFAULT '',
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -154,7 +154,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `billing_paypal`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `billing_paypal` (
   `id` INT(8) NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(128) DEFAULT NULL,
@@ -187,7 +187,7 @@ CREATE TABLE `billing_paypal` (
   `payer_status` VARCHAR(200) DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -205,7 +205,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `billing_plans`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `billing_plans` (
   `id` INT(8) NOT NULL AUTO_INCREMENT,
   `planName` VARCHAR(128) DEFAULT NULL,
@@ -235,7 +235,7 @@ CREATE TABLE `billing_plans` (
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `planName` (`planName`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -253,13 +253,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `billing_plans_profiles`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `billing_plans_profiles` (
   `id` INT(32) NOT NULL AUTO_INCREMENT,
   `plan_name` VARCHAR(128) NOT NULL COMMENT 'the name of the plan',
   `profile_name` VARCHAR(256) DEFAULT NULL COMMENT 'the profile/group name',
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -277,7 +277,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `billing_rates`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `billing_rates` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `rateName` VARCHAR(128) NOT NULL DEFAULT '',
@@ -289,7 +289,7 @@ CREATE TABLE `billing_rates` (
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `rateName` (`rateName`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -307,7 +307,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `dictionary`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `dictionary` (
   `id` INT(10) NOT NULL AUTO_INCREMENT,
   `Type` VARCHAR(30) DEFAULT NULL,
@@ -320,7 +320,7 @@ CREATE TABLE `dictionary` (
   `RecommendedHelper` VARCHAR(32) DEFAULT NULL,
   `RecommendedTooltip` VARCHAR(512) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=9718 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9718 DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -9859,7 +9859,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `hotspots`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `hotspots` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) DEFAULT NULL,
@@ -9885,7 +9885,7 @@ CREATE TABLE `hotspots` (
   PRIMARY KEY  (`id`),
   KEY `name` (`name`),
   KEY `mac` (`mac`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -9903,7 +9903,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `invoice`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `invoice` (
   `id` INT(32) NOT NULL AUTO_INCREMENT,
   `user_id` INT(32) DEFAULT NULL COMMENT 'user id of the userbillinfo table',
@@ -9917,7 +9917,7 @@ CREATE TABLE `invoice` (
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -9935,7 +9935,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `invoice_items`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `invoice_items` (
   `id` INT(32) NOT NULL AUTO_INCREMENT,
   `invoice_id` INT(32) NOT NULL COMMENT 'invoice id of the invoices table',
@@ -9949,7 +9949,7 @@ CREATE TABLE `invoice_items` (
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -9967,7 +9967,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `invoice_status`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `invoice_status` (
   `id` INT(10) NOT NULL AUTO_INCREMENT,
   `value` VARCHAR(32) NOT NULL DEFAULT '' COMMENT 'status value',
@@ -9977,7 +9977,7 @@ CREATE TABLE `invoice_status` (
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10001,7 +10001,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `invoice_type`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `invoice_type` (
   `id` INT(10) NOT NULL AUTO_INCREMENT,
   `value` VARCHAR(32) NOT NULL DEFAULT '' COMMENT 'type value',
@@ -10011,7 +10011,7 @@ CREATE TABLE `invoice_type` (
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10032,7 +10032,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `node`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `node` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Time of last checkin',
@@ -10086,7 +10086,7 @@ CREATE TABLE `node` (
   `firmware_revision` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `mac` (`mac`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='node database';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='node database';
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10104,7 +10104,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `operators`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `operators` (
   `id` INT(32) NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(32) NOT NULL,
@@ -10128,7 +10128,7 @@ CREATE TABLE `operators` (
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10147,14 +10147,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `operators_acl`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `operators_acl` (
   `id` INT(32) NOT NULL AUTO_INCREMENT,
   `operator_id` INT(32) NOT NULL,
   `file` VARCHAR(128) NOT NULL,
   `access` TINYINT(8) NOT NULL DEFAULT '0',
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=252 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=252 DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10173,14 +10173,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `operators_acl_files`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `operators_acl_files` (
   `id` INT(32) NOT NULL AUTO_INCREMENT,
   `file` VARCHAR(128) NOT NULL,
   `category` VARCHAR(128) NOT NULL,
   `section` VARCHAR(128) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=140 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=140 DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10199,7 +10199,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `payment`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `payment` (
   `id` INT(32) NOT NULL AUTO_INCREMENT,
   `invoice_id` INT(32) NOT NULL COMMENT 'invoice id of the invoices table',
@@ -10212,7 +10212,7 @@ CREATE TABLE `payment` (
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10230,7 +10230,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `payment_type`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `payment_type` (
   `id` INT(10) NOT NULL AUTO_INCREMENT,
   `value` VARCHAR(32) NOT NULL DEFAULT '' COMMENT 'type value',
@@ -10240,7 +10240,7 @@ CREATE TABLE `payment_type` (
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10259,7 +10259,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `proxys`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `proxys` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `proxyname` VARCHAR(128) DEFAULT NULL,
@@ -10272,7 +10272,7 @@ CREATE TABLE `proxys` (
   `updatedate` DATETIME DEFAULT NULL,
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10290,7 +10290,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `realms`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `realms` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `realmname` VARCHAR(128) DEFAULT NULL,
@@ -10307,7 +10307,7 @@ CREATE TABLE `realms` (
   `updatedate` DATETIME DEFAULT NULL,
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10325,7 +10325,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `userbillinfo`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `userbillinfo` (
   `id` INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(128) DEFAULT NULL,
@@ -10369,7 +10369,7 @@ CREATE TABLE `userbillinfo` (
   PRIMARY KEY  (`id`),
   KEY `username` (`username`),
   KEY `planname` (`planName`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -10387,7 +10387,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `userinfo`;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+SET character_set_client = utf8mb4;
 CREATE TABLE `userinfo` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(128) DEFAULT NULL,
@@ -10414,7 +10414,7 @@ CREATE TABLE `userinfo` (
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
 
 --
