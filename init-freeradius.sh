@@ -17,7 +17,7 @@ function init_freeradius {
 	ln -s $RADIUS_PATH/mods-available/sqlcounter $RADIUS_PATH/mods-enabled/sqlcounter
 	ln -s $RADIUS_PATH/mods-available/sqlippool $RADIUS_PATH/mods-enabled/sqlippool
 	sed -i 's|instantiate {|instantiate {\nsql|' $RADIUS_PATH/radiusd.conf # mods-enabled does not ensure the right order
-	
+
 	# Enable used tunnel for unifi
 	sed -i 's|use_tunneled_reply = no|use_tunneled_reply = yes|' $RADIUS_PATH/mods-available/eap
 
@@ -28,12 +28,12 @@ function init_freeradius {
 	sed -i 's|^#\s*server = .*|server = "'$MYSQL_HOST'"|' $RADIUS_PATH/mods-available/sql
 	sed -i 's|^#\s*port = .*|port = "'$MYSQL_PORT'"|' $RADIUS_PATH/mods-available/sql
 	sed -i '1,$s/radius_db.*/radius_db="'$MYSQL_DATABASE'"/g' $RADIUS_PATH/mods-available/sql
-	sed -i 's|^#\s*password = .*|password = "'$MYSQL_PASSWORD'"|' $RADIUS_PATH/mods-available/sql 
+	sed -i 's|^#\s*password = .*|password = "'$MYSQL_PASSWORD'"|' $RADIUS_PATH/mods-available/sql
 	sed -i 's|^#\s*login = .*|login = "'$MYSQL_USER'"|' $RADIUS_PATH/mods-available/sql
 
 	if [ -n "$DEFAULT_CLIENT_SECRET" ]; then
 		sed -i 's|testing123|'$DEFAULT_CLIENT_SECRET'|' $RADIUS_PATH/mods-available/sql
-	fi 
+	fi
 	echo "freeradius initialization completed."
 }
 
@@ -63,7 +63,7 @@ while ! mysqladmin ping -h"$MYSQL_HOST" --silent; do
 	sleep 20
 done
 
-INIT_LOCK=/internal_data/.init_done
+INIT_LOCK=/data/.freeradius_init_done
 if test -f "$INIT_LOCK"; then
 	echo "Init lock file exists, skipping initial setup."
 else

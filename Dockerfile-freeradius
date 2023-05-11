@@ -35,7 +35,7 @@ RUN apt-get update \
 
 # Create directories
 # /data should be mounted as volume to avoid recreation of database entries
-RUN mkdir /app /data /internal_data
+RUN mkdir /app /data
 WORKDIR /app
 
 # Copy init script to image

@@ -58,7 +58,7 @@ RUN a2dissite 000-default.conf && \
 
 # Create directories
 # /data should be mounted as volume to avoid recreation of database entries
-RUN mkdir /data /internal_data
+RUN mkdir /data
 ADD . /var/www/daloradius
 
 #RUN touch /var/www/html/library/daloradius.conf.php

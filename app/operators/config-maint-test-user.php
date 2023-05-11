@@ -38,15 +38,15 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    if (isset($configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'])) {
+    if (!isset($configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'])) {
         $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = "127.0.0.1";
     }
 
-    if (isset($configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'])) {
+    if (!isset($configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'])) {
         $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
     }
 
-    if (isset($configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'])) {
+    if (!isset($configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'])) {
         $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = "testing123";
     }
 
@@ -85,6 +85,7 @@
                 ? trim($_REQUEST['secret']) : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'];
 
         $username = (isset($_REQUEST['username']) && !empty(trim($_REQUEST['username']))) ? trim($_REQUEST['username']) : "";
+        $password = (isset($_REQUEST['password']) && !empty(trim($_REQUEST['password']))) ? trim($_REQUEST['password']) : "";
 
 
         include('../common/includes/db_open.php');
@@ -224,12 +225,14 @@
                                         "name" => "password1",
                                         "caption" => t('all','Password'),
                                         "type" => "password",
+                                        "value" => ((isset($password)) ? $password : ""),
                                      );
 
         $input_descriptors0[] = array(
                                         "name" => "password2",
                                         "caption" => t('all','Password') . " (confirmation)",
                                         "type" => "password",
+                                        "value" => ((isset($password)) ? $password : ""),
                                      );
 
         $input_descriptors0[] = array(
