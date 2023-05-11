@@ -62,6 +62,7 @@
                 $tmp = (!is_array($_POST['username'])) ? array($_POST['username']) : $_POST['username'];
                 foreach ($tmp as $value) {
                     
+                    $value = urldecode($value);
                     $value = trim(str_replace("%", "", $value));
                     
                     if (!in_array($value, $usernames)) {
