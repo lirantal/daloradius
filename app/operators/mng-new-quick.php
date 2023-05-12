@@ -140,6 +140,8 @@
                     // we "inject" specified attribute in the $_POST array.
                     // handleAttributes() - called later - will take care of it.
                     $injected_attribute = array();
+                    // we record which attributes should be Reply instead of Check
+                    $reply_attribute_list = array();
 
                     $injected_attribute[$passwordType] = $password;
 
@@ -153,10 +155,12 @@
 
                     if ($sessiontimeout) {
                         $injected_attribute['Session-Timeout'] = $sessiontimeout;
+                        $reply_attribute_list[] = "Session-Timeout";
                     }
 
                     if ($idletimeout) {
                         $injected_attribute['Idle-Timeout'] = $idletimeout;
+                        $reply_attribute_list[] = "Idle-Timeout";
                     }
 
                     if ($simultaneoususe) {
@@ -165,14 +169,19 @@
 
                     if ($framedipaddress) {
                         $injected_attribute['Framed-IP-Address'] = $framedipaddress;
+                        $reply_attribute_list[] = "Framed-IP-Address";
                     }
 
-                    $i = 0;
-                    foreach ($injected_attribute as $attribute => $value) {
-                        $index = 'injected_attribute' . $i;
-                        $_POST[$index] = array( $attribute, $value, ':=', 'check' );
-                        $i++;
-                    }
+                     $i = 0;
+                     foreach ($injected_attribute as $attribute => $value) {
+                         $index = 'injected_attribute' . $i;
+                         if (in_array($attribute, $reply_attribute_list)) {
+                             $_POST[$index] = array( $attribute, $value, ':=', 'reply' );
+                         } else {
+                             $_POST[$index] = array( $attribute, $value, ':=', 'check' );
+                         }
+                         $i++;
+                     }
 
                     include("library/attributes.php");
                     $skipList = array(
