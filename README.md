@@ -1,18 +1,10 @@
-# About
+<p align="center">
+  <img width="213" height="190" src="app/common/static/images/daloradius_logo.jpg">
+</p>
 
-![daloradius_logo][daloRADIUS_Logo]
+**daloRADIUS** is an advanced RADIUS web management application for managing hotspots and general-purpose ISP deployments. It features user management, graphical reporting, accounting, a billing engine, and integrates with [OpenStreetMap](https://www.openstreetmap.org/copyright) for geolocation. The system is based on [FreeRADIUS](https://freeradius.org/) with which it shares access to the backend database.
 
-[daloRADIUS](http://www.daloradius.com) is an advanced RADIUS web management application aimed at managing hotspots and
-general-purpose ISP deployments. It features user management, graphical reporting, accounting,
-a billing engine and integrates with GoogleMaps for geo-locating.
-
-daloRADIUS is written in PHP and JavaScript and utilizes a database abstraction
-layer which means that it supports many database systems, among them the popular
-MySQL, PostgreSQL, Sqlite, MsSQL, and many others.
-
-It is based on a [FreeRADIUS](http://www.freeradius.org) deployment with a database server serving as the backend.
-Among other features it implements ACLs, GoogleMaps integration for locating
-hotspots/access points visually and many more features.
+**daloRADIUS** is written using the [PHP programming language](https://www.php.net/) and uses a [database abstraction layer](https://en.wikipedia.org/wiki/Database_abstraction_layer) (DAL) for database access. Although DAL allows the use of different [database management systems](https://en.wikipedia.org/wiki/Database#Database_management_system) (DBMSs) (e.g. MariaDB, MySQL, PostgreSQL, SQLite, MsSQL, etc.), daloRADIUS has been mainly tested on the [MariaDB](https://mariadb.org/) DBMS.
 
 ## Contributors
 
