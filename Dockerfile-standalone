@@ -32,7 +32,7 @@ RUN pear channel-update pear.php.net \
 COPY --from=source /tmp/daloradius/app/ /var/www/html/daloradius
 COPY --from=source /tmp/daloradius/app/common/includes/daloradius.conf.php.sample /var/www/html/daloradius/common/includes/daloradius.conf.php
 
-COPY ./contrib/scripts/apache-config.sh /usr/local/bin
+COPY --from=source /tmp/daloradius/contrib/scripts/apache-config.sh /usr/local/bin
 
 RUN chmod +x /usr/local/bin/apache-config.sh \
 && sh /usr/local/bin/apache-config.sh
