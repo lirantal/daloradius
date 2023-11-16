@@ -113,7 +113,7 @@
 
     if (!empty($username)) {
         $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
-        $sql_WHERE[] = sprintf("username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+        $sql_WHERE[] = sprintf("username LIKE '%%%s%%'", $dbSocket->escapeSimple($username));
     }
 
     // setup php session variables for exporting

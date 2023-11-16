@@ -245,7 +245,7 @@
         $sql_WHERE[] = sprintf("ubi.batch_id=%d", $batch_id);
         
         if (!empty($username)) {
-            $sql_WHERE[] = sprintf("ubi.username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+            $sql_WHERE[] = sprintf("ubi.username LIKE '%%s%%'", $dbSocket->escapeSimple($username));
             $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
         }
 

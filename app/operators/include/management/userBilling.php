@@ -424,7 +424,7 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
     }
 
     if (!empty($payer_email)) {
-        $sql_WHERE[] = sprintf("payer_email LIKE '%s%%'", $dbSocket->escapeSimple($payer_email));
+        $sql_WHERE[] = sprintf("payer_email LIKE '%%%s%%'", $dbSocket->escapeSimple($payer_email));
     }
 
     if (!empty($payment_status)) {

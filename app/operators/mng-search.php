@@ -134,7 +134,7 @@
         $arr = array( "username", "firstname", "lastname", "homephone", "workphone", "mobilephone" );
         $value_prefix = $dbSocket->escapeSimple($username);
         foreach ($arr as $field_name) {
-            $nested_condition2[] = sprintf("ui.%s LIKE '%s%%'", $field_name, $value_prefix);
+            $nested_condition2[] = sprintf("ui.%s LIKE '%%%s%%'", $field_name, $value_prefix);
         }
     }
 

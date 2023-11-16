@@ -82,7 +82,7 @@
     $sql_WHERE = array();
     $sql_WHERE[] = "(type <> '' OR type IS NOT NULL)";
     if (!empty($attribute)) {
-        $sql_WHERE[] = sprintf("attribute LIKE '%s%%'", $dbSocket->escapeSimple($attribute));
+        $sql_WHERE[] = sprintf("attribute LIKE '%%s%%'", $dbSocket->escapeSimple($attribute));
     }
 
     // we use this simplified query just to initialize $numrows

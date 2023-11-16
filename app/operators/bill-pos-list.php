@@ -98,7 +98,7 @@
     $sql_WHERE[] = "(rc.attribute LIKE '%-Password' OR rc.attribute = 'Auth-Type')";
     
     if (!empty($planname)) {
-        $sql_WHERE[] = sprintf("ubi.planname LIKE '%s%%' ", $dbSocket->escapeSimple($planname));
+        $sql_WHERE[] = sprintf("ubi.planname LIKE '%%%s%%' ", $dbSocket->escapeSimple($planname));
     }
 
     $sql = sprintf("SELECT DISTINCT(rc.username) AS username, rc.id, rc.value, rc.attribute, ubi.contactperson,

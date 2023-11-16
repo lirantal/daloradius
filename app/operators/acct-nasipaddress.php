@@ -93,7 +93,7 @@
     include('include/management/pages_common.php');
 
     $sql_WHERE = (!empty($nasipaddress))
-               ? sprintf(" WHERE NASIPAddress LIKE '%s%%'", $dbSocket->escapeSimple($nasipaddress))
+               ? sprintf(" WHERE NASIPAddress LIKE '%%%s%%'", $dbSocket->escapeSimple($nasipaddress))
                : "";
 
     // setup php session variables for exporting

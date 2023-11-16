@@ -84,7 +84,7 @@
     $sql_WHERE = array();
     $sql_WHERE[] = "(type <> '' OR type IS NOT NULL)";
     if (!empty($vendor)) {
-        $sql_WHERE[] = sprintf("vendor LIKE '%s%%'", $dbSocket->escapeSimple($vendor));
+        $sql_WHERE[] = sprintf("vendor LIKE '%%%s%%'", $dbSocket->escapeSimple($vendor));
     }
 
     // we use this simplified query just to initialize $numrows

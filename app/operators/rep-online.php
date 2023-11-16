@@ -120,7 +120,7 @@
     // all other query parameters have been validated earlier.
     $sql_WHERE = " WHERE (ra.AcctStopTime IS NULL OR ra.AcctStopTime='0000-00-00 00:00:00') ";
     if (!empty($username)) {
-        $sql_WHERE .= sprintf(" AND ra.username LIKE '%s%%' ", $dbSocket->escapeSimple($username));
+        $sql_WHERE .= sprintf(" AND ra.username LIKE '%%%s%%' ", $dbSocket->escapeSimple($username));
     }
 
     // setup php session variables for exporting
