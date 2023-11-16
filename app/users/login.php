@@ -53,7 +53,7 @@ $dir = (strtolower($langCode) === 'ar') ? "rtl" : "ltr";
     <link rel="manifest" href="static/images/favicon/site.webmanifest">
 
     <link rel="stylesheet" href="static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="static/css/icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="static/css/icons/bootstrap-icons.min.css">
 
     <style>
 html, body {

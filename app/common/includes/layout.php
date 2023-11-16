@@ -28,7 +28,7 @@ if (strpos($_SERVER['PHP_SELF'], '/common/includes/layout.php') !== false) {
 
 const DEFAULT_COMMON_PROLOGUE_CSS = array(
     "static/css/bootstrap.min.css",
-    "static/css/icons/bootstrap-icons.css",
+    "static/css/icons/bootstrap-icons.min.css",
 );
 
 const DEFAULT_COMMON_PROLOGUE_JS = array(
@@ -1762,4 +1762,3 @@ function close_tab($keywords=array(), $index=0) {
 
     echo "\n";
 }
-
