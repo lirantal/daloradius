@@ -119,11 +119,11 @@ apt --no-install-recommends install apache2 php libapache2-mod-php \
                                     mariadb-client freeradius-utils
 ```
 
-After the installation of the required packages, proceed to download the daloRADIUS package with git by executing the following commands. These commands will create a new directory named daloradius in `/var/www`:
+After the installation of the required packages, proceed to download the daloRADIUS package with git by executing the following commands. These commands will create a new directory named `daloradius` in `/var/www`:
 ```bash
 apt --no-install-recommends install git
 cd /var/www
-git clone https://github.com/lirantal/daloradius.git
+git clone https://github.com/filippolauria/daloradius.git
 ```
 
 Afterwards, it is necessary to create the log directories for `daloradius/operators` and `daloradius/users`. This can be achieved by using the following command:
@@ -239,8 +239,8 @@ chmod -R 775 var
 The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to guarantee the correct loading of FreeRADIUS's SQL schema. This can be accomplished by executing the following commands:
 ```bash
 cd /var/www/daloradius/contrib/db
-mariadb -u raduser -p raddb < fr3-mysql-freeradius.sql
-mariadb -u raduser -p raddb < mysql-daloradius.sql
+mariadb -u raduser -p raddb < fr3-mariadb-freeradius.sql
+mariadb -u raduser -p raddb < mariadb-daloradius.sql
 ```
 
 Finally, to complete the configuration, it is necessary to disable the default site, enable the newly created sites, ensure that Apache 2 is enabled, and restart it by executing the following commands:
