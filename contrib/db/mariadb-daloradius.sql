@@ -10439,4 +10439,35 @@ INSERT IGNORE INTO `radgroupcheck` (`groupname`,`attribute`,`op`,`value`)
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-05-25 19:22:59
+--
+-- Table structure for table `messages`
+--
+
+DROP TABLE IF EXISTS `messages`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8mb4;
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `type` ENUM('login', 'support', 'dashboard') NOT NULL,
+  `content` LONGTEXT NOT NULL,
+  `created_on` DATETIME NULL,
+  `created_by` VARCHAR(32) NULL,
+  `modified_on` DATETIME NULL,
+  `modified_by` VARCHAR(32) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Default data for table `messages`
+--
+
+LOCK TABLES `messages` WRITE;
+/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
+INSERT INTO `messages` VALUES (2, 'login', '<p>Dear User,<br>Welcome to the Users Portal. We are glad you joined us!</p><p>By logging in with your account username and password, you will be able to access a wide range of features. For example, you can easily edit your contact settings, update your personal information, and view some history data through visual graphs.</p><p>We take your privacy and security seriously, so please rest assured that all your data is stored securely in our database and is accessible only to you and our authorized staff.</p><p>If you need any assistance or have any questions, please do not hesitate to contact our support team. We are always happy to help!</p><p>Regards,<br/>The daloRADIUS Staff.</p>', NOW(), 'administrator', NULL, NULL);
+INSERT INTO `messages` VALUES (3, 'support', '<p>Dear User,<br>We can provide support in different ways: you can email us at <strong>support@daloradius.local</strong> or you can open a new ticket through our help desk: <strong>https://helpdesk.daloradius.local</strong>.</p><p>Thank you for choosing daloRADIUS.</p><p>Best regards,<br>The daloRADIUS Support Team</p>', NOW(), 'administrator', NULL, NULL);
+INSERT INTO `messages` VALUES (4, 'dashboard', '<p>Dear User,<br>We can provide support in different ways: you can email us at <strong>support@daloradius.local</strong> or you can open a new ticket through our help desk: <strong>https://helpdesk.daloradius.local</strong>.</p><p>Thank you for choosing daloRADIUS.</p><p>Best regards,<br>The daloRADIUS Support Team</p>', NOW(), 'administrator', NULL, NULL);
+/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
