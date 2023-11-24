@@ -254,18 +254,29 @@ $valid_planTimeTypes = array( "Accumulative", "Time-To-Finish" );
 $valid_timeUnits = array( "second", "minute", "hour", "day", "week", "month", );
 
 // ordered by country code
-$valid_languages = array(
-                            "ar" => "Arabic",
-                            "en" => "English",
-                            "es_ve" => "Spanish - Venezuelan",
-                            "hu" => "Hungarian",
-                            "it" => "Italian",
-                            "ja" => "Japanese",
-                            "pt_br" => "Portuguese - Brazilian",
-                            "ro" => "Romanian",
-                            "ru" => "Russian",
-                            "tr" => "Turkish",
-                            "zh" => "Chinese",
-                        );
+$operators_valid_languages = array(
+                                    "ar" => "Arabic",
+                                    "en" => "English",
+                                    "es_ve" => "Spanish - Venezuelan",
+                                    "hu" => "Hungarian",
+                                    "it" => "Italian",
+                                    "ja" => "Japanese",
+                                    "pt_br" => "Portuguese - Brazilian",
+                                    "ro" => "Romanian",
+                                    "ru" => "Russian",
+                                    "tr" => "Turkish",
+                                    "zh" => "Chinese",
+                                  );
+// users allowed languages
+$users_valid_languages = array(
+                                    "en" => "English",
+                                    "it" => "Italiano (Italian)",
+                                    "ro" => "Română (Romanian)",
+                                    "ru" => "Русский (Russian)",
+                                  );
+                                  
+$valid_message_types = array(
+                                 "login", "support", "dashboard",
+                              );
 
 ?>

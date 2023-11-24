@@ -171,6 +171,7 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
  great tools and their authors for releasing such a good software to the community.
 * dompdf - [https://github.com/dompdf](https://github.com/dompdf)
 * jpgraph - [https://jpgraph.net/](https://jpgraph.net/)
+* htmlpurifier - [https://github.com/ezyang/htmlpurifier](https://github.com/ezyang/htmlpurifier)
 * bootstrap - [https://getbootstrap.com/](https://getbootstrap.com/)
 * bootstrap icons - [https://icons.getbootstrap.com/](https://icons.getbootstrap.com/)
 

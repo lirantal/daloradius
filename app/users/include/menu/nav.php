@@ -33,6 +33,7 @@ $nav = array(
                 "acct"   => array( 'Accounting', 'acct-main.php', ),
                 "bill"   => array( 'Billing', 'bill-main.php', ),
                 "graphs" => array( 'Graphs', 'graphs-main.php', ),
+                "help" => array( 'Help', 'help-main.php', ),
             );
 
 // detect category from the PHP_SELF name

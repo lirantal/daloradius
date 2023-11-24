@@ -39,7 +39,7 @@
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
             if (array_key_exists('CONFIG_LANG', $_POST) && !empty(strtolower(trim($_POST['CONFIG_LANG']))) &&
-                in_array(strtolower(trim($_POST['CONFIG_LANG'])), array_keys($valid_languages))) {
+                in_array(strtolower(trim($_POST['CONFIG_LANG'])), array_keys($operators_valid_languages))) {
 
                 $configValues['CONFIG_LANG'] = $_POST['CONFIG_LANG'];
                 include("../common/includes/config_write.php");
@@ -72,7 +72,7 @@
                                     'name' => 'CONFIG_LANG',
                                     'type' => 'select',
                                     'caption' => t('all','PrimaryLanguage'),
-                                    'options' => $valid_languages,
+                                    'options' => $operators_valid_languages,
                                     'selected_value' => $configValues['CONFIG_LANG']
                                  );
 

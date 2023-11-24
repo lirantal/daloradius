@@ -64,7 +64,7 @@ function print_html_prologue($title, $lang='en', $extra_css=array(), $extra_js=a
 <meta charset="utf-8">
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="copyright" content="Liran Tal & Filippo Lauria">
+<meta name="copyright" content="Filippo Lauria">
 <meta name="robots" content="noindex">
 
 <link rel="apple-touch-icon" sizes="180x180" href="static/images/favicon/apple-touch-icon.png">
@@ -194,6 +194,7 @@ EOF;
     // we close the html document
     echo '</body></html>';
 }
+
 
 
 // this function can be used for printing pages title and help
@@ -904,7 +905,8 @@ function print_calculated_select($select_descriptor) {
                             //~ "name" => "notes", (required)
                             //~ "caption" => t('ContactInfo','Notes'),
                             //~ tabindex => 100,
-                            //~ "content" => xxx
+                            //~ "content" => xxx,
+                            //~ "onchange" => ""
 function print_textarea($textarea_descriptor) {
 
     if (!array_key_exists('id', $textarea_descriptor) || empty($textarea_descriptor['id'])) {
@@ -917,6 +919,10 @@ function print_textarea($textarea_descriptor) {
     printf('<label for="%s" class="form-label mb-1">%s</label>', $textarea_descriptor['id'], $textarea_descriptor['caption']);
     printf('<textarea class="%s" name="%s" id="%s"', $class, $textarea_descriptor['name'], $textarea_descriptor['id']);
 
+    if (array_key_exists('oninput', $textarea_descriptor)) {
+        printf(' oninput="%s"', $textarea_descriptor['oninput']);
+    }
+    
     if (array_key_exists('tabindex', $textarea_descriptor)) {
         printf(' tabindex="%s"', $textarea_descriptor['tabindex']);
     }
@@ -1607,8 +1613,13 @@ function menu_print_textarea($descriptor) {
     if (array_key_exists('readmore', $descriptor)) {
         $readmore = $descriptor['readmore'];
 
-        printf('<a target="_blank" href="%s" class="btn btn-sm btn-outline-dark">%s</a>',
-               $readmore['href'], $readmore['label']);
+        $target = "_self";
+        if (array_key_exists('target', $readmore)) {
+            $target = $readmore['target'];
+        }
+
+        printf('<a target="%s" href="%s" class="btn btn-sm btn-outline-dark">%s</a>',
+               $target, $readmore['href'], $readmore['label']);
     }
 
     echo '</div></div>'

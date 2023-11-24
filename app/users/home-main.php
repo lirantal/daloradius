@@ -28,26 +28,38 @@
     include_once("lang/main.php");
     include("../common/includes/layout.php");
 
+    include('../common/includes/functions.php');
+    include('../common/includes/db_open.php');
+    $message = get_message($dbSocket, "dashboard")["content"];
+    include('../common/includes/db_close.php');
+    
+    if (!empty($message)) {
+        $help = $message;
+    } else {
+        $help = t('helpPage','loginUsersPortal');
+    }
+
     // print HTML prologue
     $title = "Home";
-
     print_html_prologue($title, $langCode);
 
-    include('library/extensions/welcome_page.php');
-    
+    $title = "Welcome to the daloRADIUS User Portal";
+    print_title_and_help($title, $help);
+
     // main accordion
     echo '<div class="accordion m-2" id="accordion-parent">';
-    
+
     include_once('include/management/userReports.php');
-    
-    userPlanInformation($login_user, 1, true);
-    
-    // userSubscriptionAnalysis with argument set to 1 for drawing the table
-    userSubscriptionAnalysis($login_user, 1, true);
-    
-    // userConnectionStatus (same as above)
+
+    // Display user session status as a table and open the accordion.
     userConnectionStatus($login_user, 1, true);
-    
+
+    // Show user plan information in a table.
+    userPlanInformation($login_user, 1);
+
+    // Analyze and display user subscription details in a table.
+    userSubscriptionAnalysis($login_user, 1);
+
     echo '</div>';
 
     include('include/config/logging.php');

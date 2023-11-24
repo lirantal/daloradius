@@ -34,6 +34,7 @@ $cat_subcat_tree = array(
                             "pref" => array(),
                             "acct"   => array(),
                             "bill"   => array(),
+                            "help" => array(),
                             "graphs" => array(),
                         );
 

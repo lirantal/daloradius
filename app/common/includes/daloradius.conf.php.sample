@@ -65,6 +65,7 @@ $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'] = 'invoice_type';
 $configValues['CONFIG_DB_TBL_DALOPAYMENTS'] = 'payment';
 $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'] = 'payment_type';
 $configValues['CONFIG_DB_TBL_DALONODE'] = 'node';
+$configValues['CONFIG_DB_TBL_DALOMESSAGES'] = 'messages';
 $configValues['CONFIG_FILE_RADIUS_PROXY'] = '/etc/freeradius/3.0/proxy.conf';
 $configValues['CONFIG_PATH_RADIUS_DICT'] = '';
 $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '/var/www/daloradius/var';
