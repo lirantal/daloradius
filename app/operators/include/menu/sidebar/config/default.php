@@ -39,8 +39,6 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','LoggingSetting
                          'icon' => 'tools', );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','InterfaceSettings'), 'href' => 'config-interface.php',
                          'icon' => 'tools', );
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','MailSettings'), 'href' => 'config-mail.php',
-                         'icon' => 'envelope-at',  );
 $descriptors1[] = array( 'type' => 'link', 'label' => "Message Settings", 'href' => 'config-messages.php',
                          'icon' => 'chat-text', );
 

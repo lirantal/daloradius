@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -21,24 +21,27 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
-    $operator = $_SESSION['operator_user'];
+// prevent this file to be directly accessed
+if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/config/default.php') !== false) {
+    header("Location: ../../../../index.php");
+    exit;
+}
 
-    include_once('../common/includes/config_read.php');
-    $log = "visited page: ";
+// define descriptors
+$descriptors1 = array();
 
-    include_once("lang/main.php");
-    
-    include("../common/includes/layout.php");
+$descriptors1[] = array( 'type' => 'link', 'label' => t('button','MailSettings'), 'href' => 'config-mail-settings.php',
+                         'icon' => 'envelope-at',  );
+$descriptors1[] = array( 'type' => 'link', 'label' => "Test email", 'href' => 'config-mail-testing.php',
+                         'icon' => 'envelope-at',  );
 
-    // print HTML prologue
-    $title = t('Intro','configmain.php');
-    $help = t('helpPage','configmain');
-    
-    print_html_prologue($title, $langCode);
 
-    print_title_and_help($title, $help);
-    
-    include('include/config/logging.php');
-    print_footer_and_html_epilogue();
-?>
+$sections = array();
+$sections[] = array( 'title' => 'Mail', 'descriptors' => $descriptors1 );
+
+
+// add sections to menu
+$menu = array(
+                'title' => 'Configuration',
+                'sections' => $sections,
+             );

@@ -315,7 +315,17 @@
                                 . sprintf("<li><strong>groups count</strong>: %d</li>", $groupsCount)
                                 . sprintf("<li><strong>user info</strong>: %s</li>", $addedUserInfo)
                                 . sprintf("<li><strong>billing info</strong>: %s</li>", $addedBillingInfo)
-                                . "</ul>";
+                                . "</ul>"
+
+
+                                . "<strong>Welcome notification</strong>: "
+                                . '<a target="_blank" href="include/common/notifications.php?action=preview">Preview</a>';
+
+                    if (strtolower($configValues['CONFIG_MAIL_ENABLED']) == "yes") {
+                        $successMsg .= ' or <a href="include/common/notifications.php?action=email">Send</a>';
+                    }
+
+                    $_SESSION['notification'] = array( 'username' => $username, 'type' => 'user-welcome' );
 
                     $logAction .= sprintf("Successfully inserted new %s [%s] on page: ", $what, $u);
                 }

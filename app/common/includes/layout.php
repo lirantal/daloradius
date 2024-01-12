@@ -115,7 +115,7 @@ EOF;
 
         <div class="container">
             <div class="row m-0 p-0">
-                <div id="sidebar" class="min-vh-100 col-sm-2 p-3 bg-light text-dark border-end">
+                <div id="sidebar" class="min-vh-100 col-sm-2 p-sm-2 col-lg-3 p-lg-3 bg-light text-dark border-end">
 EOF;
 
     // printing sidebar
@@ -124,9 +124,9 @@ EOF;
     // closing sidebar col
     // opening main content col
     echo <<<EOF
-                </div><!-- .col-sm-3 -->
+                </div><!-- .col-sm-2 p-sm-2 col-lg-3 p-lg-3 -->
 
-                <div class="col-sm-10 p-3 bg-white text-dark">
+                <div class="col-sm-10 p-sm-2 col-lg-9 p-lg-3 bg-white text-dark">
 
 EOF;
 }
@@ -140,7 +140,7 @@ function print_footer_and_html_epilogue($inline_extra_js="", $extra_js=array(), 
     // closing main content col and
     // main wrapper container
     echo <<<EOF
-                </div><!-- -col-sm-9 -->
+                </div><!-- .col-sm-10 p-sm-2 col-lg-9 p-lg-3 -->
             </div><!-- .row -->
         </div><!-- .container -->
 

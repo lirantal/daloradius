@@ -38,7 +38,7 @@ $cat_subcat_tree = array(
                             "bill" => array( "plans", "rates", "merchant", "history", "invoice", "payments", ),
                             "gis" => array(),
                             "graphs" => array(),
-                            "config" => array( "reports", "maint", "operators", "backup", ),
+                            "config" => array( "reports", "maint", "operators", "backup", "mail", ),
                             "help" => array(),
                         );
 
@@ -136,4 +136,3 @@ if (file_exists($sidebar_file)) {
 //~ config-maint
 //~ config-operators
 //~ config-backup
-
