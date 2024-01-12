@@ -169,11 +169,12 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
 
  [daloRADIUS](http://www.daloradius.com) makes use of several third-party packages and I would like to thank these
  great tools and their authors for releasing such a good software to the community.
-* dompdf - [https://github.com/dompdf](https://github.com/dompdf)
-* jpgraph - [https://jpgraph.net/](https://jpgraph.net/)
-* htmlpurifier - [https://github.com/ezyang/htmlpurifier](https://github.com/ezyang/htmlpurifier)
 * bootstrap - [https://getbootstrap.com/](https://getbootstrap.com/)
 * bootstrap icons - [https://icons.getbootstrap.com/](https://icons.getbootstrap.com/)
+* dompdf - [https://github.com/dompdf](https://github.com/dompdf)
+* htmlpurifier - [https://github.com/ezyang/htmlpurifier](https://github.com/ezyang/htmlpurifier)
+* jpgraph - [https://jpgraph.net/](https://jpgraph.net/)
+* phpmailer - [https://github.com/PHPMailer/PHPMailer](https://github.com/PHPMailer/PHPMailer)
 
 
 # Support
