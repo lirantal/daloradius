@@ -11,7 +11,7 @@
 Special thanks to these wonderful people for their contributions to daloRADIUS...
 <p align="center">
   <a href="../../graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=filippolauria/daloradius&columns=15" />
+    <img src="https://contrib.rocks/image?repo=daloradius/daloradius&columns=15" />
   </a>
 </p>
 ... and many more who have contributed to the project over time. Thank you for your valuable contributions!
@@ -183,6 +183,6 @@ Helpful resources to find help and support with daloRADIUS:
 * [daloRADIUS Issues](../../issues)
 
 # Copyright
-This repository is a fork of the original daloRADIUS, available in its [official repository](https://github.com/lirantal/daloradius), where you can find older releases, resources, and documentation.
-
-I extend my gratitude to the original creator [Liran Tal](https://github.com/lirantal/), to [Miguel García](https://github.com/MiguelVis) and all contributors for their valuable work.
+- [Filippo Lauria](https://github.com/filippolauria/), main mainter of this repository;
+- [Liran Tal](https://github.com/lirantal/), the original creator of daloRADIUS;
+- [Miguel García](https://github.com/MiguelVis) and all contributors for their valuable work.
