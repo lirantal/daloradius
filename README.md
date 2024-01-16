@@ -11,7 +11,7 @@
 Special thanks to these wonderful people for their contributions to daloRADIUS...
 <p align="center">
   <a href="../../graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=daloradius/daloradius&columns=15" />
+    <img src="https://contrib.rocks/image?repo=lirantal/daloradius&columns=15" />
   </a>
 </p>
 ... and many more who have contributed to the project over time. Thank you for your valuable contributions!
