@@ -30,10 +30,15 @@ if (array_key_exists('logged_in', $_SESSION)
     exit;
 }
 
-// this include "exports" $langCode that can be used later in this script
-include("lang/main.php");
+// this include "exports" $langCode and $selectedLanguage that can be used later in this script
+include('lang/main.php');
 
 $dir = (strtolower($langCode) === 'ar') ? "rtl" : "ltr";
+
+include('../common/includes/functions.php');
+include('../common/includes/db_open.php');
+$message = get_message($dbSocket, "login")["content"];
+include('../common/includes/db_close.php');
 
 ?>
 <!DOCTYPE html>
@@ -53,9 +58,9 @@ $dir = (strtolower($langCode) === 'ar') ? "rtl" : "ltr";
     <link rel="manifest" href="static/images/favicon/site.webmanifest">
 
     <link rel="stylesheet" href="static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="static/css/icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="static/css/icons/bootstrap-icons.min.css">
 
-    <style>
+        <style>
 html, body {
   height: 100%;
 }
@@ -84,42 +89,72 @@ body {
 }
 
 .form-login input[type="password"] {
+  margin-bottom: -1px;
+  border-radius: 0;
+}
+
+.form-login select {
   margin-bottom: 10px;
   border-top-left-radius: 0;
-  border-top-right-radius: 0;
+  border-top-right-radius: 0;  
 }
 
     </style>
 </head>
 
+
 <body>
     <main class="form-login w-100 m-auto">
     <form action="dologin.php" method="POST">
-    <img class="mb-4" src="static/images/daloradius_small.png" alt="daloRADIUS" width="135" height="41">
-    <h1 class="h3 mb-3 fw-normal d-flex align-items-center">
-        <button class="btn btn-link btn-lg" data-bs-toggle="modal" data-bs-target="#welcome-modal">
+    <h1 class="h4 mb-3 fw-normal d-flex align-items-center">
+<?php
+    if (!empty($message)) {
+        echo <<<EOF
+        <button class="btn btn-link btn-lg" data-bs-toggle="modal" data-bs-target="#welcome-modal" type="button">
             <i class="bi bi-info-circle-fill"></i>
         </button>
+EOF;
+    }
+?>
         <?= t('text','LoginRequired') ?>
     </h1>
 
     <div class="form-floating">
-    <input type="text" class="form-control" id="login_user" name="login_user" placeholder="<?= t('all','Username') ?>" required>
-    <label for="login_user"><?= t('all','Username') ?></label>
+        <input type="text" class="form-control" id="login_user" name="login_user" placeholder="<?= t('all','Username') ?>" required>
+        <label for="login_user"><?= t('all','Username') ?></label>
     </div>
 
     <div class="form-floating">
-    <input type="password" class="form-control" id="login_pass" name="login_pass" placeholder="<?= t('all','Password') ?>" required>
-    <label for="login_pass"><?= t('all','Password') ?></label>
+        <input type="password" class="form-control" id="login_pass" name="login_pass" placeholder="<?= t('all','Password') ?>" required>
+        <label for="login_pass"><?= t('all','Password') ?></label>
     </div>
 
-    <button class="w-100 btn btn-lg btn-primary" type="submit"><?= t('text','LoginPlease') ?></button>
-    <small class="my-2 text-muted text-center d-block"><?= t('all','daloRADIUS') ?></small>
+    <div class="form-floating">
+        <select class="form-control" id="language" name="language">
+<?php
+    foreach ($users_valid_languages as $code => $label) {
+        $selected = ($code == $selectedLanguage) ? " selected" : "";
+        printf('<option value="%s"%s>%s</option>', $code, $selected, $label);
+    }
+?>
+        </select>
+        <label for="language"><?= t('all','Language') ?></label>
+    </div>
+
+    <button class="w-100 btn btn-lg btn-success mb-4" type="submit"><?= t('text','LoginPlease') ?></button>
+
+    <div class="d-flex justify-content-center align-items-center user-select-none">
+        <img src="static/images/daloradius_small.png" alt="daloRADIUS Logo" width="128">
+    </div>
 
     <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
     </form>
 
+<?php
 
+    if (!empty($message)) {
+
+    echo <<<EOF
     <div class="modal modal-lg fade" id="welcome-modal" tabindex="-1" aria-labelledby="welcome-modal-label" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -127,14 +162,13 @@ body {
                     <h1 class="modal-title fs-5" id="welcome-modal-label">Welcome!</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <?= t('helpPage','loginUsersPortal') ?>
-                </div>
+                <div class="modal-body">{$message}</div>
             </div>
         </div>
     </div>
+EOF;
+    }
 
-<?php
     if (isset($_SESSION['login_error']) && $_SESSION['login_error'] !== false) {
         $message = t('messages','loginerror');
         echo <<<EOF

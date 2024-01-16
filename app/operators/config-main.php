@@ -37,9 +37,6 @@
     
     print_html_prologue($title, $langCode);
 
-    
-    
-
     print_title_and_help($title, $help);
     
     include('include/config/logging.php');

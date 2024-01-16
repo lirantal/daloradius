@@ -151,28 +151,28 @@
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
+
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-    
+
             if (array_key_exists('accounts', $_POST) && !empty($_POST['accounts']) && is_array($_POST['accounts']) &&
                 array_key_exists('type', $_POST) && $_POST['type'] == "batch") {
-                
+
                 $batch_name = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])))
                             ? htmlspecialchars(trim($_POST['batch_name']), ENT_QUOTES, 'UTF-8') : "";
-                
+
                 $accounts = $_POST['accounts'];
-                
+
                 if (array_key_exists('ticketInformation', $_POST) && !empty(trim($_POST['ticketInformation']))) {
                     $ticketInformation = "<strong>Information</strong>:<br>" . htmlspecialchars(trim($_POST['ticketInformation']), ENT_QUOTES, 'UTF-8');
                     $ticketInformation = str_replace("\n", "<br>", $ticketInformation);
                 }
-                
+
                 $plan = (array_key_exists('plan', $_POST) && !empty(trim($_POST['plan'])))
                       ? trim($_POST['plan']) : "";
-                
+
                 $ticketCost = "";
                 $ticketTime = "";
-                
+
                 if (!empty($plan)) {
                     include_once('../../../common/includes/db_open.php');
                     include_once('../management/pages_common.php');
@@ -188,7 +188,7 @@
 
                     include_once('../../../common/includes/db_close.php');
                 }
-                
+
                 $card_body_height = 10;
                 $card_foot_height = 30;
                 if (!empty($ticketCost)) {
@@ -199,14 +199,14 @@
                     $card_foot_height -= 5;
                     $card_body_height += 5;
                 }
-            
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
         <title><?= (!empty($batch_name)) ? $batch_name : "user cards" ?></title>
-        
+
         <style>
 
 @page {
@@ -313,7 +313,7 @@ body {
     padding: 0;
     margin: 0;
 }
-    
+
         </style>
 
     </head>
@@ -323,31 +323,31 @@ body {
 <?php
             // remove first element
             array_shift($accounts);
-            
+
             echo '<div class="container">';
-            
+
             foreach ($accounts as $i => $account) {
                 list($username, $password) = $account;
-                
+
                 if ($i != 0 && $i % 4 == 0) {
                     echo '</div><div class="container">';
                 }
-                
+
                 $trs = array(
                                 "User" => $username,
                                 "Pass" => $password
                             );
-                
+
                 if (!empty($ticketTime)) {
                     $trs["Validity"] = $ticketTime;
                 }
-                
+
                 if (!empty($ticketCost)) {
                     $trs["Price"] = $ticketCost;
                 }
-                
+
                 echo '<div class="card">';
-                printf('<div class="card-head"><img src="%s"></div>', $ticketLogoFile); 
+                printf('<div class="card-head"><img src="%s"></div>', $ticketLogoFile);
                 echo '<div class="card-body">'
                    . '<table>';
 
@@ -361,10 +361,10 @@ body {
                 printf('<p>%s</p>', $ticketInformation);
                 echo '</div>'
                    . '</div>';
-                
+
                 $i++;
             }
-            
+
             echo '</div>';
 ?>
 
@@ -375,7 +375,7 @@ body {
             }
         }
     }
-    
+
     header("Location: $redirect");
 
 ?>

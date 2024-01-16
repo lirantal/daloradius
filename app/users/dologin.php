@@ -26,16 +26,27 @@
 
 include('library/sessions.php');
 include_once('../common/includes/config_read.php');
+include_once('lang/main.php');
 
 dalo_session_start();
 
 $errorMessage = '';
 
-// we interact with the db, ONLY IF user provided
-// both operator_user and operator_pass params
+// we interact with the db, ONLY IF user provided both operator_user and operator_pass params
 if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']) &&
     array_key_exists('login_user', $_POST) && !empty($_POST['login_user']) &&
-    array_key_exists('login_pass', $_POST) && !empty($_POST['login_pass'])) {
+    array_key_exists('login_pass', $_POST) && !empty($_POST['login_pass']) &&
+    array_key_exists('language', $_POST) && !empty(trim($_POST['language']))) {
+
+    $language = strtolower(trim($_POST['language']));
+    if (in_array($language, array_keys($users_valid_languages))) {
+        $selectedLanguage = $language;
+    } else {
+        $selectedLanguage = 'en';
+    }
+    
+    //~ 31536000 = 365 * 24 * 60 * 60 
+    setcookie('daloradius_language', $selectedLanguage, time() + 31536000);
 
     $login_user = $_POST['login_user'];
     $login_pass = $_POST['login_pass'];

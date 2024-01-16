@@ -80,7 +80,7 @@
                            FROM %s AS rug1 LEFT JOIN %s AS dui ON rug1.username=dui.username",
                          $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
         if (!empty($username)) {
-            $sql0 .= sprintf(" WHERE rug1.username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+            $sql0 .= sprintf(" WHERE rug1.username LIKE '%%%s%%'", $dbSocket->escapeSimple($username));
         }
     
     $res = $dbSocket->query($sql0);

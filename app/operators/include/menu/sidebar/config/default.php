@@ -30,17 +30,17 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/config/default.php') !==
 // define descriptors
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','UserSettings'), 'href' => 'config-user.php',
-                         'icon' => 'person-gear', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'person-gear', );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DatabaseSettings'), 'href' => 'config-db.php',
-                         'icon' => 'database', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'database', );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','LanguageSettings'), 'href' => 'config-lang.php',
-                         'icon' => 'translate', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'translate', );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','LoggingSettings'), 'href' => 'config-logging.php',
-                         'icon' => 'tools', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'tools', );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','InterfaceSettings'), 'href' => 'config-interface.php',
-                         'icon' => 'tools', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','MailSettings'), 'href' => 'config-mail.php',
-                         'icon' => 'envelope-at', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
+                         'icon' => 'tools', );
+$descriptors1[] = array( 'type' => 'link', 'label' => "Message Settings", 'href' => 'config-messages.php',
+                         'icon' => 'chat-text', );
 
 $sections = array();
 $sections[] = array( 'title' => 'Global Settings', 'descriptors' => $descriptors1 );

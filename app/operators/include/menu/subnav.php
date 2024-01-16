@@ -44,6 +44,7 @@ $subnav["config"] = array(
                             'Maintenance' => 'config-maint.php',
                             'Operators' => 'config-operators.php',
                             'Backup' => 'config-backup.php',
+                            'Mail' => 'config-mail-settings.php',
                         );
 
 // rep subnav elements

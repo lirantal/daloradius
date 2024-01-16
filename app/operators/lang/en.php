@@ -1449,8 +1449,50 @@ $l['helpPage']['configinterface'] = <<<EOF
 EOF;
 
 $l['helpPage']['configmail'] = <<<EOF
-<h2 class="fs-6">Mail Settings</h2>
-<p>Configure mail settings.</p>
+<h2 class="fs-6">Mail Settings Configuration</h2>
+<div id="help-text">
+  <div class="help-item">
+    <strong>Enabled:</strong>
+    <p>Choose whether the SMTP client is enabled or disabled for sending emails.</p>
+  </div>
+
+  <div class="help-item">
+    <strong>SMTP Server Address:</strong>
+    <p>Enter the address of your SMTP server.<br>This is the server responsible for sending your emails.</p>
+  </div>
+
+  <div class="help-item">
+    <strong>SMTP Server Port:</strong>
+    <p>Specify the port number used by the SMTP server. The default is 25.</p>
+  </div>
+
+  <div class="help-item">
+    <strong>SMTP Security:</strong>
+    <p>Select the security protocol for the SMTP connection.<br>Choose 'none' for no security or 'tls' for TLS encryption.</p>
+  </div>
+
+  <div class="help-item">
+    <strong>From Email Address:</strong>
+    <p>Provide the email address that will be used as the sender of the emails.</p>
+  </div>
+
+  <div class="help-item">
+    <strong>Sender's Name:</strong>
+    <p>Enter the name associated with the sender's email address.<br>Use only letters, numbers, and spaces.</p>
+  </div>
+
+  <div class="help-item">
+    <strong>Subject Prefix:</strong>
+    <p>Set a prefix for the email subjects.<br>Allowed characters include letters, numbers, spaces, and square brackets.</p>
+  </div>
+
+  <div class="help-item">
+    <strong>SMTP Username and Password:</strong>
+    <p>Provide the username and password for SMTP authentication if required.<br>Leave both fields blank to skip authentication.</p>
+  </div>
+
+  <small><strong>Note:</strong> Make sure to click "Apply" after making changes to save your configuration.</small>
+</div>
 EOF;
 
 $l['helpPage']['configmaint'] = <<<EOF
@@ -1842,5 +1884,6 @@ $l['submenu']['Invoices'] = "Invoices";
 $l['submenu']['Payments'] = "Payments";
 $l['submenu']['Custom'] = "Custom";
 $l['submenu']['Hotspot'] = "Hotspot";
+$l['submenu']['Mail'] = "Mail";
 
 ?>

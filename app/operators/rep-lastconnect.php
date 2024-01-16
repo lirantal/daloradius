@@ -131,7 +131,7 @@
     // all other query parameters have been validated earlier.
     $sql_WHERE = array();
     if (!empty($username)) {
-        $sql_WHERE[] = sprintf("pa.%s LIKE '%s%%'", $tableSetting['postauth']['user'],
+        $sql_WHERE[] = sprintf("pa.%s LIKE '%%%s%%'", $tableSetting['postauth']['user'],
                                                     $dbSocket->escapeSimple($username));
     }
     $sql_WHERE[] = sprintf("pa.%s BETWEEN '%s' AND '%s'", $tableSetting['postauth']['date'],

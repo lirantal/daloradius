@@ -119,7 +119,7 @@
     }
     
     if (!empty($username)) {
-        $sql_WHERE[] = sprintf("b.username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+        $sql_WHERE[] = sprintf("b.username LIKE '%%%s%%'", $dbSocket->escapeSimple($username));
         $partial_query_params[] = sprintf("username=%s", $username_enc);
     }
     

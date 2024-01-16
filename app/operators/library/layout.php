@@ -28,7 +28,7 @@ if (strpos($_SERVER['PHP_SELF'], '/library/layout.php') !== false) {
 
 const DEFAULT_COMMON_PROLOGUE_CSS = array(
     "static/css/bootstrap.min.css",
-    "static/css/icons/bootstrap-icons.css",
+    "static/css/icons/bootstrap-icons.min.css",
 );
 
 const DEFAULT_COMMON_PROLOGUE_JS = array(

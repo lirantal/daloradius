@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Invoice for __CUSTOMER_NAME__</title>
+    <style>
+        @page {
+            size: 21cm 29.7cm;
+            margin: 0;
+        }
+
+        body {
+            font-family: sans-serif;
+            padding: 1cm;
+        }
+
+        #main {
+            width: 19cm;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        td {
+            vertical-align: top;
+        }
+
+        td:first-child {
+            width: 50%;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .header {
+            margin-top: 20px;
+        }
+
+        hr {
+            border: 1px solid #ddd;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .small-text {
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main">
+
+        <table>
+            <tr>
+                <td>
+                    <p>
+                        <b>Customer Name and Contact</b><br/>
+                        __CUSTOMER_NAME__<br/>
+                        __CUSTOMER_ADDRESS__<br/><br/>
+                        
+                        <b>Phone:</b> __CUSTOMER_PHONE__<br/>
+                        <b>Email:</b> __CUSTOMER_EMAIL__
+                    </p>
+                </td>
+                <td>
+                    <a href="http://www.daloradius.com/"><img src="company-logo.jpg" alt="Company Logo" border='0'/></a>
+
+                    <p>Enginx<br/>
+                        <a href="mailto:team@enginx.com">team@enginx.com</a><br>
+                        Created on __INVOICE_CREATION_DATE__
+                    </p>
+                    
+                </td>
+            </tr>
+        </table>
+
+        <div id="content">
+            <div class="header">
+                <p>
+                    <b>Welcome Notification</b>
+                    <br/><br/>
+                    
+                    Dear customer, <br/><br/>
+                    
+                    Welcome to our Hotspot service.<br/>
+                    We hope you enjoy and wish you happy surfing<br/>
+                </p>
+            </div>
+
+            <hr>
+
+            <p>
+                Thank you for your order!<br/>
+                If you have any questions, please feel free to contact us at <a href="mailto:team@enginx.com">team@enginx.com</a>.
+            </p>
+
+            <hr>
+
+            <p class="small-text">
+                This communication is for the exclusive use of the addressee and may contain proprietary, confidential, or privileged information.<br/>
+                If you are not the intended recipient, any use, copying, disclosure, dissemination, or distribution is strictly prohibited.
+                <br /><br />
+                &copy; Enginx (C) All Rights Reserved
+            </p>
+        </div><!--end content-->
+
+    </div><!--end page-->
+</body>
+</html>

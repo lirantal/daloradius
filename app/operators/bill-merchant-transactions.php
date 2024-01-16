@@ -123,7 +123,7 @@
     }
     
     if (!empty($payer_email)) {
-        $sql_WHERE[] = sprintf("payer_email LIKE '%s%%'", $dbSocket->escapeSimple($payer_email));
+        $sql_WHERE[] = sprintf("payer_email LIKE '%%%s%%'", $dbSocket->escapeSimple($payer_email));
         $partial_query_string_pieces[] = sprintf("payer_email=%s", $payer_email);
     }
     

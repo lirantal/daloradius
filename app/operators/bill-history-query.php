@@ -113,12 +113,12 @@
     //~ }
 
     if (!empty($username)) {
-        $sql_WHERE[] = sprintf("username LIKE '%s%%'", $dbSocket->escapeSimple($username));
+        $sql_WHERE[] = sprintf("username LIKE '%%%s%%'", $dbSocket->escapeSimple($username));
         $partial_query_string_pieces[] = sprintf("username=%s", $username_enc);
     }
 
     if (!empty($billaction)) {
-        $sql_WHERE[] = sprintf("billaction LIKE '%s%%'", $dbSocket->escapeSimple($billaction));
+        $sql_WHERE[] = sprintf("billaction LIKE '%%%s%%'", $dbSocket->escapeSimple($billaction));
         $partial_query_string_pieces[] = sprintf("billaction=%s", $billaction_enc);
     }
 

@@ -92,7 +92,7 @@
     include('include/management/pages_common.php');
 
     $sql_WHERE = (!empty($ipaddress))
-               ? sprintf(" WHERE FramedIPAddress LIKE '%s%%'", $dbSocket->escapeSimple($ipaddress))
+               ? sprintf(" WHERE FramedIPAddress LIKE '%%%s%%'", $dbSocket->escapeSimple($ipaddress))
                : "";
 
     // setup php session variables for exporting

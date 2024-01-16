@@ -79,7 +79,7 @@
     include('include/management/pages_common.php');
 
     $sql_WHERE = (!empty($groupname))
-               ? sprintf(" WHERE groupname LIKE '%s%%'", $dbSocket->escapeSimple($groupname)) : "";
+               ? sprintf(" WHERE groupname LIKE '%%%s%%'", $dbSocket->escapeSimple($groupname)) : "";
 
     // we use this simplified query just to initialize $numrows
     $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPREPLY']) . $sql_WHERE;
