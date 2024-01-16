@@ -1,4 +1,4 @@
-This guide will take you through the process of deploying a **basic open-source AAA infrastructure** on a dedicated instance of [Debian 11](https://www.debian.org/download) using the following components:
+This guide will take you through the process of deploying a **basic open-source AAA infrastructure** on a dedicated instance of [Debian](https://www.debian.org/download) 11 or 12 using the following components:
  - [MariaDB](https://mariadb.org/download/) (version 10.5);
  - [FreeRADIUS](https://freeradius.org/releases/) (version 3.0.x);
  - daloRADIUS, which requires:
