@@ -74,16 +74,16 @@ function user_disconnect($params) {
                         "output" => "radclient binary not found on the system",
                     );
     }
-    
+
     $required_params = array( "nas_id", "command", "username",  );
-    
+
     $missing_params = array();
     foreach ($required_params as $required_param) {
         if (!array_key_exists($required_param, $params)) {
             $missing_params[] = $required_param;
         }
     }
-    
+
     $valid_commands = array( "coa", "disconnect" );
     if (!in_array($params['command'], $valid_commands)) {
         return array(
@@ -91,18 +91,18 @@ function user_disconnect($params) {
                         "output" => sprintf("'%s': invalid command", $params['command']),
                     );
     }
-    
+
     // get nas details
     include('../common/includes/db_open.php');
-        
+
     $sql = sprintf("SELECT DISTINCT(nasname), ports, secret FROM %s WHERE id=%d",
                    $configValues['CONFIG_DB_TBL_RADNAS'], $params['nas_id']);
     $res = $dbSocket->query($sql);
 
     list($addr, $port, $secret) = $res->fetchrow();
-    
+
     include('../common/includes/db_close.php');
-    
+
     $params = radclient_common_options($params);
     $count = (array_key_exists('count', $params) && $params['count'] > 0) ? $params['count'] : 1;
     $requests = (array_key_exists('requests', $params) && $params['requests'] > 0) ? $params['requests'] : 1;
@@ -110,47 +110,50 @@ function user_disconnect($params) {
     $timeout = (array_key_exists('timeout', $params) && $params['timeout'] > 0) ? $params['timeout'] : 3;
     $debug = (array_key_exists('debug', $params) && $params['debug'] == true) ? "-x" : "";
     $command = (array_key_exists('command', $params) && in_array($params['command'], $valid_commands)) ? $params['command'] : "auth";
-    
+
     // prepare radclient arguments
     $server_port = sprintf("%s:%d", $addr, $port);
     $positional_args = sprintf("%s %s %s", escapeshellarg($server_port), escapeshellarg($command), escapeshellarg($secret));
-    
+
     $query = sprintf("User-Name=%s", escapeshellarg($params['username']));
-    
+
     if (array_key_exists('customAttributes', $params) && !empty($params['customAttributes'])) {
         $query_params = array();
-        
+
         $attr_values = explode(",", $params['customAttributes']);
         foreach ($attr_values as $attr_value) {
             list($attr, $value) = explode("=", $attr_value);
             $attr = trim($attr);
             $value = trim($value);
-            
+
             if (!empty($attr) && !empty($value) && $attr !== 'User-Name') {
                 $query_params[escapeshellarg($attr)] = escapeshellarg($value);
             }
         }
-        
-        $query .= ", " . implode(",", $query_params);
+
+        foreach ($query_params as $attr => $value) {
+            $query .= sprintf(", %s=%s", $attr, $value);
+        }
+
     }
-    
+
     // other radclient options
     $radclient_options = sprintf(" -c %s -n %s -r %s -t %s %s", escapeshellarg($count), escapeshellarg($requests),
                                                                 escapeshellarg($retries), escapeshellarg($timeout), $debug);
-    
+
     if (isset($params['dictionary']) && !empty(trim($params['dictionary']))) {
         $radclient_options .= sprintf(" -d %s", escapeshellarg(trim($params['dictionary'])));
     }
-    
+
     $cmd = sprintf('echo "%s" | %s %s %s 2>&1', escapeshellcmd($query), $radclient_path, $radclient_options, $positional_args);
-    
+
     if ($params['simulate']) {
         return array(
                         "error" => false,
                         "output" => "$cmd (not executed)",
                     );
     }
-    
+
     $result = shell_exec($cmd);
 
     if (empty($result)) {
@@ -164,7 +167,7 @@ function user_disconnect($params) {
                     "error" => false,
                     "output" => "$cmd\n$result"
                 );
-    
+
 }
 
 
@@ -186,23 +189,23 @@ function user_auth($params) {
 
     include_once('library/validation.php');
     global $valid_passwordTypes;
-    
+
     $required_params = array( "command", "username", "password", "password_type", "server", "port", "secret" );
-    
+
     $missing_params = array();
     foreach ($required_params as $required_param) {
         if (!array_key_exists($required_param, $params)) {
             $missing_params[] = $required_param;
         }
     }
-    
+
     if (count($missing_params) > 0) {
         return array(
                         "error" => true,
                         "output" => sprintf("Missing params: %s", implode(", ", $missing_params)),
                     );
     }
-    
+
     $valid_commands = array( "auth", "status" );
     if (!in_array($params['command'], $valid_commands)) {
         return array(
@@ -210,21 +213,21 @@ function user_auth($params) {
                         "output" => sprintf("'%s': invalid command", $params['command']),
                     );
     }
-    
+
     if (!in_array($params['password_type'], $valid_passwordTypes)) {
         return array(
                         "error" => true,
                         "output" => sprintf("'%s': invalid password type", $params['password_type']),
                     );
     }
-    
+
     if (filter_var(trim($params['server']), FILTER_VALIDATE_IP) === false) {
         return array(
                         "error" => true,
                         "output" => "Invalid RADIUS server IP address",
                     );
     }
-    
+
     // validate other params
     $command = (array_key_exists('command', $params) && in_array($params['command'], $valid_commands)) ? $params['command'] : "auth";
     $port = (array_key_exists('port', $params) && $params['port'] >= 1 && $params['port'] <= 65535) ? $params['port'] : 1812;
@@ -240,26 +243,26 @@ function user_auth($params) {
     // prepare radclient arguments
     $server_port = sprintf("%s:%d", $params['server'], $params['port']);
     $positional_args = sprintf("%s %s %s", escapeshellarg($server_port), escapeshellarg($command), $secret);
-    
+
     $query = sprintf("User-Name=%s,%s=%s", escapeshellarg($params['username']), $params['password_type'], escapeshellarg($params['password']));
-    
+
     // other radclient options
     $radclient_options = sprintf(" -c %s -n %s -r %s -t %s %s", escapeshellarg($count), escapeshellarg($requests),
                                                                 escapeshellarg($retries), escapeshellarg($timeout), $debug);
-    
+
     if (isset($params['dictionary']) && !empty(trim($params['dictionary']))) {
         $radclient_options .= sprintf(" -d %s", escapeshellarg(trim($params['dictionary'])));
     }
 
     $cmd = sprintf('echo "%s" | %s %s %s 2>&1', escapeshellcmd($query), $radclient_path, $radclient_options, $positional_args);
-    
+
     if ($params['simulate']) {
         return array(
                         "error" => false,
                         "output" => "$cmd (not executed)",
                     );
     }
-    
+
     $result = shell_exec($cmd);
 
     if (empty($result)) {
