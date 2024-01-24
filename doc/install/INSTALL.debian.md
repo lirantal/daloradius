@@ -87,12 +87,20 @@ password = "radpass"
 radius_db = "raddb"
 ```
 
-In the provided deployment, only the essential operations required for FreeRADIUS to communicate with the database are executed. As a result, the TLS options are deactivated using the following command:
+In the provided deployment, only the essential operations required for FreeRADIUS to communicate with the database are executed.
+As a result, the TLS options are deactivated using the following command:
+
 ```bash
 sed -Ei '/^[\t\s#]*tls\s+\{/, /[\t\s#]*\}/ s/^/#/' /etc/freeradius/3.0/mods-available/sql
 ```
 
 **Please note that disabling TLS communication is not recommended in production environments or scenarios where security is a concern.**
+
+Also, ensure that the following two options are uncommented and specified as follows:
+```ini
+read_clients = yes
+client_table = "nas"
+```
 
 To finalize the installation of FreeRADIUS, enable the SQL module by creating a symbolic link to the configuration file using the following command:
 ```bash
@@ -119,11 +127,11 @@ apt --no-install-recommends install apache2 php libapache2-mod-php \
                                     mariadb-client freeradius-utils
 ```
 
-After the installation of the required packages, proceed to download the daloRADIUS package with git by executing the following commands. These commands will create a new directory named `daloradius` in `/var/www`:
+After the installation of the required packages, proceed to download the daloRADIUS package with git by executing the following commands. These commands will create a new directory named daloradius in `/var/www`:
 ```bash
 apt --no-install-recommends install git
 cd /var/www
-git clone https://github.com/filippolauria/daloradius.git
+git clone https://github.com/lirantal/daloradius.git
 ```
 
 Afterwards, it is necessary to create the log directories for `daloradius/operators` and `daloradius/users`. This can be achieved by using the following command:
@@ -277,8 +285,6 @@ Upon logging in, it is highly recommended to **update the administrator's passwo
 # Credits
 This guide was created by **Filippo Lauria** and **Andrea De Vita**.
 
-**Filippo Lauria** has contributed to this guide by providing valuable insights and expertise.
-You can reach out to Filippo via email at [filippo.lauria@iit.cnr.it](mailto:filippo.lauria@iit.cnr.it).
+**Filippo Lauria** has contributed to this guide by providing valuable insights and expertise. You can reach out to Filippo via email at [filippo.lauria@iit.cnr.it](mailto:filippo.lauria@iit.cnr.it). You can also find more of his work and projects on GitHub at [github.com/filippolauria](https://github.com/filippolauria).
 
-**Andrea De Vita** has also played a significant role in creating this guide.
-If you have any questions, you can contact Andrea via email at [andrea.devita@iit.cnr.it](mailto:andrea.devita@iit.cnr.it).
+**Andrea De Vita** has also played a significant role in creating this guide. If you have any questions, you can contact Andrea via email at [andrea.devita@iit.cnr.it](mailto:andrea.devita@iit.cnr.it).
