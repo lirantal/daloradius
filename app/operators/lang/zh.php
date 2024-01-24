@@ -20,6 +20,7 @@
  * Authors:        Liran Tal <liran@enginx.com>
  *                 三多 <10644331064@qq.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *                 rongzedong <rongzedong@qq.com> 2023-11-30
  *
  *********************************************************************************************************
  */
@@ -35,7 +36,7 @@ $l['all']['daloRADIUSVersion'] = sprintf("版本 %s ", $configValues['DALORADIUS
 $l['all']['copyright1'] = 'RADIUS 管理、报告、会计和账单 <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
 $l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y') . ' by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
                         . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.<br>'
-                        . 'Chinese language pack produced by SanDuo';
+                        . 'Chinese language pack produced by SanDuo, rongzedong.';
 
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "IP地址名称";
@@ -1822,24 +1823,24 @@ $l['menu']['Help'] = "帮助";
 
 // TODO translation needed.
 // once translated, delete these comment lines.
-$l['submenu']['General'] = "General";
-$l['submenu']['Reporting'] = "Reporting";
-$l['submenu']['Maintenance'] = "Maintenance";
-$l['submenu']['Operators'] = "Operators";
-$l['submenu']['Backup'] = "Backup";
-$l['submenu']['Logs'] = "Logs";
-$l['submenu']['Status'] = "Status";
+$l['submenu']['General'] = "通用";
+$l['submenu']['Reporting'] = "报表";
+$l['submenu']['Maintenance'] = "维护";
+$l['submenu']['Operators'] = "操作员";
+$l['submenu']['Backup'] = "备份";
+$l['submenu']['Logs'] = "日志";
+$l['submenu']['Status'] = "状态";
 $l['submenu']['Batch Users'] = "Batch Users";
-$l['submenu']['Dashboard'] = "Dashboard";
-$l['submenu']['Users'] = "Users";
-$l['submenu']['Hotspots'] = "Hotspots";
+$l['submenu']['Dashboard'] = "控制台";
+$l['submenu']['Users'] = "用户";
+$l['submenu']['Hotspots'] = "热点";
 $l['submenu']['Nas'] = "Nas";
-$l['submenu']['User-Groups'] = "User-Groups";
+$l['submenu']['User-Groups'] = "用户组";
 $l['submenu']['Profiles'] = "Profiles";
 $l['submenu']['HuntGroups'] = "HuntGroups";
 $l['submenu']['Attributes'] = "Attributes";
 $l['submenu']['Realm/Proxy'] = "Realm/Proxy";
-$l['submenu']['IP-Pool'] = "IP-Pool";
+$l['submenu']['IP-Pool'] = "IP地址池";
 $l['submenu']['POS'] = "POS";
 $l['submenu']['Plans'] = "Plans";
 $l['submenu']['Rates'] = "Rates";
@@ -1848,7 +1849,7 @@ $l['submenu']['Billing-History'] = "Billing-History";
 $l['submenu']['Invoices'] = "Invoices";
 $l['submenu']['Payments'] = "Payments";
 $l['submenu']['Custom'] = "Custom";
-$l['submenu']['Hotspot'] = "Hotspot";
+$l['submenu']['Hotspot'] = "热点";
 
 ?>
 

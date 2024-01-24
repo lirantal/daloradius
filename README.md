@@ -6,21 +6,9 @@
 
 **daloRADIUS** is written using the [PHP programming language](https://www.php.net/) and uses a [database abstraction layer](https://en.wikipedia.org/wiki/Database_abstraction_layer) (DAL) for database access. Although DAL allows the use of different [database management systems](https://en.wikipedia.org/wiki/Database#Database_management_system) (DBMSs) (e.g. MariaDB, MySQL, PostgreSQL, SQLite, MsSQL, etc.), daloRADIUS has been mainly tested on the [MariaDB](https://mariadb.org/) DBMS.
 
-## Contributors
-
-Special thanks to these wonderful people for their contributions to daloRADIUS...
-<p align="center">
-  <a href="../../graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=filippolauria/daloradius&columns=15" />
-  </a>
-</p>
-... and many more who have contributed to the project over time. Thank you for your valuable contributions!
-
-Would you like to contribute too? Learn how to get started: [How to Contribute](https://github.com/firstcontributions/first-contributions).
-
 ## Installation
 
-To install daloRADIUS, you can follow the installation guide available in the project's Wiki:
+To install daloRADIUS, you can follow the installation guide available in the project's official wiki:
 
 - [Wiki: Installing daloRADIUS](../../wiki/Installing-daloRADIUS)
 
@@ -32,6 +20,17 @@ If you encounter any issues during the installation or have any questions, feel 
 
 The documentation for daloRADIUS is available in Markdown format and can be found in the `doc` folder of this repository.
 
+## Contributors
+
+Special thanks to these wonderful people for their contributions to daloRADIUS...
+<p align="center">
+  <a href="../../graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=lirantal/daloradius&columns=15" />
+  </a>
+</p>
+... and many more who have contributed to the project over time. Thank you for your valuable contributions!
+
+Would you like to contribute too? Learn how to get started: [How to Contribute](https://github.com/firstcontributions/first-contributions).
 
 # Features
 
@@ -183,6 +182,6 @@ Helpful resources to find help and support with daloRADIUS:
 * [daloRADIUS Issues](../../issues)
 
 # Copyright
-This repository is a fork of the original daloRADIUS, available in its [official repository](https://github.com/lirantal/daloradius), where you can find older releases, resources, and documentation.
-
-I extend my gratitude to the original creator [Liran Tal](https://github.com/lirantal/), to [Miguel García](https://github.com/MiguelVis) and all contributors for their valuable work.
+- [Filippo Lauria](https://github.com/filippolauria/), main mainter of this repository;
+- [Liran Tal](https://github.com/lirantal/), the original creator of daloRADIUS;
+- [Miguel García](https://github.com/MiguelVis) and all contributors for their valuable work.
