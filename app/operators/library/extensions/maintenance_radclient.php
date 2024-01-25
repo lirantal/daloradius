@@ -126,8 +126,13 @@ function user_disconnect($params) {
             $attr = trim($attr);
             $value = trim($value);
 
-            if (!empty($attr) && !empty($value) && $attr !== 'User-Name') {
-                $query_params[escapeshellarg($attr)] = escapeshellarg($value);
+            if (
+                    !empty($attr) &&
+                    !empty($value) &&
+                    $attr !== 'User-Name' && 
+                    preg_match(ALLOWED_ATTRIBUTE_CHARS_REGEX, $attr) === 1
+               ) {
+                $query_params[$attr] = escapeshellarg($value);
             }
         }
 

@@ -42,6 +42,7 @@ define("ALL_PRINTABLE_CHARS_REGEX", '/^[ -~]+$/');
 
 define("DB_TABLE_NAME_REGEX", '/^[a-zA-Z0-9_]+$/');
 define("ALLOWED_RANDOM_CHARS_REGEX", DB_TABLE_NAME_REGEX);
+define("ALLOWED_ATTRIBUTE_CHARS_REGEX", '/^[a-zA-Z0-9-]+$/');
 
 define("SENDER_NAME_REGEX", '/^[a-zA-Z0-9 -]+$/');
 define("SUBJECT_PREFIX_REGEX", '/^[a-zA-Z0-9 -\[\]]+$/');
