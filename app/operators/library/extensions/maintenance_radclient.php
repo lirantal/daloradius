@@ -118,23 +118,21 @@ function user_disconnect($params) {
     $query = sprintf("User-Name=%s", escapeshellarg($params['username']));
 
     if (array_key_exists('customAttributes', $params) && !empty($params['customAttributes'])) {
-        $query_params = array();
-
         $attr_values = explode(",", $params['customAttributes']);
         foreach ($attr_values as $attr_value) {
             list($attr, $value) = explode("=", $attr_value);
             $attr = trim($attr);
             $value = trim($value);
 
-            if (!empty($attr) && !empty($value) && $attr !== 'User-Name') {
-                $query_params[escapeshellarg($attr)] = escapeshellarg($value);
+            if (
+                    !empty($attr) &&
+                    !empty($value) &&
+                    $attr !== 'User-Name' && 
+                    preg_match(ALLOWED_ATTRIBUTE_CHARS_REGEX, $attr) === 1
+               ) {
+                $query .= sprintf(", %s=%s", $attr, escapeshellarg($value));
             }
         }
-
-        foreach ($query_params as $attr => $value) {
-            $query .= sprintf(", %s=%s", $attr, $value);
-        }
-
     }
 
     // other radclient options
