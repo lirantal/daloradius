@@ -30,14 +30,14 @@
     include_once("lang/main.php");
     include_once("../common/includes/validation.php");
     include("../common/includes/layout.php");
-    
+
     // setting table-related parameters first
     switch($configValues['FREERADIUS_VERSION']) {
     case '1':
         $tableSetting['postauth']['user'] = 'user';
         $tableSetting['postauth']['date'] = 'date';
         break;
-        
+
     case '2':
     case '3':
     default:
@@ -45,15 +45,15 @@
         $tableSetting['postauth']['date'] = 'authdate';
         break;
     }
-    
+
     // in other cases we just check that syntax is ok
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
+                  preg_match(DATE_REGEX, $_GET['startdate'], $m) === 1 &&
                   checkdate($m[2], $m[3], $m[1]))
                ? $_GET['startdate'] : date("Y-m-01");
 
     $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
+                preg_match(DATE_REGEX, $_GET['enddate'], $m) === 1 &&
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : date("Y-m-01", mktime(0, 0, 0, date('n') + 1, 1, date('Y')));
 
@@ -66,40 +66,41 @@
     $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
+
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
-    
+
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
     //   - for validating user input
     //   - for table ordering purpose
     // - its value can be used for table headings presentation
-    $cols = array( 
+    $cols = array(
                    "fullname" => t('all','Name'),
                    $tableSetting['postauth']['user'] => t('all','Username'),
                  );
-    
+
     if (!$hiddenPassword) {
         $cols["pass"] = t('all','Password');
     }
-    
-    $date_label = $tableSetting['postauth']['date'];
-    $cols[$date_label] = t('all','StartTime');
-    
+
     if ($radiusReply == 'Any') {
         $cols["reply"] = t('all','RADIUSReply');
     } else {
         $cols[] = t('all','RADIUSReply');
     }
-    
+
+    $date_label = $tableSetting['postauth']['date'];
+    $cols[$date_label] = t('all','StartTime');
+
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
 
     // validating user passed parameters
 
-    $default_orderBy = array_keys($cols)[count($cols) - 2];
+    $starttime_index = count($cols) - 1;
+    $default_orderBy = array_keys($cols)[$starttime_index];
     $default_orderType = "desc";
-    
+
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($cols)))
@@ -108,16 +109,16 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : $default_orderType;
-    
+
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
     $logDebugSQL = "";
-    
+
     // print HTML prologue
     $title = t('Intro','replastconnect.php');
     $help = t('helpPage','replastconnect');
-    
+
     print_html_prologue($title, $langCode);
 
     print_title_and_help($title, $help);
@@ -140,7 +141,7 @@
     if ($radiusReply != "Any") {
         $sql_WHERE[] = sprintf("pa.reply='%s'", $dbSocket->escapeSimple($radiusReply));
     }
-    
+
     // setup php session variables for exporting
     $_SESSION['reportTable'] = sprintf("%s AS pa LEFT JOIN %s AS ui ON pa.%s = ui.username",
                                        $configValues['CONFIG_DB_TBL_RADPOSTAUTH'],
@@ -149,27 +150,27 @@
     $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE);
     $_SESSION['reportType'] = "reportsLastConnectionAttempts";
 
-    
+
     $sql = sprintf("SELECT CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
                            pa.%s AS username, pa.pass, pa.reply, pa.%s
                       FROM %s %s", $tableSetting['postauth']['user'], $tableSetting['postauth']['date'],
                                    $_SESSION['reportTable'], $_SESSION['reportQuery']);
-    
+
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
-    
+
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
         include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-        
+
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
@@ -191,7 +192,7 @@
         if (!empty($radiusReply)) {
             $partial_query_params[] = sprintf("radiusReply=%s", $radiusReply);
         }
-        
+
         $partial_query_string = ((count($partial_query_params) > 0) ? "&" . implode("&", $partial_query_params)  : "");
 
         $descriptors = array();
@@ -214,10 +215,10 @@
                                         'class' => 'btn-light',
                                      );
         print_table_prologue($descriptors);
-        
+
         // print table top
         print_table_top();
-        
+
         // second line of table header
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
 
@@ -228,7 +229,7 @@
         $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
-            
+
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
                 $row[$i] = htmlspecialchars(trim($row[$i]), ENT_QUOTES, 'UTF-8');
@@ -236,7 +237,7 @@
 
             // The table that is being produced is in the format of:
             // +-------------+-------------+---------------+-----------+-----------+
-            // | fullname    | user        | pass (opt.)   | reply     | date      |   
+            // | fullname    | user        | pass (opt.)   | reply     | date      |
             // +-------------+-------------+---------------+-----------+-----------+
 
             list($fullname, $user, $pass, $reply, $starttime) = $row;
@@ -249,7 +250,7 @@
             if (!$hiddenPassword) {
                 $table_row[] = $pass;
             }
-        
+
             $table_row[] = $reply;
             $table_row[] = $starttime;
 
@@ -281,9 +282,9 @@
         $failureMsg = "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-    
+
     include('../common/includes/db_close.php');
-    
+
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 ?>
