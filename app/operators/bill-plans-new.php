@@ -139,7 +139,7 @@
                         $format = "A new %s named %s has been successfully added to database. %d %s have been associated to this %s";
                         $successMsg = sprintf($format . ' [<a href="bill-plans-edit.php?planName=%s" title="Edit">Edit</a>]', t('all','PlanName'),
                                               $planName_enc, $groupsCount, t('title','Profiles'), t('all','PlanName'), urlencode($planName_enc));
-                        $logAction .= sprintf("$format on page: ", t('all','PlanName'), $groupsCount, t('title','Profiles'), t('all','PlanName'));
+                        $logAction .= sprintf("$format on page: ", t('all','PlanName'), $groupsCount, t('title','Profiles'), t('all','PlanName'), '');
                     } else {
                         $failureMsg = "Failed to insert a new plan to database";
                         $logAction .= "$failureMsg on page: ";
