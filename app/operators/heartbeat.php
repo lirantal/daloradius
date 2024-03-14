@@ -15,8 +15,11 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    This script validates authorization and
+ *                 updates/inserts system information into a database
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -32,7 +35,7 @@ if (empty($secretKey)) {
     die("secret_key not provided");
 }
 
-require_once '../common/includes/config_read.php';
+include implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
 
 if ($secret_key !== $configValues['CONFIG_DASHBOARD_DALO_SECRETKEY']) {
     die("authorization denied");
@@ -68,7 +71,7 @@ foreach ($defaults as $key => $default) {
 
 $current_datetime = date('Y-m-d H:i:s');
 
-require_once '../common/includes/db_open.php';
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
 // insert hotspot info
 
@@ -102,7 +105,7 @@ if ($numrows > 0) {
 $prepared1 = $dbSocket->prepare($sql1);
 $res1 = $dbSocket->execute($prepared1, $data);
 
-require_once '../common/includes/db_close.php';
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
 $debug_mode = $configValues['CONFIG_DASHBOARD_DALO_DEBUG'];
 

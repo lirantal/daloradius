@@ -15,23 +15,25 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    This script is responsible for testing user connectivity to a RADIUS server.
+ *
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    
+    include implode(DIRECTORY_SEPARATOR, [ __DIR__, 'library', 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
+    include implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY_EXTENSIONS'], 'maintenance_radclient.php' ]);
 
-    include('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include("include/management/functions.php");
-    include("library/extensions/maintenance_radclient.php");
 
     // init logging variables
     $log = "visited page: ";
@@ -87,14 +89,11 @@
         $username = (isset($_REQUEST['username']) && !empty(trim($_REQUEST['username']))) ? trim($_REQUEST['username']) : "";
         $password = (isset($_REQUEST['password']) && !empty(trim($_REQUEST['password']))) ? trim($_REQUEST['password']) : "";
 
-
-        include('../common/includes/db_open.php');
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
-                include('../common/includes/db_open.php');
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
                 if (!user_exists($dbSocket, $username)) {
                     // required
@@ -157,7 +156,7 @@
                         $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = $radius_addr;
                         $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = $radius_port;
                         $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = $secret;
-                        include("../common/includes/config_write.php");
+                        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'config_write.php' ]);
 
                         // test user
                         $result = user_auth($params);
@@ -187,7 +186,7 @@
                     }
                 }
 
-                include('../common/includes/db_close.php');
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
             } else {
                 // csrf
@@ -200,16 +199,14 @@
         $logAction .= "$failureMsg on page: ";
     }
 
-
     // print HTML prologue
     $title = t('Intro','configmainttestuser.php');
     $help = t('helpPage','configmainttestuser');
 
     print_html_prologue($title, $langCode);
-
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     if ($radclient_path !== false) {
 
@@ -356,8 +353,6 @@
         close_form();
     }
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
 
     print_footer_and_html_epilogue();
-
-?>

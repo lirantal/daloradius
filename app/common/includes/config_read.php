@@ -15,8 +15,9 @@
  *
  *********************************************************************************************************
  *
- * Description:    reads configuration file from daloradius.conf.php and
- *                 loads its contents to the $configValues associated array
+ * Description:    This script retrieves and loads configuration settings stored in the
+ *                 daloradius.conf.php file, populating the $configValues associative array
+ *                 with the retrieved data.
  *
  * Authors:        Liran Tal <liran@enginx.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
