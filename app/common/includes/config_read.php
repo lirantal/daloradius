@@ -42,4 +42,19 @@ foreach ($configValues as $_configOption => $_configElem) {
     }
 }
 
-?>
+// inject useful paths in the $configValues
+$configValues['COMMON_INCLUDES'] = __DIR__;
+$configValues['COMMON_ROOT'] = realpath(implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], '..' ]));
+$configValues['COMMON_LIBRARY'] = implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_ROOT'], 'library' ]);
+
+$configValues['APP_ROOT'] = realpath(implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_ROOT'], '..' ]));
+
+$configValues['OPERATORS_ROOT'] = implode(DIRECTORY_SEPARATOR, [ $configValues['APP_ROOT'], 'operators' ]);
+$configValues['OPERATORS_LANG'] = implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_ROOT'], 'lang' ]);
+$configValues['OPERATORS_INCLUDE'] = implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_ROOT'], 'include' ]);
+$configValues['OPERATORS_INCLUDE_MANAGEMENT'] = implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE'], 'management' ]);
+$configValues['OPERATORS_INCLUDE_CONFIG'] = implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE'], 'config' ]);
+$configValues['OPERATORS_LIBRARY'] = implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_ROOT'], 'library' ]);
+$configValues['OPERATORS_LIBRARY_EXTENSIONS'] = implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'extensions' ]);
+
+$configValues['USERS_ROOT'] = implode(DIRECTORY_SEPARATOR, [ $configValues['APP_ROOT'], 'users' ]);
