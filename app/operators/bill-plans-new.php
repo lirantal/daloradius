@@ -106,7 +106,7 @@
                     $logAction .= "$failureMsg on page: ";
                 } else {
                     // required later
-                    $currDate = date('Y-m-d H:i:s');
+                    $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $operator;
                     
                     $sql = sprintf("INSERT INTO %s (id, planName, planId, planType, planTimeBank, planTimeType,
@@ -127,7 +127,7 @@
                                    $dbSocket->escapeSimple($planRecurringPeriod), $dbSocket->escapeSimple($planRecurringBillingSchedule),
                                    $dbSocket->escapeSimple($planCost), $dbSocket->escapeSimple($planSetupCost),
                                    $dbSocket->escapeSimple($planTax), $dbSocket->escapeSimple($planCurrency),
-                                   $dbSocket->escapeSimple($planGroup), $dbSocket->escapeSimple($planActive), $currDate, $currBy);
+                                   $dbSocket->escapeSimple($planGroup), $dbSocket->escapeSimple($planActive), $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
                     

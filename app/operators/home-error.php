@@ -15,33 +15,34 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    An operator is redirected to this specific page when they lack the permissions
+ *                 to access a particular area of the system.
+ * 
+ * Authors:        Liran Tal <liran@enginx.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include('library/checklogin.php');
+    include implode(DIRECTORY_SEPARATOR, [ __DIR__, 'library', 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
-    include_once('../common/includes/config_read.php');
 
-    include_once("lang/main.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     $log = "visited page: ";
 
     // print HTML prologue
     $title = t('Intro','msgerrorpermissions.php');
-    $help = t('helpPage','msgerrorpermissions');
+    $help = "";
     
     print_html_prologue($title, $langCode);
 
     print_title_and_help($title, $help);
 
     $failureMsg = t('helpPage','msgerrorpermissions');
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
-    include('include/config/logging.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-
-?>

@@ -53,7 +53,7 @@
 		if ( (isset($firstName)) && (isset($lastName)) && (isset($address)) && (isset($city)) && (isset($state)) && (isset($planId)) ) {
 
 			// all paramteres have been set, save it in the database
-			$currDate = date('Y-m-d H:i:s');
+			$current_datetime = date('Y-m-d H:i:s');
 			$currBy = "paypal-webinterface";
 
 			// lets create some random data for user pin
@@ -78,7 +78,7 @@
 	                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 				" (id, username, firstname, lastname, creationdate, creationby)".
                                 " VALUES (0,'$userPIN','".$dbSocket->escapeSimple($firstName)."','".$dbSocket->escapeSimple($lastName)."',".
-				"'$currDate','$currBy'".
+				"'$current_datetime','$currBy'".
 				")";
 	                $res = $dbSocket->query($sql);
 

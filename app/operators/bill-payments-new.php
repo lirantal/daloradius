@@ -58,7 +58,7 @@
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
         
             // required later
-            $currDate = date('Y-m-d H:i:s');
+            $current_datetime = date('Y-m-d H:i:s');
             $currBy = $operator;
         
             $required_fields = array();
@@ -101,7 +101,7 @@
                                                 creationdate, creationby, updatedate, updateby)
                                         VALUES (0, %d, %s, '%s', %d, '%s', '%s', '%s', NULL, NULL)",
                                $configValues['CONFIG_DB_TBL_DALOPAYMENTS'], $payment_invoice_id, $payment_amount,
-                               $payment_date, $payment_type_id, $dbSocket->escapeSimple($payment_notes), $currDate, $currBy);
+                               $payment_date, $payment_type_id, $dbSocket->escapeSimple($payment_notes), $current_datetime, $currBy);
                                
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";

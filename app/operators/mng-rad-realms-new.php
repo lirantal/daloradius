@@ -72,7 +72,7 @@
                 $notrealm = (array_key_exists('notrealm', $_POST) && !empty(trim($_POST['notrealm']))) ? trim($_POST['notrealm']) : "";
                 
                 // required later
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $operator;
                 
                 $sql = sprintf("INSERT INTO %s (id, type, authhost, accthost, secret, ldflag, nostrip, hints,
@@ -82,7 +82,7 @@
                 $prep = $dbSocket->prepare($sql);
                 $values = array( 
                                     $type, $authhost, $accthost, $secret, $ldflag,
-                                    $nostrip, $hints, $notrealm, $currDate, $currBy, $realmname
+                                    $nostrip, $hints, $notrealm, $current_datetime, $currBy, $realmname
                                );
                 $res = $dbSocket->execute($prep, $values);
                 $logDebugSQL .= "$sql;\n";

@@ -33,9 +33,9 @@ if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
 
 // possible locations for radius logs
 $logfile_loc = array(
-    '/var/log/freeradius/radius.log',
+    '/var/log/freeradius/3.0/radius.log',
     '/usr/local/var/log/radius/radius.log',
-    '/var/log/radius/radius.log'
+    '/var/log/radius/radius.log',
 );
 
 // select one log file

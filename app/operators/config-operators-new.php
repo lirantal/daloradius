@@ -82,7 +82,7 @@
                     $failureMsg = sprintf("operator already exists in database: <b>%s</b>", $operator_username_enc);
                     $logAction .= "Failed adding new operator user already existing in database [$operator_username] on page: ";
                 } else {
-                    $currDate = date('Y-m-d H:i:s');
+                    $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
 
                     // insert username and password of operator into the database
@@ -92,7 +92,7 @@
                                             VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
                                                     '%s', '%s', '%s', '%s', NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
                                    $operator_username, $operator_password, $firstname, $lastname, $title, $department, $company,
-                                   $phone1, $phone2, $email1, $email2, $messenger1, $messenger2, $notes, $currDate, $currBy);
+                                   $phone1, $phone2, $email1, $email2, $messenger1, $messenger2, $notes, $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
 

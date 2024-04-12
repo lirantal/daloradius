@@ -155,7 +155,7 @@
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
             // required later
-            $currDate = date('Y-m-d H:i:s');
+            $current_datetime = date('Y-m-d H:i:s');
             $currBy = $operator;
 
             $planName = (array_key_exists('planName', $_POST) && isset($_POST['planName'])) ? trim($_POST['planName']) : "";
@@ -256,7 +256,7 @@
                                                                         $dbSocket->escapeSimple($notes), $dbSocket->escapeSimple($ui_changeuserinfo),
                                                                         $dbSocket->escapeSimple($ui_PortalLoginPassword),
                                                                         $dbSocket->escapeSimple($ui_enableUserPortalLogin),
-                                                                        $dbSocket->escapeSimple($currDate), $dbSocket->escapeSimple($currBy));
+                                                                        $dbSocket->escapeSimple($current_datetime), $dbSocket->escapeSimple($currBy));
                 } else {
                    // update user information table
                    $sql = sprintf("UPDATE %s SET firstname='%s', lastname='%s', email='%s', department='%s', company='%s', workphone='%s',
@@ -273,7 +273,7 @@
                                                           $dbSocket->escapeSimple($notes), $dbSocket->escapeSimple($ui_changeuserinfo),
                                                           $dbSocket->escapeSimple($ui_PortalLoginPassword),
                                                           $dbSocket->escapeSimple($ui_enableUserPortalLogin),
-                                                          $dbSocket->escapeSimple($currDate), $dbSocket->escapeSimple($currBy),
+                                                          $dbSocket->escapeSimple($current_datetime), $dbSocket->escapeSimple($currBy),
                                                           $dbSocket->escapeSimple($username));
                 }
 
@@ -311,7 +311,7 @@
                                                                  $dbSocket->escapeSimple($bi_creditcardverification),
                                                                  $dbSocket->escapeSimple($bi_creditcardtype),
                                                                  $dbSocket->escapeSimple($bi_creditcardexp), $dbSocket->escapeSimple($bi_notes),
-                                                                 $dbSocket->escapeSimple($bi_changeuserbillinfo), $currDate, $currBy);
+                                                                 $dbSocket->escapeSimple($bi_changeuserbillinfo), $current_datetime, $currBy);
                 } else {
                     // update user information table
                     $sql = sprintf("UPDATE %s SET `contactperson`='%s', `planname`='%s', `company`='%s', `email`='%s', `phone`='%s',
@@ -335,7 +335,7 @@
                                                                     $dbSocket->escapeSimple($bi_ordertaker), $dbSocket->escapeSimple($bi_billstatus),
                                                                     $dbSocket->escapeSimple($bi_nextinvoicedue), $dbSocket->escapeSimple($bi_billdue),
                                                                     $dbSocket->escapeSimple($bi_postalinvoice), $dbSocket->escapeSimple($bi_faxinvoice),
-                                                                    $dbSocket->escapeSimple($bi_emailinvoice), $currDate, $currBy,
+                                                                    $dbSocket->escapeSimple($bi_emailinvoice), $current_datetime, $currBy,
                                                                     $dbSocket->escapeSimple($username));
                 }
 

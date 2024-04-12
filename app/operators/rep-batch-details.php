@@ -402,10 +402,10 @@
                     $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
                 }
 
-                list($username, $active, $starttime) = $row;
+                list($username, $active, $datetime) = $row;
                 $badge = ($active !== '0') ? "success" : "danger";
-                if (empty($starttime)) {
-                    $starttime = "(n/a)";
+                if (empty($datetime)) {
+                    $datetime = "(n/a)";
                 }
                 
                 $status = sprintf('<span class="badge bg-%s ms-1">%s</span>', $badge, (($active !== '0') ? "yes" : "no"));
@@ -441,7 +441,7 @@
                 $d = array( 'name' => 'username[]', 'value' => $username );
                 $checkbox = get_checkbox_str($d);
                 
-                $table_row = array( $checkbox, $tooltip, $status, $starttime );
+                $table_row = array( $checkbox, $tooltip, $status, $datetime );
 
                 // print table row
                 print_table_row($table_row);

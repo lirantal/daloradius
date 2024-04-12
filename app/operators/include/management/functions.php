@@ -520,3 +520,32 @@ function add_user_billing_info($dbSocket, $username, $params) {
 
     return add_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
 }
+
+function count_sql($dbSocket, $sql) {
+    $res = $dbSocket->query($sql);
+    return intval($res->fetchrow()[0]);
+}
+
+function count_users($dbSocket) {
+    global $configValues;
+
+    $sql = sprintf("SELECT COUNT(DISTINCT ui.username) FROM %s AS rc, %s AS ra, %s AS ui
+                    WHERE ui.username=ra.username AND ui.username=rc.username
+                    AND (rc.attribute='Auth-Type' OR rc.attribute LIKE '%%-Password')",
+                    $configValues['CONFIG_DB_TBL_RADCHECK'],
+                    $configValues['CONFIG_DB_TBL_RADACCT'],
+                    $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+    return count_sql($dbSocket, $sql);
+}
+
+function count_nas($dbSocket) {
+    global $configValues;
+    $sql = sprintf("SELECT COUNT(`id`) FROM %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+    return count_sql($dbSocket, $sql);
+}
+
+function count_hotspots($dbSocket) {
+    global $configValues;
+    $sql = sprintf("SELECT COUNT(`id`) FROM %s", $configValues['CONFIG_DB_TBL_RADNAS']);
+    return count_sql($dbSocket, $sql);  
+}

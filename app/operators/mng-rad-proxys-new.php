@@ -59,7 +59,7 @@
             } else {
                 
                 // required later
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $operator;
                 
                 $retry_delay = (array_key_exists('retry_delay', $_POST) && intval(trim($_POST['retry_delay'])) > 0)
@@ -78,7 +78,7 @@
                                                 creationdate, creationby, updatedate, updateby, proxyname)
                                         VALUES (0, ?, ?, ?, ?, ?, ?, NULL, NULL, ?)", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
                 $prep = $dbSocket->prepare($sql);
-                $values = array( $retry_delay, $retry_count, $dead_time, $default_fallback, $currDate, $currBy, $proxyname );
+                $values = array( $retry_delay, $retry_count, $dead_time, $default_fallback, $current_datetime, $currBy, $proxyname );
                 $res = $dbSocket->execute($prep, $values);
                 $logDebugSQL .= "$sql;\n";
                 

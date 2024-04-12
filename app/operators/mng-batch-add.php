@@ -242,7 +242,7 @@
                                ? intval(trim($_POST['startingIndex'])) : 1000;
 
                 // current date and time to enter as creationdate field
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $_SESSION['operator_user'];
 
 
@@ -341,7 +341,7 @@
                                                 "changeuserinfo" => $ui_changeuserinfo,
                                                 "enableportallogin" => $ui_enableUserPortalLogin,
                                                 "portalloginpassword" => $ui_PortalLoginPassword,
-                                                "creationdate" => $currDate,
+                                                "creationdate" => $current_datetime,
                                                 "creationby" => $currBy,
                                            );
 
@@ -383,7 +383,7 @@
                                                 "planName" => $planName,
                                                 "hotspot_id" => $hotspot_id,
                                                 "batch_id" => $sql_batch_id,
-                                                "creationdate" => $currDate,
+                                                "creationdate" => $current_datetime,
                                                 "creationby" => $currBy
                                            );
 

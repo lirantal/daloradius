@@ -225,7 +225,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                     $id = $row['id'];
                     $refillCost = $row['planTimeRefillCost'];
 
-                    $currDate = date('Y-m-d H:i:s');
+                    $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
                     
                     $sql = sprintf("INSERT INTO %s (id, username, planId, billAmount, billAction, billPerformer, billReason,
@@ -236,7 +236,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                                    $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'], $username, $row['planName'], $row['planTimeRefillCost'],
                                    'Refill Session Time', 'daloRADIUS Web Interface', 'Refill Session Time', $row['paymentmethod'],
                                    $row['cash'], $row['creditcardname'], $row['creditcardnumber'], $row['creditcardverification'],
-                                   $row['creditcardtype'], $row['creditcardexp'], $currDate, $currBy);
+                                   $row['creditcardtype'], $row['creditcardexp'], $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
                     
 
@@ -305,7 +305,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                     $id = $row['id'];
                     $refillCost = $row['planTrafficRefillCost'];
 
-                    $currDate = date('Y-m-d H:i:s');
+                    $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
                     
                     $sql = sprintf("INSERT INTO %s (id, username, planId, billAmount, billAction, billPerformer, billReason,
@@ -316,7 +316,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                                    $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'], $username, $row['planName'], $row['planTimeRefillCost'],
                                    'Refill Session Traffic', 'daloRADIUS Web Interface', 'Refill Session Traffic', $row['paymentmethod'],
                                    $row['cash'], $row['creditcardname'], $row['creditcardnumber'], $row['creditcardverification'],
-                                   $row['creditcardtype'], $row['creditcardexp'], $currDate, $currBy);
+                                   $row['creditcardtype'], $row['creditcardexp'], $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
                     
                     // if the refill cost is anything beyond the amount 0, we create an invoice for it.

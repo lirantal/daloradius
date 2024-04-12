@@ -78,10 +78,10 @@
                 $sql_SET = array();
 
                 // required later
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $operator;
 
-                $sql_SET[] = sprintf("updatedate='%s'", $currDate);
+                $sql_SET[] = sprintf("updatedate='%s'", $current_datetime);
                 $sql_SET[] = sprintf("updateby='%s'", $currBy);
 
                 $paymentnotes = (array_key_exists('paymentnotes', $_POST) && !empty(trim($_POST['paymentnotes'])))

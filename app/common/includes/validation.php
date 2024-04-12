@@ -15,6 +15,11 @@
  *
  *********************************************************************************************************
  *
+ * Description:    This script provides commonly used regex patterns for ensuring data integrity
+ *                 and security. Additionally, it defines whitelists and collections of valid options
+ *                 for parameters like authentication types, billing actions, plan currencies
+ *                 and supported languages.
+ * 
  * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
@@ -74,10 +79,23 @@ $valid_passwordTypes = array(
                                 //~ "CHAP-Password"
                              );
 
-$valid_ops = array(
-                    "=", ":=", "==", "+=", "!=", ">",
-                    ">=", "<", "<=", "=~", "!~", "=*", "!*"
-                  );
+// https://wiki.freeradius.org/config/Operators
+$valid_ops = [
+                ":=", // Always matches as a check item and replaces or adds attribute in the configuration items
+                "=" , // Not allowed as a check item for RADIUS protocol attributes. It is allowed for server configuration attributes (Auth-Type, etc), and sets the value of on attribute, only if there is no other item of the same attribute.
+                "+=", // Always matches as a check item and adds the attribute with value to the configuration items
+                "==", // As a check item, it matches if the named attribute is present in the request and has the given value
+                "!=", // As a check item, matches if the given attribute is in the request and does not have the given value
+                ">" , // As a check item, it matches if the request contains an attribute with a value greater than the given value
+                ">=", // As a check item, it matches if the request contains an attribute with a value greater than or equal to the given value
+                "<" , // As a check item, it matches if the request contains an attribute with a value less than the given value
+                "<=", // As a check item, it matches if the request contains an attribute with a value less than or equal to the given value
+                "=~", // As a check item, it matches if the request contains an attribute which matches the given regular expression. This operator may only be applied to string attributes.
+                "!~", // As a check item, it matches if the request contains an attribute which does not match the given regular expression.
+                "=*", // As a check item, it matches if the request contains the named attribute, no matter what the value is.
+                "!*", // As a check item, it matches if the request does not contain the named attribute, no matter what the value is.
+              ];
+                          
 
 $valid_recommendedHelpers = array(
                                     "date", "datetime", "authtype", "framedprotocol", "servicetype",
@@ -250,10 +268,60 @@ $valid_billactions = array( "Any", "Refill Session Time", "Refill Session Traffi
 $valid_planTypes = array( "Prepaid", "Postpaid", "2Checkout", "PayPal", );
 $valid_planRecurringPeriods = array( "Never", "Daily", "Weekly", "Monthly", "Quarterly", "Semi-Yearly", "Yearly", );
 $valid_planRecurringBillingSchedules = array( "Fixed", "Anniversary", );
-$valid_planCurrencys = array(
-                                "USD", "EUR", "GBP", "CAD", "JPY", "AUD", "NZD", "CHF", "HKD", "SGD",
-                                "SEK", "DKK", "PLN", "NOK", "HUF", "CZK", "ILS", "MXN", "KSH",
-                            );
+$valid_planCurrencys = [
+                        "USD", // United States Dollar
+                        "EUR", // Euro
+                        "JPY", // Japanese Yen
+                        "GBP", // British Pound Sterling
+                        "CAD", // Canadian Dollar
+                        "AUD", // Australian Dollar
+                        "CHF", // Swiss Franc
+                        "CNY", // Chinese Yuan
+                        "HKD", // Hong Kong Dollar
+                        "NZD", // New Zealand Dollar
+                        "SEK", // Swedish Krona
+                        "KRW", // South Korean Won
+                        "SGD", // Singapore Dollar
+                        "NOK", // Norwegian Krone
+                        "MXN", // Mexican Peso
+                        "INR", // Indian Rupee
+                        "RUB", // Russian Ruble
+                        "ZAR", // South African Rand
+                        "TRY", // Turkish Lira
+                        "BRL", // Brazilian Real
+                        "TWD", // New Taiwan Dollar
+                        "DKK", // Danish Krone
+                        "PLN", // Polish Zloty
+                        "THB", // Thai Baht
+                        "IDR", // Indonesian Rupiah
+                        "HUF", // Hungarian Forint
+                        "CZK", // Czech Koruna
+                        "ILS", // Israeli New Shekel
+                        "PHP", // Philippine Peso
+                        "ARS", // Argentine Peso
+                        "CLP", // Chilean Peso
+                        "COP", // Colombian Peso
+                        "MYR", // Malaysian Ringgit
+                        "KES", // Kenyan Shilling
+                        "UAH", // Ukrainian Hryvnia
+                        "NGN", // Nigerian Naira
+                        "EGP", // Egyptian Pound
+                        "PKR", // Pakistani Rupee
+                        "VND", // Vietnamese Dong
+                        "BDT", // Bangladeshi Taka
+                        "IQD", // Iraqi Dinar
+                        "IRR", // Iranian Rial
+                        "QAR", // Qatari Riyal
+                        "KWD", // Kuwaiti Dinar
+                        "OMR", // Omani Rial
+                        "BHD", // Bahraini Dinar
+                        "LYD", // Libyan Dinar
+                        "AED", // United Arab Emirates Dirham
+                        "SAR", // Saudi Riyal
+                        "JOD", // Jordanian Dinar
+                        "LBP", // Lebanese Pound
+                      ];
+
 $valid_planTimeTypes = array( "Accumulative", "Time-To-Finish" );
 
 $valid_timeUnits = array( "second", "minute", "hour", "day", "week", "month", );
@@ -283,5 +351,3 @@ $users_valid_languages = array(
 $valid_message_types = array(
                                  "login", "support", "dashboard",
                               );
-
-?>

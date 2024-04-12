@@ -43,7 +43,7 @@
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
             // required later
-            $currDate = date('Y-m-d H:i:s');
+            $current_datetime = date('Y-m-d H:i:s');
             $currBy = $operator;
 
             $required_fields = array();
@@ -99,7 +99,7 @@
                     $sql = sprintf("INSERT INTO %s (id, ratename, ratetype, ratecost, creationdate, creationby, updatedate, updateby)
                                             VALUES (0, '%s', '%s', %d, '%s', '%s', NULL, NULL)",
                                    $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $dbSocket->escapeSimple($ratename),
-                                   $dbSocket->escapeSimple($ratetype), $ratecost, $currDate, $currBy);
+                                   $dbSocket->escapeSimple($ratetype), $ratecost, $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
 

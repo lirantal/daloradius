@@ -269,7 +269,7 @@
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
             // required later
-            $currDate = date('Y-m-d H:i:s');
+            $current_datetime = date('Y-m-d H:i:s');
             $currBy = $operator;
 
             include('../common/includes/db_open.php');
@@ -330,7 +330,7 @@
                                         "changeuserinfo" => $ui_changeuserinfo,
                                         "enableportallogin" => $ui_enableUserPortalLogin,
                                         "portalloginpassword" => $ui_PortalLoginPassword,
-                                        "creationdate" => $currDate,
+                                        "creationdate" => $current_datetime,
                                         "creationby" => $currBy,
                                    );
 

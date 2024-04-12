@@ -94,7 +94,7 @@
                     $failureMsg = sprintf("Name <strong>%s</strong> or IP/MAC address <strong>%s</strong> already exist in database", $name_enc, $macaddress);
                     $logAction .= "Failed adding new HS. Name or IP/MAC address already existing in database [$name, $macaddress] on page: ";
                 } else {
-                    $currDate = date('Y-m-d H:i:s');
+                    $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
 
                     $sql = sprintf("INSERT INTO %s (id, name, mac, geocode, owner, email_owner, manager, email_manager, address,
@@ -107,7 +107,7 @@
                                    $dbSocket->escapeSimple($emailmanager), $dbSocket->escapeSimple($address), $dbSocket->escapeSimple($company),
                                    $dbSocket->escapeSimple($phone1), $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($hotspot_type),
                                    $dbSocket->escapeSimple($companywebsite), $dbSocket->escapeSimple($companyemail),
-                                   $dbSocket->escapeSimple($companycontact), $dbSocket->escapeSimple($companyphone), $currDate, $currBy);
+                                   $dbSocket->escapeSimple($companycontact), $dbSocket->escapeSimple($companyphone), $current_datetime, $currBy);
 
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";

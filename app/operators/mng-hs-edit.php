@@ -86,7 +86,7 @@
                 $exists = $res->fetchrow()[0] > 0;
 
                 if (!$exists) {
-                    $currDate = date('Y-m-d H:i:s');
+                    $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
 
                     $geocode = (array_key_exists('geocode', $_POST) && !empty(trim($_POST['geocode']))) ? trim($_POST['geocode']) : "";
@@ -118,7 +118,7 @@
                                    $dbSocket->escapeSimple($address), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
                                    $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($hotspot_type), $dbSocket->escapeSimple($companywebsite),
                                    $dbSocket->escapeSimple($companyemail) , $dbSocket->escapeSimple($companycontact),
-                                   $dbSocket->escapeSimple($companyphone), $currDate, $currBy, $dbSocket->escapeSimple($name));
+                                   $dbSocket->escapeSimple($companyphone), $current_datetime, $currBy, $dbSocket->escapeSimple($name));
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
 

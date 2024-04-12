@@ -182,6 +182,6 @@ Helpful resources to find help and support with daloRADIUS:
 * [daloRADIUS Issues](../../issues)
 
 # Copyright
-- [Filippo Lauria](https://github.com/filippolauria/), main mainter of this repository;
+- [Filippo Lauria](https://github.com/filippolauria/), main mainteiner of this repository;
 - [Liran Tal](https://github.com/lirantal/), the original creator of daloRADIUS;
 - [Miguel García](https://github.com/MiguelVis) and all contributors for their valuable work.

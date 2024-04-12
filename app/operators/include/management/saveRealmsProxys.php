@@ -30,7 +30,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/saveRealmsProxy.php') !== 
 if ($fileFlag == 1) {
 
     // write daloradius header
-    $currDate = date('Y-m-d_H:i:s');
+    $current_datetime = date('Y-m-d_H:i:s');
 
     // open the file for reading and writing
     $origFd = fopen($filenameRealmsProxys, "r");
@@ -42,13 +42,13 @@ if ($fileFlag == 1) {
     if (strcmp($dalo_signature, "# daloradius") !== 0) {
         
         // if it doesn't then it's someone else's file so we make a backup copy of it
-        $backupFilename = sprintf("%s.orig-%s", $filenameRealmsProxys, $currDate);
+        $backupFilename = sprintf("%s.orig-%s", $filenameRealmsProxys, $current_datetime);
         $test = @copy($filenameRealmsProxys, $backupFilename);
         
         // if we weren't able to write the original file as a copy to the relevant directory
         // then we copy it to daloradius's variable directory
         if (!$test) {
-            $backupFilename = sprintf("%s/proxy.conf.orig-%s", $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'], $currDate);
+            $backupFilename = sprintf("%s/proxy.conf.orig-%s", $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'], $current_datetime);
             copy($filenameRealmsProxys, $backupFilename);
         }
     }
@@ -57,7 +57,7 @@ if ($fileFlag == 1) {
     $realmsFd = fopen($filenameRealmsProxys, "w");
         
     if ($realmsFd) {
-        fwrite($realmsFd, sprintf("# daloradius - %s\n\n", $currDate));
+        fwrite($realmsFd, sprintf("# daloradius - %s\n\n", $current_datetime));
             
         /* enumerate from database all proxy entries */
         $sql = sprintf("SELECT proxyname, retry_delay, retry_count, dead_time, default_fallback

@@ -77,7 +77,7 @@
             } else {
         
                 // required later
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $operator;
         
                 $planId = (array_key_exists('planId', $_POST) && !empty(trim($_POST['planId']))) ? trim($_POST['planId']) : "";
@@ -136,7 +136,7 @@
                                    $dbSocket->escapeSimple($planRecurringPeriod), $dbSocket->escapeSimple($planRecurringBillingSchedule),
                                    $dbSocket->escapeSimple($planCost), $dbSocket->escapeSimple($planSetupCost),
                                    $dbSocket->escapeSimple($planTax), $dbSocket->escapeSimple($planCurrency),
-                                   $dbSocket->escapeSimple($planActive), $dbSocket->escapeSimple($planGroup), $currDate, $currBy,
+                                   $dbSocket->escapeSimple($planActive), $dbSocket->escapeSimple($planGroup), $current_datetime, $currBy,
                                    $dbSocket->escapeSimple($planName));
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
