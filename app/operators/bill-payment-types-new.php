@@ -65,14 +65,14 @@
                     // invalid
                 } else {
                     // required later
-                    $currDate = date('Y-m-d H:i:s');
+                    $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $operator;
                     
                     // insert apyment type info
                     $sql = sprintf("INSERT INTO %s (id, value, notes, creationdate, creationby, updatedate, updateby)
                                             VALUES (0, '%s', '%s', '%s', '%s', NULL, NULL)",
                                    $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $dbSocket->escapeSimple($paymentname),
-                                   $dbSocket->escapeSimple($paymentnotes), $currDate, $currBy);
+                                   $dbSocket->escapeSimple($paymentnotes), $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
                     

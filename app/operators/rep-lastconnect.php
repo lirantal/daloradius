@@ -240,7 +240,7 @@
             // | fullname    | user        | pass (opt.)   | reply     | date      |
             // +-------------+-------------+---------------+-----------+-----------+
 
-            list($fullname, $user, $pass, $reply, $starttime) = $row;
+            list($fullname, $user, $pass, $reply, $datetime) = $row;
 
             $fullname = (!empty($fullname) ? $fullname : "(n/a)");
             $reply = sprintf('<span class="text-%s">%s</span>',
@@ -252,7 +252,7 @@
             }
 
             $table_row[] = $reply;
-            $table_row[] = $starttime;
+            $table_row[] = $datetime;
 
             // print table row
             print_table_row($table_row);

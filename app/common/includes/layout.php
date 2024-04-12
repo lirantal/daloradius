@@ -115,7 +115,7 @@ EOF;
 
         <div class="container">
             <div class="row m-0 p-0">
-                <div id="sidebar" class="min-vh-100 col-sm-2 p-sm-2 col-lg-3 p-lg-3 bg-light text-dark border-end">
+                <div id="sidebar" class="min-vh-100 col-sm-2 p-sm-2 col-lg-2 p-lg-3 bg-light text-dark border-end">
 EOF;
 
     // printing sidebar
@@ -124,9 +124,9 @@ EOF;
     // closing sidebar col
     // opening main content col
     echo <<<EOF
-                </div><!-- .col-sm-2 p-sm-2 col-lg-3 p-lg-3 -->
+                </div><!-- .min-vh-100 col-sm-2 p-sm-2 col-lg-2 p-lg-3 bg-light text-dark border-end -->
 
-                <div class="col-sm-10 p-sm-2 col-lg-9 p-lg-3 bg-white text-dark">
+                <div class="col-sm-10 p-sm-2 col-lg-10 p-lg-3 bg-white text-dark">
 
 EOF;
 }
@@ -140,7 +140,7 @@ function print_footer_and_html_epilogue($inline_extra_js="", $extra_js=array(), 
     // closing main content col and
     // main wrapper container
     echo <<<EOF
-                </div><!-- .col-sm-10 p-sm-2 col-lg-9 p-lg-3 -->
+                </div><!-- .col-sm-10 p-sm-2 col-lg-10 p-lg-3 bg-white text-dark -->
             </div><!-- .row -->
         </div><!-- .container -->
 
@@ -1506,7 +1506,7 @@ function menu_print_form_component($descriptor) {
 
 // opens the menu bar
 function menu_open($title) {
-    printf('<h4>%s</h4>', $title);
+    printf('<h1 class="fs-4">%s</h1>', $title);
 }
 
 
@@ -1518,14 +1518,14 @@ function menu_close() {
 
 // opens a menu session specifing a give $title
 function menu_open_section($title) {
-    printf('<h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted text-uppercase"><span>%s</span></h6>', $title);
+    printf('<h2 class="fs-6 sidebar-heading px-3 mt-4 mb-1 text-muted text-uppercase">%s</h2>', $title);
     echo '<ul class="nav nav-pills nav-fill flex-column">';
 }
 
 
 // closes a menu session specifing a give $title
 function menu_close_section() {
-    echo '</ul><!-- .nav -->' . "\n";
+    echo '</ul><!-- .nav nav-pills nav-fill flex-column -->' . "\n";
 
 }
 
@@ -1542,7 +1542,7 @@ function menu_print_link($descriptor) {
 
     $class = ($descriptor['href'] === basename($_SERVER['PHP_SELF'])) ? "active" : "";
 
-    printf('<li class="nav-item"><a class="nav-link %s" href="%s"%s>%s</a></li>' . "\n",
+    printf('<li class="nav-item p-0 m-0"><a class="nav-link py-2 px-0 m-0 %s" href="%s"%s>%s</a></li>' . "\n",
            $class, $descriptor['href'], (!empty($class)) ? ' aria-current="page"' : "", $label);
 }
 

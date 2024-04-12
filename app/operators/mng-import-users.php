@@ -138,7 +138,7 @@
 
             if (count($data) > 0 && !empty($passwordType)) {
 
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $_SESSION['operator_user'];
 
                 include('../common/includes/db_open.php');
@@ -160,7 +160,7 @@
 
                     // adding user info
                     $params = array(
-                                        "creationdate" => $currDate,
+                                        "creationdate" => $current_datetime,
                                         "creationby" => $currBy,
                                    );
 

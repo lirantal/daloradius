@@ -72,7 +72,7 @@
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
         
             if (!empty($operator_username)) {
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $_SESSION['operator_user'];
                 
                 $operator_password = (array_key_exists('operator_password', $_POST) && isset($_POST['operator_password']))
@@ -100,7 +100,7 @@
                                $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($title),
                                $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
                                $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1), $dbSocket->escapeSimple($email2),
-                               $dbSocket->escapeSimple($messenger1), $dbSocket->escapeSimple($messenger2), $currDate,
+                               $dbSocket->escapeSimple($messenger1), $dbSocket->escapeSimple($messenger2), $current_datetime,
                                $currBy, $dbSocket->escapeSimple($operator_username));
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";

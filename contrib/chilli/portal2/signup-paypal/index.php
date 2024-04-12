@@ -46,7 +46,7 @@
 			// all paramteres have been set, save it in the database
 			include('library/opendb.php');
 
-			$currDate = date('Y-m-d H:i:s');
+			$current_datetime = date('Y-m-d H:i:s');
 			$currBy = "paypal-webinterface";
 
 			// lets create some random data for user pin
@@ -95,7 +95,7 @@
 					" (id, username, firstname, lastname, address, city, state, creationdate, creationby)".
 					" VALUES (0,'$userPIN','".$dbSocket->escapeSimple($firstName)."','".$dbSocket->escapeSimple($lastName)."', '".
 					$dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($city)."','".$dbSocket->escapeSimple($state)."', ".
-					"'$currDate','$currBy'".
+					"'$current_datetime','$currBy'".
 					")";
 			$res = $dbSocket->query($sql);
 			
@@ -104,7 +104,7 @@
 					" (id, username, planname, contactperson, address, city, state, creationdate, creationby) ".
 					" VALUES (0, '$userPIN', '$planName', '".$dbSocket->escapeSimple($firstName)." ".$dbSocket->escapeSimple($lastName)."', '".
 					$dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($city)."','".$dbSocket->escapeSimple($state)."', ".
-					" '$currDate', '$currBy'".
+					" '$current_datetime', '$currBy'".
 					")";
 			$res = $dbSocket->query($sql);
 			
@@ -112,7 +112,7 @@
 				// lets add user billing information to the database
 				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
 						" (id, username, txnId, planId, vendor_type, payment_date)".
-						" VALUES (0,'$userPIN','$txnId', $planId, 'PayPal', '$currDate'".
+						" VALUES (0,'$userPIN','$txnId', $planId, 'PayPal', '$current_datetime'".
 						")";
 				$res = $dbSocket->query($sql);
 			//}

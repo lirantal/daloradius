@@ -43,7 +43,7 @@
 
 			// all paramteres have been set, save it in the database
 
-			$currDate = date('Y-m-d H:i:s');
+			$current_datetime = date('Y-m-d H:i:s');
 			$currBy = "2Checkout-webinterface";
 
 			$userPIN = createPassword($configValues['CONFIG_USERNAME_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
@@ -67,7 +67,7 @@
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
 					" (id, username, firstname, lastname, creationdate, creationby)".
 					" VALUES (0,'$userPIN','".$dbSocket->escapeSimple($firstName)."','".$dbSocket->escapeSimple($lastName)."',".
-					"'$currDate','$currBy'".
+					"'$current_datetime','$currBy'".
 					")";
 			$res = $dbSocket->query($sql);
 			
@@ -77,7 +77,7 @@
 					" (id, username, planname, ".
 					" creationdate, creationby) ".
 					" VALUES (0, '$userPIN', '$planName', ".
-					" '$currDate', '$currBy'".
+					" '$current_datetime', '$currBy'".
 					")";
 			$res = $dbSocket->query($sql);
 			
@@ -85,7 +85,7 @@
 			// lets add user billing information to the database
 			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
 					" (id, username, txnId, planName, planId, vendor_type, payment_date)".
-					" VALUES (0,'$userPIN','$txnId','$planName','$planId', '2Checkout', '$currDate'".
+					" VALUES (0,'$userPIN','$txnId','$planName','$planId', '2Checkout', '$current_datetime'".
 					")";
 			$res = $dbSocket->query($sql);
 

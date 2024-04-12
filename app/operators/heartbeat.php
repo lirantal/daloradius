@@ -16,7 +16,7 @@
  *********************************************************************************************************
  *
  * Description:    This script validates authorization and
- *                 updates/inserts system information into a database
+ *                 updates/inserts system information into a database.
  *
  * Authors:        Liran Tal <liran@enginx.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>

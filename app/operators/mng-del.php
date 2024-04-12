@@ -199,12 +199,12 @@
                 if ($userstimesLen > 0) {
                     
                     foreach ($username__starttimes as $username__starttime) {
-                        list($username, $starttime) = explode('||', $username__starttime);
+                        list($username, $datetime) = explode('||', $username__starttime);
                         $sql = sprintf("DELETE FROM %s
                                          WHERE username='%s' AND AcctStartTime='%s'
                                            AND (AcctStopTime='0000-00-00 00:00:00' OR AcctStopTime IS NULL)",
                                        $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username),
-                                       $dbSocket->escapeSimple($starttime));
+                                       $dbSocket->escapeSimple($datetime));
                         $res = $dbSocket->query($sql);
                         $logDebugSQL .= "$sql;\n";
                     }

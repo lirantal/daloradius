@@ -75,7 +75,7 @@
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
                 
                 // required later
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $operator;
                         
                 $user_id = (array_key_exists('user_id', $_POST) && !empty(trim($_POST['user_id'])) &&
@@ -111,7 +111,7 @@
                                             VALUES (0, %d, '%s', %d, %d, '%s', '%s', '%s', NULL, NULL)",
                                    $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id, $invoice_date,
                                    $invoice_status_id, $invoice_type_id, $dbSocket->escapeSimple($invoice_notes),
-                                   $currDate, $currBy);
+                                   $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
                     

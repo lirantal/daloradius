@@ -83,7 +83,7 @@
                 $logAction .= "$failureMsg on page: ";
             } else {                
                 // required later
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $operator;
                 
                 $sql = sprintf("UPDATE %s SET type=?, authhost=?, accthost=?, secret=?, ldflag=?,
@@ -92,7 +92,7 @@
                 $prep = $dbSocket->prepare($sql);
                 $values = array( 
                                     $type, $authhost, $accthost, $secret, $ldflag,
-                                    $nostrip, $hints, $notrealm, $currDate, $currBy, $realmname
+                                    $nostrip, $hints, $notrealm, $current_datetime, $currBy, $realmname
                                );
                 $res = $dbSocket->execute($prep, $values);
                 $logDebugSQL .= "$sql;\n";

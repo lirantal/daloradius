@@ -42,7 +42,7 @@ EOF;
 }
 
 if (isset($successMsg) && !empty($successMsg)) {
-	    echo <<<EOF
+	echo <<<EOF
     <div class="alert alert-success d-flex align-items-center" role="alert">
         <i class="bi bi-check-circle-fill me-2"></i>
         <div>{$successMsg}</div>

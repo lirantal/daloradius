@@ -1274,8 +1274,7 @@ $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
 $l['helpPage']['mngimportusers'] = "";
 
-$l['helpPage']['msgerrorpermissions'] = "You do not have permissions to access the page. <br/>
-Please consult with your System Administrator. <br/>";
+$l['helpPage']['msgerrorpermissions'] = "Sorry, you do not have the necessary permissions to access this area.<br>Please contact the system administrator.";
 
 $l['helpPage']['mngradusergroup'] = "";
 $l['helpPage']['mngradusergroupdel'] = "To remove a user entry from the database you must provide the username of the account";

@@ -87,10 +87,10 @@
                 $sql_SET = array();
                 
                 // required later
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $operator;
             
-                $sql_SET[] = sprintf("updatedate='%s'", $currDate);
+                $sql_SET[] = sprintf("updatedate='%s'", $current_datetime);
                 $sql_SET[] = sprintf("updateby='%s'", $currBy);
             
                 $payment_invoice_id = (array_key_exists('payment_invoice_id', $_POST) && intval(trim($_POST['payment_invoice_id'])) > 0)

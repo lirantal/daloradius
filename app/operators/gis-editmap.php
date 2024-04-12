@@ -64,7 +64,7 @@
                 $failureMsg = "Invalid input";
             } else {
 
-                $currDate = date('Y-m-d H:i:s');
+                $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $_SESSION['operator_user'];
 
                 $hotspot_name_enc = htmlspecialchars($hotspot_name, ENT_QUOTES, 'UTF-8');
@@ -72,7 +72,7 @@
                 $sql = sprintf("INSERT INTO %s (name, mac, geocode, creationdate, creationby, updatedate, updateby)
                                 VALUES (?, ?, ?, ?, ?, NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
                 $stmt = $dbSocket->prepare($sql);
-                $data = array($hotspot_name, $hotspot_mac, $hotspot_geo, $currDate, $currBy);
+                $data = array($hotspot_name, $hotspot_mac, $hotspot_geo, $current_datetime, $currBy);
                 $res = $dbSocket->execute($stmt, $data);
                 $logDebugSQL .= "$sql;\n";
 
