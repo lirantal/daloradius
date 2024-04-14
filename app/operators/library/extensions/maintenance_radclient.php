@@ -327,8 +327,8 @@ function user_auth($params) {
     $query = sprintf("User-Name=%s,%s=%s", escapeshellarg($params['username']), $params['password_type'], escapeshellarg($params['password']));
 
     // Other radclient options
-    $radclient_options = sprintf(" -c %s -n %s -r %s -t %s %s", escapeshellarg($count), escapeshellarg($requests),
-        escapeshellarg($retries), escapeshellarg($timeout), $debug);
+    $radclient_options = sprintf(" -c %s -n %s -r %s -t %s -x", escapeshellarg($count), escapeshellarg($requests),
+        escapeshellarg($retries), escapeshellarg($timeout));
 
     // Add dictionary option if provided
     if (isset($params['dictionary']) && !empty(trim($params['dictionary']))) {
