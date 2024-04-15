@@ -153,7 +153,7 @@
     // setup php session variables for exporting
     $_SESSION['reportTable'] = sprintf("%s AS rc LEFT JOIN %s AS ra ON ra.username=rc.username, %s AS rr LEFT JOIN %s AS ui ON rr.username=ui.username",
                                        $configValues['CONFIG_DB_TBL_RADCHECK'], $configValues['CONFIG_DB_TBL_RADACCT'],
-                                       "radreply",$configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+                                       $configValues['CONFIG_DB_TBL_RADREPLY'],$configValues['CONFIG_DB_TBL_DALOUSERINFO']);
     $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE);
     $_SESSION['reportType'] = "usernameListGeneric";
 
