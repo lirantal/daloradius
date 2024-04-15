@@ -521,11 +521,24 @@ function add_user_billing_info($dbSocket, $username, $params) {
     return add_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
 }
 
+/**
+ * Counts the number of records returned by a given SQL query.
+ *
+ * @param object $dbSocket The database connection object with a query() method.
+ * @param string $sql The SQL query to be executed.
+ * @return int The number of records returned by the query.
+ */
 function count_sql($dbSocket, $sql) {
     $res = $dbSocket->query($sql);
     return intval($res->fetchrow()[0]);
 }
 
+/**
+ * Counts the number of distinct users in the database.
+ *
+ * @param object $dbSocket The database connection object with a query() method.
+ * @return int The number of distinct users.
+ */
 function count_users($dbSocket) {
     global $configValues;
 
@@ -538,13 +551,25 @@ function count_users($dbSocket) {
     return count_sql($dbSocket, $sql);
 }
 
-function count_nas($dbSocket) {
+/**
+ * Counts the number of hotspots in the database.
+ *
+ * @param object $dbSocket The database connection object with a query() method.
+ * @return int The number of hotspots.
+ */
+function count_hotspots($dbSocket) {
     global $configValues;
     $sql = sprintf("SELECT COUNT(`id`) FROM %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
     return count_sql($dbSocket, $sql);
 }
 
-function count_hotspots($dbSocket) {
+/**
+ * Counts the number of NAS devices in the database.
+ *
+ * @param object $dbSocket The database connection object with a query() method.
+ * @return int The number of NAS devices.
+ */
+function count_nas($dbSocket) {
     global $configValues;
     $sql = sprintf("SELECT COUNT(`id`) FROM %s", $configValues['CONFIG_DB_TBL_RADNAS']);
     return count_sql($dbSocket, $sql);  
