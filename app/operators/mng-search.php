@@ -136,6 +136,7 @@
         foreach ($arr as $field_name) {
             $nested_condition2[] = sprintf("ui.%s LIKE '%%%s%%'", $field_name, $value_prefix);
         }
+        $nested_condition2[] = sprintf("rr.%s LIKE '%%%s'", "value", $value_prefix);
     }
 
     // init SQL WHERE (with join condition already set)
@@ -150,9 +151,9 @@
     }
 
     // setup php session variables for exporting
-    $_SESSION['reportTable'] = sprintf("%s AS rc LEFT JOIN %s AS ra ON ra.username=rc.username, %s AS ui",
+    $_SESSION['reportTable'] = sprintf("%s AS rc LEFT JOIN %s AS ra ON ra.username=rc.username, %s AS rr LEFT JOIN %s AS ui ON rr.username=ui.username",
                                        $configValues['CONFIG_DB_TBL_RADCHECK'], $configValues['CONFIG_DB_TBL_RADACCT'],
-                                       $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+                                       $configValues['CONFIG_DB_TBL_RADREPLY'],$configValues['CONFIG_DB_TBL_DALOUSERINFO']);
     $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE);
     $_SESSION['reportType'] = "usernameListGeneric";
 
