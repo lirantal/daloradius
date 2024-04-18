@@ -15,52 +15,52 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    This page displays logs from daloRADIUS, allowing customization of line count
+ *                 and filtering by queries, notices, inserts, or selects.
+ * 
+ * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *                 Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-    
-    include_once("lang/main.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY_EXTENSIONS'], 'system_logs.php' ]);
     
     $log = "visited page: ";
 
-    // parameter validation
-    $count = (array_key_exists('count', $_GET) && isset($_GET['count']) && intval($_GET['count']) > 0)
-           ? intval($_GET['count']) : 50;
+    // Parameter validation
+    $count = filter_var($_GET['count'] ?? 50, FILTER_VALIDATE_INT, ['options' => ['default' => 50, 'min_range' => 1]]);
+    $filter = (in_array(strtoupper($_GET['filter']) ?? "", ["QUERY", "NOTICE", "INSERT", "SELECT"])) ? strtoupper($_GET['filter']) : "";
 
-    // preg quoted before usage
-    $filter = (array_key_exists('filter', $_GET) && isset($_GET['filter']) &&
-               in_array(strtoupper($_GET['filter']), array( "QUERY", "NOTICE", "INSERT", "SELECT" )))
-            ? strtoupper($_GET['filter']) : "";
-
-    // print HTML prologue
-    $title = t('Intro','replogsdaloradius.php');
+    // Print HTML prologue
+    $title = sprintf("%s &bull; lines: %d", t('Intro','replogsdaloradius.php'), $count);
+    if (!empty($filter)) {
+        $title .= sprintf(", filter: %s", $filter);
+    }
     $help = t('helpPage','replogsdaloradius');
     
     print_html_prologue($title, $langCode);
-
-    $title .= sprintf(" :: %d Lines Count", $count);
-    if (!empty($filter)) {
-        $title .= " with filter set to " . htmlspecialchars($filter, ENT_QUOTES, 'UTF-8');
-    }
-
-    
-
-
     print_title_and_help($title, $help);
     
-    include('library/extensions/daloradius_log.php');
-    include_once('include/management/actionMessages.php');
-    
-    include('include/config/logging.php');
-    print_footer_and_html_epilogue();
+    // Check if the daloradius logfile is set
+    $log_label = "daloRADIUS log file";
 
-?>    
+    if (!isset($configValues['CONFIG_LOG_FILE']) || empty($configValues['CONFIG_LOG_FILE'])) {
+        $failureMsg = sprintf('The system could not locate your <em>%s</em>.<br>' .
+                              'Please specify its location in the <a href="config-logging.php">%s</a> section.',
+                              $log_label, t('button','LoggingSettings'));
+    } else {
+        $logfile_paths = [$configValues['CONFIG_LOG_FILE']];
+        $failureMsg = print_system_log($logfile_paths, $log_label, $filter, $count);
+    }
+
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
+    print_footer_and_html_epilogue();

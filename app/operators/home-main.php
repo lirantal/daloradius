@@ -290,7 +290,6 @@ HTML;
     echo '</div>';
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
-    
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
 
     $inline_extra_js = <<<JS

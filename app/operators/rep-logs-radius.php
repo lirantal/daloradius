@@ -15,53 +15,56 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    This page shows freeRADIUS event logs with customizable line count and filters
+ *                 for message types like "Auth", "Info" or "Error".
+ *
+ * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *                 Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-    
-    include_once("lang/main.php");
-    include("../common/includes/layout.php");
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY_EXTENSIONS'], 'system_logs.php' ]);
+
     $log = "visited page: ";
 
-    // parameter validation
-    $count = (array_key_exists('count', $_GET) && isset($_GET['count']) && intval($_GET['count']) > 0)
-           ? intval($_GET['count']) : 50;
+    // Parameter validation
+    $count = filter_var($_GET['count'] ?? 50, FILTER_VALIDATE_INT, ['options' => ['default' => 50, 'min_range' => 1]]);
+    $filter = (in_array($_GET['filter'] ?? "", ["Auth", "Info", "Error"])) ? $_GET['filter'] : "";
 
-    // preg quoted before usage
-    $filter = (array_key_exists('filter', $_GET) && isset($_GET['filter']) &&
-               in_array($_GET['filter'], array( "Auth", "Info", "Error" )))
-            ? $_GET['filter'] : "";
-
-
-    // print HTML prologue
-    $title = t('Intro','replogsradius.php');
-    $help = t('helpPage','replogsradius');
-    
-    print_html_prologue($title, $langCode);
-
-    $title .= sprintf(" :: %d Lines Count", $count);
+    // Print HTML prologue
+    $title = sprintf("%s &bull; lines: %d", t('Intro','replogsradius.php'), $count);
     if (!empty($filter)) {
-        $title .= " with filter set to " . htmlspecialchars($filter, ENT_QUOTES, 'UTF-8');
+        $title .= sprintf(", filter: %s", $filter);
+    }
+    $help = t('helpPage','replogsradius');
+
+    print_html_prologue($title, $langCode);
+    print_title_and_help($title, $help);
+
+    // Define possible log file paths
+    $logfile_paths = [
+        '/var/log/freeradius/radius.log',
+        '/usr/local/var/log/radius/radius.log',
+        '/var/log/radius/radius.log'
+    ];
+
+    if (array_key_exists('CONFIG_RADIUSLOG_FILE', $configValues) && !empty($configValues['CONFIG_RADIUSLOG_FILE'])) {
+        array_unshift($logfile_paths, $configValues['CONFIG_RADIUSLOG_FILE']);
     }
 
-    
+    $log_label = "freeRADIUS log file";
 
+    // Print log or set the $failureMsg
+    $failureMsg = print_system_log($logfile_paths, $log_label, $filter, $count);
 
-    print_title_and_help($title, $help);
-    
-    include('library/extensions/radius_log.php');
-    include_once('include/management/actionMessages.php');
-
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-
-?>

@@ -15,51 +15,56 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    This page displays boot logs,
+ *                 allowing you to specify the number of lines and apply filters.
+ * 
+ * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *                 Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY_EXTENSIONS'], 'system_logs.php' ]);
+
     $log = "visited page: ";
 
-    include_once("lang/main.php");
-    include("../common/includes/layout.php");
-
-    // parameter validation
-    $count = (array_key_exists('count', $_GET) && isset($_GET['count']) && intval($_GET['count']) > 0)
-           ? intval($_GET['count']) : 50;
-
-    // preg quoted before usage
+    // Parameter validation
+    $count = filter_var($_GET['count'] ?? 50, FILTER_VALIDATE_INT, ['options' => ['default' => 50, 'min_range' => 1]]);
     $filter = (array_key_exists('filter', $_GET) && isset($_GET['filter'])) ? $_GET['filter'] : "";
 
-
-    // print HTML prologue
-    $title = t('Intro','replogsboot.php');
-    $help = t('helpPage','replogsboot');
-    
-    print_html_prologue($title, $langCode);
-
-    $title .= sprintf(" :: %d Lines Count", $count);
+    // Print HTML prologue
+    $title = sprintf("%s &bull; lines: %d", t('Intro','replogsboot.php'), $count);
     if (!empty($filter)) {
-        $title .= " with filter set to " . htmlspecialchars($filter, ENT_QUOTES, 'UTF-8');
+        $title .= sprintf(", filter: %s", htmlspecialchars($filter, ENT_QUOTES, 'UTF-8'));
+    }
+    $help = t('helpPage','replogsboot');
+
+    print_html_prologue($title, $langCode);
+    print_title_and_help($title, $help);
+    
+    // Define possible log file paths
+    $logfile_paths = [
+        '/var/log/boot',
+        '/var/log/dmesg',
+        '/usr/local/var/log/dmesg'
+    ];
+
+    if (array_key_exists('CONFIG_BOOTLOG_FILE', $configValues) && !empty($configValues['CONFIG_BOOTLOG_FILE'])) {
+        array_unshift($logfile_paths, $configValues['CONFIG_BOOTLOG_FILE']);
     }
 
-    
+    $log_label = "dmesg (boot) log file";
 
+    // Print log or set the $failureMsg
+    $failureMsg = print_system_log($logfile_paths, $log_label, $filter, $count);
 
-    print_title_and_help($title, $help);
-
-    include('library/extensions/boot_log.php');
-    include_once('include/management/actionMessages.php');
-    
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-
-?>
