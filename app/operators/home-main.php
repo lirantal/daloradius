@@ -151,7 +151,7 @@ HTML;
     ];
 
     $version = t('all', 'daloRADIUS');
-    $copyright = sprintf("Copyright 2007-%s Filippo Lauria, Liran Tal", date('Y'));
+    $copyright = strip_tags(t('all', 'copyright2'));
     
     echo <<<HTML
 <span class="d-flex align-items-center justify-content-start mb-2">

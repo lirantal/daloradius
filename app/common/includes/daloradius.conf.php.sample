@@ -22,8 +22,6 @@
  *********************************************************************************************************
  */
 
-include(__DIR__ . '/version.php');
-
 $configValues['FREERADIUS_VERSION'] = '3';
 $configValues['CONFIG_DB_ENGINE'] = 'mysqli';
 $configValues['CONFIG_DB_HOST'] = 'localhost';
@@ -78,6 +76,9 @@ $configValues['CONFIG_LOG_QUERIES'] = 'no';
 $configValues['CONFIG_DEBUG_SQL'] = 'no';
 $configValues['CONFIG_DEBUG_SQL_ONPAGE'] = 'no';
 $configValues['CONFIG_LOG_FILE'] = '/var/www/daloradius/var/log/daloradius.log';
+$configValues['CONFIG_SYSLOG_FILE'] = '/var/log/syslog';
+$configValues['CONFIG_RADIUSLOG_FILE'] = '/var/log/freeradius/radius.log';
+$configValues['CONFIG_BOOTLOG_FILE'] = '/var/log/boot.log';
 $configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] = 'no';
 $configValues['CONFIG_IFACE_TABLES_LISTING'] = '25';
 $configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = 'yes';
