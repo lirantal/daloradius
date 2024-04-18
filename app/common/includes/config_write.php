@@ -74,8 +74,17 @@ if (strpos(\$_SERVER['PHP_SELF'], '/common/includes/daloradius.conf.php') !== fa
 
 EOL;
 
-// 2. body
+// 2. strip version information
+unset($configValues['DALORADIUS_VERSION'], $configValues['DALORADIUS_DATE']);
+
+// 3. body
 foreach ($configValues as $_configOption => $_configElem) {
+
+    if (substr( $_configOption, 0, 4 ) === "APP_" || substr( $_configOption, 0, 7 ) === "COMMON_" ||
+        substr( $_configOption, 0, 10 ) === "OPERATORS_" || substr( $_configOption, 0, 6 ) === "USERS_") {
+        continue;
+    }
+
     $fileContents .= sprintf("\$configValues['%s'] =", $_configOption);
 
     if (is_array($configValues[$_configOption])) {
@@ -84,13 +93,6 @@ foreach ($configValues as $_configOption => $_configElem) {
         $fileContents .= sprintf(" '%s';\n", addslashes($configValues[$_configOption]));
     }
 }
-
-// 3. close
-$fileContents .= <<<EOL
-
-?>
-
-EOL;
 
 //
 // putting contents into file
@@ -103,5 +105,3 @@ if ($writtenBytes > 0) {
     $failureMsg = sprintf("Could not open the file for writing: <strong>%s</strong>", $configFile)
                 . "<br>Check file permissions. The file should be writable by the webserver's user/group";
 }
-
-?>

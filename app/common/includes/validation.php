@@ -19,7 +19,7 @@
  *                 and security. Additionally, it defines whitelists and collections of valid options
  *                 for parameters like authentication types, billing actions, plan currencies
  *                 and supported languages.
- * 
+ *
  * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
@@ -44,6 +44,7 @@ define("PINCODE_REGEX", '/^[a-zA-Z0-9]+$/');
 define("LOOSE_IP_REGEX", '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/');
 
 define("ALL_PRINTABLE_CHARS_REGEX", '/^[ -~]+$/');
+define("LOG_FILEPATH_REGEX", '/^(\/[a-zA-Z0-9]+)+(\.log)?$/');
 
 define("DB_TABLE_NAME_REGEX", '/^[a-zA-Z0-9_]+$/');
 define("ALLOWED_RANDOM_CHARS_REGEX", DB_TABLE_NAME_REGEX);
@@ -95,7 +96,7 @@ $valid_ops = [
                 "=*", // As a check item, it matches if the request contains the named attribute, no matter what the value is.
                 "!*", // As a check item, it matches if the request does not contain the named attribute, no matter what the value is.
               ];
-                          
+
 
 $valid_recommendedHelpers = array(
                                     "date", "datetime", "authtype", "framedprotocol", "servicetype",
@@ -347,7 +348,7 @@ $users_valid_languages = array(
                                     "ro" => "Română (Romanian)",
                                     "ru" => "Русский (Russian)",
                                   );
-                                  
+
 $valid_message_types = array(
                                  "login", "support", "dashboard",
                               );

@@ -32,8 +32,9 @@ if (strpos($_SERVER['PHP_SELF'], '/lang/en.php') !== false) {
 $l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
 $l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
 $l['all']['copyright1'] = 'RADIUS Management, Reporting, Accounting and Billing by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
-$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y') . ' by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.<br>'
-                        . 'daloRADIUS has been enhanced by <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>.';
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y')
+                        . ' <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a> and'
+                        . ' <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.';
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Pool Name";
 $l['all']['CalledStationId'] = "CalledStationId";
@@ -279,12 +280,12 @@ $l['all']['DatabaseName'] = "Database Name";
 
 $l['all']['PrimaryLanguage'] = "Primary Language";
 
-$l['all']['PagesLogging'] = "Logging of Pages (page visits)";
-$l['all']['QueriesLogging'] = "Logging of Queries (reports and graphs)";
-$l['all']['ActionsLogging'] = "Logging of Actions (form submits)";
-$l['all']['FilenameLogging'] = "Logging filename (full path)";
-$l['all']['LoggingDebugOnPages'] = "Logging of Debug info on pages";
-$l['all']['LoggingDebugInfo'] = "Logging of Debug Info";
+$l['all']['PagesLogging'] = "Log page visits";
+$l['all']['QueriesLogging'] = "Log queries (e.g. reports, graphs, etc.)";
+$l['all']['ActionsLogging'] = "Log actions (e.g. form submits)";
+$l['all']['FilenameLogging'] = "Log file (absolute path)";
+$l['all']['LoggingDebugOnPages'] = "Log debug information (on pages)";
+$l['all']['LoggingDebugInfo'] = "Log debug information";
 
 $l['all']['PasswordHidden'] = "Enable Password Hiding (asterisk will be shown)";
 $l['all']['TablesListing'] = "Rows/Records per Tables Listing page";
@@ -455,10 +456,8 @@ $l['Tooltip']['taxTooltip'] = "";
 $l['Tooltip']['PayTypeName'] = "Type the Payment Type name";
 $l['Tooltip']['EditPayType'] = "Edit Payment Type";
 $l['Tooltip']['RemovePayType'] = "Remove Payment Type";
-$l['Tooltip']['paymentTypeTooltip'] = "The payment type friendly name,<br/>
-                                        to describe the purpose of the payment";
-$l['Tooltip']['paymentTypeNotesTooltip'] = "The payment type description, to describe<br/>
-                                        the operation of the payment type";
+$l['Tooltip']['paymentTypeTooltip'] = "The payment type friendly name,<br/>to describe the purpose of the payment";
+$l['Tooltip']['paymentTypeNotesTooltip'] = "The payment type description, to describe<br/>the operation of the payment type";
 $l['Tooltip']['EditPayment'] = "Edit Payment";
 $l['Tooltip']['PaymentId'] = "The Payment Id";
 $l['Tooltip']['RemovePayment'] = "Remove Payment";
@@ -476,7 +475,7 @@ $l['Tooltip']['AttributeName'] = "Type in the attribute name";
 $l['Tooltip']['VendorName'] = "Select the vendor name";
 $l['Tooltip']['PoolName'] = "Type in pool name";
 $l['Tooltip']['IPAddress'] = "Type in the IP address";
-$l['Tooltip']['Filter'] = "Type in a filter. It can be any alphanumeric string. Leave empty to match anything.";
+$l['Tooltip']['Filter'] = "Type an alphanumeric string or leave it empty to match all";
 $l['Tooltip']['Date'] = "Select a date";
 $l['Tooltip']['RateName'] = "Type in the rate name";
 $l['Tooltip']['OperatorName'] = "Type in the operator name";
@@ -486,10 +485,8 @@ $l['Tooltip']['PlanName'] = "Type in the plan name";
 $l['Tooltip']['EditRate'] = "Edit Rate";
 $l['Tooltip']['RemoveRate'] = "Remove Rate";
 
-$l['Tooltip']['rateNameTooltip'] = "The rate friendly name,<br/>
-                    to describe the purpose of the rate";
-$l['Tooltip']['rateTypeTooltip'] = "The rate type, to describe<br/>
-                    the operation of the rate";
+$l['Tooltip']['rateNameTooltip'] = "The rate friendly name,<br/>to describe the purpose of the rate";
+$l['Tooltip']['rateTypeTooltip'] = "The rate type, to describe<br/>the operation of the rate";
 $l['Tooltip']['rateCostTooltip'] = "The rate cost amount";
 
 $l['Tooltip']['planNameTooltip'] = "The Plan's name. This is a friendly name describing the characeristics of the plan";
@@ -1091,10 +1088,10 @@ $l['Intro']['replastconnect.php'] = "Last Connection Attempts";
 $l['Intro']['repstatradius.php'] = "Daemons Information";
 $l['Intro']['repstatserver.php'] = "Server Status and Information";
 $l['Intro']['reponline.php'] = "Listing Online Users";
-$l['Intro']['replogssystem.php'] = "System Logfile";
-$l['Intro']['replogsradius.php'] = "RADIUS Server Logfile";
-$l['Intro']['replogsdaloradius.php'] = "daloRADIUS Logfile";
-$l['Intro']['replogsboot.php'] = "Boot Logfile";
+$l['Intro']['replogssystem.php'] = "System Log Viewer";
+$l['Intro']['replogsradius.php'] = "freeRADIUS Log Viewer";
+$l['Intro']['replogsdaloradius.php'] = "daloRADIUS Log Viewer";
+$l['Intro']['replogsboot.php'] = "Boot Log Viewer";
 $l['Intro']['replogs.php'] = "Logs";
 $l['Intro']['rephb.php'] = "Heartbeat";
 $l['Intro']['rephbdashboard.php'] = "daloRADIUS NAS Dashboard";
@@ -1438,8 +1435,27 @@ $l['helpPage']['configlang'] = <<<EOF
 EOF;
 
 $l['helpPage']['configlogging'] = <<<EOF
-<h2 class="fs-6">Logging Settings</h2>
-<p>Configure logging rules and facilities.<br>Please make sure that the filename that you specify has write permissions by the webserver</p>
+<h2 class="fs-6">daloRADIUS Configuration Form</h2>
+<p>This section allows you to configure logging settings for daloRADIUS and other logging options.</p>
+<h2 class="fs-6">daloRADIUS Logging settings</h2>
+<ul>
+    <li><strong>{$l['all']['PagesLogging']}:</strong> Enable or disable logging of page visits.</li>
+    <li><strong>{$l['all']['QueriesLogging']}:</strong> Enable or disable logging of queries.</li>
+    <li><strong>{$l['all']['ActionsLogging']}:</strong> Enable or disable logging of actions, such as form submissions.</li>
+    <li><strong>{$l['all']['LoggingDebugInfo']}:</strong> Enable or disable logging of debug information.</li>
+    <li><strong>{$l['all']['LoggingDebugOnPages']}:</strong> Enable or disable logging of debug information specifically on pages.</li>
+    <li><strong>daloRADIUS {$l['all']['FilenameLogging']}:</strong> Specify the absolute path for the log file.<br>
+        For example: <code>/var/www/daloradius/var/log/daloradius.log</code></li>
+</ul>
+<h2 class="fs-6">Other logging settings</h2>
+<ul>
+    <li><strong>SYSLOG {$l['all']['FilenameLogging']}:</strong> Specify the absolute path for the SYSLOG log file.<br>
+        For example: <code>/var/log/syslog</code></li>
+    <li><strong>RADIUSLOG {$l['all']['FilenameLogging']}:</strong> Specify the absolute path for the RADIUSLOG log file.
+        For example: <code>/var/log/freeradius/radius.log</code></li>
+    <li><strong>BOOTLOG {$l['all']['FilenameLogging']}:</strong> Specify the absolute path for the BOOTLOG log file.
+        For example: <code>/var/log/boot.log</code></li>
+</ul>
 EOF;
 
 $l['helpPage']['configinterface'] = <<<EOF
@@ -1594,10 +1610,22 @@ $l['helpPage']['graphmain'] = '<h1 class="fs-5">Graphs</h1>'
 $l['helpPage']['rephistory'] = "Lists all activity performed on management items and provides information on <br/>
 Creation Date, Creation By as well as Updated Date and Update By history fields";
 $l['helpPage']['replastconnect'] = "Lists all login attempts to the RADIUS server, both successful and failed logins";
-$l['helpPage']['replogsboot'] = "Monitor Operating System Boot log - equivalent to running the dmesg command.";
-$l['helpPage']['replogsdaloradius'] = "Monitor daloRADIUS's Logfile.";
-$l['helpPage']['replogsradius'] = "Monitor FreeRADIUS's Logfile.";
-$l['helpPage']['replogssystem'] = "Monitor Operating System Logfile.";
+$l['helpPage']['replogsboot'] = <<<EOF
+The <strong>{$l['Intro']['replogsboot.php']}</strong> allows you to monitor the operating system boot log, which is equivalent to running the <kbd>dmesg</kbd> command.
+Yoy can customize your view by specifying the number of lines and applying filters to refine the results.
+EOF;
+$l['helpPage']['replogsdaloradius'] = <<<EOF
+The <strong>{$l['Intro']['replogsdaloradius.php']}</strong> allows you to monitor logs from daloRADIUS.
+Customize the line count and filter the logs by queries, notices, inserts, or selects.
+EOF;
+$l['helpPage']['replogsradius'] = <<<EOF
+The <strong>{$l['Intro']['replogsradius.php']}</strong> allows you to monitor freeRADIUS's event logs,
+with customizable line count and filters available for message types such as 'Auth', 'Info', or 'Error'.
+EOF;
+$l['helpPage']['replogssystem'] = <<<EOF
+The <strong>{$l['Intro']['replogssystem.php']}</strong> allows you to monitor system logs, such as syslog and messages,
+with customizable line count and optional filters to refine your view.
+EOF;
 $l['helpPage']['rephb'] = "";
 $l['helpPage']['rephbdashboard'] = "";
 $l['helpPage']['repbatch'] = "";
@@ -1605,17 +1633,15 @@ $l['helpPage']['repbatchlist'] = "";
 $l['helpPage']['mngbatchlist'] = "";
 $l['helpPage']['mngbatchdel'] = "";
 $l['helpPage']['repbatchdetails'] = "Provides details on a specific batch";
+
 $l['helpPage']['replogs'] = <<<EOF
 <h1 class="fs-5">Logs</h1>
-<h2 class="fs-6">daloRADIUS Log</h2>
-<p>Monitors the daloRADIUS logfile.</p>
-<h2 class="fs-6">RADIUS Log</h2>
-<p>Monitors the FreeRADIUS logfile, equivalent to <code>/var/log/freeradius/radius.log</code> or <code>/usr/local/var/log/radius/radius.log</code>. Other possible locations for the logfile may be used, so please adjust the configuration accordingly.</p>
-<h2 class="fs-6">System Log</h2>
-<p>Monitors the operating system logfile, equivalent to <code>/var/log/syslog</code> or <code>/var/log/messages</code> on most platforms. Other possible locations for the logfile may be used, so please adjust the configuration accordingly.</p>
-<h2 class="fs-6">Boot Log</h2>
-<p>Monitors the operating system boot log, equivalent to running the <code>dmesg</code> command.</p>
+<p>{$l['helpPage']['replogsdaloradius']}</p>
+<p>{$l['helpPage']['replogsradius']}</p>
+<p>{$l['helpPage']['replogssystem']}</p>
+<p>{$l['helpPage']['replogsboot']}</p>
 EOF;
+
 $l['helpPage']['repmain'] = <<<EOF
 <h1 class="fs-5">General Reports</h1>
 <h2 class="fs-6">Online Users</h2>

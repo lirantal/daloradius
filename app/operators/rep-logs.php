@@ -21,28 +21,18 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
-        
-    include_once('../common/includes/config_read.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
     $log = "visited page: ";
 
-    include_once("lang/main.php");    
-    include("../common/includes/layout.php");
-
-
-    // print HTML prologue
     $title = t('Intro','replogs.php');
     $help = t('helpPage','replogs');
     
     print_html_prologue($title, $langCode);
-
-    
-
-
     print_title_and_help($title, $help);
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-
-?>

@@ -43,10 +43,16 @@
                             'CONFIG_DEBUG_SQL_ONPAGE' => t('all','LoggingDebugOnPages')
                         );
 
+    $logfile_param_label = array(
+                                    'CONFIG_SYSLOG_FILE' => "SYSLOG " . t('all','FilenameLogging'),
+                                    'CONFIG_RADIUSLOG_FILE' => "RADIUSLOG " . t('all','FilenameLogging'),
+                                    'CONFIG_BOOTLOG_FILE' => "BOOTLOG " . t('all','FilenameLogging'),
+         );
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
-            $isError = false;
+            $isError = [];
 
             // validate yes/no params
             foreach ($param_label as $param => $label) {
@@ -84,18 +90,48 @@
                     $configValues['CONFIG_LOG_FILE'] = $candidate_log_file;
 
                 } else {
-                    $isError = true;
+                    $isError[] = 'CONFIG_LOG_FILE';
                 }
             } else {
-                $isError = true;
+                $isError[] = 'CONFIG_LOG_FILE';
             }
 
-            // we write ONLY IF isError is false
-            if (!$isError) {
+            // for other paths we use a regex
+            foreach ($logfile_param_label as $param => $label) {
+                if (array_key_exists($param, $_POST) && !empty($_POST[$param]) &&
+                    preg_match(LOG_FILEPATH_REGEX, $_POST[$param]) === 1) {
+                    $configValues[$param] = $_POST[$param];
+                    continue;
+                }
+
+                $isError[] = $param;
+            }
+
+            // we write ONLY IF isError is empty
+            if (empty($isError)) {
                 include("../common/includes/config_write.php");
             } else {
-                $failureMsg = sprintf("Log path not allowed. Ensure that log file name locates a writable %s file contained in %s",
-                                      $log_file_suffix, $log_path_prefix);
+
+                $failureMsg = "Error while saving configuration. ";
+                $error_labels = [];
+
+                // Check for errors related to CONFIG_LOG_FILE
+                if (in_array('CONFIG_LOG_FILE', $isError)) {
+                    $failureMsg .= sprintf("Ensure that daloRADIUS log file name locates a writable %s file contained in %s",
+                                        $log_file_suffix, $log_path_prefix);
+                    $isError = array_diff($isError, ['CONFIG_LOG_FILE']);
+                }
+
+                // Gather error labels
+                foreach ($isError as $label) {
+                    $error_labels[] = $logfile_param_label[$label];
+                }
+
+                // Append error message
+                if (!empty($error_labels)) {
+                    $failureMsg .= sprintf("You have specified invalid path(s) for the following log file(s): %s.", implode(", ", $error_labels));
+                }
+
                 $logAction .= "$failureMsg on page: ";
             }
 
@@ -113,16 +149,9 @@
 
     print_html_prologue($title, $langCode);
 
-    
-
-
     print_title_and_help($title, $help);
 
     include_once('include/management/actionMessages.php');
-
-    $fieldset0_descriptor = array(
-                                    "title" => t('title','Settings')
-                                 );
 
 
     $input_descriptors0 = array();
@@ -144,19 +173,36 @@
                                         "value" => $configValues['CONFIG_LOG_FILE']
                                      );
 
-    $input_descriptors0[] = array(
+    
+    
+    $input_descriptors2 = [];
+    $input_descriptors2[] = array(
                                     "name" => "csrf_token",
                                     "type" => "hidden",
                                     "value" => dalo_csrf_token(),
                                  );
 
-    $input_descriptors0[] = array(
+    $input_descriptors2[] = array(
                                     'type' => 'submit',
                                     'name' => 'submit',
                                     'value' => t('buttons','apply')
                                  );
 
+    // set navbar stuff
+    $navkeys = array( array( 'daloLogs', "daloRADIUS Logging settings" ), array( 'otherLogs', "Other logging settings" ) );
+
+    // print navbar controls
+    print_tab_header($navkeys);
+
     open_form();
+
+    // open tab wrapper
+    open_tab_wrapper();
+
+    // tab 0
+    open_tab($navkeys, 0, true);
+
+    $fieldset0_descriptor = array( "title" => $navkeys[0][1] );
 
     // open 0-th fieldset
     open_fieldset($fieldset0_descriptor);
@@ -167,9 +213,54 @@
 
     close_fieldset();
 
+    close_tab();
+
+    // tab 1
+    open_tab($navkeys, 1);
+
+    $fieldset1_descriptor = array( "title" => $navkeys[1][1] );
+
+    open_fieldset($fieldset1_descriptor);
+
+    $input_descriptors1 = [];
+
+    $input_descriptors1[] = array(
+                                    "type" => "text",
+                                    "caption" => "SYSLOG " . t('all','FilenameLogging'),
+                                    "name" => 'CONFIG_SYSLOG_FILE',
+                                    "value" => $configValues['CONFIG_SYSLOG_FILE']
+                                 );
+
+    $input_descriptors1[] = array(
+                                    "type" => "text",
+                                    "caption" => "RADIUSLOG " . t('all','FilenameLogging'),
+                                    "name" => 'CONFIG_RADIUSLOG_FILE',
+                                    "value" => $configValues['CONFIG_RADIUSLOG_FILE']
+                                 );
+
+    $input_descriptors1[] = array(
+                                    "type" => "text",
+                                    "caption" => "BOOTLOG " . t('all','FilenameLogging'),
+                                    "name" => 'CONFIG_BOOTLOG_FILE',
+                                    "value" => $configValues['CONFIG_BOOTLOG_FILE']
+                                 );
+
+    foreach ($input_descriptors1 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+
+    close_fieldset();
+
+    close_tab();
+
+    close_tab_wrapper();
+
+    foreach ($input_descriptors2 as $input_descriptor) {
+        print_form_component($input_descriptor);
+    }
+
     close_form();
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 
-?>

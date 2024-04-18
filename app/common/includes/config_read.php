@@ -59,3 +59,6 @@ $configValues['OPERATORS_LIBRARY'] = implode(DIRECTORY_SEPARATOR, [ $configValue
 $configValues['OPERATORS_LIBRARY_EXTENSIONS'] = implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'extensions' ]);
 
 $configValues['USERS_ROOT'] = implode(DIRECTORY_SEPARATOR, [ $configValues['APP_ROOT'], 'users' ]);
+
+// include version information
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'version.php' ]);
