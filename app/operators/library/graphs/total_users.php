@@ -14,35 +14,30 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *********************************************************************************************************
- * Description:    this extension is used to count all the records
- *                 (or table entries) in the radcheck table
+ * Description:    This script generates and displays a bar graph representing the total number of users.
+ *                 It retrieves the user count from the database, creates the graph
+ *                 and then renders the latter for display.
  *
- * Authors:	       Liran Tal <liran@enginx.com>
- *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Authors:	       Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *                 Liran Tal <liran@enginx.com>
  *
  *********************************************************************************************************
  */
 
-    include('../checklogin.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
-    include('../../../common/includes/db_open.php');
+    $labels = [ "" ];
+    $values = [ count_users($dbSocket) ];
 
-    $sql = sprintf("SELECT COUNT(DISTINCT ui.username) FROM %s AS rc, %s AS ra, %s AS ui
-                        WHERE ui.username=ra.username AND ui.username=rc.username
-                        AND (rc.attribute='Auth-Type' OR rc.attribute LIKE '%%-Password')",
-                        $configValues['CONFIG_DB_TBL_RADCHECK'],
-                        $configValues['CONFIG_DB_TBL_RADACCT'],
-                        $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
-    $res = $dbSocket->query($sql);
-
-    $labels = array( "" );
-    $values = array( intval($res->fetchRow()[0]) );
-
-    include('../../../common/includes/db_close.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     // draw the graph
-    include_once('../../../common/library/jpgraph/jpgraph.php');
-    include_once('../../../common/library/jpgraph/jpgraph_bar.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_LIBRARY'], 'jpgraph', 'jpgraph.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_LIBRARY'], 'jpgraph', 'jpgraph_bar.php' ]);
 
     // create the graph
     $graph = new Graph(1024, 384, 'auto');
@@ -51,7 +46,7 @@
     $graph->SetFrame(false);
     $graph->SetTickDensity(TICKD_SPARSE, TICKD_SPARSE);
     $graph->img->SetMargin(110, 20, 20, 110);
-    $graph->title->Set("total users");
+    $graph->title->Set(strtolower(t('all', 'TotalUsers')));
 
     // setup x-axis
     $graph->xaxis->title->SetMargin(60);
@@ -60,7 +55,7 @@
     $graph->xaxis->HideLastTickLabel();
 
     // setup y-axis
-    $graph->yaxis->title->Set("users");
+    $graph->yaxis->title->Set(strtolower(t('all', 'Users')));
     $graph->yaxis->title->SetMargin(40);
     $graph->yaxis->SetLabelAngle(45);
     $graph->yaxis->scale->SetGrace(25);
@@ -76,5 +71,3 @@
 
     // display the graph
     $graph->Stroke();
-
-?>

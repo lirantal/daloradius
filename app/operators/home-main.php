@@ -26,10 +26,10 @@
  *********************************************************************************************************
  */
 
-    include implode(DIRECTORY_SEPARATOR, [ __DIR__, 'library', 'checklogin.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
@@ -102,7 +102,7 @@
 
     function generateCard($title, $total, $linkText, $linkURL, $bgColor, $icon) {
         return <<<HTML
-<div class="col-4 m-0 p-0">
+<div class="col-md-4 m-0 p-0">
     <div class="card m-1 rounded-0">
         <div class="row g-0">
             <div class="d-none d-md-flex col-md-2 text-bg-{$bgColor} align-items-center justify-content-center" style="--bs-bg-opacity: .9;">
@@ -180,7 +180,7 @@ HTML;
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
 
-    echo '<div class="col-6 m-0 px-3">';
+    echo '<div class="col-sm-12 col-md-6 m-0 px-3">';
     $title = t('button', 'LastConnectionAttempts');
     print_title($title, "rep-lastconnect.php", "bi-box-arrow-up-right");
 
@@ -214,7 +214,7 @@ HTML;
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
 
-    echo '<div class="col-6 m-0 px-3">';
+    echo '<div class="col-sm-12 col-md-6 m-0 px-3">';
     print_title('Currently online', "rep-online.php?orderBy=acctstarttime&orderType=desc", "bi-box-arrow-up-right");
 
     if ($numrows > 0) {
