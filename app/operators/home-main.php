@@ -208,8 +208,9 @@ HTML;
     }
 
     echo '</div>';
-
-    $sql = sprintf("SELECT `username`, `acctstarttime` FROM %s WHERE `acctstoptime` IS NULL ORDER BY `acctstarttime` DESC LIMIT 10",
+    $sql = sprintf("SELECT `username`, `acctstarttime` FROM %s
+                     WHERE `acctstoptime` IS NULL OR `acctstoptime`='0000-00-00 00:00:00'
+                     ORDER BY `acctstarttime` DESC LIMIT 10",
                    $configValues['CONFIG_DB_TBL_RADACCT']);
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
