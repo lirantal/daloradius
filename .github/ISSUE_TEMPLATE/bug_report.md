@@ -25,8 +25,9 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. Linux Debian Sid]
- - Your Browser [e.g. chrome, safari]
- - daloRADIUS Version [e.g. "cloned the master branch yesterday on commit hash 1234"]
+ - Your Browser:  [e.g. chrome, safari]
+ - daloRADIUS Version: [e.g. "cloned the master branch yesterday on commit hash 1234"]
+ - FreeRADIUS Version: 3
 
 **Additional context**
 Add any other context about the problem here.
