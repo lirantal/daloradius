@@ -30,7 +30,7 @@
 
 /* Configuration Section ************************************************ */
 
-$configPath = dirname(__FILE__) . '/../../../library/config_read.php';
+$configPath = dirname(__FILE__) . '/../../../app/common/includes/config_read.php';
 include($configPath);
 
 //interval is specified in seconds
