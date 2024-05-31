@@ -43,7 +43,7 @@ define("PINCODE_REGEX", '/^[a-zA-Z0-9]+$/');
 // this regex allows input like (e.g.) 127, 127., 127.0, 127.0., 127.0.0, 127.0.0 and 127.0.0.1
 define("LOOSE_IP_REGEX", '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/');
 
-define("ALL_PRINTABLE_CHARS_REGEX", '/^[ -~]+$/');
+define("ALL_PRINTABLE_CHARS_REGEX", '/^[ -~ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/');
 define("LOG_FILEPATH_REGEX", '/^(\/[a-zA-Z0-9]+)+(\.log)?$/');
 
 define("DB_TABLE_NAME_REGEX", '/^[a-zA-Z0-9_]+$/');
