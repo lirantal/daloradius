@@ -37,7 +37,7 @@ $l['all']['copyright1'] = 'RADIUS 管理、报告、会计和账单 <a target="_
 $l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y')
                         . ' <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a> and'
                         . ' <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.'
-                        . ' Chinese language pack produced by SanDuo, rongzedong.';
+                        . ' Chinese language pack produced by SanDuo, rongzedong, robertkwok2.';
 
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "IP地址名称";
@@ -480,7 +480,7 @@ $l['Tooltip']['VendorName'] = "设备名称类型";
 $l['Tooltip']['PoolName'] = "IP地址池名称类型";
 $l['Tooltip']['IPAddress'] = "IP地址池类型";
 $l['Tooltip']['Filter'] = "过滤器的类型，可以是任何字符的字符串。用留空配对其它。";
-$l['Tooltip']['Date'] = "日期类型 <br/> 示例: 1982-06-04 (Y-M-D)";
+$l['Tooltip']['Date'] = "日期类型 <br/> 示例: 2024-06-05 (Y-M-D)";
 $l['Tooltip']['RateName'] = "价格名称类型";
 $l['Tooltip']['OperatorName'] = "操作人名称类型";
 $l['Tooltip']['BillingPlanName'] = "记账计划名称类型";
@@ -613,7 +613,7 @@ $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "如果指�
 
 $l['Tooltip']['usernameTooltip'] = "准确的用户名，用户将<br/>&nbsp;&nbsp;&nbsp;
                     用来连接系统";
-$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";
+$l['Tooltip']['passwordTypeTooltip'] = "进行Radius用户认证的密码类型";
 $l['Tooltip']['passwordTooltip'] = "密码实例包含在系统里<br/>&nbsp;&nbsp;&nbsp;
                     所以要格外小心";
 $l['Tooltip']['groupTooltip'] = "用户将被添加到这个组<br/>&nbsp;&nbsp;&nbsp;
@@ -640,7 +640,7 @@ $l['Tooltip']['lengthOfPasswordTooltip'] = "示例：8<br/>&nbsp;&nbsp;&nbsp;
                     被创建。建议8-12个字符。";
 
 
-$l['Tooltip']['hotspotNameTooltip'] = "Example：酒店的电吉他<br/>&nbsp;&nbsp;&nbsp;
+$l['Tooltip']['hotspotNameTooltip'] = "示例：酒店的电吉他<br/>&nbsp;&nbsp;&nbsp;
                     一个友好的热点名称<br/>";
 
 $l['Tooltip']['hotspotMacaddressTooltip'] = "示例：00-aa-bb-cc-dd-ee<br/>&nbsp;&nbsp;&nbsp;
@@ -1822,8 +1822,6 @@ $l['menu']['Graphs'] = "图表";
 $l['menu']['Config'] = "配置";
 $l['menu']['Help'] = "帮助";
 
-// TODO translation needed.
-// once translated, delete these comment lines.
 $l['submenu']['General'] = "通用";
 $l['submenu']['Reporting'] = "报表";
 $l['submenu']['Maintenance'] = "维护";
@@ -1831,25 +1829,25 @@ $l['submenu']['Operators'] = "操作员";
 $l['submenu']['Backup'] = "备份";
 $l['submenu']['Logs'] = "日志";
 $l['submenu']['Status'] = "状态";
-$l['submenu']['Batch Users'] = "Batch Users";
+$l['submenu']['Batch Users'] = "批量用户处理";
 $l['submenu']['Dashboard'] = "控制台";
 $l['submenu']['Users'] = "用户";
 $l['submenu']['Hotspots'] = "热点";
 $l['submenu']['Nas'] = "Nas";
 $l['submenu']['User-Groups'] = "用户组";
-$l['submenu']['Profiles'] = "Profiles";
-$l['submenu']['HuntGroups'] = "HuntGroups";
-$l['submenu']['Attributes'] = "Attributes";
-$l['submenu']['Realm/Proxy'] = "Realm/Proxy";
+$l['submenu']['Profiles'] = "资料信息";
+$l['submenu']['HuntGroups'] = "寻线组";
+$l['submenu']['Attributes'] = "属性";
+$l['submenu']['Realm/Proxy'] = "域/代理";
 $l['submenu']['IP-Pool'] = "IP地址池";
-$l['submenu']['POS'] = "POS";
-$l['submenu']['Plans'] = "Plans";
-$l['submenu']['Rates'] = "Rates";
-$l['submenu']['Merchant-Transactions'] = "Merchant-Transactions";
-$l['submenu']['Billing-History'] = "Billing-History";
-$l['submenu']['Invoices'] = "Invoices";
-$l['submenu']['Payments'] = "Payments";
-$l['submenu']['Custom'] = "Custom";
+$l['submenu']['POS'] = "销售点";
+$l['submenu']['Plans'] = "计划";
+$l['submenu']['Rates'] = "费率";
+$l['submenu']['Merchant-Transactions'] = "交易管理";
+$l['submenu']['Billing-History'] = "账单记录";
+$l['submenu']['Invoices'] = "发票";
+$l['submenu']['Payments'] = "支付管理";
+$l['submenu']['Custom'] = "自定义查询";
 $l['submenu']['Hotspot'] = "热点";
 
 ?>
