@@ -146,7 +146,7 @@ if (!empty($day)) {
 
         $sql = sprintf("SELECT HOUR(acctstarttime) AS h, COUNT(DISTINCT(radacctid)) FROM %s
                          WHERE DATE(acctstarttime) <= '%s'
-                           AND (DATE(acctstoptime) >= '%s'OR (acctsessiontime = 0 AND acctinputoctets = 0 AND acctoutputoctets = 0))
+                           AND (DATE(acctstoptime) >= '%s' OR (acctsessiontime = 0 AND acctinputoctets = 0 AND acctoutputoctets = 0))
                          GROUP BY h", $configValues['CONFIG_DB_TBL_RADACCT'], $date, $date);
         $result = $dbSocket->query($sql);
 
@@ -217,5 +217,3 @@ $graph->Add($plot);
 $graph->Stroke();
 
 include('../../../common/includes/db_close.php');
-
-?>

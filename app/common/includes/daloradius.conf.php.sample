@@ -104,6 +104,16 @@ $configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] = '5';
 $configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] = '15';
 $configValues['CONFIG_DB_PASSWORD_MAX_LENGTH'] = '14';
 $configValues['CONFIG_DB_PASSWORD_MIN_LENGTH'] = '8';
+$configValues['CONFIG_FIX_STALE_ENABLED'] = 'no';
+$configValues['CONFIG_FIX_STALE_INTERVAL'] = '60';
+$configValues['CONFIG_FIX_STALE_GRACE'] = '30';
+$configValues['CONFIG_NODE_STATUS_MONITOR_ENABLED'] = 'no';
+$configValues['CONFIG_NODE_STATUS_MONITOR_HARD_DELAY'] = '15';
+$configValues['CONFIG_USER_TRAFFIC_MONITOR_ENABLED'] = 'no';
+$configValues['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT'] = '1073741824';
+$configValues['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT'] = '536870912';
+
+
 
 // invoice templates - optional
 $configValues['CONFIG_INVOICE_TEMPLATE'] = 'invoice_template.html';

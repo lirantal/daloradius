@@ -36,9 +36,8 @@ if (strpos($_SERVER['PHP_SELF'], '/common/includes/db_open.php') !== false) {
     // this is introduced in order to provide daloRADIUS to authenticate and manage several database backends without having to
     // install several web directories of daloradius
 
-    $location = (array_key_exists('location_name', $_SESSION) &&
-                 isset($_SESSION['location_name']) &&
-                 $_SESSION['location_name'] != "default")
+    $location = (isset($_SESSION) && array_key_exists('location_name', $_SESSION) &&
+                 isset($_SESSION['location_name']) && $_SESSION['location_name'] != "default")
               ? $configValues['CONFIG_LOCATIONS'][$_SESSION['location_name']]
               : "";
 
