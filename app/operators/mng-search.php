@@ -151,9 +151,11 @@
     }
 
     // setup php session variables for exporting
-    $_SESSION['reportTable'] = sprintf("%s AS rc LEFT JOIN %s AS ra ON ra.username=rc.username, %s AS rr LEFT JOIN %s AS ui ON rr.username=ui.username",
-                                       $configValues['CONFIG_DB_TBL_RADCHECK'], $configValues['CONFIG_DB_TBL_RADACCT'],
-                                       $configValues['CONFIG_DB_TBL_RADREPLY'],$configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+    $_SESSION['reportTable'] = sprintf("%s AS rc LEFT JOIN %s AS ra ON ra.username=rc.username
+                                                 LEFT JOIN %s AS rr ON rr.username=rc.username
+                                                 LEFT JOIN %s AS ui ON ui.username=rc.username",
+                                        $configValues['CONFIG_DB_TBL_RADCHECK'], $configValues['CONFIG_DB_TBL_RADACCT'],
+                                        $configValues['CONFIG_DB_TBL_RADREPLY'], $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
     $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE);
     $_SESSION['reportType'] = "usernameListGeneric";
 
@@ -410,4 +412,3 @@
     include('include/config/logging.php');
 
     print_footer_and_html_epilogue();
-?>

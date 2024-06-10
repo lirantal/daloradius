@@ -7,7 +7,13 @@
 **daloRADIUS** is written using the [PHP programming language](https://www.php.net/) and uses a [database abstraction layer](https://en.wikipedia.org/wiki/Database_abstraction_layer) (DAL) for database access. Although DAL allows the use of different [database management systems](https://en.wikipedia.org/wiki/Database#Database_management_system) (DBMSs) (e.g. MariaDB, MySQL, PostgreSQL, SQLite, MsSQL, etc.), daloRADIUS has been mainly tested on the [MariaDB](https://mariadb.org/) DBMS.
 
 ## Installation
-
+### quick installation
+To quickly install a basic standalone AAA infrastructure - based on daloRADIUS - on a [Debian](https://www.debian.org/download) environment, run the following command in a `root` terminal:
+```bash
+wget -qO - https://raw.githubusercontent.com/lirantal/daloradius/master/setup/install.sh | bash
+```
+---
+### installation guide
 To install daloRADIUS, you can follow the installation guide available in the project's official wiki:
 
 - [Wiki: Installing daloRADIUS](../../wiki/Installing-daloRADIUS)

@@ -41,6 +41,8 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','InterfaceSetti
                          'icon' => 'tools', );
 $descriptors1[] = array( 'type' => 'link', 'label' => "Message Settings", 'href' => 'config-messages.php',
                          'icon' => 'chat-text', );
+$descriptors1[] = array( 'type' => 'link', 'label' => "Recurring Tasks Settings", 'href' => 'config-crontab.php',
+                         'icon' => 'stopwatch', );
 
 $sections = array();
 $sections[] = array( 'title' => 'Global Settings', 'descriptors' => $descriptors1 );

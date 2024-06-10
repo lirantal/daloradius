@@ -81,7 +81,8 @@ unset($configValues['DALORADIUS_VERSION'], $configValues['DALORADIUS_DATE']);
 foreach ($configValues as $_configOption => $_configElem) {
 
     if (substr( $_configOption, 0, 4 ) === "APP_" || substr( $_configOption, 0, 7 ) === "COMMON_" ||
-        substr( $_configOption, 0, 10 ) === "OPERATORS_" || substr( $_configOption, 0, 6 ) === "USERS_") {
+        substr( $_configOption, 0, 10 ) === "OPERATORS_" || substr( $_configOption, 0, 6 ) === "USERS_" ||
+        substr( $_configOption, 0, 8 ) === "CONTRIB_") {
         continue;
     }
 

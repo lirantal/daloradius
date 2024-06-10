@@ -509,9 +509,20 @@ function print_table_top($descriptor=array()) {
         open_form($descriptor['form']);
     }
 
+    $class = "table table-striped table-hover";
+
+    // Check if 'class' key exists in $descriptor array
+    if (isset($descriptor['class'])) {
+        // Add the specified class to the $class variable
+        $class .= " " . $descriptor['class'];
+    }
+    
+    // Remove duplicate classes if any
+    $class = implode(" ", array_unique(explode(" ", $class)));
+
     echo <<<EOF
 
-<table class="table table-striped table-hover">
+<table class="{$class}">
     <thead>
         <tr>
 

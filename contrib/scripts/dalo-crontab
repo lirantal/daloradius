@@ -1,28 +1,20 @@
-#
 # daloRADIUS - RADIUS Web Platform
 # Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
 #
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
 #
-# daloRADIUS Crontab script entries
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 #
+# Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
+#
 
-# -- configuration start
+CONTRIB_SCRIPTS="/var/www/daloradius/contrib/scripts"
 
-# change to set daloRADIUS's contrib/scripts/ directory
-# by default this crontab script is in the same directory of the scripts which is
-# why this is left as `pwd`. if you move it elsewhere, change accordingly.
-
-DALO_DIR="/var/www/daloradius/contrib/scripts"
-
-# -- configuration end
-
-
-# This job cleans stale sessions. It runs every minute.
-* * * * * /usr/bin/php $DALO_DIR/maintenance/cleanStaleSessions.php >/dev/null 2>&1
-
-# This job cleans expired accounts. It runs every day at midnight.
-#0 0 * * * /usr/bin/php $DALO_DIR/maintenance/cleanExpiredAccounts.php >/dev/null 2>&1
-
-# This job monitors nodes. It runs every 15 minutes.
-#/15 * * * * /usr/bin/php $DALO_DIR/monitorNodes.php >/dev/null 2>&1
+# This job maintenance/terminate-stale-sessions.php runs every */1 minutes.
+*/1 * * * * /usr/bin/php "$CONTRIB_SCRIPTS/maintenance/fix-stale-sessions.php" >/dev/null 2>&1
