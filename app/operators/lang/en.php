@@ -1171,7 +1171,7 @@ $l['Intro']['mngradgroupchecksearch.php'] = "Search Group Check Mapping";
 
 $l['Intro']['configuser.php'] = "User Configuration";
 $l['Intro']['configmail.php'] = "Mail Configuration";
-
+$l['Intro']['configcrontab.php'] = "Recurring tasks configuration";
 $l['Intro']['configdb.php'] = "Database Configuration";
 $l['Intro']['configlang.php'] = "Language Configuration";
 $l['Intro']['configlogging.php'] = "Logging Configuration";
@@ -1432,6 +1432,20 @@ EOF;
 $l['helpPage']['configlang'] = <<<EOF
 <h2 class="fs-6">Language Settings</h2>
 <p>Configure the interface language.</p>
+EOF;
+
+$l['helpPage']['configcrontab'] = <<<EOF
+<p>This section allows you to configure various monitoring and alerting functionalities related to sessions and traffic within the system.<br>
+It allows you to adjust parameters such as stale session detection intervals, node monitoring settings, user traffic monitoring thresholds
+and email alert configurations. The section is organized into tabs, each focusing on a specific aspect of the system's monitoring and
+alerting capabilities. In particular, you can enable or disable checks, set thresholds and configure email recipients for alerts.
+Additionally, there's a tab for viewing the output of the system's crontab configuration,
+providing insight into scheduled tasks related to monitoring and maintenance.</p>
+
+<h3 class="fs-6">Stale sessions</h3>
+<p>Interval and Grace are used to calculate the time threshold. It's important to ensure that the time threshold is set accordingly
+to the <strong>Acct-Interim-Interval</strong>, especially to ensure it's greater than the Acct-Interim-Interval to avoid
+premature session termination.</p>
 EOF;
 
 $l['helpPage']['configlogging'] = <<<EOF

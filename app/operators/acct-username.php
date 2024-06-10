@@ -151,7 +151,7 @@
             print_table_prologue($descriptors);
 
             // print table top
-            print_table_top();
+            print_table_top(['class' => 'table-sm']);
 
             // second line of table header
             printTableHead($cols, $orderBy, $orderType, $partial_query_string);
@@ -176,22 +176,27 @@
                 $acctInputOctets = toxbyte($acctInputOctets);
                 $acctOutputOctets = toxbyte($acctOutputOctets);
                 
-                $ajax_id = "divContainerHotspotInfo_" . $count;
-                $param = sprintf('hotspot=%s', urlencode($hotspot));
-                $onclick = "ajaxGeneric('library/ajax/hotspot_info.php','retHotspotGeneralStat','$ajax_id','$param')";
-                $tooltip1 = array(
-                                    'subject' => $hotspot,
-                                    'onclick' => $onclick,
-                                    'ajax_id' => $ajax_id,
-                                    'actions' => array(),
-                                 );
-                $tooltip1['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ), 'label' => t('Tooltip','HotspotEdit'), );
-                $tooltip1['actions'][] = array( 'href' => 'acct-hotspot-compare.php', 'label' => t('all','Compare'), );
-                
+                if (!empty($hotspot)) {
+
+                    $ajax_id = "divContainerHotspotInfo_" . $count;
+                    $param = sprintf('hotspot=%s', urlencode($hotspot));
+                    $onclick = sprintf("ajaxGeneric('library/ajax/hotspot_info.php','retHotspotGeneralStat','%s','%s')", $ajax_id, $param);
+                    $tooltip1 = array(
+                                        'subject' => $hotspot,
+                                        'onclick' => $onclick,
+                                        'ajax_id' => $ajax_id,
+                                        'actions' => array(),
+                                    );
+                    $tooltip1['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ), 'label' => t('Tooltip','HotspotEdit'), );
+                    $tooltip1['actions'][] = array( 'href' => 'acct-hotspot-compare.php', 'label' => t('all','Compare'), );
+                    $tooltip1 = get_tooltip_list_str($tooltip1);
+                } else {
+                    $tooltip1 = "(n/a)";
+                }
                 
                 $ajax_id = "divContainerUserInfo_" . $count;
                 $param = sprintf('username=%s', urlencode($username));
-                $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
+                $onclick = sprintf("ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','%s','%s')", $ajax_id, $param);
                 $tooltip2 = array(
                                     'subject' => $username,
                                     'onclick' => $onclick,
@@ -200,7 +205,6 @@
                                  );
                 $tooltip2['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
                 
-                $tooltip1 = get_tooltip_list_str($tooltip1);
                 $tooltip2 = get_tooltip_list_str($tooltip2);
                 
                 // define table row

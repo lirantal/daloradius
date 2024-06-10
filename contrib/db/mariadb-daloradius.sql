@@ -10346,7 +10346,7 @@ INSERT INTO `operators_acl` VALUES (114, 6, 'acct_custom_query', 1),
                                    (248, 6, 'config_reports_dashboard', 1),
                                    (249, 6, 'rep_stat_ups', 1),
                                    (250, 6, 'rep_stat_raid', 1),
-                                   (251, 6, 'rep_stat_cron', 1),
+                                   (251, 6, 'config_crontab', 1),
                                    (252, 6, 'config_mail_settings', 1),
                                    (253, 6, 'config_mail_testing', 1);
 /*!40000 ALTER TABLE `operators_acl` ENABLE KEYS */;

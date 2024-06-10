@@ -60,5 +60,8 @@ $configValues['OPERATORS_LIBRARY_EXTENSIONS'] = implode(DIRECTORY_SEPARATOR, [ $
 
 $configValues['USERS_ROOT'] = implode(DIRECTORY_SEPARATOR, [ $configValues['APP_ROOT'], 'users' ]);
 
+$configValues['CONTRIB_ROOT'] = realpath(implode(DIRECTORY_SEPARATOR, [ $configValues['APP_ROOT'], '..', 'contrib' ]));
+$configValues['CONTRIB_SCRIPTS'] = implode(DIRECTORY_SEPARATOR, [ $configValues['CONTRIB_ROOT'], 'scripts' ]);
+
 // include version information
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'version.php' ]);
