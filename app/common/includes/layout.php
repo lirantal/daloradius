@@ -442,10 +442,11 @@ function print_checkbox($descriptor) {
 // - center => contains the page numbering controls
 // - end => contains additional controls (CSV export)
 function print_table_prologue($descriptors) {
-    echo '<div class="d-flex justify-content-between">';
+    echo '<div class="row p-0 my-3">';
 
+    echo '<div class="col-4 d-flex justify-content-start align-items-center">';
     if (isset($descriptors['start']) && is_array($descriptors['start'])) {
-        echo '<div>';
+        
         $start = $descriptors['start'];
 
         if (isset($start['common_controls'])) {
@@ -455,24 +456,25 @@ function print_table_prologue($descriptors) {
         if (isset($start['additional_controls']) && is_array($start['additional_controls'])) {
             print_additional_controls($start['additional_controls']);
         }
-        echo '</div>';
+        
     }
+    echo '</div>';
 
+    echo '<div class="col-4 d-flex justify-content-center align-items-center">';
     if (isset($descriptors['center']) && is_array($descriptors['center'])) {
         $center = $descriptors['center'];
 
         if (isset($center['draw']) && $center['draw']) {
-            echo '<div>';
             print_page_numbering($center['params']);
-            echo '</div>';
         }
     }
+    echo '</div>';
 
+    echo '<div class="col-4 d-flex justify-content-end align-items-center">';
     if (isset($descriptors['end']) && is_array($descriptors['end'])) {
-        echo '<div>';
         print_additional_controls($descriptors['end']);
-        echo '</div>';
     }
+    echo '</div>';
 
     echo '</div>';
 }

@@ -109,6 +109,17 @@ function insert_single_attribute($dbSocket, $subject, $attribute, $op, $value, $
     return false;
 }
 
+function hotspots_exists($dbSocket, $hotspot_name) {
+    global $configValues, $logDebugSQL;
+    $sql = sprintf("SELECT COUNT(DISTINCT(`id`)) FROM %s WHERE `name` = '%s'",
+                   $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'], $dbSocket->escapeSimple($hotspot_name));
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+
+    return $res->fetchrow()[0] > 0;
+}
+
+
 // give an open $dbSocket and a $username,
 // returns true if the provided username is found
 // in the radcheck table, if $table_index is not provided

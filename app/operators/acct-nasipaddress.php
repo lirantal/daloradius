@@ -21,15 +21,15 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
 
     // validate this parameter before including menu
     $onlyactive = (array_key_exists('only-active', $_GET) && isset($_GET['only-active']));
@@ -62,11 +62,11 @@
 
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
-             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+                in_array($_GET['orderBy'], array_keys($cols)))
+             ? $_GET['orderBy'] : array_keys($cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
                ? strtolower($_GET['orderType']) : "desc";
 
     // init logging variables
@@ -89,8 +89,8 @@
     print_title_and_help($title, $help);
 
     // we can only use the $dbSocket after we have included '../common/includes/db_open.php' which initialzes the connection and the $dbSocket object
-    include('../common/includes/db_open.php');
-    include('include/management/pages_common.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     $sql_WHERE = (!empty($nasipaddress))
                ? sprintf(" WHERE NASIPAddress LIKE '%%%s%%'", $dbSocket->escapeSimple($nasipaddress))
@@ -102,7 +102,9 @@
     $_SESSION['reportType'] = "accountingGeneric";
 
     $sql = "SELECT ra.RadAcctId, dh.name as hotspot, ra.UserName, ra.FramedIPAddress, ra.AcctStartTime, ra.AcctStopTime,
-                   ra.AcctSessionTime, ra.AcctInputOctets, ra.AcctOutputOctets, ra.AcctTerminateCause, ra.NASIPAddress
+                   ra.AcctSessionTime, ra.AcctInputOctets, ra.AcctOutputOctets,
+                   CASE WHEN ra.AcctTerminateCause = '0' THEN 'Unknown' ELSE ra.AcctTerminateCause END AS AcctTerminateCause,
+                   ra.NASIPAddress
               FROM %s AS ra LEFT JOIN %s AS dh ON ra.calledstationid=dh.mac";
     
     $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']) . $sql_WHERE;
@@ -113,8 +115,9 @@
         /* START - Related to pages_numbering.php */
         
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        // must be included after opendb because it needs to read
+        // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
         
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
@@ -153,7 +156,7 @@
         print_table_prologue($descriptors);
 
         // print table top
-        print_table_top();
+        print_table_top(['class' => 'table-sm']);
 
         // second line of table header
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
@@ -174,40 +177,85 @@
             list($radAcctId, $hotspot, $username, $framedIPAddress, $acctStartTime, $acctStopTime,
                  $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress) = $row;
                 
-            $acctSessionTime = time2str($acctSessionTime);
+            $acctSessionTime = time2str($acctSessionTime, true);
             $acctInputOctets = toxbyte($acctInputOctets);
             $acctOutputOctets = toxbyte($acctOutputOctets);
             
-            $ajax_id = "divContainerHotspotInfo_" . $count;
-            $param = sprintf('hotspot=%s', urlencode($hotspot));
-            $onclick = "ajaxGeneric('library/ajax/hotspot_info.php','retHotspotGeneralStat','$ajax_id','$param')";
-            $tooltip1 = array(
+            if (hotspots_exists($dbSocket, $hotspot)) {
+                $ajax_id = "divContainerHotspotInfo_" . $count;
+                $param = sprintf('hotspot=%s', urlencode($hotspot));
+                $onclick = "ajaxGeneric('library/ajax/hotspot_info.php','retHotspotGeneralStat','$ajax_id','$param')";
+
+                $tooltip1 = [
                                 'subject' => $hotspot,
                                 'onclick' => $onclick,
                                 'ajax_id' => $ajax_id,
                                 'actions' => array(),
-                             );
-            $tooltip1['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ), 'label' => t('Tooltip','HotspotEdit'), );
-            $tooltip1['actions'][] = array( 'href' => 'acct-hotspot-compare.php', 'label' => t('all','Compare'), );
+                            ];
+                $tooltip1['actions'][] = [ 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ),
+                                           'label' => t('Tooltip','HotspotEdit'), ];
+                $tooltip1['actions'][] = [ 'href' => 'acct-hotspot-compare.php',
+                                           'label' => t('all','Compare'), ];
+                
+                $tooltip1 = get_tooltip_list_str($tooltip1);
+            } else {
+                $tooltip1 = (!empty($hotspot)) ? $hotspot : "(n/a)";
+            }
+
+            if (!empty($username)) {
+                $ajax_id = "divContainerUserInfo_" . $count;
+                $param = sprintf('username=%s', urlencode($username));
+                $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
             
-            
-            $ajax_id = "divContainerUserInfo_" . $count;
-            $param = sprintf('username=%s', urlencode($username));
-            $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
-            $tooltip2 = array(
+                $tooltip2 = [
                                 'subject' => $username,
                                 'onclick' => $onclick,
                                 'ajax_id' => $ajax_id,
                                 'actions' => array(),
-                             );
-            $tooltip2['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
-            
-            $tooltip1 = get_tooltip_list_str($tooltip1);
-            $tooltip2 = get_tooltip_list_str($tooltip2);
+                            ];
+                if (user_exists($dbSocket, $username, 'CONFIG_DB_TBL_RADACCT')) {
+                    $tooltip2['actions'][] = [ 'href' => sprintf('acct-username.php?username=%s', urlencode($username), ),
+                                               'label' => t('button','UserAccounting'), ];
+                }
+                if (user_exists($dbSocket, $username, 'CONFIG_DB_TBL_RADCHECK')) {
+                    $tooltip2['actions'][] = [ 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ),
+                                               'label' => t('Tooltip','UserEdit'), ];
+                }
+                
+                $tooltip2 = get_tooltip_list_str($tooltip2);
+            } else {
+                $tooltip2 = "(n/a)";
+            }
+
+            if (preg_match(LOOSE_IP_REGEX, $framedIPAddress, $m) !== false) {
+                $tooltip3 = [
+                    'subject' => $framedIPAddress,
+                    'actions' => array(),
+                ];
+                $tooltip3['actions'][] = [  'href' => sprintf('acct-ipaddress.php?ipaddress=%s', urlencode($framedIPAddress), ),
+                                            'label' => t('button','IPAccounting'), ];
+                
+                $tooltip3 = get_tooltip_list_str($tooltip3);
+            } else {
+                $tooltip3 = (!empty($framedIPAddress)) ? $framedIPAddress : "(n/a)";
+            }
+
+            if (preg_match(LOOSE_IP_REGEX, $nasIPAddress, $m) !== false) {
+                $tooltip4 = [
+                    'subject' => $nasIPAddress,
+                    'actions' => array(),
+                ];
+                $tooltip4['actions'][] = [  'href' => sprintf('acct-nasipaddress.php?ipaddress=%s', urlencode($nasIPAddress), ),
+                                            'label' => t('button','NASIPAccounting'), ];
+                
+                $tooltip4 = get_tooltip_list_str($tooltip4);
+            } else {
+                $tooltip4 = (!empty($nasIPAddress)) ? $nasIPAddress : "(n/a)";
+            }
             
             // define table row
-            $table_row = array( $radAcctId, $tooltip1, $tooltip2, $framedIPAddress, $acctStartTime, $acctStopTime,
-                                $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $nasIPAddress);
+            $table_row = array( $radAcctId, $tooltip1, $tooltip2, $tooltip3, $acctStartTime, $acctStopTime,
+                                $acctSessionTime, $acctInputOctets, $acctOutputOctets, $acctTerminateCause, $tooltip4);
 
             // print table row
             print_table_row($table_row);
@@ -234,12 +282,11 @@
 
     } else {
         $failureMsg = "Nothing to display";
-        include_once("include/management/actionMessages.php");
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
     
-    include('../common/includes/db_close.php');
-
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     
     print_footer_and_html_epilogue();
-?>
+

@@ -120,8 +120,27 @@ function setupLinks($pageNum, $maxPage, $orderBy, $orderType, $request1="", $req
     echo setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1, $request2, $request3);
 }
 
+function get_link_href($partial_query_string, $pageNum="", $orderBy="", $orderType="asc") {
+    // partial_query_string should be valid!
+    $href = sprintf("?orderType=%s", $orderType);
+
+    if (!empty($orderBy)) {
+        $href .= sprintf("&orderBy=%s", $orderBy);
+    }
+
+    if (is_numeric($pageNum)) {
+        $href .= sprintf("&page=%d", $pageNum);
+    }
+
+    if (!empty($partial_query_string)) {
+        $href .= $partial_query_string;
+    }
+
+    return $href;
+}
+
 // this is an utility function used for printing a "go to <page num.>" link in the function setupNumbering_str()
-function print_link($aPageNum, $pageNum, $orderBy, $orderType, $request1="", $request2="", $request3="") {     
+function print_link($aPageNum, $pageNum, $orderBy, $orderType, $request1="", $request2="", $request3="") {
     $link_format = '<li class="page-item"><a class="page-link" href="?page=%s&orderBy=%s&orderType=%s%s%s%s">%s</a></li>';
     $selected_link_format = '<li class="page-item active" aria-current="page"><span class="page-link">%s</span></li>';
     
@@ -162,7 +181,7 @@ function setupNumbering_str($numrows, $rowsPerPage, $pageNum, $orderBy, $orderTy
         $pageNum = 1;
     }
     
-    $result = '<nav><ul class="pagination pagination-sm">';
+    $result = '<nav><ul class="pagination pagination-sm m-0">';
     
     if ($numofpages <= 20) {
         for ($i = 1; $i <= $numofpages; $i++) {
