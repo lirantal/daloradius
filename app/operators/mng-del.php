@@ -21,25 +21,25 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
-    
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-    
+
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+ 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    $valid_tablenames = array(
-                                $configValues['CONFIG_DB_TBL_RADCHECK'],
-                                $configValues['CONFIG_DB_TBL_RADREPLY'],
-                                $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
-                                $configValues['CONFIG_DB_TBL_RADGROUPCHECK']
-                             );
+    $valid_tablenames = [
+                            $configValues['CONFIG_DB_TBL_RADCHECK'],
+                            $configValues['CONFIG_DB_TBL_RADREPLY'],
+                            $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
+                            $configValues['CONFIG_DB_TBL_RADGROUPCHECK']
+                        ];
 
-    include('../common/includes/db_open.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
@@ -55,11 +55,11 @@
 
 
             // validate values
-            $usernames = array();
+            $usernames = [];
             
             if (array_key_exists('username', $_POST) && !empty($_POST['username'])) {
                 
-                $tmp = (!is_array($_POST['username'])) ? array($_POST['username']) : $_POST['username'];
+                $tmp = (!is_array($_POST['username'])) ? [ $_POST['username'] ] : $_POST['username'];
                 foreach ($tmp as $value) {
                     
                     $value = urldecode($value);
@@ -74,14 +74,14 @@
                 
                     if (!empty($id__attribute) && !empty($tablename)) {
                         
-                        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE username='%s'",
+                        $sql = sprintf("SELECT COUNT(`id`) FROM %s WHERE username='%s'",
                                        $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($usernames[0]));
                         $res = $dbSocket->query($sql);
                         $logDebugSQL .= "$sql;\n";
                         
                         $check_attr_count = intval($res->fetchrow()[0]);
                         
-                        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE username='%s' AND attribute='Auth-Type' OR attribute LIKE '%%-Password'",
+                        $sql = sprintf("SELECT COUNT(`id`) FROM %s WHERE username='%s' AND attribute='Auth-Type' OR attribute LIKE '%%-Password'",
                                        $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($usernames[0]));
                         $res = $dbSocket->query($sql);
                         $logDebugSQL .= "$sql;\n";
@@ -91,9 +91,9 @@
                         list($columnId, $attribute) = explode("__", $id__attribute);
                         $attribute = trim($attribute);
                         $columnId = intval(trim($columnId));
+                        $is_last_auth_attr = $check_auth_attr_count == 1 && ($attribute == 'Auth-Type' || preg_match("/-Password$/", $attribute) === 1);
                         
-                        if ($tablename == 'radcheck' && $check_attr_count == 1 ||
-                            (($attribute == 'Auth-Type' || preg_match("/-Password$/", $attribute) !== false) && $check_auth_attr_count == 1)) {
+                        if ($tablename == $configValues['CONFIG_DB_TBL_RADCHECK'] && ($check_attr_count == 1 || $is_last_auth_attr)) {
                             // if operator wants to remove the last check attribute
                             // or the last "password-like" check attribute
                             // they should delete all user related info stored in the db
@@ -116,7 +116,7 @@
                             $logAction = sprintf("$format on page: ", $attribute, $usernames[0]);
                         }
                     } else {
-                        $dbusers = array();
+                        $dbusers = [];
                         
                         foreach ($usernames as $u) {
                             if (!empty($dbSocket->escapeSimple($u))) {
@@ -149,13 +149,13 @@
                             $res = $dbSocket->query($sql);
                             $logDebugSQL .= "$sql;\n";
                             
-                            $tables = array(
-                                                $configValues['CONFIG_DB_TBL_RADCHECK'],
-                                                $configValues['CONFIG_DB_TBL_RADREPLY'],
-                                                $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                                                $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                                                $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                           );
+                            $tables = [
+                                        $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                        $configValues['CONFIG_DB_TBL_RADREPLY'],
+                                        $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
+                                        $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                                      ];
 
                             if ($delradacct) {
                                 $tables[] = $configValues['CONFIG_DB_TBL_RADACCT'];
@@ -182,9 +182,9 @@
                 }
             } else if (array_key_exists('clearSessionsUsers', $_POST) && !empty($_POST['clearSessionsUsers'])) {
                 
-                $username__starttimes = array();
+                $username__starttimes = [];
                 
-                $tmp = (!is_array($_POST['clearSessionsUsers'])) ? array($_POST['clearSessionsUsers']) : $_POST['clearSessionsUsers'];
+                $tmp = (!is_array($_POST['clearSessionsUsers'])) ? [ $_POST['clearSessionsUsers'] ] : $_POST['clearSessionsUsers'];
                 foreach ($tmp as $value) {
                     
                     $value = trim(str_replace("%", "", $value));
@@ -224,42 +224,39 @@
         }
     }
 
-    include('../common/includes/db_close.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
-    include_once("lang/main.php");
-    include("../common/includes/layout.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // print HTML prologue
     $title = t('Intro','mngdel.php');
     $help = t('helpPage','mngdel');
     
     print_html_prologue($title, $langCode);
-
-    
     
     if (!empty($username) && !is_array($username)) {
         $title .= " :: " . htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
     }
-    
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
-
-    include('../common/includes/db_open.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
     
-    $sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
+    $sql = sprintf("SELECT DISTINCT(`username`) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
     
-    $options = array();
+    $options = [];
     while ($row = $res->fetchrow()) {
         $options[] = $row[0];
     }
     
-    include('../common/includes/db_close.php');
-
-    $input_descriptors1 = array();
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    
+    $input_descriptors1 = [];
 
     $input_descriptors1[] = array(
                                 'name' => 'username[]',
@@ -309,6 +306,5 @@
 
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-?>

@@ -53,23 +53,26 @@ function createPassword($length, $chars) {
 
 /* convert byte to to size */
 function toxbyte($size) {
-    $magnitudes = array(
-                         "GB" => 1073741824, // Gigabytes
-                         "MB" => 1048576,    // Megabytes
-                         "KB" => 1024        // Kilobytes
-                       );
+    if (!is_numeric($size) || $size <= 0) {
+        return "0 B";
+    }
+
+    $magnitudes = [
+        "TB" => 1099511627776, // Terabytes
+        "GB" => 1073741824,    // Gigabytes
+        "MB" => 1048576,       // Megabytes
+        "KB" => 1024           // Kilobytes
+    ];
 
     foreach ($magnitudes as $label => $magnitude) {
-        if ($size > $magnitude) {
+        if ($size >= $magnitude) {
             $ret = round($size / $magnitude, 2);
             return "$ret $label";
         }
     }
 
     // Bytes
-    if (!empty($size) && $size <= 1024) {
-        return "$size B";
-    }
+    return "$size B";
 }
 
 // set of functions to ease the usage of escaping " chars in echo or print functions
@@ -79,35 +82,58 @@ function printq($text) { print qq($text); }
 function printqn($text) { print qq($text)."\n"; }
 
 // function taken from dialup_admin
-function time2str($time) {
+function time2str($time, $abbreviate = false) {
+    // Check if $time is a valid number
+    if (!is_numeric($time) || $time < 0) {
+        return "(n/a)";
+    }
 
-    $str = "";                // initialize variable
     $time = floor($time);
-    if (!$time)
+
+    // Initialize the result string
+    if ($time == 0) {
         return "0 seconds";
-    $d = $time/86400;
-    $d = floor($d);
-    if ($d){
-        $str .= "$d days, ";
-        $time = $time % 86400;
     }
-    $h = $time/3600;
-    $h = floor($h);
-    if ($h){
-        $str .= "$h hours, ";
-        $time = $time % 3600;
+
+    $str = "";
+
+    // Define labels
+    $labels = $abbreviate 
+        ? ['d' => 'd', 'h' => 'h', 'm' => 'm', 's' => 's'] 
+        : ['d' => ' days', 'h' => ' hours', 'm' => ' minutes', 's' => ' seconds'];
+
+    // Calculate days
+    $d = floor($time / 86400);
+    if ($d > 0) {
+        $str .= sprintf("%d%s, ", $d, $labels['d']);
+        $time %= 86400;
     }
-    $m = $time/60;
-    $m = floor($m);
-    if ($m){
-        $str .= "$m minutes, ";
-        $time = $time % 60;
+
+    // Calculate hours
+    $h = floor($time / 3600);
+    if ($h > 0) {
+        $str .= sprintf("%d%s, ", $h, $labels['h']);
+        $time %= 3600;
     }
-    if ($time)
-        $str .= "$time seconds, ";
-    $str = preg_replace("/, $/",'',$str);
+
+    // Calculate minutes
+    $m = floor($time / 60);
+    if ($m > 0) {
+        $str .= sprintf("%d%s, ", $m, $labels['m']);
+        $time %= 60;
+    }
+
+    // Calculate seconds
+    if ($time > 0) {
+        $str .= sprintf("%d%s, ", $time, $labels['s']);
+    }
+
+    // Remove the trailing comma and space
+    $str = rtrim($str, ", ");
+
     return $str;
 }
+
 
 // return next billing date (Y-m-d format) based on
 // the billing recurring period and billing schedule type

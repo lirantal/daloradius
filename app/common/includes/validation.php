@@ -137,37 +137,41 @@ $valid_nastypes = array(
 
 // accounting custom-query options list
 $acct_custom_query_options_all = array(
-                                        "RadAcctId",
-                                        "AcctSessionId",
-                                        "AcctUniqueId",
-                                        "UserName",
-                                        "Realm",
-                                        "NASIPAddress",
-                                        "NASPortId",
-                                        "NASPortType",
-                                        "AcctStartTime",
-                                        "AcctStopTime",
-                                        "AcctSessionTime",
-                                        "AcctAuthentic",
-                                        "ConnectInfo_start",
-                                        "ConnectInfo_stop",
-                                        "AcctInputOctets",
-                                        "AcctOutputOctets",
-                                        "CalledStationId",
-                                        "CallingStationId",
-                                        "AcctTerminateCause",
-                                        "ServiceType",
-                                        "FramedProtocol",
-                                        "FramedIPAddress",
-                                        "AcctStartDelay",
-                                        "AcctStopDelay"
-                                    );
+                                        "radacctid",
+                                        "acctsessionid",
+                                        "acctuniqueid",
+                                        "username",
+                                        "realm",
+                                        "nasipaddress",
+                                        "nasportid",
+                                        "nasporttype",
+                                        "acctstarttime",
+                                        "acctupdatetime",
+                                        "acctstoptime",
+                                        "acctinterval",
+                                        "acctsessiontime",
+                                        "acctauthentic",
+                                        "connectinfo_start",
+                                        "connectinfo_stop",
+                                        "acctinputoctets",
+                                        "acctoutputoctets",
+                                        "calledstationid",
+                                        "callingstationid",
+                                        "acctterminatecause",
+                                        "servicetype",
+                                        "framedprotocol",
+                                        "framedipaddress",
+                                        "framedipv6address",
+                                        "framedipv6prefix",
+                                        "framedinterfaceid",
+                                        "delegatedipv6prefix",
+                                      );
 
 // accounting custom-query options selected by default
 $acct_custom_query_options_default = array(
-                                            "UserName", "Realm", "NASIPAddress", "AcctStartTime", "AcctStopTime",
-                                            "AcctSessionTime", "AcctInputOctets", "AcctOutputOctets", "CalledStationId",
-                                            "CallingStationId", "AcctTerminateCause", "FramedIPAddress"
+                                            "username", "nasipaddress", "acctstarttime", "acctstoptime",
+                                            "acctsessiontime", "acctinputoctets", "acctoutputoctets", "calledstationid",
+                                            "callingstationid", "acctterminatecause", "framedipaddress"
                                           );
 
 // billing history query options list

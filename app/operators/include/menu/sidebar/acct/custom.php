@@ -70,9 +70,9 @@ $components[] = array(
                         "id" => 'random',
                         "caption" => "Operator",
                         "type" => "select",
-                        "name" => "operator",
+                        "name" => "where_operator",
                         "options" => array("equals", "contains"),
-                        "selected_value" => ((isset($operator)) ? $operator : "equals"),
+                        "selected_value" => ((isset($where_operator)) ? $where_operator : "equals"),
                      );
 
 $components[] = array(
@@ -94,7 +94,7 @@ $components[] = array(
                         "options" => $acct_custom_query_options_all,
                         "selected_value" => ((isset($sqlfields)) ? $sqlfields : $acct_custom_query_options_default),
                         "multiple" => true,
-                        "size" => 7,
+                        "size" => 10,
                         "show_controls" => true,
                      );
 
@@ -113,7 +113,7 @@ $components[] = array(
                         "type" => "select",
                         "name" => "orderType",
                         "options" => array("asc" => "Ascending", "desc" => "Descending"),
-                        "selected_value" => ((isset($orderType)) ? $orderType : "asc")
+                        "selected_value" => ((isset($orderType)) ? $orderType : "desc")
                      );
 
 $descriptors1 = array();

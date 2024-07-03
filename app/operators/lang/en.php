@@ -1033,7 +1033,7 @@ $l['Intro']['acctmain.php'] = "Accounting Page";
 $l['Intro']['acctplans.php'] = "Plans Accounting Page";
 $l['Intro']['acctnasipaddress.php'] = "NAS IP Accounting";
 $l['Intro']['acctusername.php'] = "Users Accounting";
-$l['Intro']['acctcustom.php'] = "Custom Accountings";
+$l['Intro']['acctcustom.php'] = "Custom Accounting";
 $l['Intro']['acctcustomquery.php'] = "Custom Query Accounting";
 $l['Intro']['acctmaintenance.php'] = "Accounting Records Maintenance";
 $l['Intro']['acctmaintenancecleanup.php'] = "Cleanup Stale-connections";
@@ -1732,18 +1732,20 @@ $l['helpPage']['acctcustom_short'] = <<<EOF
 EOF;
 
 
-$l['helpPage']['acctcustom'] = $l['helpPage']['acctcustom_short'] . <<<EOF
-<p>Provides the most flexible custom query to run on the database. You can adjust the query settings in the left sidebar to your maximum advantage.</p>
-<h2 class="fs-6">Between Dates</h2>
-<p>Set the beginning and ending date to retrieve data within the specified range.</p>
+$l['helpPage']['acctcustom'] = <<<EOF
+<h2 class="fs-6">Custom query</h2>
+<p>This feature allows for highly customizable queries on the database, empowering operators to tailor data retrieval precisely to their needs. You can adjust query settings in the left sidebar to optimize data extraction.</p>
+<h2 class="fs-6">Starting and ending dates</h2>
+<p>Specify the starting and ending dates to retrieve data within a specific timeframe.</p>
 <h2 class="fs-6">Where</h2>
-<p>Set the field in the database that you want to match, like a key. Choose whether the value to match should be equal (=) or contain part of the value you search for, like a regex. If you choose to use the Contains operator, you shouldn't add any wildcards like the common form "*", but rather the value you input will automatically be searched in this form: *value* (or in mysql style: %value%).</p>
+<p>Define the database field for matching purposes, acting like a key. Choose between exact matching ("equals") or partial matching ("contains") using the respective operator. Avoid using wildcards like "*", as the input value will automatically be formatted for searching (e.g., *value* or %value%).</p>
 <h2 class="fs-6">Query Accounting Fields</h2>
-<p>You may choose which fields you would like to present in the resulting list.</p>
-<h2 class="fs-6">Order By</h2>
-<p>Choose by which field you would like to order the results and its type, either ascending or descending.</p>
+<p>Select which fields you want to include in the resulting list.</p>
+<h2 class="fs-6">Order by and order type</h2>
+<p>Specify the field by which you want to sort the results and choose between ascending or descending order.</p>
 EOF;
-$l['helpPage']['acctcustomquery'] = "";
+
+$l['helpPage']['acctcustomquery'] = $l['helpPage']['acctcustom'];
 
 
 $l['helpPage']['acctplans'] = "";
