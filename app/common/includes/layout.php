@@ -776,7 +776,7 @@ function print_input_field($input_descriptor) {
 
     }
 
-    if (array_key_exists('tooltipText', $input_descriptor)) {
+    if (array_key_exists('tooltipText', $input_descriptor) && !empty($input_descriptor['tooltipText'])) {
         $tooltipText = str_replace('"', "'", strip_tags($input_descriptor['tooltipText']));
 
         printf(' placeholder="%s"', $tooltipText);
@@ -784,9 +784,7 @@ function print_input_field($input_descriptor) {
         if (array_key_exists('sidebar', $input_descriptor) && $input_descriptor['sidebar'] !== false) {
             printf(' tooltipText="%s"', $tooltipText);
         }
-    }
 
-    if (array_key_exists('tooltipText', $input_descriptor) && !empty($input_descriptor['tooltipText'])) {
         $describedby_id = $input_descriptor['id'] .  '-help';
         printf(' aria-describedby="%s"', $describedby_id);
     }
@@ -815,7 +813,7 @@ function print_input_field($input_descriptor) {
                     $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
                     printf('<option value="%s">' . "\n", $value);
                 }
-                echo '';
+                echo '</datalist>';
                 break;
 
             case 'ajax':

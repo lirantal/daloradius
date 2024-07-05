@@ -21,25 +21,24 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    //~ include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    // include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    $param_label = array(
-                            'recipient_email_address' => "Recipient's email address",
-                            'recipient_name' => "Recipient's name",
-                            
-                        );
+    $param_label = [
+                        'recipient_email_address' => "Recipient's email address",
+                        'recipient_name' => "Recipient's name",   
+                   ];
 
     $invalid_input = array();
 
@@ -72,7 +71,8 @@
                     $logAction .= "$failureMsg on page: ";
                 } else {
                     
-                    include "../common/includes/notifications.php";
+                    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'mail.php' ]);
+                    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'pdf.php' ]);
                     
                     // Sample recipient information
                     $recipient_email_address = trim($_POST['recipient_email_address']);
@@ -82,8 +82,13 @@
                     $subject = 'Test Email';
                     $body = 'This is a test email. If you received this, your SMTP mailer is working fine.';
 
+                    $attachment = [
+                        'content' => create_pdf($body),
+                        'filename' => 'test.pdf',
+                    ];
+
                     // Call the send_email function
-                    list($success, $message) = send_email($configValues, $recipient_email_address, $recipient_name, $subject, $body);
+                    list($success, $message) = send_email($configValues, $recipient_email_address, $recipient_name, $subject, $body, $attachment);
 
                     // Check the result
                     if ($success) {
@@ -114,15 +119,13 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     $fieldset0_descriptor = array(
                                     "title" => t('title','Settings')
                                  );
 
     $input_descriptors0 = array();
-
-
 
     $input_descriptors0[] = array(
                                         "type" => "email",
@@ -167,7 +170,5 @@
 
     close_form();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-
-?>

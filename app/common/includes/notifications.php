@@ -26,14 +26,15 @@ if (strpos($_SERVER['PHP_SELF'], '/common/includes/notifications.php') !== false
     exit;
 }
 
+include_once 'config_read.php';
+
 // Include PHPMailer classes
-include __DIR__ . '/../library/phpmailer/Exception.php';
-include __DIR__ . '/../library/phpmailer/SMTP.php';
-include __DIR__ . '/../library/phpmailer/PHPMailer.php';
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_LIBRARY'], 'phpmailer', 'Exception.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_LIBRARY'], 'phpmailer', 'SMTP.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_LIBRARY'], 'phpmailer', 'PHPMailer.php' ]);
 
 // Include the dompdf class
-require_once __DIR__ . '/../library/dompdf/dompdf_config.inc.php';
-
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_LIBRARY'], 'dompdf', 'vendor', 'autoload.php' ]);
 
 /**
  * createPDF()
@@ -58,6 +59,20 @@ function createPDF($html, $base_path) {
     return $dompdf->output();
 }
 
+function create_pdf($html_content) {
+    // instantiate and use the dompdf class
+    $dompdf = new Dompdf\Dompdf();
+    $dompdf->loadHtml($html_content);
+
+    // (Optional) Setup the paper size and orientation
+    $dompdf->setPaper('A4', 'landscape');
+
+    // Render the HTML as PDF
+    $dompdf->render();
+
+    // Output the generated PDF to Browser
+    return $dompdf->output();
+}
 
 /**
  * Function for sending an email using PHPMailer.
@@ -70,7 +85,7 @@ function createPDF($html, $base_path) {
  *
  * @return array [bool, string] An array indicating success or failure and a message.
  */
-function send_email($config_values, $recipient_email_address, $recipient_name, $subject, $body) {
+function send_email($config_values, $recipient_email_address, $recipient_name, $subject, $body, $attachment=array()) {
     // Create a PHPMailer instance
     $mail = new PHPMailer\PHPMailer\PHPMailer(true);
 
@@ -96,6 +111,11 @@ function send_email($config_values, $recipient_email_address, $recipient_name, $
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $body;
+
+        if (is_array($attachment) && array_key_exists('content', $attachment) && array_key_exists('filename', $attachment) ) {
+            $mail->addStringAttachment($attachment['content'], $attachment['filename'],
+                                       PHPMailer\PHPMailer\PHPMailer::ENCODING_BASE64, 'application/pdf', 'attachment');
+        }
 
         // Send the email
         $mail->send();

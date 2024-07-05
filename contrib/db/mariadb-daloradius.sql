@@ -2362,7 +2362,7 @@ INSERT INTO `dictionary` VALUES (1,'ipaddr','AAT-Client-Primary-DNS',NULL,NULL,'
                                 (2031,'integer','Connect-Rate',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2032,'string','Add-Prefix',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2033,'string','Add-Suffix',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
-                                (2034,'date','Expiration',NULL,NULL,'dictionary.freeradius.internal',':=','check','date','Specifies the expiration date in the format of \\\'01 Jan 2008\\\' for a user.'),
+                                (2034,'date','Expiration',NULL,NULL,'dictionary.freeradius.internal',':=','check','date','The Expiration attribute is a date in the format shown by the `date` utility (e.g. "Thu 3 Apr 2014 13:19:52 EDT").'),
                                 (2035,'integer','Autz-Type',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2036,'integer','Acct-Type',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2037,'integer','Session-Type',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),

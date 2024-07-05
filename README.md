@@ -12,6 +12,8 @@ To quickly install a basic standalone AAA infrastructure - based on daloRADIUS -
 ```bash
 wget -qO - https://raw.githubusercontent.com/lirantal/daloradius/master/setup/install.sh | bash
 ```
+At the end of this procedure, **the installation script will generate random credentials to be used for the operator's first login**.
+
 ---
 ### installation guide
 To install daloRADIUS, you can follow the installation guide available in the project's official wiki:
