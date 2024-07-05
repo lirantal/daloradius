@@ -1,11 +1,10 @@
-This guide will take you through the process of deploying a **basic open-source AAA infrastructure** on a dedicated instance of [Debian](https://www.debian.org/download) 11 or 12 using the following components:
- - [MariaDB](https://mariadb.org/download/) (version 10.5);
- - [FreeRADIUS](https://freeradius.org/releases/) (version 3.0.x);
- - daloRADIUS, which requires:
-   - [Apache 2](https://httpd.apache.org/download.cgi) (version 2.4.x);
-   - [PHP](https://www.php.net/downloads.php) (version 7.4).
-
-Please note that this guide has been fully tested on a Debian 11 environment, and the specific versions of the components used are mentioned in the above list.
+This guide will walk you through the process of deploying a **basic open-source AAA infrastructure** on a dedicated instance of [Debian](https://www.debian.org/download). The configurations that have been tested are provided separately for Debian 11 and Debian 12, as outlined in the table below:
+Package\OS|Debian 11|Debian 12|
+--|--|--|
+[MariaDB](https://mariadb.org/download/)|10.5|10.11
+[FreeRADIUS](https://freeradius.org/releases/)|3.0.x|3.2.x
+[Apache 2](https://httpd.apache.org/download.cgi)|2.4.x|2.4.x
+[PHP](https://www.php.net/downloads.php)|7.4.x|8.2.x
 
 # Prerequisites
 Before proceeding with the installation, please ensure the following:
@@ -124,7 +123,7 @@ To proceed with the installation of daloRADIUS, execute the following command wh
 apt --no-install-recommends install apache2 php libapache2-mod-php \
                                     php-mysql php-zip php-mbstring php-common php-curl \
                                     php-gd php-db php-mail php-mail-mime \
-                                    mariadb-client freeradius-utils
+                                    mariadb-client freeradius-utils rsyslog
 ```
 
 After the installation of the required packages, proceed to download the daloRADIUS package with git by executing the following commands. These commands will create a new directory named daloradius in `/var/www`:
@@ -221,6 +220,10 @@ cd /var/www/daloradius/app/common/includes
 cp daloradius.conf.php.sample daloradius.conf.php
 chown www-data:www-data daloradius.conf.php  
 chmod 664 daloradius.conf.php
+```
+Also the file `dalo-crontab` needs to be owned by `www-data`:
+```bash
+chown www-data:www-data /var/www/daloradius/contrib/scripts/dalo-crontab
 ```
 
 After that, the `daloradius.conf.php` file must be edited to match the FreeRADIUS and MariaDB configurations:

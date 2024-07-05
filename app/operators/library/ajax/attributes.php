@@ -23,65 +23,158 @@
  *********************************************************************************************************
  */
 
-include('../checklogin.php');
-include_once('../../lang/main.php');
-include_once('../../../common/includes/validation.php');
+include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', '..', 'common', 'includes', 'config_read.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
 
-//
-// functions
-//
-
+/**
+ * @brief Populates an HTML select element with options from table names.
+ *
+ * This function iterates through an array of table names and adds each name
+ * as an option to an HTML select element, if the element has the type 'select-one'.
+ */
 function populateTables() {
-
-    $tables = array( 'check', 'reply' );
+    // Array of table names to add to the select element
+    $tables = ['check', 'reply'];
     
+    // Iterate through each table name and add it as an option to the select element
     foreach ($tables as $table) {
-        printf("if (objTable.type == 'select-one') { objTable.add(new Option('%s', '%s')); }\n", $table, $table);
+        // Print the JavaScript code to add the option
+        printf(<<<EOF
+if (objTable.type == 'select-one') {
+    objTable.add(new Option('%s', '%s'));
+}
+EOF, $table, $table);
     }
-
 }
 
-
+/**
+ * @brief Populates an HTML select element with options from valid operations.
+ *
+ * This function iterates through a global array of valid operations and adds each
+ * as an option to an HTML select element.
+ */
 function populateOPs() {
     global $valid_ops;
-    
+
+    // Iterate through each valid operation and add it as an option to the select element
     foreach ($valid_ops as $op) {
-        printf("objOP.add(new Option('%s', '%s'));\n", $op, $op);
+        // Print the JavaScript code to add the option
+        printf(<<<EOF
+objOP.add(new Option('%s', '%s'));
+EOF, $op, $op);
     }
 }
 
-
+/**
+ * @brief Sets an HTML input element to be of type datetime-local with the current date and time.
+ *
+ * This function prints JavaScript code to set an HTML input element's type to 'datetime-local'
+ * and its value to the current date and time.
+ *
+ * @param int $num An integer parameter (not used in this function).
+ */
 function drawHelperDateTime($num) {
-    echo "objValues.setAttribute('type', 'datetime-local');\n";
-    printf("objValues.setAttribute('value', '%s');\n", date('Y-m-d H:i:s'));
+    printf(<<<EOF
+objValues.setAttribute('type', 'datetime-local');
+objValues.value = "%s";
+
+EOF, date('Y-m-d\TH:i'));
 }
 
-
+/**
+ * @brief Sets an HTML input element to be of type text with the current date and time.
+ *
+ * This function prints JavaScript code to set an HTML input element's type to 'text'
+ * and its value to the current date and time in a human-readable format.
+ * 
+ * @param int $num An integer parameter (not used in this function).
+ * 
+ * @see https://networkradius.com/doc/3.0.10/raddb/mods-available/expiration.html
+ */
 function drawHelperDate($num) {
-    echo "objValues.setAttribute('type', 'date');\n";
-    printf("objValues.setAttribute('value', '%s');\n", date('Y-m-d'));
+    printf(<<<EOF
+objValues.setAttribute('type', 'text');
+objValues.value = "%s";
+
+EOF, date("D j M Y G:i:s T"));
 }
 
+/**
+ * @brief Generates a datalist HTML string with specified options.
+ *
+ * This function generates and returns a datalist HTML string with the given ID
+ * and options provided as an array.
+ *
+ * @param string $id The ID attribute for the datalist element.
+ * @param array $options An array of options to include in the datalist.
+ * @return string The generated datalist HTML string.
+ */
+function get_datalist($id, $options) {
+    $result = sprintf('<datalist id="%s">', $id);
+    
+    foreach ($options as $value) {
+        $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+        $result .= sprintf('<option value="%s">', $value);
+    }
+    
+    $result .= '</datalist>';
+    return $result;
+}
 
-// general purpose datalist helper draw function
+/**
+ * @brief Sets up a datalist helper for an HTML input element.
+ *
+ * This function generates a datalist HTML string with the specified options,
+ * sets up IDs for the input and datalist elements, and associates the datalist with the input element.
+ *
+ * @param int $num An integer used to generate unique IDs.
+ * @param string $helperIdPrefix A prefix for the datalist ID.
+ * @param array $options An array of options to include in the datalist.
+ */
 function drawDatalistHelper($num, $helperIdPrefix, $options) {
-    // setup IDs
+    // Setup IDs
     $num = intval($num);
     $inputId = sprintf("dictValues%d", $num);
     $helperId = sprintf("%s%d", $helperIdPrefix, $num);
     
-    echo 'objHelper.innerHTML = ' . "'";
-    printf('<datalist id="%s">', $helperId);
-    foreach ($options as $value) {
+    // Generate the datalist HTML string
+    $datalist = get_datalist($helperId, $options);
+
+    // Begin JavaScript output
+    echo <<<EOF
+objHelper.innerHTML = '{$datalist}';
+objValues.setAttribute('placeholder', 'double click or start typing...');
+objValues.setAttribute('list', '{$helperId}');
+
+EOF;
+}
+
+/**
+ * @brief Generates a <select> HTML element with specified attributes and options.
+ *
+ * This function generates and returns a <select> HTML element with the given ID, onclick event,
+ * and options provided as an associative array of value-caption pairs.
+ *
+ * @param string $id The ID attribute for the <select> element.
+ * @param string $onclick The onclick event handler for the <select> element.
+ * @param array $options An associative array of options in the format value => caption.
+ * @return string The generated <select> HTML string.
+ */
+function get_select($id, $onclick, $options) {
+    $result = sprintf('<select id="%s" onclick="%s">', $id, $onclick);
+    
+    foreach ($options as $value => $caption) {
         $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-        printf('<option value="%s">', $value);
+        $caption = htmlspecialchars($caption, ENT_QUOTES, 'UTF-8');
+        
+        // Append each option to the result string
+        $result .= sprintf('<option value="%s">%s</option>', $value, $caption);
     }
-    echo '</datalist>' . "';\n";
     
-    
-    echo "objValues.setAttribute('placeholder', 'double click or start typing...');\n";
-    printf("objValues.setAttribute('list', '%s');\n", $helperId);
-    
+    $result .= '</select>';
+    return $result;
 }
 
 
@@ -92,17 +185,12 @@ function drawSelectHelper($num, $helperIdPrefix, $options) {
     $inputId = sprintf("dictValues%d", $num);
     $helperId = sprintf("%s%d", $helperIdPrefix, $num);
     $onclick = sprintf("setStringText(\'%s\', \'%s\')", $helperId, $inputId);
+    $select = get_select($helperId, $onclick, $options);
     
-    // draw helper
-    echo 'objHelper.innerHTML = ' . "'";
-    printf('<select onclick="%s" id="%s" class="form">', $onclick, $helperId);
-    foreach ($options as $value => $caption) {
-        $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-        $caption = htmlspecialchars($caption, ENT_QUOTES, 'UTF-8');
-        
-        printf('<option value="%s">%s</option>', $value, $caption);
-    }
-    echo '</select>' . "';\n";
+    echo <<<EOF
+objHelper.innerHTML = '{$select}';
+
+EOF;
 }
 
 
@@ -299,8 +387,8 @@ if (isset($_GET['getVendorsList'])) {
     $action = 'getVendorsList';
 }
 
-include_once('../../include/management/pages_common.php');
-include_once('../../../common/includes/db_open.php');
+include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
 
 switch ($action) {
@@ -390,9 +478,9 @@ switch ($action) {
         $num = (array_key_exists('instanceNum', $_GET) && !empty($_GET['instanceNum']))
              ? intval($_GET['instanceNum']) : rand();
 
-        $sql = sprintf("SELECT RecommendedOP, RecommendedTable, RecommendedTooltip, type, RecommendedHelper
-                          FROM %s WHERE Attribute='%s'", $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                                         $dbSocket->escapeSimple($attribute));
+        $sql = sprintf("SELECT `recommendedOP`, `recommendedTable`, `recommendedTooltip`, `type`, `recommendedHelper`
+                          FROM %s WHERE `attribute`='%s' AND `recommendedHelper` IS NOT NULL ORDER BY `id` ASC LIMIT 1",
+                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($attribute));
         $res = $dbSocket->query($sql);
         $numrows = $res->numRows();
         
@@ -515,7 +603,4 @@ switch ($action) {
         break;
 }
 
-
-include_once('../../../common/includes/db_close.php');
-
-?>
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);

@@ -21,20 +21,19 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
-    
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-    
+
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
 
     // custom validation structures
     $valid_tables = array("check", "reply");
@@ -90,7 +89,7 @@
                 $logAction .= "Failed updating attribute [$attribute] (possible empty/invalid vendor and/or attribute) on page: ";
             } else {
                 
-                include('../common/includes/db_open.php');
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
                 
                 $exists = attribute_vendor_exist($dbSocket, $attribute, $vendor);
                 
@@ -122,7 +121,7 @@
                     }
                 }
                 
-                include('../common/includes/db_close.php');
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
             }
 
         } else {
@@ -149,13 +148,10 @@
     
     print_html_prologue($title, $langCode);
 
-    
-    
-
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+
     $exists = attribute_vendor_exist($dbSocket, $attribute, $vendor);
                     
     if (!$exists) {
@@ -165,21 +161,19 @@
         
     } else {
 
-        $sql = sprintf("SELECT Type, Value, Format, RecommendedOP, RecommendedTable, RecommendedHelper, RecommendedTooltip
-                          FROM %s WHERE attribute='%s' AND vendor='%s' LIMIT 1",
+        $sql = sprintf("SELECT `type`, `value`, `format`, `recommendedOP`, `recommendedTable`, `recommendedHelper`, `recommendedTooltip`
+                          FROM %s WHERE `attribute`='%s' AND `vendor`='%s' LIMIT 1",
                        $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
                        $dbSocket->escapeSimple($attribute),
                        $dbSocket->escapeSimple($vendor));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
         
-        list($this_Type, $this_Value, $this_Format, $this_OP, $this_Table, $this_Helper, $this_Tooltip) = $res->fetchrow();
-
+        list($type, $value, $format, $recommendedOP, $table, $recommendedHelper, $recommendedTooltip) = $res->fetchrow();
     }
     
-    include('../common/includes/db_close.php');
-
-    include_once('include/management/actionMessages.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
 
     if (!isset($successMsg) && !empty($vendor) && !empty($attribute)) {
@@ -226,43 +220,43 @@
                                         "caption" => t('all','Type'),
                                         "type" => "text",
                                         "datalist" => $valid_attributeTypes,
-                                        "value" => ((isset($this_Type)) ? $this_Type : ""),
+                                        "value" => ((isset($type)) ? $type : ""),
                                         "tooltipText" => t('Tooltip','typeTooltip'),
                                      );
         
         $input_descriptors0[] = array(
-                                        "name" => "RecommendedOP",
+                                        "name" => "recommendedOP",
                                         "caption" => t('all','RecommendedOP'),
                                         "type" => "text",
                                         "datalist" => $valid_ops,
-                                        "value" => ((isset($this_OP)) ? $this_OP : ""),
+                                        "value" => ((isset($recommendedOP)) ? $recommendedOP : ""),
                                         "tooltipText" => t('Tooltip','RecommendedOPTooltip'),
                                      );
-        
+
         $input_descriptors0[] = array(
-                                        "name" => "RecommendedTable",
+                                        "name" => "recommendedTable",
                                         "caption" => t('all','RecommendedTable'),
                                         "type" => "text",
                                         "datalist" => $valid_tables,
-                                        "value" => ((isset($this_Table)) ? $this_Table : ""),
+                                        "value" => ((isset($table)) ? $table : ""),
                                         "tooltipText" => t('Tooltip','RecommendedTableTooltip'),
                                      );
         
         $input_descriptors0[] = array(
-                                        "name" => "RecommendedHelper",
+                                        "name" => "recommendedHelper",
                                         "caption" => t('all','RecommendedHelper'),
                                         "type" => "text",
                                         "datalist" => $valid_recommendedHelpers,
-                                        "value" => ((isset($this_Helper)) ? $this_Helper : ""),
+                                        "value" => ((isset($recommendedHelper)) ? $recommendedHelper : ""),
                                         "tooltipText" => t('Tooltip','RecommendedHelperTooltip'),
                                      );
         
         $input_descriptors0[] = array(
-                                        "name" => "RecommendedTooltip",
+                                        "name" => "recommendedTooltip",
                                         "caption" => t('all','RecommendedTooltip'),
                                         "type" => "textarea",
                                         "tooltipText" => t('Tooltip','RecommendedTooltipTooltip'),
-                                        "value" => (isset($this_Tooltip) ? $this_Tooltip : "")
+                                        "content" => (isset($recommendedTooltip) ? $recommendedTooltip : "")
                                      );
         
         $input_descriptors0[] = array(
@@ -290,7 +284,5 @@
         close_form();
     }
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-
-?>

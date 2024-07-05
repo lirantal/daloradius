@@ -20,9 +20,11 @@
  *********************************************************************************************************
  */
 
-include __DIR__ . '/../../library/checklogin.php';
-include __DIR__ . '/../../../common/includes/config_read.php';
-include __DIR__ . '/../../lang/main.php';
+include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', '..', 'common', 'includes', 'config_read.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
+$operator = $_SESSION['operator_user'];
+
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
 
 // Retrieve redirect target
 $redirect = ($_SESSION['PREV_LIST_PAGE'] ?? "") ? trim($_SESSION['PREV_LIST_PAGE']) : "../../index.php";
@@ -46,7 +48,7 @@ if (!isset($params['type']) || !in_array($params['type'], $allowed_types)) {
 $type = $params['type'];
 
 // Setup template path
-$template = sprintf("%s/%s.html", rtrim($configValues['CONFIG_PATH_DALO_TEMPLATES_DIR'], "/"), $type);
+$template = implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_NOTIFICATIONS_TEMPLATES'], sprintf("%s.html", $type) ]);
 if (!file_exists($template)) {
     header("Location: $redirect");
     exit;
@@ -255,13 +257,28 @@ function get_batch_details_context($configValues, $dbSocket, $batch_name) {
     return $context;
 }
 
+function get_user_email_details($configValues, $dbSocket, $username) {
+    $sql = sprintf("SELECT firstname, lastname, email FROM %s WHERE username='%s'",
+                   $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($username));
+
+    $res = $dbSocket->query($sql);
+    $numrows = $res->numRows();
+
+    if ($numrows <= 0) {
+        return [];
+    }
+
+    list($ui_firstname, $ui_lastname, $ui_email) = $res->fetchRow();
+    return [ 'firstname' => $ui_firstname, 'lastname' => $ui_lastname, 'email' => $ui_email];
+    
+}
 
 function get_user_welcome_context($configValues, $dbSocket, $username) {
     $context = array();
 
     // Get user info
-    $sql = sprintf("SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city,
-                           state, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate,
+    $sql = sprintf("SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, `address`, city,
+                           `state`, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate,
                            creationby, updatedate, updateby
                       FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
                                                     $dbSocket->escapeSimple($username));
@@ -327,11 +344,25 @@ function get_user_welcome_context($configValues, $dbSocket, $username) {
     return $context;
 }
 
+function get_pdf($template, $context) {
+    // Get template contents
+    $template_contents = file_get_contents($template);
+
+    // Fill template contents with correct values
+    foreach ($context as $key => $value) {
+        $template_contents = str_replace($key, $value, $template_contents);
+    }
+
+    // Fix for DOMPDF error: https://stackoverflow.com/questions/37521775/dompdf-error-no-block-level-parent-found-not-good
+    $html = str_replace("\n", "", $template_contents);
+
+    return create_pdf($html);
+}
 
 // Create a context to pass to our PDF creator
 $context = array();
 
-include __DIR__ . '/../../../common/includes/db_open.php';
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
 switch ($type) {
     case "user-welcome":
@@ -343,6 +374,10 @@ switch ($type) {
 
         $filename = sprintf('%s-%s-%s.pdf', date("Ymd"), $username, $type);
         $context = get_user_welcome_context($configValues, $dbSocket, $username);
+        $subject = "Welcome notification";
+        $body = "Please check the attached pdf containing your welcome notification!";
+        list($firstname, $lastname, $recipient_email_address) = get_user_email_details($configValues, $dbSocket, $username);
+        $recipient_name = "$firstname $lastname";
         break;
 
     case "batch-details":
@@ -354,31 +389,18 @@ switch ($type) {
 
         $filename = sprintf('%s-%s-%s.pdf', date("Ymd"), $batch_name, $type);
         $context = get_batch_details_context($configValues, $dbSocket, $batch_name);
+        $subject = "Batch details";
+        $body = sprintf("Please check the attached pdf containing batch %s's details!", $batch_name);
+        $recipient_email_address = "";
+        $recipient_name = "";
         break;
 }
 
-include __DIR__ . '/../../../common/includes/db_close.php';
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
-// Get template contents
-$template_contents = file_get_contents($template);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'pdf.php' ]);
 
-// Fill template contents with correct values
-foreach ($context as $key => $value) {
-    $template_contents = str_replace($key, $value, $template_contents);
-}
-
-// Fix for DOMPDF error: https://stackoverflow.com/questions/37521775/dompdf-error-no-block-level-parent-found-not-good
-$html = str_replace("\n", "", $template_contents);
-
-// Include the dompdf class
-include __DIR__ . '/../../../common/library/dompdf/dompdf_config.inc.php';
-
-// Instantiate the PDF document
-$dompdf = new DOMPDF();
-$dompdf->set_base_path(rtrim($configValues['CONFIG_PATH_DALO_TEMPLATES_DIR'], "/"));
-$dompdf->load_html($html);
-$dompdf->render();
-$pdf_contents = $dompdf->output();
+$pdf_contents = get_pdf($template, $context);
 $size = strlen($pdf_contents);
 
 switch ($action) {
@@ -396,7 +418,27 @@ switch ($action) {
             break;
         }
 
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'mail.php' ]);
+        
+        $subject = 'Test Email';
+        $body = 'This is a test email. If you received this, your SMTP mailer is working fine.';
 
+        $attachment = [
+            'content' => $pdf_contents,
+            'filename' => $filename,
+        ];
+
+        // Call the send_email function
+        list($success, $message) = send_email($configValues, $recipient_email_address, $recipient_name, $subject, $body, $attachment);
+
+        // Check the result
+        if ($success) {
+            $successMsg = $message;
+        } else {
+            $failureMsg = $message;
+        }
+
+        printf('%s<br><a href="%s">Go back</a>.', $message, $redirect);
 
         break;
 }
