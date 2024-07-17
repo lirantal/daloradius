@@ -156,7 +156,7 @@ HTML;
     echo <<<HTML
 <span class="d-flex align-items-center justify-content-start mb-2">
     <h1 class="fs-4 m-0">daloRADIUS</h1>
-    <a tabindex="0" class="ms-2 text-decoration-none btn btn-light" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="{$version}" data-bs-content="{$copyright}">
+    <a tabindex="0" class="ms-2 text-decoration-none btn btn-light" role="button" data-bs-trigger="focus" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="{$version}" data-bs-content="{$copyright}">
         <i class="fs-6 bi bi-c-circle"></i>
     </a>
 </span>

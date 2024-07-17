@@ -21,17 +21,17 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
-    
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include_once("include/management/functions.php");
-    include_once('include/management/populate_selectbox.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+ 
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -49,32 +49,31 @@
 
     // if cleartext passwords are not allowed, 
     // we remove Cleartext-Password from the $valid_passwordTypes array
-    if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
-        strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) !== 'yes') {
+    $cleartextPasswordAllowed = (!isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) ||
+        strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) === 'yes');
+    if (!$cleartextPasswordAllowed) {
         $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
-            $authType = (array_key_exists('authType', $_POST) && isset($_POST['authType']) &&
-                         in_array($_POST['authType'], array_keys($valid_authTypes))) ? $_POST['authType'] : array_keys($valid_authTypes)[0];
+            $authType = $_POST['authType'] ?? array_keys($valid_authTypes)[0];
+            $authType = in_array($authType, array_keys($valid_authTypes)) ? $authType : array_keys($valid_authTypes)[0];
 
-            $planName = (array_key_exists('planName', $_POST) && !empty($_POST['planName']) &&
-                         in_array($_POST['planName'], $valid_planNames))
-                      ? $_POST['planName'] : "";
+            $planName = $_POST['planName'] ?? '';
+            $planName = in_array($planName, $valid_planNames) ? $planName : '';
 
-            $groups = (array_key_exists('groups', $_POST) && isset($_POST['groups'])) ? $_POST['groups'] : array();
+            $groups = $_POST['groups'] ?? [];
 
-            $csvdata = (array_key_exists('csvdata', $_POST) && isset($_POST['csvdata']))
-                     ? $_POST['csvdata'] : "";
+            $csvdata = $_POST['csvdata'] ?? '';
+            $csvFormattedData = !empty($csvdata) ? explode("\n", $csvdata) : [];
 
-            $csvFormattedData = (!empty($csvdata)) ? explode("\n", $csvdata) : array();
+            $simpleList = $_POST['simpleList'] ?? '';
+            $simpleListData = !empty($simpleList) ? explode("\n", $simpleList) : [];
 
-            $simpleList = (array_key_exists('simpleList', $_POST) && isset($_POST['simpleList']))
-                        ? $_POST['simpleList'] : "";
-
-            $simpleListData = (!empty($simpleList)) ? explode("\n", $simpleList) : array();
+            $enableportallogin = $_POST['enableportallogin'] ?? 'no';
+            $enableportallogin = ($enableportallogin === 'no') ? 0 : 1;
 
             $data = array();
             $passwordType = "";
@@ -100,9 +99,10 @@
                     $firstname = trim($firstname);
                     $lastname = trim($lastname);
 
-                    if (strpos("%", $username) === false &&
-                        preg_match(ALL_PRINTABLE_CHARS_REGEX, $username) &&
-                        preg_match(ALL_PRINTABLE_CHARS_REGEX, $password) &&
+                    if (preg_match(EMAIL_LIKE_USERNAME_REGEX, $username) === 1 &&
+                        preg_match(SAFE_PASSWORD_REGEX, $password) === 1 &&
+                        preg_match(FIRST_LAST_NAME_REGEX, $firstname) === 1 &&
+                        preg_match(FIRST_LAST_NAME_REGEX, $lastname) === 1 &&
                         !array_key_exists($username, $data)) {
                         $data[$username] = array( $password, $email, $firstname, $lastname );
                     }
@@ -126,9 +126,7 @@
                     $firstname = trim($firstname);
                     $lastname = trim($lastname);
                     
-                    if (strpos("%", $username) === false &&
-                        preg_match(ALL_PRINTABLE_CHARS_REGEX, $username) &&
-                        !array_key_exists($username, $data)) {
+                    if (preg_match(EMAIL_LIKE_USERNAME_REGEX, $username) === 1 && !array_key_exists($username, $data)) {
                         $data[$username] = array( "Accept", $email, $firstname, $lastname );
                     }
 
@@ -141,19 +139,19 @@
                 $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $_SESSION['operator_user'];
 
-                include('../common/includes/db_open.php');
-                include("library/attributes.php");
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
 
                 $counter = 0;
                 foreach ($data as $subject => $arr) {
                     list( $value, $email, $firstname, $lastname ) = $arr;
                     
-                    $value = hashPasswordAttribute($passwordType, $value);
+                    $hashed_value = hashPasswordAttribute($passwordType, $value);
 
                     // skipping this user if it exists or insert fails
                     if (
                             user_exists($dbSocket, $subject) ||
-                            !insert_single_attribute($dbSocket, $subject, $passwordType, ":=", $value)
+                            !insert_single_attribute($dbSocket, $subject, $passwordType, ":=", $hashed_value)
                        ) {
                         continue;
                     }
@@ -164,11 +162,17 @@
                                         "creationby" => $currBy,
                                    );
 
-                    if (!empty($firstname) && preg_match(ALL_PRINTABLE_CHARS_REGEX, $firstname)) {
+                    if ($authType == 'userAuth') {
+                        $params["portalloginpassword"] = $value;
+                        $params["enableportallogin"] = $enableportallogin;
+                        $params["changeuserinfo"] = $enableportallogin;
+                    }
+
+                    if (!empty($firstname) && preg_match(FIRST_LAST_NAME_REGEX, $firstname)) {
                         $params["firstname"] = $firstname;
                     }
                     
-                    if (!empty($lastname) && preg_match(ALL_PRINTABLE_CHARS_REGEX, $lastname)) {
+                    if (!empty($lastname) && preg_match(FIRST_LAST_NAME_REGEX, $lastname)) {
                         $params["lastname"] = $lastname;
                     }
                     
@@ -190,7 +194,7 @@
                     $counter++;
                 }
 
-                include('../common/includes/db_close.php');
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
                 if ($counter > 0) {
                     $successMsg = "Successfully imported a total of <b>$counter</b> users to database";
@@ -222,7 +226,7 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     if (!isset($successMsg)) {
 
@@ -292,15 +296,29 @@
                                         "options" => $valid_passwordTypes,
                                         "type" => "select",
                                         "selected_value" => ((isset($failureMsg)) ? $passwordType : ""),
-                                        "tooltipText" => 'Notice that for supported password-like attributes, you can just specify a plaintext value. ' .
+                                        "tooltipText" => 'Notice that for supported password-like attributes, ' .
+                                                         'you can just specify a plaintext value. ' .
                                                          'The system will take care of correctly hashing it.',
                                     );
+
+        if ($cleartextPasswordAllowed) {
+            $input_descriptors1[] = array(
+                                            "type" =>"select",
+                                            "name" => "enableportallogin",
+                                            "caption" => "Enable Portal Login",
+                                            "options" => [ "yes", "no" ],
+                                            "selected_value" => ((isset($failureMsg)) ? $enableportallogin : "no"),
+                                            "tooltipText" => "If set to 'yes', " .
+                                                             "allows the use of username and password for logging into the user portal.",
+                                        );
+        }
 
         $input_descriptors1[] = array(
                                         "caption" => t('all','CSVData'),
                                         "type" => "textarea",
                                         "name" => "csvdata",
-                                        "tooltipText" => 'Paste a CSV-formatted data input of users, expected format is: user,password,email,firstname,lastname. ' .
+                                        "tooltipText" => 'Paste a CSV-formatted data input of users, expected format is: ' .
+                                                         'username,password,email,firstname,lastname. ' .
                                                          'Note: any CSV fields beyond the first 5 are ignored.',
                                         "content" => ((isset($failureMsg)) ? $csvdata : ""),
                                      );
@@ -356,7 +374,7 @@
 
     }
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
 
     $inline_extra_js = <<<EOF
 function switchAuthType() {

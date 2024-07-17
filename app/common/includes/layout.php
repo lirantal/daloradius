@@ -26,6 +26,13 @@ if (strpos($_SERVER['PHP_SELF'], '/common/includes/layout.php') !== false) {
     exit;
 }
 
+function fix_placeholder_text($text) {
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text = str_replace('"', "'", strip_tags($text));
+    $text = preg_replace('/[\s\h\v\xA0]+/u', ' ', $text);
+    return trim($text);
+}
+
 const DEFAULT_COMMON_PROLOGUE_CSS = array(
     "static/css/bootstrap.min.css",
     "static/css/icons/bootstrap-icons.min.css",
@@ -777,8 +784,7 @@ function print_input_field($input_descriptor) {
     }
 
     if (array_key_exists('tooltipText', $input_descriptor) && !empty($input_descriptor['tooltipText'])) {
-        $tooltipText = str_replace('"', "'", strip_tags($input_descriptor['tooltipText']));
-
+        $tooltipText = fix_placeholder_text($input_descriptor['tooltipText']);
         printf(' placeholder="%s"', $tooltipText);
 
         if (array_key_exists('sidebar', $input_descriptor) && $input_descriptor['sidebar'] !== false) {
@@ -984,7 +990,7 @@ function print_select($select_descriptor) {
 
 
     if (isset($select_descriptor['tooltipText'])) {
-        $tooltipText = str_replace('"', "'", strip_tags($select_descriptor['tooltipText']));
+        $tooltipText = fix_placeholder_text($select_descriptor['tooltipText']);
 
         if (!empty($tooltipText)) {
             printf(' placeholder="%s"', $tooltipText);
@@ -1177,8 +1183,7 @@ function print_form_component($descriptor) {
         $tooltip_box_id = sprintf('%s-%d-tooltip', $descriptor['id'], rand());
         $describedby_id = $descriptor['id'] .  '-help';
 
-        $tooltipText = preg_replace('/\n/', '', strip_tags(html_entity_decode($descriptor['tooltipText'])));
-        $tooltipText = preg_replace('/\s+/', ' ', trim($tooltipText));
+        $tooltipText = fix_placeholder_text($descriptor['tooltipText']);
 
         printf('<div id="%s" class="form-text">%s</div>', $describedby_id, $tooltipText);
     }
@@ -1225,7 +1230,7 @@ function menu_print_select($select_descriptor) {
     }
 
     if (array_key_exists('tooltipText', $select_descriptor)) {
-        $tooltipText = str_replace('"', "'", strip_tags($select_descriptor['tooltipText']));
+        $tooltipText = fix_placeholder_text($select_descriptor['tooltipText']);
         printf(' data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="%s"', $tooltipText);
         printf(' placeholder="%s"', $tooltipText);
     }
@@ -1416,7 +1421,7 @@ function menu_print_input_field($input_descriptor) {
     }
 
     if (array_key_exists('tooltipText', $input_descriptor)) {
-        $tooltipText = str_replace('"', "'", strip_tags($input_descriptor['tooltipText']));
+        $tooltipText = fix_placeholder_text($input_descriptor['tooltipText']);
         printf(' data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="%s"', $tooltipText);
         printf(' placeholder="%s"', $tooltipText);
     }

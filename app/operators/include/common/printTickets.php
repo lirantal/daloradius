@@ -23,359 +23,237 @@
  *********************************************************************************************************
  */
 
-    include('../../library/checklogin.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', '..', 'common', 'includes', 'config_read.php' ]);   
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
+    $operator = $_SESSION['operator_user'];
 
     $redirect = (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE'])))
               ? trim($_SESSION['PREV_LIST_PAGE'])
               : "../../index.php";
 
-
-    function printTicketsHTMLTable($accounts, $ticketCost, $ticketTime) {
-
-    $output = "";
-
-    global $ticketInformation;
-    global $ticketLogoFile;
-
-    // the $accounts array contain the username,password|| first element as it's originally
-    // used to be a for CSV table header
-    array_shift($accounts);
-
-    // we align 3 tables for each row (each line)
-    // for each 4th entry of a new ticket table we put it in a new row of it's own
-    $trCounter = 0;
-    foreach ($accounts as $account) {
-
-        list($user, $pass) = $account;
-
-        if ($trCounter > 2)
-            $trCounter = 0;
-
-        if ($trCounter == 2)
-            $trTextEnd = "</tr>";
-        else
-            $trTextEnd = "";
-
-        if ($trCounter == 0)
-            $trTextBeg = "<tr>";
-        else
-            $trTextBeg = "";
-
-        $output .= "
-            $trTextBeg
-                <td>
-                    <table border='0' cellpadding='1' cellspacing='1' height='140' width='211'>
-                        <tbody>
-                        <tr align='center'>
-                            <td colspan='2'>
-                                <img src='$ticketLogoFile' alt='Logo' />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>Login</b>:
-                            </td>
-                            <td>
-                                <font size='2'>
-                                $user
-                                </font>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>Password</b>:
-                            </td>
-                            <td>
-                                <font size='2'>
-                                $pass
-                                </font>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>Validity</b>:
-                            </td>
-                            <td>
-                                <font size='2'>
-                                $ticketTime
-                                </font>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>Price</b>:
-                            </td>
-                            <td>
-                                <font size='2'>
-                                $ticketCost
-                                </font>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan='2' valign='top'>
-                                <font size='1'>
-                                $ticketInformation
-                                </font>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                </td>
-            $trTextEnd
-        ";
-
-        $trCounter++;
-    }
-
-    print "
-         <style type='text/css'>
-            @page { size:landscape; margin-top:20cm; margin-right:0cm; margin-left:0cm; margin-bottom: 0px; marks:cross;}
-            td, tr, th { border: 1px dotted black }
-        </style>
-        <html><body>
-            <table style='maring-top: 15px; margin-left: auto; margin-right: auto;'
-                    cellspacing='15'>
-                <tbody>
-                            $output
-                </tbody>
-            </table>
-        </body></html>
-    ";
-
-}
-
     $ticketInformation = "<strong>Information</strong>:<br>to use this card, please connect your device to the nearest ssid."
                        . "Open your web browser and enter each needed field.";
     $ticketLogoFile = "../../static/images/daloradius_small.png";
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && dalo_check_csrf_token()) {
+        
+        if (array_key_exists('accounts', $_POST) && !empty($_POST['accounts']) && is_array($_POST['accounts']) &&
+            array_key_exists('type', $_POST) && $_POST['type'] == "batch") {
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $batch_name = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])))
+                        ? htmlspecialchars(trim($_POST['batch_name']), ENT_QUOTES, 'UTF-8') : "";
 
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            $accounts = $_POST['accounts'];
 
-            if (array_key_exists('accounts', $_POST) && !empty($_POST['accounts']) && is_array($_POST['accounts']) &&
-                array_key_exists('type', $_POST) && $_POST['type'] == "batch") {
+            $ticketInformation = trim($_POST['ticketInformation'] ?? '');
+            if (!empty($ticketInformation)) {
+                $ticketInformation = "<strong>Information</strong>:<br>" . htmlspecialchars($ticketInformation, ENT_QUOTES, 'UTF-8');
+                $ticketInformation = str_replace("\n", "<br>", $ticketInformation);
+            }
 
-                $batch_name = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])))
-                            ? htmlspecialchars(trim($_POST['batch_name']), ENT_QUOTES, 'UTF-8') : "";
 
-                $accounts = $_POST['accounts'];
+            $plan = (array_key_exists('plan', $_POST) && !empty(trim($_POST['plan'])))
+                    ? trim($_POST['plan']) : "";
 
-                if (array_key_exists('ticketInformation', $_POST) && !empty(trim($_POST['ticketInformation']))) {
-                    $ticketInformation = "<strong>Information</strong>:<br>" . htmlspecialchars(trim($_POST['ticketInformation']), ENT_QUOTES, 'UTF-8');
-                    $ticketInformation = str_replace("\n", "<br>", $ticketInformation);
-                }
+            $ticketCost = "";
+            $ticketTime = "";
 
-                $plan = (array_key_exists('plan', $_POST) && !empty(trim($_POST['plan'])))
-                      ? trim($_POST['plan']) : "";
+            if (!empty($plan)) {
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+                $sql = sprintf("SELECT `plancost`, `plantimebank`, `plancurrency` FROM `%s` WHERE `planname`='%s'",
+                                $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($plan));                    
+                $res = $dbSocket->query($sql);
+                list($ticketCost, $ticketTime, $ticketCurrency) = $res->fetchRow();
 
-                $ticketCost = "";
-                $ticketTime = "";
+                $ticketCost = "$ticketCost $ticketCurrency";
+                $ticketTime = time2str($ticketTime);
 
-                if (!empty($plan)) {
-                    include_once('../../../common/includes/db_open.php');
-                    include_once('../management/pages_common.php');
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+            }
 
-                    $sql = sprintf("SELECT dbp.planCost AS planCost, dbp.planTimeBank AS planTimeBank, dbp.planCurrency AS planCurrency
-                                      FROM %s AS dbp WHERE dbp.planName='%s'",
-                                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($plan));
-                    $res = $dbSocket->query($sql);
-                    list($ticketCost, $ticketTime, $ticketCurrency) = $res->fetchRow();
+            $card_body_height = 10;
+            $card_foot_height = 30;
+            if (!empty($ticketCost) || !empty($ticketTime)) {
+                $card_foot_height -= 5;
+                $card_body_height += 5;
+            }                
 
-                    $ticketCost = "$ticketCost $ticketCurrency";
-                    $ticketTime = time2str($ticketTime);
+            $title = (!empty($batch_name)) ? $batch_name : "user cards";
 
-                    include_once('../../../common/includes/db_close.php');
-                }
-
-                $card_body_height = 10;
-                $card_foot_height = 30;
-                if (!empty($ticketCost)) {
-                    $card_foot_height -= 5;
-                    $card_body_height += 5;
-                }
-                if (!empty($ticketTime)) {
-                    $card_foot_height -= 5;
-                    $card_body_height += 5;
-                }
-
-?>
+            echo <<<EOF
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title><?= (!empty($batch_name)) ? $batch_name : "user cards" ?></title>
+<head>
+    <meta charset="utf-8" />
+    <title>{$title}</title>
 
-        <style>
+    <style>
 
 @page {
-    size: 21cm 29.7cm;
-    margin: 0;
+size: 21cm 29.7cm;
+margin: 0;
 }
 
 body {
-    font-family: Tahoma;
-    padding: 1cm;
+font-family: Tahoma;
+padding: 1cm;
 }
 
 .container:first-child .card {
-    border-top: 1px dotted gray;
+border-top: 1px dotted gray;
 }
 
 .card {
-    height: 54mm;
-    width: 44mm;
-    margin: 0;
-    border-right: 1px dotted gray;
-    border-bottom: 1px dotted gray;
+height: 54mm;
+width: 44mm;
+margin: 0;
+border-right: 1px dotted gray;
+border-bottom: 1px dotted gray;
 }
 
 .card:last-child {
-    border-right: 1px dotted gray;
+border-right: 1px dotted gray;
 }
 
 .card:first-child {
-    border-left: 1px dotted gray;
+border-left: 1px dotted gray;
 }
 
 .card-head {
-    height: 12mm;
-    width: 100%;
-    margin: 0;
-    position: relative;
+height: 12mm;
+width: 100%;
+margin: 0;
+position: relative;
 }
 
 .card-head img {
-    position: absolute;
-    margin: auto;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+position: absolute;
+margin: auto;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
 }
 
 .card-body {
-    height: <?= $card_body_height ?>mm;
-    width: 42mm;
-    margin: 0;
-    padding: 1mm;
+height: {$card_body_height}mm;
+width: 42mm;
+margin: 0;
+padding: 1mm;
 }
 
 .card-body table {
-    border: 0;
-    margin: 0;
-    width: 100%;
-    text-align: center;
-    font-size: 8pt;
-    padding: 0;
+border: 0;
+margin: 0;
+width: 100%;
+text-align: center;
+font-size: 8pt;
+padding: 0;
 }
 
 .card-body table tr {
-    border: 0;
-    margin: 0;
-    width: 100%;
-    height: 5mm;
-    padding: 0;
+border: 0;
+margin: 0;
+width: 100%;
+height: 5mm;
+padding: 0;
 }
 
 .card-body table th {
-    text-align: right;
+text-align: right;
 }
 
 .card-body table td {
-    text-align: left;
+text-align: left;
 }
 
 .card-foot {
-    height: <?= $card_foot_height ?>mm;
-    margin: 0;
+height: {$card_foot_height}mm;
+margin: 0;
 }
 
 .card-foot p {
-    margin: 0;
-    width: 42mm;
-    padding: 1mm;
-    font-size: 8pt;
-    font-weight: normal;
-    text-align: justify;
+margin: 0;
+width: 42mm;
+padding: 1mm;
+font-size: 8pt;
+font-weight: normal;
+text-align: justify;
 }
 
 .container {
-    text-align: center;
-    padding: 0;
-    margin: 0;
+text-align: center;
+padding: 0;
+margin: 0;
 }
 
 .container > div {
-    display: inline-block;
-    vertical-align: middle;
-    padding: 0;
-    margin: 0;
+display: inline-block;
+vertical-align: middle;
+padding: 0;
+margin: 0;
 }
 
-        </style>
+    </style>
 
-    </head>
+</head>
 
-    <body>
+<body>
+    <div class="container">
+EOF;
 
-<?php
-            // remove first element
-            array_shift($accounts);
+        // remove first element
+        array_shift($accounts);
 
-            echo '<div class="container">';
+        foreach ($accounts as $i => $account) {
+            list($username, $password) = $account;
 
-            foreach ($accounts as $i => $account) {
-                list($username, $password) = $account;
-
-                if ($i != 0 && $i % 4 == 0) {
-                    echo '</div><div class="container">';
-                }
-
-                $trs = array(
-                                "User" => $username,
-                                "Pass" => $password
-                            );
-
-                if (!empty($ticketTime)) {
-                    $trs["Validity"] = $ticketTime;
-                }
-
-                if (!empty($ticketCost)) {
-                    $trs["Price"] = $ticketCost;
-                }
-
-                echo '<div class="card">';
-                printf('<div class="card-head"><img src="%s"></div>', $ticketLogoFile);
-                echo '<div class="card-body">'
-                   . '<table>';
-
-                foreach ($trs as $label => $value) {
-                    printf('<tr><th>%s:</th><td>%s</td></tr>', $label, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
-                }
-
-                echo '</table>'
-                   . '</div>'
-                   . '<div class="card-foot">';
-                printf('<p>%s</p>', $ticketInformation);
-                echo '</div>'
-                   . '</div>';
-
-                $i++;
+            if ($i != 0 && $i % 4 == 0) {
+                echo '</div><div class="container">';
             }
 
-            echo '</div>';
-?>
+            $trs = [ "User" => $username, "Pass" => $password ];
 
+            if (!empty($ticketTime)) {
+                $trs["Validity"] = $ticketTime;
+            }
+
+            if (!empty($ticketCost)) {
+                $trs["Price"] = $ticketCost;
+            }
+
+            $table = "";
+            foreach ($trs as $label => $value) {
+                $table .= sprintf('<tr><th>%s:</th><td>%s</td></tr>', $label, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
+            }
+
+            echo <<<EOF
+            <div class="card">
+                <div class="card-head">
+                    <img src="{$ticketLogoFile}">
+                </div><!-- .card-head -->
+                <div class="card-body">
+                    <table>
+                        {$table}
+                    </table>
+                </div><!-- .card-body -->
+                <div class="card-foot">
+                    <p>{$ticketInformation}</p>
+                </div><!-- .card-foot -->
+            </div>
+EOF;
+
+            $i++;
+        }
+
+        echo <<<EOF
+        </div><!-- .container -->
     </body>
 </html>
-<?php
-                exit;
-            }
+EOF;
+            exit;
         }
     }
 
     header("Location: $redirect");
-
-?>

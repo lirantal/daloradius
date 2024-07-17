@@ -32,9 +32,12 @@ if (strpos($_SERVER['PHP_SELF'], '/lang/en.php') !== false) {
 $l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
 $l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
 $l['all']['copyright1'] = 'RADIUS Management, Reporting, Accounting and Billing by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
-$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y')
-                        . ' <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a> and'
-                        . ' <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.';
+$l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y') . <<<EOF
+ <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Follow @filippolauria on GitHub">
+  <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>
+</span>  and <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>.
+EOF;
+
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "Pool Name";
 $l['all']['CalledStationId'] = "CalledStationId";
@@ -582,41 +585,19 @@ $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(descriptive n
 
 $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
 
-
-$l['Tooltip']['usernameTooltip'] = "The exact username the user will use to connect to the system";
-$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in RADIUS.";
-$l['Tooltip']['passwordTooltip'] = "Some systems use case-sensetive passwords. Take extra care!";
-$l['Tooltip']['groupTooltip'] = "The user will be added to the specified group. By adding a user to a specific group they are subject to the group's attributes";
-$l['Tooltip']['macaddressTooltip'] = "Example: 00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp;&nbsp;
-                    The MAC Address format should be the same<br/>&nbsp;&nbsp;&nbsp;
-                    as the NAS sends it. Mostly this is without<br/>&nbsp;&nbsp;&nbsp;
-                    any characters.";
-$l['Tooltip']['pincodeTooltip'] = "Example: khrivnxufi101<br/>&nbsp;&nbsp;&nbsp;
-                    This is the exact pincode as the user will enter it.<br/>&nbsp;&nbsp;&nbsp;
-                    You may use alpha numeric characters, case is sensituve";
-$l['Tooltip']['usernamePrefixTooltip'] = "Example: TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
-                    This username prefix will be added to<br/>&nbsp;&nbsp;&nbsp;
-                    the generated username finally.";
-$l['Tooltip']['instancesToCreateTooltip'] = "Example: 100<br/>&nbsp;&nbsp;&nbsp;
-                    The amount of random users to create<br/>&nbsp;&nbsp;&nbsp;
-                    with the specified profile.";
-$l['Tooltip']['lengthOfUsernameTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
-                    The characters length of the username<br/>&nbsp;&nbsp;&nbsp;
-                    to be created. Recommended 8-12 chars.";
-$l['Tooltip']['lengthOfPasswordTooltip'] = "Example: 8<br/>&nbsp;&nbsp;&nbsp;
-                    The characters length of the password<br/>&nbsp;&nbsp;&nbsp;
-                    to be created. Recommended 8-12 chars.";
-
-
-$l['Tooltip']['hotspotNameTooltip'] = "Example: Hotel Stratocaster<br/>&nbsp;&nbsp;&nbsp;
-                    a friendly name of the hotspot<br/>";
-
-$l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00-aa-bb-cc-dd-ee<br/>&nbsp;&nbsp;&nbsp;
-                    The MAC address of the NAS<br/>";
-
-$l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
-                    This is the GooleMaps location code used<br/>&nbsp;&nbsp;&nbsp;
-                    to pin the Hotspot/NAS on the map (see GIS).";
+$l['Tooltip']['usernameTooltip'] = "Example: john_doe. The exact username the user will use to connect to the system.";
+$l['Tooltip']['passwordTypeTooltip'] = "Example: Cleartext-Password, MD5-Password, SHA1-Password. The password type used to authenticate the user in RADIUS.";
+$l['Tooltip']['passwordTooltip'] = "Example: P@ssw0rd!. The user's password. Note that some systems use case-sensitive passwords, so please take extra care.";
+$l['Tooltip']['groupTooltip'] = "Example: Premium_Users. The group to which the user will be added. By adding a user to a specific group, they become subject to that group's attributes.";
+$l['Tooltip']['macaddressTooltip'] = "Example: 00:AA:BB:CC:DD:EE. The MAC Address format should be the same as sent by the NAS. Usually, this is without any separating characters.";
+$l['Tooltip']['pincodeTooltip'] = "Example: khrivnxufi101. Enter the exact pincode that the user will use. You may use alphanumeric characters; the pincode is case-sensitive.";
+$l['Tooltip']['usernamePrefixTooltip'] = "Example: TMP_ POP_ WIFI1_. This prefix will be added to the beginning of the generated username.";
+$l['Tooltip']['instancesToCreateTooltip'] = "Example: 100. The number of random users to create with the specified profile.";
+$l['Tooltip']['lengthOfUsernameTooltip'] = "Example: 8. The length of the username to be created. Recommended range: 8-12 characters.";
+$l['Tooltip']['lengthOfPasswordTooltip'] = "Example: 8. The length of the password to be created. Recommended range: 8-12 characters.";
+$l['Tooltip']['hotspotNameTooltip'] = "Example: Hotel Stratocaster. A user-friendly name for the hotspot.";
+$l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00-aa-bb-cc-dd-ee. The MAC address of the NAS.";
+$l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201. These are the geographic coordinates used to pinpoint the Hotspot/NAS location on the map (see GIS).";
 
 $l['Tooltip']['reassignplanprofiles'] = "If toggled on, when applying user information <br/>
                     the Profiles listed in the Profiles tab will be ignored and <br/>
