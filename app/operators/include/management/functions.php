@@ -582,3 +582,21 @@ function count_nas($dbSocket) {
     $sql = sprintf("SELECT COUNT(`id`) FROM %s", $configValues['CONFIG_DB_TBL_RADNAS']);
     return count_sql($dbSocket, $sql);  
 }
+
+/**
+ * Get the number of rows from a COUNT query.
+ *
+ * This function executes a SQL COUNT query and returns the result as an integer.
+ *
+ * @param DB $dbSocket The database connection object.
+ * @param string $query The SQL query string. It should be in the form of "SELECT COUNT(...) FROM ...".
+ *
+ * @return int The number of rows returned by the COUNT query.
+ *
+ *
+ * @note The query should return only one column with the count result.
+ *       Queries returning multiple columns or rows may lead to unexpected results.
+ */
+function get_numrows($dbSocket, $query) {
+    return $dbSocket->query($query)->fetchrow()[0];
+}

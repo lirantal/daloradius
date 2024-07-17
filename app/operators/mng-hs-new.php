@@ -21,15 +21,15 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -39,7 +39,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        if (dalo_check_csrf_token()) {
 
             $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
                            (preg_match(MACADDR_REGEX, trim($_POST['macaddress'])) ||
@@ -70,7 +70,7 @@
                              filter_var(trim($_POST['companyemail']), FILTER_VALIDATE_EMAIL)) ? trim($_POST['companyemail']) : "";
             $companycontact = (array_key_exists('companycontact', $_POST) && !empty(trim($_POST['companycontact']))) ? trim($_POST['companycontact']) : "";
 
-            include('../common/includes/db_open.php');
+            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
             if (empty($macaddress) || empty($name)) {
                 // if statement returns false which means that the user has left an empty field for
@@ -82,10 +82,8 @@
                 $sql = sprintf("SELECT COUNT(id) FROM %s WHERE name='%s' OR mac='%s'",
                                $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
                                $dbSocket->escapeSimple($name), $dbSocket->escapeSimple($macaddress));
-                $res = $dbSocket->query($sql);
+                $exists = get_numrows($dbSocket, $sql) > 0;
                 $logDebugSQL .= "$sql;\n";
-
-                $exists = $res->fetchrow()[0] > 0;
 
                 if ($exists) {
                     // if statement returns false which means there is at least one HS
@@ -127,7 +125,7 @@
 
             }
 
-            include('../common/includes/db_close.php');
+            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
         } else {
             // csrf
             $failureMsg = "CSRF token error";
@@ -144,7 +142,7 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     if (!isset($successMsg)) {
 
@@ -222,6 +220,7 @@
         // open second tab
         open_tab($navkeys, 1);
         include_once('include/management/contactinfo.php');
+        // include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'contactinfo.php' ]);
         close_tab($navkeys, 1);
 
         // close tab wrapper
@@ -237,6 +236,5 @@
 
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-?>
