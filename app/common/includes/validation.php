@@ -43,7 +43,7 @@ define("PINCODE_REGEX", '/^[a-zA-Z0-9]+$/');
 // this regex allows input like (e.g.) 127, 127., 127.0, 127.0., 127.0.0, 127.0.0 and 127.0.0.1
 define("LOOSE_IP_REGEX", '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/');
 
-define("FIRST_LAST_NAME_REGEX", '/^[ -A-Za-zÀ-ÖØ-öø-ÿ0-9]+$/');
+define("FIRST_LAST_NAME_REGEX", '/^[ \-\p{L}0-9]+$/u');
 define("SAFE_PASSWORD_REGEX", '/^[\w!@#$^&*()\-_=+{};:.<>]+$/');
 define("EMAIL_LIKE_USERNAME_REGEX", '/^[A-Za-z0-9][A-Za-z0-9_.-]*(?:@[A-Za-z0-9.-]+\.[A-Za-z]{2,})?$/');
 define("LOG_FILEPATH_REGEX", '/^(\/[a-zA-Z0-9]+)+(\.log)?$/');
