@@ -88,7 +88,7 @@
             if (empty($enddate)) {
                 $required_fields['enddate'] = t('all','EndingDate');
             } else {
-                $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $enddate);
+                $sql_WHERE[] = sprintf("AcctStartTime < DATE_ADD('%s', INTERVAL 1 DAY)", $enddate);
             }
             
             // further checks
