@@ -23,10 +23,8 @@
 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
-
     include_once("lang/main.php");
     include_once("../common/includes/validation.php");
     include("../common/includes/layout.php");
@@ -60,7 +58,8 @@
     // print HTML prologue
     $extra_js = array(
         "static/js/ajax.js",
-        "static/js/ajaxGeneric.js"
+        "static/js/ajaxGeneric.js",
+        "static/js/pages_common.js"
     );
 
     $title = t('Intro','mngsearch.php');
@@ -276,7 +275,12 @@
                                 'label' => 'Enable',
                                 'class' => 'btn-secondary',
                               );
-
+// Add "Send Mail" button
+        $additional_controls[] = array(
+                                'onclick' => "mailCheckbox('listall','library/ajax/user_actions.php')",
+                                'label' => 'Send Mail',
+                                'class' => 'btn-primary',
+                                );
         $descriptors = array();
 
         $descriptors['start'] = array( 'common_controls' => 'username[]', 'additional_controls' => $additional_controls );

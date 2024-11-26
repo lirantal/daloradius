@@ -44,7 +44,8 @@
     // print HTML prologue
     $extra_js = array(
         "static/js/ajax.js",
-        "static/js/ajaxGeneric.js"
+        "static/js/ajaxGeneric.js",
+        "static/js/pages_common.js"
     );
 
     $title = t('Intro','mnglistall.php');
@@ -225,7 +226,12 @@
                                 'label' => 'Enable',
                                 'class' => 'btn-secondary',
                               );
-
+// Add "Send Mail" button
+        $additional_controls[] = array(
+                                'onclick' => "mailCheckbox('listall','library/ajax/user_actions.php')",
+                                'label' => 'Send Mail',
+                                'class' => 'btn-primary',
+                                );
         $descriptors = array();
 
         $descriptors['start'] = array( 'common_controls' => 'username[]', 'additional_controls' => $additional_controls );
@@ -238,7 +244,6 @@
                             'order_type' => $orderType,
                         );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
-
 
         $descriptors['end'] = array();
         $descriptors['end'][] = array(
