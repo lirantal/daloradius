@@ -18,7 +18,7 @@
  * Description:          daloRADIUS Configuration File
  *
  * Modification Date:    Mon Mar 13 15:55:00 CET 2023
- * 
+ *
  *********************************************************************************************************
  */
 
@@ -112,6 +112,7 @@ $configValues['CONFIG_NODE_STATUS_MONITOR_HARD_DELAY'] = '15';
 $configValues['CONFIG_USER_TRAFFIC_MONITOR_ENABLED'] = 'no';
 $configValues['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT'] = '1073741824';
 $configValues['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT'] = '536870912';
+$configValues['CONFIG_USER_VPN_SERVER'] = 'vpn.company.com';
 
 
 

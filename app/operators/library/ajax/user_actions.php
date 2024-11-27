@@ -187,11 +187,12 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                 // Set the subject and body of the email
                 $subject = 'VPN Credentials'; // Subject of the email
                 $body = sprintf(
-                    '<b>VPN credential</b><br>Hello, %s %s!<br>Your login is: %s<br>Your password is: %s<br>VPN Server is: vpn.company.com<br><br>Best regards, Admin',
+                    '<b>VPN credential</b><br>Hello, %s %s!<br>Your login is: %s<br>Your password is: %s<br>VPN Server is: %s<br><br>Best regards, Admin',
                     $row[3], // First name of the user
                     $row[4], // Last name of the user
                     $row[0], // Username
-                    $row[1]  // Password
+                    $row[1],  // Password
+                    $configValues['CONFIG_USER_VPN_SERVER']  // VPN Server name/IP
                 );
 
                 // Prepare an empty array for email attachments, if any
