@@ -18,7 +18,7 @@
  * Description:    returns user status (active, expired, disabled)
  *                 as well as performs different user operations
  *                 (e.g. disable user, enable user, etc.) via ajax
- * 
+ *
  * Authors:        Liran Tal <liran@enginx.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
@@ -26,40 +26,41 @@
  */
 
 include_once('../checklogin.php');
-
+include_once('../../../common/includes/config_read.php');
+include_once('../../../common/includes/mail.php');
 // name of the group of disabled users
 $disabled_groupname = 'daloRADIUS-Disabled-Users';
 
 // username and divContainer are required
 if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
     array_key_exists('divContainer', $_GET) && isset($_GET['divContainer'])) {
-    
+
     // divContainer id must begin with a letter ([A-Za-z]) and may be followed by any number of letters,
     // digits ([0-9]), hyphens ("-"), underscores ("_").
     if (!preg_match('/[A-Za-z][A-Za-z0-9_-]+/', $_GET['divContainer'])) {
         exit;
     }
-    
+
     $divContainer = $_GET['divContainer'];
-    
+
     // username could contain a list of usernames
     $tmp_usernames = (!is_array($_GET['username'])) ? array( $_GET['username'] ) : $_GET['username'];
-    
+
     $usernames = array();
-    
+
     // we escape username(s)
     foreach ($tmp_usernames as $tmp_username) {
         $tmp_username = trim(str_replace("%", "", $tmp_username));
-        
+
         if (!empty($tmp_username) && !in_array($tmp_username, $usernames)) {
             $usernames[] = $tmp_username;
         }
     }
-    
+
     if (count($usernames) == 0) {
         exit;
     }
-    
+
     // we can handle these actions
     $action = "";
     if (isset($_GET['userDisable'])) {
@@ -70,35 +71,37 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
         $action = 'refillSessionTraffic';
     } else if (isset($_GET['checkDisabled'])) {
         $action = 'checkDisabled';
+    } else if (isset($_GET['userMail'])) {    // handle "Send Mail" button action
+        $action = 'userMail';
+    } else if (isset($_GET['checkDisabled'])){
     } else {
         // this represents the default action
         $action = 'userEnable';
     }
-    
+
     include('../../../common/includes/db_open.php');
     include_once('../../include/management/pages_common.php');
-    
+
     // further escape usernames for safe db queries
     foreach ($usernames as $i => $username) {
         $usernames[$i] = $dbSocket->escapeSimple($username);
     }
-    
+
     // commonly used in the following lines of code
     $username_list = "'" . implode("', '", $usernames) . "'";
-    
+
     // used in presentation
     $username_list_enc = htmlspecialchars($username_list, ENT_QUOTES, 'UTF-8');
     $label = (count($usernames) > 1 || count($usernames) == 0) ? "users" : "user";
 
     switch ($action) {
-    
+
         default:
         case 'userEnable':
             // delete from radusergroup
-            $sql = sprintf("DELETE FROM %s WHERE username IN (%s) AND groupname='%s'", 
+            $sql = sprintf("DELETE FROM %s WHERE username IN (%s) AND groupname='%s'",
                            $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $username_list, $disabled_groupname);
             $res = $dbSocket->query($sql);
-            
             // return message
             if (DB::isError($res)) {
                 $class = "danger";
@@ -107,9 +110,8 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                 $class = "success";
                 $message = sprintf('Enabled %s <strong>%s</strong>.', $label, $username_list_enc);
             }
-                
             break;
-    
+
         case 'userDisable':
             // get the list of users already disabled
             $sql = sprintf("SELECT DISTINCT(username)
@@ -118,42 +120,33 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                                AND groupname='%s'",
                            $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $username_list, $disabled_groupname);
             $res = $dbSocket->query($sql);
-            
+
             $already_disabled = array();
             while ($row = $res->fetchRow()) {
                 $already_disabled[] = $row[0];
             }
-        
             // no need to disable already disabled users
             $to_disable = array();
             foreach ($usernames as $username) {
                 if (in_array($username, $already_disabled)) {
                     continue;
                 }
-                
                 $to_disable[] = $username;
             }
-        
             if (count($to_disable) > 0) {
-        
-                // this left piece of the query is the same for all 
+                // this left piece of the query is the same for all
                 $sql0 = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ",
                                 $configValues['CONFIG_DB_TBL_RADUSERGROUP']);
-                                
                 $sql_piece_format = "('%s', '%s', 0)";
                 $sql_pieces = array();
-                
                 foreach ($to_disable as $username) {
                     $sql_pieces[] = sprintf($sql_piece_format, $username, $disabled_groupname);
                 }
-                
                 // actually execute the query for disabling users
                 $sql = $sql0 . implode(", ", $sql_pieces);
                 $res = $dbSocket->query($sql);
-                
                 $to_disable_list = implode(", ", $to_disable);
                 $to_disable_list_enc = htmlspecialchars($to_disable_list, ENT_QUOTES, 'UTF-8');
-            
                 if (DB::isError($res)) {
                     $class = "danger";
                     $message = sprintf('Failed to disable %s <strong>%s</strong>.', $label, $to_disable_list_enc);
@@ -164,22 +157,68 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             } else {
                 $already_disabled_enc = htmlspecialchars(implode(", ", $already_disabled), ENT_QUOTES, 'UTF-8');
                 $already_disabled_label = ((count($to_disable) > 1 || count($to_disable) == 0)) ? "users" : "user";
-                
                 $class = "danger";
                 $message = sprintf('%s <strong>%s</strong> already disabled.', $already_disabled_label, $already_disabled_enc);
             }
-
             break;
-        
+//============================
+        case 'userMail':
+            // Prepare the SQL query to retrieve user mail information
+            $sql = sprintf(
+                "SELECT radcheck.username, value, email, firstname, lastname
+        FROM %s
+        JOIN %s
+        ON radcheck.username = userinfo.username
+        WHERE radcheck.username IN (%s);",
+                $configValues['CONFIG_DB_TBL_RADCHECK'], // Table containing user credentials
+                $configValues['CONFIG_DB_TBL_DALOUSERINFO'], // Table containing user info
+                $username_list // List of usernames to filter the results
+            );
+
+            // Execute the SQL query
+            $res = $dbSocket->query($sql);
+
+            // Iterate through the results
+            while ($row = $res->fetchRow()) {
+                // Get the recipient's email address and username
+                $recipient_email_address = $row[2]; // Email of the user
+                $recipient_name = $row[0]; // Username of the user
+
+                // Set the subject and body of the email
+                $subject = 'VPN Credentials'; // Subject of the email
+                $body = sprintf(
+                    '<b>VPN credential</b><br>Hello, %s %s!<br>Your login is: %s<br>Your password is: %s<br>VPN Server is: %s<br><br>Best regards, Admin',
+                    $row[3], // First name of the user
+                    $row[4], // Last name of the user
+                    $row[0], // Username
+                    $row[1],  // Password
+                    $configValues['CONFIG_USER_VPN_SERVER']  // VPN Server name/IP
+                );
+
+                // Prepare an empty array for email attachments, if any
+                $attachment = array();
+
+                // Send the email and capture the success status and message
+                list($success, $status) = send_email($configValues, $recipient_email_address, $recipient_name, $subject, $body, $attachment);
+
+                // Determine the class and message based on whether the email was sent successfully
+                if ($success) {
+                    $class = "success"; // Class for successful email sending
+                    $message = $status; // Message indicating success status
+                } else {
+                    $class = "danger"; // Class for failed email sending
+                    $message = $status; // Message indicating failure status
+                }
+            }
+            break; // End of the case
+//=======================
         case 'checkDisabled':
             $username = $usernames[0];
-        
             $sql = sprintf("SELECT username FROM %s WHERE username='%s' AND groupname='%s'",
                            $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
                            $dbSocket->escapeSimple($username), $disabled_groupname);
             $res = $dbSocket->query($sql);
             $numrows = $res->numRows();
-            
             if ($numrows > 0) {
                 $class = "danger";
                 $message = sprintf('Please note that user <strong>%s</strong> is currently disabled.',
@@ -188,7 +227,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                          . sprintf('To enable this user, remove it from the <em>%s</em> profile.', $disabled_groupname);
             }
             break;
-        
+
         case 'userRefillSessionTime':
             // we update the sessiontime value to be 0 - this will only work though
             // for accumulative type accounts. For TTF accounts we need to completely
@@ -197,16 +236,16 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             // counter definition in radiusd.conf to check for records with AcctSessionTime>=1
             $sql = sprintf("UPDATE %s SET AcctSessionTime=0 WHERE Username IN (%s)",
                            $configValues['CONFIG_DB_TBL_RADACCT'], $username_list);
-            
+
             $res = $dbSocket->query($sql);
 
             $isErr = DB::isError($res);
-            
+
             if (!$isErr) {
 
                 // take care of recording the billing action in billing_history table
                 foreach ($usernames as $username) {
-                    $sql = sprintf("SELECT ubi.id, ubi.username, ubi.planName, bp.id as PlanID, bp.planTimeRefillCost, 
+                    $sql = sprintf("SELECT ubi.id, ubi.username, ubi.planName, bp.id as PlanID, bp.planTimeRefillCost,
                                            bp.planTax, ubi.paymentmethod, ubi.cash, ubi.creditcardname, ubi.creditcardnumber,
                                            ubi.creditcardverification, ubi.creditcardtype, ubi.creditcardexp
                                       FROM %s AS ubi, %s AS bp
@@ -215,19 +254,19 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                                    $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $username);
                     $res = $dbSocket->query($sql);
                     $numrows = $res->numRows();
-                    
+
                     if ($numrows == 0) {
                         continue;
                     }
-                    
+
                     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-                    
+
                     $id = $row['id'];
                     $refillCost = $row['planTimeRefillCost'];
 
                     $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
-                    
+
                     $sql = sprintf("INSERT INTO %s (id, username, planId, billAmount, billAction, billPerformer, billReason,
                                                     paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification,
                                                     creditcardtype, creditcardexp, creationdate, creationby)
@@ -238,24 +277,24 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                                    $row['cash'], $row['creditcardname'], $row['creditcardnumber'], $row['creditcardverification'],
                                    $row['creditcardtype'], $row['creditcardexp'], $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
-                    
+
 
                     // if the refill cost is anything beyond the amount 0, we create an invoice for it.
                     if ($refillCost > 0 && !empty($id)) {
-            
+
                         // if the user id indeed set in the userbillinfo table
                         include_once('../../include/management/userBilling.php');
-                
+
                         $invoiceInfo['notes'] = 'refill user account';
-                        
-                        // calculate tax (planTax is the numerical percentage amount) 
+
+                        // calculate tax (planTax is the numerical percentage amount)
                         $planTax = floatval($row['planTax'] / 100);
-                        
+
                         $invoiceItems[0]['plan_id'] = $row['PlanID'];
                         $invoiceItems[0]['amount'] = $row['planTimeRefillCost'];
                         $invoiceItems[0]['tax'] = floatval($row['planTimeRefillCost'] * $planTax);
                         $invoiceItems[0]['notes'] = 'refill user session time';
-                                            
+
                         userInvoiceAdd($id, $invoiceInfo, $invoiceItems);
                     }
                 }
@@ -272,20 +311,20 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             }
 
             break;
-    
+
          case 'userRefillSessionTraffic':
             $sql = sprintf("UPDATE %s SET AcctInputOctets=0, AcctOutputOctets=0 WHERE Username IN (%s)",
                            $configValues['CONFIG_DB_TBL_RADACCT'], $username_list);
-            
+
             $res = $dbSocket->query($sql);
 
             $isErr = DB::isError($res);
-            
+
             if (!$isErr) {
 
                 // take care of recording the billing action in billing_history table
                 foreach ($usernames as $username) {
-                
+
                     $sql = sprintf("SELECT ubi.id, ubi.username, ubi.planName, bp.id as PlanID, bp.planTax,
                                            bp.planTrafficRefillCost, ubi.paymentmethod, ubi.cash, ubi.creditcardname,
                                            ubi.creditcardnumber, ubi.creditcardverification, ubi.creditcardtype, ubi.creditcardexp
@@ -295,19 +334,19 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                                    $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $username);
                     $res = $dbSocket->query($sql);
                     $numrows = $res->numRows();
-                    
+
                     if ($numrows == 0) {
                         continue;
                     }
 
                     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-                    
+
                     $id = $row['id'];
                     $refillCost = $row['planTrafficRefillCost'];
 
                     $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
-                    
+
                     $sql = sprintf("INSERT INTO %s (id, username, planId, billAmount, billAction, billPerformer, billReason,
                                                     paymentmethod, cash, creditcardname, creditcardnumber, creditcardverification,
                                                     creditcardtype, creditcardexp, creationdate, creationby)
@@ -318,27 +357,27 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                                    $row['cash'], $row['creditcardname'], $row['creditcardnumber'], $row['creditcardverification'],
                                    $row['creditcardtype'], $row['creditcardexp'], $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
-                    
+
                     // if the refill cost is anything beyond the amount 0, we create an invoice for it.
                     if ($refillCost > 0 && !empty($id)) {
                         // if the user id indeed set in the userbillinfo table
                         include_once('../../include/management/userBilling.php');
-                
+
                         $invoiceInfo['notes'] = 'refill user account';
-                        
-                        // calculate tax (planTax is the numerical percentage amount) 
+
+                        // calculate tax (planTax is the numerical percentage amount)
                         $planTax = floatval($row['planTax'] / 100);
                         $invoiceItems[0]['plan_id'] = $row['PlanID'];
                         $invoiceItems[0]['amount'] = $row['planTrafficRefillCost'];
                         $invoiceItems[0]['tax'] = floatval($row['planTrafficRefillCost'] * $planTax);
                         $invoiceItems[0]['notes'] = 'refill user session traffic';
-                                            
+
                         userInvoiceAdd($id, $invoiceInfo, $invoiceItems);
 
                     }
                 }
             }
-            
+
             // return message
             if ($isErr) {
                 $class = "danger";
@@ -348,13 +387,13 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                 $message = sprintf('Session traffic for %s <strong>%s</strong> has been successfully refilled (and billed).',
                                    $label, $username_list_enc);
             }
-            
+
             break;
-    
+
     }
 
     include('../../../common/includes/db_close.php');
-    
+
     // output message
     if (isset($message) && isset($class)) {
         $div = sprintf('<div class="alert alert-%s" role="alert">%s</div>', $class, $message);
