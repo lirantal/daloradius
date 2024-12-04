@@ -561,6 +561,7 @@ main() {
     freeradius_setup_sql_mod
     freeradius_enable_restart
 
+    apache_disable_all_sites
     apache_setup_envvars
     apache_setup_ports
     apache_setup_operators_site
