@@ -286,7 +286,7 @@
 
             // define table row
             $table_row = array(
-                                $checkbox, $tooltip2, $this_name, $this_framedipaddress, $this_calledstationid,
+                                $checkbox, $tooltip2, $this_name, $this_framedipaddress, $this_callingstationid,
                                 $this_starttime, $this_sessiontime, $this_hotspot, $this_nasshortname, $tooltip1
                               );
 
