@@ -65,6 +65,11 @@
             $groups = (array_key_exists('groups', $_POST) && isset($_POST['groups'])) ? $_POST['groups'] : array();
             $maxallsession = (array_key_exists('maxallsession', $_POST) && isset($_POST['maxallsession'])) ? $_POST['maxallsession'] : "";
             $expiration = (array_key_exists('expiration', $_POST) && isset($_POST['expiration'])) ? $_POST['expiration'] : "";
+            // Convert expiration date from Y-m-d to d M Y format if it's not empty
+            if (!empty($expiration)) {
+                $expirationDate = new DateTime($expiration);
+                $expiration = $expirationDate->format('d M Y');
+            }
             $sessiontimeout = (array_key_exists('sessiontimeout', $_POST) && isset($_POST['sessiontimeout'])) ? $_POST['sessiontimeout'] : "";
             $idletimeout = (array_key_exists('idletimeout', $_POST) && isset($_POST['idletimeout'])) ? $_POST['idletimeout'] : "";
             $simultaneoususe = (array_key_exists('simultaneoususe', $_POST) && isset($_POST['simultaneoususe'])) ? $_POST['simultaneoususe'] : "";
