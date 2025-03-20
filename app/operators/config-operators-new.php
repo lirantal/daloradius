@@ -119,9 +119,10 @@
                         // insert operators acl for this operator
                         foreach ($_POST as $field => $access) {
                             
-                            if (preg_match('/^ACL_/', $field) === false) {
-                                continue;
-                            }
+                        if (!preg_match('/^ACL_/', $field)) { 
+                            continue;
+                        }
+
                             
                             $file = substr($field, 4);
                             $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($file),
