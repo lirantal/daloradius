@@ -2,7 +2,7 @@
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
- * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ * Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,7 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Liran Tal <liran@enginx.com>
+ * Authors:    Liran Tal <liran@lirantal.com>
  *             Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
@@ -119,9 +119,10 @@
                         // insert operators acl for this operator
                         foreach ($_POST as $field => $access) {
                             
-                            if (preg_match('/^ACL_/', $field) === false) {
-                                continue;
-                            }
+                        if (!preg_match('/^ACL_/', $field)) { 
+                            continue;
+                        }
+
                             
                             $file = substr($field, 4);
                             $sql_pieces[] = sprintf($sql_piece_format, $dbSocket->escapeSimple($file),

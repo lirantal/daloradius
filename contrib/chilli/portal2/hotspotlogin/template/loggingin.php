@@ -2,7 +2,7 @@
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
- * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ * Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,7 @@
  *
  *********************************************************************************************************
  *
- * Authors:     Liran Tal <liran@enginx.com>
+ * Authors:     Liran Tal <liran@lirantal.com>
  *
  * daloRADIUS edition - fixed up variable definition through-out the code
  * as well as parted the code for the sake of modularity and ability to

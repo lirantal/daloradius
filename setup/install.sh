@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # daloRADIUS - RADIUS Web Platform
-# Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+# Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -561,6 +561,7 @@ main() {
     freeradius_setup_sql_mod
     freeradius_enable_restart
 
+    apache_disable_all_sites
     apache_setup_envvars
     apache_setup_ports
     apache_setup_operators_site

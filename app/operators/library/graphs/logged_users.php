@@ -2,7 +2,7 @@
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
- * Copyright (C) 2007 - Liran Tal <liran@enginx.com> All Rights Reserved.
+ * Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@
  *                 reports the per-hour distribution of users accounted
  *                 on the specified date.
  *
- * Authors:        Liran Tal <liran@enginx.com>
+ * Authors:        Liran Tal <liran@lirantal.com>
  *                 Tiago Ratto <tiagoratto@gmail.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *

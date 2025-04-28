@@ -24,7 +24,7 @@
 #/*
 # *********************************************************************************************************
 # *
-# * Authors:     Liran Tal <liran@enginx.com>
+# * Authors:     Liran Tal <liran@lirantal.com>
 # *
 # * daloRADIUS edition - fixed up variable definition through-out the code
 # * as well as parted the code for the sake of modularity and ability to

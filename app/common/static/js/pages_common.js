@@ -28,7 +28,7 @@ function toggleAttributeCustom() {
     var elem2 = document.getElementById('addAttributesCustom');
     elem1.disabled = false;
     elem2.disabled = false;
-    
+
     var elem3 = document.getElementById('dictVendors0');
     var elem4 = document.getElementById('reloadAttributes');
     var elem5 = document.getElementById('dictAttributesDatabase');
@@ -48,7 +48,7 @@ function toggleAttributeSelectbox() {
     var elem2 = document.getElementById('addAttributesCustom');
     elem1.disabled = true;
     elem2.disabled = true;
-    
+
     var elem3 = document.getElementById('dictVendors0');
     var elem4 = document.getElementById('reloadAttributes');
     var elem5 = document.getElementById('dictAttributesDatabase');
@@ -65,7 +65,7 @@ function toggleRandomUsers() {
 
     //disable field
     document.batchuser.elements['startingIndex'].disabled=true;
-    
+
     // enable required fields
     //document.batchuser.elements['length_pass'].disabled=false;
     document.batchuser.elements['length_user'].disabled=false;
@@ -144,7 +144,7 @@ function toggleMacAuth(state) {
 /***********************************************************************
  * setText
  * srcObj    - an integer to be multiplied
- * dstObj    - the dstination object is multiplied by it's value 
+ * dstObj    - the dstination object is multiplied by it's value
  *           and the value of the source object.
  ***********************************************************************/
 function setText(srcObj,dstObj) {
@@ -185,7 +185,7 @@ function setStringText(srcId,dstId) {
  * setStringTextMulti
  * srcId    - the source object text
  * dstId1    - the dstination object is set to the source object text
- * dstId2    - 
+ * dstId2    -
  ***********************************************************************/
 function setStringTextMulti(srcId,dstId1, dstId2) {
 
@@ -209,7 +209,7 @@ function setStringTextMulti(srcId,dstId1, dstId2) {
 /***********************************************************************
  * toggleShowDiv
  * toggles a div on/off (visible/hidden)
- * 
+ *
  * idName        - the id name of the target div to toggle on/off
  *               (visible/hidden)
  ***********************************************************************/
@@ -297,9 +297,9 @@ function SetChecked(val,chkName,formname) {
 /***********************************************************************
  * removeCheckbox
  * submits a form with checkbox values to a remote page
- * 
+ *
  * formName    - the form name
- * pageDst    - the page destination to be submitted 
+ * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
 function removeCheckbox(formName,pageDst) {
@@ -336,9 +336,9 @@ function removeCheckbox(formName,pageDst) {
 /***********************************************************************
  * disableCheckbox
  * submits a form using ajax to disable a user
- * 
+ *
  * formName    - the form name
- * pageDst    - the page destination to be submitted 
+ * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
 function disableCheckbox(formName,pageDst) {
@@ -377,15 +377,51 @@ function disableCheckbox(formName,pageDst) {
 }
 
 
+/***********************************************************************
+ * mailCheckbox
+ * submits a form using ajax to send email to user/users
+ *
+ * formName    - the form name
+ * pageDst    - the page destination to be submitted
+ *
+ ***********************************************************************/
+function mailCheckbox(formName,pageDst) {
+
+    var count = 0;
+    var form = document.getElementsByTagName('input');
+    var values = "";
+
+    for (var i=0; i < form.length; ++i) {
+        var e = form[i];
+        if (e.type == 'checkbox' && e.checked) {
+            values += "username[]=" + e.value + "&";
+            ++count;
+        }
+    }
+
+    var strUsernames = values.substr(0,values.length-1);
+
+    // if no items were checked there's no reason to submit the form
+    if (count == 0) {
+        alert("No items selected");
+        return;
+    }
+    if (confirm("You are about to send " + count + " messages\nDo you want to continue?"))  {
+        ajaxGeneric("library/ajax/user_actions.php","userMail","returnMessages",strUsernames);
+        return true;
+    }
+    return false;
+}
+
 
 
 
 /***********************************************************************
  * enableCheckbox
  * submits a form using ajax to enable a user
- * 
+ *
  * formName    - the form name
- * pageDst    - the page destination to be submitted 
+ * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
 function enableCheckbox(formName,pageDst) {
@@ -429,7 +465,7 @@ function enableCheckbox(formName,pageDst) {
 /***********************************************************************
  * backupRollback
  * performs rollback
- * 
+ *
  ***********************************************************************/
 function backupRollback(file) {
 
@@ -464,9 +500,9 @@ function genericCounter(str) {
 /***********************************************************************
  * refillSessionTimeCheckbox
  * submits a form using ajax to refill a user session time
- * 
+ *
  * formName    - the form name
- * pageDst    - the page destination to be submitted 
+ * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
 function refillSessionTimeCheckbox(formName,pageDst) {
@@ -516,9 +552,9 @@ function refillSessionTimeCheckbox(formName,pageDst) {
 /***********************************************************************
  * refillSessionTrafficCheckbox
  * submits a form using ajax to refill a user session traffic
- * 
+ *
  * formName    - the form name
- * pageDst    - the page destination to be submitted 
+ * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
 function refillSessionTrafficCheckbox(formName,pageDst) {
@@ -561,7 +597,7 @@ function refillSessionTrafficCheckbox(formName,pageDst) {
 /***********************************************************************
  * copyUserBillInfo
  * copies user contact info to billing contact info input fields
- * 
+ *
  ***********************************************************************/
 function copyUserBillInfo(obj) {
 
@@ -577,7 +613,7 @@ function copyUserBillInfo(obj) {
         document.getElementById('bi_city').value = document.getElementById('city').value;
         document.getElementById('bi_state').value = document.getElementById('state').value;
         document.getElementById('bi_zip').value = document.getElementById('zip').value;
-        
+
     } else {
 
         document.getElementById('bi_contactperson').value = "";
@@ -588,7 +624,7 @@ function copyUserBillInfo(obj) {
         document.getElementById('bi_city').value = "";
         document.getElementById('bi_state').value = "";
         document.getElementById('bi_zip').value = "";
-        
+
     }
 
 }
@@ -599,10 +635,10 @@ function setupAccordion() {
     for (var i = 0; i < acc.length; i++) {
         acc[i].addEventListener("click", function() {
             this.classList.toggle("accordion-active");
-            
+
             var panel = this.nextElementSibling,
                 display = panel.style.display === "block";
-            
+
             panel.style.display = (display) ? "none" : "block";
         });
     }
