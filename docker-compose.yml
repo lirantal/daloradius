@@ -35,8 +35,9 @@ services:
       - DEFAULT_CLIENT_SECRET=testing123
     volumes:
       - ./data/freeradius:/data
-    # If you want to disable debug output, remove the command parameter
-    command: -X
+      - radius_logs:/var/log/freeradius
+    # Uncomment below to enable debug logging.
+    #command: -X
 
   radius-web:
     build: .
@@ -64,3 +65,7 @@ services:
 
     volumes:
       - ./data/daloradius:/data
+      - radius_logs:/var/log/freeradius
+
+volumes:
+  radius_logs:

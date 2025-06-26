@@ -80,5 +80,29 @@ else
 	date > $DB_LOCK
 fi
 
-# Start freeradius in the foreground and in debug mode
-exec freeradius -f "$@"
+# make logs directory world readable
+chmod -R a+rX /var/log/freeradius
+
+# start freeradius in foreground mode
+freeradius -f "$@" &
+RADIUS_PID=$!
+
+tail -F /var/log/freeradius/radius.log &
+TAIL_PID=$!
+
+# trap SIGINT/SIGTERM and forward to both processes
+_term() {
+  echo "Caught signal—shutting down..."
+  kill -TERM "$RADIUS_PID" 2>/dev/null
+  kill -TERM "$TAIL_PID"   2>/dev/null
+  wait "$RADIUS_PID"
+  wait "$TAIL_PID"
+  exit 0
+}
+trap _term INT TERM
+
+wait "$RADIUS_PID"
+# if freeradius dies, kill the tail and exit with its code
+kill -TERM "$TAIL_PID" 2>/dev/null
+wait "$TAIL_PID"
+exit $?
