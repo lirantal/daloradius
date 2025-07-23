@@ -350,16 +350,20 @@
                         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
                         // calculate tax (planTax is the numerical percentage amount)
-                        $calcTax = (float) ($row['planCost'] * (float)($row['planTax'] / 100) );
+                        $planCost = is_numeric($row['planCost']) ? (float)$row['planCost'] : 0.0;
+                        $planTax = is_numeric($row['planTax']) ? (float)$row['planTax'] : 0.0;
+                        $calcTax = $planCost * ($planTax / 100);
+                        
                         $invoiceItems[0]['plan_id'] = $row['id'];
-                        $invoiceItems[0]['amount'] = $row['planCost'];
+                        $invoiceItems[0]['amount'] = $planCost;
                         $invoiceItems[0]['tax'] = $calcTax;
                         $invoiceItems[0]['notes'] = 'charge for plan service';
 
                         if (isset($row['planSetupCost']) && ($row['planSetupCost'] != '') ) {
-                            $calcTax = (float) ($row['planSetupCost'] * (float)($row['planTax'] / 100) );
+                            $planSetupCost = is_numeric($row['planSetupCost']) ? (float)$row['planSetupCost'] : 0.0;
+                            $calcTax = $planSetupCost * ($planTax / 100);
                             $invoiceItems[1]['plan_id'] = $row['id'];
-                            $invoiceItems[1]['amount'] = $row['planSetupCost'];
+                            $invoiceItems[1]['amount'] = $planSetupCost;
                             $invoiceItems[1]['tax'] = $calcTax;
                             $invoiceItems[1]['notes'] = 'charge for plan setup fee (one time)';
                         }
