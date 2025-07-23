@@ -35,8 +35,8 @@
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            $username = (array_key_exists('username', $_POST) && !empty(str_replace("%", trim($_POST['username']))))
-                      ? str_replace("%", trim($_POST['username'])) : "";
+            $username = (array_key_exists('username', $_POST) && !empty(str_replace("%", "", trim($_POST['username']))))
+                      ? str_replace("%", "", trim($_POST['username'])) : "";
             
             if (!empty($username)) {
             
@@ -68,17 +68,22 @@
                                $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $dbSocket->escapeSimple($username));
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
-                $user_id = intval($res->fetchrow()[0]);
+                $row = $res->fetchrow();
+                $user_id = ($row && isset($row[0])) ? intval($row[0]) : 0;
                 
                 // to remove all invoices and payments we need to get the invoices_id
-                $sql = sprintf("SELECT id FROM %s WHERE user_id=%d",
-                               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id);
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                $invoice_id = array();
-                while ($row = $res->fetchrow()) {
-                    $invoice_id[] = intval($row[0]);
+                if ($user_id > 0) {
+                    $sql = sprintf("SELECT id FROM %s WHERE user_id=%d",
+                                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                    
+                    $invoice_id = array();
+                    while ($row = $res->fetchrow()) {
+                        $invoice_id[] = intval($row[0]);
+                    }
+                } else {
+                    $invoice_id = array();
                 }
                 
                 $tables = array(
@@ -88,18 +93,22 @@
                 
                 $format = "DELETE FROM %s WHERE invoice_id IN (%s)";
                 
-                // delete all invoice items and all payment items
-                foreach ($tables as $table) {
-                    $sql = sprintf($format, $table, implode(", ", $invoice_id));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";  
+                // delete all invoice items and all payment items only if there are invoice IDs
+                if (!empty($invoice_id)) {
+                    foreach ($tables as $table) {
+                        $sql = sprintf($format, $table, implode(", ", $invoice_id));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";  
+                    }
                 }
 
-                // remove all invoices by this user
-                $sql = sprintf("DELETE FROM %s WHERE user_id=%d",
-                               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id);
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
+                // remove all invoices by this user only if user_id is valid
+                if ($user_id > 0) {
+                    $sql = sprintf("DELETE FROM %s WHERE user_id=%d",
+                                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id);
+                    $res = $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                }
                 
                 include('../common/includes/db_close.php');
             
@@ -115,8 +124,8 @@
             $logAction .= "$failureMsg on page: ";
         }
     } else {
-        $username = (array_key_exists('username', $_REQUEST) && !empty(str_replace("%", trim($_REQUEST['username']))))
-                  ? str_replace("%", trim($_REQUEST['username'])) : "";
+        $username = (array_key_exists('username', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['username']))))
+                  ? str_replace("%", "", trim($_REQUEST['username'])) : "";
     }
     
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
