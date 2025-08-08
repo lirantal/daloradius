@@ -59,7 +59,7 @@
                    $configValues['CONFIG_DB_TBL_RADACCT'], $timeThreshold);
 
     // Execute SQL query on the database
-    $res = $dbSocket->query($query);
+    $res = $dbSocket->query($sql);
 
     // Update the `acctstarttime` field by adding the session time and a specified threshold to the current time.
     // This is performed for records where `acctstarttime` is either '0000-00-00 00:00:00' or NULL
@@ -70,7 +70,7 @@
                    $configValues['CONFIG_DB_TBL_RADACCT'], $timeThreshold);
 
     
-    $res = $dbSocket->query($query);
+    $res = $dbSocket->query($sql);
 
     // Close the database connection
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
