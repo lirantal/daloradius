@@ -22,34 +22,36 @@
 #
 
 CREATE TABLE IF NOT EXISTS radacct (
-  radacctid BIGINT(21) NOT NULL AUTO_INCREMENT,
-  acctsessionid VARCHAR(64) NOT NULL DEFAULT '',
-  acctuniqueid VARCHAR(32) NOT NULL DEFAULT '',
-  username VARCHAR(64) NOT NULL DEFAULT '',
-  realm VARCHAR(64) DEFAULT '',
-  nasipaddress VARCHAR(15) NOT NULL DEFAULT '',
-  nasportid VARCHAR(32) DEFAULT NULL,
-  nasporttype VARCHAR(32) DEFAULT NULL,
-  acctstarttime DATETIME NULL DEFAULT NULL,
-  acctupdatetime DATETIME NULL DEFAULT NULL,
-  acctstoptime DATETIME NULL DEFAULT NULL,
-  acctinterval INT(12) DEFAULT NULL,
-  acctsessiontime INT(12) UNSIGNED DEFAULT NULL,
-  acctauthentic VARCHAR(32) DEFAULT NULL,
-  connectinfo_start VARCHAR(50) DEFAULT NULL,
-  connectinfo_stop VARCHAR(50) DEFAULT NULL,
-  acctinputoctets BIGINT(20) DEFAULT NULL,
-  acctoutputoctets BIGINT(20) DEFAULT NULL,
-  calledstationid VARCHAR(50) NOT NULL DEFAULT '',
-  callingstationid VARCHAR(50) NOT NULL DEFAULT '',
-  acctterminatecause VARCHAR(32) NOT NULL DEFAULT '',
-  servicetype VARCHAR(32) DEFAULT NULL,
-  framedprotocol VARCHAR(32) DEFAULT NULL,
-  framedipaddress VARCHAR(15) NOT NULL DEFAULT '',
-  framedipv6address VARCHAR(45) NOT NULL DEFAULT '',
-  framedipv6prefix VARCHAR(45) NOT NULL DEFAULT '',
-  framedinterfaceid VARCHAR(44) NOT NULL DEFAULT '',
-  delegatedipv6prefix VARCHAR(45) NOT NULL DEFAULT '',
+  radacctid bigint(21) NOT NULL AUTO_INCREMENT,
+  acctsessionid varchar(64) NOT NULL DEFAULT '',
+  acctuniqueid varchar(32) NOT NULL DEFAULT '',
+  username varchar(64) NOT NULL DEFAULT '',
+  groupname varchar(64) NOT NULL DEFAULT '',
+  realm varchar(64) DEFAULT '',
+  nasipaddress varchar(15) NOT NULL DEFAULT '',
+  nasportid varchar(32) DEFAULT NULL,
+  nasporttype varchar(32) DEFAULT NULL,
+  acctstarttime datetime NULL DEFAULT NULL,
+  acctupdatetime datetime NULL DEFAULT NULL,
+  acctstoptime datetime NULL DEFAULT NULL,
+  acctinterval int(12) DEFAULT NULL,
+  acctsessiontime int(12) unsigned DEFAULT NULL,
+  acctauthentic varchar(32) DEFAULT NULL,
+  connectinfo_start varchar(50) DEFAULT NULL,
+  connectinfo_stop varchar(50) DEFAULT NULL,
+  acctinputoctets bigint(20) DEFAULT NULL,
+  acctoutputoctets bigint(20) DEFAULT NULL,
+  calledstationid varchar(50) NOT NULL DEFAULT '',
+  callingstationid varchar(50) NOT NULL DEFAULT '',
+  acctterminatecause varchar(32) NOT NULL DEFAULT '',
+  servicetype varchar(32) DEFAULT NULL,
+  framedprotocol varchar(32) DEFAULT NULL,
+  framedipaddress varchar(15) NOT NULL DEFAULT '',
+  framedipv6address varchar(45) NOT NULL DEFAULT '',
+  framedipv6prefix varchar(45) NOT NULL DEFAULT '',
+  framedinterfaceid varchar(44) NOT NULL DEFAULT '',
+  delegatedipv6prefix varchar(45) NOT NULL DEFAULT '',
+  class varchar(64) DEFAULT NULL,
   PRIMARY KEY (radacctid),
   UNIQUE KEY acctuniqueid (acctuniqueid),
   KEY username (username),
@@ -63,7 +65,8 @@ CREATE TABLE IF NOT EXISTS radacct (
   KEY acctstarttime (acctstarttime),
   KEY acctinterval (acctinterval),
   KEY acctstoptime (acctstoptime),
-  KEY nasipaddress (nasipaddress)
+  KEY nasipaddress (nasipaddress),
+  INDEX bulk_close (acctstoptime, nasipaddress, acctstarttime)
 );
 
 #
@@ -71,12 +74,12 @@ CREATE TABLE IF NOT EXISTS radacct (
 #
 
 CREATE TABLE IF NOT EXISTS radcheck (
-  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  username VARCHAR(64) NOT NULL DEFAULT '',
-  attribute VARCHAR(64) NOT NULL DEFAULT '',
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  username varchar(64) NOT NULL DEFAULT '',
+  attribute varchar(64)  NOT NULL DEFAULT '',
   op char(2) NOT NULL DEFAULT '==',
-  value VARCHAR(253) NOT NULL DEFAULT '',
-  PRIMARY KEY (id),
+  value varchar(253) NOT NULL DEFAULT '',
+  PRIMARY KEY  (id),
   KEY username (username(32))
 );
 
@@ -85,12 +88,12 @@ CREATE TABLE IF NOT EXISTS radcheck (
 #
 
 CREATE TABLE IF NOT EXISTS radgroupcheck (
-  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  groupname VARCHAR(64) NOT NULL DEFAULT '',
-  attribute VARCHAR(64) NOT NULL DEFAULT '',
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  groupname varchar(64) NOT NULL DEFAULT '',
+  attribute varchar(64)  NOT NULL DEFAULT '',
   op char(2) NOT NULL DEFAULT '==',
-  value VARCHAR(253) NOT NULL DEFAULT '',
-  PRIMARY KEY (id),
+  value varchar(253)  NOT NULL DEFAULT '',
+  PRIMARY KEY  (id),
   KEY groupname (groupname(32))
 );
 
@@ -99,12 +102,12 @@ CREATE TABLE IF NOT EXISTS radgroupcheck (
 #
 
 CREATE TABLE IF NOT EXISTS radgroupreply (
-  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  groupname VARCHAR(64) NOT NULL DEFAULT '',
-  attribute VARCHAR(64) NOT NULL DEFAULT '',
-  op CHAR(2) NOT NULL DEFAULT '=',
-  value VARCHAR(253) NOT NULL DEFAULT '',
-  PRIMARY KEY (id),
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  groupname varchar(64) NOT NULL DEFAULT '',
+  attribute varchar(64)  NOT NULL DEFAULT '',
+  op char(2) NOT NULL DEFAULT '=',
+  value varchar(253)  NOT NULL DEFAULT '',
+  PRIMARY KEY  (id),
   KEY groupname (groupname(32))
 );
 
@@ -113,12 +116,12 @@ CREATE TABLE IF NOT EXISTS radgroupreply (
 #
 
 CREATE TABLE IF NOT EXISTS radreply (
-  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  username VARCHAR(64) NOT NULL DEFAULT '',
-  attribute VARCHAR(64) NOT NULL DEFAULT '',
-  op CHAR(2) NOT NULL DEFAULT '=',
-  value VARCHAR(253) NOT NULL DEFAULT '',
-  PRIMARY KEY (id),
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  username varchar(64) NOT NULL DEFAULT '',
+  attribute varchar(64) NOT NULL DEFAULT '',
+  op char(2) NOT NULL DEFAULT '=',
+  value varchar(253) NOT NULL DEFAULT '',
+  PRIMARY KEY  (id),
   KEY username (username(32))
 );
 
@@ -128,11 +131,11 @@ CREATE TABLE IF NOT EXISTS radreply (
 #
 
 CREATE TABLE IF NOT EXISTS radusergroup (
-  id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  username VARCHAR(64) NOT NULL DEFAULT '',
-  groupname VARCHAR(64) NOT NULL DEFAULT '',
-  priority INT(11) NOT NULL DEFAULT '1',
-  PRIMARY KEY (id),
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  username varchar(64) NOT NULL DEFAULT '',
+  groupname varchar(64) NOT NULL DEFAULT '',
+  priority int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY  (id),
   KEY username (username(32))
 );
 
@@ -147,13 +150,13 @@ CREATE TABLE IF NOT EXISTS radusergroup (
 #
 
 CREATE TABLE IF NOT EXISTS radpostauth (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  username VARCHAR(64) NOT NULL DEFAULT '',
-  pass VARCHAR(64) NOT NULL DEFAULT '',
-  reply VARCHAR(32) NOT NULL DEFAULT '',
-  authdate TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (id),
-  KEY username (username(32))
+  id int(11) NOT NULL AUTO_INCREMENT,
+  username varchar(64) NOT NULL DEFAULT '',
+  pass varchar(64) NOT NULL DEFAULT '',
+  reply varchar(32) NOT NULL DEFAULT '',
+  authdate timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  class varchar(64) NOT NULL DEFAULT '',
+  PRIMARY KEY  (id)
 );
 
 #
@@ -161,17 +164,28 @@ CREATE TABLE IF NOT EXISTS radpostauth (
 #
 
 CREATE TABLE IF NOT EXISTS nas (
-  id INT(10) NOT NULL AUTO_INCREMENT,
-  nasname VARCHAR(128) NOT NULL,
-  shortname VARCHAR(32),
-  type VARCHAR(30) DEFAULT 'other',
-  ports INT(5),
-  secret VARCHAR(60) DEFAULT 'secret' NOT NULL,
-  server VARCHAR(64),
-  community VARCHAR(50),
-  description VARCHAR(200) DEFAULT 'RADIUS Client',
+  id int(10) NOT NULL AUTO_INCREMENT,
+  nasname varchar(128) NOT NULL,
+  shortname varchar(32),
+  type varchar(30) DEFAULT 'other',
+  ports int(5),
+  secret varchar(60) DEFAULT 'secret' NOT NULL,
+  server varchar(64),
+  community varchar(50),
+  description varchar(200) DEFAULT 'RADIUS Client',
+  require_ma varchar(4) DEFAULT 'auto',
+  limit_proxy_state varchar(4) DEFAULT 'auto',
   PRIMARY KEY (id),
   KEY nasname (nasname)
+);
+
+#
+# Table structure for table 'nasreload'
+#
+CREATE TABLE IF NOT EXISTS nasreload (
+  nasipaddress varchar(15) NOT NULL,
+  reloadtime datetime NOT NULL,
+  PRIMARY KEY (nasipaddress)
 );
 
 #
@@ -198,14 +212,14 @@ CREATE TABLE IF NOT EXISTS radippool (
 # which replaces the "radpostauth" table.
 #
 
-CREATE TABLE wimax (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  username VARCHAR(64) NOT NULL DEFAULT '',
-  authdate TIMESTAMP NOT NULL,
-  spi VARCHAR(16) NOT NULL DEFAULT '',
-  mipkey VARCHAR(400) NOT NULL DEFAULT '',
-  lifetime INT(12) DEFAULT NULL,
-  PRIMARY KEY (id),
+CREATE TABLE IF NOT EXISTS wimax (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  username varchar(64) NOT NULL DEFAULT '',
+  authdate timestamp NOT NULL,
+  spi varchar(16) NOT NULL DEFAULT '',
+  mipkey varchar(400) NOT NULL DEFAULT '',
+  lifetime int(12) DEFAULT NULL,
+  PRIMARY KEY  (id),
   KEY username (username),
   KEY spi (spi)
 ) ;
@@ -214,14 +228,14 @@ CREATE TABLE wimax (
 # Table structure for table 'cui'
 #
 
-CREATE TABLE `cui` (
-  `clientipaddress` VARCHAR(46) NOT NULL DEFAULT '',
-  `callingstationid` VARCHAR(50) NOT NULL DEFAULT '',
-  `username` VARCHAR(64) NOT NULL DEFAULT '',
-  `cui` VARCHAR(32) NOT NULL DEFAULT '',
-  `creationdate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastaccounting` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`username`,`clientipaddress`,`callingstationid`)
+CREATE TABLE IF NOT EXISTS `cui` (
+  `clientipaddress` varchar(46) NOT NULL DEFAULT '',
+  `callingstationid` varchar(50) NOT NULL DEFAULT '',
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `cui` varchar(128) NOT NULL DEFAULT '',
+  `creationdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastaccounting` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY  (`username`,`clientipaddress`,`callingstationid`)
 );
 
 #
@@ -229,11 +243,11 @@ CREATE TABLE `cui` (
 # source: https://wiki.freeradius.org/guide/SQL-Huntgroup-HOWTO
 #
 
-CREATE TABLE radhuntgroup (
-    id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    groupname VARCHAR(64) NOT NULL DEFAULT '',
-    nasipaddress VARCHAR(15) NOT NULL DEFAULT '',
-    nasportid VARCHAR(15) DEFAULT NULL,
-    PRIMARY KEY (id),
+CREATE TABLE IF NOT EXISTS radhuntgroup (
+    id int(11) unsigned NOT NULL AUTO_INCREMENT,
+    groupname varchar(64) NOT NULL DEFAULT '',
+    nasipaddress varchar(15) NOT NULL DEFAULT '',
+    nasportid varchar(15) DEFAULT NULL,
+    PRIMARY KEY  (id),
     KEY nasipaddress (nasipaddress)
 );
