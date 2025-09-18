@@ -66,13 +66,20 @@ function init_database {
 
 echo "Starting freeradius..."
 
+# Remove the lock file to ensure initialization runs on every container start
+# This prevents issues when containers are recreated but volumes persist
+INIT_LOCK=/data/.freeradius_init_done
+if test -f "$INIT_LOCK"; then
+	echo "Removing existing lock file to ensure proper initialization on container restart."
+	rm -f "$INIT_LOCK"
+fi
+
 # wait for MySQL-Server to be ready
 while ! mysqladmin ping -h"$MYSQL_HOST" --silent; do
 	echo "Waiting for mysql ($MYSQL_HOST)..."
 	sleep 20
 done
 
-INIT_LOCK=/data/.freeradius_init_done
 if test -f "$INIT_LOCK"; then
 	echo "Init lock file exists, skipping initial setup."
 else
