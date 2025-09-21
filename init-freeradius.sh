@@ -74,7 +74,16 @@ done
 
 INIT_LOCK=/data/.freeradius_init_done
 if test -f "$INIT_LOCK"; then
-	echo "Init lock file exists, skipping initial setup."
+	# Lock file exists, but verify that FreeRADIUS is actually configured
+	# This handles the case where containers are recreated but volumes persist
+	if test -L "$RADIUS_PATH/mods-enabled/sql" && grep -q "rlm_sql_mysql" "$RADIUS_PATH/mods-available/sql" 2>/dev/null; then
+		echo "Init lock file exists and FreeRADIUS is properly configured, skipping initial setup."
+	else
+		echo "Init lock file exists but FreeRADIUS configuration is missing, reinitializing..."
+		rm -f "$INIT_LOCK"
+		init_freeradius
+		date > $INIT_LOCK
+	fi
 else
 	init_freeradius
 	date > $INIT_LOCK
