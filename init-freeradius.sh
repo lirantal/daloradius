@@ -66,22 +66,24 @@ function init_database {
 
 echo "Starting freeradius..."
 
-# Remove the lock file to ensure initialization runs on every container start
-# This prevents issues when containers are recreated but volumes persist
-INIT_LOCK=/data/.freeradius_init_done
-if test -f "$INIT_LOCK"; then
-	echo "Removing existing lock file to ensure proper initialization on container restart."
-	rm -f "$INIT_LOCK"
-fi
-
 # wait for MySQL-Server to be ready
 while ! mysqladmin ping -h"$MYSQL_HOST" --silent; do
 	echo "Waiting for mysql ($MYSQL_HOST)..."
 	sleep 20
 done
 
+INIT_LOCK=/data/.freeradius_init_done
 if test -f "$INIT_LOCK"; then
-	echo "Init lock file exists, skipping initial setup."
+	# Lock file exists, but verify that FreeRADIUS is actually configured
+	# This handles the case where containers are recreated but volumes persist
+	if test -L "$RADIUS_PATH/mods-enabled/sql" && grep -q "rlm_sql_mysql" "$RADIUS_PATH/mods-available/sql" 2>/dev/null; then
+		echo "Init lock file exists and FreeRADIUS is properly configured, skipping initial setup."
+	else
+		echo "Init lock file exists but FreeRADIUS configuration is missing, reinitializing..."
+		rm -f "$INIT_LOCK"
+		init_freeradius
+		date > $INIT_LOCK
+	fi
 else
 	init_freeradius
 	date > $INIT_LOCK
