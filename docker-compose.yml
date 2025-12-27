@@ -1,28 +1,26 @@
+version: "3"
+
 services:
 
   radius-mysql:
     image: mariadb:10
     container_name: radius-mysql
     restart: unless-stopped
-    ports:
-      - '3306:3306'
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - TZ=${TZ}
+      - MYSQL_DATABASE=radius
+      - MYSQL_USER=radius
+      - MYSQL_PASSWORD=radiusdbpw
+      - MYSQL_ROOT_PASSWORD=radiusrootdbpw
     volumes:
       - "./data/mysql:/var/lib/mysql"
-      # Optional: mount host timezone files (helpful on Linux hosts)
-      # - "/etc/localtime:/etc/localtime:ro"
-      # - "/etc/timezone:/etc/timezone:ro"
+      - mariadb_certs:/etc/mysql/certs
+      - ./docker/mariadb/tls.cnf:/etc/mysql/conf.d/tls.cnf:ro
 
   radius:
     container_name: radius
     build:
       context: .
-      dockerfile: docker/freeradius/dockerfile-freeradius
+      dockerfile: Dockerfile-freeradius
     restart: unless-stopped
     depends_on: 
       - radius-mysql
@@ -30,25 +28,22 @@ services:
       - '1812:1812/udp'
       - '1813:1813/udp'
     environment:
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_PORT=${MYSQL_PORT}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - TZ=${TZ}
+      - MYSQL_HOST=radius-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=radius
+      - MYSQL_USER=radius
+      - MYSQL_PASSWORD=radiusdbpw
       # Optional settings
-      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET}
+      - DEFAULT_CLIENT_SECRET=testing123
     volumes:
       - ./data/freeradius:/data
-      - ./radius_logs:/var/log/freeradius
+      - radius_logs:/var/log/freeradius
     # Uncomment below to enable debug logging.
     #command: -X
 
   radius-web:
-    build:
-      context: .
-      dockerfile: docker/daloradius/dockerfile
-    container_name: daloradius
+    build: .
+    container_name: radius-web
     restart: unless-stopped
     depends_on:
       - radius
@@ -57,23 +52,23 @@ services:
       - '80:80'
       - '8000:8000'
     environment:
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_PORT=${MYSQL_PORT}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - TZ=${TZ}
+      - MYSQL_HOST=radius-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=radius
+      - MYSQL_USER=radius
+      - MYSQL_PASSWORD=radiusdbpw
       # Optional Settings:
-      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET}
-      - DEFAULT_FREERADIUS_SERVER=${DEFAULT_FREERADIUS_SERVER}
-      - MAIL_SMTPADDR=${MAIL_SMTPADDR}
-      - MAIL_PORT=${MAIL_PORT}
-      - MAIL_FROM=${MAIL_FROM}
-      - MAIL_AUTH=${MAIL_AUTH}
+      - DEFAULT_CLIENT_SECRET=testing123
+      - DEFAULT_FREERADIUS_SERVER=radius
+      - MAIL_SMTPADDR=127.0.0.1
+      - MAIL_PORT=25
+      - MAIL_FROM=root@daloradius.xdsl.by
+      - MAIL_AUTH=
 
     volumes:
       - ./data/daloradius:/data
-      - ./radius_logs:/var/log/freeradius
+      - radius_logs:/var/log/freeradius
 
 volumes:
   radius_logs:
+  mariadb_certs:
