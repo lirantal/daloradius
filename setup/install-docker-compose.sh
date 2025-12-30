@@ -471,6 +471,70 @@ daloradius_load_sql_schema() {
     print_green "OK"
 }
 
+
+# === STEP 4: Ensure .env exists ===
+echo "==> STEP 4: Ensuring .env exists..."
+ENV_FILE="$REPO_ROOT/.env"
+EXAMPLE_ENV_FILE="$REPO_ROOT/.env.example"
+
+ensure_env_file() {
+  echo "Ensuring .env exists..."
+
+  # If .env already exists, just sanitize and exit
+  if [ -f "$ENV_FILE" ]; then
+    echo ".env already exists: $ENV_FILE"
+    sanitize_file_for_linux "$ENV_FILE"
+    return 0
+  fi
+
+  # If .env absent, copy from .env.example when available
+  if [ -f "$EXAMPLE_ENV_FILE" ]; then
+    sanitize_file_for_linux "$EXAMPLE_ENV_FILE"
+    cp "$EXAMPLE_ENV_FILE" "$ENV_FILE"
+    echo "Created $ENV_FILE from $EXAMPLE_ENV_FILE"
+  else
+    # Fallback: create a minimal .env so the installer can proceed
+    echo "Warning: $EXAMPLE_ENV_FILE not found; creating minimal $ENV_FILE"
+    cat > "$ENV_FILE" <<'EOF'
+    # docker environment overrides
+    # Timezone (set to your preferred TZ)
+    TZ=Europe/Madrid
+
+    # MariaDB settings (change as needed)
+    MYSQL_HOST=radius-mysql
+    MYSQL_PORT=3306
+    MYSQL_DATABASE=radius
+    MYSQL_USER=radius
+
+    # daloRADIUS optional settings
+    DEFAULT_CLIENT_SECRET=testing123
+    DEFAULT_FREERADIUS_SERVER=radius
+    MAIL_SMTPADDR=127.0.0.1
+    MAIL_PORT=25
+    MAIL_FROM=root@daloradius.xdsl.by
+    MAIL_AUTH=
+
+    # MySQL TLS mode: SKIP | DISABLED | PREFERRED | REQUIRED
+    # Default is PREFERRED (try TLS, fallback if not available)
+    MYSQL_SSL_MODE=PREFERRED
+    # Set to SKIP to explicitly disable SSL (not recommended)
+    # MYSQL_SSL_MODE=SKIP
+
+    # If you use Docker secrets, place files under /run/secrets with names:
+    # - mysql_root_password
+    # - mysql_password
+EOF
+    echo "Created minimal $ENV_FILE"
+  fi
+
+  chmod 600 "$ENV_FILE" 2>/dev/null || true
+  sanitize_file_for_linux "$ENV_FILE"
+}
+
+# Call the function
+ensure_env_file
+
+
 # Finalize installation tasks (set operator password etc.)
 system_finalize() {
     INIT_USERNAME="administrator"
@@ -508,7 +572,8 @@ create_mariadb_client_defaults
 daloradius_load_sql_schema
 system_finalize
 
-# === STEP 4: Create README in secrets ===
+# === STEP 5: Create README in secrets ===
+echo "==> STEP 5: Create README in secrets"
 cat > "$SECRETS_DIR/README.txt" <<EOF
 Certificates and secrets generated for daloRADIUS Docker Compose.
 
