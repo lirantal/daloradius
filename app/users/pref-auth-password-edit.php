@@ -130,7 +130,7 @@
                             
                             // we can procede
                             $sql = sprintf("UPDATE %s SET value='%s' WHERE id=%d", $configValues['CONFIG_DB_TBL_RADCHECK'],
-                                          $new_hashed_password, $id);
+                                          $dbSocket->escapeSimple($new_hashed_password), $id);
                             $res1 = $dbSocket->query($sql);
                             $logDebugSQL .= "$sql;\n";
                             
