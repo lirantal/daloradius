@@ -137,7 +137,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                 // this left piece of the query is the same for all
                 $sql0 = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ",
                                 $configValues['CONFIG_DB_TBL_RADUSERGROUP']);
-                $sql_piece_format = "('%s', '%s', 0)";
+                $sql_piece_format = "('%s', '%s', -1)";
                 $sql_pieces = array();
                 foreach ($to_disable as $username) {
                     $sql_pieces[] = sprintf($sql_piece_format, $username, $disabled_groupname);
