@@ -30,7 +30,7 @@ if (array_key_exists('hotspot', $_GET) && isset($_GET['hotspot']) &&
     
     // divContainer id must begin with a letter ([A-Za-z]) and may be followed by any number of letters,
     // digits ([0-9]), hyphens ("-"), underscores ("_").
-    if (!preg_match("/[A-Za-z][A-Za-z0-9_-]+/", $_GET['divContainer'])) {
+    if (!preg_match("/^[A-Za-z][A-Za-z0-9_-]+$/", $_GET['divContainer'])) {
         exit;
     }
     

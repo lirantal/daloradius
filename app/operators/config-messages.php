@@ -23,7 +23,7 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    //~ include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
     include_once("lang/main.php");
     include_once("../common/includes/validation.php");
