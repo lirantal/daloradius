@@ -130,12 +130,18 @@
 
                     // Convert expiration date from Y-m-d to d M Y format (FreeRADIUS format)
                     if (!empty($expiration)) {
-                        try {
-                            $expirationDate = new DateTime($expiration);
-                            $expiration = $expirationDate->format('d M Y');
-                        } catch (Exception $e) {
+                        $expirationDate = DateTime::createFromFormat('Y-m-d', $expiration);
+                        $errors = DateTime::getLastErrors();
+
+                        // ensure strict parsing: no errors/warnings and no normalization
+                        if ($expirationDate === false
+                            || !empty($errors['warning_count'])
+                            || !empty($errors['error_count'])
+                            || $expirationDate->format('Y-m-d') !== $expiration) {
                             continue; // Skip invalid date
                         }
+
+                        $expiration = $expirationDate->format('d M Y');
                     }
 
                     // Validate timeout fields (must be numeric if provided)
