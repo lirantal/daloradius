@@ -9,9 +9,9 @@
 # 1. docker run -p 80:80 -p 8000:8000 -d lirantal/daloradius
 
 FROM debian:13-slim
-MAINTAINER Liran Tal <liran.tal@gmail.com>
 
-LABEL Description="daloRADIUS Official docker based on Debian 13 and PHP8." \
+LABEL maintainer="Liran Tal <liran.tal@gmail.com>" \
+	Description="daloRADIUS Official docker based on Debian 13 and PHP8." \
 	License="GPLv2" \
 	Usage="docker build . -t lirantal/daloradius && docker run -d -p 80:80 -p 8000:8000 lirantal/daloradius" \
 	Version="2.0beta"
