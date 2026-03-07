@@ -86,25 +86,84 @@
 
                 foreach ($csvFormattedData as $csvLine) {
 
-                    $arr = explode(",", $csvLine);
+                    $arr = str_getcsv($csvLine, ",");
 
-                    if (count($arr) != 5) {
+                    // Support 5-20 fields:
+                    // Required (5): username, password, email, firstname, lastname
+                    // Optional (15): framedipaddress, expiration, department, company, mobilephone,
+                    //                workphone, homephone, address, city, state, country, zip,
+                    //                sessiontimeout, idletimeout, maxdailysession
+                    if (count($arr) < 5 || count($arr) > 20) {
                         continue;
                     }
 
-                    list($username, $password, $email, $firstname, $lastname) = $arr;
+                    // Pad to 20 fields with empty strings
+                    list($username, $password, $email, $firstname, $lastname, $framedipaddress, $expiration,
+                         $department, $company, $mobilephone, $workphone, $homephone, $address, $city, $state,
+                         $country, $zip, $sessiontimeout, $idletimeout, $maxdailysession) = array_pad($arr, 20, '');
+
                     $username = trim($username);
                     $password = trim($password);
                     $email = trim($email);
                     $firstname = trim($firstname);
                     $lastname = trim($lastname);
+                    $framedipaddress = trim($framedipaddress);
+                    $expiration = trim($expiration);
+                    $department = trim($department);
+                    $company = trim($company);
+                    $mobilephone = trim($mobilephone);
+                    $workphone = trim($workphone);
+                    $homephone = trim($homephone);
+                    $address = trim($address);
+                    $city = trim($city);
+                    $state = trim($state);
+                    $country = trim($country);
+                    $zip = trim($zip);
+                    $sessiontimeout = trim($sessiontimeout);
+                    $idletimeout = trim($idletimeout);
+                    $maxdailysession = trim($maxdailysession);
+
+                    // Validate IP address format if provided
+                    if (!empty($framedipaddress) && preg_match(IP_REGEX, $framedipaddress) !== 1) {
+                        continue; // Skip invalid IP
+                    }
+
+                    // Convert expiration date from Y-m-d to d M Y format (FreeRADIUS format)
+                    if (!empty($expiration)) {
+                        $expirationDate = DateTime::createFromFormat('Y-m-d', $expiration);
+                        $errors = DateTime::getLastErrors();
+
+                        // ensure strict parsing: no errors/warnings and no normalization
+                        if ($expirationDate === false
+                            || !empty($errors['warning_count'])
+                            || !empty($errors['error_count'])
+                            || $expirationDate->format('Y-m-d') !== $expiration) {
+                            continue; // Skip invalid date
+                        }
+
+                        $expiration = $expirationDate->format('d M Y');
+                    }
+
+                    // Validate timeout fields (must be numeric if provided)
+                    if (!empty($sessiontimeout) && !is_numeric($sessiontimeout)) {
+                        continue;
+                    }
+                    if (!empty($idletimeout) && !is_numeric($idletimeout)) {
+                        continue;
+                    }
+                    if (!empty($maxdailysession) && !is_numeric($maxdailysession)) {
+                        continue;
+                    }
 
                     if (preg_match(EMAIL_LIKE_USERNAME_REGEX, $username) === 1 &&
                         preg_match(SAFE_PASSWORD_REGEX, $password) === 1 &&
                         preg_match(FIRST_LAST_NAME_REGEX, $firstname) === 1 &&
                         preg_match(FIRST_LAST_NAME_REGEX, $lastname) === 1 &&
                         !array_key_exists($username, $data)) {
-                        $data[$username] = array( $password, $email, $firstname, $lastname );
+                        $data[$username] = array( $password, $email, $firstname, $lastname, $framedipaddress, $expiration,
+                                                  $department, $company, $mobilephone, $workphone, $homephone,
+                                                  $address, $city, $state, $country, $zip,
+                                                  $sessiontimeout, $idletimeout, $maxdailysession );
                     }
                 }
 
@@ -149,8 +208,11 @@
 
                 $counter = 0;
                 foreach ($data as $subject => $arr) {
-                    list( $value, $email, $firstname, $lastname ) = $arr;
-                    
+                    list( $value, $email, $firstname, $lastname, $framedipaddress, $expiration,
+                          $department, $company, $mobilephone, $workphone, $homephone,
+                          $address, $city, $state, $country, $zip,
+                          $sessiontimeout, $idletimeout, $maxdailysession ) = $arr;
+
                     // skipping this user if it exists
                     if (user_exists($dbSocket, $subject)) {
                         continue;
@@ -168,6 +230,31 @@
                         }
                     }
 
+                    // Insert Framed-IP-Address (radreply table)
+                    if (!empty($framedipaddress)) {
+                        insert_single_attribute($dbSocket, $subject, 'Framed-IP-Address', ':=', $framedipaddress, $configValues['CONFIG_DB_TBL_RADREPLY']);
+                    }
+
+                    // Insert Expiration (radcheck table)
+                    if (!empty($expiration)) {
+                        insert_single_attribute($dbSocket, $subject, 'Expiration', ':=', $expiration, $configValues['CONFIG_DB_TBL_RADCHECK']);
+                    }
+
+                    // Insert Session-Timeout (radreply table)
+                    if (!empty($sessiontimeout)) {
+                        insert_single_attribute($dbSocket, $subject, 'Session-Timeout', ':=', $sessiontimeout, $configValues['CONFIG_DB_TBL_RADREPLY']);
+                    }
+
+                    // Insert Idle-Timeout (radreply table)
+                    if (!empty($idletimeout)) {
+                        insert_single_attribute($dbSocket, $subject, 'Idle-Timeout', ':=', $idletimeout, $configValues['CONFIG_DB_TBL_RADREPLY']);
+                    }
+
+                    // Insert Max-Daily-Session (radcheck table)
+                    if (!empty($maxdailysession)) {
+                        insert_single_attribute($dbSocket, $subject, 'Max-Daily-Session', ':=', $maxdailysession, $configValues['CONFIG_DB_TBL_RADCHECK']);
+                    }
+
                     // adding user info
                     $params = array(
                                         "creationdate" => $current_datetime,
@@ -183,13 +270,55 @@
                     if (!empty($firstname) && preg_match(FIRST_LAST_NAME_REGEX, $firstname)) {
                         $params["firstname"] = $firstname;
                     }
-                    
+
                     if (!empty($lastname) && preg_match(FIRST_LAST_NAME_REGEX, $lastname)) {
                         $params["lastname"] = $lastname;
                     }
-                    
+
                     if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         $params["email"] = $email;
+                    }
+
+                    // Priority 1: Additional user info fields
+                    if (!empty($department)) {
+                        $params["department"] = $department;
+                    }
+
+                    if (!empty($company)) {
+                        $params["company"] = $company;
+                    }
+
+                    if (!empty($mobilephone)) {
+                        $params["mobilephone"] = $mobilephone;
+                    }
+
+                    if (!empty($workphone)) {
+                        $params["workphone"] = $workphone;
+                    }
+
+                    if (!empty($homephone)) {
+                        $params["homephone"] = $homephone;
+                    }
+
+                    // Priority 4: Location info fields
+                    if (!empty($address)) {
+                        $params["address"] = $address;
+                    }
+
+                    if (!empty($city)) {
+                        $params["city"] = $city;
+                    }
+
+                    if (!empty($state)) {
+                        $params["state"] = $state;
+                    }
+
+                    if (!empty($country)) {
+                        $params["country"] = $country;
+                    }
+
+                    if (!empty($zip)) {
+                        $params["zip"] = $zip;
                     }
 
                     $addedUserInfo = add_user_info($dbSocket, $subject, $params);
@@ -329,9 +458,26 @@
                                         "caption" => t('all','CSVData'),
                                         "type" => "textarea",
                                         "name" => "csvdata",
-                                        "tooltipText" => 'Paste a CSV-formatted data input of users, expected format is: ' .
-                                                         'username,password,email,firstname,lastname. ' .
-                                                         'Note: any CSV fields beyond the first 5 are ignored.',
+                                        "tooltipText" => 'Paste a CSV-formatted data input of users.<br/><br/>' .
+                                                         '<b>Required fields (5):</b> username,password,email,firstname,lastname<br/><br/>' .
+                                                         '<b>Optional fields (15):</b><br/>' .
+                                                         '• framedipaddress - Valid IPv4 address<br/>' .
+                                                         '• expiration - Date in YYYY-MM-DD format<br/>' .
+                                                         '• department - Department name<br/>' .
+                                                         '• company - Company name<br/>' .
+                                                         '• mobilephone - Mobile phone number<br/>' .
+                                                         '• workphone - Work phone number<br/>' .
+                                                         '• homephone - Home phone number<br/>' .
+                                                         '• address - Street address<br/>' .
+                                                         '• city - City name<br/>' .
+                                                         '• state - State/Province<br/>' .
+                                                         '• country - Country name<br/>' .
+                                                         '• zip - Postal/ZIP code<br/>' .
+                                                         '• sessiontimeout - Session timeout in seconds<br/>' .
+                                                         '• idletimeout - Idle timeout in seconds<br/>' .
+                                                         '• maxdailysession - Max daily session in seconds<br/><br/>' .
+                                                         '<b>Example:</b> user001,pass123,user@example.com,John,Doe,192.168.1.100,2026-12-31,IT,ACME Corp,+1234567890,,,New York,NY,USA,10001,3600,600,86400<br/><br/>' .
+                                                         'Note: Rows with more than 20 CSV fields will be skipped.',
                                         "content" => ((isset($failureMsg)) ? $csvdata : ""),
                                      );
 
