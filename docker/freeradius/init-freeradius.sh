@@ -31,7 +31,7 @@ function init_freeradius {
         sed -i 's|#\s*msg_badpass =.*|msg_badpass = "authenticationtype:\\\"%{control:Auth-Type}\\\";nasipv4address:\\\"%{request:NAS-IP-Address}\\\";nasipv6address:\\\"%{request:NAS-IPv6-Address}\\\";nasid:\\\"%{request:NAS-Identifier}\\\";srcipaddress:\\\"%{request:Packet-Src-IP-Address}\\\";nasport:\\\"%{request:NAS-Port-Id}\\\";nasporttype:\\\"%{request:NAS-Port-Type}\\\";calledstationid:\\\"%{request:Called-Station-Id}\\\";callingstationid:\\\"%{request:Calling-Station-Id}\\\""|' \
         $RADIUS_PATH/radiusd.conf
 
-	# Enable status in freeadius
+	# Enable status in freeradius
 	ln -s $RADIUS_PATH/sites-available/status $RADIUS_PATH/sites-enabled/status
 
 	# Set Database connection
