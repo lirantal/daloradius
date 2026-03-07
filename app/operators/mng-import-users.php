@@ -240,14 +240,14 @@
                         insert_single_attribute($dbSocket, $subject, 'Expiration', ':=', $expiration, $configValues['CONFIG_DB_TBL_RADCHECK']);
                     }
 
-                    // Insert Session-Timeout (radcheck table)
+                    // Insert Session-Timeout (radreply table)
                     if (!empty($sessiontimeout)) {
-                        insert_single_attribute($dbSocket, $subject, 'Session-Timeout', ':=', $sessiontimeout, $configValues['CONFIG_DB_TBL_RADCHECK']);
+                        insert_single_attribute($dbSocket, $subject, 'Session-Timeout', ':=', $sessiontimeout, $configValues['CONFIG_DB_TBL_RADREPLY']);
                     }
 
-                    // Insert Idle-Timeout (radcheck table)
+                    // Insert Idle-Timeout (radreply table)
                     if (!empty($idletimeout)) {
-                        insert_single_attribute($dbSocket, $subject, 'Idle-Timeout', ':=', $idletimeout, $configValues['CONFIG_DB_TBL_RADCHECK']);
+                        insert_single_attribute($dbSocket, $subject, 'Idle-Timeout', ':=', $idletimeout, $configValues['CONFIG_DB_TBL_RADREPLY']);
                     }
 
                     // Insert Max-Daily-Session (radcheck table)
