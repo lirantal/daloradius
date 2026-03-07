@@ -86,7 +86,7 @@
 
                 foreach ($csvFormattedData as $csvLine) {
 
-                    $arr = explode(",", $csvLine);
+                    $arr = str_getcsv($csvLine, ",");
 
                     // Support 5-20 fields:
                     // Required (5): username, password, email, firstname, lastname
