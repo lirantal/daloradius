@@ -477,7 +477,7 @@
                                                          '• idletimeout - Idle timeout in seconds<br/>' .
                                                          '• maxdailysession - Max daily session in seconds<br/><br/>' .
                                                          '<b>Example:</b> user001,pass123,user@example.com,John,Doe,192.168.1.100,2026-12-31,IT,ACME Corp,+1234567890,,,New York,NY,USA,10001,3600,600,86400<br/><br/>' .
-                                                         'Note: Any CSV fields beyond the first 20 are ignored.',
+                                                         'Note: Rows with more than 20 CSV fields will be skipped.',
                                         "content" => ((isset($failureMsg)) ? $csvdata : ""),
                                      );
 
