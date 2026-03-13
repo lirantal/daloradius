@@ -336,6 +336,7 @@ $valid_timeUnits = array( "second", "minute", "hour", "day", "week", "month", );
 // ordered by country code
 $operators_valid_languages = array(
                                     "ar" => "Arabic",
+                                    "de" => "German",
                                     "en" => "English",
                                     "es_ve" => "Spanish - Venezuelan",
                                     "hu" => "Hungarian",
@@ -349,6 +350,7 @@ $operators_valid_languages = array(
                                   );
 // users allowed languages
 $users_valid_languages = array(
+                                    "de" => "Deutsch (German)",
                                     "en" => "English",
                                     "it" => "Italiano (Italian)",
                                     "ro" => "Română (Romanian)",
