@@ -115,7 +115,7 @@
 		"<b>".t('all','Invoice')."</b>: ".$invoice_id."<br/>".
 		"<b>".t('all','Date')."</b>: ".$invoiceDetails['date']."<br/>".
 		"<b>".t('all','TotalBilled')."</b>: ".$invoiceDetails['totalbilled']."<br/>".
-		"<b>".t('all','TotalPayed')."</b>: ".$invoiceDetails['totalpayed']."<br/>".
+		"<b>".t('all','TotalPaid')."</b>: ".$invoiceDetails['totalpayed']."<br/>".
 		"<b>".t('all','Balance')."</b>: ".$balance."<br/>".
 		"<b>".t('all','Status')."</b>: ".$invoiceDetails['status']."<br/>".
 		"<b>".t('ContactInfo','Notes')."</b>: ".$invoiceDetails['notes']."<br/><br/><br/>";

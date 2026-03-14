@@ -34,7 +34,7 @@
                     "id" => t('all','Invoice'),
                     "date" => t('all','Date'),
                     "totalbilled" => t('all','TotalBilled'),
-                    "totalpayed" => t('all','TotalPayed'),
+                    "totalpayed" => t('all','TotalPaid'),
                     t('all','Balance'),
                     "status_id" => t('all','Status')
                  );

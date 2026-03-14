@@ -151,7 +151,7 @@
 
                 $input_descriptors0[] = array(
                                                 "name" => "totalpayed",
-                                                "caption" => t('all','TotalPayed'),
+                                                "caption" => t('all','TotalPaid'),
                                                 "type" => "number",
                                                 "value" => $totalpayed,
                                                 "min" => 0,
