@@ -20,7 +20,7 @@
  *********************************************************************************************************
  */
 	//include the dompdf class
-	require_once("dompdf/dompdf_config.inc.php");
+	require_once(__DIR__ . "/../../common/library/dompdf/autoload.inc.php");
 
 	//include the Pear Mail classes for sending out emails
 	@require_once('Mail.php');
@@ -132,7 +132,7 @@
 		global $base;
 		
 		// instansiate the pdf document
-		$dompdf = new DOMPDF();
+		$dompdf = new Dompdf\Dompdf();
 		$dompdf->set_base_path("$base/templates/");
 		$dompdf->load_html($html);
 		$dompdf->render();
