@@ -22,7 +22,7 @@
 
 	require_once(dirname(__FILE__)."/../../library/checklogin.php");
 	require_once(dirname(__FILE__)."/../../notifications/processNotificationUserInvoice.php");
-	require_once(dirname(__FILE__)."/../../library/config_read.php");
+	require_once(dirname(__FILE__)."/../../../common/includes/config_read.php");
 	
 	isset($_GET['invoice_id']) ? $invoice_id = $_GET['invoice_id'] : $invoice_id = "";
 	isset($_GET['destination']) ? $destination = $_GET['destination'] : $destination = "download";
@@ -49,7 +49,7 @@
 	
 	function getInvoiceDetails($invoice_id = NULL, $username) {
 		
-		require(dirname(__FILE__)."/../../library/opendb.php");
+		require(dirname(__FILE__)."/../../../common/includes/db_open.php");
 		require_once(dirname(__FILE__)."/../../lang/main.php");
 		
 		global $configValues;
@@ -156,7 +156,7 @@
 		
 		$customerInfo['invoice_items'] = $invoice_items;
 		
-		require(dirname(__FILE__)."/../../library/closedb.php");
+		require(dirname(__FILE__)."/../../../common/includes/db_close.php");
 		
 		
 		return $customerInfo;
