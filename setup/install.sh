@@ -152,7 +152,7 @@ mariadb_install() {
 mariadb_secure() {
     echo -n "[+] Securing MariaDB... "
     if ! mariadb -u root <<SQL >/dev/null 2>&1
-DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.01', '::1');
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 ALTER USER root@'localhost' IDENTIFIED BY '';
 DELETE FROM mysql.user WHERE User='';
 DROP DATABASE IF EXISTS test;
