@@ -118,7 +118,9 @@ system_ensure_root() {
 system_update() {
     echo -n "[+] Updating system package lists... "
 
-    apt update >/dev/null 2>&1 & print_spinner $!
+    apt update >/dev/null 2>&1 &
+    print_spinner $!
+    wait $!
     if [ $? -ne 0 ]; then
         echo "KO"
             echo "[!] Failed to update package lists. Aborting." >&2
@@ -127,7 +129,9 @@ system_update() {
     print_green "OK"
 
     echo -n "[+] Upgrading system packages... "
-    apt dist-upgrade -y >/dev/null 2>&1 & print_spinner $!
+    apt dist-upgrade -y >/dev/null 2>&1 &
+    print_spinner $!
+    wait $!
     if [ $? -ne 0 ]; then
         print_red "KO"
         echo "[!] Failed to upgrade system packages. Aborting." >&2
@@ -139,7 +143,9 @@ system_update() {
 # Function to install MariaDB
 mariadb_install() {
     echo -n "[+] Installing MariaDB... "
-    apt --no-install-recommends install mariadb-server mariadb-client -y >/dev/null 2>&1 & print_spinner $!
+    apt --no-install-recommends install mariadb-server mariadb-client -y >/dev/null 2>&1 &
+    print_spinner $!
+    wait $!
     if [ $? -ne 0 ]; then
         print_red "KO"
         echo "[!] Failed to install MariaDB. Aborting." >&2
@@ -152,7 +158,7 @@ mariadb_install() {
 mariadb_secure() {
     echo -n "[+] Securing MariaDB... "
     if ! mariadb -u root <<SQL >/dev/null 2>&1
-DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.01', '::1');
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 ALTER USER root@'localhost' IDENTIFIED BY '';
 DELETE FROM mysql.user WHERE User='';
 DROP DATABASE IF EXISTS test;
@@ -187,7 +193,9 @@ SQL
 # Function to install freeRADIUS
 freeradius_install() {
     echo -n "[+] Installing freeRADIUS... "
-    apt --no-install-recommends install freeradius freeradius-common freeradius-mysql -y >/dev/null 2>&1 & print_spinner $!
+    apt --no-install-recommends install freeradius freeradius-common freeradius-mysql -y >/dev/null 2>&1 &
+    print_spinner $!
+    wait $!
     if [ $? -ne 0 ]; then
         print_red "KO"
         echo "[!] Failed to install freeRADIUS. Aborting." >&2
@@ -232,9 +240,9 @@ freeradius_enable_restart() {
 daloradius_install_dep() {
     echo -n "[+] Installing daloRADIUS dependencies... "
     apt --no-install-recommends install apache2 php libapache2-mod-php php-mysql php-zip php-mbstring php-common php-curl \
-                                        php-gd php-db php-mail php-mail-mime freeradius-utils git rsyslog -y >/dev/null 2>&1 & \
+                                        php-gd php-db php-mail php-mail-mime freeradius-utils git rsyslog -y >/dev/null 2>&1 &
     print_spinner $!
-
+    wait $!
     if [ $? -ne 0 ]; then
         print_red "KO"
         print_red "[!] Failed to install daloRADIUS dependencies. Aborting." >&2
@@ -267,7 +275,9 @@ daloradius_installation() {
             exit 1
         fi
 
-        git clone https://github.com/lirantal/daloradius.git "${DALORADIUS_ROOT_DIRECTORY}" >/dev/null 2>&1 & print_spinner $!
+        git clone https://github.com/lirantal/daloradius.git "${DALORADIUS_ROOT_DIRECTORY}" >/dev/null 2>&1 &
+        print_spinner $!
+        wait $!
         if [ $? -ne 0 ]; then
             print_red "KO"
             print_red "[!] Failed to clone daloRADIUS repository. Aborting." >&2
@@ -325,9 +335,9 @@ daloradius_setup_required_files() {
       sed -Ei "s/^.*CONFIG_DB_PORT'\].*$/\$configValues['CONFIG_DB_PORT'] = '${DB_PORT}';/" "${DALORADIUS_CONF_FILE}" >/dev/null 2>&1 && \
       sed -Ei "s/^.*CONFIG_DB_USER'\].*$/\$configValues['CONFIG_DB_USER'] = '${DB_USER}';/" "${DALORADIUS_CONF_FILE}" >/dev/null 2>&1 && \
       sed -Ei "s/^.*CONFIG_DB_PASS'\].*$/\$configValues['CONFIG_DB_PASS'] = '${DB_PASS}';/" "${DALORADIUS_CONF_FILE}" >/dev/null 2>&1 && \
-      sed -Ei "s/^.*CONFIG_DB_NAME'\].*$/\$configValues['CONFIG_DB_NAME'] = '${DB_SCHEMA}';/" "${DALORADIUS_CONF_FILE}" >/dev/null 2>&1 ) & \
+      sed -Ei "s/^.*CONFIG_DB_NAME'\].*$/\$configValues['CONFIG_DB_NAME'] = '${DB_SCHEMA}';/" "${DALORADIUS_CONF_FILE}" >/dev/null 2>&1 ) &
     print_spinner $!
-
+    wait $!
     if [ $? -ne 0 ]; then
         print_red "KO"
         print_red "[!] Failed to setup daloRADIUS configuration file. Aborting." >&2
@@ -358,7 +368,9 @@ daloradius_setup_required_files() {
 # Function to disable all Apache sites
 apache_disable_all_sites() {
     echo -n "[+] Disabling all Apache sites... "
-    find /etc/apache2/sites-enabled/ -type l -exec rm "{}" \; >/dev/null 2>&1 & print_spinner $!
+    find /etc/apache2/sites-enabled/ -type l -exec rm "{}" \; >/dev/null 2>&1 &
+    print_spinner $!
+    wait $!
     if [ $? -ne 0 ]; then
         print_red "KO"
         print_red "[!] Failed to disable all Apache sites. Aborting." >&2
@@ -499,14 +511,18 @@ daloradius_load_sql_schema() {
     DB_DIR="${DALORADIUS_ROOT_DIRECTORY}/contrib/db"
     echo -n "[+] Loading daloRADIUS SQL schema into MariaDB... "
 
-    mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/fr3-mariadb-freeradius.sql" >/dev/null 2>&1 & print_spinner $!
+    mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/fr3-mariadb-freeradius.sql" >/dev/null 2>&1 &
+    print_spinner $!
+    wait $!
     if [ $? -ne 0 ]; then
         print_red "KO"
         print_red "[!] Failed to load freeRADIUS SQL schema into MariaDB. Aborting." >&2
         exit 1
     fi
 
-    mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius.sql" >/dev/null 2>&1 & print_spinner $!
+    mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius.sql" >/dev/null 2>&1 &
+    print_spinner $!
+    wait $!
     if [ $? -ne 0 ]; then
         print_red "KO"
         print_red "[!] Failed to load daloRADIUS SQL schema into MariaDB. Aborting." >&2
