@@ -111,7 +111,7 @@
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  preg_match(ORDER_TYPE_REGEX, $_GET['orderType']) !== false)
+                  in_array(strtolower($_GET['orderType']), array("asc", "desc")))
                ? strtolower($_GET['orderType']) : "asc";
 
 
