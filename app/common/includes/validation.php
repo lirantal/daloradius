@@ -44,7 +44,7 @@ define("PINCODE_REGEX", '/^[a-zA-Z0-9]+$/');
 define("LOOSE_IP_REGEX", '/^(((2(5[0-5]|[0-4][0-9]))|1[0-9]{2}|[1-9]?[0-9])\.?){1,4}$/');
 
 define("FIRST_LAST_NAME_REGEX", '/^[ \-\p{L}0-9]+$/u');
-define("SAFE_PASSWORD_REGEX", '/^[^\x00-\x1F\x7F]+$/');
+define("SAFE_PASSWORD_REGEX", '/^\P{C}+$/u');
 define("EMAIL_LIKE_USERNAME_REGEX", '/^[A-Za-z0-9][A-Za-z0-9_.-]*(?:@[A-Za-z0-9.-]+\.[A-Za-z]{2,})?$/');
 define("LOG_FILEPATH_REGEX", '/^(\/[a-zA-Z0-9]+)+(\.log)?$/');
 
