@@ -41,9 +41,9 @@
 
     $cols = array(
                     "id" => t('all','HgID'),
+                    "groupname" => t('all','HgGroupName'),
                     "nasipaddress" => t('all','HgIPHost'),
                     "nasportid" => t('all','HgPortId'),
-                    "groupname" => t('all','HgGroupName'),
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
