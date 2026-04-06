@@ -111,7 +111,7 @@
 
                 $id = intval($row[5]);
                 $id__attribute = sprintf('%d__%s', $id, $row[0]);
-                $name = sprintf('editValues%s[]', $editCounter);
+                $name = sprintf('editValues_%s_%d[]', $table_name, $id);
 
                 $type = ((preg_match("/-Password$/", $row[0]) === 1) && (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes"))
                       ? "password" : "text";
@@ -124,9 +124,6 @@
                                      'attr_type' => $row[3], 'attr_desc' => $row[4], 'table' => $table_name);
 
                 print_edit_attribute($descriptor);
-
-                // we increment the counter for the html elements of the edit attributes
-                $editCounter++;
             }
 
             echo '<small class="mt-4 d-block">'
