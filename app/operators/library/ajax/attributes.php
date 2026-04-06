@@ -479,7 +479,7 @@ switch ($action) {
              ? intval($_GET['instanceNum']) : rand();
 
         $sql = sprintf("SELECT `recommendedOP`, `recommendedTable`, `recommendedTooltip`, `type`, `recommendedHelper`
-                          FROM %s WHERE `attribute`='%s' AND `recommendedHelper` IS NOT NULL ORDER BY `id` ASC LIMIT 1",
+                          FROM %s WHERE `attribute`='%s' ORDER BY `id` ASC LIMIT 1",
                        $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($attribute));
         $res = $dbSocket->query($sql);
         $numrows = $res->numRows();
