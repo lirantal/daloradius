@@ -1334,7 +1334,7 @@ Este posibil s? se adapteze la interogare este max prin modificarea set?rilor ?n
 <br/>
 ?n cazul ?n care <b> </ b> - Seta?i domeniul in baza de date pe care dori?i, pentru a se potrivi (la fel ca ?i un element-cheie), ales ?n cazul ?n care valoarea
 care s? se potriveasc? pentru a ar trebui s? fie egal (=) sau acesta con?ine o parte din valoarea de c?utare pentru tine (cum ar fi o regex). Dac?
-alege s? utilizeze Contine operatorul nu trebuie s? ad?uga?i orice metacaractere din comuna forma "*", ci mai degrab?
+alege s? utilizeze Contine operatorul nu trebuie s? ad?uga?i orice metacaractere din comuna forma \"*\", ci mai degrab?
 valoarea pe care vor fi c?utate ?n mod automat ?n acest formular: * valoare * (sau ?n stil mysql:% valoarea%).
 <br/>
 Interogare de Contabilitate <b> Domenii </ b> - Pute?i alege domenii care v-ar pl?cea s? prezinte, ?n rezultate
@@ -1475,4 +1475,3 @@ $l['submenu']['Custom'] = "Custom";
 $l['submenu']['Hotspot'] = "Hotspot";
 
 ?>
-
