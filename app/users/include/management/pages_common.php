@@ -373,7 +373,8 @@ function printTableHead($cols, $orderBy="", $orderType="asc", $partial_query_str
             $title_asc = sprintf($title_format, strip_tags($caption), 'ascending');
             $title_desc = sprintf($title_format, strip_tags($caption), 'descending');
 
-            $href_format = '?orderBy=%s&orderType=%s' . $partial_query_string;
+            $partial_query_string_safe = str_replace('%', '%%', $partial_query_string);
+            $href_format = '?orderBy=%s&orderType=%s' . $partial_query_string_safe; 
             $href_asc = sprintf($href_format, $param, 'asc');
             $href_desc = sprintf($href_format, $param, 'desc');
 
