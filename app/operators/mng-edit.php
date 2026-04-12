@@ -50,37 +50,40 @@
             return;
         }
 
-        $sql = sprintf("SELECT planGroup FROM %s WHERE planName='%s'",
-                        $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
+        // remove profiles associated with the old plan
+        $sql = sprintf("SELECT profile_name FROM %s WHERE plan_name='%s'",
+                        $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'],
                         $dbSocket->escapeSimple($oldplanName));
-        $res = $dbSocket->query($sql);
+        $oldProfiles = $dbSocket->getCol($sql);
         $logDebugSQL .= "$sql;\n";
 
-        $oldplanGroup = $res->fetchRow()[0];
-
-        if (!empty($oldplanGroup)) {
-            $sql = sprintf("DELETE FROM %s WHERE username='%s' AND groupname='%s'",
-                           $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
-                           $dbSocket->escapeSimple($oldplanGroup));
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
+        if (is_array($oldProfiles) && count($oldProfiles) > 0) {
+            foreach ($oldProfiles as $profile_name) {
+                $sql = sprintf("DELETE FROM %s WHERE username='%s' AND groupname='%s'",
+                               $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                               $dbSocket->escapeSimple($username),
+                               $dbSocket->escapeSimple($profile_name));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+            }
         }
 
-        $sql = sprintf("SELECT planGroup FROM %s WHERE planName='%s'",
-                        $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
+        // add profiles associated with the new plan
+        $sql = sprintf("SELECT profile_name FROM %s WHERE plan_name='%s'",
+                        $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'],
                         $dbSocket->escapeSimple($planName));
-        $res = $dbSocket->query($sql);
+        $newProfiles = $dbSocket->getCol($sql);
         $logDebugSQL .= "$sql;\n";
 
-        $planGroup = $res->fetchRow()[0];
-
-        if (!empty($planGroup)) {
-
-            $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', 0)",
-                           $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
-                           $dbSocket->escapeSimple($planGroup));
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
+        if (is_array($newProfiles) && count($newProfiles) > 0) {
+            foreach ($newProfiles as $profile_name) {
+                $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', 0)",
+                               $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                               $dbSocket->escapeSimple($username),
+                               $dbSocket->escapeSimple($profile_name));
+                $res = $dbSocket->query($sql);
+                $logDebugSQL .= "$sql;\n";
+            }
         }
     }
 
@@ -180,10 +183,7 @@
             $planName = (array_key_exists('planName', $_POST) && isset($_POST['planName'])) ? trim($_POST['planName']) : "";
             $oldplanName = (array_key_exists('oldplanName', $_POST) && isset($_POST['oldplanName'])) ? trim($_POST['oldplanName']) : "";
 
-            // fix up errors with droping the Plan name
-            if (empty($planName)) {
-                $planName = $oldplanName;
-            }
+
 
             if (!empty($username)) {
 
