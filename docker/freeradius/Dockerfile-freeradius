@@ -1,0 +1,53 @@
+# Official daloRADIUS dockerfile for freeradius
+# GitHub: https://github.com/lirantal/daloradius
+#
+# Build image:
+# 1. git pull git@github.com:lirantal/daloradius.git
+# 2. docker build -t lirantal/daloradius -f dockerfile-freeradius
+#
+# Run the container:
+# 1. docker run -p 80:80 -d lirantal/dalofreeradius
+
+FROM freeradius/freeradius-server:latest
+MAINTAINER Liran Tal <liran.tal@gmail.com>
+
+LABEL Description="freeradius docker based on Ubuntu 20.04 LTS, optimized for daloRADIUS." \
+	License="GPLv2" \
+	Usage="docker build -t lirantal/dalofreeradius -f dockerfile-freeradius && docker run -d -p 80:80 lirantal/dalofreeradius" \
+	Version="1.0"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+# default timezone (overridable at runtime via docker-compose/.env)
+ENV TZ=Europe/Madrid
+
+RUN apt-get update \
+	&& apt-get install --yes --no-install-recommends \
+		apt-utils \
+		ipcalc \
+		tzdata \
+		net-tools \
+		mariadb-client \
+		libmysqlclient-dev \
+		unzip \
+		wget \
+		dos2unix \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Create directories
+# /data should be mounted as volume to avoid recreation of database entries
+RUN mkdir /app /data
+WORKDIR /app
+
+# Copy init script to image
+ADD docker/freeradius/init-freeradius.sh /app
+
+# Normalize EOL and make init.sh script executable
+RUN dos2unix /app/init-freeradius.sh || true && chmod +x /app/init-freeradius.sh
+
+# Expose FreeRADIUS Ports
+EXPOSE 1812 1813
+
+# Run the script which executes freeradius in foreground (invoke with bash to avoid CRLF shebang issues)
+ENTRYPOINT ["/bin/bash", "/app/init-freeradius.sh"]
+CMD ["/bin/bash", "/app/init-freeradius.sh"]

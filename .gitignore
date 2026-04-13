@@ -1,10 +1,17 @@
-.idea/
+..idea/
 *.log
 *.db
 invoice_preview.html
 .DS_Store
 data/
 internal_data/
+
+# Local environment overrides (do not commit secrets)
+.env
+
+# Secrets directory - contains sensitive files, do NOT commit
+/secrets/*
+!secrets/README.md
 
 var/log/*.log
 var/backup/*.sql

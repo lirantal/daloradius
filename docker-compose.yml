@@ -1,18 +1,31 @@
-version: "3"
-
 services:
 
   radius-mysql:
     image: mariadb:10
     container_name: radius-mysql
     restart: unless-stopped
+    # Expose MariaDB port only if you need host access (e.g., external backups or admin tools).
+    # Leaving this commented keeps the DB accessible only on the Docker network (safer).
+    # To enable host access, uncomment and secure it with firewall rules:
+    # Expose MariaDB to the host *only* if you need external access (e.g., backups or admin tools).
+    # By default this is commented so the DB is only accessible on the Docker network (safer).
+    # To expose the DB port to the host, uncomment and secure with firewall rules:
+    ports:
+      - '3306:3306'
     environment:
       - MYSQL_DATABASE=radius
       - MYSQL_USER=radius
-      - MYSQL_PASSWORD=radiusdbpw
-      - MYSQL_ROOT_PASSWORD=radiusrootdbpw
+      - MYSQL_PASSWORD_FILE=/run/secrets/MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/MYSQL_ROOT_PASSWORD
+      - TZ=${TZ}
+      - MYSQL_CA_FILE=/etc/mysql/certs/mysql_ca.pem
+    secrets:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_PASSWORD
     volumes:
       - "./data/mysql:/var/lib/mysql"
+      - mariadb_certs:/etc/mysql/certs
+      - ./docker/mariadb/tls.cnf:/etc/mysql/conf.d/tls.cnf:ro
 
   radius:
     container_name: radius
@@ -36,6 +49,7 @@ services:
     volumes:
       - ./data/freeradius:/data
       - radius_logs:/var/log/freeradius
+      - mariadb_certs:/etc/mysql/certs
     # Uncomment below to enable debug logging.
     #command: -X
 
@@ -69,3 +83,10 @@ services:
 
 volumes:
   radius_logs:
+  mariadb_certs:
+
+secrets:
+  MYSQL_ROOT_PASSWORD:
+    file: ./secrets/mysql_root_password
+  MYSQL_PASSWORD:
+    file: ./secrets/mysql_password

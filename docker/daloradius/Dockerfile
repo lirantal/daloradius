@@ -1,4 +1,4 @@
-# Official daloRADIUS Dockerfile
+# Official daloRADIUS dockerfile
 # GitHub: https://github.com/lirantal/daloradius
 #
 # Build image:
@@ -8,18 +8,18 @@
 # Run the container:
 # 1. docker run -p 80:80 -p 8000:8000 -d lirantal/daloradius
 
-FROM debian:11-slim
-MAINTAINER Liran Tal <liran.tal@gmail.com>
+FROM debian:13-slim
 
-LABEL Description="daloRADIUS Official Docker based on Debian 11 and PHP7." \
+LABEL maintainer="Liran Tal <liran.tal@gmail.com>" \
+	Description="daloRADIUS Official docker based on Debian 13 and PHP8." \
 	License="GPLv2" \
 	Usage="docker build . -t lirantal/daloradius && docker run -d -p 80:80 -p 8000:8000 lirantal/daloradius" \
 	Version="2.0beta"
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# default timezone
-ENV TZ Europe/Vienna
+# default timezone (overridable at runtime via docker-compose/.env)
+ENV TZ=Europe/Madrid
 
 # PHP install
 RUN apt-get update \
@@ -48,6 +48,7 @@ RUN apt-get update \
   default-libmysqlclient-dev \
   unzip \
   wget \
+  dos2unix \
   && rm -rf /var/lib/apt/lists/*
 
 ADD contrib/docker/operators.conf /etc/apache2/sites-available/operators.conf
@@ -71,6 +72,10 @@ RUN rm -rf /var/www/html
 RUN touch /var/log/freeradius/daloradius.log && chown -R www-data:www-data /var/log/freeradius/daloradius.log
 RUN mkdir -p /var/log/apache2/daloradius && chown -R www-data:www-data /var/log/apache2/daloradius
 RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf
+
+# Add init script from docker directory and make it executable
+ADD docker/daloradius/init.sh /var/www/daloradius/init.sh
+RUN dos2unix /var/www/daloradius/init.sh || true && chmod +x /var/www/daloradius/init.sh
 
 ## Expose Web port for daloRADIUS
 EXPOSE 80
