@@ -10916,3 +10916,13 @@ INSERT INTO `messages` VALUES (2, 'support', '<p>Dear User,<br>We can provide su
 INSERT INTO `messages` VALUES (3, 'dashboard', '<p>Dear User,<br>We can provide support in different ways: you can email us at <strong>support@daloradius.local</strong> or you can open a new ticket through our help desk: <strong>https://helpdesk.daloradius.local</strong>.</p><p>Thank you for choosing daloRADIUS.</p><p>Best regards,<br>The daloRADIUS Support Team</p>', NOW(), 'administrator', NULL, NULL);
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- ==========================================
+-- daloRADIUS Performance Indexes
+-- ==========================================
+CREATE INDEX idx_radacct_username_time ON radacct (username, acctstarttime);
+CREATE INDEX idx_userinfo_username ON userinfo (username);
+CREATE INDEX idx_radpostauth_authdate ON radpostauth (authdate);
+CREATE INDEX idx_radacct_status_start ON radacct (acctstoptime, acctstarttime);
+CREATE INDEX idx_radacct_top_users ON radacct (acctstarttime, username, acctsessiontime, acctinputoctets, acctoutputoctets);
+CREATE INDEX idx_radcheck_username_attr ON radcheck (username, attribute);
