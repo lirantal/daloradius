@@ -69,8 +69,25 @@
             $secret = (array_key_exists('secret', $_POST) && !empty(str_replace("%", "", trim($_POST['secret']))))
                     ? str_replace("%", "", trim($_POST['secret'])) : "";
     
+            // allow the current DB type to pass validation even if it is a
+            // legacy/custom value not present in $valid_nastypes, so that
+            // re-submitting the edit form does not silently overwrite it
+            $allowed_types = $valid_nastypes;
+            if (!empty($nasname)) {
+                $sql_cur = sprintf("SELECT type FROM %s WHERE nasname='%s' LIMIT 1",
+                                   $configValues['CONFIG_DB_TBL_RADNAS'],
+                                   $dbSocket->escapeSimple($nasname));
+                $res_cur = $dbSocket->query($sql_cur);
+                $logDebugSQL .= "$sql_cur;\n";
+                $row_cur = $res_cur->fetchrow();
+                if ($row_cur && !empty($row_cur[0])) {
+                    $allowed_types[] = $row_cur[0];
+                    $allowed_types = array_unique($allowed_types);
+                }
+            }
+
             $type = (array_key_exists('type', $_POST) && isset($_POST['type']) &&
-                     in_array($_POST['type'], $valid_nastypes)) ? $_POST['type'] : "other";
+                     in_array($_POST['type'], $allowed_types)) ? $_POST['type'] : "other";
             
             $shortname = (array_key_exists('shortname', $_POST) && !empty(str_replace("%", "", trim($_POST['shortname']))))
                        ? str_replace("%", "", trim($_POST['shortname'])) : "";
@@ -183,13 +200,30 @@
                                         "tooltipText" => "Enter the shared secret used for RADIUS communication."
                                      );
                                      
+        // preserve legacy/custom NAS type values loaded from DB
+        $nastype_options = $valid_nastypes;
+        $nastype_selected = (isset($type) && $type !== "") ? $type : "other";
+        $nastype_tooltip = "Select the NAS vendor type from the predefined list.";
+
+        if ($nastype_selected !== "other" && !in_array($nastype_selected, $valid_nastypes)) {
+            // DB contains a type not in the standard list — build an associative
+            // options map so the legacy value is shown and stays selected
+            $nastype_options = array();
+            $nastype_options[$nastype_selected] = $nastype_selected . " (legacy)";
+            foreach ($valid_nastypes as $nt) {
+                $nastype_options[$nt] = $nt;
+            }
+            $nastype_tooltip = "The current type is not in the standard list. "
+                             . "It will be preserved unless you select a different value.";
+        }
+
         $input_descriptors0[] = array(
                                         "name" => "type",
                                         "caption" => t('all','NasType'),
                                         "type" => "select",
-                                        "options" => $valid_nastypes,
-                                        "selected_value" => ((isset($type)) ? $type : "other"),
-                                        "tooltipText" => "Select the NAS vendor type from the predefined list."
+                                        "options" => $nastype_options,
+                                        "selected_value" => $nastype_selected,
+                                        "tooltipText" => $nastype_tooltip
                                      );
                                      
         $input_descriptors0[] = array(
