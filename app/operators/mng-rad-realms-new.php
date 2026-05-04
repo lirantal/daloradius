@@ -168,7 +168,7 @@
                                         'name' => 'realmname',
                                         'caption' => t('all','RealmName'),
                                         'type' => 'text',
-                                        'value' => $realmname,
+                                        'value' => ((isset($realmname)) ? $realmname : ""),
                                         'required' => true,
                                         'tooltipText' => t('Tooltip','realmNameTooltip'),
                                      );
