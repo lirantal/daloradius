@@ -50,7 +50,7 @@
                    ? str_replace("%", "", trim($_REQUEST['realmname'])) : "";
     }
 
-    $exists = in_array($realmname, array_keys($valid_realmnames));
+    $exists = in_array($realmname, $valid_realmnames);
 
     
     if (!$exists) {

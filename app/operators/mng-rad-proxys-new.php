@@ -146,6 +146,14 @@
     
     if (!isset($successMsg)) {
         
+        // ensure form variables are initialized (they may not be set on initial
+        // GET requests or when POST validation fails before reaching their assignment)
+        $proxyname = (isset($proxyname)) ? $proxyname : "";
+        $retry_delay = (isset($retry_delay)) ? $retry_delay : "";
+        $retry_count = (isset($retry_count)) ? $retry_count : "";
+        $dead_time = (isset($dead_time)) ? $dead_time : "";
+        $default_fallback = (isset($default_fallback)) ? $default_fallback : "";
+        
         // descriptors 0
         $input_descriptors0 = array();
 
