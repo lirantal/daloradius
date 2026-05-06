@@ -435,7 +435,7 @@ switch ($action) {
         $vendor = (array_key_exists('vendorAttributes', $_GET) && !empty(trim($_GET['vendorAttributes'])))
                    ? trim($_GET['vendorAttributes']) : "";
         
-        $sql = sprintf("SELECT attribute FROM %s WHERE Vendor='%s' AND (Value = '' OR Value IS NULL) ORDER BY attribute ASC",
+        $sql = sprintf("SELECT DISTINCT attribute FROM %s WHERE Vendor='%s' ORDER BY attribute ASC",
                        $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($vendor));
         $res = $dbSocket->query($sql);
         
@@ -479,7 +479,7 @@ switch ($action) {
              ? intval($_GET['instanceNum']) : rand();
 
         $sql = sprintf("SELECT `recommendedOP`, `recommendedTable`, `recommendedTooltip`, `type`, `recommendedHelper`
-                          FROM %s WHERE `attribute`='%s' ORDER BY `id` ASC LIMIT 1",
+                          FROM %s WHERE `attribute`='%s' AND (Value = '' OR Value IS NULL) ORDER BY `id` ASC LIMIT 1",
                        $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($attribute));
         $res = $dbSocket->query($sql);
         $numrows = $res->numRows();
@@ -560,6 +560,19 @@ switch ($action) {
 
                 case "kbitspersecond":
                     drawKBitPerSecond($num);
+                    break;
+
+                default:
+                    $sql_dyn = sprintf("SELECT DISTINCT `Value` FROM %s WHERE `attribute`='%s' AND `Value` <> '' AND `Value` IS NOT NULL ORDER BY `Value` ASC",
+                                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($attribute));
+                    $res_dyn = $dbSocket->query($sql_dyn);
+                    if ($res_dyn && $res_dyn->numRows() > 0) {
+                        $dynamic_options = array();
+                        while ($row_dyn = $res_dyn->fetchRow()) {
+                            $dynamic_options[] = trim($row_dyn[0]);
+                        }
+                        drawDatalistHelper($num, "dynDatalist", $dynamic_options);
+                    }
                     break;
 
             }
