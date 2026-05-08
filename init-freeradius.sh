@@ -67,7 +67,7 @@ function init_database {
 echo "Starting freeradius..."
 
 # wait for MySQL-Server to be ready
-while ! mysqladmin ping -h"$MYSQL_HOST" --silent; do
+while ! mysqladmin ping -h"$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do
 	echo "Waiting for mysql ($MYSQL_HOST)..."
 	sleep 20
 done

@@ -1,9 +1,7 @@
-version: "3"
-
 services:
 
   radius-mysql:
-    image: mariadb:10
+    image: mariadb:11.8
     container_name: radius-mysql
     restart: unless-stopped
     environment:
@@ -13,15 +11,23 @@ services:
       - MYSQL_ROOT_PASSWORD=radiusrootdbpw
     volumes:
       - "./data/mysql:/var/lib/mysql"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   radius:
+    image: lirantal/dalofreeradius
     container_name: radius
     build:
       context: .
       dockerfile: Dockerfile-freeradius
     restart: unless-stopped
-    depends_on: 
-      - radius-mysql
+    depends_on:
+      radius-mysql:
+        condition: service_healthy
     ports:
       - '1812:1812/udp'
       - '1813:1813/udp'
@@ -40,12 +46,15 @@ services:
     #command: -X
 
   radius-web:
+    image: lirantal/daloradius
     build: .
     container_name: radius-web
     restart: unless-stopped
     depends_on:
-      - radius
-      - radius-mysql
+      radius-mysql:
+        condition: service_healthy
+      radius:
+        condition: service_started
     ports:
       - '80:80'
       - '8000:8000'
