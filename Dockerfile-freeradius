@@ -8,10 +8,9 @@
 # Run the container:
 # 1. docker run -p 80:80 -d lirantal/dalofreeradius
 
-FROM freeradius/freeradius-server:latest
-MAINTAINER Liran Tal <liran.tal@gmail.com>
-
-LABEL Description="freeradius Docker based on Ubuntu 20.04 LTS, optimized for daloRADIUS." \
+FROM freeradius/freeradius-server:3.2.8
+LABEL maintainer="Liran Tal <liran.tal@gmail.com>"
+LABEL Description="FreeRADIUS 3.2.8 Docker image optimized for daloRADIUS." \
 	License="GPLv2" \
 	Usage="docker build -t lirantal/dalofreeradius -f Dockerfile-freeradius && docker run -d -p 80:80 lirantal/dalofreeradius" \
 	Version="1.0"
