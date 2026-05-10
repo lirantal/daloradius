@@ -17,6 +17,7 @@ function init_freeradius {
 	ln -s $RADIUS_PATH/mods-available/sql $RADIUS_PATH/mods-enabled/sql
 	ln -s $RADIUS_PATH/mods-available/sqlcounter $RADIUS_PATH/mods-enabled/sqlcounter
 	ln -s $RADIUS_PATH/mods-available/sqlippool $RADIUS_PATH/mods-enabled/sqlippool
+	enable_noresetcounter
 	sed -i 's|instantiate {|instantiate {\nsql|' $RADIUS_PATH/radiusd.conf # mods-enabled does not ensure the right order
 
 	# Enable used tunnel for unifi
@@ -44,6 +45,33 @@ function init_freeradius {
 		sed -i 's|testing123|'$DEFAULT_CLIENT_SECRET'|' $RADIUS_PATH/mods-available/sql
 	fi
 	echo "freeradius initialization completed."
+}
+
+function enable_noresetcounter {
+	# Enforce Max-All-Session limits through FreeRADIUS sqlcounter.
+	# The sqlcounter module must run in authorize; enabling mods-enabled/sqlcounter alone is not enough.
+	if grep -q "^[[:space:]]*noresetcounter[[:space:]]*$" $RADIUS_PATH/sites-available/default; then
+		return
+	fi
+
+	if ! awk '
+		BEGIN { in_authorize = 0; added = 0 }
+		/^authorize[[:space:]]*[{]/ { in_authorize = 1 }
+		in_authorize && !added && /^[[:space:]]*-sql$/ {
+			print
+			print "\tnoresetcounter"
+			added = 1
+			next
+		}
+		/^authenticate[[:space:]]*[{]/ { in_authorize = 0 }
+		{ print }
+		END { exit added ? 0 : 1 }
+	' $RADIUS_PATH/sites-available/default > /tmp/freeradius-default; then
+		rm -f /tmp/freeradius-default
+		echo "Failed to add noresetcounter to FreeRADIUS authorize section."
+		exit 1
+	fi
+	mv /tmp/freeradius-default $RADIUS_PATH/sites-available/default
 }
 
 function ensure_daloradius_schema {
@@ -91,6 +119,7 @@ if test -f "$INIT_LOCK"; then
 	# Lock file exists, but verify that FreeRADIUS is actually configured
 	# This handles the case where containers are recreated but volumes persist
 	if test -L "$RADIUS_PATH/mods-enabled/sql" && grep -q "rlm_sql_mysql" "$RADIUS_PATH/mods-available/sql" 2>/dev/null; then
+		enable_noresetcounter
 		echo "Init lock file exists and FreeRADIUS is properly configured, skipping initial setup."
 	else
 		echo "Init lock file exists but FreeRADIUS configuration is missing, reinitializing..."
@@ -101,6 +130,12 @@ if test -f "$INIT_LOCK"; then
 else
 	init_freeradius
 	date > $INIT_LOCK
+fi
+
+# Ensure Max-All-Session is enforced before FreeRADIUS starts, including after
+# lock-file and reinitialization paths.
+if test -L "$RADIUS_PATH/mods-enabled/sqlcounter"; then
+	enable_noresetcounter
 fi
 
 DB_LOCK=/data/.db_init_done

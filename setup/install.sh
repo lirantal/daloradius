@@ -27,6 +27,8 @@ DALORADIUS_ROOT_DIRECTORY=/var/www/daloradius
 DALORADIUS_CONF_FILE="${DALORADIUS_ROOT_DIRECTORY}/app/common/includes/daloradius.conf.php"
 DALORADIUS_SERVER_ADMIN=admin@daloradius.local
 FREERADIUS_SQL_MOD_PATH="/etc/freeradius/3.0/mods-available/sql"
+FREERADIUS_SQLCOUNTER_MOD_PATH="/etc/freeradius/3.0/mods-available/sqlcounter"
+FREERADIUS_DEFAULT_SITE_PATH="/etc/freeradius/3.0/sites-available/default"
 
 # Function to print an OK message in green
 print_green() {
@@ -222,6 +224,50 @@ freeradius_setup_sql_mod() {
         echo "[!] Failed to set up freeRADIUS SQL module. Aborting." >&2
         exit 1
     fi
+    print_green "OK"
+}
+
+
+# Function to set up freeRADIUS SQL counter module for Max-All-Session enforcement
+freeradius_setup_sqlcounter_mod() {
+    echo -n "[+] Setting up freeRADIUS SQL counter module... "
+
+    if ! sed -Ei 's/^[[:space:]#]*dialect[[:space:]]+=[[:space:]]+.*$/	dialect = "mysql"/g' "${FREERADIUS_SQLCOUNTER_MOD_PATH}" >/dev/null 2>&1; then
+        print_red "KO"
+        echo "[!] Failed to configure freeRADIUS SQL counter module. Aborting." >&2
+        exit 1
+    fi
+
+    if [ ! -e /etc/freeradius/3.0/mods-enabled/sqlcounter ]; then
+        if ! ln -s "${FREERADIUS_SQLCOUNTER_MOD_PATH}" /etc/freeradius/3.0/mods-enabled/ >/dev/null 2>&1; then
+            print_red "KO"
+            echo "[!] Failed to enable freeRADIUS SQL counter module. Aborting." >&2
+            exit 1
+        fi
+    fi
+
+    if ! grep -q "^[[:space:]]*noresetcounter[[:space:]]*$" "${FREERADIUS_DEFAULT_SITE_PATH}"; then
+        if ! awk '
+            BEGIN { in_authorize = 0; added = 0 }
+            /^authorize[[:space:]]*[{]/ { in_authorize = 1 }
+            in_authorize && !added && /^[[:space:]]*-sql$/ {
+                print
+                print "	noresetcounter"
+                added = 1
+                next
+            }
+            /^authenticate[[:space:]]*[{]/ { in_authorize = 0 }
+            { print }
+            END { exit added ? 0 : 1 }
+        ' "${FREERADIUS_DEFAULT_SITE_PATH}" > /tmp/freeradius-default; then
+            rm -f /tmp/freeradius-default
+            print_red "KO"
+            echo "[!] Failed to add noresetcounter to freeRADIUS authorize section. Aborting." >&2
+            exit 1
+        fi
+        mv /tmp/freeradius-default "${FREERADIUS_DEFAULT_SITE_PATH}"
+    fi
+
     print_green "OK"
 }
 
@@ -575,6 +621,7 @@ main() {
 
     freeradius_install
     freeradius_setup_sql_mod
+    freeradius_setup_sqlcounter_mod
     freeradius_enable_restart
 
     apache_disable_all_sites
