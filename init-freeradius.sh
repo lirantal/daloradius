@@ -46,9 +46,23 @@ function init_freeradius {
 	echo "freeradius initialization completed."
 }
 
+function ensure_daloradius_schema {
+	mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" <<'EOSQL'
+CREATE TABLE IF NOT EXISTS `radhuntgroup` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `groupname` varchar(64) NOT NULL DEFAULT '',
+  `nasipaddress` varchar(15) NOT NULL DEFAULT '',
+  `nasportid` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `nasipaddress` (`nasipaddress`)
+);
+EOSQL
+}
+
 function init_database {
 	mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/main/mysql/schema.sql
 	mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/ippool/mysql/schema.sql
+	ensure_daloradius_schema
 
 	# Insert a client for the current subnet (to allow daloradius to perform checks)
 	IP=`ifconfig eth0 | awk '/inet/{ print $2;} '` # does also work: $IP=`hostname -I | awk '{print $1}'`
@@ -92,6 +106,7 @@ fi
 DB_LOCK=/data/.db_init_done
 if test -f "$DB_LOCK"; then
 	echo "Database lock file exists, skipping initial setup of mysql database."
+	ensure_daloradius_schema
 else
 	init_database
 	date > $DB_LOCK
