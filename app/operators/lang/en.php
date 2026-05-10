@@ -1360,11 +1360,15 @@ $l['helpPage']['mngradippool'] .= $l['helpPage']['mngradippoolnew'] . $l['helpPa
                                 . $l['helpPage']['mngradippooledit'] . $l['helpPage']['mngradippooldel'];
 
 // nas help pages
-$l['helpPage']['mngradnas'] = "";
+$l['helpPage']['mngradnas'] = <<<EOF
+<h1 class="fs-5">NAS Management</h1>
+<p>A Network Access Server (NAS) acts as a gateway to guard access to a network. In a FreeRADIUS environment, the NAS is the physical or virtual device (such as a router, switch, VPN gateway, or wireless access point) that sends RADIUS authentication, authorization, and accounting requests to the RADIUS server.</p>
+<p>Managing NAS entries is a critical security requirement. FreeRADIUS must be explicitly configured with the IP address (or hostname) and a shared secret for each NAS device. Without this configuration, the RADIUS server will silently ignore any incoming requests from that device.</p>
+EOF;
 $l['helpPage']['mngradnasdel'] = "To remove a nas ip/host entry from the database you must provide the ip/host of the account";
-$l['helpPage']['mngradnasnew'] = "";
+$l['helpPage']['mngradnasnew'] = "You may fill below details for a new NAS device addition to the database.";
 $l['helpPage']['mngradnaslist'] = "";
-$l['helpPage']['mngradnasedit'] = "";
+$l['helpPage']['mngradnasedit'] = "You may edit below details for the NAS device.";
 
 // huntgroup help pages
 $l['helpPage']['mngradhunt'] = <<<EOF

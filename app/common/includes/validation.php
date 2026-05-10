@@ -133,8 +133,10 @@ $valid_db_engines = array(
 
 // values taken from an instance of freeradius 3.0.21
 $valid_nastypes = array(
-                         "other", "cisco", "computone", "livingston", "juniper", "max40xx", "multitech",
-                         "netserver", "pathras", "patton", "portslave", "tc", "usrhiper"
+                         "livingston", "cisco", "cvx", "juniper", "multitech", "computone", "max40xx",
+                         "ascend", "portslave", "tc", "pathras", "pr3000", "pr4000", "patton", "digitro",
+                         "usrhiper", "netserver", "versanet", "bay", "cisco_l2tp", "mikrotik", "mikrotik_snmp",
+                         "redback", "dot1x", "other"
                        );
 
 // accounting custom-query options list
