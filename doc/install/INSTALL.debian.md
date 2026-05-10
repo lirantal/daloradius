@@ -106,6 +106,24 @@ To finalize the installation of FreeRADIUS, enable the SQL module by creating a 
 ln -s /etc/freeradius/3.0/mods-available/sql /etc/freeradius/3.0/mods-enabled/
 ```
 
+To enforce total session-time limits such as `Max-All-Session`, also enable the SQL counter module:
+```bash
+sed -Ei 's/^[\t\s#]*dialect\s+=\s+.*$/\tdialect = "mysql"/g' /etc/freeradius/3.0/mods-available/sqlcounter
+ln -s /etc/freeradius/3.0/mods-available/sqlcounter /etc/freeradius/3.0/mods-enabled/
+```
+
+Then add the `noresetcounter` SQL counter to the `authorize` section in `/etc/freeradius/3.0/sites-available/default`, immediately after `-sql`:
+```text
+authorize {
+    ...
+    -sql
+    noresetcounter
+    ...
+}
+```
+
+This lets FreeRADIUS compare the user's accumulated accounting time with daloRADIUS check attributes such as `Max-All-Session`.
+
 To complete the installation, enable and restart the FreeRADIUS service using the following commands:
 ```bash
 systemctl enable freeradius
