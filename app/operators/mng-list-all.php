@@ -102,28 +102,26 @@
     // init nested condition 1
     $nested_condition1 = array( "rc.attribute='Auth-Type'", "rc.attribute LIKE '%%-Password'" );
 
-    // init SQL WHERE (with join condition already set)
-    $sql_WHERE = array( "rc.username=ui.username" );
+    // init SQL WHERE
+    $sql_WHERE = array();
 
     // imploding nested condition 1
     $sql_WHERE[] = sprintf("(%s)", implode(" OR ", $nested_condition1));
 
     // setup php session variables for exporting
-    $_SESSION['reportTable'] = sprintf("%s AS rc LEFT JOIN %s AS ra ON ra.username=rc.username, %s AS ui",
-                                       $configValues['CONFIG_DB_TBL_RADCHECK'], $configValues['CONFIG_DB_TBL_RADACCT'],
+    $_SESSION['reportTable'] = sprintf("%s AS rc INNER JOIN %s AS ui ON rc.username = ui.username",
+                                       $configValues['CONFIG_DB_TBL_RADCHECK'],
                                        $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
     $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE);
     $_SESSION['reportType'] = "usernameListGeneric";
 
-    // we initialize $numrows
-    $sql = sprintf("SELECT ui.id AS id, rc.username AS username, rc.value AS auth, rc.attribute,
-                           CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
-                           MAX(ra.acctstarttime) AS lastlogin
-                      FROM %s %s
-                     GROUP BY rc.username", $_SESSION['reportTable'], $_SESSION['reportQuery']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    $numrows = $res->numRows();
+    // compute total number of rows matching the query for pagination
+    $sql_count = sprintf("SELECT COUNT(DISTINCT rc.username) AS count FROM %s %s", $_SESSION['reportTable'], $_SESSION['reportQuery']);
+    $res_count = $dbSocket->query($sql_count);
+    $logDebugSQL .= "$sql_count;\n";
+    
+    $row_count = $res_count->fetchRow();
+    $numrows = isset($row_count) ? intval($row_count[0]) : 0;
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
@@ -137,7 +135,15 @@
 
         /* END */
 
-        // we execute and log the actual query
+        // we execute and log the actual data query
+        $sql = sprintf("SELECT ui.id AS id, rc.username AS username, rc.value AS auth, rc.attribute,
+                               CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
+                               (SELECT MAX(acctstarttime) FROM %s WHERE username = rc.username) AS lastlogin
+                          FROM %s %s
+                         GROUP BY rc.username", 
+                         $configValues['CONFIG_DB_TBL_RADACCT'],
+                         $_SESSION['reportTable'], $_SESSION['reportQuery']);
+
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
