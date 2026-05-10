@@ -10921,7 +10921,6 @@ UNLOCK TABLES;
 -- daloRADIUS Performance Indexes
 -- ==========================================
 CREATE INDEX idx_radacct_username_time ON radacct (username, acctstarttime);
-CREATE INDEX idx_userinfo_username ON userinfo (username);
 CREATE INDEX idx_radpostauth_authdate ON radpostauth (authdate);
 CREATE INDEX idx_radacct_status_start ON radacct (acctstoptime, acctstarttime);
 CREATE INDEX idx_radacct_top_users ON radacct (acctstarttime, username, acctsessiontime, acctinputoctets, acctoutputoctets);
