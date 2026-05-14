@@ -127,3 +127,17 @@ test("Operator passwords are hashed and Docker admin password is explicit", () =
   assert.match(webInit, /password_hash\(\$argv\[1\], PASSWORD_DEFAULT\)/);
   assert.match(installer, /INIT_PASSWORD_HASH=\$\(php -r 'echo password_hash\(\$argv\[1\], PASSWORD_DEFAULT\);'/);
 });
+
+test("Standalone image builds from local context on a supported PHP runtime", () => {
+  const dockerfile = read("Dockerfile-standalone");
+  const readme = read("README.docker-standalone.md");
+
+  assert.doesNotMatch(dockerfile, /git clone/);
+  assert.doesNotMatch(dockerfile, /FROM php:7-apache/);
+  assert.doesNotMatch(dockerfile, /apt-get -y upgrade/);
+  assert.match(dockerfile, /^FROM php:8\.4-apache$/m);
+  assert.match(dockerfile, /^COPY app\/ \/var\/www\/html\/daloradius$/m);
+  assert.match(dockerfile, /^COPY contrib\/scripts\/apache-config\.sh \/usr\/local\/bin\/apache-config\.sh$/m);
+  assert.match(readme, /docker build -t daloradius-standalone -f Dockerfile-standalone \./);
+  assert.doesNotMatch(readme, /dormancygrace\/daloradius/);
+});
