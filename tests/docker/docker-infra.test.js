@@ -24,6 +24,8 @@ test("Compose avoids insecure local defaults", () => {
   assert.match(compose, /MYSQL_ROOT_PASSWORD=\$\{MYSQL_ROOT_PASSWORD:\?Set MYSQL_ROOT_PASSWORD\}/);
   assert.match(compose, /DEFAULT_CLIENT_SECRET=\$\{DEFAULT_CLIENT_SECRET:\?Set DEFAULT_CLIENT_SECRET\}/);
   assert.match(compose, /DALORADIUS_ADMIN_PASSWORD=\$\{DALORADIUS_ADMIN_PASSWORD:\?Set DALORADIUS_ADMIN_PASSWORD\}/);
+  assert.doesNotMatch(compose, /FREERADIUS_SQL_TLS=\$\{FREERADIUS_SQL_TLS:-disabled\}/);
+  assert.match(compose, /FREERADIUS_SQL_TLS=\$\{FREERADIUS_SQL_TLS:\?Set FREERADIUS_SQL_TLS to require or disabled\}/);
 });
 
 test("Compose limits exposed admin surface and waits for FreeRADIUS health", () => {

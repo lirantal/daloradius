@@ -43,7 +43,7 @@ services:
       - MYSQL_USER=radius
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD}
       - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET}
-      - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
+      - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:?Set FREERADIUS_SQL_TLS to require or disabled}
     volumes:
       - radius_freeradius_data:/data
       - radius_logs:/var/log/freeradius
