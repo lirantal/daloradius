@@ -180,6 +180,78 @@ test("Compose avoids insecure local defaults", () => {
   assert.match(compose, /FREERADIUS_SQL_TLS=\$\{FREERADIUS_SQL_TLS:\?Set FREERADIUS_SQL_TLS to require or disabled\}/);
 });
 
+test("Docker Compose env example is a safe copyable template", () => {
+  const envExamplePath = path.join(root, ".env.example");
+  const dockerignore = read(".dockerignore");
+  const gitignore = read(".gitignore");
+  const insecureDefaults = [
+    "radiusdbpw",
+    "radiusrootdbpw",
+    "testing123",
+    "radpass",
+    "local-db-",
+    "local-root-",
+    "local-radius-",
+    "local-admin-",
+  ];
+
+  assert.ok(fs.existsSync(envExamplePath), ".env.example should exist");
+
+  const envExample = read(".env.example");
+  const templateValues = {};
+
+  for (const line of envExample.split("\n")) {
+    const match = line.match(/^\s*#?\s*([A-Z0-9_]+)=(.*)$/);
+    if (match) {
+      templateValues[match[1]] = match[2];
+    }
+  }
+
+  const values = Object.fromEntries(
+    envExample
+      .split("\n")
+      .filter((line) => line.trim() && !line.trimStart().startsWith("#"))
+      .map((line) => line.split("=", 2)),
+  );
+
+  for (const variableName of [
+    "MYSQL_PASSWORD",
+    "MYSQL_ROOT_PASSWORD",
+    "DEFAULT_CLIENT_SECRET",
+    "DALORADIUS_ADMIN_PASSWORD",
+    "FREERADIUS_SQL_TLS",
+  ]) {
+    assert.ok(Object.hasOwn(templateValues, variableName), `${variableName} should be represented in .env.example`);
+  }
+
+  for (const secretVariable of [
+    "MYSQL_PASSWORD",
+    "MYSQL_ROOT_PASSWORD",
+    "DEFAULT_CLIENT_SECRET",
+    "DALORADIUS_ADMIN_PASSWORD",
+  ]) {
+    assert.match(
+      templateValues[secretVariable],
+      /^CHANGE_ME_[A-Z0-9_]+$/,
+      `${secretVariable} should use a CHANGE_ME placeholder`,
+    );
+  }
+
+  assert.match(templateValues.FREERADIUS_SQL_TLS, /^(require|disabled)$/);
+  assert.doesNotMatch(envExample, /^\s*[A-Z0-9_]+=CHANGE_ME_[A-Z0-9_]*$/m);
+  assert.deepEqual(values, {}, ".env.example should not contain active variable assignments");
+
+  for (const insecureDefault of insecureDefaults) {
+    assert.doesNotMatch(envExample, new RegExp(escapeRegExp(insecureDefault)));
+  }
+
+  assert.match(dockerignore, /^\.env$/m);
+  assert.match(dockerignore, /^\.env\.\*$/m);
+  assert.match(gitignore, /^\.env$/m);
+  assert.match(gitignore, /^\.env\.\*$/m);
+  assert.match(gitignore, /^!\.env\.example$/m);
+});
+
 test("Compose limits exposed admin surface and waits for FreeRADIUS health", () => {
   const compose = read("docker-compose.yml");
 
