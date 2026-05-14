@@ -67,8 +67,13 @@ RUN chown -R www-data:www-data /var/www/daloradius
 RUN rm -rf /var/www/html
 #
 # Create daloRADIUS Log file
-RUN touch /tmp/daloradius.log && chown -R www-data:www-data /tmp/daloradius.log
+RUN mkdir -p /var/www/daloradius/var/log \
+  && touch /var/www/daloradius/var/log/daloradius.log \
+  && chown -R www-data:www-data /var/www/daloradius/var
 RUN mkdir -p /var/log/apache2/daloradius && chown -R www-data:www-data /var/log/apache2/daloradius
+RUN printf '%s\n' "System logs are not available inside this container. Use docker logs daloradius-radius-web-1." > /var/log/syslog \
+  && printf '%s\n' "Boot logs are not available inside this container. Use docker logs daloradius-radius-web-1." > /var/log/boot.log \
+  && chmod 0644 /var/log/syslog /var/log/boot.log
 RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf
 
 ## Expose Web port for daloRADIUS

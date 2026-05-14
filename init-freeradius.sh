@@ -170,6 +170,23 @@ function wait_for_mysql {
 	done
 }
 
+function prepare_freeradius_logs {
+	chown -R freerad:33 /var/log/freeradius
+	find /var/log/freeradius -type d -exec chmod 2750 {} +
+	find /var/log/freeradius -type f -exec chmod 0640 {} +
+}
+
+function wait_for_radius_status {
+	local attempt=1
+	while ! echo 'FreeRADIUS-Statistics-Type = 1' | radclient -q -r 1 -t 3 127.0.0.1:18121 status adminsecret >/dev/null 2>&1; do
+		if [ "$attempt" -ge 30 ]; then
+			return
+		fi
+		attempt=$((attempt + 1))
+		sleep 1
+	done
+}
+
 echo "Starting freeradius..."
 
 # wait for MySQL-Server to be ready
@@ -214,12 +231,14 @@ else
 fi
 
 # make logs readable to the shared www-data group without opening them world-wide
-chgrp -R 33 /var/log/freeradius 2>/dev/null || true
-chmod -R u+rwX,g+rX,o-rwx /var/log/freeradius
+prepare_freeradius_logs
 
 # start freeradius in foreground mode
 freeradius -f "$@" &
 RADIUS_PID=$!
+
+wait_for_radius_status
+prepare_freeradius_logs
 
 tail -F /var/log/freeradius/radius.log &
 TAIL_PID=$!

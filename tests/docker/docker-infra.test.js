@@ -72,6 +72,44 @@ test("Docker image recreates shared static asset symlinks", () => {
   assert.match(dockerfile, /ln -s \.\.\/common\/static \/var\/www\/daloradius\/app\/users\/static/);
 });
 
+test("Docker web logging defaults use the writable daloRADIUS var log path", () => {
+  const dockerfile = read("Dockerfile");
+  const webInit = read("init.sh");
+
+  assert.match(dockerfile, /mkdir -p \/var\/www\/daloradius\/var\/log/);
+  assert.match(dockerfile, /touch \/var\/www\/daloradius\/var\/log\/daloradius\.log/);
+  assert.match(dockerfile, /chown -R www-data:www-data \/var\/www\/daloradius\/var/);
+  assert.match(webInit, /php_config_set "CONFIG_LOG_FILE" "\/var\/www\/daloradius\/var\/log\/daloradius\.log"/);
+  assert.match(webInit, /chown www-data:www-data "\$DALORADIUS_CONF_PATH"/);
+  assert.match(webInit, /chmod 0644 "\$DALORADIUS_CONF_PATH"/);
+  assert.doesNotMatch(webInit, /php_config_set "CONFIG_LOG_FILE" "\/tmp\/daloradius\.log"/);
+});
+
+test("FreeRADIUS log volume keeps log files readable by the web service", () => {
+  const radiusInit = read("init-freeradius.sh");
+  const compose = read("docker-compose.yml");
+
+  assert.match(compose, /radius:[\s\S]*?- radius_logs:\/var\/log\/freeradius/);
+  assert.match(compose, /radius-web:[\s\S]*?- radius_logs:\/var\/log\/freeradius/);
+  assert.match(radiusInit, /function prepare_freeradius_logs/);
+  assert.match(radiusInit, /function wait_for_radius_status/);
+  assert.match(radiusInit, /radclient -q -r 1 -t 3 127\.0\.0\.1:18121 status adminsecret >\/dev\/null 2>&1/);
+  assert.match(radiusInit, /chown -R freerad:33 \/var\/log\/freeradius/);
+  assert.match(radiusInit, /find \/var\/log\/freeradius -type d -exec chmod 2750/);
+  assert.match(radiusInit, /find \/var\/log\/freeradius -type f -exec chmod 0640/);
+  assert.match(radiusInit, /freeradius -f "\$@" &[\s\S]*RADIUS_PID=\$![\s\S]*wait_for_radius_status[\s\S]*prepare_freeradius_logs/);
+});
+
+test("Docker web image provides readable placeholders for unavailable host logs", () => {
+  const dockerfile = read("Dockerfile");
+
+  assert.match(dockerfile, /System logs are not available inside this container/);
+  assert.match(dockerfile, /> \/var\/log\/syslog/);
+  assert.match(dockerfile, /Boot logs are not available inside this container/);
+  assert.match(dockerfile, /> \/var\/log\/boot\.log/);
+  assert.match(dockerfile, /chmod 0644 \/var\/log\/syslog \/var\/log\/boot\.log/);
+});
+
 test("Docker init scripts fail fast and use bounded database waits", () => {
   for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
     const script = read(scriptPath);

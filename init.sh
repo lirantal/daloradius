@@ -93,7 +93,9 @@ function init_daloradius {
     [ -n "$MAIL_PORT" ] && php_config_set "CONFIG_MAIL_SMTPPORT" "$MAIL_PORT"
     [ -n "$MAIL_FROM" ] && php_config_set "CONFIG_MAIL_SMTPFROM" "$MAIL_FROM"
     [ -n "$MAIL_AUTH" ] && php_config_set "CONFIG_MAIL_SMTPAUTH" "$MAIL_AUTH"
-    php_config_set "CONFIG_LOG_FILE" "/tmp/daloradius.log"
+    php_config_set "CONFIG_LOG_FILE" "/var/www/daloradius/var/log/daloradius.log"
+    chown www-data:www-data "$DALORADIUS_CONF_PATH"
+    chmod 0644 "$DALORADIUS_CONF_PATH"
 
     echo "daloRADIUS initialization completed."
 }
