@@ -37,7 +37,8 @@ WORKDIR /app
 COPY ./init-freeradius.sh /app
 
 # Make init.sh script executable
-RUN chmod +x /app/init-freeradius.sh
+RUN sed -i 's/\r$//' /app/init-freeradius.sh \
+	&& chmod +x /app/init-freeradius.sh
 
 # Expose FreeRADIUS Ports
 EXPOSE 1812 1813

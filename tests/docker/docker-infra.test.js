@@ -69,6 +69,16 @@ test("Docker init scripts fail fast and use bounded database waits", () => {
   }
 });
 
+test("Dockerfiles normalize copied shell scripts before execution", () => {
+  const webDockerfile = read("Dockerfile");
+  const radiusDockerfile = read("Dockerfile-freeradius");
+  const standaloneDockerfile = read("Dockerfile-standalone");
+
+  assert.match(webDockerfile, /sed -i 's\/\\r\$\/\/' \/var\/www\/daloradius\/init\.sh/);
+  assert.match(radiusDockerfile, /sed -i 's\/\\r\$\/\/' \/app\/init-freeradius\.sh/);
+  assert.match(standaloneDockerfile, /sed -i 's\/\\r\$\/\/' \/usr\/local\/bin\/apache-config\.sh/);
+});
+
 test("Database initialization locks are backed by schema checks", () => {
   const webInit = read("init.sh");
   const radiusInit = read("init-freeradius.sh");
