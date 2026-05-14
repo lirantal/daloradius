@@ -1,6 +1,6 @@
 FROM php:8.4-apache@sha256:5489a66a463f350f77045ec0ec313dcbc4a5b78f32040b946cf694c9d5c7689d
 
-ENV TZ UTC
+ENV TZ=UTC
 
 RUN apt-get update \
  && apt-get -y install --no-install-recommends \
