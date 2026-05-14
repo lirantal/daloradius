@@ -8,6 +8,7 @@
 *.db
 *.log
 *.sql
+*.sql.gz
 data/
 internal_data/
 var/log/

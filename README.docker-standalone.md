@@ -66,6 +66,69 @@ docker compose config
 
 If a required variable is missing, Compose exits with an error that names it.
 
+### Import an existing database backup
+
+When importing a database from a previous non-Docker daloRADIUS or FreeRADIUS instance, import the dump before starting `radius` and `radius-web`. Legacy dumps can contain older table definitions, so run the post-import migrations before starting the full stack.
+
+Example for `backup_radius_14-05-2026.sql.gz`:
+
+```powershell
+.\scripts\docker\import-backup.ps1 -DumpPath .\backup_radius_14-05-2026.sql.gz
+```
+
+Linux equivalent:
+
+```bash
+bash scripts/docker/import-backup.sh ./backup_radius_14-05-2026.sql.gz
+```
+
+The runners live at `scripts/docker/import-backup.ps1` and `scripts/docker/import-backup.sh`. They perform this sequence:
+
+- validates `.env` through `docker compose config --quiet`
+- validates the dump with `gzip -t`
+- starts only `radius-mysql`
+- imports the dump into the `radius` database
+- applies SQL files from `docker/post-import-migrations`
+- builds `radius-web` and hashes imported operator passwords
+- validates required tables and critical schema widths
+- starts the complete stack
+
+#### Post-import migrations
+
+Post-import migrations handle schema drift from older dumps. The current required migration widens `operators.password` to `VARCHAR(95)` because current daloRADIUS operator passwords are stored with PHP `password_hash()` values. Older dumps may define that column as `VARCHAR(32)`, which prevents `radius-web` from setting `DALORADIUS_ADMIN_PASSWORD`.
+
+After SQL migrations, the runner converts only daloRADIUS operator passwords. Legacy non-hash operator values are hashed with PHP `password_hash()`. If an `administrator` operator exists, its password is set from `DALORADIUS_ADMIN_PASSWORD` in `.env`. This step does not rewrite daloRADIUS user portal passwords or FreeRADIUS `radcheck` authentication attributes.
+
+Manual equivalent:
+
+```powershell
+$mariadb = @'
+set -eu
+defaults_file="$(mktemp)"
+cleanup() {
+    rm -f "$defaults_file"
+}
+trap cleanup EXIT
+{
+    printf "[client]\n"
+    printf "user=radius\n"
+    printf "password=%s\n" "$MYSQL_PASSWORD"
+} > "$defaults_file"
+chmod 600 "$defaults_file"
+mariadb --defaults-extra-file="$defaults_file" --batch --skip-column-names radius
+'@
+
+docker compose stop radius radius-web
+docker compose up -d radius-mysql
+gzip -cd .\backup_radius_14-05-2026.sql.gz | docker compose exec -T radius-mysql sh -lc $mariadb
+Get-Content -Raw .\docker\post-import-migrations\001-operators-password-width.sql | docker compose exec -T radius-mysql sh -lc $mariadb
+docker compose build radius-web
+docker compose run --rm --no-deps --entrypoint php radius-web /usr/local/bin/daloradius-hash-imported-passwords.php
+docker compose up -d --build
+```
+
+The MariaDB command uses a temporary client defaults file inside the database container so `MYSQL_PASSWORD` is not passed as a process argument.
+
 ### Start the stack
 
 Build images and start the services:

@@ -314,7 +314,7 @@ test("Docker build context excludes local state and copies only required trees",
   const dockerignore = read(".dockerignore");
   const dockerfile = read("Dockerfile");
 
-  for (const ignoredPath of [".git", ".planning", "data/", "internal_data/", "*.log", "*.sql", ".env"]) {
+  for (const ignoredPath of [".git", ".planning", "data/", "internal_data/", "*.log", "*.sql", "*.sql.gz", ".env"]) {
     assert.match(dockerignore, new RegExp(`^${ignoredPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "m"));
   }
 
@@ -796,6 +796,119 @@ test("Docker init database writes do not pass secrets through process arguments"
   assert.doesNotMatch(nasInsertMatch[0], /'\$client_secret_sql'/);
   assert.equal(Buffer.from(dangerousSecretHex, "hex").toString("utf8"), dangerousSecret);
   assert.doesNotMatch(dangerousSecretHex, /['\\;-]/);
+});
+
+test("Docker post-import migration assets are present and ordered", () => {
+  const migrationPath = path.join(root, "docker", "post-import-migrations", "001-operators-password-width.sql");
+  const runnerPath = path.join(root, "scripts", "docker", "import-backup.ps1");
+  const bashRunnerPath = path.join(root, "scripts", "docker", "import-backup.sh");
+  const passwordConverterPath = path.join(root, "scripts", "docker", "hash-imported-passwords.php");
+
+  assert.ok(fs.existsSync(migrationPath), "operator password width migration should exist");
+  assert.ok(fs.existsSync(runnerPath), "backup import runner should exist");
+  assert.ok(fs.existsSync(bashRunnerPath), "Linux backup import runner should exist");
+  assert.ok(fs.existsSync(passwordConverterPath), "post-import password converter should exist");
+
+  const migration = read("docker/post-import-migrations/001-operators-password-width.sql");
+  assert.match(migration, /ALTER TABLE `operators` MODIFY `password` VARCHAR\(95\) NOT NULL;/);
+  assert.doesNotMatch(migration, /DROP TABLE|TRUNCATE|DELETE FROM/i);
+});
+
+test("Docker backup import PowerShell runner imports, migrates, hashes passwords, and starts stack last", () => {
+  const runner = read("scripts/docker/import-backup.ps1");
+
+  assert.match(runner, /param\s*\(/);
+  assert.match(runner, /\[Parameter\(Mandatory = \$true\)\]\s*\[string\]\$DumpPath/);
+  assert.match(runner, /docker compose config --quiet/);
+  assert.match(runner, /gzip -t/);
+  assert.match(runner, /docker compose stop radius radius-web/);
+  assert.match(runner, /docker compose up -d radius-mysql/);
+  assert.match(runner, /Wait-ComposeServiceHealthy -ServiceName "radius-mysql"/);
+  assert.match(runner, /gzip -cd/);
+  assert.match(runner, /mariadb --defaults-extra-file="\$defaults_file" --batch --skip-column-names radius/);
+  assert.match(runner, /password=%s\\n" "\$MYSQL_PASSWORD"/);
+  assert.doesNotMatch(runner, /-p"\$MYSQL_PASSWORD"/);
+  assert.match(runner, /Get-ChildItem .*docker.*post-import-migrations/);
+  assert.match(runner, /Validate-ImportedSchema/);
+  assert.match(runner, /SELECT IS_NULLABLE FROM information_schema\.COLUMNS/);
+  assert.match(runner, /Expected operators\.password to be NOT NULL/);
+  assert.match(runner, /function Invoke-PostImportPasswordConversion/);
+  assert.match(runner, /docker compose build radius-web/);
+  assert.match(runner, /docker compose run --rm --no-deps --entrypoint php radius-web \/usr\/local\/bin\/daloradius-hash-imported-passwords\.php/);
+
+  assert.ok(
+    runner.indexOf("gzip -cd") < runner.indexOf("Get-ChildItem"),
+    "dump import should run before post-import migrations",
+  );
+  assert.ok(
+    runner.indexOf("Validate-ImportedSchema") < runner.indexOf("docker compose up -d --build"),
+    "schema validation should run before full stack start",
+  );
+  assert.ok(
+    runner.indexOf("\n    Invoke-PostImportPasswordConversion\n") < runner.indexOf("\n    Validate-ImportedSchema\n"),
+    "password conversion should run before schema validation",
+  );
+});
+
+test("Docker backup import Linux runner mirrors the post-import workflow", () => {
+  const runner = read("scripts/docker/import-backup.sh");
+
+  assert.match(runner, /^set -euo pipefail$/m);
+  assert.match(runner, /docker compose config --quiet/);
+  assert.match(runner, /gzip -t "\$resolved_dump"/);
+  assert.match(runner, /docker compose stop radius radius-web/);
+  assert.match(runner, /docker compose up -d radius-mysql/);
+  assert.match(runner, /wait_compose_service_healthy "radius-mysql"/);
+  assert.match(runner, /gzip -cd "\$resolved_dump"/);
+  assert.match(runner, /mariadb --defaults-extra-file="\$defaults_file" --batch --skip-column-names radius/);
+  assert.match(runner, /find "\$project_dir\/docker\/post-import-migrations" -maxdepth 1 -name '\*\.sql' -print0 \| sort -z/);
+  assert.match(runner, /docker compose build radius-web/);
+  assert.match(runner, /docker compose run --rm --no-deps --entrypoint php radius-web \/usr\/local\/bin\/daloradius-hash-imported-passwords\.php/);
+  assert.match(runner, /validate_imported_schema/);
+
+  assert.ok(
+    runner.indexOf('gzip -cd "$resolved_dump"') < runner.indexOf("post-import-migrations"),
+    "Linux runner should import dump before applying migrations",
+  );
+  assert.ok(
+    runner.indexOf("\nrun_post_import_password_conversion\n") < runner.indexOf("\nvalidate_imported_schema\n"),
+    "Linux runner should convert passwords before validation",
+  );
+});
+
+test("Docker docs describe legacy dump post-import migrations", () => {
+  const readme = read("README.docker-standalone.md");
+
+  assert.match(readme, /Post-import migrations/);
+  assert.match(readme, /scripts\/docker\/import-backup\.ps1/);
+  assert.match(readme, /backup_radius_14-05-2026\.sql\.gz/);
+  assert.match(readme, /operators\.password/);
+  assert.match(readme, /VARCHAR\(95\)/);
+  assert.match(readme, /temporary client defaults file/);
+  assert.doesNotMatch(readme, /-p"\$MYSQL_PASSWORD"/);
+  assert.match(readme, /scripts\/docker\/import-backup\.sh/);
+  assert.match(readme, /hashes imported operator passwords/);
+  assert.match(readme, /does not rewrite daloRADIUS user portal passwords or FreeRADIUS `radcheck` authentication attributes/);
+  assert.match(readme, /docker compose up -d radius-mysql/);
+  assert.match(readme, /docker compose up -d --build/);
+});
+
+test("Docker post-import password converter hashes imported operator passwords only", () => {
+  const converter = read("scripts/docker/hash-imported-passwords.php");
+  const dockerfile = read("Dockerfile");
+
+  assert.match(dockerfile, /COPY scripts\/docker\/hash-imported-passwords\.php \/usr\/local\/bin\/daloradius-hash-imported-passwords\.php/);
+  assert.match(converter, /password_hash\(/);
+  assert.match(converter, /password_get_info\(/);
+  assert.match(converter, /DALORADIUS_ADMIN_PASSWORD/);
+  assert.match(converter, /\$username === 'administrator'/);
+  assert.match(converter, /SELECT `id`, `username`, `password` FROM `operators`/);
+  assert.match(converter, /operator_passwords_converted/);
+  assert.match(converter, /administrator_password_updated/);
+  assert.doesNotMatch(converter, /userinfo/);
+  assert.doesNotMatch(converter, /portalloginpassword/);
+  assert.doesNotMatch(converter, /radcheck/);
+  assert.doesNotMatch(converter, /echo .*password/i);
 });
 
 test("Standalone image builds from local context on a supported PHP runtime", () => {

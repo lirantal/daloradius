@@ -45,6 +45,7 @@ RUN apt-get update \
 
 COPY contrib/docker/operators.conf /etc/apache2/sites-available/operators.conf
 COPY contrib/docker/users.conf /etc/apache2/sites-available/users.conf
+COPY scripts/docker/hash-imported-passwords.php /usr/local/bin/daloradius-hash-imported-passwords.php
 RUN a2dissite 000-default.conf && \
     a2ensite users.conf operators.conf && \
     sed -i 's/Listen 80/Listen 80\nListen 8000/' /etc/apache2/ports.conf
@@ -59,6 +60,8 @@ RUN rm -rf /var/www/daloradius/app/operators/static /var/www/daloradius/app/user
   && ln -s ../common/static /var/www/daloradius/app/operators/static \
   && ln -s ../common/static /var/www/daloradius/app/users/static
 RUN sed -i 's/\r$//' /var/www/daloradius/init.sh
+RUN sed -i 's/\r$//' /usr/local/bin/daloradius-hash-imported-passwords.php \
+  && chmod 0755 /usr/local/bin/daloradius-hash-imported-passwords.php
 
 #RUN touch /var/www/html/library/daloradius.conf.php
 RUN chown -R www-data:www-data /var/www/daloradius
