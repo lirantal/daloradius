@@ -140,14 +140,14 @@ function init_database {
 	ensure_daloradius_schema
 
 	# Insert a client for the current subnet (to allow daloradius to perform checks)
-	IP=`ifconfig eth0 | awk '/inet/{ print $2;} '` # does also work: $IP=`hostname -I | awk '{print $1}'`
-	NM=`ifconfig eth0 | awk '/netmask/{ print $4;} '`
-	CIDR=`ipcalc $IP $NM | awk '/Network/{ print $2;} '`
-	SECRET=$DEFAULT_CLIENT_SECRET
-	CIDR_SQL=$(sql_escape "$CIDR")
-	SECRET_SQL=$(sql_escape "$SECRET")
-	echo "Adding client for $CIDR with configured shared secret."
-	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" -e "INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$CIDR_SQL','DOCKER NET','other',0,'$SECRET_SQL',NULL,'','')"
+	container_ip_address=`ifconfig eth0 | awk '/inet/{ print $2;} '` # does also work: $container_ip_address=`hostname -I | awk '{print $1}'`
+	container_netmask=`ifconfig eth0 | awk '/netmask/{ print $4;} '`
+	container_cidr=`ipcalc $container_ip_address $container_netmask | awk '/Network/{ print $2;} '`
+	client_secret=$DEFAULT_CLIENT_SECRET
+	container_cidr_sql=$(sql_escape "$container_cidr")
+	client_secret_sql=$(sql_escape "$client_secret")
+	echo "Adding client for $container_cidr with configured shared secret."
+	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" -e "INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$container_cidr_sql','DOCKER NET','other',0,'$client_secret_sql',NULL,'','')"
 
 	echo "Database initialization for freeradius completed."
 }

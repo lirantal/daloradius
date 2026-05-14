@@ -170,6 +170,16 @@ test("Docker init scripts escape environment-derived config values", () => {
   assert.doesNotMatch(radiusInit, /echo "Adding client .*secret \$SECRET"/);
 });
 
+test("FreeRADIUS Docker client insertion uses descriptive variable names", () => {
+  const radiusInit = read("init-freeradius.sh");
+
+  assert.doesNotMatch(radiusInit, /^\s*(IP|NM|CIDR|SECRET)=/m);
+  assert.match(radiusInit, /container_ip_address=/);
+  assert.match(radiusInit, /container_netmask=/);
+  assert.match(radiusInit, /container_cidr=/);
+  assert.match(radiusInit, /client_secret=/);
+});
+
 test("Operator passwords are hashed and Docker admin password is explicit", () => {
   const login = read("app/operators/dologin.php");
   const operatorNew = read("app/operators/config-operators-new.php");
