@@ -31,5 +31,6 @@ COPY app/ /var/www/html/daloradius
 COPY app/common/includes/daloradius.conf.php.sample /var/www/html/daloradius/common/includes/daloradius.conf.php
 COPY contrib/scripts/apache-config.sh /usr/local/bin/apache-config.sh
 
-RUN chmod +x /usr/local/bin/apache-config.sh \
+RUN sed -i 's/\r$//' /usr/local/bin/apache-config.sh \
+ && chmod +x /usr/local/bin/apache-config.sh \
  && sh /usr/local/bin/apache-config.sh
