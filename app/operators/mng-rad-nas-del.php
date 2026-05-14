@@ -90,6 +90,7 @@
             $label = (count($tmp) > 1 || count($tmp) == 0) ? "NASs" : "NAS";
             
             $successMsg = sprintf("Deleted %s: <strong>%s</strong>.", $label, implode(", ", $tmp));
+            $successMsg .= '<br><strong>Restart FreeRADIUS for NAS changes to take effect.</strong>';
             $logAction .= sprintf("Successfully deleted %s [%s] on page: ", $label, implode(", ", $deleted_values));
         } else {
             $failureMsg = "Empty or invalid NAS hostname/IP(s).";

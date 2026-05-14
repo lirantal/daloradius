@@ -120,6 +120,7 @@
 
                 if (!DB::isError($res)) {
                     $successMsg = sprintf("Edited NAS: <strong>%s</strong>", $nasname_enc);
+                    $successMsg .= '<br><strong>Restart FreeRADIUS for NAS changes to take effect.</strong>';
                     $logAction .= sprintf("Successfully edited NAS [%s] on page: ", $nasname);
                 } else {
                     // it seems that operator could not be added
