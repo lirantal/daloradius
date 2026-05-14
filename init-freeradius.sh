@@ -12,6 +12,7 @@ MYSQL_PASSWORD=${MYSQL_PASSWORD:-}
 MYSQL_WAIT_RETRIES=${MYSQL_WAIT_RETRIES:-30}
 MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-2}
 INIT_ERROR_LOG=${INIT_ERROR_LOG:-/data/freeradius-init-errors.log}
+TZ=${TZ:-Europe/Vienna}
 DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-}
 FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-require}
 
@@ -108,6 +109,29 @@ function require_mysql_port {
 	fi
 }
 
+function require_timezone {
+	local name="$1"
+	local value="${!name:-}"
+	local zoneinfo_file
+	require_non_empty "$name"
+	reject_crlf "$name"
+	case "$value" in
+		/*|*..*|*//*|*/*/)
+			fail_step "validation" "invalid_timezone_${name}"
+			;;
+	esac
+	if ! [[ "$value" =~ ^[A-Za-z0-9][A-Za-z0-9._+-]*(/[A-Za-z0-9][A-Za-z0-9._+-]*)*$ ]]; then
+		fail_step "validation" "invalid_timezone_${name}"
+	fi
+	if [ "$value" = "UTC" ]; then
+		return
+	fi
+	zoneinfo_file="/usr/share/zoneinfo/$value"
+	if [ ! -f "$zoneinfo_file" ] || [ "$(head -c 4 "$zoneinfo_file" 2>/dev/null)" != "TZif" ]; then
+		fail_step "validation" "invalid_timezone_${name}"
+	fi
+}
+
 function require_sql_identifier {
 	local name="$1"
 	local value="${!name:-}"
@@ -144,6 +168,7 @@ function require_host_token {
 }
 
 function validate_runtime_config {
+	require_timezone "TZ"
 	require_host_token "MYSQL_HOST"
 	require_mysql_port "MYSQL_PORT"
 	require_sql_identifier "MYSQL_DATABASE"

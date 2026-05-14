@@ -46,6 +46,16 @@ The operators UI bind is optional and defaults to localhost:
 DALORADIUS_OPERATORS_BIND=127.0.0.1:8000
 ```
 
+Optional timezone and mail settings can also be set in `.env`:
+
+```dotenv
+TZ=Europe/Vienna
+MAIL_SMTPADDR=127.0.0.1
+MAIL_PORT=25
+MAIL_FROM=root@daloradius.xdsl.by
+MAIL_AUTH=
+```
+
 ### Validate configuration
 
 Validate the Compose configuration and required environment variables:

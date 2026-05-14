@@ -37,6 +37,7 @@ services:
       - '1812:1812/udp'
       - '1813:1813/udp'
     environment:
+      - TZ=${TZ:-Europe/Vienna}
       - MYSQL_HOST=radius-mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=radius
@@ -72,6 +73,7 @@ services:
       - '80:80'
       - '${DALORADIUS_OPERATORS_BIND:-127.0.0.1:8000}:8000'
     environment:
+      - TZ=${TZ:-Europe/Vienna}
       - MYSQL_HOST=radius-mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=radius
@@ -81,10 +83,10 @@ services:
       # Optional Settings:
       - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET}
       - DEFAULT_FREERADIUS_SERVER=radius
-      - MAIL_SMTPADDR=127.0.0.1
-      - MAIL_PORT=25
-      - MAIL_FROM=root@daloradius.xdsl.by
-      - MAIL_AUTH=
+      - MAIL_SMTPADDR=${MAIL_SMTPADDR:-127.0.0.1}
+      - MAIL_PORT=${MAIL_PORT:-25}
+      - MAIL_FROM=${MAIL_FROM:-root@daloradius.xdsl.by}
+      - MAIL_AUTH=${MAIL_AUTH:-}
 
     volumes:
       - radius_daloradius_data:/data

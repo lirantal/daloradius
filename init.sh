@@ -13,6 +13,7 @@ MYSQL_PASSWORD=${MYSQL_PASSWORD:-}
 MYSQL_WAIT_RETRIES=${MYSQL_WAIT_RETRIES:-30}
 MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-2}
 INIT_ERROR_LOG=${INIT_ERROR_LOG:-/data/daloradius-init-errors.log}
+TZ=${TZ:-Europe/Vienna}
 PASSWORD_MIN_LENGTH=${PASSWORD_MIN_LENGTH:-}
 PASSWORD_MAX_LENGTH=${PASSWORD_MAX_LENGTH:-}
 DEFAULT_FREERADIUS_SERVER=${DEFAULT_FREERADIUS_SERVER:-radius}
@@ -125,6 +126,37 @@ function require_mysql_port {
     fi
 }
 
+function validate_optional_port {
+    local name="$1"
+    local value="${!name:-}"
+    if [ -n "$value" ]; then
+        require_mysql_port "$name"
+    fi
+}
+
+function require_timezone {
+    local name="$1"
+    local value="${!name:-}"
+    local zoneinfo_file
+    require_non_empty "$name"
+    reject_crlf "$name"
+    case "$value" in
+        /*|*..*|*//*|*/*/)
+            fail_step "validation" "invalid_timezone_${name}"
+            ;;
+    esac
+    if ! [[ "$value" =~ ^[A-Za-z0-9][A-Za-z0-9._+-]*(/[A-Za-z0-9][A-Za-z0-9._+-]*)*$ ]]; then
+        fail_step "validation" "invalid_timezone_${name}"
+    fi
+    if [ "$value" = "UTC" ]; then
+        return
+    fi
+    zoneinfo_file="/usr/share/zoneinfo/$value"
+    if [ ! -f "$zoneinfo_file" ] || [ "$(head -c 4 "$zoneinfo_file" 2>/dev/null)" != "TZif" ]; then
+        fail_step "validation" "invalid_timezone_${name}"
+    fi
+}
+
 function require_sql_identifier {
     local name="$1"
     local value="${!name:-}"
@@ -160,7 +192,27 @@ function require_host_token {
     fi
 }
 
+function validate_optional_host_token {
+    local name="$1"
+    local value="${!name:-}"
+    if [ -n "$value" ]; then
+        require_host_token "$name"
+    fi
+}
+
+function validate_optional_email {
+    local name="$1"
+    local value="${!name:-}"
+    if [ -n "$value" ]; then
+        reject_crlf "$name"
+        if ! [[ "$value" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)+$ ]]; then
+            fail_step "validation" "invalid_email_${name}"
+        fi
+    fi
+}
+
 function validate_runtime_config {
+    require_timezone "TZ"
     require_host_token "MYSQL_HOST"
     require_mysql_port "MYSQL_PORT"
     require_sql_identifier "MYSQL_DATABASE"
@@ -176,9 +228,9 @@ function validate_runtime_config {
     validate_optional_no_crlf "DEFAULT_CLIENT_SECRET"
     validate_optional_no_crlf "PASSWORD_MIN_LENGTH"
     validate_optional_no_crlf "PASSWORD_MAX_LENGTH"
-    validate_optional_no_crlf "MAIL_SMTPADDR"
-    validate_optional_no_crlf "MAIL_PORT"
-    validate_optional_no_crlf "MAIL_FROM"
+    validate_optional_host_token "MAIL_SMTPADDR"
+    validate_optional_port "MAIL_PORT"
+    validate_optional_email "MAIL_FROM"
     validate_optional_no_crlf "MAIL_AUTH"
 }
 

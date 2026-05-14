@@ -180,6 +180,30 @@ test("Compose avoids insecure local defaults", () => {
   assert.match(compose, /FREERADIUS_SQL_TLS=\$\{FREERADIUS_SQL_TLS:\?Set FREERADIUS_SQL_TLS to require or disabled\}/);
 });
 
+test("Compose exposes configurable timezone and mail environment", () => {
+  const compose = read("docker-compose.yml");
+  const mysqlService = compose.match(/radius-mysql:[\s\S]*?(?=\n  radius:)/);
+  const radiusService = compose.match(/radius:[\s\S]*?(?=\n  radius-web:)/);
+  const webService = compose.match(/radius-web:[\s\S]*/);
+
+  assert.notEqual(mysqlService, null, "radius-mysql service should be present");
+  assert.notEqual(radiusService, null, "radius service should be present");
+  assert.notEqual(webService, null, "radius-web service should be present");
+
+  assert.doesNotMatch(mysqlService[0], /^\s*-\s*TZ=/m);
+
+  for (const service of [radiusService[0], webService[0]]) {
+    assert.match(service, /TZ=\$\{TZ:-Europe\/Vienna\}/);
+  }
+
+  assert.match(webService[0], /MAIL_SMTPADDR=\$\{MAIL_SMTPADDR:-127\.0\.0\.1\}/);
+  assert.match(webService[0], /MAIL_PORT=\$\{MAIL_PORT:-25\}/);
+  assert.match(webService[0], /MAIL_FROM=\$\{MAIL_FROM:-root@daloradius\.xdsl\.by\}/);
+  assert.match(webService[0], /MAIL_AUTH=\$\{MAIL_AUTH:-\}/);
+  assert.doesNotMatch(webService[0], /MAIL_SMTPADDR=127\.0\.0\.1/);
+  assert.doesNotMatch(webService[0], /MAIL_PORT=25/);
+});
+
 test("Docker Compose env example is a safe copyable template", () => {
   const envExamplePath = path.join(root, ".env.example");
   const dockerignore = read(".dockerignore");
@@ -220,6 +244,11 @@ test("Docker Compose env example is a safe copyable template", () => {
     "DEFAULT_CLIENT_SECRET",
     "DALORADIUS_ADMIN_PASSWORD",
     "FREERADIUS_SQL_TLS",
+    "TZ",
+    "MAIL_SMTPADDR",
+    "MAIL_PORT",
+    "MAIL_FROM",
+    "MAIL_AUTH",
   ]) {
     assert.ok(Object.hasOwn(templateValues, variableName), `${variableName} should be represented in .env.example`);
   }
@@ -238,6 +267,11 @@ test("Docker Compose env example is a safe copyable template", () => {
   }
 
   assert.match(templateValues.FREERADIUS_SQL_TLS, /^(require|disabled)$/);
+  assert.equal(templateValues.TZ, "Europe/Vienna");
+  assert.equal(templateValues.MAIL_SMTPADDR, "127.0.0.1");
+  assert.equal(templateValues.MAIL_PORT, "25");
+  assert.equal(templateValues.MAIL_FROM, "root@daloradius.xdsl.by");
+  assert.equal(templateValues.MAIL_AUTH, "");
   assert.doesNotMatch(envExample, /^\s*[A-Z0-9_]+=CHANGE_ME_[A-Z0-9_]*$/m);
   assert.deepEqual(values, {}, ".env.example should not contain active variable assignments");
 
@@ -442,14 +476,34 @@ test("Docker init scripts validate runtime configuration before creating default
 
   const webInit = read("init.sh");
   const radiusInit = read("init-freeradius.sh");
+  const webTimezone = functionBody(webInit, "require_timezone");
+  const radiusTimezone = functionBody(radiusInit, "require_timezone");
+  const validateEmail = functionBody(webInit, "validate_optional_email");
 
   assert.doesNotMatch(webInit, /MYSQL_PASSWORD=\$\{MYSQL_PASSWORD:-radpass\}/);
   assert.doesNotMatch(radiusInit, /MYSQL_PASSWORD=\$\{MYSQL_PASSWORD:-radpass\}/);
   assert.match(webInit, /MYSQL_PASSWORD=\$\{MYSQL_PASSWORD:-\}/);
   assert.match(radiusInit, /MYSQL_PASSWORD=\$\{MYSQL_PASSWORD:-\}/);
+  assert.match(webInit, /TZ=\$\{TZ:-Europe\/Vienna\}/);
+  assert.match(radiusInit, /TZ=\$\{TZ:-Europe\/Vienna\}/);
+  assert.match(webInit, /function require_timezone/);
+  assert.match(radiusInit, /function require_timezone/);
+  assert.match(webTimezone, /\/usr\/share\/zoneinfo\/\$value/);
+  assert.match(radiusTimezone, /\/usr\/share\/zoneinfo\/\$value/);
+  assert.match(webTimezone, /\[ "\$value" = "UTC" \]/);
+  assert.match(radiusTimezone, /\[ "\$value" = "UTC" \]/);
+  assert.match(webTimezone, /TZif/);
+  assert.match(radiusTimezone, /TZif/);
+  assert.match(webInit, /require_timezone "TZ"/);
+  assert.match(radiusInit, /require_timezone "TZ"/);
   assert.match(webInit, /require_non_empty "DALORADIUS_ADMIN_PASSWORD"/);
   assert.match(webInit, /validate_optional_no_crlf "DEFAULT_CLIENT_SECRET"/);
-  assert.match(webInit, /validate_optional_no_crlf "MAIL_SMTPADDR"/);
+  assert.match(webInit, /validate_optional_host_token "MAIL_SMTPADDR"/);
+  assert.match(webInit, /validate_optional_port "MAIL_PORT"/);
+  assert.match(webInit, /validate_optional_email "MAIL_FROM"/);
+  assert.match(webInit, /validate_optional_no_crlf "MAIL_AUTH"/);
+  assert.match(validateEmail, /A-Za-z0-9-\]\*/);
+  assert.doesNotMatch(validateEmail, /A-Za-z0-9_-\]\*/);
   assert.match(webInit, /validate_optional_no_crlf "PASSWORD_MIN_LENGTH"/);
 
   assert.match(radiusInit, /require_non_empty "DEFAULT_CLIENT_SECRET"/);
