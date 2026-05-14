@@ -8,11 +8,109 @@ MYSQL_HOST=${MYSQL_HOST:-localhost}
 MYSQL_PORT=${MYSQL_PORT:-3306}
 MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
 MYSQL_USER=${MYSQL_USER:-radius}
-MYSQL_PASSWORD=${MYSQL_PASSWORD:-radpass}
+MYSQL_PASSWORD=${MYSQL_PASSWORD:-}
 MYSQL_WAIT_RETRIES=${MYSQL_WAIT_RETRIES:-30}
 MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-2}
 DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-}
 FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-require}
+
+function require_non_empty {
+	local name="$1"
+	local value="${!name:-}"
+	if [ -z "$value" ]; then
+		echo "$name must be set."
+		exit 1
+	fi
+}
+
+function reject_crlf {
+	local name="$1"
+	local value="${!name:-}"
+	case "$value" in
+		*$'\r'*|*$'\n'*)
+			echo "$name must not contain CR or LF characters."
+			exit 1
+			;;
+	esac
+}
+
+function require_positive_integer {
+	local name="$1"
+	local value="${!name:-}"
+	if ! [[ "$value" =~ ^[1-9][0-9]*$ ]]; then
+		echo "$name must be a positive integer."
+		exit 1
+	fi
+}
+
+function require_mysql_port {
+	local name="$1"
+	local value="${!name:-}"
+	require_positive_integer "$name"
+	if [ "${#value}" -gt 5 ] || { [ "${#value}" -eq 5 ] && [[ "$value" > "65535" ]]; }; then
+		echo "$name must be between 1 and 65535."
+		exit 1
+	fi
+}
+
+function require_sql_identifier {
+	local name="$1"
+	local value="${!name:-}"
+	require_non_empty "$name"
+	if ! [[ "$value" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+		echo "$name must start with a letter or underscore and contain only letters, digits, and underscores."
+		exit 1
+	fi
+}
+
+function require_host_token {
+	local name="$1"
+	local value="${!name:-}"
+	local -a host_labels
+	local label
+	require_non_empty "$name"
+	reject_crlf "$name"
+
+	case "$value" in
+		.*|*.|*..*)
+			echo "$name must not contain leading, trailing, or consecutive dots."
+			exit 1
+			;;
+	esac
+
+	IFS='.' read -r -a host_labels <<< "$value"
+	for label in "${host_labels[@]}"; do
+		if ! [[ "$label" =~ ^[A-Za-z0-9]([A-Za-z0-9_-]*[A-Za-z0-9])?$ ]]; then
+			echo "$name must use dot-separated labels that start and end with a letter or digit."
+			exit 1
+		fi
+	done
+
+	if [ "${#host_labels[@]}" -eq 0 ]; then
+		echo "$name must be a valid host token."
+		exit 1
+	fi
+}
+
+function validate_runtime_config {
+	require_host_token "MYSQL_HOST"
+	require_mysql_port "MYSQL_PORT"
+	require_sql_identifier "MYSQL_DATABASE"
+	require_sql_identifier "MYSQL_USER"
+	require_non_empty "MYSQL_PASSWORD"
+	reject_crlf "MYSQL_PASSWORD"
+	require_positive_integer "MYSQL_WAIT_RETRIES"
+	require_positive_integer "MYSQL_WAIT_INTERVAL"
+	require_non_empty "DEFAULT_CLIENT_SECRET"
+	reject_crlf "DEFAULT_CLIENT_SECRET"
+	if [ "$FREERADIUS_SQL_TLS" != "require" ] && [ "$FREERADIUS_SQL_TLS" != "disabled" ]; then
+		echo "FREERADIUS_SQL_TLS must be either require or disabled."
+		exit 1
+	fi
+}
+
+validate_runtime_config
+
 MYSQL_DEFAULTS_FILE=$(mktemp)
 
 chmod 600 "$MYSQL_DEFAULTS_FILE"
@@ -29,6 +127,10 @@ function escape_sed_replacement {
 	printf '%s' "$1" | sed -e 's/[\/&|\\]/\\&/g'
 }
 
+function freeradius_quote_escape {
+	printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\$/\\$/g'
+}
+
 function sql_escape {
 	printf '%s' "$1" | sed "s/'/''/g"
 }
@@ -43,7 +145,7 @@ function require_default_client_secret {
 function sql_config_set {
 	local key="$1"
 	local value
-	value=$(escape_sed_replacement "$2")
+	value=$(escape_sed_replacement "$(freeradius_quote_escape "$2")")
 	sed -i "s|^[#[:space:]]*$key[[:space:]]*=.*|$key = \"$value\"|" "$RADIUS_PATH/mods-available/sql"
 }
 
@@ -88,7 +190,7 @@ function init_freeradius {
 	sql_config_set "radius_db" "$MYSQL_DATABASE"
 	sql_config_set "password" "$MYSQL_PASSWORD"
 	sql_config_set "login" "$MYSQL_USER"
-	sed -i "s|testing123|$(escape_sed_replacement "$DEFAULT_CLIENT_SECRET")|" $RADIUS_PATH/mods-available/sql
+	sed -i "s|testing123|$(escape_sed_replacement "$(freeradius_quote_escape "$DEFAULT_CLIENT_SECRET")")|" $RADIUS_PATH/mods-available/sql
 	echo "freeradius initialization completed."
 }
 

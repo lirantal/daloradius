@@ -9,6 +9,16 @@ function read(relativePath) {
   return fs.readFileSync(path.join(root, relativePath), "utf8");
 }
 
+function functionBody(script, functionName) {
+  const functionStart = script.indexOf(`function ${functionName} {`);
+  assert.notEqual(functionStart, -1);
+
+  const nextFunctionStart = script.indexOf("\nfunction ", functionStart + 1);
+  assert.notEqual(nextFunctionStart, -1);
+
+  return script.slice(functionStart, nextFunctionStart);
+}
+
 test("FreeRADIUS image uses one executable startup directive", () => {
   const dockerfile = read("Dockerfile-freeradius");
 
@@ -160,14 +170,76 @@ test("Docker init scripts do not expose DB passwords in process arguments", () =
 test("Docker init scripts escape environment-derived config values", () => {
   const webInit = read("init.sh");
   const radiusInit = read("init-freeradius.sh");
+  const radiusSqlConfigSet = functionBody(radiusInit, "sql_config_set");
 
   assert.match(webInit, /function escape_sed_replacement/);
   assert.match(webInit, /function php_escape/);
   assert.match(webInit, /function php_config_set/);
   assert.match(radiusInit, /function escape_sed_replacement/);
+  assert.match(radiusInit, /function freeradius_quote_escape/);
   assert.match(radiusInit, /function sql_escape/);
   assert.match(radiusInit, /function require_default_client_secret/);
+  assert.match(radiusSqlConfigSet, /freeradius_quote_escape "\$2"/);
+  assert.match(radiusSqlConfigSet, /escape_sed_replacement "\$\(freeradius_quote_escape "\$2"\)"/);
+  assert.match(radiusInit, /escape_sed_replacement "\$\(freeradius_quote_escape "\$DEFAULT_CLIENT_SECRET"\)"/);
   assert.doesNotMatch(radiusInit, /echo "Adding client .*secret \$SECRET"/);
+});
+
+test("Docker init scripts validate runtime configuration before creating defaults files", () => {
+  for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
+    const script = read(scriptPath);
+    const validationCallIndex = script.indexOf("\nvalidate_runtime_config\n");
+    const defaultsFileIndex = script.indexOf("MYSQL_DEFAULTS_FILE=$(mktemp)");
+
+    assert.match(script, /function validate_runtime_config/);
+    assert.notEqual(validationCallIndex, -1);
+    assert.notEqual(defaultsFileIndex, -1);
+    assert.ok(validationCallIndex < defaultsFileIndex);
+
+    const hostValidator = functionBody(script, "require_host_token");
+    const hostCrlfCheckIndex = hostValidator.indexOf('reject_crlf "$name"');
+    const hostSplitIndex = hostValidator.indexOf("IFS='.' read -r -a host_labels");
+    const portValidator = functionBody(script, "require_mysql_port");
+
+    assert.match(script, /function require_non_empty/);
+    assert.match(script, /function reject_crlf/);
+    assert.match(script, /function require_positive_integer/);
+    assert.match(script, /function require_mysql_port/);
+    assert.match(script, /function require_sql_identifier/);
+    assert.match(script, /function require_host_token/);
+    assert.match(script, /65535/);
+    assert.doesNotMatch(portValidator, /\[ "\$value" -gt 65535 \]/);
+    assert.match(portValidator, /\[ "\$\{#value\}" -gt 5 \]/);
+    assert.match(portValidator, /\[ "\$\{#value\}" -eq 5 \]/);
+    assert.match(portValidator, /\[\[ "\$value" > "65535" \]\]/);
+    assert.match(script, /\[\[ "\$value" =~ \^\[A-Za-z_\]\[A-Za-z0-9_\]\*\$ \]\]/);
+    assert.doesNotMatch(script, /\[\[ "\$value" =~ \^\[A-Za-z0-9_\]\+\$ \]\]/);
+    assert.match(script, /\.\*\|\*\.\|\*\.\.\*\)/);
+    assert.match(script, /IFS='\.' read -r -a host_labels <<< "\$value"/);
+    assert.match(script, /for label in "\$\{host_labels\[@\]\}"; do/);
+    assert.match(script, /\[\[ "\$label" =~ \^\[A-Za-z0-9\]\(\[A-Za-z0-9_-\]\*\[A-Za-z0-9\]\)\?\$ \]\]/);
+    assert.doesNotMatch(script, /\[\[ "\$value" =~ \^\[A-Za-z0-9_.-\]\+\$ \]\]/);
+    assert.notEqual(hostCrlfCheckIndex, -1);
+    assert.notEqual(hostSplitIndex, -1);
+    assert.ok(hostCrlfCheckIndex < hostSplitIndex);
+  }
+
+  const webInit = read("init.sh");
+  const radiusInit = read("init-freeradius.sh");
+
+  assert.doesNotMatch(webInit, /MYSQL_PASSWORD=\$\{MYSQL_PASSWORD:-radpass\}/);
+  assert.doesNotMatch(radiusInit, /MYSQL_PASSWORD=\$\{MYSQL_PASSWORD:-radpass\}/);
+  assert.match(webInit, /MYSQL_PASSWORD=\$\{MYSQL_PASSWORD:-\}/);
+  assert.match(radiusInit, /MYSQL_PASSWORD=\$\{MYSQL_PASSWORD:-\}/);
+  assert.match(webInit, /require_non_empty "DALORADIUS_ADMIN_PASSWORD"/);
+  assert.match(webInit, /validate_optional_no_crlf "DEFAULT_CLIENT_SECRET"/);
+  assert.match(webInit, /validate_optional_no_crlf "MAIL_SMTPADDR"/);
+  assert.match(webInit, /validate_optional_no_crlf "PASSWORD_MIN_LENGTH"/);
+
+  assert.match(radiusInit, /require_non_empty "DEFAULT_CLIENT_SECRET"/);
+  assert.match(radiusInit, /reject_crlf "DEFAULT_CLIENT_SECRET"/);
+  assert.match(radiusInit, /FREERADIUS_SQL_TLS" != "require"/);
+  assert.match(radiusInit, /FREERADIUS_SQL_TLS" != "disabled"/);
 });
 
 test("FreeRADIUS Docker client insertion uses descriptive variable names", () => {
