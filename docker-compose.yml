@@ -48,7 +48,7 @@ services:
       - radius_freeradius_data:/data
       - radius_logs:/var/log/freeradius
     healthcheck:
-      test: ["CMD-SHELL", "freeradius -C >/dev/null 2>&1"]
+      test: ["CMD-SHELL", "echo 'FreeRADIUS-Statistics-Type = 1' | radclient -q -r 1 -t 3 127.0.0.1:18121 status adminsecret >/dev/null"]
       interval: 10s
       timeout: 5s
       retries: 10

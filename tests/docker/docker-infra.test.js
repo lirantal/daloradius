@@ -34,6 +34,13 @@ test("Compose limits exposed admin surface and waits for FreeRADIUS health", () 
   assert.match(compose, /radius-web:[\s\S]*?radius:[\s\S]*?condition: service_healthy/);
 });
 
+test("FreeRADIUS healthcheck queries the live status server", () => {
+  const compose = read("docker-compose.yml");
+
+  assert.doesNotMatch(compose, /freeradius -C/);
+  assert.match(compose, /echo 'FreeRADIUS-Statistics-Type = 1' \| radclient -q -r 1 -t 3 127\.0\.0\.1:18121 status adminsecret >\/dev\/null/);
+});
+
 test("Compose runtime state does not live inside the build context", () => {
   const compose = read("docker-compose.yml");
 
