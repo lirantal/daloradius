@@ -1,4 +1,5 @@
 const assert = require("node:assert/strict");
+const childProcess = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 const test = require("node:test");
@@ -6,7 +7,7 @@ const test = require("node:test");
 const root = path.resolve(__dirname, "..", "..");
 
 function read(relativePath) {
-  return fs.readFileSync(path.join(root, relativePath), "utf8");
+  return fs.readFileSync(path.join(root, relativePath), "utf8").replace(/\r\n/g, "\n");
 }
 
 function functionBody(script, functionName) {
@@ -18,6 +19,147 @@ function functionBody(script, functionName) {
 
   return script.slice(functionStart, nextFunctionStart);
 }
+
+function trackedFiles(...paths) {
+  return childProcess
+    .execFileSync("git", ["ls-files", "--", ...paths], { cwd: root, encoding: "utf8" })
+    .split(/\r?\n/)
+    .filter(Boolean);
+}
+
+function loggingAndEchoLines(script) {
+  return script
+    .split("\n")
+    .filter((line) => line.includes("log_event") || line.includes("fail_step") || /^\s*echo\b/.test(line))
+    .join("\n");
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function shellVariableReference(variableName) {
+  const escapedName = escapeRegExp(variableName);
+  return new RegExp(`\\$(?:\\{${escapedName}\\}|${escapedName})(?![A-Za-z0-9_])`);
+}
+
+function assertLineOrder(contents, beforeMarker, afterMarker) {
+  const beforeIndex = contents.indexOf(beforeMarker);
+  const afterIndex = contents.indexOf(afterMarker);
+
+  assert.notEqual(beforeIndex, -1, `${beforeMarker.trim()} marker should be present`);
+  assert.notEqual(afterIndex, -1, `${afterMarker.trim()} marker should be present`);
+  assert.ok(beforeIndex < afterIndex, `${beforeMarker.trim()} should appear before ${afterMarker.trim()}`);
+}
+
+test("Secret variable reference matcher catches braced and unbraced shell variables", () => {
+  const matcher = shellVariableReference("DEFAULT_CLIENT_SECRET");
+
+  assert.match("echo $DEFAULT_CLIENT_SECRET", matcher);
+  assert.match("echo ${DEFAULT_CLIENT_SECRET}", matcher);
+  assert.doesNotMatch("fail_step \"validation\" \"missing_required_DEFAULT_CLIENT_SECRET\"", matcher);
+});
+
+test("Line order helper rejects missing markers before comparing order", () => {
+  assert.throws(
+    () => assertLineOrder("setup_mysql_defaults_file\n", "\nvalidate_runtime_config\n", "\nsetup_mysql_defaults_file\n"),
+    /validate_runtime_config/,
+  );
+});
+
+test("Docker compliance cleanup findings remain covered by explicit invariants", () => {
+  const compose = read("docker-compose.yml");
+  const dockerignore = read(".dockerignore");
+  const webInit = read("init.sh");
+  const radiusInit = read("init-freeradius.sh");
+  const composeMysqlServiceMatch = compose.match(/radius-mysql:[\s\S]*?(?=\n  radius:)/);
+  assert.notEqual(composeMysqlServiceMatch, null, "radius-mysql service should be present");
+  const composeMysqlService = composeMysqlServiceMatch[0];
+  const scriptBundle = `${webInit}\n${radiusInit}`;
+  const loggingLines = `${loggingAndEchoLines(webInit)}\n${loggingAndEchoLines(radiusInit)}`;
+  const discoverCidr = functionBody(radiusInit, "discover_container_cidr");
+  const prepareLogs = functionBody(radiusInit, "prepare_freeradius_logs");
+
+  const complianceFindings = [
+    [
+      "no tracked or build-context .env defaults",
+      () => {
+        assert.doesNotMatch(compose, /radiusdbpw|radiusrootdbpw|testing123/);
+        assert.match(dockerignore, /^\.env$/m);
+        assert.deepEqual(trackedFiles(".env"), []);
+      },
+    ],
+    [
+      "MariaDB 3306 is internal only",
+      () => {
+        assert.doesNotMatch(composeMysqlService, /^\s*ports:/m);
+      },
+    ],
+    [
+      "FreeRADIUS SQL TLS compose mode is explicit",
+      () => {
+        assert.match(compose, /FREERADIUS_SQL_TLS=\$\{FREERADIUS_SQL_TLS:\?Set FREERADIUS_SQL_TLS to require or disabled\}/);
+        assert.doesNotMatch(compose, /FREERADIUS_SQL_TLS=\$\{FREERADIUS_SQL_TLS:-disabled\}/);
+        assert.match(radiusInit, /FREERADIUS_SQL_TLS=\$\{FREERADIUS_SQL_TLS:-require\}/);
+      },
+    ],
+    [
+      "Docker init scripts do not disable MySQL SSL checks",
+      () => assert.doesNotMatch(scriptBundle, /--skip-ssl/),
+    ],
+    [
+      "FreeRADIUS logs use grouped permissions",
+      () => {
+        assert.doesNotMatch(radiusInit, /chmod -R a\+rX/);
+        assert.match(prepareLogs, /chown -R freerad:33 \/var\/log\/freeradius 2>>"\$INIT_ERROR_LOG"/);
+        assert.match(prepareLogs, /find \/var\/log\/freeradius -type d -exec chmod 2750 \{\} \+ 2>>"\$INIT_ERROR_LOG"/);
+        assert.match(prepareLogs, /find \/var\/log\/freeradius -type f -exec chmod 0640 \{\} \+ 2>>"\$INIT_ERROR_LOG"/);
+      },
+    ],
+    [
+      "structured logs and echo lines do not print secrets",
+      () => {
+        for (const secretVariable of [
+          "DEFAULT_CLIENT_SECRET",
+          "MYSQL_PASSWORD",
+          "DALORADIUS_ADMIN_PASSWORD",
+          "admin_hash",
+          "client_secret_sql",
+        ]) {
+          assert.doesNotMatch(loggingLines, shellVariableReference(secretVariable));
+        }
+      },
+    ],
+    [
+      "env-derived identifiers, hosts, and ports are validated before use",
+      () => {
+        for (const script of [webInit, radiusInit]) {
+          assertLineOrder(script, "\nvalidate_runtime_config\n", "\nsetup_mysql_defaults_file\n");
+          assert.match(script, /function require_sql_identifier/);
+          assert.match(script, /function require_host_token/);
+          assert.match(script, /function require_mysql_port/);
+        }
+      },
+    ],
+    [
+      "critical Docker init writes and permissions are guarded",
+      () => {
+        for (const script of [webInit, radiusInit]) {
+          assert.match(functionBody(script, "setup_mysql_defaults_file"), /fail_step "mysql_defaults_setup" "defaults_file_write_failed"/);
+          assert.match(functionBody(script, "write_lock"), /fail_step "\$event" "lock_write_failed"/);
+          assert.match(functionBody(script, "setup_error_log"), /fail_step "error_log_setup" "error_log_create_failed"/);
+        }
+
+        assert.match(discoverCidr, /fail_step "cidr_discovery" "container_cidr_discovery_failed"/);
+        assert.match(prepareLogs, /fail_step "freeradius_log_permissions" "log_file_mode_failed"/);
+      },
+    ],
+  ];
+
+  for (const [finding, assertInvariant] of complianceFindings) {
+    assert.doesNotThrow(assertInvariant, finding);
+  }
+});
 
 test("FreeRADIUS image uses one executable startup directive", () => {
   const dockerfile = read("Dockerfile-freeradius");
@@ -451,10 +593,10 @@ test("FreeRADIUS Docker client insertion uses descriptive variable names", () =>
   const radiusInit = read("init-freeradius.sh");
 
   assert.doesNotMatch(radiusInit, /^\s*(IP|NM|CIDR|SECRET)=/m);
-  assert.match(radiusInit, /container_ip_address=/);
-  assert.match(radiusInit, /container_netmask=/);
-  assert.match(radiusInit, /container_cidr=/);
-  assert.match(radiusInit, /client_secret=/);
+  assert.match(radiusInit, /^\s*(?:if ! )?container_ip_address=/m);
+  assert.match(radiusInit, /^\s*(?:if ! )?container_netmask=/m);
+  assert.match(radiusInit, /^\s*(?:if ! )?container_cidr=/m);
+  assert.match(radiusInit, /^\s*client_secret=/m);
 });
 
 test("Operator passwords are hashed and Docker admin password is explicit", () => {
