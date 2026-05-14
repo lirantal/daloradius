@@ -22,6 +22,9 @@
  */
 
 include('../checklogin.php');
+$operator_perm_file = 'acct_username';
+$operator_perm_deny_http_status = 403;
+include('../check_operator_perm.php');
 
 
 // username and divContainer are required

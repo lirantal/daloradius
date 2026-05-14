@@ -79,6 +79,23 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
         $action = 'userEnable';
     }
 
+    switch ($action) {
+        case 'userDisable':
+        case 'userEnable':
+        case 'userMail':
+        case 'refillSessionTime':
+        case 'refillSessionTraffic':
+            $operator_perm_file = 'mng_edit';
+            break;
+
+        default:
+            $operator_perm_file = 'mng_search';
+            break;
+    }
+
+    $operator_perm_deny_http_status = 403;
+    include_once('../check_operator_perm.php');
+
     include('../../../common/includes/db_open.php');
     include_once('../../include/management/pages_common.php');
 

@@ -22,6 +22,9 @@
  */
 
 include('../checklogin.php');
+$operator_perm_file = 'mng_rad_attributes_list';
+$operator_perm_deny_http_status = 403;
+include('../check_operator_perm.php');
 
 
 // attribute and divContainer are required
