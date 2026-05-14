@@ -75,7 +75,6 @@ function init_daloradius {
 
     if ! test -f "$DALORADIUS_CONF_PATH" || ! test -s "$DALORADIUS_CONF_PATH"; then
         cp "$DALORADIUS_CONF_PATH.sample" "$DALORADIUS_CONF_PATH"
-        chown www-data:www-data "$DALORADIUS_CONF_PATH"
     fi
     php_config_set "CONFIG_DB_HOST" "$MYSQL_HOST"
     php_config_set "CONFIG_DB_PORT" "$MYSQL_PORT"
@@ -152,4 +151,4 @@ fi
 set_admin_password
 
 # Start Apache2 in the foreground
-/usr/sbin/apachectl -DFOREGROUND -k start
+exec /usr/sbin/apachectl -DFOREGROUND -k start

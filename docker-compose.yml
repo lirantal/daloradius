@@ -3,6 +3,10 @@ services:
   radius-mysql:
     image: mariadb:11.8
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
     environment:
       - MYSQL_DATABASE=radius
       - MYSQL_USER=radius
@@ -22,6 +26,10 @@ services:
       context: .
       dockerfile: Dockerfile-freeradius
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
     depends_on:
       radius-mysql:
         condition: service_healthy
@@ -51,6 +59,10 @@ services:
   radius-web:
     build: .
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
     depends_on:
       radius-mysql:
         condition: service_healthy

@@ -12,6 +12,7 @@ MYSQL_PASSWORD=${MYSQL_PASSWORD:-radpass}
 MYSQL_WAIT_RETRIES=${MYSQL_WAIT_RETRIES:-30}
 MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-2}
 DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-}
+FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-require}
 MYSQL_DEFAULTS_FILE=$(mktemp)
 
 chmod 600 "$MYSQL_DEFAULTS_FILE"
@@ -53,11 +54,13 @@ function init_freeradius {
 	sed -i 's|driver = "rlm_sql_null"|driver = "rlm_sql_mysql"|' $RADIUS_PATH/mods-available/sql
 	sed -i 's|dialect = "sqlite"|dialect = "mysql"|' $RADIUS_PATH/mods-available/sql
 	sed -i 's|dialect = ${modules.sql.dialect}|dialect = "mysql"|' $RADIUS_PATH/mods-available/sqlcounter # avoid instantiation error
-	sed -i 's|ca_file = "/etc/ssl/certs/my_ca.crt"|#ca_file = "/etc/ssl/certs/my_ca.crt"|' $RADIUS_PATH/mods-available/sql #disable sql encryption
-        sed -i 's|ca_path = "/etc/ssl/certs/"|#ca_path = "/etc/ssl/certs/"|' $RADIUS_PATH/mods-available/sql #disable sql encryption
-	sed -i 's|certificate_file = "/etc/ssl/certs/private/client.crt"|#certificate_file = "/etc/ssl/certs/private/client.crt"|' $RADIUS_PATH/mods-available/sql #disable sql encryption
-	sed -i 's|private_key_file = "/etc/ssl/certs/private/client.key"|#private_key_file = "/etc/ssl/certs/private/client.key"|' $RADIUS_PATH/mods-available/sql #disable sql encryption
-	sed -i 's|tls_required = yes|tls_required = no|' $RADIUS_PATH/mods-available/sql #disable sql encryption
+	if [ "$FREERADIUS_SQL_TLS" = "disabled" ]; then
+		sed -i 's|ca_file = "/etc/ssl/certs/my_ca.crt"|#ca_file = "/etc/ssl/certs/my_ca.crt"|' $RADIUS_PATH/mods-available/sql
+		sed -i 's|ca_path = "/etc/ssl/certs/"|#ca_path = "/etc/ssl/certs/"|' $RADIUS_PATH/mods-available/sql
+		sed -i 's|certificate_file = "/etc/ssl/certs/private/client.crt"|#certificate_file = "/etc/ssl/certs/private/client.crt"|' $RADIUS_PATH/mods-available/sql
+		sed -i 's|private_key_file = "/etc/ssl/certs/private/client.key"|#private_key_file = "/etc/ssl/certs/private/client.key"|' $RADIUS_PATH/mods-available/sql
+		sed -i 's|tls_required = yes|tls_required = no|' $RADIUS_PATH/mods-available/sql
+	fi
 	sed -i 's|#\s*read_clients = yes|read_clients = yes|' $RADIUS_PATH/mods-available/sql
 	ln -sf $RADIUS_PATH/mods-available/sql $RADIUS_PATH/mods-enabled/sql
 	ln -sf $RADIUS_PATH/mods-available/sqlcounter $RADIUS_PATH/mods-enabled/sqlcounter
@@ -210,8 +213,9 @@ else
 	date > "$DB_LOCK"
 fi
 
-# make logs directory world readable
-chmod -R a+rX /var/log/freeradius
+# make logs readable to the shared www-data group without opening them world-wide
+chgrp -R 33 /var/log/freeradius 2>/dev/null || true
+chmod -R u+rwX,g+rX,o-rwx /var/log/freeradius
 
 # start freeradius in foreground mode
 freeradius -f "$@" &
@@ -231,8 +235,11 @@ _term() {
 }
 trap _term INT TERM
 
+set +e
 wait "$RADIUS_PID"
+RADIUS_STATUS=$?
+set -e
 # if freeradius dies, kill the tail and exit with its code
 kill -TERM "$TAIL_PID" 2>/dev/null
-wait "$TAIL_PID"
-exit $?
+wait "$TAIL_PID" 2>/dev/null || true
+exit "$RADIUS_STATUS"

@@ -141,3 +141,24 @@ test("Standalone image builds from local context on a supported PHP runtime", ()
   assert.match(readme, /docker build -t daloradius-standalone -f Dockerfile-standalone \./);
   assert.doesNotMatch(readme, /dormancygrace\/daloradius/);
 });
+
+test("Containers use Docker-friendly process, log, and hardening defaults", () => {
+  const webInit = read("init.sh");
+  const radiusInit = read("init-freeradius.sh");
+  const usersConf = read("contrib/docker/users.conf");
+  const operatorsConf = read("contrib/docker/operators.conf");
+  const compose = read("docker-compose.yml");
+
+  assert.match(webInit, /exec \/usr\/sbin\/apachectl -DFOREGROUND -k start/);
+  assert.match(radiusInit, /RADIUS_STATUS=\$\?/);
+  assert.match(radiusInit, /exit "\$RADIUS_STATUS"/);
+  assert.doesNotMatch(radiusInit, /chmod -R a\+rX/);
+  assert.match(radiusInit, /FREERADIUS_SQL_TLS=\$\{FREERADIUS_SQL_TLS:-require\}/);
+  assert.match(radiusInit, /if \[ "\$FREERADIUS_SQL_TLS" = "disabled" \]/);
+  assert.match(usersConf, /ErrorLog \/proc\/self\/fd\/2/);
+  assert.match(usersConf, /CustomLog \/proc\/self\/fd\/1 combined/);
+  assert.match(operatorsConf, /ErrorLog \/proc\/self\/fd\/2/);
+  assert.match(operatorsConf, /CustomLog \/proc\/self\/fd\/1 combined/);
+  assert.match(compose, /security_opt:[\s\S]*no-new-privileges:true/);
+  assert.match(compose, /cap_drop:[\s\S]*- NET_RAW/);
+});
