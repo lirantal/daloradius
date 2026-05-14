@@ -34,7 +34,7 @@ RUN mkdir /app /data
 WORKDIR /app
 
 # Copy init script to image
-ADD ./init-freeradius.sh /app
+COPY ./init-freeradius.sh /app
 
 # Make init.sh script executable
 RUN chmod +x /app/init-freeradius.sh
