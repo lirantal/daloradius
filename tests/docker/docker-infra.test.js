@@ -162,7 +162,8 @@ test("Docker init scripts do not expose DB passwords in process arguments", () =
     const script = read(scriptPath);
 
     assert.doesNotMatch(script, /-p"\$MYSQL_PASSWORD"/);
-    assert.match(script, /MYSQL_DEFAULTS_FILE=\$\(mktemp\)/);
+    assert.match(script, /function setup_mysql_defaults_file/);
+    assert.match(script, /MYSQL_DEFAULTS_FILE="\$defaults_file"/);
     assert.match(script, /--defaults-extra-file="\$MYSQL_DEFAULTS_FILE"/);
   }
 });
@@ -189,7 +190,7 @@ test("Docker init scripts validate runtime configuration before creating default
   for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
     const script = read(scriptPath);
     const validationCallIndex = script.indexOf("\nvalidate_runtime_config\n");
-    const defaultsFileIndex = script.indexOf("MYSQL_DEFAULTS_FILE=$(mktemp)");
+    const defaultsFileIndex = script.indexOf("\nsetup_mysql_defaults_file\n");
 
     assert.match(script, /function validate_runtime_config/);
     assert.notEqual(validationCallIndex, -1);
@@ -240,6 +241,210 @@ test("Docker init scripts validate runtime configuration before creating default
   assert.match(radiusInit, /reject_crlf "DEFAULT_CLIENT_SECRET"/);
   assert.match(radiusInit, /FREERADIUS_SQL_TLS" != "require"/);
   assert.match(radiusInit, /FREERADIUS_SQL_TLS" != "disabled"/);
+});
+
+test("Docker init scripts use structured redacted init logging", () => {
+  for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
+    const script = read(scriptPath);
+    const logEvent = functionBody(script, "log_event");
+    const failStep = functionBody(script, "fail_step");
+    const validationHelpers = [
+      "require_non_empty",
+      "reject_crlf",
+      "require_positive_integer",
+      "require_mysql_port",
+      "require_sql_identifier",
+      "require_host_token",
+    ].map((helperName) => functionBody(script, helperName)).join("\n");
+
+    assert.match(script, /function log_event/);
+    assert.match(script, /function fail_step/);
+    assert.match(logEvent, /level=%s component=/);
+    assert.match(logEvent, /event=%s outcome=%s detail=%s/);
+    assert.match(logEvent, /component=[a-z-]+-init/);
+    assert.match(failStep, /log_event "error"/);
+    assert.match(failStep, /exit 1/);
+    assert.match(validationHelpers, /fail_step "validation"/);
+    assert.doesNotMatch(validationHelpers, /echo "\$name must/);
+    assert.doesNotMatch(validationHelpers, /echo "FREERADIUS_SQL_TLS must/);
+  }
+});
+
+test("Critical Docker init database operations do not dump raw command errors", () => {
+  const webInit = read("init.sh");
+  const radiusInit = read("init-freeradius.sh");
+
+  assert.match(webInit, /INIT_ERROR_LOG=\$\{INIT_ERROR_LOG:-\/data\/daloradius-init-errors\.log\}/);
+  assert.match(webInit, /log_event "info" "mysql_wait" "start" "waiting_for_mysql"/);
+  assert.match(webInit, /mysqladmin --defaults-extra-file="\$MYSQL_DEFAULTS_FILE" ping --silent >\/dev\/null 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(webInit, /fail_step "mysql_wait" "mysql_wait_timeout"/);
+  assert.match(webInit, /log_event "info" "daloradius_schema_import" "start" "importing_schema"/);
+  assert.match(webInit, /mysql --defaults-extra-file="\$MYSQL_DEFAULTS_FILE" "\$MYSQL_DATABASE" < "\$DALORADIUS_PATH\/contrib\/db\/mariadb-daloradius\.sql" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(webInit, /fail_step "daloradius_schema_import" "schema_import_failed"/);
+  assert.match(webInit, /log_event "info" "daloradius_schema_import" "success" "schema_imported"/);
+  assert.match(webInit, /log_event "info" "admin_password_update" "start" "updating_admin_password"/);
+  assert.match(webInit, /2>>"\$INIT_ERROR_LOG" \|\| fail_step "admin_password_update" "admin_password_update_failed"/);
+  assert.match(webInit, /log_event "info" "admin_password_update" "success" "admin_password_updated"/);
+  assert.match(webInit, /log_event "info" "daloradius_schema_check" "start" "checking_schema"/);
+  assert.match(webInit, /log_event "info" "daloradius_schema_check" "success" "schema_present"/);
+  assert.match(webInit, /fail_step "daloradius_schema_check" "schema_post_check_failed"/);
+
+  assert.match(radiusInit, /INIT_ERROR_LOG=\$\{INIT_ERROR_LOG:-\/data\/freeradius-init-errors\.log\}/);
+  assert.match(radiusInit, /log_event "info" "mysql_wait" "start" "waiting_for_mysql"/);
+  assert.match(radiusInit, /mysqladmin --defaults-extra-file="\$MYSQL_DEFAULTS_FILE" ping --silent >\/dev\/null 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(radiusInit, /fail_step "mysql_wait" "mysql_wait_timeout"/);
+  assert.match(radiusInit, /log_event "info" "freeradius_schema_import" "start" "importing_schema"/);
+  assert.match(radiusInit, /mysql --defaults-extra-file="\$MYSQL_DEFAULTS_FILE" "\$MYSQL_DATABASE" < "\$RADIUS_PATH\/mods-config\/sql\/main\/mysql\/schema\.sql" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(radiusInit, /fail_step "freeradius_schema_import" "schema_import_failed"/);
+  assert.match(radiusInit, /log_event "info" "freeradius_schema_import" "success" "schema_imported"/);
+  assert.match(radiusInit, /log_event "info" "ippool_schema_import" "start" "importing_schema"/);
+  assert.match(radiusInit, /mysql --defaults-extra-file="\$MYSQL_DEFAULTS_FILE" "\$MYSQL_DATABASE" < "\$RADIUS_PATH\/mods-config\/sql\/ippool\/mysql\/schema\.sql" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(radiusInit, /fail_step "ippool_schema_import" "schema_import_failed"/);
+  assert.match(radiusInit, /log_event "info" "ippool_schema_import" "success" "schema_imported"/);
+  assert.match(radiusInit, /log_event "info" "radhuntgroup_schema_ensure" "start" "ensuring_schema"/);
+  assert.match(radiusInit, /fail_step "radhuntgroup_schema_ensure" "schema_ensure_failed"/);
+  assert.match(radiusInit, /log_event "info" "radhuntgroup_schema_ensure" "success" "schema_ensured"/);
+  assert.match(radiusInit, /log_event "info" "nas_client_insert" "start" "inserting_docker_client"/);
+  assert.match(radiusInit, /fail_step "nas_client_insert" "client_insert_failed"/);
+  assert.match(radiusInit, /log_event "info" "nas_client_insert" "success" "docker_client_inserted"/);
+  assert.match(radiusInit, /fail_step "noresetcounter_config" "noresetcounter_insert_failed"/);
+  assert.match(radiusInit, /log_event "info" "freeradius_schema_check" "start" "checking_schema"/);
+  assert.match(radiusInit, /log_event "info" "freeradius_schema_check" "success" "schema_present"/);
+  assert.match(radiusInit, /fail_step "freeradius_schema_check" "schema_post_check_failed"/);
+});
+
+test("Docker init scripts initialize private error logs before redirection use", () => {
+  for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
+    const script = read(scriptPath);
+    const setupErrorLog = functionBody(script, "setup_error_log");
+    const setupCallIndex = script.indexOf("\nsetup_error_log\n");
+    const validationCallIndex = script.indexOf("\nvalidate_runtime_config\n");
+    const mysqlDefaultsCallIndex = script.indexOf("\nsetup_mysql_defaults_file\n");
+
+    assert.match(script, /function setup_error_log/);
+    assert.match(setupErrorLog, /: > "\$INIT_ERROR_LOG"; \} 2>\/dev\/null/);
+    assert.match(setupErrorLog, /chmod 600 "\$INIT_ERROR_LOG" 2>\/dev\/null/);
+    assert.match(setupErrorLog, /fail_step "error_log_setup" "error_log_create_failed"/);
+    assert.match(setupErrorLog, /fail_step "error_log_setup" "error_log_chmod_failed"/);
+    assert.doesNotMatch(setupErrorLog, /2>>"\$INIT_ERROR_LOG"/);
+    assert.notEqual(setupCallIndex, -1);
+    assert.notEqual(validationCallIndex, -1);
+    assert.notEqual(mysqlDefaultsCallIndex, -1);
+    assert.ok(setupCallIndex < validationCallIndex);
+    assert.ok(setupCallIndex < mysqlDefaultsCallIndex);
+    assert.doesNotMatch(script, /INIT_ERROR_LOG=\$\{INIT_ERROR_LOG:-\/tmp\//);
+  }
+});
+
+test("Docker init scripts guard MySQL defaults files and lock writes", () => {
+  for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
+    const script = read(scriptPath);
+    const mysqlDefaults = functionBody(script, "setup_mysql_defaults_file");
+    const writeLock = functionBody(script, "write_lock");
+    const setupErrorLogIndex = script.indexOf("\nsetup_error_log\n");
+    const validateRuntimeIndex = script.indexOf("\nvalidate_runtime_config\n");
+    const setupMysqlIndex = script.indexOf("\nsetup_mysql_defaults_file\n");
+
+    assert.match(mysqlDefaults, /defaults_file="\$\(mktemp\)"/);
+    assert.match(mysqlDefaults, /MYSQL_DEFAULTS_FILE="\$defaults_file"/);
+    assert.match(mysqlDefaults, /chmod 600 "\$MYSQL_DEFAULTS_FILE" 2>>"\$INIT_ERROR_LOG"/);
+    assert.match(mysqlDefaults, /cat 2>>"\$INIT_ERROR_LOG" > "\$MYSQL_DEFAULTS_FILE"/);
+    assert.match(mysqlDefaults, /password=\$MYSQL_PASSWORD/);
+    assert.match(mysqlDefaults, /trap 'rm -f "\$MYSQL_DEFAULTS_FILE"' EXIT/);
+    assert.match(mysqlDefaults, /fail_step "mysql_defaults_setup" "defaults_file_create_failed"/);
+    assert.match(mysqlDefaults, /fail_step "mysql_defaults_setup" "defaults_file_chmod_failed"/);
+    assert.match(mysqlDefaults, /fail_step "mysql_defaults_setup" "defaults_file_write_failed"/);
+    assert.doesNotMatch(mysqlDefaults, /log_event [^\n]*MYSQL_PASSWORD/);
+    assert.match(writeLock, /date 2>>"\$INIT_ERROR_LOG" > "\$lock_path"/);
+    assert.match(writeLock, /fail_step "\$event" "lock_write_failed"/);
+    assert.notEqual(setupErrorLogIndex, -1);
+    assert.notEqual(validateRuntimeIndex, -1);
+    assert.notEqual(setupMysqlIndex, -1);
+    assert.ok(setupErrorLogIndex < validateRuntimeIndex);
+    assert.ok(validateRuntimeIndex < setupMysqlIndex);
+    assert.doesNotMatch(script, /\nMYSQL_DEFAULTS_FILE=\$\(mktemp\)\n/);
+    assert.doesNotMatch(script, /\nchmod 600 "\$MYSQL_DEFAULTS_FILE"\n/);
+    assert.doesNotMatch(script, /\ncat > "\$MYSQL_DEFAULTS_FILE" <<EOF\n/);
+    assert.doesNotMatch(script, /date > "\$(?:INIT|DB)_LOCK"/);
+  }
+});
+
+test("FreeRADIUS init guards CIDR discovery and log permission setup", () => {
+  const radiusInit = read("init-freeradius.sh");
+  const initDatabase = functionBody(radiusInit, "init_database");
+  const discoverCidr = functionBody(radiusInit, "discover_container_cidr");
+  const prepareLogs = functionBody(radiusInit, "prepare_freeradius_logs");
+
+  assert.match(radiusInit, /function discover_container_cidr/);
+  assert.match(initDatabase, /discover_container_cidr/);
+  assert.match(discoverCidr, /container_cidr=/);
+  assert.doesNotMatch(initDatabase, /ifconfig eth0/);
+  assert.doesNotMatch(initDatabase, /ipcalc \$container_ip_address \$container_netmask/);
+  assert.match(discoverCidr, /ifconfig eth0 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(discoverCidr, /fail_step "cidr_discovery" "container_ip_discovery_failed"/);
+  assert.match(discoverCidr, /fail_step "cidr_discovery" "container_netmask_discovery_failed"/);
+  assert.match(discoverCidr, /ipcalc "\$container_ip_address" "\$container_netmask" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(discoverCidr, /fail_step "cidr_discovery" "container_cidr_discovery_failed"/);
+  assert.match(discoverCidr, /fail_step "cidr_discovery" "container_cidr_empty"/);
+  assert.match(prepareLogs, /chown -R freerad:33 \/var\/log\/freeradius 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(prepareLogs, /fail_step "freeradius_log_permissions" "log_owner_failed"/);
+  assert.match(prepareLogs, /find \/var\/log\/freeradius -type d -exec chmod 2750 \{\} \+ 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(prepareLogs, /fail_step "freeradius_log_permissions" "log_directory_mode_failed"/);
+  assert.match(prepareLogs, /find \/var\/log\/freeradius -type f -exec chmod 0640 \{\} \+ 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(prepareLogs, /fail_step "freeradius_log_permissions" "log_file_mode_failed"/);
+});
+
+test("Docker init scripts guard critical file configuration steps", () => {
+  const webInit = read("init.sh");
+  const radiusInit = read("init-freeradius.sh");
+  const webConfigSet = functionBody(webInit, "php_config_set");
+  const webInitBody = functionBody(webInit, "init_daloradius");
+  const radiusConfigSet = functionBody(radiusInit, "sql_config_set");
+  const radiusInitBody = functionBody(radiusInit, "init_freeradius");
+  const noresetcounterBody = functionBody(radiusInit, "enable_noresetcounter");
+
+  assert.match(webConfigSet, /sed -i[\s\S]*2>>"\$INIT_ERROR_LOG"/);
+  assert.match(webConfigSet, /fail_step "daloradius_init" "config_update_failed"/);
+  assert.match(webInitBody, /log_event "info" "daloradius_init" "start" "configuring_daloradius"/);
+  assert.match(webInitBody, /cp "\$DALORADIUS_CONF_PATH\.sample" "\$DALORADIUS_CONF_PATH" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(webInitBody, /fail_step "daloradius_init" "config_copy_failed"/);
+  assert.match(webInitBody, /chown www-data:www-data "\$DALORADIUS_CONF_PATH" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(webInitBody, /fail_step "daloradius_init" "config_owner_failed"/);
+  assert.match(webInitBody, /chmod 0644 "\$DALORADIUS_CONF_PATH" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(webInitBody, /fail_step "daloradius_init" "config_mode_failed"/);
+  assert.match(webInitBody, /log_event "info" "daloradius_init" "success" "daloradius_configured"/);
+
+  assert.match(radiusConfigSet, /sed -i[\s\S]*2>>"\$INIT_ERROR_LOG"/);
+  assert.match(radiusConfigSet, /fail_step "freeradius_init" "sql_config_update_failed"/);
+  assert.match(radiusInitBody, /log_event "info" "freeradius_init" "start" "configuring_freeradius"/);
+  assert.match(radiusInitBody, /run_freeradius_sed/);
+  assert.match(radiusInitBody, /run_freeradius_link/);
+  assert.match(radiusInitBody, /log_event "info" "freeradius_init" "success" "freeradius_configured"/);
+  assert.match(radiusInit, /function run_freeradius_sed/);
+  assert.match(radiusInit, /function run_freeradius_link/);
+  assert.match(radiusInit, /sed -i "\$@" 2>>"\$INIT_ERROR_LOG" \|\| fail_step "freeradius_init" "config_update_failed"/);
+  assert.match(radiusInit, /ln -sf "\$@" 2>>"\$INIT_ERROR_LOG" \|\| fail_step "freeradius_init" "config_link_failed"/);
+  assert.match(noresetcounterBody, /2>>"\$INIT_ERROR_LOG" > \/tmp\/freeradius-default/);
+  assert.match(noresetcounterBody, /mv \/tmp\/freeradius-default "\$RADIUS_PATH\/sites-available\/default" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(noresetcounterBody, /fail_step "noresetcounter_config" "noresetcounter_apply_failed"/);
+});
+
+test("Docker init structured logs do not interpolate secret values", () => {
+  for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
+    const script = read(scriptPath);
+    const loggingCalls = script
+      .split("\n")
+      .filter((line) => line.includes("log_event") || line.includes("fail_step"))
+      .join("\n");
+
+    assert.doesNotMatch(loggingCalls, /\$MYSQL_PASSWORD/);
+    assert.doesNotMatch(loggingCalls, /\$MYSQL_ROOT_PASSWORD/);
+    assert.doesNotMatch(loggingCalls, /\$DEFAULT_CLIENT_SECRET/);
+    assert.doesNotMatch(loggingCalls, /\$DALORADIUS_ADMIN_PASSWORD/);
+    assert.doesNotMatch(loggingCalls, /\$admin_hash/);
+    assert.doesNotMatch(loggingCalls, /password=.*\$/i);
+    assert.doesNotMatch(loggingCalls, /secret=.*\$/i);
+  }
 });
 
 test("FreeRADIUS Docker client insertion uses descriptive variable names", () => {

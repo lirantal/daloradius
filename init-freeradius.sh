@@ -11,15 +11,73 @@ MYSQL_USER=${MYSQL_USER:-radius}
 MYSQL_PASSWORD=${MYSQL_PASSWORD:-}
 MYSQL_WAIT_RETRIES=${MYSQL_WAIT_RETRIES:-30}
 MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-2}
+INIT_ERROR_LOG=${INIT_ERROR_LOG:-/data/freeradius-init-errors.log}
 DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-}
 FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-require}
+
+function log_event {
+	local level="$1"
+	local event="$2"
+	local outcome="$3"
+	local detail="$4"
+	printf 'level=%s component=freeradius-init event=%s outcome=%s detail=%s\n' "$level" "$event" "$outcome" "$detail"
+}
+
+function fail_step {
+	local event="$1"
+	local detail="$2"
+	log_event "error" "$event" "failure" "$detail"
+	exit 1
+}
+
+function setup_error_log {
+	if ! { : > "$INIT_ERROR_LOG"; } 2>/dev/null; then
+		fail_step "error_log_setup" "error_log_create_failed"
+	fi
+	if ! chmod 600 "$INIT_ERROR_LOG" 2>/dev/null; then
+		fail_step "error_log_setup" "error_log_chmod_failed"
+	fi
+}
+
+function setup_mysql_defaults_file {
+	local defaults_file
+	if ! [ -w "$INIT_ERROR_LOG" ]; then
+		fail_step "mysql_defaults_setup" "error_log_unwritable"
+	fi
+	if ! defaults_file="$(mktemp)" 2>>"$INIT_ERROR_LOG"; then
+		fail_step "mysql_defaults_setup" "defaults_file_create_failed"
+	fi
+	MYSQL_DEFAULTS_FILE="$defaults_file"
+	trap 'rm -f "$MYSQL_DEFAULTS_FILE"' EXIT
+	if ! chmod 600 "$MYSQL_DEFAULTS_FILE" 2>>"$INIT_ERROR_LOG"; then
+		fail_step "mysql_defaults_setup" "defaults_file_chmod_failed"
+	fi
+	if ! cat 2>>"$INIT_ERROR_LOG" > "$MYSQL_DEFAULTS_FILE" <<EOF
+[client]
+host=$MYSQL_HOST
+port=$MYSQL_PORT
+user=$MYSQL_USER
+password=$MYSQL_PASSWORD
+EOF
+	then
+		fail_step "mysql_defaults_setup" "defaults_file_write_failed"
+	fi
+}
+
+function write_lock {
+	local lock_path="$1"
+	local event="$2"
+	if ! [ -w "$INIT_ERROR_LOG" ]; then
+		fail_step "$event" "error_log_unwritable"
+	fi
+	date 2>>"$INIT_ERROR_LOG" > "$lock_path" || fail_step "$event" "lock_write_failed"
+}
 
 function require_non_empty {
 	local name="$1"
 	local value="${!name:-}"
 	if [ -z "$value" ]; then
-		echo "$name must be set."
-		exit 1
+		fail_step "validation" "missing_required_${name}"
 	fi
 }
 
@@ -28,8 +86,7 @@ function reject_crlf {
 	local value="${!name:-}"
 	case "$value" in
 		*$'\r'*|*$'\n'*)
-			echo "$name must not contain CR or LF characters."
-			exit 1
+			fail_step "validation" "invalid_crlf_${name}"
 			;;
 	esac
 }
@@ -38,8 +95,7 @@ function require_positive_integer {
 	local name="$1"
 	local value="${!name:-}"
 	if ! [[ "$value" =~ ^[1-9][0-9]*$ ]]; then
-		echo "$name must be a positive integer."
-		exit 1
+		fail_step "validation" "invalid_positive_integer_${name}"
 	fi
 }
 
@@ -48,8 +104,7 @@ function require_mysql_port {
 	local value="${!name:-}"
 	require_positive_integer "$name"
 	if [ "${#value}" -gt 5 ] || { [ "${#value}" -eq 5 ] && [[ "$value" > "65535" ]]; }; then
-		echo "$name must be between 1 and 65535."
-		exit 1
+		fail_step "validation" "invalid_mysql_port_${name}"
 	fi
 }
 
@@ -58,8 +113,7 @@ function require_sql_identifier {
 	local value="${!name:-}"
 	require_non_empty "$name"
 	if ! [[ "$value" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
-		echo "$name must start with a letter or underscore and contain only letters, digits, and underscores."
-		exit 1
+		fail_step "validation" "invalid_sql_identifier_${name}"
 	fi
 }
 
@@ -73,22 +127,19 @@ function require_host_token {
 
 	case "$value" in
 		.*|*.|*..*)
-			echo "$name must not contain leading, trailing, or consecutive dots."
-			exit 1
+			fail_step "validation" "invalid_host_dots_${name}"
 			;;
 	esac
 
 	IFS='.' read -r -a host_labels <<< "$value"
 	for label in "${host_labels[@]}"; do
 		if ! [[ "$label" =~ ^[A-Za-z0-9]([A-Za-z0-9_-]*[A-Za-z0-9])?$ ]]; then
-			echo "$name must use dot-separated labels that start and end with a letter or digit."
-			exit 1
+			fail_step "validation" "invalid_host_label_${name}"
 		fi
 	done
 
 	if [ "${#host_labels[@]}" -eq 0 ]; then
-		echo "$name must be a valid host token."
-		exit 1
+		fail_step "validation" "invalid_host_empty_${name}"
 	fi
 }
 
@@ -104,24 +155,13 @@ function validate_runtime_config {
 	require_non_empty "DEFAULT_CLIENT_SECRET"
 	reject_crlf "DEFAULT_CLIENT_SECRET"
 	if [ "$FREERADIUS_SQL_TLS" != "require" ] && [ "$FREERADIUS_SQL_TLS" != "disabled" ]; then
-		echo "FREERADIUS_SQL_TLS must be either require or disabled."
-		exit 1
+		fail_step "validation" "invalid_FREERADIUS_SQL_TLS"
 	fi
 }
 
+setup_error_log
 validate_runtime_config
-
-MYSQL_DEFAULTS_FILE=$(mktemp)
-
-chmod 600 "$MYSQL_DEFAULTS_FILE"
-cat > "$MYSQL_DEFAULTS_FILE" <<EOF
-[client]
-host=$MYSQL_HOST
-port=$MYSQL_PORT
-user=$MYSQL_USER
-password=$MYSQL_PASSWORD
-EOF
-trap 'rm -f "$MYSQL_DEFAULTS_FILE"' EXIT
+setup_mysql_defaults_file
 
 function escape_sed_replacement {
 	printf '%s' "$1" | sed -e 's/[\/&|\\]/\\&/g'
@@ -137,8 +177,7 @@ function sql_escape {
 
 function require_default_client_secret {
 	if [ -z "$DEFAULT_CLIENT_SECRET" ]; then
-		echo "DEFAULT_CLIENT_SECRET must be set."
-		exit 1
+		fail_step "validation" "missing_required_DEFAULT_CLIENT_SECRET"
 	fi
 }
 
@@ -146,43 +185,53 @@ function sql_config_set {
 	local key="$1"
 	local value
 	value=$(escape_sed_replacement "$(freeradius_quote_escape "$2")")
-	sed -i "s|^[#[:space:]]*$key[[:space:]]*=.*|$key = \"$value\"|" "$RADIUS_PATH/mods-available/sql"
+	sed -i "s|^[#[:space:]]*$key[[:space:]]*=.*|$key = \"$value\"|" "$RADIUS_PATH/mods-available/sql" \
+		2>>"$INIT_ERROR_LOG" || fail_step "freeradius_init" "sql_config_update_failed"
+}
+
+function run_freeradius_sed {
+	sed -i "$@" 2>>"$INIT_ERROR_LOG" || fail_step "freeradius_init" "config_update_failed"
+}
+
+function run_freeradius_link {
+	ln -sf "$@" 2>>"$INIT_ERROR_LOG" || fail_step "freeradius_init" "config_link_failed"
 }
 
 function init_freeradius {
 	require_default_client_secret
+	log_event "info" "freeradius_init" "start" "configuring_freeradius"
 
 	# Enable SQL in freeradius
-	sed -i 's|driver = "rlm_sql_null"|driver = "rlm_sql_mysql"|' $RADIUS_PATH/mods-available/sql
-	sed -i 's|dialect = "sqlite"|dialect = "mysql"|' $RADIUS_PATH/mods-available/sql
-	sed -i 's|dialect = ${modules.sql.dialect}|dialect = "mysql"|' $RADIUS_PATH/mods-available/sqlcounter # avoid instantiation error
+	run_freeradius_sed 's|driver = "rlm_sql_null"|driver = "rlm_sql_mysql"|' "$RADIUS_PATH/mods-available/sql"
+	run_freeradius_sed 's|dialect = "sqlite"|dialect = "mysql"|' "$RADIUS_PATH/mods-available/sql"
+	run_freeradius_sed 's|dialect = ${modules.sql.dialect}|dialect = "mysql"|' "$RADIUS_PATH/mods-available/sqlcounter" # avoid instantiation error
 	if [ "$FREERADIUS_SQL_TLS" = "disabled" ]; then
-		sed -i 's|ca_file = "/etc/ssl/certs/my_ca.crt"|#ca_file = "/etc/ssl/certs/my_ca.crt"|' $RADIUS_PATH/mods-available/sql
-		sed -i 's|ca_path = "/etc/ssl/certs/"|#ca_path = "/etc/ssl/certs/"|' $RADIUS_PATH/mods-available/sql
-		sed -i 's|certificate_file = "/etc/ssl/certs/private/client.crt"|#certificate_file = "/etc/ssl/certs/private/client.crt"|' $RADIUS_PATH/mods-available/sql
-		sed -i 's|private_key_file = "/etc/ssl/certs/private/client.key"|#private_key_file = "/etc/ssl/certs/private/client.key"|' $RADIUS_PATH/mods-available/sql
-		sed -i 's|tls_required = yes|tls_required = no|' $RADIUS_PATH/mods-available/sql
+		run_freeradius_sed 's|ca_file = "/etc/ssl/certs/my_ca.crt"|#ca_file = "/etc/ssl/certs/my_ca.crt"|' "$RADIUS_PATH/mods-available/sql"
+		run_freeradius_sed 's|ca_path = "/etc/ssl/certs/"|#ca_path = "/etc/ssl/certs/"|' "$RADIUS_PATH/mods-available/sql"
+		run_freeradius_sed 's|certificate_file = "/etc/ssl/certs/private/client.crt"|#certificate_file = "/etc/ssl/certs/private/client.crt"|' "$RADIUS_PATH/mods-available/sql"
+		run_freeradius_sed 's|private_key_file = "/etc/ssl/certs/private/client.key"|#private_key_file = "/etc/ssl/certs/private/client.key"|' "$RADIUS_PATH/mods-available/sql"
+		run_freeradius_sed 's|tls_required = yes|tls_required = no|' "$RADIUS_PATH/mods-available/sql"
 	fi
-	sed -i 's|#\s*read_clients = yes|read_clients = yes|' $RADIUS_PATH/mods-available/sql
-	ln -sf $RADIUS_PATH/mods-available/sql $RADIUS_PATH/mods-enabled/sql
-	ln -sf $RADIUS_PATH/mods-available/sqlcounter $RADIUS_PATH/mods-enabled/sqlcounter
-	ln -sf $RADIUS_PATH/mods-available/sqlippool $RADIUS_PATH/mods-enabled/sqlippool
+	run_freeradius_sed 's|#\s*read_clients = yes|read_clients = yes|' "$RADIUS_PATH/mods-available/sql"
+	run_freeradius_link "$RADIUS_PATH/mods-available/sql" "$RADIUS_PATH/mods-enabled/sql"
+	run_freeradius_link "$RADIUS_PATH/mods-available/sqlcounter" "$RADIUS_PATH/mods-enabled/sqlcounter"
+	run_freeradius_link "$RADIUS_PATH/mods-available/sqlippool" "$RADIUS_PATH/mods-enabled/sqlippool"
 	enable_noresetcounter
-	sed -i 's|instantiate {|instantiate {\nsql|' $RADIUS_PATH/radiusd.conf # mods-enabled does not ensure the right order
+	run_freeradius_sed 's|instantiate {|instantiate {\nsql|' "$RADIUS_PATH/radiusd.conf" # mods-enabled does not ensure the right order
 
 	# Enable used tunnel for unifi
-	sed -i 's|use_tunneled_reply = no|use_tunneled_reply = yes|' $RADIUS_PATH/mods-available/eap
+	run_freeradius_sed 's|use_tunneled_reply = no|use_tunneled_reply = yes|' "$RADIUS_PATH/mods-available/eap"
 
         # Log authentication request in radius-log file
-        sed -i 's|auth = no|auth = yes|' $RADIUS_PATH/radiusd.conf
+        run_freeradius_sed 's|auth = no|auth = yes|' "$RADIUS_PATH/radiusd.conf"
         # Sane default log setings for authentication
-        sed -i 's|#\s*msg_goodpass =.*|msg_goodpass = "authenticationtype:\\\"%{control:Auth-Type}\\\";nasipv4address:\\\"%{request:NAS-IP-Address}\\\";nasipv6address:\\\"%{request:NAS-IPv6-Address}\\\";nasid:\\\"%{request:NAS-Identifier}\\\";srcipaddress:\\\"%{request:Packet-Src-IP-Address}\\\";nasport:\\\"%{request:NAS-Port-Id}\\\";nasporttype:\\\"%{request:NAS-Port-Type}\\\";vlan:\\\"%{reply:Tunnel-Private-Group-Id}\\\";calledstationid:\\\"%{request:Called-Station-Id}\\\";callingstationid:\\\"%{request:Calling-Station-Id}\\\";session_timeout:\\\"%{reply:Session-Timeout}\\\""|' \
-        $RADIUS_PATH/radiusd.conf
-        sed -i 's|#\s*msg_badpass =.*|msg_badpass = "authenticationtype:\\\"%{control:Auth-Type}\\\";nasipv4address:\\\"%{request:NAS-IP-Address}\\\";nasipv6address:\\\"%{request:NAS-IPv6-Address}\\\";nasid:\\\"%{request:NAS-Identifier}\\\";srcipaddress:\\\"%{request:Packet-Src-IP-Address}\\\";nasport:\\\"%{request:NAS-Port-Id}\\\";nasporttype:\\\"%{request:NAS-Port-Type}\\\";calledstationid:\\\"%{request:Called-Station-Id}\\\";callingstationid:\\\"%{request:Calling-Station-Id}\\\""|' \
-        $RADIUS_PATH/radiusd.conf
+        run_freeradius_sed 's|#\s*msg_goodpass =.*|msg_goodpass = "authenticationtype:\\\"%{control:Auth-Type}\\\";nasipv4address:\\\"%{request:NAS-IP-Address}\\\";nasipv6address:\\\"%{request:NAS-IPv6-Address}\\\";nasid:\\\"%{request:NAS-Identifier}\\\";srcipaddress:\\\"%{request:Packet-Src-IP-Address}\\\";nasport:\\\"%{request:NAS-Port-Id}\\\";nasporttype:\\\"%{request:NAS-Port-Type}\\\";vlan:\\\"%{reply:Tunnel-Private-Group-Id}\\\";calledstationid:\\\"%{request:Called-Station-Id}\\\";callingstationid:\\\"%{request:Calling-Station-Id}\\\";session_timeout:\\\"%{reply:Session-Timeout}\\\""|' \
+        "$RADIUS_PATH/radiusd.conf"
+        run_freeradius_sed 's|#\s*msg_badpass =.*|msg_badpass = "authenticationtype:\\\"%{control:Auth-Type}\\\";nasipv4address:\\\"%{request:NAS-IP-Address}\\\";nasipv6address:\\\"%{request:NAS-IPv6-Address}\\\";nasid:\\\"%{request:NAS-Identifier}\\\";srcipaddress:\\\"%{request:Packet-Src-IP-Address}\\\";nasport:\\\"%{request:NAS-Port-Id}\\\";nasporttype:\\\"%{request:NAS-Port-Type}\\\";calledstationid:\\\"%{request:Called-Station-Id}\\\";callingstationid:\\\"%{request:Calling-Station-Id}\\\""|' \
+        "$RADIUS_PATH/radiusd.conf"
 
 	# Enable status in freeadius
-	ln -sf $RADIUS_PATH/sites-available/status $RADIUS_PATH/sites-enabled/status
+	run_freeradius_link "$RADIUS_PATH/sites-available/status" "$RADIUS_PATH/sites-enabled/status"
 
 	# Set Database connection
 	sql_config_set "server" "$MYSQL_HOST"
@@ -190,7 +239,8 @@ function init_freeradius {
 	sql_config_set "radius_db" "$MYSQL_DATABASE"
 	sql_config_set "password" "$MYSQL_PASSWORD"
 	sql_config_set "login" "$MYSQL_USER"
-	sed -i "s|testing123|$(escape_sed_replacement "$(freeradius_quote_escape "$DEFAULT_CLIENT_SECRET")")|" $RADIUS_PATH/mods-available/sql
+	run_freeradius_sed "s|testing123|$(escape_sed_replacement "$(freeradius_quote_escape "$DEFAULT_CLIENT_SECRET")")|" "$RADIUS_PATH/mods-available/sql"
+	log_event "info" "freeradius_init" "success" "freeradius_configured"
 	echo "freeradius initialization completed."
 }
 
@@ -213,16 +263,17 @@ function enable_noresetcounter {
 		/^authenticate[[:space:]]*[{]/ { in_authorize = 0 }
 		{ print }
 		END { exit added ? 0 : 1 }
-	' $RADIUS_PATH/sites-available/default > /tmp/freeradius-default; then
+	' "$RADIUS_PATH/sites-available/default" 2>>"$INIT_ERROR_LOG" > /tmp/freeradius-default; then
 		rm -f /tmp/freeradius-default
-		echo "Failed to add noresetcounter to FreeRADIUS authorize section."
-		exit 1
+		fail_step "noresetcounter_config" "noresetcounter_insert_failed"
 	fi
-	mv /tmp/freeradius-default $RADIUS_PATH/sites-available/default
+	mv /tmp/freeradius-default "$RADIUS_PATH/sites-available/default" 2>>"$INIT_ERROR_LOG" \
+		|| fail_step "noresetcounter_config" "noresetcounter_apply_failed"
 }
 
 function ensure_daloradius_schema {
-	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
+	log_event "info" "radhuntgroup_schema_ensure" "start" "ensuring_schema"
+	if mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" 2>>"$INIT_ERROR_LOG" <<'EOSQL'
 CREATE TABLE IF NOT EXISTS `radhuntgroup` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `groupname` varchar(64) NOT NULL DEFAULT '',
@@ -232,24 +283,42 @@ CREATE TABLE IF NOT EXISTS `radhuntgroup` (
   KEY `nasipaddress` (`nasipaddress`)
 );
 EOSQL
+	then
+		log_event "info" "radhuntgroup_schema_ensure" "success" "schema_ensured"
+	else
+		fail_step "radhuntgroup_schema_ensure" "schema_ensure_failed"
+	fi
 }
 
 function init_database {
 	require_default_client_secret
 
-	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/main/mysql/schema.sql
-	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/ippool/mysql/schema.sql
+	log_event "info" "freeradius_schema_import" "start" "importing_schema"
+	if mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" < "$RADIUS_PATH/mods-config/sql/main/mysql/schema.sql" 2>>"$INIT_ERROR_LOG"; then
+		log_event "info" "freeradius_schema_import" "success" "schema_imported"
+	else
+		fail_step "freeradius_schema_import" "schema_import_failed"
+	fi
+
+	log_event "info" "ippool_schema_import" "start" "importing_schema"
+	if mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" < "$RADIUS_PATH/mods-config/sql/ippool/mysql/schema.sql" 2>>"$INIT_ERROR_LOG"; then
+		log_event "info" "ippool_schema_import" "success" "schema_imported"
+	else
+		fail_step "ippool_schema_import" "schema_import_failed"
+	fi
 	ensure_daloradius_schema
 
 	# Insert a client for the current subnet (to allow daloradius to perform checks)
-	container_ip_address=`ifconfig eth0 | awk '/inet/{ print $2;} '` # does also work: $container_ip_address=`hostname -I | awk '{print $1}'`
-	container_netmask=`ifconfig eth0 | awk '/netmask/{ print $4;} '`
-	container_cidr=`ipcalc $container_ip_address $container_netmask | awk '/Network/{ print $2;} '`
+	discover_container_cidr
 	client_secret=$DEFAULT_CLIENT_SECRET
 	container_cidr_sql=$(sql_escape "$container_cidr")
 	client_secret_sql=$(sql_escape "$client_secret")
 	echo "Adding client for $container_cidr with configured shared secret."
-	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" -e "INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$container_cidr_sql','DOCKER NET','other',0,'$client_secret_sql',NULL,'','')"
+	log_event "info" "nas_client_insert" "start" "inserting_docker_client"
+	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" \
+		-e "INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$container_cidr_sql','DOCKER NET','other',0,'$client_secret_sql',NULL,'','')" \
+		2>>"$INIT_ERROR_LOG" || fail_step "nas_client_insert" "client_insert_failed"
+	log_event "info" "nas_client_insert" "success" "docker_client_inserted"
 
 	echo "Database initialization for freeradius completed."
 }
@@ -260,22 +329,47 @@ function freeradius_schema_ready {
 }
 
 function wait_for_mysql {
+	log_event "info" "mysql_wait" "start" "waiting_for_mysql"
 	local attempt=1
-	while ! mysqladmin --defaults-extra-file="$MYSQL_DEFAULTS_FILE" ping --silent; do
+	while ! mysqladmin --defaults-extra-file="$MYSQL_DEFAULTS_FILE" ping --silent >/dev/null 2>>"$INIT_ERROR_LOG"; do
 		if [ "$attempt" -ge "$MYSQL_WAIT_RETRIES" ]; then
-			echo "MySQL did not become ready after $MYSQL_WAIT_RETRIES attempts."
-			exit 1
+			fail_step "mysql_wait" "mysql_wait_timeout"
 		fi
 		echo "Waiting for mysql ($MYSQL_HOST)..."
 		attempt=$((attempt + 1))
 		sleep "$MYSQL_WAIT_INTERVAL"
 	done
+	log_event "info" "mysql_wait" "success" "mysql_ready"
+}
+
+function discover_container_cidr {
+	if ! container_ip_address=$(ifconfig eth0 2>>"$INIT_ERROR_LOG" | awk '/inet/{ print $2; exit }'); then
+		fail_step "cidr_discovery" "container_ip_discovery_failed"
+	fi
+	if [ -z "$container_ip_address" ]; then
+		fail_step "cidr_discovery" "container_ip_empty"
+	fi
+	if ! container_netmask=$(ifconfig eth0 2>>"$INIT_ERROR_LOG" | awk '/netmask/{ print $4; exit }'); then
+		fail_step "cidr_discovery" "container_netmask_discovery_failed"
+	fi
+	if [ -z "$container_netmask" ]; then
+		fail_step "cidr_discovery" "container_netmask_empty"
+	fi
+	if ! container_cidr=$(ipcalc "$container_ip_address" "$container_netmask" 2>>"$INIT_ERROR_LOG" | awk '/Network/{ print $2; exit }'); then
+		fail_step "cidr_discovery" "container_cidr_discovery_failed"
+	fi
+	if [ -z "$container_cidr" ]; then
+		fail_step "cidr_discovery" "container_cidr_empty"
+	fi
 }
 
 function prepare_freeradius_logs {
-	chown -R freerad:33 /var/log/freeradius
-	find /var/log/freeradius -type d -exec chmod 2750 {} +
-	find /var/log/freeradius -type f -exec chmod 0640 {} +
+	chown -R freerad:33 /var/log/freeradius 2>>"$INIT_ERROR_LOG" \
+		|| fail_step "freeradius_log_permissions" "log_owner_failed"
+	find /var/log/freeradius -type d -exec chmod 2750 {} + 2>>"$INIT_ERROR_LOG" \
+		|| fail_step "freeradius_log_permissions" "log_directory_mode_failed"
+	find /var/log/freeradius -type f -exec chmod 0640 {} + 2>>"$INIT_ERROR_LOG" \
+		|| fail_step "freeradius_log_permissions" "log_file_mode_failed"
 }
 
 function wait_for_radius_status {
@@ -305,11 +399,11 @@ if test -f "$INIT_LOCK"; then
 		echo "Init lock file exists but FreeRADIUS configuration is missing, reinitializing..."
 		rm -f "$INIT_LOCK"
 		init_freeradius
-		date > "$INIT_LOCK"
+		write_lock "$INIT_LOCK" "freeradius_init_lock"
 	fi
 else
 	init_freeradius
-	date > "$INIT_LOCK"
+	write_lock "$INIT_LOCK" "freeradius_init_lock"
 fi
 
 # Ensure Max-All-Session is enforced before FreeRADIUS starts, including after
@@ -321,15 +415,16 @@ fi
 DB_LOCK=/data/.db_init_done
 if freeradius_schema_ready; then
 	echo "Database schema already present, skipping initial setup of mysql database."
-	date > "$DB_LOCK"
+	write_lock "$DB_LOCK" "freeradius_db_lock"
 	ensure_daloradius_schema
 else
 	init_database
+	log_event "info" "freeradius_schema_check" "start" "checking_schema"
 	if ! freeradius_schema_ready; then
-		echo "FreeRADIUS database schema was not found after initialization."
-		exit 1
+		fail_step "freeradius_schema_check" "schema_post_check_failed"
 	fi
-	date > "$DB_LOCK"
+	log_event "info" "freeradius_schema_check" "success" "schema_present"
+	write_lock "$DB_LOCK" "freeradius_db_lock"
 fi
 
 # make logs readable to the shared www-data group without opening them world-wide
