@@ -116,28 +116,70 @@ switch ($reportType) {
         break;
 
     case "usernameListGeneric":
-        // we use this associative array for generating both,
-        // Output Header and SQL selected fields
+        // Export users in the same field order accepted by mng-import-users.php.
+        // Required (5): username, password, email, firstname, lastname
+        // Optional (15): framedipaddress, expiration, department, company, mobilephone,
+        //                workphone, homephone, address, city, state, country, zip,
+        //                sessiontimeout, idletimeout, maxdailysession
         $cols = array(
-                        "Id" => "ui.id",
-                        "Fullname" => "CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname",
-                        "Username" => "rc.username",
-                        "Attribute" => "rc.attribute",
-                        "Auth" => "rc.value"
+                        "username" => "rc.username AS username",
+                        "password" => "COALESCE(MAX(CASE WHEN rc_export.attribute LIKE '%%-Password' THEN rc_export.value END), "
+                                    . "MAX(CASE WHEN rc_export.attribute='Auth-Type' THEN rc_export.value END), '') AS password",
+                        "email" => "COALESCE(MAX(ui.email), '') AS email",
+                        "firstname" => "COALESCE(MAX(ui.firstname), '') AS firstname",
+                        "lastname" => "COALESCE(MAX(ui.lastname), '') AS lastname",
+                        "framedipaddress" => "COALESCE(MAX(CASE WHEN rr_export.attribute='Framed-IP-Address' THEN rr_export.value END), '') "
+                                           . "AS framedipaddress",
+                        "expiration" => "COALESCE(MAX(CASE WHEN rc_export.attribute='Expiration' THEN rc_export.value END), '') AS expiration",
+                        "department" => "COALESCE(MAX(ui.department), '') AS department",
+                        "company" => "COALESCE(MAX(ui.company), '') AS company",
+                        "mobilephone" => "COALESCE(MAX(ui.mobilephone), '') AS mobilephone",
+                        "workphone" => "COALESCE(MAX(ui.workphone), '') AS workphone",
+                        "homephone" => "COALESCE(MAX(ui.homephone), '') AS homephone",
+                        "address" => "COALESCE(MAX(ui.address), '') AS address",
+                        "city" => "COALESCE(MAX(ui.city), '') AS city",
+                        "state" => "COALESCE(MAX(ui.state), '') AS state",
+                        "country" => "COALESCE(MAX(ui.country), '') AS country",
+                        "zip" => "COALESCE(MAX(ui.zip), '') AS zip",
+                        "sessiontimeout" => "COALESCE(MAX(CASE WHEN rr_export.attribute='Session-Timeout' THEN rr_export.value END), '') "
+                                          . "AS sessiontimeout",
+                        "idletimeout" => "COALESCE(MAX(CASE WHEN rr_export.attribute='Idle-Timeout' THEN rr_export.value END), '') "
+                                       . "AS idletimeout",
+                        "maxdailysession" => "COALESCE(MAX(CASE WHEN rc_export.attribute='Max-Daily-Session' THEN rc_export.value END), '') "
+                                           . "AS maxdailysession"
                      );
-        
+
         $selected_fields = implode(", ", array_values($cols));
-        $sql = sprintf("SELECT %s FROM %s %s ORDER BY %s ASC",
-                       $selected_fields, $reportTable, $reportQuery, array_values($cols)[0]);
+        $sql = sprintf("SELECT %s FROM %s LEFT JOIN %s AS rc_export ON rc_export.username=rc.username "
+                     . "LEFT JOIN %s AS rr_export ON rr_export.username=rc.username %s "
+                     . "GROUP BY rc.username ORDER BY rc.username ASC",
+                       $selected_fields, $reportTable, $configValues['CONFIG_DB_TBL_RADCHECK'],
+                       $configValues['CONFIG_DB_TBL_RADREPLY'], $reportQuery);
         $res = $dbSocket->query($sql);
-        
-        // this is the output header
-        $output = implode(", ", array_keys($cols)) . "\n";
-        
-        // this is the remaining part of the output content
-        while($row = $res->fetchRow()) {
-            $output .= implode(",", $row) . "\n";
+
+        $csv = fopen('php://temp', 'r+');
+        fputcsv($csv, array_keys($cols), ',', '"', '');
+
+        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            // mng-import-users.php expects expiration as YYYY-MM-DD, while FreeRADIUS stores it as "d M Y".
+            if (!empty($row['expiration'])) {
+                $expiration = DateTime::createFromFormat('d M Y', $row['expiration']);
+                if ($expiration !== false) {
+                    $row['expiration'] = $expiration->format('Y-m-d');
+                }
+            }
+
+            $fields = array();
+            foreach (array_keys($cols) as $field) {
+                $fields[] = $row[$field] ?? '';
+            }
+
+            fputcsv($csv, $fields, ',', '"', '');
         }
+
+        rewind($csv);
+        $output = stream_get_contents($csv);
+        fclose($csv);
 
         break;
 
