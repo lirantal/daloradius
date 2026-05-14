@@ -8,7 +8,7 @@
 # Run the container:
 # 1. docker run -p 80:80 -p 8000:8000 -d lirantal/daloradius
 
-FROM debian:13-slim
+FROM debian:13-slim@sha256:109e2c65005bf160609e4ba6acf7783752f8502ad218e298253428690b9eaa4b
 LABEL maintainer="Liran Tal <liran.tal@gmail.com>"
 LABEL Description="daloRADIUS Official Docker based on Debian 13 and PHP 8.4." \
 	License="GPLv2" \
@@ -24,29 +24,23 @@ ENV TZ Europe/Vienna
 RUN apt-get update \
   && apt-get install --yes --no-install-recommends \
   ca-certificates \
-  apt-utils \
   freeradius-utils \
   tzdata \
   apache2 \
   libapache2-mod-php \
   cron \
-  net-tools \
   php \
   php-common \
   php-gd \
   php-cli \
   php-curl \
   php-mail \
-  php-dev \
   php-mail-mime \
   php-mbstring \
   php-db \
   php-mysql \
   php-zip \
   mariadb-client \
-  default-libmysqlclient-dev \
-  unzip \
-  wget \
   && rm -rf /var/lib/apt/lists/*
 
 COPY contrib/docker/operators.conf /etc/apache2/sites-available/operators.conf

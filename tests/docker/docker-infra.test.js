@@ -135,7 +135,7 @@ test("Standalone image builds from local context on a supported PHP runtime", ()
   assert.doesNotMatch(dockerfile, /git clone/);
   assert.doesNotMatch(dockerfile, /FROM php:7-apache/);
   assert.doesNotMatch(dockerfile, /apt-get -y upgrade/);
-  assert.match(dockerfile, /^FROM php:8\.4-apache$/m);
+  assert.match(dockerfile, /^FROM php:8\.4-apache(@sha256:[a-f0-9]{64})?$/m);
   assert.match(dockerfile, /^COPY app\/ \/var\/www\/html\/daloradius$/m);
   assert.match(dockerfile, /^COPY contrib\/scripts\/apache-config\.sh \/usr\/local\/bin\/apache-config\.sh$/m);
   assert.match(readme, /docker build -t daloradius-standalone -f Dockerfile-standalone \./);
@@ -161,4 +161,19 @@ test("Containers use Docker-friendly process, log, and hardening defaults", () =
   assert.match(operatorsConf, /CustomLog \/proc\/self\/fd\/1 combined/);
   assert.match(compose, /security_opt:[\s\S]*no-new-privileges:true/);
   assert.match(compose, /cap_drop:[\s\S]*- NET_RAW/);
+});
+
+test("Runtime images are pinned and avoid unnecessary build/debug packages", () => {
+  const webDockerfile = read("Dockerfile");
+  const radiusDockerfile = read("Dockerfile-freeradius");
+  const standaloneDockerfile = read("Dockerfile-standalone");
+  const compose = read("docker-compose.yml");
+
+  assert.match(webDockerfile, /^FROM debian:13-slim@sha256:[a-f0-9]{64}$/m);
+  assert.match(radiusDockerfile, /^FROM freeradius\/freeradius-server:3\.2\.8@sha256:[a-f0-9]{64}$/m);
+  assert.match(standaloneDockerfile, /^FROM php:8\.4-apache@sha256:[a-f0-9]{64}$/m);
+  assert.match(compose, /image: mariadb:11\.8@sha256:[a-f0-9]{64}/);
+  assert.doesNotMatch(webDockerfile, /apt-utils|php-dev|default-libmysqlclient-dev|unzip|wget/);
+  assert.doesNotMatch(radiusDockerfile, /apt-utils|libmysqlclient-dev|unzip|wget/);
+  assert.match(radiusDockerfile, /-p 1812:1812\/udp -p 1813:1813\/udp/);
 });
