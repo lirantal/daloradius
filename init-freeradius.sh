@@ -1,7 +1,17 @@
 #!/bin/bash
 # Executable process script for daloRADIUS freeradius docker image:
 # GitHub: git@github.com:lirantal/daloradius.git
+set -euo pipefail
+
 RADIUS_PATH=/etc/freeradius
+MYSQL_HOST=${MYSQL_HOST:-localhost}
+MYSQL_PORT=${MYSQL_PORT:-3306}
+MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
+MYSQL_USER=${MYSQL_USER:-radius}
+MYSQL_PASSWORD=${MYSQL_PASSWORD:-radpass}
+MYSQL_WAIT_RETRIES=${MYSQL_WAIT_RETRIES:-30}
+MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-2}
+DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-}
 
 function init_freeradius {
 	# Enable SQL in freeradius
@@ -14,9 +24,9 @@ function init_freeradius {
 	sed -i 's|private_key_file = "/etc/ssl/certs/private/client.key"|#private_key_file = "/etc/ssl/certs/private/client.key"|' $RADIUS_PATH/mods-available/sql #disable sql encryption
 	sed -i 's|tls_required = yes|tls_required = no|' $RADIUS_PATH/mods-available/sql #disable sql encryption
 	sed -i 's|#\s*read_clients = yes|read_clients = yes|' $RADIUS_PATH/mods-available/sql
-	ln -s $RADIUS_PATH/mods-available/sql $RADIUS_PATH/mods-enabled/sql
-	ln -s $RADIUS_PATH/mods-available/sqlcounter $RADIUS_PATH/mods-enabled/sqlcounter
-	ln -s $RADIUS_PATH/mods-available/sqlippool $RADIUS_PATH/mods-enabled/sqlippool
+	ln -sf $RADIUS_PATH/mods-available/sql $RADIUS_PATH/mods-enabled/sql
+	ln -sf $RADIUS_PATH/mods-available/sqlcounter $RADIUS_PATH/mods-enabled/sqlcounter
+	ln -sf $RADIUS_PATH/mods-available/sqlippool $RADIUS_PATH/mods-enabled/sqlippool
 	enable_noresetcounter
 	sed -i 's|instantiate {|instantiate {\nsql|' $RADIUS_PATH/radiusd.conf # mods-enabled does not ensure the right order
 
@@ -32,7 +42,7 @@ function init_freeradius {
         $RADIUS_PATH/radiusd.conf
 
 	# Enable status in freeadius
-	ln -s $RADIUS_PATH/sites-available/status $RADIUS_PATH/sites-enabled/status
+	ln -sf $RADIUS_PATH/sites-available/status $RADIUS_PATH/sites-enabled/status
 
 	# Set Database connection
 	sed -i 's|^#\s*server = .*|server = "'$MYSQL_HOST'"|' $RADIUS_PATH/mods-available/sql
@@ -75,7 +85,7 @@ function enable_noresetcounter {
 }
 
 function ensure_daloradius_schema {
-	mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" <<'EOSQL'
+	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" <<'EOSQL'
 CREATE TABLE IF NOT EXISTS `radhuntgroup` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `groupname` varchar(64) NOT NULL DEFAULT '',
@@ -88,8 +98,8 @@ EOSQL
 }
 
 function init_database {
-	mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/main/mysql/schema.sql
-	mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/ippool/mysql/schema.sql
+	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/main/mysql/schema.sql
+	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/ippool/mysql/schema.sql
 	ensure_daloradius_schema
 
 	# Insert a client for the current subnet (to allow daloradius to perform checks)
@@ -101,18 +111,33 @@ function init_database {
 		SECRET=$DEFAULT_CLIENT_SECRET
 	fi
 	echo "Adding client for $CIDR with default secret $SECRET"
-	mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" -e "INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$CIDR','DOCKER NET','other',0,'$SECRET',NULL,'','')"
+	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" -e "INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$CIDR','DOCKER NET','other',0,'$SECRET',NULL,'','')"
 
 	echo "Database initialization for freeradius completed."
+}
+
+function freeradius_schema_ready {
+	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" \
+		-e "SELECT 1 FROM radcheck LIMIT 1; SELECT 1 FROM nas LIMIT 1;" >/dev/null 2>&1
+}
+
+function wait_for_mysql {
+	local attempt=1
+	while ! mysqladmin ping -h"$MYSQL_HOST" -P"$MYSQL_PORT" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do
+		if [ "$attempt" -ge "$MYSQL_WAIT_RETRIES" ]; then
+			echo "MySQL did not become ready after $MYSQL_WAIT_RETRIES attempts."
+			exit 1
+		fi
+		echo "Waiting for mysql ($MYSQL_HOST)..."
+		attempt=$((attempt + 1))
+		sleep "$MYSQL_WAIT_INTERVAL"
+	done
 }
 
 echo "Starting freeradius..."
 
 # wait for MySQL-Server to be ready
-while ! mysqladmin ping -h"$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do
-	echo "Waiting for mysql ($MYSQL_HOST)..."
-	sleep 20
-done
+wait_for_mysql
 
 INIT_LOCK=/data/.freeradius_init_done
 if test -f "$INIT_LOCK"; then
@@ -125,11 +150,11 @@ if test -f "$INIT_LOCK"; then
 		echo "Init lock file exists but FreeRADIUS configuration is missing, reinitializing..."
 		rm -f "$INIT_LOCK"
 		init_freeradius
-		date > $INIT_LOCK
+		date > "$INIT_LOCK"
 	fi
 else
 	init_freeradius
-	date > $INIT_LOCK
+	date > "$INIT_LOCK"
 fi
 
 # Ensure Max-All-Session is enforced before FreeRADIUS starts, including after
@@ -139,12 +164,17 @@ if test -L "$RADIUS_PATH/mods-enabled/sqlcounter"; then
 fi
 
 DB_LOCK=/data/.db_init_done
-if test -f "$DB_LOCK"; then
-	echo "Database lock file exists, skipping initial setup of mysql database."
+if freeradius_schema_ready; then
+	echo "Database schema already present, skipping initial setup of mysql database."
+	date > "$DB_LOCK"
 	ensure_daloradius_schema
 else
 	init_database
-	date > $DB_LOCK
+	if ! freeradius_schema_ready; then
+		echo "FreeRADIUS database schema was not found after initialization."
+		exit 1
+	fi
+	date > "$DB_LOCK"
 fi
 
 # make logs directory world readable

@@ -56,3 +56,28 @@ test("Docker build context excludes local state and copies only required trees",
   assert.match(dockerfile, /^COPY contrib \/var\/www\/daloradius\/contrib$/m);
   assert.match(dockerfile, /^COPY init\.sh \/var\/www\/daloradius\/init\.sh$/m);
 });
+
+test("Docker init scripts fail fast and use bounded database waits", () => {
+  for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
+    const script = read(scriptPath);
+
+    assert.match(script, /^set -euo pipefail$/m);
+    assert.match(script, /MYSQL_WAIT_RETRIES=\$\{MYSQL_WAIT_RETRIES:-30\}/);
+    assert.match(script, /function wait_for_mysql/);
+    assert.match(script, /while ! mysqladmin ping/);
+    assert.match(script, /if \[ "\$attempt" -ge "\$MYSQL_WAIT_RETRIES" \]/);
+  }
+});
+
+test("Database initialization locks are backed by schema checks", () => {
+  const webInit = read("init.sh");
+  const radiusInit = read("init-freeradius.sh");
+
+  assert.match(webInit, /function daloradius_schema_ready/);
+  assert.match(webInit, /if daloradius_schema_ready; then[\s\S]*Database schema already present/);
+  assert.match(webInit, /init_database[\s\S]*if ! daloradius_schema_ready; then/);
+
+  assert.match(radiusInit, /function freeradius_schema_ready/);
+  assert.match(radiusInit, /if freeradius_schema_ready; then[\s\S]*Database schema already present/);
+  assert.match(radiusInit, /init_database[\s\S]*if ! freeradius_schema_ready; then/);
+});
