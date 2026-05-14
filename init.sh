@@ -257,7 +257,7 @@ function init_daloradius {
     php_config_set "CONFIG_LOG_FILE" "/var/www/daloradius/var/log/daloradius.log"
     chown www-data:www-data "$DALORADIUS_CONF_PATH" 2>>"$INIT_ERROR_LOG" \
         || fail_step "daloradius_init" "config_owner_failed"
-    chmod 0644 "$DALORADIUS_CONF_PATH" 2>>"$INIT_ERROR_LOG" \
+    chmod 0600 "$DALORADIUS_CONF_PATH" 2>>"$INIT_ERROR_LOG" \
         || fail_step "daloradius_init" "config_mode_failed"
 
     log_event "info" "daloradius_init" "success" "daloradius_configured"

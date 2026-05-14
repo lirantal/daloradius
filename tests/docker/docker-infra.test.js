@@ -235,7 +235,8 @@ test("Docker web logging defaults use the writable daloRADIUS var log path", () 
   assert.match(dockerfile, /chown -R www-data:www-data \/var\/www\/daloradius\/var/);
   assert.match(webInit, /php_config_set "CONFIG_LOG_FILE" "\/var\/www\/daloradius\/var\/log\/daloradius\.log"/);
   assert.match(webInit, /chown www-data:www-data "\$DALORADIUS_CONF_PATH"/);
-  assert.match(webInit, /chmod 0644 "\$DALORADIUS_CONF_PATH"/);
+  assert.match(webInit, /chmod 0600 "\$DALORADIUS_CONF_PATH"/);
+  assert.doesNotMatch(webInit, /chmod 0?6[0-7][4-7] "\$DALORADIUS_CONF_PATH"/);
   assert.doesNotMatch(webInit, /php_config_set "CONFIG_LOG_FILE" "\/tmp\/daloradius\.log"/);
 });
 
@@ -553,7 +554,7 @@ test("Docker init scripts guard critical file configuration steps", () => {
   assert.match(webInitBody, /fail_step "daloradius_init" "config_copy_failed"/);
   assert.match(webInitBody, /chown www-data:www-data "\$DALORADIUS_CONF_PATH" 2>>"\$INIT_ERROR_LOG"/);
   assert.match(webInitBody, /fail_step "daloradius_init" "config_owner_failed"/);
-  assert.match(webInitBody, /chmod 0644 "\$DALORADIUS_CONF_PATH" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(webInitBody, /chmod 0600 "\$DALORADIUS_CONF_PATH" 2>>"\$INIT_ERROR_LOG"/);
   assert.match(webInitBody, /fail_step "daloradius_init" "config_mode_failed"/);
   assert.match(webInitBody, /log_event "info" "daloradius_init" "success" "daloradius_configured"/);
 
