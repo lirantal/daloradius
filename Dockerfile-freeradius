@@ -15,10 +15,10 @@ LABEL Description="FreeRADIUS 3.2.8 Docker image optimized for daloRADIUS." \
 	Usage="docker build -t lirantal/dalofreeradius -f Dockerfile-freeradius && docker run -d -p 1812:1812/udp -p 1813:1813/udp lirantal/dalofreeradius" \
 	Version="1.0"
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # default timezone
-ENV TZ Europe/Vienna
+ENV TZ=Europe/Vienna
 
 RUN apt-get update \
 	&& apt-get install --yes --no-install-recommends \
