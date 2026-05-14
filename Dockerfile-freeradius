@@ -47,5 +47,4 @@ RUN chmod +x /app/init-freeradius.sh
 EXPOSE 1812 1813
 
 # Run the script which executes freeradius in foreground
-CMD ["/app/init-freeradius.sh"]
 ENTRYPOINT ["/app/init-freeradius.sh"]
