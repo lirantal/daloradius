@@ -216,14 +216,18 @@ function set_admin_password {
     require_admin_password
 
     local admin_hash
-    admin_hash=$(php -r 'echo password_hash($argv[1], PASSWORD_DEFAULT);' "$DALORADIUS_ADMIN_PASSWORD")
+    admin_hash=$(printf '%s' "$DALORADIUS_ADMIN_PASSWORD" | php -r 'echo password_hash(stream_get_contents(STDIN), PASSWORD_DEFAULT);')
     admin_hash=$(sql_escape "$admin_hash")
 
     log_event "info" "admin_password_update" "start" "updating_admin_password"
-    mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" \
-        -e "UPDATE operators SET password='$admin_hash' WHERE username='administrator';" \
-        2>>"$INIT_ERROR_LOG" || fail_step "admin_password_update" "admin_password_update_failed"
-    log_event "info" "admin_password_update" "success" "admin_password_updated"
+    if mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" 2>>"$INIT_ERROR_LOG" <<EOSQL
+UPDATE operators SET password='$admin_hash' WHERE username='administrator';
+EOSQL
+    then
+        log_event "info" "admin_password_update" "success" "admin_password_updated"
+    else
+        fail_step "admin_password_update" "admin_password_update_failed"
+    fi
 }
 
 function init_daloradius {

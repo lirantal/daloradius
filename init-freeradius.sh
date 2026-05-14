@@ -315,10 +315,14 @@ function init_database {
 	client_secret_sql=$(sql_escape "$client_secret")
 	echo "Adding client for $container_cidr with configured shared secret."
 	log_event "info" "nas_client_insert" "start" "inserting_docker_client"
-	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" \
-		-e "INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$container_cidr_sql','DOCKER NET','other',0,'$client_secret_sql',NULL,'','')" \
-		2>>"$INIT_ERROR_LOG" || fail_step "nas_client_insert" "client_insert_failed"
-	log_event "info" "nas_client_insert" "success" "docker_client_inserted"
+	if mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" 2>>"$INIT_ERROR_LOG" <<EOSQL
+INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$container_cidr_sql','DOCKER NET','other',0,'$client_secret_sql',NULL,'','');
+EOSQL
+	then
+		log_event "info" "nas_client_insert" "success" "docker_client_inserted"
+	else
+		fail_step "nas_client_insert" "client_insert_failed"
+	fi
 
 	echo "Database initialization for freeradius completed."
 }

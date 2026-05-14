@@ -425,7 +425,8 @@ test("Critical Docker init database operations do not dump raw command errors", 
   assert.match(webInit, /fail_step "daloradius_schema_import" "schema_import_failed"/);
   assert.match(webInit, /log_event "info" "daloradius_schema_import" "success" "schema_imported"/);
   assert.match(webInit, /log_event "info" "admin_password_update" "start" "updating_admin_password"/);
-  assert.match(webInit, /2>>"\$INIT_ERROR_LOG" \|\| fail_step "admin_password_update" "admin_password_update_failed"/);
+  assert.match(webInit, /mysql --defaults-extra-file="\$MYSQL_DEFAULTS_FILE" "\$MYSQL_DATABASE" 2>>"\$INIT_ERROR_LOG" <<EOSQL\nUPDATE operators SET password='\$admin_hash'/);
+  assert.match(webInit, /fail_step "admin_password_update" "admin_password_update_failed"/);
   assert.match(webInit, /log_event "info" "admin_password_update" "success" "admin_password_updated"/);
   assert.match(webInit, /log_event "info" "daloradius_schema_check" "start" "checking_schema"/);
   assert.match(webInit, /log_event "info" "daloradius_schema_check" "success" "schema_present"/);
@@ -618,8 +619,30 @@ test("Operator passwords are hashed and Docker admin password is explicit", () =
   assert.doesNotMatch(seedSql, /'administrator','radius'/);
   assert.match(webInit, /DALORADIUS_ADMIN_PASSWORD=\$\{DALORADIUS_ADMIN_PASSWORD:-\}/);
   assert.match(webInit, /function set_admin_password/);
-  assert.match(webInit, /password_hash\(\$argv\[1\], PASSWORD_DEFAULT\)/);
+  assert.doesNotMatch(webInit, /password_hash\(\$argv\[1\]/);
+  assert.doesNotMatch(webInit, /php\b[^\n|;&]*\$DALORADIUS_ADMIN_PASSWORD/);
   assert.match(installer, /INIT_PASSWORD_HASH=\$\(php -r 'echo password_hash\(\$argv\[1\], PASSWORD_DEFAULT\);'/);
+});
+
+test("Docker init database writes do not pass secrets through process arguments", () => {
+  const webInit = read("init.sh");
+  const radiusInit = read("init-freeradius.sh");
+  const adminPasswordUpdate = functionBody(webInit, "set_admin_password").match(
+    /mysql\b[\s\S]*?fail_step "admin_password_update" "admin_password_update_failed"/,
+  );
+  const nasInsertMatch = radiusInit.match(/mysql\b[\s\S]*?INSERT INTO nas[\s\S]*?fail_step "nas_client_insert" "client_insert_failed"/);
+
+  assert.notEqual(adminPasswordUpdate, null, "admin password update mysql command should be present");
+  assert.doesNotMatch(webInit, /mysql\b[\s\S]*?-e\s+"UPDATE operators SET password=/);
+  assert.match(adminPasswordUpdate[0], /<<[-]?'?[A-Z_]*'?/);
+  assert.doesNotMatch(adminPasswordUpdate[0].split(/<<[-]?'?[A-Z_]*'?/)[0], /\$admin_hash/);
+  assert.match(adminPasswordUpdate[0], /\$admin_hash/);
+
+  assert.notEqual(nasInsertMatch, null, "NAS insert mysql command should be present");
+  assert.doesNotMatch(radiusInit, /mysql\b[^\n]*-e\s+"INSERT INTO nas/);
+  assert.doesNotMatch(nasInsertMatch[0], /mysql\b[\s\S]*?-e\s+"INSERT INTO nas/);
+  assert.match(nasInsertMatch[0], /<<[-]?'?[A-Z_]*'?/);
+  assert.match(nasInsertMatch[0], /client_secret_sql/);
 });
 
 test("Standalone image builds from local context on a supported PHP runtime", () => {
