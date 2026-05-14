@@ -33,7 +33,7 @@ $reportFormat = (array_key_exists('reportFormat', $_GET) && isset($_GET['reportF
 
 // this are all the report types this script can generate
 $types = array(
-                "accountingGeneric", "usernameListGeneric", "reportsOnlineUsers", "reportsLastConnectionAttempts",
+                "accountingGeneric", "usernameListGeneric", "usernameListByGroup", "reportsOnlineUsers", "reportsLastConnectionAttempts",
                 "TopUsers", "reportsPlansUsage", "reportsBatchActiveUsers", "reportsBatchList",
                 "reportsBatchTotalUsers", "reportsInvoiceList"
               );
@@ -58,10 +58,10 @@ if (!$found) {
 }
 
 // reportQuery adds the WHERE fields for page-specific reports
-$reportQuery = $_SESSION['reportQuery'];
+$reportQuery = $_SESSION['reportQuery'] ?? "";
 
 // get table name (radacct/radcheck/etc)
-$reportTable = $_SESSION['reportTable'];
+$reportTable = $_SESSION['reportTable'] ?? "";
 
 // the following two functions tell the browser what file, size, etc. it should expect
 function exportCSVFile($output) {
@@ -116,11 +116,26 @@ switch ($reportType) {
         break;
 
     case "usernameListGeneric":
+    case "usernameListByGroup":
         // Export users in the same field order accepted by mng-import-users.php.
         // Required (5): username, password, email, firstname, lastname
         // Optional (15): framedipaddress, expiration, department, company, mobilephone,
         //                workphone, homephone, address, city, state, country, zip,
         //                sessiontimeout, idletimeout, maxdailysession
+        if ($reportType === "usernameListByGroup") {
+            if (!array_key_exists('groupname', $_GET) || empty(trim($_GET['groupname']))) {
+                break;
+            }
+
+            $groupname = trim($_GET['groupname']);
+            $reportTable = sprintf("%s AS rug INNER JOIN %s AS rc ON rc.username = rug.username "
+                                . "LEFT JOIN %s AS ui ON rc.username = ui.username",
+                                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
+                                   $configValues['CONFIG_DB_TBL_RADCHECK'],
+                                   $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+            $reportQuery = sprintf(" WHERE rug.groupname='%s'", $dbSocket->escapeSimple($groupname));
+        }
+
         $cols = array(
                         "username" => "rc.username AS username",
                         "password" => "COALESCE(MAX(CASE WHEN rc_export.attribute LIKE '%%-Password' THEN rc_export.value END), "
