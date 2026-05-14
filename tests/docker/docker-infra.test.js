@@ -15,3 +15,30 @@ test("FreeRADIUS image uses one executable startup directive", () => {
   assert.match(dockerfile, /^ENTRYPOINT \["\/app\/init-freeradius\.sh"\]$/m);
   assert.doesNotMatch(dockerfile, /^CMD \["\/app\/init-freeradius\.sh"\]$/m);
 });
+
+test("Compose avoids insecure local defaults", () => {
+  const compose = read("docker-compose.yml");
+
+  assert.doesNotMatch(compose, /radiusdbpw|radiusrootdbpw|testing123/);
+  assert.match(compose, /MYSQL_PASSWORD=\$\{MYSQL_PASSWORD:\?Set MYSQL_PASSWORD\}/);
+  assert.match(compose, /MYSQL_ROOT_PASSWORD=\$\{MYSQL_ROOT_PASSWORD:\?Set MYSQL_ROOT_PASSWORD\}/);
+  assert.match(compose, /DEFAULT_CLIENT_SECRET=\$\{DEFAULT_CLIENT_SECRET:\?Set DEFAULT_CLIENT_SECRET\}/);
+  assert.match(compose, /DALORADIUS_ADMIN_PASSWORD=\$\{DALORADIUS_ADMIN_PASSWORD:\?Set DALORADIUS_ADMIN_PASSWORD\}/);
+});
+
+test("Compose limits exposed admin surface and waits for FreeRADIUS health", () => {
+  const compose = read("docker-compose.yml");
+
+  assert.match(compose, /'\$\{DALORADIUS_OPERATORS_BIND:-127\.0\.0\.1:8000\}:8000'/);
+  assert.match(compose, /radius:[\s\S]*?healthcheck:/);
+  assert.match(compose, /radius-web:[\s\S]*?radius:[\s\S]*?condition: service_healthy/);
+});
+
+test("Compose runtime state does not live inside the build context", () => {
+  const compose = read("docker-compose.yml");
+
+  assert.doesNotMatch(compose, /\.\.?\s*\/data|\.\/data|"\.\/data|'\.\/data/);
+  assert.match(compose, /radius_mysql:/);
+  assert.match(compose, /radius_freeradius_data:/);
+  assert.match(compose, /radius_daloradius_data:/);
+});
