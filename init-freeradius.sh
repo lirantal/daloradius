@@ -240,6 +240,8 @@ function init_freeradius {
 	sql_config_set "password" "$MYSQL_PASSWORD"
 	sql_config_set "login" "$MYSQL_USER"
 	run_freeradius_sed "s|testing123|$(escape_sed_replacement "$(freeradius_quote_escape "$DEFAULT_CLIENT_SECRET")")|" "$RADIUS_PATH/mods-available/sql"
+	chown root:freerad "$RADIUS_PATH/mods-available/sql" 2>>"$INIT_ERROR_LOG" || fail_step "freeradius_init" "sql_config_owner_failed"
+	chmod 0640 "$RADIUS_PATH/mods-available/sql" 2>>"$INIT_ERROR_LOG" || fail_step "freeradius_init" "sql_config_mode_failed"
 	log_event "info" "freeradius_init" "success" "freeradius_configured"
 	echo "freeradius initialization completed."
 }

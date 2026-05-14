@@ -563,7 +563,26 @@ test("Docker init scripts guard critical file configuration steps", () => {
   assert.match(radiusInitBody, /log_event "info" "freeradius_init" "start" "configuring_freeradius"/);
   assert.match(radiusInitBody, /run_freeradius_sed/);
   assert.match(radiusInitBody, /run_freeradius_link/);
+  assert.match(radiusInitBody, /chown root:freerad "\$RADIUS_PATH\/mods-available\/sql" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(radiusInitBody, /fail_step "freeradius_init" "sql_config_owner_failed"/);
+  assert.match(radiusInitBody, /chmod 0640 "\$RADIUS_PATH\/mods-available\/sql" 2>>"\$INIT_ERROR_LOG"/);
+  assert.match(radiusInitBody, /fail_step "freeradius_init" "sql_config_mode_failed"/);
   assert.match(radiusInitBody, /log_event "info" "freeradius_init" "success" "freeradius_configured"/);
+  assertLineOrder(
+    radiusInitBody,
+    'sql_config_set "password" "$MYSQL_PASSWORD"',
+    'chown root:freerad "$RADIUS_PATH/mods-available/sql" 2>>"$INIT_ERROR_LOG"',
+  );
+  assertLineOrder(
+    radiusInitBody,
+    'run_freeradius_sed "s|testing123|$(escape_sed_replacement "$(freeradius_quote_escape "$DEFAULT_CLIENT_SECRET")")|" "$RADIUS_PATH/mods-available/sql"',
+    'chmod 0640 "$RADIUS_PATH/mods-available/sql" 2>>"$INIT_ERROR_LOG"',
+  );
+  assertLineOrder(
+    radiusInitBody,
+    'chmod 0640 "$RADIUS_PATH/mods-available/sql" 2>>"$INIT_ERROR_LOG"',
+    'log_event "info" "freeradius_init" "success" "freeradius_configured"',
+  );
   assert.match(radiusInit, /function run_freeradius_sed/);
   assert.match(radiusInit, /function run_freeradius_link/);
   assert.match(radiusInit, /sed -i "\$@" 2>>"\$INIT_ERROR_LOG" \|\| fail_step "freeradius_init" "config_update_failed"/);
