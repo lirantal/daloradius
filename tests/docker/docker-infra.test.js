@@ -104,3 +104,26 @@ test("Docker init scripts escape environment-derived config values", () => {
   assert.match(radiusInit, /function require_default_client_secret/);
   assert.doesNotMatch(radiusInit, /echo "Adding client .*secret \$SECRET"/);
 });
+
+test("Operator passwords are hashed and Docker admin password is explicit", () => {
+  const login = read("app/operators/dologin.php");
+  const operatorNew = read("app/operators/config-operators-new.php");
+  const operatorEdit = read("app/operators/config-operators-edit.php");
+  const helper = read("app/operators/library/operator_passwords.php");
+  const seedSql = read("contrib/db/mariadb-daloradius.sql");
+  const webInit = read("init.sh");
+  const installer = read("setup/install.sh");
+
+  assert.match(helper, /function operator_password_hash/);
+  assert.match(helper, /function operator_password_verify/);
+  assert.doesNotMatch(login, /where username='%s' and password='%s'/i);
+  assert.match(login, /operator_password_verify\(\$operator_pass, \$row\['password'\]\)/);
+  assert.match(operatorNew, /operator_password_hash\(\$operator_password\)/);
+  assert.match(operatorEdit, /operator_password_hash\(\$operator_password\)/);
+  assert.match(operatorEdit, /"value" => ""/);
+  assert.doesNotMatch(seedSql, /'administrator','radius'/);
+  assert.match(webInit, /DALORADIUS_ADMIN_PASSWORD=\$\{DALORADIUS_ADMIN_PASSWORD:-\}/);
+  assert.match(webInit, /function set_admin_password/);
+  assert.match(webInit, /password_hash\(\$argv\[1\], PASSWORD_DEFAULT\)/);
+  assert.match(installer, /INIT_PASSWORD_HASH=\$\(php -r 'echo password_hash\(\$argv\[1\], PASSWORD_DEFAULT\);'/);
+});

@@ -33,6 +33,7 @@
     $logDebugSQL = "";
     
     include_once('../common/includes/config_read.php');
+    include_once('library/operator_passwords.php');
     
     include('../common/includes/db_open.php');
 
@@ -90,13 +91,17 @@
                 $messenger1 = (array_key_exists('messenger1', $_POST) && isset($_POST['messenger1'])) ? trim($_POST['messenger1']) : "";
                 $messenger2 = (array_key_exists('messenger2', $_POST) && isset($_POST['messenger2'])) ? trim($_POST['messenger2']) : "";
                 $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? trim($_POST['notes']) : "";
+                $passwordSql = "";
+                if (!empty($operator_password)) {
+                    $passwordSql = sprintf("password='%s', ", $dbSocket->escapeSimple(operator_password_hash($operator_password)));
+                }
                 
                 // update operator data into the database
-                $sql = sprintf("UPDATE %s SET password='%s', firstname='%s', lastname='%s', title='%s', department='%s',
+                $sql = sprintf("UPDATE %s SET %s firstname='%s', lastname='%s', title='%s', department='%s',
                                               company='%s', phone1='%s', phone2='%s', email1='%s', email2='%s', messenger1='%s',
                                               messenger2='%s', updatedate='%s', updateby='%s'
                                  WHERE username='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_password),
+                               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $passwordSql,
                                $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($title),
                                $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
                                $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1), $dbSocket->escapeSimple($email2),
@@ -173,6 +178,7 @@
                 $operator_email1, $operator_email2, $operator_messenger1, $operator_messenger2, $operator_notes,
                 $operator_lastlogin, $operator_creationdate, $operator_creationby, $operator_updatedate, $operator_updateby
             ) = $res->fetchRow();
+        $operator_password = "";
     }
 
     include('../common/includes/db_close.php');
@@ -228,7 +234,7 @@
                                         "name" => "operator_password",
                                         "caption" => t('all','Password'),
                                         "type" => $hiddenPassword,
-                                        "value" => ((isset($operator_password)) ? $operator_password : ""),
+                                        "value" => "",
                                         "random" => true
                                      );
                                   

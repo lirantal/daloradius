@@ -26,6 +26,7 @@
 
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
+    include_once('library/operator_passwords.php');
 
     include_once("lang/main.php");
     include_once("../common/includes/validation.php");
@@ -84,6 +85,7 @@
                 } else {
                     $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
+                    $operator_password_hash = operator_password_hash($operator_password);
 
                     // insert username and password of operator into the database
                     $sql = sprintf("INSERT INTO %s (id, username, password, firstname, lastname, title, department, company,
@@ -91,7 +93,7 @@
                                                     creationby, updatedate, updateby)
                                             VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
                                                     '%s', '%s', '%s', '%s', NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
-                                   $operator_username, $operator_password, $firstname, $lastname, $title, $department, $company,
+                                   $operator_username, $dbSocket->escapeSimple($operator_password_hash), $firstname, $lastname, $title, $department, $company,
                                    $phone1, $phone2, $email1, $email2, $messenger1, $messenger2, $notes, $current_datetime, $currBy);
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";

@@ -17,6 +17,7 @@ PASSWORD_MAX_LENGTH=${PASSWORD_MAX_LENGTH:-}
 DEFAULT_FREERADIUS_SERVER=${DEFAULT_FREERADIUS_SERVER:-radius}
 DEFAULT_FREERADIUS_PORT=${DEFAULT_FREERADIUS_PORT:-}
 DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-}
+DALORADIUS_ADMIN_PASSWORD=${DALORADIUS_ADMIN_PASSWORD:-}
 MAIL_SMTPADDR=${MAIL_SMTPADDR:-}
 MAIL_PORT=${MAIL_PORT:-}
 MAIL_FROM=${MAIL_FROM:-}
@@ -46,6 +47,28 @@ function php_config_set {
     local value
     value=$(escape_sed_replacement "$(php_escape "$2")")
     sed -i "s|\\\$configValues\['$key'\] = .*;|\\\$configValues['$key'] = '$value';|" "$DALORADIUS_CONF_PATH"
+}
+
+function sql_escape {
+    printf '%s' "$1" | sed "s/'/''/g"
+}
+
+function require_admin_password {
+    if [ -z "$DALORADIUS_ADMIN_PASSWORD" ]; then
+        echo "DALORADIUS_ADMIN_PASSWORD must be set."
+        exit 1
+    fi
+}
+
+function set_admin_password {
+    require_admin_password
+
+    local admin_hash
+    admin_hash=$(php -r 'echo password_hash($argv[1], PASSWORD_DEFAULT);' "$DALORADIUS_ADMIN_PASSWORD")
+    admin_hash=$(sql_escape "$admin_hash")
+
+    mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" \
+        -e "UPDATE operators SET password='$admin_hash' WHERE username='administrator';"
 }
 
 function init_daloradius {
@@ -125,6 +148,8 @@ else
     fi
     date > "$DB_LOCK"
 fi
+
+set_admin_password
 
 # Start Apache2 in the foreground
 /usr/sbin/apachectl -DFOREGROUND -k start

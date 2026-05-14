@@ -10291,7 +10291,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `operators` WRITE;
 /*!40000 ALTER TABLE `operators` DISABLE KEYS */;
-INSERT INTO `operators` VALUES (1,'administrator','radius','','','','','','','','','','','','',NULL,CURRENT_TIMESTAMP,'admin',NULL,NULL);
+INSERT INTO `operators` VALUES (1,'administrator','!disabled!','','','','','','','','','','','','',NULL,CURRENT_TIMESTAMP,'admin',NULL,NULL);
 /*!40000 ALTER TABLE `operators` ENABLE KEYS */;
 UNLOCK TABLES;
 

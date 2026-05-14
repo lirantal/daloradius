@@ -581,10 +581,11 @@ daloradius_load_sql_schema() {
 system_finalize() {
     INIT_USERNAME="administrator"
     INIT_PASSWORD=$(generate_random_string 12)
-    SQL="UPDATE operators SET password='${INIT_PASSWORD}' WHERE username='${INIT_USERNAME}'"
+    INIT_PASSWORD_HASH=$(php -r 'echo password_hash($argv[1], PASSWORD_DEFAULT);' "${INIT_PASSWORD}")
+    SQL="UPDATE operators SET password='${INIT_PASSWORD_HASH}' WHERE username='${INIT_USERNAME}'"
     if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" --execute="${SQL}" >/dev/null 2>&1; then
-        INIT_PASSWORD="radius"
-        print_yellow "[!] Failed to update ${INIT_USERNAME}'s default password"
+        print_red "[!] Failed to update ${INIT_USERNAME}'s default password"
+        exit 1
     fi
 
     echo -e "[+] ${GREEN}daloRADIUS${NC} has been installed."
