@@ -91,17 +91,26 @@
                 $messenger2 = (array_key_exists('messenger2', $_POST) && isset($_POST['messenger2'])) ? trim($_POST['messenger2']) : "";
                 $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? trim($_POST['notes']) : "";
                 
+                if (empty($operator_password)) {
+                    $sql = sprintf("SELECT password FROM %s WHERE id=%d",
+                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $curr_operator_id);
+                    $operator_password_hash = $dbSocket->getOne($sql);
+                    $logDebugSQL .= "$sql;\n";
+                } else {
+                    $operator_password_hash = password_hash($operator_password, PASSWORD_DEFAULT);
+                }
+
                 // update operator data into the database
                 $sql = sprintf("UPDATE %s SET password='%s', firstname='%s', lastname='%s', title='%s', department='%s',
                                               company='%s', phone1='%s', phone2='%s', email1='%s', email2='%s', messenger1='%s',
                                               messenger2='%s', updatedate='%s', updateby='%s'
                                  WHERE username='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_password),
+                               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_password_hash),
                                $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($title),
                                $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
                                $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1), $dbSocket->escapeSimple($email2),
                                $dbSocket->escapeSimple($messenger1), $dbSocket->escapeSimple($messenger2), $current_datetime,
-                               $currBy, $dbSocket->escapeSimple($operator_username));
+                               $dbSocket->escapeSimple($currBy), $dbSocket->escapeSimple($operator_username));
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
 
@@ -228,7 +237,7 @@
                                         "name" => "operator_password",
                                         "caption" => t('all','Password'),
                                         "type" => $hiddenPassword,
-                                        "value" => ((isset($operator_password)) ? $operator_password : ""),
+                                        "value" => "",
                                         "random" => true
                                      );
                                   

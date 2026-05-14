@@ -22,6 +22,9 @@
  */
 
 include('../checklogin.php');
+$operator_perm_file = 'mng_search';
+$operator_perm_deny_http_status = 403;
+include('../check_operator_perm.php');
 
 // datatype => allowed actions
 $whitelist = array();

@@ -33,19 +33,29 @@ if (strpos($_SERVER['PHP_SELF'], '/library/check_operator_perm.php') !== false) 
 // we replace every instance of the - symbol with _ and we completely
 // remove the .php extension
 // this formatting is done to match the exact entry for the page as it
-// appears in the operators_acl table
-$file = str_replace("-", "_", basename($_SERVER['SCRIPT_NAME'], ".php"));
+// appears in the operators_acl table.
+//
+// AJAX endpoints may serve as helpers for existing ACL-protected pages, so
+// they can set $operator_perm_file before including this file.
+$file = (isset($operator_perm_file) && !empty($operator_perm_file))
+      ? $operator_perm_file
+      : str_replace("-", "_", basename($_SERVER['SCRIPT_NAME'], ".php"));
 
-include('../common/includes/db_open.php');
+include(implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', 'common', 'includes', 'db_open.php' ]));
 
 $sql = sprintf("SELECT access FROM %s WHERE operator_id=%d AND file='%s'",
                $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'], $_SESSION['operator_id'], $file);
 $access = intval($dbSocket->getOne($sql)) === 1;
 
-include('../common/includes/db_close.php');
+include(implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', 'common', 'includes', 'db_close.php' ]));
 
 // we finally check if the access to the requested page could be granted
 if (!$access) {
+    if (isset($operator_perm_deny_http_status)) {
+        http_response_code(intval($operator_perm_deny_http_status));
+        exit;
+    }
+
     header('Location: home-error.php');
     exit;
 }

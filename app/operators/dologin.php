@@ -59,28 +59,40 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
     include('../common/includes/db_open.php');
     
     $operator_user = $dbSocket->escapeSimple($_POST['operator_user']);
-    $operator_pass = $dbSocket->escapeSimple($_POST['operator_pass']);
-    
-    $sqlFormat = "select * from %s where username='%s' and password='%s'";
-    $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_user, $operator_pass);
+    $operator_pass = $_POST['operator_pass'];
+
+    $sqlFormat = "select * from %s where username='%s'";
+    $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_user);
     $res = $dbSocket->query($sql);
     $numRows = $res->numRows();
     
     // we only accept ONE AND ONLY ONE RECORD as result
     if ($numRows === 1) {
         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-        $operator_id = $row['id'];
-        
-        $_SESSION['daloradius_logged_in'] = true;
-        $_SESSION['operator_user'] = $operator_user;
-        $_SESSION['operator_id'] = $operator_id;
-        
-        // lets update the lastlogin time for this operator
-        $now = date("Y-m-d H:i:s");
-        $sqlFormat = "update %s set lastlogin='%s' where username='%s'";
-        $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $now, $operator_user);
-        $res = $dbSocket->query($sql);
+        $stored_password = $row['password'];
+        $verified = password_verify($operator_pass, $stored_password);
+        $legacy_verified = (!$verified && hash_equals($stored_password, $operator_pass));
 
+        if ($verified || $legacy_verified) {
+            $operator_id = $row['id'];
+
+            $_SESSION['daloradius_logged_in'] = true;
+            $_SESSION['operator_user'] = $operator_user;
+            $_SESSION['operator_id'] = $operator_id;
+
+            // lets update the lastlogin time for this operator
+            $now = date("Y-m-d H:i:s");
+            $sqlFormat = "update %s set lastlogin='%s' where username='%s'";
+            $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $now, $operator_user);
+            $res = $dbSocket->query($sql);
+
+            if ($legacy_verified || password_needs_rehash($stored_password, PASSWORD_DEFAULT)) {
+                $operator_pass_hash = $dbSocket->escapeSimple(password_hash($operator_pass, PASSWORD_DEFAULT));
+                $sqlFormat = "update %s set password='%s' where username='%s'";
+                $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_pass_hash, $operator_user);
+                $res = $dbSocket->query($sql);
+            }
+        }
     }
     
     // close connection to db before redirecting
