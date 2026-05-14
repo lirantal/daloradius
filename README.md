@@ -28,6 +28,8 @@ If you encounter any issues during the installation or have any questions, feel 
 
 The documentation for daloRADIUS is available in Markdown format and can be found in the `doc` folder of this repository.
 
+For Docker usage, including the recommended Compose stack and standalone web image, see [README.docker-standalone.md](README.docker-standalone.md).
+
 ## Contributors
 
 Special thanks to these wonderful people for their contributions to daloRADIUS...
