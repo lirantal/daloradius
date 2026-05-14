@@ -49,8 +49,8 @@ RUN apt-get update \
   wget \
   && rm -rf /var/lib/apt/lists/*
 
-ADD contrib/docker/operators.conf /etc/apache2/sites-available/operators.conf
-ADD contrib/docker/users.conf /etc/apache2/sites-available/users.conf
+COPY contrib/docker/operators.conf /etc/apache2/sites-available/operators.conf
+COPY contrib/docker/users.conf /etc/apache2/sites-available/users.conf
 RUN a2dissite 000-default.conf && \
     a2ensite users.conf operators.conf && \
     sed -i 's/Listen 80/Listen 80\nListen 8000/' /etc/apache2/ports.conf
@@ -58,7 +58,9 @@ RUN a2dissite 000-default.conf && \
 # Create directories
 # /data should be mounted as volume to avoid recreation of database entries
 RUN mkdir /data
-ADD . /var/www/daloradius
+COPY app /var/www/daloradius/app
+COPY contrib /var/www/daloradius/contrib
+COPY init.sh /var/www/daloradius/init.sh
 
 #RUN touch /var/www/html/library/daloradius.conf.php
 RUN chown -R www-data:www-data /var/www/daloradius

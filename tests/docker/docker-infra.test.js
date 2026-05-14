@@ -42,3 +42,17 @@ test("Compose runtime state does not live inside the build context", () => {
   assert.match(compose, /radius_freeradius_data:/);
   assert.match(compose, /radius_daloradius_data:/);
 });
+
+test("Docker build context excludes local state and copies only required trees", () => {
+  const dockerignore = read(".dockerignore");
+  const dockerfile = read("Dockerfile");
+
+  for (const ignoredPath of [".git", ".planning", "data/", "internal_data/", "*.log", "*.sql", ".env"]) {
+    assert.match(dockerignore, new RegExp(`^${ignoredPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "m"));
+  }
+
+  assert.doesNotMatch(dockerfile, /^ADD \. \/var\/www\/daloradius$/m);
+  assert.match(dockerfile, /^COPY app \/var\/www\/daloradius\/app$/m);
+  assert.match(dockerfile, /^COPY contrib \/var\/www\/daloradius\/contrib$/m);
+  assert.match(dockerfile, /^COPY init\.sh \/var\/www\/daloradius\/init\.sh$/m);
+});
