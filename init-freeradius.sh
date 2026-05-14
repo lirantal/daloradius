@@ -175,6 +175,10 @@ function sql_escape {
 	printf '%s' "$1" | sed "s/'/''/g"
 }
 
+function sql_hex {
+	printf '%s' "$1" | od -An -tx1 -v | tr -d '[:space:]'
+}
+
 function require_default_client_secret {
 	if [ -z "$DEFAULT_CLIENT_SECRET" ]; then
 		fail_step "validation" "missing_required_DEFAULT_CLIENT_SECRET"
@@ -314,11 +318,11 @@ function init_database {
 	discover_container_cidr
 	client_secret=$DEFAULT_CLIENT_SECRET
 	container_cidr_sql=$(sql_escape "$container_cidr")
-	client_secret_sql=$(sql_escape "$client_secret")
+	client_secret_hex=$(sql_hex "$client_secret")
 	echo "Adding client for $container_cidr with configured shared secret."
 	log_event "info" "nas_client_insert" "start" "inserting_docker_client"
 	if mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" 2>>"$INIT_ERROR_LOG" <<EOSQL
-INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$container_cidr_sql','DOCKER NET','other',0,'$client_secret_sql',NULL,'','');
+INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$container_cidr_sql','DOCKER NET','other',0,UNHEX('$client_secret_hex'),NULL,'','');
 EOSQL
 	then
 		log_event "info" "nas_client_insert" "success" "docker_client_inserted"

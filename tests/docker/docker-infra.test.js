@@ -124,7 +124,7 @@ test("Docker compliance cleanup findings remain covered by explicit invariants",
           "MYSQL_PASSWORD",
           "DALORADIUS_ADMIN_PASSWORD",
           "admin_hash",
-          "client_secret_sql",
+          "client_secret_hex",
         ]) {
           assert.doesNotMatch(loggingLines, shellVariableReference(secretVariable));
         }
@@ -647,6 +647,8 @@ test("Operator passwords are hashed and Docker admin password is explicit", () =
 test("Docker init database writes do not pass secrets through process arguments", () => {
   const webInit = read("init.sh");
   const radiusInit = read("init-freeradius.sh");
+  const dangerousSecret = "radius\\'); DROP TABLE nas; --";
+  const dangerousSecretHex = Buffer.from(dangerousSecret, "utf8").toString("hex");
   const adminPasswordUpdate = functionBody(webInit, "set_admin_password").match(
     /mysql\b[\s\S]*?fail_step "admin_password_update" "admin_password_update_failed"/,
   );
@@ -662,7 +664,12 @@ test("Docker init database writes do not pass secrets through process arguments"
   assert.doesNotMatch(radiusInit, /mysql\b[^\n]*-e\s+"INSERT INTO nas/);
   assert.doesNotMatch(nasInsertMatch[0], /mysql\b[\s\S]*?-e\s+"INSERT INTO nas/);
   assert.match(nasInsertMatch[0], /<<[-]?'?[A-Z_]*'?/);
-  assert.match(nasInsertMatch[0], /client_secret_sql/);
+  assert.match(nasInsertMatch[0], /client_secret_hex=\$\(sql_hex "\$client_secret"\)/);
+  assert.match(nasInsertMatch[0], /UNHEX\('\$client_secret_hex'\)/);
+  assert.doesNotMatch(nasInsertMatch[0], /client_secret_sql/);
+  assert.doesNotMatch(nasInsertMatch[0], /'\$client_secret_sql'/);
+  assert.equal(Buffer.from(dangerousSecretHex, "hex").toString("utf8"), dangerousSecret);
+  assert.doesNotMatch(dangerousSecretHex, /['\\;-]/);
 });
 
 test("Standalone image builds from local context on a supported PHP runtime", () => {
