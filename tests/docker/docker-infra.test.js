@@ -57,6 +57,14 @@ test("Docker build context excludes local state and copies only required trees",
   assert.match(dockerfile, /^COPY init\.sh \/var\/www\/daloradius\/init\.sh$/m);
 });
 
+test("Docker image recreates shared static asset symlinks", () => {
+  const dockerfile = read("Dockerfile");
+
+  assert.match(dockerfile, /rm -rf \/var\/www\/daloradius\/app\/operators\/static \/var\/www\/daloradius\/app\/users\/static/);
+  assert.match(dockerfile, /ln -s \.\.\/common\/static \/var\/www\/daloradius\/app\/operators\/static/);
+  assert.match(dockerfile, /ln -s \.\.\/common\/static \/var\/www\/daloradius\/app\/users\/static/);
+});
+
 test("Docker init scripts fail fast and use bounded database waits", () => {
   for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
     const script = read(scriptPath);

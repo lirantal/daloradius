@@ -55,6 +55,9 @@ RUN mkdir /data
 COPY app /var/www/daloradius/app
 COPY contrib /var/www/daloradius/contrib
 COPY init.sh /var/www/daloradius/init.sh
+RUN rm -rf /var/www/daloradius/app/operators/static /var/www/daloradius/app/users/static \
+  && ln -s ../common/static /var/www/daloradius/app/operators/static \
+  && ln -s ../common/static /var/www/daloradius/app/users/static
 RUN sed -i 's/\r$//' /var/www/daloradius/init.sh
 
 #RUN touch /var/www/html/library/daloradius.conf.php
