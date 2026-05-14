@@ -64,7 +64,7 @@ test("Docker init scripts fail fast and use bounded database waits", () => {
     assert.match(script, /^set -euo pipefail$/m);
     assert.match(script, /MYSQL_WAIT_RETRIES=\$\{MYSQL_WAIT_RETRIES:-30\}/);
     assert.match(script, /function wait_for_mysql/);
-    assert.match(script, /while ! mysqladmin ping/);
+    assert.match(script, /while ! mysqladmin .* ping/);
     assert.match(script, /if \[ "\$attempt" -ge "\$MYSQL_WAIT_RETRIES" \]/);
   }
 });
@@ -80,4 +80,27 @@ test("Database initialization locks are backed by schema checks", () => {
   assert.match(radiusInit, /function freeradius_schema_ready/);
   assert.match(radiusInit, /if freeradius_schema_ready; then[\s\S]*Database schema already present/);
   assert.match(radiusInit, /init_database[\s\S]*if ! freeradius_schema_ready; then/);
+});
+
+test("Docker init scripts do not expose DB passwords in process arguments", () => {
+  for (const scriptPath of ["init.sh", "init-freeradius.sh"]) {
+    const script = read(scriptPath);
+
+    assert.doesNotMatch(script, /-p"\$MYSQL_PASSWORD"/);
+    assert.match(script, /MYSQL_DEFAULTS_FILE=\$\(mktemp\)/);
+    assert.match(script, /--defaults-extra-file="\$MYSQL_DEFAULTS_FILE"/);
+  }
+});
+
+test("Docker init scripts escape environment-derived config values", () => {
+  const webInit = read("init.sh");
+  const radiusInit = read("init-freeradius.sh");
+
+  assert.match(webInit, /function escape_sed_replacement/);
+  assert.match(webInit, /function php_escape/);
+  assert.match(webInit, /function php_config_set/);
+  assert.match(radiusInit, /function escape_sed_replacement/);
+  assert.match(radiusInit, /function sql_escape/);
+  assert.match(radiusInit, /function require_default_client_secret/);
+  assert.doesNotMatch(radiusInit, /echo "Adding client .*secret \$SECRET"/);
 });

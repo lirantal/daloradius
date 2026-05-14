@@ -12,8 +12,43 @@ MYSQL_PASSWORD=${MYSQL_PASSWORD:-radpass}
 MYSQL_WAIT_RETRIES=${MYSQL_WAIT_RETRIES:-30}
 MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-2}
 DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-}
+MYSQL_DEFAULTS_FILE=$(mktemp)
+
+chmod 600 "$MYSQL_DEFAULTS_FILE"
+cat > "$MYSQL_DEFAULTS_FILE" <<EOF
+[client]
+host=$MYSQL_HOST
+port=$MYSQL_PORT
+user=$MYSQL_USER
+password=$MYSQL_PASSWORD
+EOF
+trap 'rm -f "$MYSQL_DEFAULTS_FILE"' EXIT
+
+function escape_sed_replacement {
+	printf '%s' "$1" | sed -e 's/[\/&|\\]/\\&/g'
+}
+
+function sql_escape {
+	printf '%s' "$1" | sed "s/'/''/g"
+}
+
+function require_default_client_secret {
+	if [ -z "$DEFAULT_CLIENT_SECRET" ]; then
+		echo "DEFAULT_CLIENT_SECRET must be set."
+		exit 1
+	fi
+}
+
+function sql_config_set {
+	local key="$1"
+	local value
+	value=$(escape_sed_replacement "$2")
+	sed -i "s|^[#[:space:]]*$key[[:space:]]*=.*|$key = \"$value\"|" "$RADIUS_PATH/mods-available/sql"
+}
 
 function init_freeradius {
+	require_default_client_secret
+
 	# Enable SQL in freeradius
 	sed -i 's|driver = "rlm_sql_null"|driver = "rlm_sql_mysql"|' $RADIUS_PATH/mods-available/sql
 	sed -i 's|dialect = "sqlite"|dialect = "mysql"|' $RADIUS_PATH/mods-available/sql
@@ -45,15 +80,12 @@ function init_freeradius {
 	ln -sf $RADIUS_PATH/sites-available/status $RADIUS_PATH/sites-enabled/status
 
 	# Set Database connection
-	sed -i 's|^#\s*server = .*|server = "'$MYSQL_HOST'"|' $RADIUS_PATH/mods-available/sql
-	sed -i 's|^#\s*port = .*|port = "'$MYSQL_PORT'"|' $RADIUS_PATH/mods-available/sql
-	sed -i '1,$s/radius_db.*/radius_db="'$MYSQL_DATABASE'"/g' $RADIUS_PATH/mods-available/sql
-	sed -i 's|^#\s*password = .*|password = "'$MYSQL_PASSWORD'"|' $RADIUS_PATH/mods-available/sql
-	sed -i 's|^#\s*login = .*|login = "'$MYSQL_USER'"|' $RADIUS_PATH/mods-available/sql
-
-	if [ -n "$DEFAULT_CLIENT_SECRET" ]; then
-		sed -i 's|testing123|'$DEFAULT_CLIENT_SECRET'|' $RADIUS_PATH/mods-available/sql
-	fi
+	sql_config_set "server" "$MYSQL_HOST"
+	sql_config_set "port" "$MYSQL_PORT"
+	sql_config_set "radius_db" "$MYSQL_DATABASE"
+	sql_config_set "password" "$MYSQL_PASSWORD"
+	sql_config_set "login" "$MYSQL_USER"
+	sed -i "s|testing123|$(escape_sed_replacement "$DEFAULT_CLIENT_SECRET")|" $RADIUS_PATH/mods-available/sql
 	echo "freeradius initialization completed."
 }
 
@@ -85,7 +117,7 @@ function enable_noresetcounter {
 }
 
 function ensure_daloradius_schema {
-	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" <<'EOSQL'
+	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
 CREATE TABLE IF NOT EXISTS `radhuntgroup` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `groupname` varchar(64) NOT NULL DEFAULT '',
@@ -98,32 +130,33 @@ EOSQL
 }
 
 function init_database {
-	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/main/mysql/schema.sql
-	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/ippool/mysql/schema.sql
+	require_default_client_secret
+
+	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/main/mysql/schema.sql
+	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" < $RADIUS_PATH/mods-config/sql/ippool/mysql/schema.sql
 	ensure_daloradius_schema
 
 	# Insert a client for the current subnet (to allow daloradius to perform checks)
 	IP=`ifconfig eth0 | awk '/inet/{ print $2;} '` # does also work: $IP=`hostname -I | awk '{print $1}'`
 	NM=`ifconfig eth0 | awk '/netmask/{ print $4;} '`
 	CIDR=`ipcalc $IP $NM | awk '/Network/{ print $2;} '`
-	SECRET=testing123
-	if [ -n "$DEFAULT_CLIENT_SECRET" ]; then
-		SECRET=$DEFAULT_CLIENT_SECRET
-	fi
-	echo "Adding client for $CIDR with default secret $SECRET"
-	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" -e "INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$CIDR','DOCKER NET','other',0,'$SECRET',NULL,'','')"
+	SECRET=$DEFAULT_CLIENT_SECRET
+	CIDR_SQL=$(sql_escape "$CIDR")
+	SECRET_SQL=$(sql_escape "$SECRET")
+	echo "Adding client for $CIDR with configured shared secret."
+	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" -e "INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description) VALUES ('$CIDR_SQL','DOCKER NET','other',0,'$SECRET_SQL',NULL,'','')"
 
 	echo "Database initialization for freeradius completed."
 }
 
 function freeradius_schema_ready {
-	mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" \
+	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" \
 		-e "SELECT 1 FROM radcheck LIMIT 1; SELECT 1 FROM nas LIMIT 1;" >/dev/null 2>&1
 }
 
 function wait_for_mysql {
 	local attempt=1
-	while ! mysqladmin ping -h"$MYSQL_HOST" -P"$MYSQL_PORT" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do
+	while ! mysqladmin --defaults-extra-file="$MYSQL_DEFAULTS_FILE" ping --silent; do
 		if [ "$attempt" -ge "$MYSQL_WAIT_RETRIES" ]; then
 			echo "MySQL did not become ready after $MYSQL_WAIT_RETRIES attempts."
 			exit 1
