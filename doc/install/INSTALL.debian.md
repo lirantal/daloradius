@@ -124,6 +124,36 @@ authorize {
 
 This lets FreeRADIUS compare the user's accumulated accounting time with daloRADIUS check attributes such as `Max-All-Session`.
 
+To enforce daloRADIUS profile/group NAS restrictions configured as `radgroupcheck` rows, also add the following policy immediately after `noresetcounter` in the same `authorize` section:
+
+```text
+authorize {
+    ...
+    -sql
+    noresetcounter
+
+    # daloRADIUS group NAS restriction policy
+    # Enforce radgroupcheck NAS-IP-Address == restrictions as an
+    # authentication deny rule for users assigned to SQL groups.
+    if (&request:NAS-IP-Address) {
+        if ("%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '%{User-Name}' AND gc.attribute = 'NAS-IP-Address' AND gc.op = '=='}" != "0") {
+            if ("%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '%{User-Name}' AND gc.attribute = 'NAS-IP-Address' AND gc.op = '==' AND gc.value = '%{NAS-IP-Address}'}" == "0") {
+                reject
+            }
+        }
+    }
+    ...
+}
+```
+
+Without this explicit policy, FreeRADIUS uses `radgroupcheck` mainly to decide whether a group's reply items apply. A user that already authenticates through `radcheck` can therefore be accepted even when a profile-level `NAS-IP-Address == ...` group check does not match. The policy above treats group-level `NAS-IP-Address == ...` rows as an allow-list: if a user is assigned to one or more groups with those rows, the request is rejected unless the request's `NAS-IP-Address` matches at least one allowed value.
+
+After editing the FreeRADIUS site, validate the configuration before restarting:
+
+```bash
+freeradius -C
+```
+
 To complete the installation, enable and restart the FreeRADIUS service using the following commands:
 ```bash
 systemctl enable freeradius
