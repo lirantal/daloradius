@@ -46,8 +46,9 @@
                ? trim(str_replace("%", "", $_POST['group'])) : "";
     $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
     
-    $priority = (array_key_exists('priority', $_POST) && isset($_POST['priority']) &&
-                 intval(trim($_POST['priority'])) >= 0) ? intval(trim($_POST['priority'])) : 0;
+    $priority = (array_key_exists('priority', $_POST) && isset($_POST['priority']))
+              ? normalize_user_group_priority($groupname, $_POST['priority'])
+              : normalize_user_group_priority($groupname, 0);
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
@@ -130,17 +131,24 @@
                                     "type" => "select",
                                     "options" => $options,
                                     "selected_value" => ((isset($failureMsg)) ? $groupname : ""),
-                                    "tooltipText" => t('Tooltip','groupTooltip')
+                                    "tooltipText" => t('Tooltip','groupTooltip'),
+                                    "onchange" => "setDisabledUsersGroupPriority()"
                                  );
                                  
-    $input_descriptors0[] = array(
+    $priority_descriptor = array(
                                     "id" => "priority",
                                     "name" => "priority",
                                     "caption" => t('all','Priority'),
                                     "type" => "number",
-                                    "min" => "0",
+                                    "min" => "-1",
                                     "value" => ((isset($failureMsg)) ? $priority : "0"),
                                  );
+
+    if (isset($failureMsg) && is_disabled_users_group($groupname)) {
+        $priority_descriptor["title"] = "Reserved disabled-users group; priority is locked to -1 so it is evaluated before normal groups.";
+    }
+
+    $input_descriptors0[] = $priority_descriptor;
 
     $input_descriptors1 = array();
 
@@ -173,7 +181,45 @@
     }
     
     close_form();
-    
+
+
+    $disabled_users_group_js = json_encode(DALO_DISABLED_USERS_GROUP);
+    $disabled_users_group_priority_js = json_encode((string)DALO_DISABLED_USERS_GROUP_PRIORITY);
+
+    echo <<<EOF
+<script>
+var disabledUsersGroupName = {$disabled_users_group_js};
+var disabledUsersGroupPriority = {$disabled_users_group_priority_js};
+
+function setDisabledUsersGroupPriority() {
+    var group = document.getElementById('group');
+    var priority = document.getElementById('priority');
+
+    if (!group || !priority) {
+        return;
+    }
+
+    if (group.value === disabledUsersGroupName) {
+        priority.value = disabledUsersGroupPriority;
+        priority.min = disabledUsersGroupPriority;
+        priority.readOnly = true;
+        priority.classList.add('bg-body-secondary', 'text-muted');
+        priority.title = 'Reserved disabled-users group; priority is locked to -1 so it is evaluated before normal groups.';
+    } else {
+        priority.min = '0';
+        priority.readOnly = false;
+        priority.classList.remove('bg-body-secondary', 'text-muted');
+        if (parseInt(priority.value, 10) < 0) {
+            priority.value = '0';
+        }
+        priority.title = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', setDisabledUsersGroupPriority);
+</script>
+EOF;
+
     print_back_to_previous_page();
 
     include('include/config/logging.php');

@@ -63,10 +63,11 @@
 
             // if profiles are associated with this plan, loop through each and add a usergroup entry for each
             foreach($cols as $profile_name) {
-                $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s','%s','0')",
+                $priority = normalize_user_group_priority($profile_name, 0);
+                $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s','%s',%d)",
                                $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
                                $dbSocket->escapeSimple($username),
-                               $dbSocket->escapeSimple($profile_name));
+                               $dbSocket->escapeSimple($profile_name), $priority);
                 $res = $dbSocket->query($sql);
             }
         }
@@ -96,6 +97,7 @@
                 }
 
                 $priority = (!empty($groups_priority[$i])) ? $groups_priority[$i] : "0";
+                $priority = normalize_user_group_priority($group, $priority);
 
                 $sql = sprintf($insert_group_format,
                                $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
@@ -117,10 +119,11 @@
                     continue;
                 }
 
+                $priority = normalize_user_group_priority($newgroup, 0);
                 $sql = sprintf($insert_group_format,
                                $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
                                $dbSocket->escapeSimple($username),
-                               $dbSocket->escapeSimple($group), 0);
+                               $dbSocket->escapeSimple($newgroup), $priority);
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
             }
