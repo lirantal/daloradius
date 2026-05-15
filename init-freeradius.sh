@@ -302,6 +302,45 @@ function enable_noresetcounter {
 		|| fail_step "noresetcounter_config" "noresetcounter_apply_failed"
 }
 
+
+function enable_group_nas_restrictions {
+	# Enforce daloRADIUS group/profile NAS restrictions stored in radgroupcheck.
+	# FreeRADIUS uses radgroupcheck to decide whether group reply items apply; it
+	# does not automatically reject a user who already authenticated via radcheck.
+	# This policy rejects users when their SQL group has NAS-IP-Address == rows
+	# and the request NAS-IP-Address does not match any of those allowed values.
+	if grep -q "daloRADIUS group NAS restriction policy" $RADIUS_PATH/sites-available/default; then
+		return
+	fi
+
+	if ! awk '
+		BEGIN { added = 0 }
+		{
+			print
+			if (!added && /^[[:space:]]*noresetcounter[[:space:]]*$/) {
+				print ""
+				print "\t\t# daloRADIUS group NAS restriction policy"
+				print "\t\t# Enforce radgroupcheck NAS-IP-Address == restrictions as an"
+				print "\t\t# authentication deny rule for users assigned to SQL groups."
+				print "\t\tif (&request:NAS-IP-Address) {"
+				print "\t\t\tif (\"%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '\''%{User-Name}'\'' AND gc.attribute = '\''NAS-IP-Address'\'' AND gc.op = '\''=='\''}\" != \"0\") {"
+				print "\t\t\t\tif (\"%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '\''%{User-Name}'\'' AND gc.attribute = '\''NAS-IP-Address'\'' AND gc.op = '\''=='\'' AND gc.value = '\''%{NAS-IP-Address}'\''}\" == \"0\") {"
+				print "\t\t\t\t\treject"
+				print "\t\t\t\t}"
+				print "\t\t\t}"
+				print "\t\t}"
+				added = 1
+			}
+		}
+		END { exit added ? 0 : 1 }
+	' $RADIUS_PATH/sites-available/default > /tmp/freeradius-default; then
+		rm -f /tmp/freeradius-default
+		echo "Failed to add daloRADIUS group NAS restriction policy to FreeRADIUS authorize section."
+		exit 1
+	fi
+	mv /tmp/freeradius-default $RADIUS_PATH/sites-available/default
+}
+
 function ensure_daloradius_schema {
 	log_event "info" "radhuntgroup_schema_ensure" "start" "ensuring_schema"
 	if mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" 2>>"$INIT_ERROR_LOG" <<'EOSQL'
@@ -445,6 +484,10 @@ fi
 # lock-file and reinitialization paths.
 if test -L "$RADIUS_PATH/mods-enabled/sqlcounter"; then
 	enable_noresetcounter
+fi
+
+if test -L "$RADIUS_PATH/mods-enabled/sql"; then
+	enable_group_nas_restrictions
 fi
 
 DB_LOCK=/data/.db_init_done

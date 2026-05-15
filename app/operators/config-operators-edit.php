@@ -95,7 +95,6 @@
                 if (!empty($operator_password)) {
                     $passwordSql = sprintf("password='%s', ", $dbSocket->escapeSimple(operator_password_hash($operator_password)));
                 }
-                
                 // update operator data into the database
                 $sql = sprintf("UPDATE %s SET %s firstname='%s', lastname='%s', title='%s', department='%s',
                                               company='%s', phone1='%s', phone2='%s', email1='%s', email2='%s', messenger1='%s',
@@ -106,7 +105,7 @@
                                $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
                                $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1), $dbSocket->escapeSimple($email2),
                                $dbSocket->escapeSimple($messenger1), $dbSocket->escapeSimple($messenger2), $current_datetime,
-                               $currBy, $dbSocket->escapeSimple($operator_username));
+                               $dbSocket->escapeSimple($currBy), $dbSocket->escapeSimple($operator_username));
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
 

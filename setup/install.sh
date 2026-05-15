@@ -271,6 +271,47 @@ freeradius_setup_sqlcounter_mod() {
     print_green "OK"
 }
 
+
+# Function to enforce daloRADIUS group/profile NAS restrictions in freeRADIUS
+freeradius_setup_group_nas_restrictions() {
+    echo -n "[+] Setting up freeRADIUS group NAS restriction policy... "
+
+    if grep -q "daloRADIUS group NAS restriction policy" "${FREERADIUS_DEFAULT_SITE_PATH}"; then
+        print_green "OK"
+        return
+    fi
+
+    if ! awk '
+        BEGIN { added = 0 }
+        {
+            print
+            if (!added && /^[[:space:]]*noresetcounter[[:space:]]*$/) {
+                print ""
+                print "\t\t# daloRADIUS group NAS restriction policy"
+                print "\t\t# Enforce radgroupcheck NAS-IP-Address == restrictions as an"
+                print "\t\t# authentication deny rule for users assigned to SQL groups."
+                print "\t\tif (&request:NAS-IP-Address) {"
+                print "\t\t\tif (\"%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '\''%{User-Name}'\'' AND gc.attribute = '\''NAS-IP-Address'\'' AND gc.op = '\''=='\''}\" != \"0\") {"
+                print "\t\t\t\tif (\"%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '\''%{User-Name}'\'' AND gc.attribute = '\''NAS-IP-Address'\'' AND gc.op = '\''=='\'' AND gc.value = '\''%{NAS-IP-Address}'\''}\" == \"0\") {"
+                print "\t\t\t\t\treject"
+                print "\t\t\t\t}"
+                print "\t\t\t}"
+                print "\t\t}"
+                added = 1
+            }
+        }
+        END { exit added ? 0 : 1 }
+    ' "${FREERADIUS_DEFAULT_SITE_PATH}" > /tmp/freeradius-default; then
+        rm -f /tmp/freeradius-default
+        print_red "KO"
+        echo "[!] Failed to add daloRADIUS group NAS restriction policy to freeRADIUS authorize section. Aborting." >&2
+        exit 1
+    fi
+
+    mv /tmp/freeradius-default "${FREERADIUS_DEFAULT_SITE_PATH}"
+    print_green "OK"
+}
+
 # Function to restart freeRADIUS service
 freeradius_enable_restart() {
     echo -n "[+] Enabling and restarting freeRADIUS... "
@@ -623,6 +664,7 @@ main() {
     freeradius_install
     freeradius_setup_sql_mod
     freeradius_setup_sqlcounter_mod
+    freeradius_setup_group_nas_restrictions
     freeradius_enable_restart
 
     apache_disable_all_sites

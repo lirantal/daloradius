@@ -158,6 +158,7 @@
                                 'actions' => array(),
                             );
             $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-profiles-edit.php?profile_name=%s', urlencode($groupname), ), 'label' => t('button','EditProfile'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('include/management/fileExport.php?reportType=usernameListByGroup&reportFormat=csv&groupname=%s', urlencode($groupname), ), 'label' => 'Export Users CSV', );
             $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-profiles-del.php?profile_name=%s', urlencode($groupname), ), 'label' => t('button','RemoveProfile'), );
         
             // create tooltip

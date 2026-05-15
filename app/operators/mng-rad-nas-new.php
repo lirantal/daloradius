@@ -94,6 +94,7 @@
                         $successMsg = sprintf('Successfully added a new NAS (<strong>%s</strong>) '
                                             . '<a href="mng-rad-nas-edit.php?nasname=%s" title="Edit">Edit</a>',
                                               $nasname_enc, urlencode($nasname_enc));
+                        $successMsg .= '<br><strong>Restart FreeRADIUS for NAS changes to take effect.</strong>';
                         $logAction .= "Successfully added a new NAS [$nasname] on page: ";
                     } else {
                         // it seems that operator could not be added

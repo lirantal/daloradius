@@ -87,14 +87,20 @@
                     $currBy = $_SESSION['operator_user'];
                     $operator_password_hash = operator_password_hash($operator_password);
 
-                    // insert username and password of operator into the database
+                    // insert username and hashed password of operator into the database
                     $sql = sprintf("INSERT INTO %s (id, username, password, firstname, lastname, title, department, company,
                                                     phone1, phone2, email1, email2, messenger1, messenger2, notes, creationdate,
                                                     creationby, updatedate, updateby)
                                             VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
                                                     '%s', '%s', '%s', '%s', NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
-                                   $operator_username, $dbSocket->escapeSimple($operator_password_hash), $firstname, $lastname, $title, $department, $company,
-                                   $phone1, $phone2, $email1, $email2, $messenger1, $messenger2, $notes, $current_datetime, $currBy);
+                                   $dbSocket->escapeSimple($operator_username), $dbSocket->escapeSimple($operator_password_hash),
+                                   $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname),
+                                   $dbSocket->escapeSimple($title), $dbSocket->escapeSimple($department),
+                                   $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
+                                   $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1),
+                                   $dbSocket->escapeSimple($email2), $dbSocket->escapeSimple($messenger1),
+                                   $dbSocket->escapeSimple($messenger2), $dbSocket->escapeSimple($notes),
+                                   $current_datetime, $dbSocket->escapeSimple($currBy));
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
 
