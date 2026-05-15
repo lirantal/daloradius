@@ -26,6 +26,7 @@
 
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
+    include_once("include/management/functions.php");
 
     // init logging variables
     $log = "visited page: ";
@@ -43,8 +44,9 @@
         $current_groupname = (array_key_exists('current_group', $_POST) && !empty(str_replace("%", "", trim($_POST['current_group']))))
                       ? str_replace("%", "", trim($_POST['current_group'])) : "";
 
-        $priority = (array_key_exists('priority', $_POST) && isset($_POST['priority']) &&
-                     intval(trim($_POST['priority'])) >= 0) ? intval(trim($_POST['priority'])) : 0;
+        $priority = (array_key_exists('priority', $_POST) && isset($_POST['priority']))
+                  ? normalize_user_group_priority($groupname, $_POST['priority'])
+                  : normalize_user_group_priority($groupname, 0);
     } else {
         // declaring variables
         $username = (array_key_exists('username', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['username']))))
@@ -96,14 +98,15 @@
 
                 $new_mapping_inplace = intval($res->fetchrow()[0]) > 0;
 
-                if ($new_mapping_inplace) {
+                if ($new_mapping_inplace && $groupname !== $current_groupname) {
                     // error
                     $failureMsg = "The chosen user mapping ($username_enc - $groupname_enc) is already in place.";
                     $logAction .= "Failed updating user-group mapping [$username - $groupname already in place]: ";
                 } else {
-                    $sql = sprintf("UPDATE %s SET groupname='%s', priority=%s WHERE username='%s' AND groupname='%s'",
+                    $priority = normalize_user_group_priority($groupname, $priority);
+                    $sql = sprintf("UPDATE %s SET groupname='%s', priority=%d WHERE username='%s' AND groupname='%s'",
                                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($groupname),
-                                   $dbSocket->escapeSimple($priority), $dbSocket->escapeSimple($username),
+                                   $priority, $dbSocket->escapeSimple($username),
                                    $dbSocket->escapeSimple($current_groupname));
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
@@ -213,17 +216,24 @@
                                         "type" => "select",
                                         "options" => $options,
                                         "selected_value" => $this_groupname,
-                                        "tooltipText" => t('Tooltip','groupTooltip')
+                                        "tooltipText" => t('Tooltip','groupTooltip'),
+                                        "onchange" => "setDisabledUsersGroupPriority()"
                                      );
 
-        $input_descriptors0[] = array(
+        $priority_descriptor = array(
                                         "id" => "priority",
                                         "name" => "priority",
                                         "caption" => t('all','Priority'),
                                         "type" => "number",
-                                        "min" => "0",
-                                        "value" => $this_priority,
+                                        "min" => "-1",
+                                        "value" => normalize_user_group_priority($this_groupname, $this_priority),
                                      );
+
+        if (is_disabled_users_group($this_groupname)) {
+            $priority_descriptor["title"] = "Reserved disabled-users group; priority is locked to -1 so it is evaluated before normal groups.";
+        }
+
+        $input_descriptors0[] = $priority_descriptor;
 
         $input_descriptors0[] = array(
                                         "type" => "hidden",
@@ -250,6 +260,44 @@
         close_fieldset();
 
         close_form();
+
+
+        $disabled_users_group_js = json_encode(DALO_DISABLED_USERS_GROUP);
+        $disabled_users_group_priority_js = json_encode((string)DALO_DISABLED_USERS_GROUP_PRIORITY);
+
+        echo <<<EOF
+<script>
+var disabledUsersGroupName = {$disabled_users_group_js};
+var disabledUsersGroupPriority = {$disabled_users_group_priority_js};
+
+function setDisabledUsersGroupPriority() {
+    var group = document.getElementById('group');
+    var priority = document.getElementById('priority');
+
+    if (!group || !priority) {
+        return;
+    }
+
+    if (group.value === disabledUsersGroupName) {
+        priority.value = disabledUsersGroupPriority;
+        priority.min = disabledUsersGroupPriority;
+        priority.readOnly = true;
+        priority.classList.add('bg-body-secondary', 'text-muted');
+        priority.title = 'Reserved disabled-users group; priority is locked to -1 so it is evaluated before normal groups.';
+    } else {
+        priority.min = '0';
+        priority.readOnly = false;
+        priority.classList.remove('bg-body-secondary', 'text-muted');
+        if (parseInt(priority.value, 10) < 0) {
+            priority.value = '0';
+        }
+        priority.title = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', setDisabledUsersGroupPriority);
+</script>
+EOF;
 
     }
 

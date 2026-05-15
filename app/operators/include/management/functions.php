@@ -171,6 +171,26 @@ function group_exists($dbSocket, $groupname) {
 
 }
 
+if (!defined('DALO_DISABLED_USERS_GROUP')) {
+    define('DALO_DISABLED_USERS_GROUP', 'daloRADIUS-Disabled-Users');
+}
+if (!defined('DALO_DISABLED_USERS_GROUP_PRIORITY')) {
+    define('DALO_DISABLED_USERS_GROUP_PRIORITY', -1);
+}
+
+function is_disabled_users_group($groupname) {
+    return trim($groupname) === DALO_DISABLED_USERS_GROUP;
+}
+
+function normalize_user_group_priority($groupname, $priority=0) {
+    if (is_disabled_users_group($groupname)) {
+        return DALO_DISABLED_USERS_GROUP_PRIORITY;
+    }
+
+    $priority = intval($priority);
+    return ($priority < 0) ? 0 : $priority;
+}
+
 function update_user_group_mapping_priority($dbSocket, $username, $groupname, $new_priority) {
     global $configValues, $logDebugSQL;
 
@@ -188,7 +208,7 @@ function update_user_group_mapping_priority($dbSocket, $username, $groupname, $n
 
 
     if ($numrows > 0) {
-        $priority = (intval($new_priority) < 0) ? 0 : intval($new_priority);
+        $priority = normalize_user_group_priority($groupname, $new_priority);
 
         if ($numrows == 1) {
             $sql = sprintf("UPDATE %s SET priority=%d WHERE username='%s' AND groupname='%s'",
@@ -231,7 +251,7 @@ function insert_single_user_group_mapping($dbSocket, $username, $groupname, $pri
         return false;
     }
 
-    $priority = (intval($priority) < 0) ? 0 : intval($priority);
+    $priority = normalize_user_group_priority($groupname, $priority);
 
     $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
@@ -360,11 +380,12 @@ function insert_multiple_user_group_mappings($dbSocket, $username, $groupnames) 
             continue;
         }
 
-        // insert user-group mapping with default priority 0
-        $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', 0)",
+        // insert user-group mapping with default priority 0, except reserved disabled users group
+        $priority = normalize_user_group_priority($groupname, 0);
+        $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
                        $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
                        $dbSocket->escapeSimple($username),
-                       $dbSocket->escapeSimple($groupname));
+                       $dbSocket->escapeSimple($groupname), $priority);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
