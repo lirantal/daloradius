@@ -1,10 +1,10 @@
-This guide will walk you through the process of deploying a **basic open-source AAA infrastructure** on a dedicated instance of [Debian](https://www.debian.org/download). The configurations that have been tested are provided separately for Debian 11 and Debian 12, as outlined in the table below:
-Package\OS|Debian 11|Debian 12|
---|--|--|
-[MariaDB](https://mariadb.org/download/)|10.5|10.11
-[FreeRADIUS](https://freeradius.org/releases/)|3.0.x|3.2.x
-[Apache 2](https://httpd.apache.org/download.cgi)|2.4.x|2.4.x
-[PHP](https://www.php.net/downloads.php)|7.4.x|8.2.x
+This guide will walk you through the process of deploying a **basic open-source AAA infrastructure** on a dedicated instance of [Debian](https://www.debian.org/download). The configurations that have been tested are provided separately for Debian 11, Debian 12, and Debian 13, as outlined in the table below:
+Package\OS|Debian 11|Debian 12|Debian 13|
+--|--|--|--|
+[MariaDB](https://mariadb.org/download/)|10.5|10.11|11.8
+[FreeRADIUS](https://freeradius.org/releases/)|3.0.x|3.2.x|3.2.x
+[Apache 2](https://httpd.apache.org/download.cgi)|2.4.x|2.4.x|2.4.x
+[PHP](https://www.php.net/downloads.php)|7.4.x|8.2.x|8.4.x
 
 # Prerequisites
 Before proceeding with the installation, please ensure the following:
