@@ -193,3 +193,7 @@ Helpful resources to find help and support with daloRADIUS:
 - [Filippo Lauria](https://github.com/filippolauria/), main mainteiner of this repository;
 - [Liran Tal](https://github.com/lirantal/), the original creator of daloRADIUS;
 - [Miguel García](https://github.com/MiguelVis) and all contributors for their valuable work.
+
+## Contributing
+
+Please consult [CONTRIBUTING](./CONTRIBUTING.md) for guidelines on contributing to this project.
