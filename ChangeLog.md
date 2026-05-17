@@ -1,3 +1,96 @@
+# ChangeLog
+
+## release 2.? - WIP (changes since daloRADIUS 2.2 beta)
+
+### General fixes and issue cleanup
+
+- [#541](https://github.com/lirantal/daloradius/pull/541) - Fixes several reported issues after the daloRADIUS 2.2 beta baseline.
+- [#545](https://github.com/lirantal/daloradius/pull/545) - Fixes Expiration, session handling, layout, and language-related issues.
+- [#554](https://github.com/lirantal/daloradius/pull/554) - Adds another round of targeted application fixes.
+- [#566](https://github.com/lirantal/daloradius/pull/566) - Updates validation handling.
+- [#592](https://github.com/lirantal/daloradius/pull/592) - Fixes CSRF token validation when deleting NAS records.
+- [#602](https://github.com/lirantal/daloradius/pull/602) - Fixes row IDs in SQL dump data.
+- [#603](https://github.com/lirantal/daloradius/pull/603) - Updates the online users report page.
+- [#606](https://github.com/lirantal/daloradius/pull/606) - Filters ACL fields to avoid invalid `operators_acl` entries.
+- [#615](https://github.com/lirantal/daloradius/pull/615) - Adds a collection of smaller fixes across the application.
+
+### Installation, Docker, and platform documentation
+
+- [#575](https://github.com/lirantal/daloradius/pull/575) - Fixes ownership of the daloRADIUS configuration file in Docker deployments.
+- [#580](https://github.com/lirantal/daloradius/pull/580) - Updates the installation script.
+- [#591](https://github.com/lirantal/daloradius/pull/591) - Disables MySQL TLS defaults where they break connectivity.
+- [#637](https://github.com/lirantal/daloradius/pull/637) - Improves FreeRADIUS Docker initialization on container restart.
+- [#658](https://github.com/lirantal/daloradius/pull/658) - Fixes a loopback IP typo in `setup/install.sh`.
+- [#659](https://github.com/lirantal/daloradius/pull/659) - Improves background process error detection in `setup/install.sh`.
+- [#680](https://github.com/lirantal/daloradius/pull/680) - Modernizes the Docker development stack.
+- [#681](https://github.com/lirantal/daloradius/pull/681) - Creates the `radhuntgroup` table during Docker initialization.
+- [#682](https://github.com/lirantal/daloradius/pull/682) - Configures FreeRADIUS `noresetcounter` for `Max-All-Session` support.
+- [#690](https://github.com/lirantal/daloradius/pull/690) - Documents Debian 13 installation support.
+- [#691](https://github.com/lirantal/daloradius/pull/691) - Adds an AlmaLinux installation guide.
+
+### Accounting, billing, plans, and proxy/realm management
+
+- [#578](https://github.com/lirantal/daloradius/pull/578) - Fixes accounting maintenance deletion for records from a specific day.
+- [#627](https://github.com/lirantal/daloradius/pull/627) - Improves numeric handling for plan costs and tax values in billing operations.
+- [#670](https://github.com/lirantal/daloradius/pull/670) - Enables MAC-based search in accounting and login-attempt pages.
+- [#671](https://github.com/lirantal/daloradius/pull/671) - Fixes plan profile assignment from User Management -> Edit.
+- [#677](https://github.com/lirantal/daloradius/pull/677) - Fixes proxy and realm management bugs.
+
+### Email and notifications
+
+- [#579](https://github.com/lirantal/daloradius/pull/579) - Adds support for emailing login credentials.
+- [#594](https://github.com/lirantal/daloradius/pull/594) - Updates Liran Tal's contact address.
+- [#642](https://github.com/lirantal/daloradius/pull/642) - Adds configurable email encoding options.
+
+### User import and export
+
+- [#648](https://github.com/lirantal/daloradius/pull/648) - Fixes MAC/PIN import so it sets the `Auth-Type` attribute correctly.
+- [#649](https://github.com/lirantal/daloradius/pull/649) - Extends CSV import with additional optional fields.
+- [#662](https://github.com/lirantal/daloradius/pull/662) - Allows all printable characters in passwords during CSV import.
+- [#685](https://github.com/lirantal/daloradius/pull/685) - Adds a CSV export format compatible with import.
+
+### Security hardening
+
+- [#652](https://github.com/lirantal/daloradius/pull/652) - Fixes SQL injection, XSS, and ACL bypass vulnerabilities.
+- [#654](https://github.com/lirantal/daloradius/pull/654) - Fixes disabled-user bypass by setting the disabled group priority to `-1`.
+- [#660](https://github.com/lirantal/daloradius/pull/660) - Fixes an SQL injection issue.
+- [#683](https://github.com/lirantal/daloradius/pull/683) - Updates the vendored HTMLPurifier library.
+- [#684](https://github.com/lirantal/daloradius/pull/684) - Hardens operator security controls.
+- [#686](https://github.com/lirantal/daloradius/pull/686) - Enforces group NAS restrictions in FreeRADIUS.
+- [#689](https://github.com/lirantal/daloradius/pull/689) - Locks disabled-user group priority handling.
+
+### Language, portal, and PHP compatibility
+
+- [#620](https://github.com/lirantal/daloradius/pull/620) - Updates the MariaDB daloRADIUS schema.
+- [#632](https://github.com/lirantal/daloradius/pull/632) - Updates the MariaDB schema.
+- [#655](https://github.com/lirantal/daloradius/pull/655) - Adds German translations for operator and user portals.
+- [#656](https://github.com/lirantal/daloradius/pull/656) - Aligns user portal language files to the `TotalPayed` translation key.
+- [#657](https://github.com/lirantal/daloradius/pull/657) - Fixes PHP 8 invoice downloads in the users portal.
+- [#665](https://github.com/lirantal/daloradius/pull/665) - Fixes a PHP 8 TypeError in the Romanian language file.
+
+### Attributes, NAS, huntgroups, and dictionary management
+
+- [#663](https://github.com/lirantal/daloradius/pull/663) - Fixes huntgroup list column-name ordering.
+- [#666](https://github.com/lirantal/daloradius/pull/666) - Allows attributes to be fetched even when no UI helper exists in the dictionary.
+- [#674](https://github.com/lirantal/daloradius/pull/674) - Refactors NAS management with stricter validation and updated NAS types.
+- [#678](https://github.com/lirantal/daloradius/pull/678) - Fixes extension dictionary UI errors and adds dynamic attribute values.
+
+### Performance and usability
+
+- [#604](https://github.com/lirantal/daloradius/pull/604) - Formats expiration dates in New Quick Management.
+- [#631](https://github.com/lirantal/daloradius/pull/631) - Makes the administrator UI work from a sub-directory.
+- [#673](https://github.com/lirantal/daloradius/pull/673) - Reduces database CPU spikes from user listing and dashboard loads.
+- [#687](https://github.com/lirantal/daloradius/pull/687) - Shows a FreeRADIUS restart notice after NAS changes.
+
+### Logging and documentation
+
+- [#623](https://github.com/lirantal/daloradius/pull/623) - Uses `radius.log` as the default FreeRADIUS log file.
+- [#625](https://github.com/lirantal/daloradius/pull/625) - Adds sane defaults for logging authentication requests.
+- [#669](https://github.com/lirantal/daloradius/pull/669) - Adds an SSL/TLS configuration tutorial.
+- [#676](https://github.com/lirantal/daloradius/pull/676) - Adds a session-timeout configuration guide.
+
+## Legacy changelog
+
 release 1.? - WIP
 	- Ternary expression fix in graph library
 	- Report fixes
