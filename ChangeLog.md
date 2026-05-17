@@ -89,16 +89,16 @@
 - [#669](https://github.com/lirantal/daloradius/pull/669) - Adds an SSL/TLS configuration tutorial.
 - [#676](https://github.com/lirantal/daloradius/pull/676) - Adds a session-timeout configuration guide.
 
-## Legacy changelog
+# Legacy changelog
 
-release 1.? - WIP
+## release 1.? - WIP
 	- Ternary expression fix in graph library
 	- Report fixes
 	- Fix support for multiple db locations
 
 * a mess here with releases as branches and / or tags: 1.1-2, 1.1-3, 1.1-4, 1.1-5, 1.2, 1.3 *
 
-release 1.1-3 - ?? ??? ????
+## release 1.1-3 - ?? ??? ????
 	- remove unavailable data in SUBSCRIPTION ANALYSIS view.
 	- update Portuguese language
 	- dockerfile improvements
@@ -109,16 +109,16 @@ release 1.1-3 - ?? ??? ????
 	- fix load of language file
 	- mark Romanian language files as broken
 
-release 1.1-2 - 08 Aug 2019
+## release 1.1-2 - 08 Aug 2019
     - syntax fix in language translations
 	- set right column names for table radpostauth in FreeRADIUS v3
 
-release 1.1-1 - 28 Jul 2019
+## release 1.1-1 - 28 Jul 2019
     - fix memory overflow on database backups
 	- added daloRADIUS version date to configuration
 	- improve the documentation a bit
 
-release 1.1-0 - 19 Jun 2019
+## release 1.1-0 - 19 Jun 2019
     - fix SQL syntax errors when using the column 'lead' with MySQL 8.0.2+
     - fix SQL query for last connection attempts where FreeRADIUS is v3
     - add freeradius-utils and cron to Dockerfile
@@ -126,10 +126,10 @@ release 1.1-0 - 19 Jun 2019
 	- add select box for password types in Batch Add Users option
 	- stylish ToolTip boxes
 
-release 1.0-1 - 24 Mar 2019
+## release 1.0-1 - 24 Mar 2019
 	- fixed SQL error when target value is empty when adding profiles, show error message instead
 
-release 1.0-0 - 06 Mar 2019
+## release 1.0-0 - 06 Mar 2019
 	- small fixes here and there (tooltips, autocomplete, ...)
 	. added new translation function to avoid PHP warnings on missing keys
 	- added install requirements in documentation
@@ -139,7 +139,7 @@ release 1.0-0 - 06 Mar 2019
 	- improved PHP 7 support
 	- and a lot more
 
-release 0.9-9 - 27 May 2011
+## release 0.9-9 - 27 May 2011
 	- added linux os heartbeat script
 	- added new monitoring script for heartbeat nodes with email notifications, also update default crontab script
 	- fixed dictionary table entries related to mikrotik vendor
@@ -147,7 +147,7 @@ release 0.9-9 - 27 May 2011
 	- fixed deprecated ereg_replace function with preg_replace
 	- improved heartbeat scripts to be more 'compatible' with other routers os
 
-release 0.9-9rc1 - 6 May 2011
+## release 0.9-9rc1 - 6 May 2011
 	- added heartbeat router scripts and dashboard implementation in daloradius
 	- added maintenance scripts to clean stale sessions/expire accounts and monitoring user traffic (with email alerts)
 	- added notification system for sending invoices and welcome notifications for new users
@@ -189,7 +189,7 @@ release 0.9-9rc1 - 6 May 2011
 	- improved daloradius-users portal to support proper password changing of the user account as well as provide billing information insight, invoices and more
 	
 
-release 0.9-8 - 27 January 2008 (pre 26 December 2008)
+## release 0.9-8 - 27 January 2008 (pre 26 December 2008)
 	- added option to enable/disable user information updates on daloradius-users portal
 	- added support for searchable usernames in Online Users and Last Connected Users pages
 	- added duplicate profiles menu option
@@ -230,13 +230,13 @@ release 0.9-8 - 27 January 2008 (pre 26 December 2008)
 	- fixed backend control of user information changes by administrator
 
 
-release 0.9-7 - 4 June 2008
+## release 0.9-7 - 4 June 2008
 	- added support for attributes type/description in Edit User page and Edit Profile page
 	- added support for showing the user's summary information like in Username Accounting
 	- added to daloRADIUS Users portal the Graphs pages for the user (client) 
 
 
-release 0.9-7rc2 - 26 May 2008
+## release 0.9-7rc2 - 26 May 2008
 	- fixed better support on SQL queries to NOT rely on the schema being the default (tuc)
 	- fixed bug in hotspots edit page where contact info tab didn't load values from the database
 	- fixed up documentation and added INSTALL.quick for rapid deployment of daloRADIUS
@@ -257,7 +257,7 @@ release 0.9-7rc2 - 26 May 2008
 	- other: general code cleanup
 
 
-release 0.9-7rc1 - 24 April 2008
+## release 0.9-7rc1 - 24 April 2008
 	- fixed support for password hiding in users/operators listings
 	- fixed deletion of usergroup instances of the user
 	- fixed saving encrypted password changes in database (reported by kreg, thanks)
@@ -273,7 +273,7 @@ release 0.9-7rc1 - 24 April 2008
 	- added more icons, variable translation and layout changes
 
 	
-release 0.9-6 - 25 Februray 2008
+## release 0.9-6 - 25 Februray 2008
 	- added major improvement to attributes management which is now supporting all possible vendors
 	  and attributes which comes with latest freeradius 1.1.7, dynamically from the database using
 	  ajax support in the interface to easy management.
@@ -300,7 +300,7 @@ release 0.9-6 - 25 Februray 2008
 	- fixed layout on graphs to use a lower size chart image (thanks to Joachim)
 
 
-release 0.9-5 - 23 December 2007
+## release 0.9-5 - 23 December 2007
 	- added improved support for sql db queries
 	- added new contact info for hotspot owners
 	- added more attributes and ordered existing
@@ -330,7 +330,7 @@ release 0.9-5 - 23 December 2007
 
 
 
-release 0.9-4 - October 22 2007
+## release 0.9-4 - October 22 2007
 	- fixed bug in include/management/attributes.php and library/javascript/pages_common.js
 	  which caused the drop-down select boxes not to update the text input.
 	- fixed the whole issue with the language file and commited changes to all the project files.
@@ -349,7 +349,7 @@ release 0.9-4 - October 22 2007
 	- added new logging facility for debugging sql queries performed on the database server
 	- added new reports pages and moved the older status and logs pages to the reports section
 
-release 0.9-3 - September 01 2007
+## release 0.9-3 - September 01 2007
 	- fixed bug 1763605 - user edit hat a wrong mysql syntax
 	- fixed bugs in configuration pages.
 	- added support for php's database abstraction layer instead of mysql API.
@@ -361,7 +361,7 @@ release 0.9-3 - September 01 2007
 	- moved database files to contrib/db and added database schemes for postregsql.
 
 
-release 0.9-2 - August 13 2007
+## release 0.9-2 - August 13 2007
 	- fixed bug 1763584 - in IE at javascript function randomPassword() and randomUsername()
 	- added  asc/desc sorting capabilities to tables in management, accounting and graphs
 	- added new maintenance page to use the 'radtest' program to check for user
@@ -379,7 +379,7 @@ release 0.9-2 - August 13 2007
 	  welcome), requested by ccesario.
 	
 	
-release 0.9-1 - July 29 2007
+## release 0.9-1 - July 29 2007
 	- added support for configurable table names of radius database throughout the code
 	- added better notifications of error messages when mysql queries die, 
 	  they are now shown with a red colored font so the errors are more obvious to see
@@ -388,7 +388,7 @@ release 0.9-1 - July 29 2007
 	- improved support for failure/sucess messages on forms
 	- added quick-link to delete hotspots from the hotspot listing page
 
-release 0.9 - July 2007
+## release 0.9 - July 2007
 	- this release is named after Erick Otto who took part of daloRADIUS
 	and passed away on 24th of June 2007, may he rest in peace.
 	- Major code clean-up, removing deprecated files, as well as removed jpgraph
@@ -418,7 +418,7 @@ release 0.9 - July 2007
 	
 
 
-release 0.8 - May 2007
+## release 0.8 - May 2007
 	- moved from using the Password attribute to the more widely accepted
 	User-Password attribute as well as keeping compatibility with Password attribute
 	- fixed mng-edit.php file to check if attribute exists on db and to
@@ -452,10 +452,10 @@ release 0.8 - May 2007
 	overall usage (this was confusing before but now it's fixed)
 
 
-release 0.7 - April 2007
+## release 0.7 - April 2007
 	- public release on sourceforge
 
-release 0.6 - April 2007
+## release 0.6 - April 2007
 	- added page-footer.php for easier modifications to the files.
 	  in the future more modularity is planned like this with the menus.
 	- improvements on the 'home' webpage, adding server and radius status
@@ -468,7 +468,7 @@ release 0.6 - April 2007
 	- fixed bug in graphs-overall_logins.php that didn't display the day
 	  of the week in the graph image and applied it to all other graphs.
 
-release 0.5 - April 2007
+## release 0.5 - April 2007
 	- added a whole lot of graphical reports to the Graphs section, among
 	  them are: Per User's Logins, Downloads and Uploads and an All-time
 	  Logins, Downloads and Uploads.
@@ -481,17 +481,17 @@ release 0.5 - April 2007
 	  checked when headers were read
 	- fixed bug in sql statement when displaying top users's statistics
 
-release 0.4 - March 2007
+## release 0.4 - March 2007
 	- fixed bug in generating the code snippet for googlemaps api.
 	- added GIS section to visualize hotspot locations with googlemaps api.
 
-release 0.3 - January 2007
+## release 0.3 - January 2007
 	- added more radius attributes to user management: Idle Timeout, Calling-Station-Id, WISPr-Redirection-URL, 
 	  WISPr-Bandwidth-Max-Up, WISPr-Bandwidth-Max-Down, WISPr-Session-Terminate-Time
 	- added javascript popup buttons to ease on date selection with a date applet
 	- added javascript functions to automatically generate random passwords and usernames
 
-release 0.2 - December 2006
+## release 0.2 - December 2006
 	- when adding users, check that the user doesn't already exist, if it does, deny addition to db.
 	- accounting menu has been broaden to provide an extenssive list of reports based on the radacct table
 	- management support has been added the Called-Station-Id attribute for users
@@ -499,7 +499,7 @@ release 0.2 - December 2006
 	- added javascript for alert message-box on errors
 	- added the ability to edit/del a user from reports listings
 
-release 0.1 - initial work
+## release 0.1 - initial work
 	- management support for a few radius attributes
 	- management support for hotspots (to distinguish users logging in from different hotspot access points)
 
