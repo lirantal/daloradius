@@ -1,11 +1,104 @@
-release 1.? - WIP
+# ChangeLog
+
+## release 2.? - WIP (changes since daloRADIUS 2.2 beta)
+
+### General fixes and issue cleanup
+
+- [#541](https://github.com/lirantal/daloradius/pull/541) - Fixes several reported issues after the daloRADIUS 2.2 beta baseline.
+- [#545](https://github.com/lirantal/daloradius/pull/545) - Fixes Expiration, session handling, layout, and language-related issues.
+- [#554](https://github.com/lirantal/daloradius/pull/554) - Adds another round of targeted application fixes.
+- [#566](https://github.com/lirantal/daloradius/pull/566) - Updates validation handling.
+- [#592](https://github.com/lirantal/daloradius/pull/592) - Fixes CSRF token validation when deleting NAS records.
+- [#602](https://github.com/lirantal/daloradius/pull/602) - Fixes row IDs in SQL dump data.
+- [#603](https://github.com/lirantal/daloradius/pull/603) - Updates the online users report page.
+- [#606](https://github.com/lirantal/daloradius/pull/606) - Filters ACL fields to avoid invalid `operators_acl` entries.
+- [#615](https://github.com/lirantal/daloradius/pull/615) - Adds a collection of smaller fixes across the application.
+
+### Installation, Docker, and platform documentation
+
+- [#575](https://github.com/lirantal/daloradius/pull/575) - Fixes ownership of the daloRADIUS configuration file in Docker deployments.
+- [#580](https://github.com/lirantal/daloradius/pull/580) - Updates the installation script.
+- [#591](https://github.com/lirantal/daloradius/pull/591) - Disables MySQL TLS defaults where they break connectivity.
+- [#637](https://github.com/lirantal/daloradius/pull/637) - Improves FreeRADIUS Docker initialization on container restart.
+- [#658](https://github.com/lirantal/daloradius/pull/658) - Fixes a loopback IP typo in `setup/install.sh`.
+- [#659](https://github.com/lirantal/daloradius/pull/659) - Improves background process error detection in `setup/install.sh`.
+- [#680](https://github.com/lirantal/daloradius/pull/680) - Modernizes the Docker development stack.
+- [#681](https://github.com/lirantal/daloradius/pull/681) - Creates the `radhuntgroup` table during Docker initialization.
+- [#682](https://github.com/lirantal/daloradius/pull/682) - Configures FreeRADIUS `noresetcounter` for `Max-All-Session` support.
+- [#690](https://github.com/lirantal/daloradius/pull/690) - Documents Debian 13 installation support.
+- [#691](https://github.com/lirantal/daloradius/pull/691) - Adds an AlmaLinux installation guide.
+
+### Accounting, billing, plans, and proxy/realm management
+
+- [#578](https://github.com/lirantal/daloradius/pull/578) - Fixes accounting maintenance deletion for records from a specific day.
+- [#627](https://github.com/lirantal/daloradius/pull/627) - Improves numeric handling for plan costs and tax values in billing operations.
+- [#670](https://github.com/lirantal/daloradius/pull/670) - Enables MAC-based search in accounting and login-attempt pages.
+- [#671](https://github.com/lirantal/daloradius/pull/671) - Fixes plan profile assignment from User Management -> Edit.
+- [#677](https://github.com/lirantal/daloradius/pull/677) - Fixes proxy and realm management bugs.
+
+### Email and notifications
+
+- [#579](https://github.com/lirantal/daloradius/pull/579) - Adds support for emailing login credentials.
+- [#594](https://github.com/lirantal/daloradius/pull/594) - Updates Liran Tal's contact address.
+- [#642](https://github.com/lirantal/daloradius/pull/642) - Adds configurable email encoding options.
+
+### User import and export
+
+- [#648](https://github.com/lirantal/daloradius/pull/648) - Fixes MAC/PIN import so it sets the `Auth-Type` attribute correctly.
+- [#649](https://github.com/lirantal/daloradius/pull/649) - Extends CSV import with additional optional fields.
+- [#662](https://github.com/lirantal/daloradius/pull/662) - Allows all printable characters in passwords during CSV import.
+- [#685](https://github.com/lirantal/daloradius/pull/685) - Adds a CSV export format compatible with import.
+
+### Security hardening
+
+- [#652](https://github.com/lirantal/daloradius/pull/652) - Fixes SQL injection, XSS, and ACL bypass vulnerabilities.
+- [#654](https://github.com/lirantal/daloradius/pull/654) - Fixes disabled-user bypass by setting the disabled group priority to `-1`.
+- [#660](https://github.com/lirantal/daloradius/pull/660) - Fixes an SQL injection issue.
+- [#683](https://github.com/lirantal/daloradius/pull/683) - Updates the vendored HTMLPurifier library.
+- [#684](https://github.com/lirantal/daloradius/pull/684) - Hardens operator security controls.
+- [#686](https://github.com/lirantal/daloradius/pull/686) - Enforces group NAS restrictions in FreeRADIUS.
+- [#689](https://github.com/lirantal/daloradius/pull/689) - Locks disabled-user group priority handling.
+
+### Language, portal, and PHP compatibility
+
+- [#620](https://github.com/lirantal/daloradius/pull/620) - Updates the MariaDB daloRADIUS schema.
+- [#632](https://github.com/lirantal/daloradius/pull/632) - Updates the MariaDB schema.
+- [#655](https://github.com/lirantal/daloradius/pull/655) - Adds German translations for operator and user portals.
+- [#656](https://github.com/lirantal/daloradius/pull/656) - Aligns user portal language files to the `TotalPayed` translation key.
+- [#657](https://github.com/lirantal/daloradius/pull/657) - Fixes PHP 8 invoice downloads in the users portal.
+- [#665](https://github.com/lirantal/daloradius/pull/665) - Fixes a PHP 8 TypeError in the Romanian language file.
+
+### Attributes, NAS, huntgroups, and dictionary management
+
+- [#663](https://github.com/lirantal/daloradius/pull/663) - Fixes huntgroup list column-name ordering.
+- [#666](https://github.com/lirantal/daloradius/pull/666) - Allows attributes to be fetched even when no UI helper exists in the dictionary.
+- [#674](https://github.com/lirantal/daloradius/pull/674) - Refactors NAS management with stricter validation and updated NAS types.
+- [#678](https://github.com/lirantal/daloradius/pull/678) - Fixes extension dictionary UI errors and adds dynamic attribute values.
+
+### Performance and usability
+
+- [#604](https://github.com/lirantal/daloradius/pull/604) - Formats expiration dates in New Quick Management.
+- [#631](https://github.com/lirantal/daloradius/pull/631) - Makes the administrator UI work from a sub-directory.
+- [#673](https://github.com/lirantal/daloradius/pull/673) - Reduces database CPU spikes from user listing and dashboard loads.
+- [#687](https://github.com/lirantal/daloradius/pull/687) - Shows a FreeRADIUS restart notice after NAS changes.
+
+### Logging and documentation
+
+- [#623](https://github.com/lirantal/daloradius/pull/623) - Uses `radius.log` as the default FreeRADIUS log file.
+- [#625](https://github.com/lirantal/daloradius/pull/625) - Adds sane defaults for logging authentication requests.
+- [#669](https://github.com/lirantal/daloradius/pull/669) - Adds an SSL/TLS configuration tutorial.
+- [#676](https://github.com/lirantal/daloradius/pull/676) - Adds a session-timeout configuration guide.
+
+# Legacy changelog
+
+## release 1.? - WIP
 	- Ternary expression fix in graph library
 	- Report fixes
 	- Fix support for multiple db locations
 
 * a mess here with releases as branches and / or tags: 1.1-2, 1.1-3, 1.1-4, 1.1-5, 1.2, 1.3 *
 
-release 1.1-3 - ?? ??? ????
+## release 1.1-3 - ?? ??? ????
 	- remove unavailable data in SUBSCRIPTION ANALYSIS view.
 	- update Portuguese language
 	- dockerfile improvements
@@ -16,16 +109,16 @@ release 1.1-3 - ?? ??? ????
 	- fix load of language file
 	- mark Romanian language files as broken
 
-release 1.1-2 - 08 Aug 2019
+## release 1.1-2 - 08 Aug 2019
     - syntax fix in language translations
 	- set right column names for table radpostauth in FreeRADIUS v3
 
-release 1.1-1 - 28 Jul 2019
+## release 1.1-1 - 28 Jul 2019
     - fix memory overflow on database backups
 	- added daloRADIUS version date to configuration
 	- improve the documentation a bit
 
-release 1.1-0 - 19 Jun 2019
+## release 1.1-0 - 19 Jun 2019
     - fix SQL syntax errors when using the column 'lead' with MySQL 8.0.2+
     - fix SQL query for last connection attempts where FreeRADIUS is v3
     - add freeradius-utils and cron to Dockerfile
@@ -33,10 +126,10 @@ release 1.1-0 - 19 Jun 2019
 	- add select box for password types in Batch Add Users option
 	- stylish ToolTip boxes
 
-release 1.0-1 - 24 Mar 2019
+## release 1.0-1 - 24 Mar 2019
 	- fixed SQL error when target value is empty when adding profiles, show error message instead
 
-release 1.0-0 - 06 Mar 2019
+## release 1.0-0 - 06 Mar 2019
 	- small fixes here and there (tooltips, autocomplete, ...)
 	. added new translation function to avoid PHP warnings on missing keys
 	- added install requirements in documentation
@@ -46,7 +139,7 @@ release 1.0-0 - 06 Mar 2019
 	- improved PHP 7 support
 	- and a lot more
 
-release 0.9-9 - 27 May 2011
+## release 0.9-9 - 27 May 2011
 	- added linux os heartbeat script
 	- added new monitoring script for heartbeat nodes with email notifications, also update default crontab script
 	- fixed dictionary table entries related to mikrotik vendor
@@ -54,7 +147,7 @@ release 0.9-9 - 27 May 2011
 	- fixed deprecated ereg_replace function with preg_replace
 	- improved heartbeat scripts to be more 'compatible' with other routers os
 
-release 0.9-9rc1 - 6 May 2011
+## release 0.9-9rc1 - 6 May 2011
 	- added heartbeat router scripts and dashboard implementation in daloradius
 	- added maintenance scripts to clean stale sessions/expire accounts and monitoring user traffic (with email alerts)
 	- added notification system for sending invoices and welcome notifications for new users
@@ -96,7 +189,7 @@ release 0.9-9rc1 - 6 May 2011
 	- improved daloradius-users portal to support proper password changing of the user account as well as provide billing information insight, invoices and more
 	
 
-release 0.9-8 - 27 January 2008 (pre 26 December 2008)
+## release 0.9-8 - 27 January 2008 (pre 26 December 2008)
 	- added option to enable/disable user information updates on daloradius-users portal
 	- added support for searchable usernames in Online Users and Last Connected Users pages
 	- added duplicate profiles menu option
@@ -137,13 +230,13 @@ release 0.9-8 - 27 January 2008 (pre 26 December 2008)
 	- fixed backend control of user information changes by administrator
 
 
-release 0.9-7 - 4 June 2008
+## release 0.9-7 - 4 June 2008
 	- added support for attributes type/description in Edit User page and Edit Profile page
 	- added support for showing the user's summary information like in Username Accounting
 	- added to daloRADIUS Users portal the Graphs pages for the user (client) 
 
 
-release 0.9-7rc2 - 26 May 2008
+## release 0.9-7rc2 - 26 May 2008
 	- fixed better support on SQL queries to NOT rely on the schema being the default (tuc)
 	- fixed bug in hotspots edit page where contact info tab didn't load values from the database
 	- fixed up documentation and added INSTALL.quick for rapid deployment of daloRADIUS
@@ -164,7 +257,7 @@ release 0.9-7rc2 - 26 May 2008
 	- other: general code cleanup
 
 
-release 0.9-7rc1 - 24 April 2008
+## release 0.9-7rc1 - 24 April 2008
 	- fixed support for password hiding in users/operators listings
 	- fixed deletion of usergroup instances of the user
 	- fixed saving encrypted password changes in database (reported by kreg, thanks)
@@ -180,7 +273,7 @@ release 0.9-7rc1 - 24 April 2008
 	- added more icons, variable translation and layout changes
 
 	
-release 0.9-6 - 25 Februray 2008
+## release 0.9-6 - 25 Februray 2008
 	- added major improvement to attributes management which is now supporting all possible vendors
 	  and attributes which comes with latest freeradius 1.1.7, dynamically from the database using
 	  ajax support in the interface to easy management.
@@ -207,7 +300,7 @@ release 0.9-6 - 25 Februray 2008
 	- fixed layout on graphs to use a lower size chart image (thanks to Joachim)
 
 
-release 0.9-5 - 23 December 2007
+## release 0.9-5 - 23 December 2007
 	- added improved support for sql db queries
 	- added new contact info for hotspot owners
 	- added more attributes and ordered existing
@@ -237,7 +330,7 @@ release 0.9-5 - 23 December 2007
 
 
 
-release 0.9-4 - October 22 2007
+## release 0.9-4 - October 22 2007
 	- fixed bug in include/management/attributes.php and library/javascript/pages_common.js
 	  which caused the drop-down select boxes not to update the text input.
 	- fixed the whole issue with the language file and commited changes to all the project files.
@@ -256,7 +349,7 @@ release 0.9-4 - October 22 2007
 	- added new logging facility for debugging sql queries performed on the database server
 	- added new reports pages and moved the older status and logs pages to the reports section
 
-release 0.9-3 - September 01 2007
+## release 0.9-3 - September 01 2007
 	- fixed bug 1763605 - user edit hat a wrong mysql syntax
 	- fixed bugs in configuration pages.
 	- added support for php's database abstraction layer instead of mysql API.
@@ -268,7 +361,7 @@ release 0.9-3 - September 01 2007
 	- moved database files to contrib/db and added database schemes for postregsql.
 
 
-release 0.9-2 - August 13 2007
+## release 0.9-2 - August 13 2007
 	- fixed bug 1763584 - in IE at javascript function randomPassword() and randomUsername()
 	- added  asc/desc sorting capabilities to tables in management, accounting and graphs
 	- added new maintenance page to use the 'radtest' program to check for user
@@ -286,7 +379,7 @@ release 0.9-2 - August 13 2007
 	  welcome), requested by ccesario.
 	
 	
-release 0.9-1 - July 29 2007
+## release 0.9-1 - July 29 2007
 	- added support for configurable table names of radius database throughout the code
 	- added better notifications of error messages when mysql queries die, 
 	  they are now shown with a red colored font so the errors are more obvious to see
@@ -295,7 +388,7 @@ release 0.9-1 - July 29 2007
 	- improved support for failure/sucess messages on forms
 	- added quick-link to delete hotspots from the hotspot listing page
 
-release 0.9 - July 2007
+## release 0.9 - July 2007
 	- this release is named after Erick Otto who took part of daloRADIUS
 	and passed away on 24th of June 2007, may he rest in peace.
 	- Major code clean-up, removing deprecated files, as well as removed jpgraph
@@ -325,7 +418,7 @@ release 0.9 - July 2007
 	
 
 
-release 0.8 - May 2007
+## release 0.8 - May 2007
 	- moved from using the Password attribute to the more widely accepted
 	User-Password attribute as well as keeping compatibility with Password attribute
 	- fixed mng-edit.php file to check if attribute exists on db and to
@@ -359,10 +452,10 @@ release 0.8 - May 2007
 	overall usage (this was confusing before but now it's fixed)
 
 
-release 0.7 - April 2007
+## release 0.7 - April 2007
 	- public release on sourceforge
 
-release 0.6 - April 2007
+## release 0.6 - April 2007
 	- added page-footer.php for easier modifications to the files.
 	  in the future more modularity is planned like this with the menus.
 	- improvements on the 'home' webpage, adding server and radius status
@@ -375,7 +468,7 @@ release 0.6 - April 2007
 	- fixed bug in graphs-overall_logins.php that didn't display the day
 	  of the week in the graph image and applied it to all other graphs.
 
-release 0.5 - April 2007
+## release 0.5 - April 2007
 	- added a whole lot of graphical reports to the Graphs section, among
 	  them are: Per User's Logins, Downloads and Uploads and an All-time
 	  Logins, Downloads and Uploads.
@@ -388,17 +481,17 @@ release 0.5 - April 2007
 	  checked when headers were read
 	- fixed bug in sql statement when displaying top users's statistics
 
-release 0.4 - March 2007
+## release 0.4 - March 2007
 	- fixed bug in generating the code snippet for googlemaps api.
 	- added GIS section to visualize hotspot locations with googlemaps api.
 
-release 0.3 - January 2007
+## release 0.3 - January 2007
 	- added more radius attributes to user management: Idle Timeout, Calling-Station-Id, WISPr-Redirection-URL, 
 	  WISPr-Bandwidth-Max-Up, WISPr-Bandwidth-Max-Down, WISPr-Session-Terminate-Time
 	- added javascript popup buttons to ease on date selection with a date applet
 	- added javascript functions to automatically generate random passwords and usernames
 
-release 0.2 - December 2006
+## release 0.2 - December 2006
 	- when adding users, check that the user doesn't already exist, if it does, deny addition to db.
 	- accounting menu has been broaden to provide an extenssive list of reports based on the radacct table
 	- management support has been added the Called-Station-Id attribute for users
@@ -406,7 +499,7 @@ release 0.2 - December 2006
 	- added javascript for alert message-box on errors
 	- added the ability to edit/del a user from reports listings
 
-release 0.1 - initial work
+## release 0.1 - initial work
 	- management support for a few radius attributes
 	- management support for hotspots (to distinguish users logging in from different hotspot access points)
 
