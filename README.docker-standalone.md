@@ -1,30 +1,107 @@
-# run daloradius as a standalone container
-## prerequisite
+# Docker usage
 
-1. mysql server and freeradius (in docker or on-premise) server that has been configured properly
-2. docker runtime
+The Compose setup in `docker-compose.yml` starts a complete local daloRADIUS stack:
 
-## how to run
+- `radius-mysql`: MariaDB database;
+- `radius`: FreeRADIUS;
+- `radius-web`: daloRADIUS users and operators web interfaces.
 
-1. run prebuilt image
-2. build the image first
+Use `Dockerfile-standalone` only when MariaDB and FreeRADIUS are already managed outside this repository.
 
-### preparing daloradius.conf.php
+## Full Compose stack
 
-you can edit sample config <https://github.com/lirantal/daloradius/blob/master/app/common/includes/daloradius.conf.php.sample> and then mount it in container or you can just run container, edit mounted config and re-run container
-
-## prebuilt image
+Create an environment file from the template:
 
 ```bash
-docker run --name daloradius-standalone -v /path/to/daloradius.conf.php:/var/www/html/daloradius/common/includes/daloradius.conf.php -p 80:80 -p 8000:8000 -d dormancygrace/daloradius
+cp .env.example .env
 ```
 
-## build image
+Edit `.env` and replace every `CHANGE_ME_...` value:
 
-```bash
-docker build -t daloradius-standalone -f Dockerfile-standalone
+```dotenv
+MYSQL_PASSWORD=CHANGE_ME_RADIUS_DB_PASSWORD
+MYSQL_ROOT_PASSWORD=CHANGE_ME_ROOT_DB_PASSWORD
+DEFAULT_CLIENT_SECRET=CHANGE_ME_RADIUS_SHARED_SECRET
 ```
 
+Optional values can be kept as-is for a local setup:
+
+```dotenv
+TZ=Europe/Vienna
+DALORADIUS_OPERATORS_BIND=127.0.0.1:8000
+FREERADIUS_SQL_TLS=disabled
+MAIL_SMTPADDR=127.0.0.1
+MAIL_PORT=25
+MAIL_FROM=root@daloradius.xdsl.by
+MAIL_AUTH=
+```
+
+Validate the Compose file and environment:
+
 ```bash
-docker run --name daloradius-standalone -v /path/to/daloradius.conf.php:/var/www/html/daloradius/common/includes/daloradius.conf.php -p 80:80 -p 8000:8000 -d daloradius-standalone
+docker compose config --quiet
+```
+
+Build and start the stack:
+
+```bash
+docker compose up -d --build
+```
+
+Check service state:
+
+```bash
+docker compose ps
+```
+
+Access the web interfaces:
+
+- users UI: `http://localhost/`
+- operators UI: `http://127.0.0.1:8000/`, unless `DALORADIUS_OPERATORS_BIND` is changed
+
+RADIUS authentication and accounting listen on host UDP ports `1812` and `1813`.
+
+MariaDB data remains in `./data/mysql`, FreeRADIUS init state remains in `./data/freeradius`, and daloRADIUS init state remains in `./data/daloradius`.
+
+## Logs
+
+Use Docker logs for container output:
+
+```bash
+docker compose logs -f radius-web radius radius-mysql
+```
+
+The FreeRADIUS log is shared with the web container through the `radius_logs` volume so the daloRADIUS operators UI can read `/var/log/freeradius/radius.log`.
+
+## Stop and reset
+
+Stop containers without deleting data:
+
+```bash
+docker compose down
+```
+
+Remove containers and local database/application state:
+
+```bash
+docker compose down
+rm -rf ./data
+```
+
+## Standalone web image
+
+Build the standalone web image:
+
+```bash
+docker build -t daloradius-standalone -f Dockerfile-standalone .
+```
+
+Create a `daloradius.conf.php` for your external database and RADIUS settings, then mount it into the container:
+
+```bash
+docker run --name daloradius-standalone \
+  -v /path/to/daloradius.conf.php:/var/www/html/daloradius/common/includes/daloradius.conf.php:ro \
+  -p 80:80 \
+  -p 127.0.0.1:8000:8000 \
+  -d daloradius-standalone
 ```
