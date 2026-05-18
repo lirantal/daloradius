@@ -89,7 +89,7 @@ services:
       - DEFAULT_FREERADIUS_SERVER=radius
       - MAIL_SMTPADDR=${MAIL_SMTPADDR:-127.0.0.1}
       - MAIL_PORT=${MAIL_PORT:-25}
-      - MAIL_FROM=${MAIL_FROM:-root@daloradius.xdsl.by}
+      - MAIL_FROM=${MAIL_FROM:-root@daloradius.example.com}
       - MAIL_AUTH=${MAIL_AUTH:-}
 
     volumes:
