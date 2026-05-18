@@ -29,6 +29,49 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/functions.php') !== false)
 }
 
 
+
+function quote_sql_identifier($identifier) {
+    if (!is_string($identifier) || !preg_match('/^[A-Za-z0-9_]+$/', $identifier)) {
+        return '';
+    }
+
+    return sprintf('`%s`', $identifier);
+}
+
+function get_table_column_names($dbSocket, $table_name, $fallback_columns=array()) {
+    $quoted_table_name = quote_sql_identifier($table_name);
+    if (empty($quoted_table_name)) {
+        return $fallback_columns;
+    }
+
+    $sql = sprintf('SHOW COLUMNS FROM %s', $quoted_table_name);
+    $columns = $dbSocket->getCol($sql);
+
+    if (!is_array($columns) || count($columns) == 0) {
+        return $fallback_columns;
+    }
+
+    $valid_columns = array();
+    foreach ($columns as $column) {
+        if (is_string($column) && preg_match('/^[A-Za-z0-9_]+$/', $column)) {
+            $valid_columns[] = $column;
+        }
+    }
+
+    return (count($valid_columns) > 0) ? $valid_columns : $fallback_columns;
+}
+
+function get_accounting_custom_query_options($dbSocket, $radacct_table, $fallback_all, $fallback_default) {
+    $all = get_table_column_names($dbSocket, $radacct_table, $fallback_all);
+    $default = array_values(array_intersect($fallback_default, $all));
+
+    if (count($default) == 0) {
+        $default = array_slice($all, 0, min(10, count($all)));
+    }
+
+    return array($all, $default);
+}
+
 // add invoice items contained in the $_POST array.
 // a single items is an associatime array starting with the string 'item'
 // and containing exactly 4 elements: plan, amount, tax and notes
