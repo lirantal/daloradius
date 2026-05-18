@@ -39,7 +39,7 @@ function escape_sed_replacement {
 }
 
 function sql_escape {
-	printf '%s' "$1" | sed "s/'/''/g"
+	printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e "s/'/''/g"
 }
 
 function mysql_radius {
