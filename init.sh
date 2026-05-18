@@ -132,4 +132,6 @@ else
 fi
 
 # Start Apache2 in the foreground
+cleanup_mysql_defaults
+trap - EXIT
 exec /usr/sbin/apachectl -DFOREGROUND -k start
