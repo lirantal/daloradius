@@ -4,11 +4,15 @@ services:
     image: mariadb:11.8
     container_name: radius-mysql
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
     environment:
       - MYSQL_DATABASE=radius
       - MYSQL_USER=radius
-      - MYSQL_PASSWORD=radiusdbpw
-      - MYSQL_ROOT_PASSWORD=radiusrootdbpw
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
     volumes:
       - "./data/mysql:/var/lib/mysql"
     healthcheck:
@@ -25,6 +29,10 @@ services:
       context: .
       dockerfile: Dockerfile-freeradius
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
     depends_on:
       radius-mysql:
         condition: service_healthy
@@ -32,16 +40,23 @@ services:
       - '1812:1812/udp'
       - '1813:1813/udp'
     environment:
+      - TZ=${TZ:-Europe/Vienna}
       - MYSQL_HOST=radius-mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=radius
       - MYSQL_USER=radius
-      - MYSQL_PASSWORD=radiusdbpw
-      # Optional settings
-      - DEFAULT_CLIENT_SECRET=testing123
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env}
+      - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
     volumes:
       - ./data/freeradius:/data
       - radius_logs:/var/log/freeradius
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'FreeRADIUS-Statistics-Type = 1' | radclient -q -r 1 -t 3 127.0.0.1:18121 status adminsecret >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     # Uncomment below to enable debug logging.
     #command: -X
 
@@ -50,27 +65,32 @@ services:
     build: .
     container_name: radius-web
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
     depends_on:
       radius-mysql:
         condition: service_healthy
       radius:
-        condition: service_started
+        condition: service_healthy
     ports:
       - '80:80'
-      - '8000:8000'
+      - '${DALORADIUS_OPERATORS_BIND:-127.0.0.1:8000}:8000'
     environment:
+      - TZ=${TZ:-Europe/Vienna}
       - MYSQL_HOST=radius-mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=radius
       - MYSQL_USER=radius
-      - MYSQL_PASSWORD=radiusdbpw
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
       # Optional Settings:
-      - DEFAULT_CLIENT_SECRET=testing123
+      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env}
       - DEFAULT_FREERADIUS_SERVER=radius
-      - MAIL_SMTPADDR=127.0.0.1
-      - MAIL_PORT=25
-      - MAIL_FROM=root@daloradius.xdsl.by
-      - MAIL_AUTH=
+      - MAIL_SMTPADDR=${MAIL_SMTPADDR:-127.0.0.1}
+      - MAIL_PORT=${MAIL_PORT:-25}
+      - MAIL_FROM=${MAIL_FROM:-root@daloradius.xdsl.by}
+      - MAIL_AUTH=${MAIL_AUTH:-}
 
     volumes:
       - ./data/daloradius:/data
