@@ -59,6 +59,15 @@ Access the web interfaces:
 - users UI: `http://localhost/`
 - operators UI: `http://127.0.0.1:8000/`, unless `DALORADIUS_OPERATORS_BIND` is changed
 
+The initial operator account seeded by the default schema is:
+
+```text
+username: administrator
+password: radius
+```
+
+Use this account only for the first login, then change the operator password from the operators UI.
+
 RADIUS authentication and accounting listen on host UDP ports `1812` and `1813`.
 
 MariaDB data remains in `./data/mysql`, FreeRADIUS init state remains in `./data/freeradius`, and daloRADIUS init state remains in `./data/daloradius`.
