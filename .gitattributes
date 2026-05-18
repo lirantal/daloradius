@@ -1,0 +1,8 @@
+.dockerignore text eol=lf
+.env.example text eol=lf
+Dockerfile text eol=lf
+Dockerfile-* text eol=lf
+docker-compose.yml text eol=lf
+init.sh text eol=lf
+init-freeradius.sh text eol=lf
+contrib/docker/*.conf text eol=lf
