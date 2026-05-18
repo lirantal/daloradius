@@ -3,6 +3,9 @@
 *.db
 invoice_preview.html
 .DS_Store
+.env
+.env.*
+!.env.example
 data/
 internal_data/
 
