@@ -36,6 +36,15 @@
     $logAction = "";
     $logDebugSQL = "";
 
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+
+    list($acct_custom_query_options_all, $acct_custom_query_options_default) = get_accounting_custom_query_options(
+        $dbSocket,
+        $configValues['CONFIG_DB_TBL_RADACCT'],
+        $acct_custom_query_options_all,
+        $acct_custom_query_options_default
+    );
+
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
@@ -97,8 +106,6 @@
     print_title_and_help($title, $help);
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
     // preparing the custom query
 
     $sql_WHERE = [];
@@ -130,10 +137,10 @@
             $where_value = "%" . $where_value . "%";
         }
 
-        $sql_WHERE[] = sprintf("%s %s '%s'", $where_field, $op, $where_value);
+        $sql_WHERE[] = sprintf("%s %s '%s'", quote_sql_identifier($where_field), $op, $where_value);
 
         $partial_query_string_pieces[] = sprintf("where_field=%s", $where_field);
-        $partial_query_string_pieces[] = sprintf("operator=%s", $where_operator);
+        $partial_query_string_pieces[] = sprintf("where_operator=%s", $where_operator);
         $partial_query_string_pieces[] = sprintf("where_value=%s", $where_value_enc);
     }
 
@@ -159,7 +166,7 @@
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
 
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", quote_sql_identifier($orderBy), $orderType, $offset, $rowsPerPage);
 
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
