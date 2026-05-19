@@ -1,0 +1,16 @@
+.git
+.github
+.idea
+.DS_Store
+.env
+.env.*
+*.db
+*.log
+*.sql
+*.sql.gz
+data/
+internal_data/
+var/log/
+var/backup/
+app/common/includes/daloradius.conf.php
+app/common/library/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/HTML/
