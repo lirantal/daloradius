@@ -122,6 +122,36 @@ function tables_exist {
     done
 }
 
+function ensure_operator_password_column {
+    local column_length
+
+    if ! table_exists "operators"; then
+        return
+    fi
+
+    column_length=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
+SELECT CHARACTER_MAXIMUM_LENGTH
+FROM information_schema.columns
+WHERE table_schema = DATABASE()
+  AND table_name = 'operators'
+  AND column_name = 'password';
+EOSQL
+)
+
+    case "$column_length" in
+        ""|*[!0-9]*)
+            return
+            ;;
+    esac
+
+    if [ "$column_length" -lt 95 ]; then
+        echo "Updating operators.password column length for password hashes."
+        mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
+ALTER TABLE operators MODIFY password VARCHAR(95) NOT NULL;
+EOSQL
+    fi
+}
+
 function wait_for_mysql {
     echo -n "Waiting for mysql ($MYSQL_HOST)..."
     while ! mysqladmin --defaults-extra-file="$MYSQL_DEFAULTS_FILE" ping --silent; do
@@ -159,6 +189,8 @@ else
     fi
     date > "$DB_LOCK"
 fi
+
+ensure_operator_password_column
 
 # Start Apache2 in the foreground
 cleanup_mysql_defaults
