@@ -97,6 +97,31 @@ function init_database {
     echo "Database initialization for daloRADIUS completed."
 }
 
+function table_exists {
+    local table_name="$1"
+    local escaped_table_name
+    local count
+
+    escaped_table_name=$(printf '%s' "$table_name" | sed -e "s/'/''/g")
+    count=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<EOSQL
+SELECT COUNT(*)
+FROM information_schema.tables
+WHERE table_schema = DATABASE()
+  AND table_name = '$escaped_table_name';
+EOSQL
+)
+
+    test "$count" -gt 0
+}
+
+function tables_exist {
+    local table_name
+
+    for table_name in "$@"; do
+        table_exists "$table_name" || return 1
+    done
+}
+
 function wait_for_mysql {
     echo -n "Waiting for mysql ($MYSQL_HOST)..."
     while ! mysqladmin --defaults-extra-file="$MYSQL_DEFAULTS_FILE" ping --silent; do
@@ -127,7 +152,11 @@ DB_LOCK=/data/.db_init_done
 if test -f "$DB_LOCK"; then
     echo "Database lock file exists, skipping initial setup of mysql database."
 else
-    init_database
+    if tables_exist "operators" "operators_acl" "operators_acl_files"; then
+        echo "Existing daloRADIUS database schema detected, skipping initial setup of mysql database."
+    else
+        init_database
+    fi
     date > "$DB_LOCK"
 fi
 

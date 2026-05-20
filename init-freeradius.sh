@@ -46,6 +46,31 @@ function mysql_radius {
 	mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" "$@"
 }
 
+function table_exists {
+	local table_name="$1"
+	local escaped_table_name
+	local count
+
+	escaped_table_name=$(printf '%s' "$table_name" | sed -e "s/'/''/g")
+	count=$(mysql_radius --batch --skip-column-names <<EOSQL
+SELECT COUNT(*)
+FROM information_schema.tables
+WHERE table_schema = DATABASE()
+  AND table_name = '$escaped_table_name';
+EOSQL
+)
+
+	test "$count" -gt 0
+}
+
+function tables_exist {
+	local table_name
+
+	for table_name in "$@"; do
+		table_exists "$table_name" || return 1
+	done
+}
+
 function sql_config_set {
 	local key="$1"
 	local value
@@ -199,12 +224,7 @@ CREATE TABLE IF NOT EXISTS `radhuntgroup` (
 EOSQL
 }
 
-function init_database {
-	mysql_radius < "$RADIUS_PATH/mods-config/sql/main/mysql/schema.sql"
-	mysql_radius < "$RADIUS_PATH/mods-config/sql/ippool/mysql/schema.sql"
-	ensure_daloradius_schema
-
-	# Insert a client for the current subnet (to allow daloradius to perform checks)
+function ensure_docker_client {
 	container_ip_address=$(ifconfig eth0 | awk '/inet /{ print $2; exit }')
 	container_netmask=$(ifconfig eth0 | awk '/netmask/{ print $4; exit }')
 	container_cidr=$(ipcalc "$container_ip_address" "$container_netmask" | awk '/Network/{ print $2; exit }')
@@ -212,11 +232,19 @@ function init_database {
 	container_cidr_sql=$(sql_escape "$container_cidr")
 	client_secret_sql=$(sql_escape "$client_secret")
 
-	echo "Adding client for $container_cidr"
+	echo "Ensuring client for $container_cidr"
 	mysql_radius <<EOSQL
 INSERT INTO nas (nasname,shortname,type,ports,secret,server,community,description)
-VALUES ('$container_cidr_sql','DOCKER NET','other',0,'$client_secret_sql',NULL,'','');
+SELECT '$container_cidr_sql','DOCKER NET','other',0,'$client_secret_sql',NULL,'',''
+WHERE NOT EXISTS (SELECT 1 FROM nas WHERE nasname = '$container_cidr_sql');
 EOSQL
+}
+
+function init_database {
+	mysql_radius < "$RADIUS_PATH/mods-config/sql/main/mysql/schema.sql"
+	mysql_radius < "$RADIUS_PATH/mods-config/sql/ippool/mysql/schema.sql"
+	ensure_daloradius_schema
+	ensure_docker_client
 
 	echo "Database initialization for freeradius completed."
 }
@@ -265,8 +293,15 @@ DB_LOCK=/data/.db_init_done
 if test -f "$DB_LOCK"; then
 	echo "Database lock file exists, skipping initial setup of mysql database."
 	ensure_daloradius_schema
+	ensure_docker_client
 else
-	init_database
+	if tables_exist "radcheck" "radacct" "nas"; then
+		echo "Existing FreeRADIUS database schema detected, skipping initial setup of mysql database."
+		ensure_daloradius_schema
+		ensure_docker_client
+	else
+		init_database
+	fi
 	date > "$DB_LOCK"
 fi
 
