@@ -15,12 +15,13 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
     volumes:
       - "./data/mysql:/var/lib/mysql"
+      - "./var/backup:/docker-entrypoint-initdb.d:ro"
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 30s
+      start_period: ${MYSQL_HEALTH_START_PERIOD:-10m}
 
   radius:
     image: lirantal/dalofreeradius

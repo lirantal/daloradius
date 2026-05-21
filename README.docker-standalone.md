@@ -29,6 +29,7 @@ Optional values can be kept as-is for a local setup:
 ```dotenv
 TZ=Europe/Vienna
 DALORADIUS_OPERATORS_BIND=127.0.0.1:8000
+MYSQL_HEALTH_START_PERIOD=10m
 FREERADIUS_SQL_TLS=disabled
 MAIL_SMTPADDR=127.0.0.1
 MAIL_PORT=25
@@ -71,6 +72,30 @@ Use this account only for the first login, then change the operator password fro
 RADIUS authentication and accounting listen on host UDP ports `1812` and `1813`.
 
 MariaDB data remains in `./data/mysql`, FreeRADIUS init state remains in `./data/freeradius`, and daloRADIUS init state remains in `./data/daloradius`.
+
+## Import an existing database backup
+
+To initialize a new Docker stack from an existing MariaDB dump, copy one or more `.sql` or `.sql.gz` files into `./var/backup` before the first startup:
+
+```bash
+mkdir -p var/backup
+cp /path/to/backup.sql.gz var/backup/
+docker compose up -d --build
+```
+
+The `radius-mysql` container mounts `./var/backup` as `/docker-entrypoint-initdb.d`, so MariaDB imports those files automatically when `./data/mysql` is empty. After the import, the daloRADIUS and FreeRADIUS containers detect the existing schema and skip their default schema imports.
+
+Large dumps can take several minutes to import. `MYSQL_HEALTH_START_PERIOD` controls how long Docker ignores failing MariaDB healthchecks during first startup; increase it in `.env` if your hardware or dump size requires more time.
+
+This automatic import only runs during MariaDB first initialization. To replace an already initialized Docker database, stop the stack, back up any data you need to keep, remove `./data/mysql`, place the desired dump in `./var/backup`, and start the stack again:
+
+```bash
+docker compose down
+rm -rf ./data/mysql
+mkdir -p var/backup
+cp /path/to/backup.sql.gz var/backup/
+docker compose up -d --build
+```
 
 ## Logs
 
