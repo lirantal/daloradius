@@ -48,7 +48,7 @@
 	}
 	
 	
-	function getInvoiceDetails($invoice_id = NULL, $username) {
+	function getInvoiceDetails($invoice_id, $username) {
 		
 		require(dirname(__FILE__)."/../../../common/includes/db_open.php");
 		require_once(dirname(__FILE__)."/../../lang/main.php");
