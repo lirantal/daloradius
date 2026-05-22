@@ -1,6 +1,6 @@
 # ChangeLog
 
-## release 2.? - WIP (changes since daloRADIUS 2.2 beta)
+## release 2.3 - 22 May 2026
 
 ### General fixes and issue cleanup
 
