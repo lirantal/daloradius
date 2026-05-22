@@ -48,22 +48,27 @@
 	}
 	
 	
-	function getInvoiceDetails($invoice_id = NULL, $username) {
+	function getInvoiceDetails($invoice_id, $username) {
 		
 		require(dirname(__FILE__)."/../../../common/includes/db_open.php");
 		require_once(dirname(__FILE__)."/../../lang/main.php");
 		
-		global $configValues;
+		global $configValues, $logDebugSQL;
+
+		if (!isset($logDebugSQL))
+			$logDebugSQL = "";
 		
 
 		$sql = "SELECT id, contactperson, city, state, username FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 		" WHERE username = '".$dbSocket->escapeSimple($username)."'";
 		$res = $dbSocket->query($sql);
 		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-		$user_id = $row['id'];
+		$user_id = ($row && array_key_exists('id', $row)) ? $row['id'] : null;
 		
-		if (!$user_id)
+		if (!$user_id) {
+			require(dirname(__FILE__)."/../../../common/includes/db_close.php");
 			return false;
+		}
 		
 		if ($invoice_id == NULL || empty($invoice_id))
 			exit;
