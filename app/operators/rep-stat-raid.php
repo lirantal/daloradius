@@ -81,7 +81,7 @@
                     $table = array( 'title' => $mddevice, 'rows' => array() );
 
                     foreach($output as $line) {
-                        list($var, $val) = split(":", $line);
+                        list($var, $val) = array_pad(explode(":", $line, 2), 2, "");
                         $var = htmlspecialchars($var, ENT_QUOTES, 'UTF-8');
                         $val = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
 

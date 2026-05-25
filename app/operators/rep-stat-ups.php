@@ -42,19 +42,17 @@
 
     print_title_and_help($title, $help);
 
-    exec("which apcaccess || command -v apcaccess", $output, $retStatus);
+    exec("apcaccess 2>/dev/null", $output, $retStatus);
 
     $failureMsg = "";
 
-    $sep = ":";
     if ($retStatus !== 0) {
-        $sep = "\n";
         $failureMsg = '<strong>Error</strong> accessing UPS device information';
     } else {
 
         $table = array( 'title' => 'General Information', 'rows' => array() );
         foreach ($output as $line) {
-            list($var, $val) = split($sep, $line);
+            list($var, $val) = array_pad(explode(":", $line, 2), 2, "");
             $var = htmlspecialchars($var, ENT_QUOTES, 'UTF-8');
             $val = htmlspecialchars($val, ENT_QUOTES, 'UTF-8');
 
