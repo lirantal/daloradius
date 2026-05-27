@@ -67,6 +67,10 @@ svg {
     margin-bottom: 0;
 }
 
+.table-responsive:has(.dropdown-menu.show) {
+    padding-bottom: 10rem;
+}
+
 .table th,
 .table td {
     vertical-align: middle;
@@ -108,6 +112,25 @@ svg {
 
 .nav-tabs .nav-link {
     white-space: nowrap;
+}
+
+.accordion-body {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.accordion-body .table {
+    min-width: 100%;
+}
+
+.accordion-body .table th,
+.accordion-body .table td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.accordion-body .table th {
+    min-width: 8rem;
 }
 
 .app-footer .d-flex {
