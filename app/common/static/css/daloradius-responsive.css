@@ -49,22 +49,48 @@ svg {
     min-width: 0;
 }
 
+.app-content,
+.alert,
+.toast,
+.modal-body,
+.dropdown-menu {
+    overflow-wrap: anywhere;
+}
+
 .table-responsive {
     width: 100%;
 }
 
 .table-responsive > .table {
+    width: max-content;
+    min-width: 100%;
     margin-bottom: 0;
 }
 
 .table th,
 .table td {
     vertical-align: middle;
+    white-space: nowrap;
+}
+
+.table tfoot td {
+    white-space: normal;
 }
 
 .table-controls .btn-group,
 .table-controls .btn {
     flex-shrink: 0;
+}
+
+.table-controls .pagination {
+    flex-wrap: wrap;
+    gap: 0.125rem;
+    margin: 0;
+}
+
+.table-controls .page-link {
+    min-width: 2.25rem;
+    text-align: center;
 }
 
 .form-control,
@@ -86,6 +112,11 @@ svg {
 
 .app-footer .d-flex {
     justify-content: center;
+}
+
+.app-footer-text {
+    margin: 0;
+    text-align: center;
 }
 
 @media (min-width: 992px) {
@@ -129,6 +160,13 @@ svg {
 
     .table-controls > [class*="col-"] {
         justify-content: flex-start !important;
+    }
+
+    .table-controls .btn,
+    .table-controls .btn-group,
+    .table-controls .pagination,
+    .table-controls nav {
+        max-width: 100%;
     }
 
     .app-footer .d-flex {
