@@ -114,22 +114,24 @@ svg {
     white-space: nowrap;
 }
 
-.accordion-body {
+.accordion-table-wrapper {
+    width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-.accordion-body .table {
+.accordion-table-wrapper .table {
     min-width: 100%;
+    margin-bottom: 1rem;
 }
 
-.accordion-body .table th,
-.accordion-body .table td {
+.accordion-table-wrapper .table th,
+.accordion-table-wrapper .table td {
     white-space: normal;
     overflow-wrap: anywhere;
 }
 
-.accordion-body .table th {
+.accordion-table-wrapper .table th {
     min-width: 8rem;
 }
 
