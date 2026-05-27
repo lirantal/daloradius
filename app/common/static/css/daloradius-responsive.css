@@ -1,0 +1,166 @@
+html,
+body {
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+img,
+svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.app-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header,
+.app-subnav {
+    min-width: 0;
+}
+
+.app-brand img {
+    width: 135px;
+    height: auto;
+}
+
+.app-primary-nav,
+.app-subnav .nav {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.app-primary-nav .nav-link,
+.app-subnav .nav-link {
+    white-space: nowrap;
+}
+
+.app-shell {
+    flex: 1 0 auto;
+}
+
+.app-sidebar {
+    min-width: 0;
+}
+
+.app-content {
+    min-width: 0;
+}
+
+.table-responsive {
+    width: 100%;
+}
+
+.table-responsive > .table {
+    margin-bottom: 0;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+.table-controls .btn-group,
+.table-controls .btn {
+    flex-shrink: 0;
+}
+
+.form-control,
+.form-select,
+.btn {
+    max-width: 100%;
+}
+
+.nav-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nav-tabs .nav-link {
+    white-space: nowrap;
+}
+
+.app-footer .d-flex {
+    justify-content: center;
+}
+
+@media (min-width: 992px) {
+    .w-lg-auto {
+        width: auto !important;
+    }
+
+    .app-sidebar {
+        position: sticky;
+        top: 0;
+        min-height: 100vh;
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .app-header .dropdown .dropdown-menu {
+        max-width: calc(100vw - 1rem);
+    }
+
+    .app-search {
+        margin-top: 0.25rem;
+    }
+
+    .app-content {
+        padding-top: 1rem !important;
+    }
+
+    .offcanvas-lg.app-sidebar {
+        width: min(88vw, 22rem);
+    }
+
+    .offcanvas-lg .offcanvas-body {
+        overflow-y: auto;
+    }
+
+    .table-controls {
+        text-align: start;
+    }
+
+    .table-controls > [class*="col-"] {
+        justify-content: flex-start !important;
+    }
+
+    .app-footer .d-flex {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .app-footer .ms-3 {
+        margin-left: 0 !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .app-brand img {
+        width: 118px;
+    }
+
+    .app-primary-nav,
+    .app-subnav .nav {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .app-primary-nav .nav-link,
+    .app-subnav .nav-link {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .table {
+        font-size: 0.875rem;
+    }
+}

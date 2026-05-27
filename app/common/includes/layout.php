@@ -36,6 +36,7 @@ function fix_placeholder_text($text) {
 const DEFAULT_COMMON_PROLOGUE_CSS = array(
     "static/css/bootstrap.min.css",
     "static/css/icons/bootstrap-icons.min.css",
+    "static/css/daloradius-responsive.css",
 );
 
 const DEFAULT_COMMON_PROLOGUE_JS = array(
@@ -105,7 +106,7 @@ EOF;
 </head>
 
 <body>
-    <div class="row">
+    <div class="app-page">
 
 EOF;
     // printing nav bar
@@ -120,9 +121,16 @@ EOF;
     // opening main wrapper container
     echo <<<EOF
 
-        <div class="container">
-            <div class="row m-0 p-0">
-                <div id="sidebar" class="min-vh-100 col-sm-2 p-sm-2 col-lg-2 p-lg-3 bg-light text-dark border-end">
+        <div class="container-fluid app-shell">
+            <div class="row g-0">
+                <aside id="sidebarOffcanvas" class="offcanvas-lg offcanvas-start app-sidebar col-lg-2 bg-light text-dark border-end"
+                       tabindex="-1" aria-labelledby="sidebarOffcanvasLabel">
+                    <div class="offcanvas-header d-lg-none">
+                        <h2 class="offcanvas-title fs-5" id="sidebarOffcanvasLabel">Menu</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarOffcanvas"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body d-block p-2 p-lg-3">
 EOF;
 
     // printing sidebar
@@ -131,9 +139,10 @@ EOF;
     // closing sidebar col
     // opening main content col
     echo <<<EOF
-                </div><!-- .min-vh-100 col-sm-2 p-sm-2 col-lg-2 p-lg-3 bg-light text-dark border-end -->
+                    </div><!-- .offcanvas-body -->
+                </aside><!-- #sidebarOffcanvas -->
 
-                <div class="col-sm-10 p-sm-2 col-lg-10 p-lg-3 bg-white text-dark">
+                <main class="app-content col-12 col-lg-10 p-2 p-lg-3 bg-white text-dark">
 
 EOF;
 }
@@ -147,18 +156,18 @@ function print_footer_and_html_epilogue($inline_extra_js="", $extra_js=array(), 
     // closing main content col and
     // main wrapper container
     echo <<<EOF
-                </div><!-- .col-sm-10 p-sm-2 col-lg-10 p-lg-3 bg-white text-dark -->
+                </main><!-- .app-content -->
             </div><!-- .row -->
-        </div><!-- .container -->
+        </div><!-- .container-fluid -->
 
 EOF;
 
     // printing footer
     echo <<<EOF
-        <div class="p-4 text-center text-bg-light border-top border-bottom">
+        <div class="app-footer p-3 p-lg-4 text-center text-bg-light border-top border-bottom">
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 text-bg-white">
-                    <img src="static/images/daloradius_small.png">
+                    <img src="static/images/daloradius_small.png" alt="daloRADIUS">
                 </div>
                 <div class="flex-grow-1 ms-3">
 EOF;
@@ -449,9 +458,9 @@ function print_checkbox($descriptor) {
 // - center => contains the page numbering controls
 // - end => contains additional controls (CSV export)
 function print_table_prologue($descriptors) {
-    echo '<div class="row p-0 my-3">';
+    echo '<div class="row g-2 p-0 my-3 align-items-center table-controls">';
 
-    echo '<div class="col-4 d-flex justify-content-start align-items-center">';
+    echo '<div class="col-12 col-lg-4 d-flex justify-content-start align-items-center flex-wrap gap-1">';
     if (isset($descriptors['start']) && is_array($descriptors['start'])) {
         
         $start = $descriptors['start'];
@@ -467,7 +476,7 @@ function print_table_prologue($descriptors) {
     }
     echo '</div>';
 
-    echo '<div class="col-4 d-flex justify-content-center align-items-center">';
+    echo '<div class="col-12 col-lg-4 d-flex justify-content-center align-items-center flex-wrap gap-1">';
     if (isset($descriptors['center']) && is_array($descriptors['center'])) {
         $center = $descriptors['center'];
 
@@ -477,7 +486,7 @@ function print_table_prologue($descriptors) {
     }
     echo '</div>';
 
-    echo '<div class="col-4 d-flex justify-content-end align-items-center">';
+    echo '<div class="col-12 col-lg-4 d-flex justify-content-start justify-content-lg-end align-items-center flex-wrap gap-1">';
     if (isset($descriptors['end']) && is_array($descriptors['end'])) {
         print_additional_controls($descriptors['end']);
     }
@@ -490,8 +499,9 @@ function print_table_prologue($descriptors) {
 function print_simple_table($table) {
     if (isset($table['title']) && isset($table['rows']) && count($table['rows']) > 0) {
         echo '<div class="container mb-4">';
-        echo '<div class="col-8 offset-2">';
+        echo '<div class="col-12 col-lg-8 offset-lg-2">';
         printf('<h5>%s</h5>', $table['title']);
+        echo '<div class="table-responsive">';
         echo '<table class="table table-striped">';
 
         foreach ($table['rows'] as $row) {
@@ -504,6 +514,7 @@ function print_simple_table($table) {
         }
 
         echo '</table>';
+        echo '</div>';
 
         echo '</div></div>';
 
@@ -531,6 +542,7 @@ function print_table_top($descriptor=array()) {
 
     echo <<<EOF
 
+<div class="table-responsive mb-3">
 <table class="{$class}">
     <thead>
         <tr>
@@ -586,6 +598,7 @@ function print_table_bottom($descriptor=array()) {
     }
 
     echo '</table>' . "\n";
+    echo '</div>' . "\n";
 
     if (isset($descriptor['form'])) {
         $csrf = array(
