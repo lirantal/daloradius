@@ -171,6 +171,7 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
 - **Create New Operator**
 - **Edit Operator**
 - **Delete Operator**
+- **Two-Factor Authentication**: Operators can enable TOTP-based MFA for their own account. Administrators can reset an operator's MFA from the UI or from the server command line; see [Operator two-factor authentication recovery](doc/setup/operator-mfa.md).
 
 
 
