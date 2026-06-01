@@ -62,6 +62,14 @@ function close_accordion_item() {
 EOF;
 }
 
+function open_accordion_table_wrapper() {
+    echo '<div class="accordion-table-wrapper">';
+}
+
+function close_accordion_table_wrapper() {
+    echo '</div>';
+}
+
 /*
  *********************************************************************************************************
  * userSubscriptionAnalysis
@@ -293,6 +301,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
         $d = array( 'label' => 'Subscription Analysis', 'parent_id' => 'accordion-parent', 'open' => false );
         open_accordion_item($d);
 
+        open_accordion_table_wrapper();
         echo '<table class="table table-striped">'
            . '<tr>';
 
@@ -322,8 +331,10 @@ function userSubscriptionAnalysis($username, $drawTable) {
         }
 
         echo '</table>';
+        close_accordion_table_wrapper();
 
         // print other table
+        open_accordion_table_wrapper();
         echo '<table class="table table-striped">';
 
         foreach ($data2 as $label => $value) {
@@ -333,6 +344,7 @@ function userSubscriptionAnalysis($username, $drawTable) {
         }
 
         echo '</table>';
+        close_accordion_table_wrapper();
 
         close_accordion_item();
     }
@@ -429,6 +441,7 @@ function userPlanInformation($username, $drawTable) {
         $d = array( 'label' => 'Plan Information', 'parent_id' => 'accordion-parent', 'open' => false );
         open_accordion_item($d);
 
+        open_accordion_table_wrapper();
         echo '<table class="table table-striped">'
            . '<tr>';
 
@@ -452,8 +465,10 @@ function userPlanInformation($username, $drawTable) {
         }
 
         echo '</table>';
+        close_accordion_table_wrapper();
 
         // print other table
+        open_accordion_table_wrapper();
         echo '<table class="table table-striped">';
 
         foreach ($data2 as $field => $arr) {
@@ -464,6 +479,7 @@ function userPlanInformation($username, $drawTable) {
         }
 
         echo '</table>';
+        close_accordion_table_wrapper();
 
         close_accordion_item();
     }
@@ -540,6 +556,7 @@ function userConnectionStatus($username, $drawTable) {
         $d = array( 'label' => 'Session Information', 'parent_id' => 'accordion-parent', 'open' => true );
         open_accordion_item($d);
 
+        open_accordion_table_wrapper();
         echo '<table class="table table-striped">';
 
         foreach ($data as $field => $arr) {
@@ -550,6 +567,7 @@ function userConnectionStatus($username, $drawTable) {
         }
 
         echo '</table>';
+        close_accordion_table_wrapper();
 
         close_accordion_item();
     }

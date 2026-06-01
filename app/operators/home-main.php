@@ -71,13 +71,19 @@
     }
 
     function print_dashboard_table_head($headers) {
-        echo '<table class="table table-hover table-striped"><tr>';
+        echo '<div class="table-responsive dashboard-table-wrapper mb-3">';
+        echo '<table class="table table-hover table-striped dashboard-table"><tr>';
         
         foreach ($headers as $header) {
             printf('<th>%s</th>', $header);
         }
 
         echo '</tr>';
+    }
+
+    function print_dashboard_table_bottom() {
+        echo '</table>';
+        echo '</div>';
     }
 
     function print_dashboard_table_row($items) {
@@ -180,7 +186,7 @@ HTML;
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
 
-    echo '<div class="col-sm-12 col-md-6 m-0 px-3">';
+    echo '<div class="col-12 col-xl-6 m-0 px-3">';
     $title = t('button', 'LastConnectionAttempts');
     print_title($title, "rep-lastconnect.php", "bi-box-arrow-up-right");
 
@@ -201,7 +207,7 @@ HTML;
             print_dashboard_table_row(array($user, $reply, $datetime));
         }
 
-        echo '</table>';
+        print_dashboard_table_bottom();
     
     } else {
         print_dashboard_info_message('no data to show');
@@ -215,7 +221,7 @@ HTML;
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
 
-    echo '<div class="col-sm-12 col-md-6 m-0 px-3">';
+    echo '<div class="col-12 col-xl-6 m-0 px-3">';
     print_title('Currently online', "rep-online.php?orderBy=acctstarttime&orderType=desc", "bi-box-arrow-up-right");
 
     if ($numrows > 0) {
@@ -230,7 +236,7 @@ HTML;
             print_dashboard_table_row($row);
         }
 
-        echo '</table>';
+        print_dashboard_table_bottom();
     
     } else {
         print_dashboard_info_message('no data to show');
@@ -280,7 +286,7 @@ HTML;
             print_dashboard_table_row(array($username, $session_time, $uploaded_bytes, $downloaded_bytes));
         }
 
-        echo '</table>';
+        print_dashboard_table_bottom();
     
     } else {
         print_dashboard_info_message('no data to show');
