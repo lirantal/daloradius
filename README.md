@@ -173,6 +173,10 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
 - **Delete Operator**
 - **Two-Factor Authentication**: Operators can enable TOTP-based MFA for their own account. Administrators can reset an operator's MFA from the UI or from the server command line; see [Operator two-factor authentication recovery](doc/setup/operator-mfa.md).
 
+### Database migrations
+
+Fresh installations use the schema in `contrib/db/mariadb-daloradius.sql`. When upgrading an existing daloRADIUS installation, check `contrib/db/migrations/` and apply the relevant SQL migrations to your database before using newly added features.
+
 
 
 # Credits

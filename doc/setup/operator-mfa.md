@@ -27,6 +27,27 @@ $configValues['CONFIG_DB_TBL_DALOOPERATORS'] = 'operators';
 
 If your installation uses different values, replace the example database name and table name in the commands below.
 
+## Upgrading an existing installation
+
+Fresh installations already include the operator MFA schema in `contrib/db/mariadb-daloradius.sql`. Existing installations must apply the database migration before operators enable MFA or use the MFA recovery page.
+
+Back up the database first, then run the migration script from the daloRADIUS source tree.
+
+For a standard MariaDB/MySQL installation:
+
+```bash
+mariadb -u raduser -p raddb < contrib/db/migrations/2026-06-operator-totp-mfa.sql
+```
+
+For a Docker Compose installation, run this from the directory that contains `docker-compose.yml`:
+
+```bash
+docker compose exec -T radius-mysql sh -lc 'mariadb -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' \
+  < contrib/db/migrations/2026-06-operator-totp-mfa.sql
+```
+
+The migration is idempotent: it adds the missing MFA columns and registers the MFA page in the operators ACL metadata if they are not already present.
+
 ## Standard MariaDB/MySQL installation
 
 In the examples below, replace `administrator` with the operator username you want to unlock.

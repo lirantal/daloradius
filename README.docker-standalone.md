@@ -73,6 +73,18 @@ RADIUS authentication and accounting listen on host UDP ports `1812` and `1813`.
 
 MariaDB data remains in `./data/mysql`, FreeRADIUS init state remains in `./data/freeradius`, and daloRADIUS init state remains in `./data/daloradius`.
 
+
+## Database migrations for upgrades
+
+Fresh Docker deployments initialize the database from the bundled schema. When upgrading an existing Docker deployment, check `contrib/db/migrations/` in the updated source tree and apply the relevant SQL migrations before using newly added features.
+
+For example, to apply the operator MFA migration from the directory that contains `docker-compose.yml`:
+
+```bash
+docker compose exec -T radius-mysql sh -lc 'mariadb -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' \
+  < contrib/db/migrations/2026-06-operator-totp-mfa.sql
+```
+
 ## Import an existing database backup
 
 To initialize a new Docker stack from an existing MariaDB dump, copy one or more `.sql` or `.sql.gz` files into `./var/backup` before the first startup:
