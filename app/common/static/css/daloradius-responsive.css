@@ -41,6 +41,10 @@ svg {
     flex: 1 0 auto;
 }
 
+.app-search {
+    min-width: 0;
+}
+
 .app-sidebar {
     min-width: 0;
 }
@@ -149,12 +153,55 @@ svg {
         width: auto !important;
     }
 
+    .app-header .container-fluid > .d-flex {
+        flex-wrap: nowrap !important;
+    }
+
+    .app-brand,
+    .app-header .dropdown {
+        flex: 0 0 auto;
+    }
+
+    .app-primary-nav {
+        flex: 1 1 auto;
+        flex-wrap: nowrap !important;
+        min-width: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .app-search {
+        flex: 0 1 15rem;
+        width: auto;
+    }
+
     .app-sidebar {
         position: sticky;
         top: 0;
         min-height: 100vh;
         max-height: 100vh;
         overflow-y: auto;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1108px) {
+    .app-brand img {
+        width: 118px;
+    }
+
+    .app-primary-nav {
+        margin-left: 0.25rem !important;
+        margin-right: 0.25rem !important;
+    }
+
+    .app-primary-nav .nav-link {
+        padding-left: 0.375rem !important;
+        padding-right: 0.375rem !important;
+        font-size: 0.875rem;
+    }
+
+    .app-search {
+        flex-basis: 12rem;
     }
 }
 
