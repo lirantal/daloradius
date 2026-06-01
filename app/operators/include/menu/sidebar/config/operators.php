@@ -40,6 +40,9 @@ $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewOperator'), 'href' =>'config-operators-new.php',
                          'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
+$descriptors1[] = array( 'type' => 'link', 'label' => 'Two-factor authentication', 'href' =>'config-operator-2fa.php',
+                         'icon' => 'shield-lock', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), );
+
 if (count($menu_datalist) > 0) {
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListOperators'), 'href' => 'config-operators-list.php',
                              'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
