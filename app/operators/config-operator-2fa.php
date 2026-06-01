@@ -83,6 +83,7 @@ include('../common/includes/db_close.php');
 $totp_enabled = is_array($row) && intval($row['totp_enabled']) === 1;
 $pending_secret = $_SESSION['operator_totp_pending_secret'] ?? '';
 $pending_uri = !empty($pending_secret) ? dalo_totp_generate_uri($pending_secret, $operator) : '';
+$csrf_token = dalo_csrf_token();
 
 $title = "Two-factor authentication";
 $help = "Configure TOTP two-factor authentication for your operator account. This is compatible with Google Authenticator and other RFC 6238 authenticator apps.";
@@ -116,7 +117,7 @@ include_once('include/management/actionMessages.php');
 
 <?php if (!$totp_enabled && empty($pending_secret)): ?>
 <form method="POST" action="config-operator-2fa.php">
-    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
     <input type="hidden" name="action" value="start_enable">
     <button type="submit" class="btn btn-primary">Enable two-factor authentication</button>
 </form>
@@ -137,7 +138,7 @@ include_once('include/management/actionMessages.php');
 </div>
 
 <form method="POST" action="config-operator-2fa.php" class="mb-3">
-    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
     <input type="hidden" name="action" value="confirm_enable">
     <div class="mb-3">
         <label for="otp_code" class="form-label">Verification code</label>
@@ -146,7 +147,7 @@ include_once('include/management/actionMessages.php');
     <button type="submit" class="btn btn-success">Confirm and enable</button>
 </form>
 <form method="POST" action="config-operator-2fa.php">
-    <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
     <input type="hidden" name="action" value="cancel_enable">
     <button type="submit" class="btn btn-outline-secondary">Cancel setup</button>
 </form>
@@ -155,12 +156,12 @@ include_once('include/management/actionMessages.php');
 <?php if ($totp_enabled): ?>
 <div class="d-flex gap-2">
     <form method="POST" action="config-operator-2fa.php">
-        <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
         <input type="hidden" name="action" value="regenerate_recovery">
         <button type="submit" class="btn btn-outline-primary">Regenerate recovery codes</button>
     </form>
     <form method="POST" action="config-operator-2fa.php" onsubmit="return confirm('Disable two-factor authentication for your operator account?');">
-        <input type="hidden" name="csrf_token" value="<?= dalo_csrf_token() ?>">
+        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
         <input type="hidden" name="action" value="disable">
         <button type="submit" class="btn btn-danger">Disable two-factor authentication</button>
     </form>
