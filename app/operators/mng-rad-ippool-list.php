@@ -239,8 +239,17 @@
             }
 
             // build table row
-            $table_row = array( $checkbox, $tooltip1, $tooltip2, $tooltip3, $calledstationid,
-                                $callingstationid, $badge1, $tooltip4, $pool_key );
+            $table_row = array(
+                $checkbox,
+                $tooltip1,
+                $tooltip2,
+                $tooltip3,
+                (!empty($calledstationid)) ? $calledstationid : "(n/a)",
+                (!empty($callingstationid)) ? $callingstationid : "(n/a)",
+                $badge1,
+                $tooltip4,
+                (!empty($pool_key)) ? $pool_key : "(n/a)",
+            );
 
             // print table row
             print_table_row($table_row);
