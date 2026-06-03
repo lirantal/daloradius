@@ -143,20 +143,22 @@ include_once('include/management/actionMessages.php');
     </div>
 </div>
 
-<form method="POST" action="config-operator-2fa.php" class="mb-3">
-    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
-    <input type="hidden" name="action" value="confirm_enable">
-    <div class="mb-3">
-        <label for="otp_code" class="form-label">Verification code</label>
-        <input type="text" class="form-control" id="otp_code" name="otp_code" inputmode="numeric" autocomplete="one-time-code" required>
-    </div>
-    <button type="submit" class="btn btn-success">Confirm and enable</button>
-</form>
-<form method="POST" action="config-operator-2fa.php">
-    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
-    <input type="hidden" name="action" value="cancel_enable">
-    <button type="submit" class="btn btn-outline-secondary">Cancel setup</button>
-</form>
+<div class="mb-3">
+    <label for="otp_code" class="form-label">Verification code</label>
+    <input type="text" class="form-control" id="otp_code" name="otp_code" inputmode="numeric" autocomplete="one-time-code" form="confirm-totp-form" required>
+</div>
+<div class="d-flex gap-2">
+    <form method="POST" action="config-operator-2fa.php" id="confirm-totp-form">
+        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+        <input type="hidden" name="action" value="confirm_enable">
+        <button type="submit" class="btn btn-success">Confirm and enable</button>
+    </form>
+    <form method="POST" action="config-operator-2fa.php">
+        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+        <input type="hidden" name="action" value="cancel_enable">
+        <button type="submit" class="btn btn-outline-secondary">Cancel setup</button>
+    </form>
+</div>
 <?php endif; ?>
 
 <?php if ($totp_enabled): ?>
