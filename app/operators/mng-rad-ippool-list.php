@@ -29,6 +29,7 @@
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -66,10 +67,15 @@
 
 
     // print HTML prologue
+    $extra_js = array(
+        "static/js/ajax.js",
+        "static/js/ajaxGeneric.js",
+    );
+
     $title = t('Intro','mngradippoollist.php');
     $help = t('helpPage','mngradippoollist');
 
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, array(), $extra_js);
 
     // start printing content
     print_title_and_help($title, $help);
@@ -196,11 +202,37 @@
                 $tooltip3 = (!empty($nasipaddress)) ? $nasipaddress : "(n/a)";
             }
 
-
+            // username tooltip
+            if (!empty($username)) {
+                $ajax_id = "divContainerUserInfo_" . $count;
+                $param = sprintf('username=%s', urlencode($username));
+                $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
+                $tooltip4 = [
+                    'subject' => $username,
+                    'onclick' => $onclick,
+                    'ajax_id' => $ajax_id,
+                    'actions' => [],
+                ];
+                if (user_exists($dbSocket, $username, 'CONFIG_DB_TBL_RADACCT')) {
+                    $tooltip4['actions'][] = [
+                        'href'  => sprintf('acct-username.php?username=%s', urlencode($username)),
+                        'label' => t('button', 'UserAccounting'),
+                    ];
+                }
+                if (user_exists($dbSocket, $username, 'CONFIG_DB_TBL_RADCHECK')) {
+                    $tooltip4['actions'][] = [
+                        'href'  => sprintf('mng-edit.php?username=%s', urlencode($username)),
+                        'label' => t('Tooltip', 'UserEdit'),
+                    ];
+                }
+                $tooltip4 = get_tooltip_list_str($tooltip4);
+            } else {
+                $tooltip4 = "(n/a)";
+            }
 
             // build table row
             $table_row = array( $checkbox, $tooltip1, $tooltip2, $tooltip3, $calledstationid,
-                                $callingstationid, $expiry_time, $username, $pool_key );
+                                $callingstationid, $expiry_time, $tooltip4, $pool_key );
 
             // print table row
             print_table_row($table_row);
