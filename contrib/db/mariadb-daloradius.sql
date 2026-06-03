@@ -10280,6 +10280,11 @@ CREATE TABLE `operators` (
   `creationby` VARCHAR(128) DEFAULT NULL,
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
+  `totp_enabled` TINYINT(1) NOT NULL DEFAULT 0,
+  `totp_secret` VARCHAR(64) DEFAULT NULL,
+  `totp_last_counter` BIGINT DEFAULT NULL,
+  `totp_confirmed_at` DATETIME DEFAULT NULL,
+  `totp_recovery_codes` TEXT DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
@@ -10358,6 +10363,7 @@ INSERT INTO `operators_acl` (`id`, `operator_id`, `file`, `access`) VALUES
 (38, 1, 'config_operators_new', 1),
 (39, 1, 'config_operators_del', 1),
 (40, 1, 'config_operators_edit', 1),
+(1101, 1, 'config_operator_2fa', 1),
 (41, 1, 'gis_editmap', 1),
 (42, 1, 'gis_viewmap', 1),
 (43, 1, 'graphs_alltime_logins', 1),
@@ -10606,6 +10612,7 @@ INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
 ('config_operators_list', 'Configuration', 'Operators'),
 ('config_operators_edit', 'Configuration', 'Operators'),
 ('config_operators_new', 'Configuration', 'Operators'),
+('config_operator_2fa', 'Configuration', 'Operators'),
 ('config_backup_createbackups', 'Configuration', 'Backup'),
 ('config_backup_managebackups', 'Configuration', 'Backup'),
 ('acct_plans_usage', 'Accounting', 'Plans'),

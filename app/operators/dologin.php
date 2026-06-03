@@ -26,20 +26,18 @@
 
 include('library/sessions.php');
 include_once('../common/includes/config_read.php');
+include_once('library/totp.php');
 
 dalo_session_start();
 
+unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_attempts']);
+
 $errorMessage = '';
 
-// we need to set location name session variable before opening the database
-// since the whole point is to authenticate to a spefific pre-defined database server
-
-// validate location
 $location_name = (array_key_exists('location', $_POST) && isset($_POST['location']))
                ? $_POST['location']
                : "default";
 
-// we initialize some session params that will be useful later
 $_SESSION['location_name'] = (array_key_exists('CONFIG_LOCATIONS', $configValues) &&
                               is_array($configValues['CONFIG_LOCATIONS']) &&
                               count($configValues['CONFIG_LOCATIONS']) > 0 &&
@@ -49,15 +47,13 @@ $_SESSION['location_name'] = (array_key_exists('CONFIG_LOCATIONS', $configValues
 
 $_SESSION['daloradius_logged_in'] = false;
 
-// we interact with the db, ONLY IF user provided
-// both operator_user and operator_pass params
 if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
     dalo_check_csrf_token($_POST['csrf_token']) &&
-    array_key_exists('operator_user', $_POST) && isset($_POST['operator_user']) && 
+    array_key_exists('operator_user', $_POST) && isset($_POST['operator_user']) &&
     array_key_exists('operator_pass', $_POST) && isset($_POST['operator_pass'])) {
 
     include('../common/includes/db_open.php');
-    
+
     $operator_user = $dbSocket->escapeSimple($_POST['operator_user']);
     $operator_pass = $_POST['operator_pass'];
 
@@ -65,8 +61,7 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
     $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_user);
     $res = $dbSocket->query($sql);
     $numRows = $res->numRows();
-    
-    // we only accept ONE AND ONLY ONE RECORD as result
+
     if ($numRows === 1) {
         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
         $stored_password = $row['password'];
@@ -74,17 +69,7 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
         $legacy_verified = (!$verified && hash_equals($stored_password, $operator_pass));
 
         if ($verified || $legacy_verified) {
-            $operator_id = $row['id'];
-
-            $_SESSION['daloradius_logged_in'] = true;
-            $_SESSION['operator_user'] = $operator_user;
-            $_SESSION['operator_id'] = $operator_id;
-
-            // lets update the lastlogin time for this operator
-            $now = date("Y-m-d H:i:s");
-            $sqlFormat = "update %s set lastlogin='%s' where username='%s'";
-            $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $now, $operator_user);
-            $res = $dbSocket->query($sql);
+            $operator_id = intval($row['id']);
 
             if ($legacy_verified || password_needs_rehash($stored_password, PASSWORD_DEFAULT)) {
                 $operator_pass_hash = $dbSocket->escapeSimple(password_hash($operator_pass, PASSWORD_DEFAULT));
@@ -92,16 +77,35 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
                 $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_pass_hash, $operator_user);
                 $res = $dbSocket->query($sql);
             }
+
+            $totp_enabled = array_key_exists('totp_enabled', $row) && intval($row['totp_enabled']) === 1;
+            $totp_secret = (array_key_exists('totp_secret', $row) && !empty($row['totp_secret'])) ? $row['totp_secret'] : '';
+
+            if ($totp_enabled && !empty($totp_secret)) {
+                $_SESSION['operator_2fa_pending'] = true;
+                $_SESSION['operator_2fa_id'] = $operator_id;
+                $_SESSION['operator_2fa_user'] = $operator_user;
+                $_SESSION['operator_2fa_attempts'] = 0;
+                include('../common/includes/db_close.php');
+                header('Location: login-otp.php');
+                exit;
+            }
+
+            $_SESSION['daloradius_logged_in'] = true;
+            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_attempts']);
+            $_SESSION['operator_user'] = $operator_user;
+            $_SESSION['operator_id'] = $operator_id;
+
+            $now = date("Y-m-d H:i:s");
+            $sqlFormat = "update %s set lastlogin='%s' where username='%s'";
+            $sql = sprintf($sqlFormat, $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $now, $operator_user);
+            $res = $dbSocket->query($sql);
         }
     }
-    
-    // close connection to db before redirecting
-    include('../common/includes/db_close.php');
 
+    include('../common/includes/db_close.php');
 }
 
-// if everything went fine daloradius_logged_in session param has been set to true,
-// so we can check it for deciding where and how redirect user browser
 $header_location = "index.php";
 
 if ($_SESSION['daloradius_logged_in'] !== true) {
@@ -110,5 +114,4 @@ if ($_SESSION['daloradius_logged_in'] !== true) {
 }
 
 header("Location: $header_location");
-
 ?>

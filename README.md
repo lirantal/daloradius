@@ -171,6 +171,11 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
 - **Create New Operator**
 - **Edit Operator**
 - **Delete Operator**
+- **Two-Factor Authentication**: Operators can enable TOTP-based MFA for their own account. Administrators can reset an operator's MFA from the UI or from the server command line; see [Operator two-factor authentication recovery](doc/setup/operator-mfa.md).
+
+### Database migrations
+
+Fresh installations use the schema in `contrib/db/mariadb-daloradius.sql`. When upgrading an existing daloRADIUS installation, check `contrib/db/migrations/` and apply the relevant SQL migrations to your database before using newly added features.
 
 
 
@@ -184,6 +189,8 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
 * htmlpurifier - [https://github.com/ezyang/htmlpurifier](https://github.com/ezyang/htmlpurifier)
 * jpgraph - [https://jpgraph.net/](https://jpgraph.net/)
 * phpmailer - [https://github.com/PHPMailer/PHPMailer](https://github.com/PHPMailer/PHPMailer)
+* php-svg-qrcode - [https://github.com/philronan/php-svg-qrcode](https://github.com/philronan/php-svg-qrcode)
+* totp-php - [https://github.com/remotemerge/totp-php](https://github.com/remotemerge/totp-php)
 
 
 # Support
