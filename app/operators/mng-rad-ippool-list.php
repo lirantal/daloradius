@@ -152,36 +152,54 @@
             $id = intval($id);
             $item_id = sprintf("ippool-%d", $id);
 
-            $tooltip = array(
+            $tooltip1 = array(
                                 'subject' => $pool_name,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-ippool-edit.php?item=%s', $item_id, ), 'label' => t('Tooltip','EditIPAddress'), );
+            $tooltip1['actions'][] = array( 'href' => sprintf('mng-rad-ippool-edit.php?item=%s', $item_id, ), 'label' => t('Tooltip','EditIPAddress'), );
             $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-ippool-del.php?item[]=%s', $item_id, ), 'label' => t('Tooltip','RemoveIPAddress'), );
 
             // create tooltip
-            $tooltip = get_tooltip_list_str($tooltip);
+            $tooltip1 = get_tooltip_list_str($tooltip1);
 
             // create checkbox
             $d = array( 'name' => 'item[]', 'value' => $item_id, 'label' => $id );
             $checkbox = get_checkbox_str($d);
 
-            if (preg_match(IP_REGEX, $nasipaddress, $m) || preg_match(HOSTNAME_REGEX, $nasipaddress, $m)) {
+            // framed IP address accounting tooltip
+            if (preg_match(LOOSE_IP_REGEX, $framedipaddress, $m)) {
                 $tooltip2 = [
-                    'subject' => $nasipaddress,
+                    'subject' => $framedipaddress,
                     'actions' => [],
                 ];
                 $tooltip2['actions'][] = [
-                    'href'  => sprintf('acct-nasipaddress.php?ipaddress=%s', urlencode($nasipaddress)),
-                    'label' => t('button', 'NASIPAccounting'),
+                    'href'  => sprintf('acct-ipaddress.php?ipaddress=%s', urlencode($framedipaddress)),
+                    'label' => t('button', 'IPAccounting'),
                 ];
                 $tooltip2 = get_tooltip_list_str($tooltip2);
             } else {
-                $tooltip2 = (!empty($nasipaddress)) ? $nasipaddress : "(n/a)";
+                $tooltip2 = (!empty($framedipaddress)) ? $framedipaddress : "(n/a)";
             }
 
+            // NAS IP accounting tooltip
+            if (preg_match(IP_REGEX, $nasipaddress, $m) || preg_match(HOSTNAME_REGEX, $nasipaddress, $m)) {
+                $tooltip3 = [
+                    'subject' => $nasipaddress,
+                    'actions' => [],
+                ];
+                $tooltip3['actions'][] = [
+                    'href'  => sprintf('acct-nasipaddress.php?ipaddress=%s', urlencode($nasipaddress)),
+                    'label' => t('button', 'NASIPAccounting'),
+                ];
+                $tooltip3 = get_tooltip_list_str($tooltip3);
+            } else {
+                $tooltip3 = (!empty($nasipaddress)) ? $nasipaddress : "(n/a)";
+            }
+
+
+
             // build table row
-            $table_row = array( $checkbox, $tooltip, $framedipaddress, $tooltip2, $calledstationid,
+            $table_row = array( $checkbox, $tooltip1, $tooltip2, $tooltip3, $calledstationid,
                                 $callingstationid, $expiry_time, $username, $pool_key );
 
             // print table row
