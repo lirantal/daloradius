@@ -150,7 +150,6 @@
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
 
-
             list($id, $pool_name, $framedipaddress, $nasipaddress, $calledstationid,
                  $callingstationid, $expiry_time, $username, $pool_key) = $row;
 
@@ -230,9 +229,18 @@
                 $tooltip4 = "(n/a)";
             }
 
+            // expiry time badge
+            if (!empty($expiry_time)) {
+                $is_future = strtotime($expiry_time) > time();
+                $badge_class = $is_future ? "text-bg-success" : "text-bg-danger";
+                $badge1 = sprintf('<span class="badge %s">%s</span>', $badge_class, $expiry_time);
+            } else {
+                $badge1 = "(n/a)";
+            }
+
             // build table row
             $table_row = array( $checkbox, $tooltip1, $tooltip2, $tooltip3, $calledstationid,
-                                $callingstationid, $expiry_time, $tooltip4, $pool_key );
+                                $callingstationid, $badge1, $tooltip4, $pool_key );
 
             // print table row
             print_table_row($table_row);
