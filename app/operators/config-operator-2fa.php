@@ -96,83 +96,115 @@ include_once('include/management/actionMessages.php');
 
 <div class="card mb-3">
     <div class="card-body">
-        <h4 class="card-title">Operator account</h4>
-        <p><strong><?= htmlspecialchars($operator, ENT_QUOTES, 'UTF-8') ?></strong></p>
-        <p>Status:
-            <?php if ($totp_enabled): ?>
-                <span class="badge text-bg-success">Enabled</span>
-            <?php else: ?>
-                <span class="badge text-bg-secondary">Disabled</span>
-            <?php endif; ?>
-        </p>
+        <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+                <h4 class="card-title mb-1">Two-factor authentication</h4>
+                <p class="mb-1">Operator: <strong><?= htmlspecialchars($operator, ENT_QUOTES, 'UTF-8') ?></strong></p>
+                <p class="text-muted mb-0">Add an extra login step using an authenticator app.</p>
+                <?php if ($totp_enabled && !empty($row['totp_confirmed_at'])): ?>
+                    <p class="text-muted small mb-0">Enabled on <?= htmlspecialchars($row['totp_confirmed_at'], ENT_QUOTES, 'UTF-8') ?></p>
+                <?php endif; ?>
+            </div>
+            <div>
+                <?php if ($totp_enabled): ?>
+                    <span class="badge text-bg-success">Enabled</span>
+                <?php else: ?>
+                    <span class="badge text-bg-secondary">Disabled</span>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>
 
 <?php if (!empty($generated_recovery_codes)): ?>
 <div class="alert alert-warning">
     <h5>Recovery codes</h5>
-    <p>Save these recovery codes now. Each code can be used once if you lose access to your authenticator app.</p>
+    <p class="mb-2">Save these codes now. They will not be shown again. Each code can be used once if you lose access to your authenticator app.</p>
     <pre class="mb-0"><?php foreach ($generated_recovery_codes as $code) { echo htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . "\n"; } ?></pre>
 </div>
 <?php endif; ?>
 
 <?php if (!$totp_enabled && empty($pending_secret)): ?>
-<form method="POST" action="config-operator-2fa.php">
-    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
-    <input type="hidden" name="action" value="start_enable">
-    <button type="submit" class="btn btn-primary">Enable two-factor authentication</button>
-</form>
+<div class="card mb-3">
+    <div class="card-body">
+        <h4 class="card-title">Protect your operator account</h4>
+        <p class="card-text">Two-factor authentication requires a 6-digit code from your authenticator app after your password.</p>
+        <form method="POST" action="config-operator-2fa.php">
+            <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+            <input type="hidden" name="action" value="start_enable">
+            <button type="submit" class="btn btn-primary">Enable two-factor authentication</button>
+        </form>
+    </div>
+</div>
 <?php endif; ?>
 
 <?php if (!$totp_enabled && !empty($pending_secret)): ?>
 <div class="card mb-3">
     <div class="card-body">
-        <h4 class="card-title">Set up authenticator app</h4>
-        <p>Scan this QR code with your authenticator app, or enter the secret manually.</p>
-        <?php if (!empty($pending_qr)): ?>
-        <div class="text-center mb-3">
-            <img src="<?= htmlspecialchars($pending_qr, ENT_QUOTES, 'UTF-8') ?>" alt="TOTP setup QR code" class="img-fluid border rounded p-2 bg-white" style="max-width: 260px;">
-        </div>
-        <?php endif; ?>
-        <div class="input-group mb-3">
-            <span class="input-group-text">Secret</span>
-            <input type="text" class="form-control font-monospace" readonly value="<?= htmlspecialchars($pending_secret, ENT_QUOTES, 'UTF-8') ?>">
-        </div>
-        <p class="text-muted">TOTP provisioning URI:</p>
-        <textarea class="form-control font-monospace" rows="3" readonly><?= htmlspecialchars($pending_uri, ENT_QUOTES, 'UTF-8') ?></textarea>
-    </div>
-</div>
+        <h4 class="card-title">Set up your authenticator app</h4>
+        <p class="text-muted">Complete these steps to link your operator account to an authenticator app.</p>
 
-<div class="mb-3">
-    <label for="otp_code" class="form-label">Verification code</label>
-    <input type="text" class="form-control" id="otp_code" name="otp_code" inputmode="numeric" autocomplete="one-time-code" form="confirm-totp-form" required>
-</div>
-<div class="d-flex gap-2">
-    <form method="POST" action="config-operator-2fa.php" id="confirm-totp-form">
-        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
-        <input type="hidden" name="action" value="confirm_enable">
-        <button type="submit" class="btn btn-success">Confirm and enable</button>
-    </form>
-    <form method="POST" action="config-operator-2fa.php">
-        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
-        <input type="hidden" name="action" value="cancel_enable">
-        <button type="submit" class="btn btn-outline-secondary">Cancel setup</button>
-    </form>
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-5 text-center">
+                <h5>1. Scan the QR code</h5>
+                <?php if (!empty($pending_qr)): ?>
+                    <img src="<?= htmlspecialchars($pending_qr, ENT_QUOTES, 'UTF-8') ?>" alt="TOTP setup QR code" class="img-fluid border rounded p-2 bg-white" style="max-width: 260px;">
+                <?php endif; ?>
+            </div>
+            <div class="col-lg-7">
+                <h5>2. Or enter this secret manually</h5>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Secret</span>
+                    <input type="text" class="form-control font-monospace" readonly value="<?= htmlspecialchars($pending_secret, ENT_QUOTES, 'UTF-8') ?>">
+                </div>
+
+                <details class="mb-3">
+                    <summary class="text-muted">Advanced: show provisioning URI</summary>
+                    <textarea class="form-control font-monospace mt-2" rows="3" readonly><?= htmlspecialchars($pending_uri, ENT_QUOTES, 'UTF-8') ?></textarea>
+                </details>
+
+                <h5>3. Confirm setup</h5>
+                <div class="mb-3">
+                    <label for="otp_code" class="form-label">Verification code</label>
+                    <input type="text" class="form-control font-monospace" id="otp_code" name="otp_code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="123456" form="confirm-totp-form" required>
+                    <div class="form-text">Enter the 6-digit code shown in your authenticator app.</div>
+                </div>
+                <div class="d-flex gap-2">
+                    <form method="POST" action="config-operator-2fa.php" id="confirm-totp-form">
+                        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                        <input type="hidden" name="action" value="confirm_enable">
+                        <button type="submit" class="btn btn-success">Confirm and enable</button>
+                    </form>
+                    <form method="POST" action="config-operator-2fa.php">
+                        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                        <input type="hidden" name="action" value="cancel_enable">
+                        <button type="submit" class="btn btn-outline-secondary">Cancel setup</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <?php endif; ?>
 
 <?php if ($totp_enabled): ?>
-<div class="d-flex gap-2">
-    <form method="POST" action="config-operator-2fa.php">
-        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
-        <input type="hidden" name="action" value="regenerate_recovery">
-        <button type="submit" class="btn btn-outline-primary">Regenerate recovery codes</button>
-    </form>
-    <form method="POST" action="config-operator-2fa.php" onsubmit="return confirm('Disable two-factor authentication for your operator account?');">
-        <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
-        <input type="hidden" name="action" value="disable">
-        <button type="submit" class="btn btn-danger">Disable two-factor authentication</button>
-    </form>
+<div class="card mb-3">
+    <div class="card-body">
+        <h4 class="card-title">Two-factor authentication is enabled</h4>
+        <p class="card-text">Use recovery codes if you lose access to your authenticator app. Regenerating recovery codes invalidates any previous unused codes.</p>
+        <div class="d-flex gap-2">
+            <form method="POST" action="config-operator-2fa.php">
+                <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                <input type="hidden" name="action" value="regenerate_recovery">
+                <button type="submit" class="btn btn-outline-primary">Regenerate recovery codes</button>
+            </form>
+            <form method="POST" action="config-operator-2fa.php" onsubmit="return confirm('Disable two-factor authentication for your operator account?');">
+                <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                <input type="hidden" name="action" value="disable">
+                <button type="submit" class="btn btn-danger">Disable two-factor authentication</button>
+            </form>
+        </div>
+    </div>
 </div>
 <?php endif; ?>
 
