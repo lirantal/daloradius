@@ -189,6 +189,7 @@ Fresh installations use the schema in `contrib/db/mariadb-daloradius.sql`. When 
 * htmlpurifier - [https://github.com/ezyang/htmlpurifier](https://github.com/ezyang/htmlpurifier)
 * jpgraph - [https://jpgraph.net/](https://jpgraph.net/)
 * phpmailer - [https://github.com/PHPMailer/PHPMailer](https://github.com/PHPMailer/PHPMailer)
+* totp-php - [https://github.com/remotemerge/totp-php](https://github.com/remotemerge/totp-php)
 
 
 # Support
