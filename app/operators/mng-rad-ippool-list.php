@@ -166,8 +166,22 @@
             $d = array( 'name' => 'item[]', 'value' => $item_id, 'label' => $id );
             $checkbox = get_checkbox_str($d);
 
+            if (preg_match(IP_REGEX, $nasipaddress, $m) || preg_match(HOSTNAME_REGEX, $nasipaddress, $m)) {
+                $tooltip2 = [
+                    'subject' => $nasipaddress,
+                    'actions' => [],
+                ];
+                $tooltip2['actions'][] = [
+                    'href'  => sprintf('acct-nasipaddress.php?ipaddress=%s', urlencode($nasipaddress)),
+                    'label' => t('button', 'NASIPAccounting'),
+                ];
+                $tooltip2 = get_tooltip_list_str($tooltip2);
+            } else {
+                $tooltip2 = (!empty($nasipaddress)) ? $nasipaddress : "(n/a)";
+            }
+
             // build table row
-            $table_row = array( $checkbox, $tooltip, $framedipaddress, $nasipaddress, $calledstationid,
+            $table_row = array( $checkbox, $tooltip, $framedipaddress, $tooltip2, $calledstationid,
                                 $callingstationid, $expiry_time, $username, $pool_key );
 
             // print table row
