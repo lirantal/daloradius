@@ -14,6 +14,7 @@ if (strpos($_SERVER['PHP_SELF'], '/library/totp.php') !== false) {
 }
 
 require_once __DIR__ . '/../../common/library/totp-php/autoload.php';
+require_once __DIR__ . '/../../common/library/php-svg-qrcode/svg-qrcode.php';
 
 use RemoteMerge\Totp\TotpFactory;
 use RemoteMerge\Totp\TotpInterface;
@@ -34,6 +35,13 @@ function dalo_totp_generate_secret(): string {
 
 function dalo_totp_generate_uri(string $secret, string $operator_username): string {
     return dalo_totp_new()->generateUri($secret, $operator_username, 'daloRADIUS');
+}
+
+function dalo_totp_generate_qr_svg_data_uri(string $otpauth_uri): string {
+    $qr = new SVGQRCode($otpauth_uri, array('s' => 'qrm'));
+    $svg = $qr->render_svg();
+
+    return 'data:image/svg+xml;base64,' . base64_encode($svg);
 }
 
 function dalo_totp_verify(string $secret, string $code): bool {

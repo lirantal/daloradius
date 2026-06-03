@@ -83,6 +83,7 @@ include('../common/includes/db_close.php');
 $totp_enabled = is_array($row) && intval($row['totp_enabled']) === 1;
 $pending_secret = $_SESSION['operator_totp_pending_secret'] ?? '';
 $pending_uri = !empty($pending_secret) ? dalo_totp_generate_uri($pending_secret, $operator) : '';
+$pending_qr = !empty($pending_uri) ? dalo_totp_generate_qr_svg_data_uri($pending_uri) : '';
 $csrf_token = dalo_csrf_token();
 
 $title = "Two-factor authentication";
@@ -127,12 +128,17 @@ include_once('include/management/actionMessages.php');
 <div class="card mb-3">
     <div class="card-body">
         <h4 class="card-title">Set up authenticator app</h4>
-        <p>Add a new TOTP account in your authenticator app using this secret:</p>
+        <p>Scan this QR code with your authenticator app, or enter the secret manually.</p>
+        <?php if (!empty($pending_qr)): ?>
+        <div class="text-center mb-3">
+            <img src="<?= htmlspecialchars($pending_qr, ENT_QUOTES, 'UTF-8') ?>" alt="TOTP setup QR code" class="img-fluid border rounded p-2 bg-white" style="max-width: 260px;">
+        </div>
+        <?php endif; ?>
         <div class="input-group mb-3">
             <span class="input-group-text">Secret</span>
             <input type="text" class="form-control font-monospace" readonly value="<?= htmlspecialchars($pending_secret, ENT_QUOTES, 'UTF-8') ?>">
         </div>
-        <p class="text-muted">URI for QR-code tools, if you choose to generate one locally:</p>
+        <p class="text-muted">TOTP provisioning URI:</p>
         <textarea class="form-control font-monospace" rows="3" readonly><?= htmlspecialchars($pending_uri, ENT_QUOTES, 'UTF-8') ?></textarea>
     </div>
 </div>
