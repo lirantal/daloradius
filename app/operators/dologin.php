@@ -1,6 +1,6 @@
 <?php
 /*
- *******************************************************************************
+ *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
  * Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
  *
@@ -13,20 +13,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *******************************************************************************
- * Description:
- * 		performs the logging-in authorization. First creates a random
- *      session_id to be assigned to this session and then validates
- *      the operators credentials in the database
+ *********************************************************************************************************
  *
- * Authors:	Liran Tal <liran@lirantal.com>
+ * Description:    performs the logging-in authorization. First creates a random
+ *                 session_id to be assigned to this session and then validates
+ *                 the operators credentials in the database
+ * 
+ * Authors:        Liran Tal <liran@lirantal.com>
+ *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
- *******************************************************************************
+ *********************************************************************************************************
  */
 
-include('library/sessions.php');
-include_once('../common/includes/config_read.php');
-include_once('library/totp.php');
+include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'sessions.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'totp.php' ]);
 
 dalo_session_start();
 
@@ -47,12 +48,11 @@ $_SESSION['location_name'] = (array_key_exists('CONFIG_LOCATIONS', $configValues
 
 $_SESSION['daloradius_logged_in'] = false;
 
-if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
-    dalo_check_csrf_token($_POST['csrf_token']) &&
+if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']) &&
     array_key_exists('operator_user', $_POST) && isset($_POST['operator_user']) &&
     array_key_exists('operator_pass', $_POST) && isset($_POST['operator_pass'])) {
 
-    include('../common/includes/db_open.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     $operator_user = $dbSocket->escapeSimple($_POST['operator_user']);
     $operator_pass = $_POST['operator_pass'];
@@ -68,6 +68,9 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
         $verified = password_verify($operator_pass, $stored_password);
         $legacy_verified = (!$verified && hash_equals($stored_password, $operator_pass));
 
+        $totp_enabled = array_key_exists('totp_enabled', $row) && intval($row['totp_enabled']) === 1;
+        $totp_secret = (array_key_exists('totp_secret', $row) && !empty($row['totp_secret'])) ? $row['totp_secret'] : '';
+
         if ($verified || $legacy_verified) {
             $operator_id = intval($row['id']);
 
@@ -78,15 +81,14 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
                 $res = $dbSocket->query($sql);
             }
 
-            $totp_enabled = array_key_exists('totp_enabled', $row) && intval($row['totp_enabled']) === 1;
-            $totp_secret = (array_key_exists('totp_secret', $row) && !empty($row['totp_secret'])) ? $row['totp_secret'] : '';
-
             if ($totp_enabled && !empty($totp_secret)) {
                 $_SESSION['operator_2fa_pending'] = true;
                 $_SESSION['operator_2fa_id'] = $operator_id;
                 $_SESSION['operator_2fa_user'] = $operator_user;
                 $_SESSION['operator_2fa_attempts'] = 0;
-                include('../common/includes/db_close.php');
+                
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+                
                 header('Location: login-otp.php');
                 exit;
             }
@@ -103,7 +105,7 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
         }
     }
 
-    include('../common/includes/db_close.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 }
 
 $header_location = "index.php";
