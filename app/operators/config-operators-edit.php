@@ -114,6 +114,14 @@
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";
 
+                if (array_key_exists('reset_totp', $_POST) && $_POST['reset_totp'] === '1') {
+                    $sql = sprintf("UPDATE %s SET totp_enabled=0, totp_secret=NULL, totp_last_counter=NULL, totp_confirmed_at=NULL, totp_recovery_codes=NULL, updatedate='%s', updateby='%s' WHERE id=%d",
+                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $current_datetime,
+                                   $dbSocket->escapeSimple($currBy), $curr_operator_id);
+                    $dbSocket->query($sql);
+                    $logDebugSQL .= "$sql;\n";
+                }
+
                 // insert operators acl for this operator
                 foreach ($_POST as $field => $access ) {
                     
@@ -169,7 +177,7 @@
 
         $sql = sprintf("SELECT id, password, firstname, lastname, title, department, company, phone1, phone2,
                                email1, email2, messenger1, messenger2, notes, lastlogin,
-                               creationdate, creationby, updatedate, updateby
+                               creationdate, creationby, updatedate, updateby, totp_enabled, totp_confirmed_at
                           FROM %s
                          WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
                                                $dbSocket->escapeSimple($operator_username));
@@ -180,7 +188,8 @@
                 $curr_operator_id, $operator_password, $operator_firstname, $operator_lastname,
                 $operator_title, $operator_department, $operator_company, $operator_phone1, $operator_phone2,
                 $operator_email1, $operator_email2, $operator_messenger1, $operator_messenger2, $operator_notes,
-                $operator_lastlogin, $operator_creationdate, $operator_creationby, $operator_updatedate, $operator_updateby
+                $operator_lastlogin, $operator_creationdate, $operator_creationby, $operator_updatedate, $operator_updateby,
+                $operator_totp_enabled, $operator_totp_confirmed_at
             ) = $res->fetchRow();
     }
 
@@ -240,6 +249,29 @@
                                         "value" => "",
                                         "random" => true
                                      );
+
+        $totp_status = (intval($operator_totp_enabled) === 1)
+                     ? sprintf("Enabled%s", (!empty($operator_totp_confirmed_at) ? " since " . $operator_totp_confirmed_at : ""))
+                     : "Disabled";
+
+        $input_descriptors0[] = array(
+                                        "id" => "operator_totp_status",
+                                        "name" => "operator_totp_status",
+                                        "caption" => "Two-factor authentication",
+                                        "type" => "text",
+                                        "value" => $totp_status,
+                                        "disabled" => true,
+                                     );
+
+        if (intval($operator_totp_enabled) === 1) {
+            $input_descriptors0[] = array(
+                                            "id" => "reset_totp",
+                                            "name" => "reset_totp",
+                                            "caption" => "Reset two-factor authentication for this operator",
+                                            "type" => "checkbox",
+                                            "value" => "1",
+                                         );
+        }
                                   
         // set navbar stuff
         $navkeys = array( array( 'OperatorInfo', "Operator Info" ), 'ContactInfo', array( 'ACLSettings', "ACL Settings" ), );

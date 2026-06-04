@@ -152,6 +152,44 @@ EOSQL
     fi
 }
 
+function ensure_operator_totp_columns {
+    if ! table_exists "operators"; then
+        return
+    fi
+
+    local missing_columns
+    missing_columns=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
+SELECT COUNT(*)
+FROM information_schema.columns
+WHERE table_schema = DATABASE()
+  AND table_name = 'operators'
+  AND column_name IN ('totp_enabled', 'totp_secret', 'totp_last_counter', 'totp_confirmed_at', 'totp_recovery_codes');
+EOSQL
+)
+
+    if [ "$missing_columns" -lt 5 ]; then
+        echo "Adding operator TOTP columns."
+        mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
+ALTER TABLE operators
+  ADD COLUMN IF NOT EXISTS totp_enabled TINYINT(1) NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS totp_secret VARCHAR(64) DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS totp_last_counter BIGINT DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS totp_confirmed_at DATETIME DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS totp_recovery_codes TEXT DEFAULT NULL;
+EOSQL
+    fi
+
+    mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
+INSERT IGNORE INTO operators_acl_files (file, category, section)
+VALUES ('config_operator_2fa', 'Configuration', 'Operators');
+
+INSERT IGNORE INTO operators_acl (operator_id, file, access)
+SELECT id, 'config_operator_2fa', 1
+FROM operators
+WHERE username = 'administrator';
+EOSQL
+}
+
 function wait_for_mysql {
     echo -n "Waiting for mysql ($MYSQL_HOST)..."
     while ! mysqladmin --defaults-extra-file="$MYSQL_DEFAULTS_FILE" ping --silent; do
@@ -191,6 +229,7 @@ else
 fi
 
 ensure_operator_password_column
+ensure_operator_totp_columns
 
 # Start Apache2 in the foreground
 cleanup_mysql_defaults
