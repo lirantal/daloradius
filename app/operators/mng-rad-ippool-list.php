@@ -40,7 +40,7 @@
                    : "";
 
     // keep filter when ordering/paginating
-    $partial_query_string = (!empty($pool_name_enc) ? "&pool_name=" . urlencode($pool_name_enc) : "");
+    $partial_query_string = (!empty($pool_name_enc) ? "&pool_name=" . $pool_name_enc : "");
 
     // init logging variables
     $log = "visited page: ";
@@ -181,20 +181,30 @@
             $id = intval($id);
             $item_id = sprintf("ippool-%d", $id);
 
-            $tooltip1 = array(
-                                'subject' => $pool_name,
-                                'actions' => array(),
-                            );
-            $tooltip1['actions'][] = array( 'href' => sprintf('mng-rad-ippool-list.php?pool_name=%s', urlencode($pool_name)), 'label' => 'Apply Filter', );
-            $tooltip1['actions'][] = array( 'href' => sprintf('mng-rad-ippool-edit.php?item=%s', $item_id, ), 'label' => t('Tooltip','EditIPAddress'), );
-            $tooltip1['actions'][] = array( 'href' => sprintf('mng-rad-ippool-del.php?item[]=%s', $item_id, ), 'label' => t('Tooltip','RemoveIPAddress'), );
-
-            // create tooltip
-            $tooltip1 = get_tooltip_list_str($tooltip1);
-
             // create checkbox
             $d = array( 'name' => 'item[]', 'value' => $item_id, 'label' => $id );
             $checkbox = get_checkbox_str($d);
+
+            // IP-Pool actions tooltip
+            $tooltip1 = [
+                'subject' => $pool_name,
+                'actions' => [
+                    [
+                        'href'  => sprintf('mng-rad-ippool-list.php?pool_name=%s', urlencode($pool_name)),
+                        'label' => 'Apply Filter',
+                    ],
+                    [
+                        'href'  => sprintf('mng-rad-ippool-edit.php?item=%s', $item_id),
+                        'label' => t('Tooltip', 'EditIPAddress'),
+                    ],
+                    [
+                        'href'  => sprintf('mng-rad-ippool-del.php?item[]=%s', $item_id),
+                        'label' => t('Tooltip', 'RemoveIPAddress'),
+                    ],
+                ],
+            ];
+
+            $tooltip1 = get_tooltip_list_str($tooltip1);
 
             // framed IP address accounting tooltip
             if (preg_match(LOOSE_IP_REGEX, $framedipaddress, $m)) {
@@ -228,9 +238,12 @@
 
             // username tooltip
             if (!empty($username)) {
-                $ajax_id = "divContainerUserInfo_" . $count;
-                $param = sprintf('username=%s', urlencode($username));
-                $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
+                $ajax_id = sprintf("divContainerUserInfo_%d", $count);
+                $param = sprintf("username=%s", urlencode($username));
+                $onclick = sprintf(
+                    "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','%s','%s')",
+                    $ajax_id, $param
+                );
                 $tooltip4 = [
                     'subject' => $username,
                     'onclick' => $onclick,
