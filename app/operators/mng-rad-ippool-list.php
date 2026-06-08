@@ -31,6 +31,17 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
 
+    // we partially strip some characters and
+    // leave validation/escaping to other functions used later in the script
+    $pool_name = (array_key_exists('pool_name', $_GET) && !empty(str_replace("%", "", trim($_GET['pool_name']))))
+               ? str_replace("%", "", trim($_GET['pool_name'])) : "";
+    $pool_name_enc = (!empty($pool_name))
+                   ? htmlspecialchars($pool_name, ENT_QUOTES, 'UTF-8')
+                   : "";
+
+    // keep filter when ordering/paginating
+    $partial_query_string = (!empty($pool_name_enc) ? "&pool_name=" . $pool_name_enc : "");
+
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
@@ -73,6 +84,10 @@
     );
 
     $title = t('Intro','mngradippoollist.php');
+    if (!empty($pool_name_enc)) {
+        $title .=  " :: " . $pool_name_enc;
+    }
+
     $help = t('helpPage','mngradippoollist');
 
     print_html_prologue($title, $langCode, array(), $extra_js);
@@ -83,8 +98,16 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
+    // filter on pool_name
+    $sql_WHERE = "";
+    if (!empty($pool_name)) {
+        $value_prefix = $dbSocket->escapeSimple($pool_name);
+        $sql_WHERE = sprintf(" WHERE pool_name LIKE '%%%s%%'", $value_prefix);
+    }
+
     // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADIPPOOL']) . $sql_WHERE;
+
     $res = $dbSocket->query($sql);
     $numrows = $res->fetchrow()[0];
 
@@ -104,7 +127,7 @@
         // we execute and log the actual query
         $sql = sprintf("SELECT id, pool_name, framedipaddress, nasipaddress, calledstationid,
                                callingstationid, expiry_time, username, pool_key
-                          FROM %s", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
+                          FROM %s", $configValues['CONFIG_DB_TBL_RADIPPOOL']) . $sql_WHERE;
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
@@ -122,6 +145,7 @@
                             'page_num' => $pageNum,
                             'order_by' => $orderBy,
                             'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string,
                         );
 
         $descriptors = array();
@@ -157,19 +181,30 @@
             $id = intval($id);
             $item_id = sprintf("ippool-%d", $id);
 
-            $tooltip1 = array(
-                                'subject' => $pool_name,
-                                'actions' => array(),
-                            );
-            $tooltip1['actions'][] = array( 'href' => sprintf('mng-rad-ippool-edit.php?item=%s', $item_id, ), 'label' => t('Tooltip','EditIPAddress'), );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-ippool-del.php?item[]=%s', $item_id, ), 'label' => t('Tooltip','RemoveIPAddress'), );
-
-            // create tooltip
-            $tooltip1 = get_tooltip_list_str($tooltip1);
-
             // create checkbox
             $d = array( 'name' => 'item[]', 'value' => $item_id, 'label' => $id );
             $checkbox = get_checkbox_str($d);
+
+            // IP-Pool actions tooltip
+            $tooltip1 = [
+                'subject' => $pool_name,
+                'actions' => [
+                    [
+                        'href'  => sprintf('mng-rad-ippool-list.php?pool_name=%s', urlencode($pool_name)),
+                        'label' => 'Apply Filter',
+                    ],
+                    [
+                        'href'  => sprintf('mng-rad-ippool-edit.php?item=%s', $item_id),
+                        'label' => t('Tooltip', 'EditIPAddress'),
+                    ],
+                    [
+                        'href'  => sprintf('mng-rad-ippool-del.php?item[]=%s', $item_id),
+                        'label' => t('Tooltip', 'RemoveIPAddress'),
+                    ],
+                ],
+            ];
+
+            $tooltip1 = get_tooltip_list_str($tooltip1);
 
             // framed IP address accounting tooltip
             if (preg_match(LOOSE_IP_REGEX, $framedipaddress, $m)) {
@@ -203,9 +238,12 @@
 
             // username tooltip
             if (!empty($username)) {
-                $ajax_id = "divContainerUserInfo_" . $count;
-                $param = sprintf('username=%s', urlencode($username));
-                $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
+                $ajax_id = sprintf("divContainerUserInfo_%d", $count);
+                $param = sprintf("username=%s", urlencode($username));
+                $onclick = sprintf(
+                    "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','%s','%s')",
+                    $ajax_id, $param
+                );
                 $tooltip4 = [
                     'subject' => $username,
                     'onclick' => $onclick,
@@ -272,7 +310,7 @@
         print_table_bottom($descriptor);
 
         // get and print "links"
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
         printLinks($links, $drawNumberLinks);
 
     } else {
