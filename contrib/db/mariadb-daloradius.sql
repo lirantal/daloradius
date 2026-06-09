@@ -410,26 +410,29 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('AAT-Client-Assign-DNS','DNS-Assign-No','Alcatel'),
                          ('AAT-Client-Assign-DNS','DNS-Assign-Yes','Alcatel');
 
-/* Mikrotik attributes */
-INSERT INTO `dictionary` (`Type`,`Attribute`,`Value`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
-                         ('integer','Mikrotik-Recv-Limit',NULL,'Mikrotik','=','reply','volumebytes','total receive limit in bytes for the client'),
-                         ('integer','Mikrotik-Xmit-Limit',NULL,'Mikrotik','=','reply','volumebytes','total transmit limit in bytes for the client'),
-                         ('string','Mikrotik-Group',NULL,'Mikrotik','=','reply','','Router local user group name  (defines in /user group) for local users. HotSpot default profile for HotSpot users.'),
-                         ('integer','Mikrotik-Wireless-Forward',NULL,'Mikrotik',NULL,NULL,NULL,NULL),
-                         ('integer','Mikrotik-Wireless-Skip-Dot1x',NULL,'Mikrotik',NULL,NULL,NULL,NULL),
-                         ('integer','Mikrotik-Wireless-Enc-Algo',NULL,'Mikrotik',NULL,NULL,NULL,NULL),
-                         ('string','Mikrotik-Wireless-Enc-Key',NULL,'Mikrotik',NULL,NULL,NULL,NULL),
-                         ('string','Mikrotik-Rate-Limit',NULL,'Mikrotik',':=','reply','mikrotikRateLimit','Datarate limitation for clients. Format is: rx-rate[/tx-rate] [rx-burst-rate[/tx-burst-rate] [rx-burst-threshold[/tx-burst-threshold] [rx-burst-time[/tx-burst-time] [priority] [rx-rate-min[/tx-rate-min]]]] from the point of view of the router  (so \"rx\" is client upload, and \"tx\" is client download). All rates should be numbers with optional k  (000s) or M  (000,000s).'),
-                         ('string','Mikrotik-Realm',NULL,'Mikrotik',NULL,NULL,NULL,NULL),
-                         ('ipaddr','Mikrotik-Host-IP',NULL,'Mikrotik',NULL,NULL,NULL,NULL),
-                         ('string','Mikrotik-Mark-Id',NULL,'Mikrotik',NULL,NULL,NULL,NULL),
-                         ('string','Mikrotik-Advertise-URL',NULL,'Mikrotik',':=','reply','','URL of the page with advertisements that should be displayed to clients. If this attribute is specified, advertisements are enabled automatically, including transparent proxy, even if they were explicitly disabled in the corresponding user profile. Multiple attribute instances may be send by RADIUS server to specify additional URLs which are choosen in round robin fashion.'),
-                         ('integer','Mikrotik-Advertise-Interval',NULL,'Mikrotik',':=','reply','','Time interval between two adjacent advertisements. Multiple attribute instances may be send by RADIUS server to specify additional intervals. All interval values are threated as a list and are taken one-by-one for each successful advertisement. If end of list is reached, the last value is continued to be used.'),
-                         ('integer','Mikrotik-Recv-Limit-Gigawords',NULL,'Mikrotik','=','reply','','4G (2^32) bytes of total receive limit  (bits 32..63, when bits 0..31 are delivered in Mikrotik-Recv-Limit)'),
-                         ('integer','Mikrotik-Xmit-Limit-Gigawords',NULL,'Mikrotik','=','reply','','4G (2^32) bytes of total transmit limit  (bits 32..63, when bits 0..31 are delivered in Mikrotik-Recv-Limit)'),
-                         (NULL,'Mikrotik-Wireless-Enc-Algo','No-encryption','Mikrotik',NULL,NULL,NULL,NULL),
-                         (NULL,'Mikrotik-Wireless-Enc-Algo','40-bit-WEP','Mikrotik',NULL,NULL,NULL,NULL),
-                         (NULL,'Mikrotik-Wireless-Enc-Algo','104-bit-WEP','Mikrotik',NULL,NULL,NULL,NULL);
+/* Mikrotik :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Mikrotik-Recv-Limit','Mikrotik','=','reply','volumebytes','total receive limit in bytes for the client'),
+                         ('integer','Mikrotik-Xmit-Limit','Mikrotik','=','reply','volumebytes','total transmit limit in bytes for the client'),
+                         ('string','Mikrotik-Group','Mikrotik','=','reply','','Router local user group name  (defines in /user group) for local users. HotSpot default profile for HotSpot users.'),
+                         ('integer','Mikrotik-Wireless-Forward','Mikrotik',NULL,NULL,NULL,NULL),
+                         ('integer','Mikrotik-Wireless-Skip-Dot1x','Mikrotik',NULL,NULL,NULL,NULL),
+                         ('integer','Mikrotik-Wireless-Enc-Algo','Mikrotik',NULL,NULL,NULL,NULL),
+                         ('string','Mikrotik-Wireless-Enc-Key','Mikrotik',NULL,NULL,NULL,NULL),
+                         ('string','Mikrotik-Rate-Limit','Mikrotik',':=','reply','mikrotikRateLimit','Datarate limitation for clients. Format is: rx-rate[/tx-rate] [rx-burst-rate[/tx-burst-rate] [rx-burst-threshold[/tx-burst-threshold] [rx-burst-time[/tx-burst-time] [priority] [rx-rate-min[/tx-rate-min]]]] from the point of view of the router  (so \"rx\" is client upload, and \"tx\" is client download). All rates should be numbers with optional k  (000s) or M  (000,000s).'),
+                         ('string','Mikrotik-Realm','Mikrotik',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Mikrotik-Host-IP','Mikrotik',NULL,NULL,NULL,NULL),
+                         ('string','Mikrotik-Mark-Id','Mikrotik',NULL,NULL,NULL,NULL),
+                         ('string','Mikrotik-Advertise-URL','Mikrotik',':=','reply','','URL of the page with advertisements that should be displayed to clients. If this attribute is specified, advertisements are enabled automatically, including transparent proxy, even if they were explicitly disabled in the corresponding user profile. Multiple attribute instances may be send by RADIUS server to specify additional URLs which are choosen in round robin fashion.'),
+                         ('integer','Mikrotik-Advertise-Interval','Mikrotik',':=','reply','','Time interval between two adjacent advertisements. Multiple attribute instances may be send by RADIUS server to specify additional intervals. All interval values are threated as a list and are taken one-by-one for each successful advertisement. If end of list is reached, the last value is continued to be used.'),
+                         ('integer','Mikrotik-Recv-Limit-Gigawords','Mikrotik','=','reply','','4G (2^32) bytes of total receive limit  (bits 32..63, when bits 0..31 are delivered in Mikrotik-Recv-Limit)'),
+                         ('integer','Mikrotik-Xmit-Limit-Gigawords','Mikrotik','=','reply','','4G (2^32) bytes of total transmit limit  (bits 32..63, when bits 0..31 are delivered in Mikrotik-Recv-Limit)');
+
+/* Mikrotik :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Mikrotik-Wireless-Enc-Algo','No-encryption','Mikrotik'),
+                         ('Mikrotik-Wireless-Enc-Algo','40-bit-WEP','Mikrotik'),
+                         ('Mikrotik-Wireless-Enc-Algo','104-bit-WEP','Mikrotik');
 
 /* rfc2865 :: single-valued attributes */
 INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
