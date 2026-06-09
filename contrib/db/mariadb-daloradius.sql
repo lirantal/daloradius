@@ -1681,14 +1681,19 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','Breezecom-Attr10','Alvarion',NULL,NULL,NULL,NULL),
                          ('string','Breezecom-Attr11','Alvarion',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2699,'string','Acct-Tunnel-Connection',NULL,NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
-                                (2700,'integer','Acct-Tunnel-Packets-Lost',NULL,NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
-                                (2701,NULL,'Acct-Status-Type','Tunnel-Start',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
-                                (2702,NULL,'Acct-Status-Type','Tunnel-Stop',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
-                                (2703,NULL,'Acct-Status-Type','Tunnel-Reject',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
-                                (2704,NULL,'Acct-Status-Type','Tunnel-Link-Start',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
-                                (2705,NULL,'Acct-Status-Type','Tunnel-Link-Stop',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
-                                (2706,NULL,'Acct-Status-Type','Tunnel-Link-Reject',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL);
+/* dictionary.rfc2867 :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Acct-Tunnel-Connection','dictionary.rfc2867',NULL,NULL,NULL,NULL),
+                         ('integer','Acct-Tunnel-Packets-Lost','dictionary.rfc2867',NULL,NULL,NULL,NULL);
+
+/* dictionary.rfc2867 :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Acct-Status-Type','Tunnel-Start','dictionary.rfc2867'),
+                         ('Acct-Status-Type','Tunnel-Stop','dictionary.rfc2867'),
+                         ('Acct-Status-Type','Tunnel-Reject','dictionary.rfc2867'),
+                         ('Acct-Status-Type','Tunnel-Link-Start','dictionary.rfc2867'),
+                         ('Acct-Status-Type','Tunnel-Link-Stop','dictionary.rfc2867'),
+                         ('Acct-Status-Type','Tunnel-Link-Reject','dictionary.rfc2867');
 
 INSERT INTO `dictionary` VALUES (2707,'string','LE-Terminate-Detail',NULL,NULL,'Livingston',NULL,NULL,NULL,NULL),
                                 (2708,'string','LE-Advice-of-Charge',NULL,NULL,'Livingston',NULL,NULL,NULL,NULL),
