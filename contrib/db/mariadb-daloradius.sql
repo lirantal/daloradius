@@ -1259,12 +1259,16 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','Telebit-Activate-Command','Telebit',NULL,NULL,NULL,NULL),
                          ('string','Telebit-Accounting-Info','Telebit',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2322,'string','Navini-AVPair',NULL,NULL,'Navini',NULL,NULL,NULL,NULL);
+/* Navini :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Navini-AVPair','Navini',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2323,'string','Riverstone-Command',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL),
-                                (2324,'string','Riverstone-System-Event',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL),
-                                (2325,'string','Riverstone-SNMP-Config-Change',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL),
-                                (2326,'integer','Riverstone-User-Level',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL);
+/* Riverstone :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Riverstone-Command','Riverstone',NULL,NULL,NULL,NULL),
+                         ('string','Riverstone-System-Event','Riverstone',NULL,NULL,NULL,NULL),
+                         ('string','Riverstone-SNMP-Config-Change','Riverstone',NULL,NULL,NULL,NULL),
+                         ('integer','Riverstone-User-Level','Riverstone',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2327,'string','ASN-IP-Pool-Name',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
                                 (2328,'integer','ASN-Kbps-Down',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
