@@ -1341,15 +1341,17 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('ipaddr','Fortinet-Client-IP-Address','Fortinet',NULL,NULL,NULL,NULL),
                          ('string','Fortinet-Vdom-Name','Fortinet',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2383,'ipaddr','RedCreek-Tunneled-IP-Addr',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2384,'ipaddr','RedCreek-Tunneled-IP-Netmask',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2385,'ipaddr','RedCreek-Tunneled-Gateway',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2386,'string','RedCreek-Tunneled-DNS-Server',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2387,'string','RedCreek-Tunneled-WINS-Server1',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2388,'string','RedCreek-Tunneled-WINS-Server2',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2389,'string','RedCreek-Tunneled-HostName',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2390,'string','RedCreek-Tunneled-DomainName',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2391,'string','RedCreek-Tunneled-Search-List',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL);
+/* RedCreek :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('ipaddr','RedCreek-Tunneled-IP-Addr','RedCreek',NULL,NULL,NULL,NULL),
+                         ('ipaddr','RedCreek-Tunneled-IP-Netmask','RedCreek',NULL,NULL,NULL,NULL),
+                         ('ipaddr','RedCreek-Tunneled-Gateway','RedCreek',NULL,NULL,NULL,NULL),
+                         ('string','RedCreek-Tunneled-DNS-Server','RedCreek',NULL,NULL,NULL,NULL),
+                         ('string','RedCreek-Tunneled-WINS-Server1','RedCreek',NULL,NULL,NULL,NULL),
+                         ('string','RedCreek-Tunneled-WINS-Server2','RedCreek',NULL,NULL,NULL,NULL),
+                         ('string','RedCreek-Tunneled-HostName','RedCreek',NULL,NULL,NULL,NULL),
+                         ('string','RedCreek-Tunneled-DomainName','RedCreek',NULL,NULL,NULL,NULL),
+                         ('string','RedCreek-Tunneled-Search-List','RedCreek',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2392,'string','Colubris-AVPair',NULL,NULL,'Colubris',NULL,NULL,NULL,NULL),
                                 (2393,'integer','Colubris-Intercept',NULL,NULL,'Colubris',NULL,NULL,NULL,NULL);
