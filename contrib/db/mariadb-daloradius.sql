@@ -2865,13 +2865,15 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('ipaddr','NN-Homeservice','Bristol',NULL,NULL,NULL,NULL),
                          ('string','NN-Homeservice-Name','Bristol',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (3745,'integer','CVPN5000-Tunnel-Throughput',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
-                                (3746,'string','CVPN5000-Client-Assigned-IP',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
-                                (3747,'string','CVPN5000-Client-Real-IP',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
-                                (3748,'string','CVPN5000-VPN-GroupInfo',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
-                                (3749,'string','CVPN5000-VPN-Password',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
-                                (3750,'integer','CVPN5000-Echo',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
-                                (3751,'integer','CVPN5000-Client-Assigned-IPX',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL);
+/* Cisco-VPN5000 :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','CVPN5000-Tunnel-Throughput','Cisco-VPN5000',NULL,NULL,NULL,NULL),
+                         ('string','CVPN5000-Client-Assigned-IP','Cisco-VPN5000',NULL,NULL,NULL,NULL),
+                         ('string','CVPN5000-Client-Real-IP','Cisco-VPN5000',NULL,NULL,NULL,NULL),
+                         ('string','CVPN5000-VPN-GroupInfo','Cisco-VPN5000',NULL,NULL,NULL,NULL),
+                         ('string','CVPN5000-VPN-Password','Cisco-VPN5000',NULL,NULL,NULL,NULL),
+                         ('integer','CVPN5000-Echo','Cisco-VPN5000',NULL,NULL,NULL,NULL),
+                         ('integer','CVPN5000-Client-Assigned-IPX','Cisco-VPN5000',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (3752,'string','Motorola-Canopy-Shared-Secret',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
                                 (3753,'string','Motorola-Canopy-SULDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
