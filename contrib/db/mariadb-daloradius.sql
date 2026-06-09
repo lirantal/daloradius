@@ -2663,18 +2663,23 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','Aruba-Essid-Name','Aruba',NULL,NULL,NULL,NULL),
                          ('string','Aruba-Location-Id','Aruba',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (3564,'integer','Cabletron-Protocol-Enable',NULL,NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3565,'integer','Cabletron-Protocol-Callable',NULL,NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3566,NULL,'Cabletron-Protocol-Enable','IP-Enable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3567,NULL,'Cabletron-Protocol-Enable','Bridge-Enable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3568,NULL,'Cabletron-Protocol-Enable','IP-BR-Enable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3569,NULL,'Cabletron-Protocol-Enable','BR-IPX-Enable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3570,NULL,'Cabletron-Protocol-Enable','IP-BR-IPX-Enable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3571,NULL,'Cabletron-Protocol-Callable','IP-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3572,NULL,'Cabletron-Protocol-Callable','Bridge-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3573,NULL,'Cabletron-Protocol-Callable','IP-BR-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3574,NULL,'Cabletron-Protocol-Callable','BR-IPX-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3575,NULL,'Cabletron-Protocol-Callable','IP-BR-IPX-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL);
+/* Cabletron :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Cabletron-Protocol-Enable','Cabletron',NULL,NULL,NULL,NULL),
+                         ('integer','Cabletron-Protocol-Callable','Cabletron',NULL,NULL,NULL,NULL);
+
+/* Cabletron :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Cabletron-Protocol-Enable','IP-Enable','Cabletron'),
+                         ('Cabletron-Protocol-Enable','Bridge-Enable','Cabletron'),
+                         ('Cabletron-Protocol-Enable','IP-BR-Enable','Cabletron'),
+                         ('Cabletron-Protocol-Enable','BR-IPX-Enable','Cabletron'),
+                         ('Cabletron-Protocol-Enable','IP-BR-IPX-Enable','Cabletron'),
+                         ('Cabletron-Protocol-Callable','IP-Callable','Cabletron'),
+                         ('Cabletron-Protocol-Callable','Bridge-Callable','Cabletron'),
+                         ('Cabletron-Protocol-Callable','IP-BR-Callable','Cabletron'),
+                         ('Cabletron-Protocol-Callable','BR-IPX-Callable','Cabletron'),
+                         ('Cabletron-Protocol-Callable','IP-BR-IPX-Callable','Cabletron');
 
 INSERT INTO `dictionary` VALUES (3576,'ipv6addr','NAS-IPv6-Address',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
                                 (3577,'ifid','Framed-Interface-Id',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
