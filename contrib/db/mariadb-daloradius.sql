@@ -4156,21 +4156,23 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','Trapeze-Start-Date','Trapeze',NULL,NULL,NULL,NULL),
                          ('string','Trapeze-URL','Trapeze',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (4958,'string','T-Systems-Nova-Location-ID',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4959,'string','T-Systems-Nova-Location-Name',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4960,'string','T-Systems-Nova-Logoff-URL',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4961,'string','T-Systems-Nova-Redirection-URL',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4962,'integer','T-Systems-Nova-Bandwidth-Min-Up',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4963,'integer','T-Systems-Nova-Bandwidth-Min-Down',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4964,'integer','T-Systems-Nova-Bandwidth-Max-Up',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4965,'integer','T-Systems-Nova-Bandwidth-Max-Down',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4966,'integer','T-Systems-Nova-Session-Terminate-Time',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4967,'integer','T-Systems-Nova-Session-Terminate-EoD',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4968,'string','T-Systems-Nova-Billing-Class-Of-Service',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4969,'string','T-Systems-Nova-Service-Name',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4970,'integer','T-Systems-Nova-Price-Of-Service',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4971,'string','T-Systems-Nova-Visiting-Provider-Code',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4972,'string','T-Systems-Nova-UnknownAVP',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL);
+/* T-Systems-Nova :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','T-Systems-Nova-Location-ID','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('string','T-Systems-Nova-Location-Name','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('string','T-Systems-Nova-Logoff-URL','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('string','T-Systems-Nova-Redirection-URL','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('integer','T-Systems-Nova-Bandwidth-Min-Up','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('integer','T-Systems-Nova-Bandwidth-Min-Down','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('integer','T-Systems-Nova-Bandwidth-Max-Up','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('integer','T-Systems-Nova-Bandwidth-Max-Down','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('integer','T-Systems-Nova-Session-Terminate-Time','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('integer','T-Systems-Nova-Session-Terminate-EoD','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('string','T-Systems-Nova-Billing-Class-Of-Service','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('string','T-Systems-Nova-Service-Name','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('integer','T-Systems-Nova-Price-Of-Service','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('string','T-Systems-Nova-Visiting-Provider-Code','T-Systems-Nova',NULL,NULL,NULL,NULL),
+                         ('string','T-Systems-Nova-UnknownAVP','T-Systems-Nova',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (4973,'integer','Tunnel-Type',NULL,NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
                                 (4974,'integer','Tunnel-Medium-Type',NULL,NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
