@@ -1875,10 +1875,12 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('SonicWall-User-Privilege','Wireless-Add-ACL','SonicWall'),
                          ('SonicWall-User-Privilege','Internet-Access','SonicWall');
 
-INSERT INTO `dictionary` VALUES (2854,'string','Garderos-Location-Name',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
-                                (2855,'string','Garderos-Service-Name',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
-                                (2856,'string','Garderos-MSISDN',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
-                                (2857,'string','Garderos-Proxy',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL);
+/* Garderos :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Garderos-Location-Name','Garderos',NULL,NULL,NULL,NULL),
+                         ('string','Garderos-Service-Name','Garderos',NULL,NULL,NULL,NULL),
+                         ('string','Garderos-MSISDN','Garderos',NULL,NULL,NULL,NULL),
+                         ('string','Garderos-Proxy','Garderos',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2858,NULL,'Acct-Status-Type','WB-Login',NULL,'Walabi',NULL,NULL,NULL,NULL),
                                 (2859,NULL,'Acct-Status-Type','WB-Logout',NULL,'Walabi',NULL,NULL,NULL,NULL),
