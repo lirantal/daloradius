@@ -2612,16 +2612,18 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Patton-Disconnect-Cause','Protocol-error-unspecified','Patton'),
                          ('Patton-Disconnect-Cause','Internetworking-unspecified','Patton');
 
-INSERT INTO `dictionary` VALUES (3525,'integer','IPU-MIP-Spi',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3526,'string','IPU-MIP-Key',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3527,'integer','IPU-MIP-Alg-Type',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3528,'integer','IPU-MIP-Alg-Mode',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3529,'integer','IPU-MIP-Replay-Prot',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3530,'ipaddr','IPU-IKE-Remote-Addr',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3531,'ipaddr','IPU-IKE-Local-Addr',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3532,'string','IPU-IKE-Auth',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3533,'string','IPU-IKE-Conf-Name',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3534,'string','IPU-IKE-Cmd',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL);
+/* ipUnplugged :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','IPU-MIP-Spi','ipUnplugged',NULL,NULL,NULL,NULL),
+                         ('string','IPU-MIP-Key','ipUnplugged',NULL,NULL,NULL,NULL),
+                         ('integer','IPU-MIP-Alg-Type','ipUnplugged',NULL,NULL,NULL,NULL),
+                         ('integer','IPU-MIP-Alg-Mode','ipUnplugged',NULL,NULL,NULL,NULL),
+                         ('integer','IPU-MIP-Replay-Prot','ipUnplugged',NULL,NULL,NULL,NULL),
+                         ('ipaddr','IPU-IKE-Remote-Addr','ipUnplugged',NULL,NULL,NULL,NULL),
+                         ('ipaddr','IPU-IKE-Local-Addr','ipUnplugged',NULL,NULL,NULL,NULL),
+                         ('string','IPU-IKE-Auth','ipUnplugged',NULL,NULL,NULL,NULL),
+                         ('string','IPU-IKE-Conf-Name','ipUnplugged',NULL,NULL,NULL,NULL),
+                         ('string','IPU-IKE-Cmd','ipUnplugged',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (3535,'integer','Versanet-Termination-Cause',NULL,NULL,'Versanet',NULL,NULL,NULL,NULL),
                                 (3536,NULL,'Versanet-Termination-Cause','Normal-Hangup-No-Error-Occurred',NULL,'Versanet',NULL,NULL,NULL,NULL),
