@@ -1951,9 +1951,11 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Alteon-Service-Type','Alteon-Slboper','Alteon'),
                          ('Alteon-Service-Type','Alteon-User','Alteon');
 
-INSERT INTO `dictionary` VALUES (2909,'string','Merit-Proxy-Action',NULL,NULL,'Merit',NULL,NULL,NULL,NULL),
-                                (2910,'string','Merit-User-Id',NULL,NULL,'Merit',NULL,NULL,NULL,NULL),
-                                (2911,'string','Merit-User-Realm',NULL,NULL,'Merit',NULL,NULL,NULL,NULL);
+/* Merit :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Merit-Proxy-Action','Merit',NULL,NULL,NULL,NULL),
+                         ('string','Merit-User-Id','Merit',NULL,NULL,NULL,NULL),
+                         ('string','Merit-User-Realm','Merit',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2912,'string','Altiga-Access-Hours-G/U',NULL,NULL,'Altiga',NULL,NULL,NULL,NULL),
                                 (2913,'integer','Altiga-Simultaneous-Logins-G/U',NULL,NULL,'Altiga',NULL,NULL,NULL,NULL),
