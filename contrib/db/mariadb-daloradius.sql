@@ -1796,18 +1796,20 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('ipaddr','Cosine-LNS-IP-Address','Cosine',NULL,NULL,NULL,NULL),
                          ('string','Cosine-CLI-User-Permission-ID','Cosine',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2790,'string','Digest-Response',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2791,'octets','Digest-Attributes',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2792,'string','Digest-Realm',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2793,'string','Digest-Nonce',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2794,'string','Digest-Method',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2795,'string','Digest-URI',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2796,'string','Digest-QOP',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2797,'string','Digest-Algorithm',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2798,'string','Digest-Body-Digest',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2799,'string','Digest-CNonce',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2800,'string','Digest-Nonce-Count',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2801,'string','Digest-User-Name',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL);
+/* dictionary.rfc4590 :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Digest-Response','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('octets','Digest-Attributes','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-Realm','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-Nonce','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-Method','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-URI','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-QOP','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-Algorithm','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-Body-Digest','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-CNonce','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-Nonce-Count','dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                         ('string','Digest-User-Name','dictionary.rfc4590',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2802,'integer','Waverider-Grade-Of-Service',NULL,NULL,'Waverider',NULL,NULL,NULL,NULL),
                                 (2803,'integer','Waverider-Priority-Enabled',NULL,NULL,'Waverider',NULL,NULL,NULL,NULL),
