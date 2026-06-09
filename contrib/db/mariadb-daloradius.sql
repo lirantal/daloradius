@@ -1252,10 +1252,12 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('MS-CHAP-Use-NTLM-Auth','No','dictionary.freeradius.internal'),
                          ('MS-CHAP-Use-NTLM-Auth','Yes','dictionary.freeradius.internal');
 
-INSERT INTO `dictionary` VALUES (2318,'string','Telebit-Login-Command',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL),
-                                (2319,'string','Telebit-Port-Name',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL),
-                                (2320,'string','Telebit-Activate-Command',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL),
-                                (2321,'string','Telebit-Accounting-Info',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL);
+/* Telebit :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Telebit-Login-Command','Telebit',NULL,NULL,NULL,NULL),
+                         ('string','Telebit-Port-Name','Telebit',NULL,NULL,NULL,NULL),
+                         ('string','Telebit-Activate-Command','Telebit',NULL,NULL,NULL,NULL),
+                         ('string','Telebit-Accounting-Info','Telebit',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2322,'string','Navini-AVPair',NULL,NULL,'Navini',NULL,NULL,NULL,NULL);
 
