@@ -1745,18 +1745,23 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('LE-NAT-Log-Options','Syslog-Off','Livingston'),
                          ('LE-Multicast-Client','On','Livingston');
 
-INSERT INTO `dictionary` VALUES (2751,'integer','Extreme-CLI-Authorization',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2752,'string','Extreme-Shell-Command',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2753,'string','Extreme-Netlogin-Vlan',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2754,'string','Extreme-Netlogin-Url',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2755,'string','Extreme-Netlogin-Url-Desc',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2756,'integer','Extreme-Netlogin-Only',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2757,'string','Extreme-User-Location',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2758,'integer','Extreme-Netlogin-Vlan-Tag',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2759,NULL,'Extreme-CLI-Authorization','Disabled',NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2760,NULL,'Extreme-CLI-Authorization','Enabled',NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2761,NULL,'Extreme-Netlogin-Only','Disabled',NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2762,NULL,'Extreme-Netlogin-Only','Enabled',NULL,'Extreme',NULL,NULL,NULL,NULL);
+/* Extreme :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Extreme-CLI-Authorization','Extreme',NULL,NULL,NULL,NULL),
+                         ('string','Extreme-Shell-Command','Extreme',NULL,NULL,NULL,NULL),
+                         ('string','Extreme-Netlogin-Vlan','Extreme',NULL,NULL,NULL,NULL),
+                         ('string','Extreme-Netlogin-Url','Extreme',NULL,NULL,NULL,NULL),
+                         ('string','Extreme-Netlogin-Url-Desc','Extreme',NULL,NULL,NULL,NULL),
+                         ('integer','Extreme-Netlogin-Only','Extreme',NULL,NULL,NULL,NULL),
+                         ('string','Extreme-User-Location','Extreme',NULL,NULL,NULL,NULL),
+                         ('integer','Extreme-Netlogin-Vlan-Tag','Extreme',NULL,NULL,NULL,NULL);
+
+/* Extreme :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Extreme-CLI-Authorization','Disabled','Extreme'),
+                         ('Extreme-CLI-Authorization','Enabled','Extreme'),
+                         ('Extreme-Netlogin-Only','Disabled','Extreme'),
+                         ('Extreme-Netlogin-Only','Enabled','Extreme');
 
 INSERT INTO `dictionary` VALUES (2763,'string','3GPP-IMSI',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
                                 (2764,'integer','3GPP-Charging-ID',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
