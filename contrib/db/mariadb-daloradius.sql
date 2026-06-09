@@ -1353,8 +1353,10 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','RedCreek-Tunneled-DomainName','RedCreek',NULL,NULL,NULL,NULL),
                          ('string','RedCreek-Tunneled-Search-List','RedCreek',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2392,'string','Colubris-AVPair',NULL,NULL,'Colubris',NULL,NULL,NULL,NULL),
-                                (2393,'integer','Colubris-Intercept',NULL,NULL,'Colubris',NULL,NULL,NULL,NULL);
+/* Colubris :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Colubris-AVPair','Colubris',NULL,NULL,NULL,NULL),
+                         ('integer','Colubris-Intercept','Colubris',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2394,'integer','CBBSM-Bandwidth',NULL,NULL,'Cisco-BBSM',NULL,NULL,NULL,NULL);
 
