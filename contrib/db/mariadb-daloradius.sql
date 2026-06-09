@@ -908,21 +908,26 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Ingress-Filters','Enabled','dictionary.rfc4675'),
                          ('Ingress-Filters','Disabled','dictionary.rfc4675');
 
-INSERT INTO `dictionary` VALUES (498,'integer','Nomadix-Bw-Up',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (499,'integer','Nomadix-Bw-Down',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (500,'string','Nomadix-URL-Redirection',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (501,'integer','Nomadix-IP-Upsell',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (502,'string','Nomadix-Expiration',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (503,'string','Nomadix-Subnet',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (504,'integer','Nomadix-MaxBytesUp',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (505,'integer','Nomadix-MaxBytesDown',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (506,'integer','Nomadix-EndofSession',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (507,'string','Nomadix-Logoff-URL',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (508,'integer','Nomadix-Net-VLAN',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (509,'string','Nomadix-Config-URL',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (510,'string','Nomadix-Goodbye-URL',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (511,NULL,'Nomadix-IP-Upsell','PrivatePool',NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (512,NULL,'Nomadix-IP-Upsell','PublicPool',NULL,'Nomadix',NULL,NULL,NULL,NULL);
+/* Nomadix :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Nomadix-Bw-Up','Nomadix',NULL,NULL,NULL,NULL),
+                         ('integer','Nomadix-Bw-Down','Nomadix',NULL,NULL,NULL,NULL),
+                         ('string','Nomadix-URL-Redirection','Nomadix',NULL,NULL,NULL,NULL),
+                         ('integer','Nomadix-IP-Upsell','Nomadix',NULL,NULL,NULL,NULL),
+                         ('string','Nomadix-Expiration','Nomadix',NULL,NULL,NULL,NULL),
+                         ('string','Nomadix-Subnet','Nomadix',NULL,NULL,NULL,NULL),
+                         ('integer','Nomadix-MaxBytesUp','Nomadix',NULL,NULL,NULL,NULL),
+                         ('integer','Nomadix-MaxBytesDown','Nomadix',NULL,NULL,NULL,NULL),
+                         ('integer','Nomadix-EndofSession','Nomadix',NULL,NULL,NULL,NULL),
+                         ('string','Nomadix-Logoff-URL','Nomadix',NULL,NULL,NULL,NULL),
+                         ('integer','Nomadix-Net-VLAN','Nomadix',NULL,NULL,NULL,NULL),
+                         ('string','Nomadix-Config-URL','Nomadix',NULL,NULL,NULL,NULL),
+                         ('string','Nomadix-Goodbye-URL','Nomadix',NULL,NULL,NULL,NULL);
+
+/* Nomadix :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Nomadix-IP-Upsell','PrivatePool','Nomadix'),
+                         ('Nomadix-IP-Upsell','PublicPool','Nomadix');
 
 INSERT INTO `dictionary` VALUES (2007,'integer','Cajun-Service-Type',NULL,NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
                                 (2008,NULL,'Cajun-Service-Type','Cajun-Read-Only-User',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
