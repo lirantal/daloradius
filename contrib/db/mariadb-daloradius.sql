@@ -794,13 +794,18 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('MS-Acct-EAP-Type','Generic-Token-Card','Microsoft'),
                          ('MS-Acct-EAP-Type','TLS','Microsoft');
 
-INSERT INTO `dictionary` VALUES (408,'integer','Zyxel-Callback-Option',NULL,NULL,'Zyxel',NULL,NULL,NULL,NULL),
-                                (409,'integer','Zyxel-Callback-Phone-Source',NULL,NULL,'Zyxel',NULL,NULL,NULL,NULL),
-                                (410,NULL,'Zyxel-Callback-Phone-Source','Preconfigured',NULL,'Zyxel',NULL,NULL,NULL,NULL),
-                                (411,NULL,'Zyxel-Callback-Phone-Source','User',NULL,'Zyxel',NULL,NULL,NULL,NULL),
-                                (412,NULL,'Zyxel-Callback-Option','None',NULL,'Zyxel',NULL,NULL,NULL,NULL),
-                                (413,NULL,'Zyxel-Callback-Option','Optional',NULL,'Zyxel',NULL,NULL,NULL,NULL),
-                                (414,NULL,'Zyxel-Callback-Option','Mandatory',NULL,'Zyxel',NULL,NULL,NULL,NULL);
+/* Zyxel :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Zyxel-Callback-Option','Zyxel',NULL,NULL,NULL,NULL),
+                         ('integer','Zyxel-Callback-Phone-Source','Zyxel',NULL,NULL,NULL,NULL);
+
+/* Zyxel :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Zyxel-Callback-Phone-Source','Preconfigured','Zyxel'),
+                         ('Zyxel-Callback-Phone-Source','User','Zyxel'),
+                         ('Zyxel-Callback-Option','None','Zyxel'),
+                         ('Zyxel-Callback-Option','Optional','Zyxel'),
+                         ('Zyxel-Callback-Option','Mandatory','Zyxel');
 
 INSERT INTO `dictionary` VALUES (415,'string','Chargeable-User-Identity',NULL,NULL,'dictionary.rfc4372',NULL,NULL,NULL,NULL);
 
