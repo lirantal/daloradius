@@ -1785,14 +1785,16 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','3GPP-SGSN-MCC-MNC','3GPP',NULL,NULL,NULL,NULL),
                          ('octets','3GPP-Teardown-Indicator','3GPP',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2782,'string','Cosine-Connection-Profile-Name',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
-                                (2783,'string','Cosine-Enterprise-ID',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
-                                (2784,'string','Cosine-Address-Pool-Name',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
-                                (2785,'integer','Cosine-DS-Byte',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
-                                (2786,'octets','Cosine-VPI-VCI',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
-                                (2787,'integer','Cosine-DLCI',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
-                                (2788,'ipaddr','Cosine-LNS-IP-Address',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
-                                (2789,'string','Cosine-CLI-User-Permission-ID',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL);
+/* Cosine :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Cosine-Connection-Profile-Name','Cosine',NULL,NULL,NULL,NULL),
+                         ('string','Cosine-Enterprise-ID','Cosine',NULL,NULL,NULL,NULL),
+                         ('string','Cosine-Address-Pool-Name','Cosine',NULL,NULL,NULL,NULL),
+                         ('integer','Cosine-DS-Byte','Cosine',NULL,NULL,NULL,NULL),
+                         ('octets','Cosine-VPI-VCI','Cosine',NULL,NULL,NULL,NULL),
+                         ('integer','Cosine-DLCI','Cosine',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Cosine-LNS-IP-Address','Cosine',NULL,NULL,NULL,NULL),
+                         ('string','Cosine-CLI-User-Permission-ID','Cosine',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2790,'string','Digest-Response',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
                                 (2791,'octets','Digest-Attributes',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
