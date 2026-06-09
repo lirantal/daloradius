@@ -3719,21 +3719,23 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('integer','Ericsson-ViG-IPT-Time-Stamp','Ericsson',NULL,NULL,NULL,NULL),
                          ('integer','Ericsson-ViG-User-Name-Info','Ericsson',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (4563,'string','Local-Web-Client-Ip',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4564,'string','Local-Web-Border-Router',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4565,'integer','Local-Web-Tx-Limit',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4566,'integer','Local-Web-Rx-Limit',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4567,'integer','Local-Web-Acct-Time',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4568,'integer','Local-Web-Acct-Duration',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4569,'integer','Local-Web-Acct-Interim-Tx-Bytes',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4570,'integer','Local-Web-Acct-Interim-Rx-Bytes',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4571,'integer','Local-Web-Acct-Interim-Tx-Gigawords',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4572,'integer','Local-Web-Acct-Interim-Rx-Gigawords',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4573,'integer','Local-Web-Acct-Interim-Tx-Mgmt',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4574,'integer','Local-Web-Acct-Interim-Rx-Mgmt',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4575,'integer','Local-Web-Acct-Tx-Mgmt',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4576,'integer','Local-Web-Acct-Rx-Mgmt',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4577,'integer','Local-Web-Reauth-Counter',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL);
+/* Local-Web :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Local-Web-Client-Ip','Local-Web',NULL,NULL,NULL,NULL),
+                         ('string','Local-Web-Border-Router','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Tx-Limit','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Rx-Limit','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Time','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Duration','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Interim-Tx-Bytes','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Interim-Rx-Bytes','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Interim-Tx-Gigawords','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Interim-Rx-Gigawords','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Interim-Tx-Mgmt','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Interim-Rx-Mgmt','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Tx-Mgmt','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Acct-Rx-Mgmt','Local-Web',NULL,NULL,NULL,NULL),
+                         ('integer','Local-Web-Reauth-Counter','Local-Web',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (4578,'integer','HP-Privelege-Level',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
                                 (4579,'string','HP-Command-String',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
