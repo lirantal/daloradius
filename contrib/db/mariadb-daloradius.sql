@@ -2625,29 +2625,34 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','IPU-IKE-Conf-Name','ipUnplugged',NULL,NULL,NULL,NULL),
                          ('string','IPU-IKE-Cmd','ipUnplugged',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (3535,'integer','Versanet-Termination-Cause',NULL,NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3536,NULL,'Versanet-Termination-Cause','Normal-Hangup-No-Error-Occurred',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3537,NULL,'Versanet-Termination-Cause','Call-Waiting-Caused-Disconnect',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3538,NULL,'Versanet-Termination-Cause','Physical-Carrier-Loss',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3539,NULL,'Versanet-Termination-Cause','No-err-correction-at-other-end',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3540,NULL,'Versanet-Termination-Cause','No-resp-to-feature-negotiation',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3541,NULL,'Versanet-Termination-Cause','1st-modem-async-only-2nd-sync',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3542,NULL,'Versanet-Termination-Cause','No-framing-technique-in-common',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3543,NULL,'Versanet-Termination-Cause','No-protocol-in-common',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3544,NULL,'Versanet-Termination-Cause','Bad-resp-to-feature-negotiation',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3545,NULL,'Versanet-Termination-Cause','No-sync-info-from-remote-modem',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3546,NULL,'Versanet-Termination-Cause','Normal-Hangup-by-Remote-modem',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3547,NULL,'Versanet-Termination-Cause','Retransmission-limit-reached',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3548,NULL,'Versanet-Termination-Cause','Protocol-violation-occurred',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3549,NULL,'Versanet-Termination-Cause','Lost-DTR',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3550,NULL,'Versanet-Termination-Cause','Received-GSTN-cleardown',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3551,NULL,'Versanet-Termination-Cause','Inactivity-timeout',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3552,NULL,'Versanet-Termination-Cause','Speed-not-supported',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3553,NULL,'Versanet-Termination-Cause','Long-space-disconnect',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3554,NULL,'Versanet-Termination-Cause','Key-abort-disconnect',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3555,NULL,'Versanet-Termination-Cause','Clears-previous-disc-reason',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3556,NULL,'Versanet-Termination-Cause','No-connection-established',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3557,NULL,'Versanet-Termination-Cause','Disconnect-after-three-retrains',NULL,'Versanet',NULL,NULL,NULL,NULL);
+/* Versanet :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Versanet-Termination-Cause','Versanet',NULL,NULL,NULL,NULL);
+
+/* Versanet :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Versanet-Termination-Cause','Normal-Hangup-No-Error-Occurred','Versanet'),
+                         ('Versanet-Termination-Cause','Call-Waiting-Caused-Disconnect','Versanet'),
+                         ('Versanet-Termination-Cause','Physical-Carrier-Loss','Versanet'),
+                         ('Versanet-Termination-Cause','No-err-correction-at-other-end','Versanet'),
+                         ('Versanet-Termination-Cause','No-resp-to-feature-negotiation','Versanet'),
+                         ('Versanet-Termination-Cause','1st-modem-async-only-2nd-sync','Versanet'),
+                         ('Versanet-Termination-Cause','No-framing-technique-in-common','Versanet'),
+                         ('Versanet-Termination-Cause','No-protocol-in-common','Versanet'),
+                         ('Versanet-Termination-Cause','Bad-resp-to-feature-negotiation','Versanet'),
+                         ('Versanet-Termination-Cause','No-sync-info-from-remote-modem','Versanet'),
+                         ('Versanet-Termination-Cause','Normal-Hangup-by-Remote-modem','Versanet'),
+                         ('Versanet-Termination-Cause','Retransmission-limit-reached','Versanet'),
+                         ('Versanet-Termination-Cause','Protocol-violation-occurred','Versanet'),
+                         ('Versanet-Termination-Cause','Lost-DTR','Versanet'),
+                         ('Versanet-Termination-Cause','Received-GSTN-cleardown','Versanet'),
+                         ('Versanet-Termination-Cause','Inactivity-timeout','Versanet'),
+                         ('Versanet-Termination-Cause','Speed-not-supported','Versanet'),
+                         ('Versanet-Termination-Cause','Long-space-disconnect','Versanet'),
+                         ('Versanet-Termination-Cause','Key-abort-disconnect','Versanet'),
+                         ('Versanet-Termination-Cause','Clears-previous-disc-reason','Versanet'),
+                         ('Versanet-Termination-Cause','No-connection-established','Versanet'),
+                         ('Versanet-Termination-Cause','Disconnect-after-three-retrains','Versanet');
 
 INSERT INTO `dictionary` VALUES (3558,'string','Aruba-User-Role',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
                                 (3559,'integer','Aruba-User-Vlan',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
