@@ -3737,12 +3737,14 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('integer','Local-Web-Acct-Rx-Mgmt','Local-Web',NULL,NULL,NULL,NULL),
                          ('integer','Local-Web-Reauth-Counter','Local-Web',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (4578,'integer','HP-Privelege-Level',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
-                                (4579,'string','HP-Command-String',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
-                                (4580,'integer','HP-Command-Exception',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
-                                (4581,'string','HP-Port-Priority-Regeneration-Table',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
-                                (4582,'integer','HP-Bandwidth-Max-Ingress',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
-                                (4583,'string','HP-Nas-Filter-Rule',NULL,NULL,'HP',NULL,NULL,NULL,NULL);
+/* HP :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','HP-Privelege-Level','HP',NULL,NULL,NULL,NULL),
+                         ('string','HP-Command-String','HP',NULL,NULL,NULL,NULL),
+                         ('integer','HP-Command-Exception','HP',NULL,NULL,NULL,NULL),
+                         ('string','HP-Port-Priority-Regeneration-Table','HP',NULL,NULL,NULL,NULL),
+                         ('integer','HP-Bandwidth-Max-Ingress','HP',NULL,NULL,NULL,NULL),
+                         ('string','HP-Nas-Filter-Rule','HP',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (4584,'octets','CableLabs-Reserved',NULL,NULL,'CableLabs',NULL,NULL,NULL,NULL),
                                 (4585,'octets','CableLabs-Event-Message',NULL,NULL,'CableLabs',NULL,NULL,NULL,NULL),
