@@ -4094,13 +4094,15 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Epygi-CallDisconnectReason','Disconected-by-CAC','Epygi'),
                          ('Epygi-CallDisconnectReason','Other','Epygi');
 
-INSERT INTO `dictionary` VALUES (4914,NULL,'Acct-Terminate-Cause','Supplicant-Restart',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
-                                (4915,NULL,'Acct-Terminate-Cause','Reauthentication-Failure',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
-                                (4916,NULL,'Acct-Terminate-Cause','Port-Reinit',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
-                                (4917,NULL,'Acct-Terminate-Cause','Port-Disabled',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
-                                (4918,NULL,'NAS-Port-Type','Token-Ring',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
-                                (4919,NULL,'NAS-Port-Type','FDDI',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
-                                (4920,NULL,'Tunnel-Type','VLAN',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL);
+/* dictionary.rfc3580 :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Acct-Terminate-Cause','Supplicant-Restart','dictionary.rfc3580'),
+                         ('Acct-Terminate-Cause','Reauthentication-Failure','dictionary.rfc3580'),
+                         ('Acct-Terminate-Cause','Port-Reinit','dictionary.rfc3580'),
+                         ('Acct-Terminate-Cause','Port-Disabled','dictionary.rfc3580'),
+                         ('NAS-Port-Type','Token-Ring','dictionary.rfc3580'),
+                         ('NAS-Port-Type','FDDI','dictionary.rfc3580'),
+                         ('Tunnel-Type','VLAN','dictionary.rfc3580');
 
 INSERT INTO `dictionary` VALUES (4921,'integer','Foundry-Privilege-Level',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
                                 (4922,'string','Foundry-Command-String',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
