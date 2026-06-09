@@ -2681,12 +2681,14 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Cabletron-Protocol-Callable','BR-IPX-Callable','Cabletron'),
                          ('Cabletron-Protocol-Callable','IP-BR-IPX-Callable','Cabletron');
 
-INSERT INTO `dictionary` VALUES (3576,'ipv6addr','NAS-IPv6-Address',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
-                                (3577,'ifid','Framed-Interface-Id',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
-                                (3578,'ipv6prefix','Framed-IPv6-Prefix',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
-                                (3579,'ipv6addr','Login-IPv6-Host',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
-                                (3580,'string','Framed-IPv6-Route',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
-                                (3581,'string','Framed-IPv6-Pool',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL);
+/* dictionary.rfc3162 :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('ipv6addr','NAS-IPv6-Address','dictionary.rfc3162',NULL,NULL,NULL,NULL),
+                         ('ifid','Framed-Interface-Id','dictionary.rfc3162',NULL,NULL,NULL,NULL),
+                         ('ipv6prefix','Framed-IPv6-Prefix','dictionary.rfc3162',NULL,NULL,NULL,NULL),
+                         ('ipv6addr','Login-IPv6-Host','dictionary.rfc3162',NULL,NULL,NULL,NULL),
+                         ('string','Framed-IPv6-Route','dictionary.rfc3162',NULL,NULL,NULL,NULL),
+                         ('string','Framed-IPv6-Pool','dictionary.rfc3162',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (3582,'integer','SN-VPN-ID',NULL,NULL,'Starent',NULL,NULL,NULL,NULL),
                                 (3583,'string','SN-VPN-Name',NULL,NULL,'Starent',NULL,NULL,NULL,NULL),
