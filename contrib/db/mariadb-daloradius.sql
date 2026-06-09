@@ -1306,29 +1306,34 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('ASN-Webfilter-Mode','Deny','ASN'),
                          ('ASN-Webfilter-Mode','Allow','ASN');
 
-INSERT INTO `dictionary` VALUES (2357,'integer','Xylan-Auth-Group',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2358,'string','Xylan-Slot-Port',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2359,'string','Xylan-Time-of-Day',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2360,'ipaddr','Xylan-Client-IP-Addr',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2361,'string','Xylan-Group-Desc',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2362,'string','Xylan-Port-Desc',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2363,'integer','Xylan-Profil-Numb',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2364,'string','Xylan-Auth-Group-Protocol',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2365,'string','Xylan-Asa-Access',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2366,'integer','Xylan-Access-Priv',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2367,'octets','Xylan-Acce-Priv-R1',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2368,'octets','Xylan-Acce-Priv-R2',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2369,'octets','Xylan-Acce-Priv-W1',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2370,'octets','Xylan-Acce-Priv-W2',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2371,'octets','Xylan-Acce-Priv-G1',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2372,'octets','Xylan-Acce-Priv-G2',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2373,'octets','Xylan-Acce-Priv-F-R1',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2374,'octets','Xylan-Acce-Priv-F-R2',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2375,'octets','Xylan-Acce-Priv-F-W1',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2376,'octets','Xylan-Acce-Priv-F-W2',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2377,NULL,'Xylan-Access-Priv','Xylan-Read-Priv',NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2378,NULL,'Xylan-Access-Priv','Xylan-Write-Priv',NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2379,NULL,'Xylan-Access-Priv','Xylan-Admin-Priv',NULL,'Xylan',NULL,NULL,NULL,NULL);
+/* Xylan :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Xylan-Auth-Group','Xylan',NULL,NULL,NULL,NULL),
+                         ('string','Xylan-Slot-Port','Xylan',NULL,NULL,NULL,NULL),
+                         ('string','Xylan-Time-of-Day','Xylan',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Xylan-Client-IP-Addr','Xylan',NULL,NULL,NULL,NULL),
+                         ('string','Xylan-Group-Desc','Xylan',NULL,NULL,NULL,NULL),
+                         ('string','Xylan-Port-Desc','Xylan',NULL,NULL,NULL,NULL),
+                         ('integer','Xylan-Profil-Numb','Xylan',NULL,NULL,NULL,NULL),
+                         ('string','Xylan-Auth-Group-Protocol','Xylan',NULL,NULL,NULL,NULL),
+                         ('string','Xylan-Asa-Access','Xylan',NULL,NULL,NULL,NULL),
+                         ('integer','Xylan-Access-Priv','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-R1','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-R2','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-W1','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-W2','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-G1','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-G2','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-F-R1','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-F-R2','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-F-W1','Xylan',NULL,NULL,NULL,NULL),
+                         ('octets','Xylan-Acce-Priv-F-W2','Xylan',NULL,NULL,NULL,NULL);
+
+/* Xylan :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Xylan-Access-Priv','Xylan-Read-Priv','Xylan'),
+                         ('Xylan-Access-Priv','Xylan-Write-Priv','Xylan'),
+                         ('Xylan-Access-Priv','Xylan-Admin-Priv','Xylan');
 
 INSERT INTO `dictionary` VALUES (2380,'string','Fortinet-Group-Name',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL),
                                 (2381,'ipaddr','Fortinet-Client-IP-Address',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL),
