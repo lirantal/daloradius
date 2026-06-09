@@ -729,14 +729,16 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','Quintum-Trunkid-In','Quintum',NULL,NULL,NULL,NULL),
                          ('string','Quintum-Trunkid-Out','Quintum',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (352,'integer','Passport-Command-Scope',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
-                                (353,'integer','Passport-Command-Impact',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
-                                (354,'integer','Passport-Customer-Identifier',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
-                                (355,'integer','Passport-Allowed-Access',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
-                                (356,'integer','Passport-AllowedOut-Access',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
-                                (357,'string','Passport-Login-Directory',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
-                                (358,'integer','Passport-Timeout-Protocol',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
-                                (359,'string','Passport-Role',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL);
+/* Nortel :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Passport-Command-Scope','Nortel',NULL,NULL,NULL,NULL),
+                         ('integer','Passport-Command-Impact','Nortel',NULL,NULL,NULL,NULL),
+                         ('integer','Passport-Customer-Identifier','Nortel',NULL,NULL,NULL,NULL),
+                         ('integer','Passport-Allowed-Access','Nortel',NULL,NULL,NULL,NULL),
+                         ('integer','Passport-AllowedOut-Access','Nortel',NULL,NULL,NULL,NULL),
+                         ('string','Passport-Login-Directory','Nortel',NULL,NULL,NULL,NULL),
+                         ('integer','Passport-Timeout-Protocol','Nortel',NULL,NULL,NULL,NULL),
+                         ('string','Passport-Role','Nortel',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (360,'octets','MS-CHAP-Response',NULL,NULL,'Microsoft',NULL,NULL,NULL,NULL),
                                 (361,'string','MS-CHAP-Error',NULL,NULL,'Microsoft',NULL,NULL,NULL,NULL),
