@@ -1358,19 +1358,23 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','Colubris-AVPair','Colubris',NULL,NULL,NULL,NULL),
                          ('integer','Colubris-Intercept','Colubris',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2394,'integer','CBBSM-Bandwidth',NULL,NULL,'Cisco-BBSM',NULL,NULL,NULL,NULL);
+/* Cisco-BBSM :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','CBBSM-Bandwidth','Cisco-BBSM',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2395,'string','WISPr-Location-ID',NULL,NULL,'WISPr',':=','check','','Location ID is set to the radiuslocationid option if present. Should be in the format: isocc=<ISO_Country_Code>, cc=<E.164_Country_Code>,ac=<E.164_Area_Code>,network=<ssid/ZONE>'),
-                                (2396,'string','WISPr-Location-Name',NULL,NULL,'WISPr','','check','','Location Name is set to the radiuslocationname option if present. Should be in the format: <HOTSPOT_OPERATOR_NAME>,<LOCATION>'),
-                                (2397,'string','WISPr-Logoff-URL',NULL,NULL,'WISPr','=','check','','Chilli includes this attribute in Access-Request messages in order to notify the operator of the log off URL to use for logging off clients. Defaults to \"http://192.168.182.1:3990/logoff\".'),
-                                (2398,'string','WISPr-Redirection-URL',NULL,NULL,'WISPr','=','reply','','If present the client will be redirected to this URL once authenticated. This URL should include a link to WISPr-Logoff-URL in order to enable the client to log off.'),
-                                (2399,'integer','WISPr-Bandwidth-Min-Up',NULL,NULL,'WISPr',':=','reply','bitspersecond','WISPr vendor specific attributes for setting the minimum bandwidth rate in bits per second.'),
-                                (2400,'integer','WISPr-Bandwidth-Min-Down',NULL,NULL,'WISPr',':=','reply','bitspersecond','WISPr vendor specific attributes for setting the minimum bandwidth rate in bits per second.'),
-                                (2401,'integer','WISPr-Bandwidth-Max-Up',NULL,NULL,'WISPr',':=','reply','bitspersecond','Maximum transmit rate (b/s). Limits the bandwidth of the connection. Note that this attribute is specified in bits per second. For example (256000)'),
-                                (2402,'integer','WISPr-Bandwidth-Max-Down',NULL,NULL,'WISPr',':=','reply','bitspersecond','Maximum receive rate (b/s). Limits the bandwidth of the connection. Note that this attribute is specified in bits per second. For example (256000)'),
-                                (2403,'string','WISPr-Session-Terminate-Time',NULL,NULL,'WISPr','=','reply','','The time when the user should be disconnected in ISO 8601 format (YYYY-MM-DDThh:mm:ssTZD). If TZD is not specified local time is assumed. For example a disconnect on 18 December 2001 at 7:00 PM UTC would be specified as 2001-12-18T19:00:00+00:00.'),
-                                (2404,'string','WISPr-Session-Terminate-End-Of-Day',NULL,NULL,'WISPr',NULL,NULL,NULL,NULL),
-                                (2405,'string','WISPr-Billing-Class-Of-Service',NULL,NULL,'WISPr',NULL,NULL,NULL,NULL);
+/* WISPr :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','WISPr-Location-ID','WISPr',':=','check','','Location ID is set to the radiuslocationid option if present. Should be in the format: isocc=<ISO_Country_Code>, cc=<E.164_Country_Code>,ac=<E.164_Area_Code>,network=<ssid/ZONE>'),
+                         ('string','WISPr-Location-Name','WISPr','','check','','Location Name is set to the radiuslocationname option if present. Should be in the format: <HOTSPOT_OPERATOR_NAME>,<LOCATION>'),
+                         ('string','WISPr-Logoff-URL','WISPr','=','check','','Chilli includes this attribute in Access-Request messages in order to notify the operator of the log off URL to use for logging off clients. Defaults to \"http://192.168.182.1:3990/logoff\".'),
+                         ('string','WISPr-Redirection-URL','WISPr','=','reply','','If present the client will be redirected to this URL once authenticated. This URL should include a link to WISPr-Logoff-URL in order to enable the client to log off.'),
+                         ('integer','WISPr-Bandwidth-Min-Up','WISPr',':=','reply','bitspersecond','WISPr vendor specific attributes for setting the minimum bandwidth rate in bits per second.'),
+                         ('integer','WISPr-Bandwidth-Min-Down','WISPr',':=','reply','bitspersecond','WISPr vendor specific attributes for setting the minimum bandwidth rate in bits per second.'),
+                         ('integer','WISPr-Bandwidth-Max-Up','WISPr',':=','reply','bitspersecond','Maximum transmit rate (b/s). Limits the bandwidth of the connection. Note that this attribute is specified in bits per second. For example (256000)'),
+                         ('integer','WISPr-Bandwidth-Max-Down','WISPr',':=','reply','bitspersecond','Maximum receive rate (b/s). Limits the bandwidth of the connection. Note that this attribute is specified in bits per second. For example (256000)'),
+                         ('string','WISPr-Session-Terminate-Time','WISPr','=','reply','','The time when the user should be disconnected in ISO 8601 format (YYYY-MM-DDThh:mm:ssTZD). If TZD is not specified local time is assumed. For example a disconnect on 18 December 2001 at 7:00 PM UTC would be specified as 2001-12-18T19:00:00+00:00.'),
+                         ('string','WISPr-Session-Terminate-End-Of-Day','WISPr',NULL,NULL,NULL,NULL),
+                         ('string','WISPr-Billing-Class-Of-Service','WISPr',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2406,NULL,'Service-Type','Sip-session',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
                                 (2407,'integer','Sip-Method',NULL,NULL,'Columbia-University',NULL,NULL,NULL,NULL),
