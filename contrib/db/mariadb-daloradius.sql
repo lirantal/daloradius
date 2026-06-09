@@ -2846,14 +2846,16 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('SN-PPP-Data-Compression-Mode','Normal','Starent'),
                          ('SN-PPP-Data-Compression-Mode','Stateless','Starent');
 
-INSERT INTO `dictionary` VALUES (3732,'ipaddr','Xedia-DNS-Server',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
-                                (3733,'ipaddr','Xedia-NetBios-Server',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
-                                (3734,'string','Xedia-Address-Pool',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
-                                (3735,'integer','Xedia-PPP-Echo-Interval',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
-                                (3736,'integer','Xedia-SSH-Privileges',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
-                                (3737,'string','Xedia-Client-Access-Network',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
-                                (3738,'integer','Xedia-Client-Firewall-Setting',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
-                                (3739,'integer','Xedia-Save-Password',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL);
+/* Xedia :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('ipaddr','Xedia-DNS-Server','Xedia',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Xedia-NetBios-Server','Xedia',NULL,NULL,NULL,NULL),
+                         ('string','Xedia-Address-Pool','Xedia',NULL,NULL,NULL,NULL),
+                         ('integer','Xedia-PPP-Echo-Interval','Xedia',NULL,NULL,NULL,NULL),
+                         ('integer','Xedia-SSH-Privileges','Xedia',NULL,NULL,NULL,NULL),
+                         ('string','Xedia-Client-Access-Network','Xedia',NULL,NULL,NULL,NULL),
+                         ('integer','Xedia-Client-Firewall-Setting','Xedia',NULL,NULL,NULL,NULL),
+                         ('integer','Xedia-Save-Password','Xedia',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (3740,'integer','NN-Data-Rate',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
                                 (3741,'integer','NN-Data-Rate-Ceiling',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
