@@ -4130,15 +4130,20 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Foundry-INM-Privilege','AAA_pri_14','Foundry'),
                          ('Foundry-INM-Privilege','AAA_pri_15','Foundry');
 
-INSERT INTO `dictionary` VALUES (4941,'integer','3Com-User-Access-Level',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4942,NULL,'3Com-User-Access-Level','3Com-Visitor',NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4943,NULL,'3Com-User-Access-Level','3Com-Monitor',NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4944,NULL,'3Com-User-Access-Level','3Com-Manager',NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4945,NULL,'3Com-User-Access-Level','3Com-Administrator',NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4946,'integer','3Com-Connect_Id',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4947,'integer','3Com-NAS-Startup-Timestamp',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4948,'string','3Com-Ip-Host-Addr',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4949,'string','3Com-Product-ID',NULL,NULL,'3com',NULL,NULL,NULL,NULL);
+/* 3com :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','3Com-User-Access-Level','3com',NULL,NULL,NULL,NULL),
+                         ('integer','3Com-Connect_Id','3com',NULL,NULL,NULL,NULL),
+                         ('integer','3Com-NAS-Startup-Timestamp','3com',NULL,NULL,NULL,NULL),
+                         ('string','3Com-Ip-Host-Addr','3com',NULL,NULL,NULL,NULL),
+                         ('string','3Com-Product-ID','3com',NULL,NULL,NULL,NULL);
+
+/* 3com :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('3Com-User-Access-Level','3Com-Visitor','3com'),
+                         ('3Com-User-Access-Level','3Com-Monitor','3com'),
+                         ('3Com-User-Access-Level','3Com-Manager','3com'),
+                         ('3Com-User-Access-Level','3Com-Administrator','3com');
 
 INSERT INTO `dictionary` VALUES (4950,'string','Trapeze-VLAN-Name',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
                                 (4951,'string','Trapeze-Mobility-Profile',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
