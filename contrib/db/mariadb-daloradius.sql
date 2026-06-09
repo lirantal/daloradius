@@ -1882,19 +1882,24 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','Garderos-MSISDN','Garderos',NULL,NULL,NULL,NULL),
                          ('string','Garderos-Proxy','Garderos',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2858,NULL,'Acct-Status-Type','WB-Login',NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2859,NULL,'Acct-Status-Type','WB-Logout',NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2860,NULL,'Acct-Status-Type','WB-WRitelog',NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2861,'integer','WB-AUTH-Time-Left',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2862,'integer','WB-Auth-Accum-BW',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2863,'integer','WB-Auth-BW-Quota',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2864,'integer','WB-Auth-BW-Count',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2865,'integer','WB-Auth-Upload-Limit',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2866,'integer','WB-Auth-Download-Limit',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2867,'integer','WB-Auth-Login-Time',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2868,'integer','WB-Auth-Logout-Time',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2869,'integer','WB-Auth-Time-Diff',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2870,'integer','WB-Auth-BW-Usage',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL);
+/* Walabi :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','WB-AUTH-Time-Left','Walabi',NULL,NULL,NULL,NULL),
+                         ('integer','WB-Auth-Accum-BW','Walabi',NULL,NULL,NULL,NULL),
+                         ('integer','WB-Auth-BW-Quota','Walabi',NULL,NULL,NULL,NULL),
+                         ('integer','WB-Auth-BW-Count','Walabi',NULL,NULL,NULL,NULL),
+                         ('integer','WB-Auth-Upload-Limit','Walabi',NULL,NULL,NULL,NULL),
+                         ('integer','WB-Auth-Download-Limit','Walabi',NULL,NULL,NULL,NULL),
+                         ('integer','WB-Auth-Login-Time','Walabi',NULL,NULL,NULL,NULL),
+                         ('integer','WB-Auth-Logout-Time','Walabi',NULL,NULL,NULL,NULL),
+                         ('integer','WB-Auth-Time-Diff','Walabi',NULL,NULL,NULL,NULL),
+                         ('integer','WB-Auth-BW-Usage','Walabi',NULL,NULL,NULL,NULL);
+
+/* Walabi :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Acct-Status-Type','WB-Login','Walabi'),
+                         ('Acct-Status-Type','WB-Logout','Walabi'),
+                         ('Acct-Status-Type','WB-WRitelog','Walabi');
 
 INSERT INTO `dictionary` VALUES (2871,'string','Issanni-SoftFlow-Template',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
                                 (2872,'string','Issanni-NAT-Support',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
