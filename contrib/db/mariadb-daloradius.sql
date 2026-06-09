@@ -4104,26 +4104,31 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('NAS-Port-Type','FDDI','dictionary.rfc3580'),
                          ('Tunnel-Type','VLAN','dictionary.rfc3580');
 
-INSERT INTO `dictionary` VALUES (4921,'integer','Foundry-Privilege-Level',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4922,'string','Foundry-Command-String',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4923,'integer','Foundry-Command-Exception-Flag',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4924,'integer','Foundry-INM-Privilege',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4925,NULL,'Foundry-INM-Privilege','AAA_pri_0',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4926,NULL,'Foundry-INM-Privilege','AAA_pri_1',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4927,NULL,'Foundry-INM-Privilege','AAA_pri_2',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4928,NULL,'Foundry-INM-Privilege','AAA_pri_3',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4929,NULL,'Foundry-INM-Privilege','AAA_pri_4',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4930,NULL,'Foundry-INM-Privilege','AAA_pri_5',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4931,NULL,'Foundry-INM-Privilege','AAA_pri_6',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4932,NULL,'Foundry-INM-Privilege','AAA_pri_7',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4933,NULL,'Foundry-INM-Privilege','AAA_pri_8',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4934,NULL,'Foundry-INM-Privilege','AAA_pri_9',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4935,NULL,'Foundry-INM-Privilege','AAA_pri_10',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4936,NULL,'Foundry-INM-Privilege','AAA_pri_11',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4937,NULL,'Foundry-INM-Privilege','AAA_pri_12',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4938,NULL,'Foundry-INM-Privilege','AAA_pri_13',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4939,NULL,'Foundry-INM-Privilege','AAA_pri_14',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4940,NULL,'Foundry-INM-Privilege','AAA_pri_15',NULL,'Foundry',NULL,NULL,NULL,NULL);
+/* Foundry :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Foundry-Privilege-Level','Foundry',NULL,NULL,NULL,NULL),
+                         ('string','Foundry-Command-String','Foundry',NULL,NULL,NULL,NULL),
+                         ('integer','Foundry-Command-Exception-Flag','Foundry',NULL,NULL,NULL,NULL),
+                         ('integer','Foundry-INM-Privilege','Foundry',NULL,NULL,NULL,NULL);
+
+/* Foundry :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Foundry-INM-Privilege','AAA_pri_0','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_1','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_2','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_3','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_4','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_5','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_6','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_7','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_8','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_9','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_10','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_11','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_12','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_13','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_14','Foundry'),
+                         ('Foundry-INM-Privilege','AAA_pri_15','Foundry');
 
 INSERT INTO `dictionary` VALUES (4941,'integer','3Com-User-Access-Level',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
                                 (4942,NULL,'3Com-User-Access-Level','3Com-Visitor',NULL,'3com',NULL,NULL,NULL,NULL),
