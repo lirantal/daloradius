@@ -2857,11 +2857,13 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('integer','Xedia-Client-Firewall-Setting','Xedia',NULL,NULL,NULL,NULL),
                          ('integer','Xedia-Save-Password','Xedia',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (3740,'integer','NN-Data-Rate',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
-                                (3741,'integer','NN-Data-Rate-Ceiling',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
-                                (3742,'ipaddr','NN-Homenode',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
-                                (3743,'ipaddr','NN-Homeservice',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
-                                (3744,'string','NN-Homeservice-Name',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL);
+/* Bristol :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','NN-Data-Rate','Bristol',NULL,NULL,NULL,NULL),
+                         ('integer','NN-Data-Rate-Ceiling','Bristol',NULL,NULL,NULL,NULL),
+                         ('ipaddr','NN-Homenode','Bristol',NULL,NULL,NULL,NULL),
+                         ('ipaddr','NN-Homeservice','Bristol',NULL,NULL,NULL,NULL),
+                         ('string','NN-Homeservice-Name','Bristol',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (3745,'integer','CVPN5000-Tunnel-Throughput',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
                                 (3746,'string','CVPN5000-Client-Assigned-IP',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
