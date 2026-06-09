@@ -1857,18 +1857,23 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Waverider-Rf-Power','p_25','Waverider'),
                          ('Waverider-Rf-Power','p_26','Waverider');
 
-INSERT INTO `dictionary` VALUES (2842,'integer','SS3-Firewall-User-Privilege',NULL,NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2843,'integer','SonicWall-User-Privilege',NULL,NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2844,NULL,'SonicWall-User-Privilege','Remote-Access',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2845,NULL,'SonicWall-User-Privilege','Bypass-Filters',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2846,NULL,'SonicWall-User-Privilege','VPN-Client-Access',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2847,NULL,'SonicWall-User-Privilege','Access-To-VPN',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2848,NULL,'SonicWall-User-Privilege','Limited-Management',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2849,NULL,'SonicWall-User-Privilege','L2TP-Client-Access',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2850,NULL,'SonicWall-User-Privilege','Wireless-Guest',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2851,NULL,'SonicWall-User-Privilege','Wireless-Add-ACL',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2852,NULL,'SonicWall-User-Privilege','Internet-Access',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2853,'string','SonicWall-User-Group',NULL,NULL,'SonicWall',NULL,NULL,NULL,NULL);
+/* SonicWall :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','SS3-Firewall-User-Privilege','SonicWall',NULL,NULL,NULL,NULL),
+                         ('integer','SonicWall-User-Privilege','SonicWall',NULL,NULL,NULL,NULL),
+                         ('string','SonicWall-User-Group','SonicWall',NULL,NULL,NULL,NULL);
+
+/* SonicWall :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('SonicWall-User-Privilege','Remote-Access','SonicWall'),
+                         ('SonicWall-User-Privilege','Bypass-Filters','SonicWall'),
+                         ('SonicWall-User-Privilege','VPN-Client-Access','SonicWall'),
+                         ('SonicWall-User-Privilege','Access-To-VPN','SonicWall'),
+                         ('SonicWall-User-Privilege','Limited-Management','SonicWall'),
+                         ('SonicWall-User-Privilege','L2TP-Client-Access','SonicWall'),
+                         ('SonicWall-User-Privilege','Wireless-Guest','SonicWall'),
+                         ('SonicWall-User-Privilege','Wireless-Add-ACL','SonicWall'),
+                         ('SonicWall-User-Privilege','Internet-Access','SonicWall');
 
 INSERT INTO `dictionary` VALUES (2854,'string','Garderos-Location-Name',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
                                 (2855,'string','Garderos-Service-Name',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
