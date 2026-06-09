@@ -929,20 +929,25 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Nomadix-IP-Upsell','PrivatePool','Nomadix'),
                          ('Nomadix-IP-Upsell','PublicPool','Nomadix');
 
-INSERT INTO `dictionary` VALUES (2007,'integer','Cajun-Service-Type',NULL,NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2008,NULL,'Cajun-Service-Type','Cajun-Read-Only-User',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2009,NULL,'Cajun-Service-Type','Cajun-Read-Write-User',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2010,NULL,'Cajun-Service-Type','Cajun-Admin-User',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2011,'string','Avaya-StaticVlan-Type',NULL,NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2012,'integer','Avaya-PortPriority-Type',NULL,NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2013,NULL,'Avaya-PortPriority-Type','Type-0',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2014,NULL,'Avaya-PortPriority-Type','Type-1',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2015,NULL,'Avaya-PortPriority-Type','Type-2',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2016,NULL,'Avaya-PortPriority-Type','Type-3',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2017,NULL,'Avaya-PortPriority-Type','Type-4',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2018,NULL,'Avaya-PortPriority-Type','Type-5',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2019,NULL,'Avaya-PortPriority-Type','Type-6',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2020,NULL,'Avaya-PortPriority-Type','Type-7',NULL,'Cajun_p330',NULL,NULL,NULL,NULL);
+/* Cajun_p330 :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Cajun-Service-Type','Cajun_p330',NULL,NULL,NULL,NULL),
+                         ('string','Avaya-StaticVlan-Type','Cajun_p330',NULL,NULL,NULL,NULL),
+                         ('integer','Avaya-PortPriority-Type','Cajun_p330',NULL,NULL,NULL,NULL);
+
+/* Cajun_p330 :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Cajun-Service-Type','Cajun-Read-Only-User','Cajun_p330'),
+                         ('Cajun-Service-Type','Cajun-Read-Write-User','Cajun_p330'),
+                         ('Cajun-Service-Type','Cajun-Admin-User','Cajun_p330'),
+                         ('Avaya-PortPriority-Type','Type-0','Cajun_p330'),
+                         ('Avaya-PortPriority-Type','Type-1','Cajun_p330'),
+                         ('Avaya-PortPriority-Type','Type-2','Cajun_p330'),
+                         ('Avaya-PortPriority-Type','Type-3','Cajun_p330'),
+                         ('Avaya-PortPriority-Type','Type-4','Cajun_p330'),
+                         ('Avaya-PortPriority-Type','Type-5','Cajun_p330'),
+                         ('Avaya-PortPriority-Type','Type-6','Cajun_p330'),
+                         ('Avaya-PortPriority-Type','Type-7','Cajun_p330');
 
 INSERT INTO `dictionary` VALUES (2021,'integer','Fall-Through',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2022,'string','Exec-Program',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
