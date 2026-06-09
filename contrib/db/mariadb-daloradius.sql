@@ -1335,9 +1335,11 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Xylan-Access-Priv','Xylan-Write-Priv','Xylan'),
                          ('Xylan-Access-Priv','Xylan-Admin-Priv','Xylan');
 
-INSERT INTO `dictionary` VALUES (2380,'string','Fortinet-Group-Name',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL),
-                                (2381,'ipaddr','Fortinet-Client-IP-Address',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL),
-                                (2382,'string','Fortinet-Vdom-Name',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL);
+/* Fortinet :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Fortinet-Group-Name','Fortinet',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Fortinet-Client-IP-Address','Fortinet',NULL,NULL,NULL,NULL),
+                         ('string','Fortinet-Vdom-Name','Fortinet',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (2383,'ipaddr','RedCreek-Tunneled-IP-Addr',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
                                 (2384,'ipaddr','RedCreek-Tunneled-IP-Netmask',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
