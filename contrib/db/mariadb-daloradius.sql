@@ -547,8 +547,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (200,NULL,'NS-Admin-Privilege','All-VSYS-Root-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL),
                                 (201,NULL,'NS-Admin-Privilege','VSYS-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL),
                                 (202,NULL,'NS-Admin-Privilege','Read-Only-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (203,NULL,'NS-Admin-Privilege','Read-Only-VSYS-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (204,'string','Nokia-User-Profile',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
+                                (203,NULL,'NS-Admin-Privilege','Read-Only-VSYS-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (204,'string','Nokia-User-Profile',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
                                 (205,'octets','Nokia-Service-Name',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
                                 (206,'octets','Nokia-Service-Id',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
                                 (207,'octets','Nokia-Service-Username',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
@@ -564,15 +565,17 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (217,'integer','Nokia-Charging-Id',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
                                 (218,'integer','Nokia-Prepaid-Ind',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
                                 (219,'ipaddr','Nokia-GGSN-IP-Address',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (220,'ipaddr','Nokia-SGSN-IP-Address',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (221,'integer','VNC-PPPoE-CBQ-RX',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
+                                (220,'ipaddr','Nokia-SGSN-IP-Address',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (221,'integer','VNC-PPPoE-CBQ-RX',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
                                 (222,'integer','VNC-PPPoE-CBQ-TX',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
                                 (223,'integer','VNC-PPPoE-CBQ-RX-Fallback',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
                                 (224,'integer','VNC-PPPoE-CBQ-TX-Fallback',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
                                 (225,'integer','VNC-Splash',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
                                 (226,NULL,'VNC-Splash','Show',NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
-                                (227,NULL,'VNC-Splash','No-Show',NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
-                                (228,'string','SofaWare-Admin',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
+                                (227,NULL,'VNC-Splash','No-Show',NULL,'ValemountNetworks',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (228,'string','SofaWare-Admin',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
                                 (229,'string','SofaWare-VPN',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
                                 (230,'string','SofaWare-Hotspot',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
                                 (231,'string','SofaWare-UFP',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
@@ -591,8 +594,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (244,'string','ST-Realm-Name',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
                                 (245,'integer','ST-IPSec-Pfs-Group',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
                                 (246,'integer','ST-IPSec-Client-Firewall',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (247,'string','ST-IPSec-Client-Subnet',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (248,'string','Shiva-User-Attributes',NULL,NULL,'Shiva',NULL,NULL,NULL,NULL),
+                                (247,'string','ST-IPSec-Client-Subnet',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (248,'string','Shiva-User-Attributes',NULL,NULL,'Shiva',NULL,NULL,NULL,NULL),
                                 (249,'integer','Shiva-Compression',NULL,NULL,'Shiva',NULL,NULL,NULL,NULL),
                                 (250,'integer','Shiva-Dialback-Delay',NULL,NULL,'Shiva',NULL,NULL,NULL,NULL),
                                 (251,'integer','Shiva-Call-Durn-Trap',NULL,NULL,'Shiva',NULL,NULL,NULL,NULL),
@@ -670,8 +674,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (323,NULL,'Shiva-Function','Unknown',NULL,'Shiva',NULL,NULL,NULL,NULL),
                                 (324,NULL,'Shiva-Function','Dialin',NULL,'Shiva',NULL,NULL,NULL,NULL),
                                 (325,NULL,'Shiva-Function','Dialout',NULL,'Shiva',NULL,NULL,NULL,NULL),
-                                (326,NULL,'Shiva-Function','Lan-To-Lan',NULL,'Shiva',NULL,NULL,NULL,NULL),
-                                (327,'string','Quintum-AVPair',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL),
+                                (326,NULL,'Shiva-Function','Lan-To-Lan',NULL,'Shiva',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (327,'string','Quintum-AVPair',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL),
                                 (328,'string','Quintum-NAS-Port',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL),
                                 (329,'string','Quintum-h323-remote-address',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL),
                                 (330,'string','Quintum-h323-conf-id',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL),
@@ -695,16 +700,18 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (348,'string','Quintum-h323-billing-model',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL),
                                 (349,'string','Quintum-h323-currency-type',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL),
                                 (350,'string','Quintum-Trunkid-In',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL),
-                                (351,'string','Quintum-Trunkid-Out',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL),
-                                (352,'integer','Passport-Command-Scope',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
+                                (351,'string','Quintum-Trunkid-Out',NULL,NULL,'Quintum',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (352,'integer','Passport-Command-Scope',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
                                 (353,'integer','Passport-Command-Impact',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
                                 (354,'integer','Passport-Customer-Identifier',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
                                 (355,'integer','Passport-Allowed-Access',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
                                 (356,'integer','Passport-AllowedOut-Access',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
                                 (357,'string','Passport-Login-Directory',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
                                 (358,'integer','Passport-Timeout-Protocol',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
-                                (359,'string','Passport-Role',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL),
-                                (360,'octets','MS-CHAP-Response',NULL,NULL,'Microsoft',NULL,NULL,NULL,NULL),
+                                (359,'string','Passport-Role',NULL,NULL,'Nortel',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (360,'octets','MS-CHAP-Response',NULL,NULL,'Microsoft',NULL,NULL,NULL,NULL),
                                 (361,'string','MS-CHAP-Error',NULL,NULL,'Microsoft',NULL,NULL,NULL,NULL),
                                 (362,'octets','MS-CHAP-CPW-1',NULL,NULL,'Microsoft',NULL,NULL,NULL,NULL),
                                 (363,'octets','MS-CHAP-CPW-2',NULL,NULL,'Microsoft',NULL,NULL,NULL,NULL),
@@ -751,22 +758,26 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (404,NULL,'MS-Acct-EAP-Type','MD5',NULL,'Microsoft',NULL,NULL,NULL,NULL),
                                 (405,NULL,'MS-Acct-EAP-Type','OTP',NULL,'Microsoft',NULL,NULL,NULL,NULL),
                                 (406,NULL,'MS-Acct-EAP-Type','Generic-Token-Card',NULL,'Microsoft',NULL,NULL,NULL,NULL),
-                                (407,NULL,'MS-Acct-EAP-Type','TLS',NULL,'Microsoft',NULL,NULL,NULL,NULL),
-                                (408,'integer','Zyxel-Callback-Option',NULL,NULL,'Zyxel',NULL,NULL,NULL,NULL),
+                                (407,NULL,'MS-Acct-EAP-Type','TLS',NULL,'Microsoft',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (408,'integer','Zyxel-Callback-Option',NULL,NULL,'Zyxel',NULL,NULL,NULL,NULL),
                                 (409,'integer','Zyxel-Callback-Phone-Source',NULL,NULL,'Zyxel',NULL,NULL,NULL,NULL),
                                 (410,NULL,'Zyxel-Callback-Phone-Source','Preconfigured',NULL,'Zyxel',NULL,NULL,NULL,NULL),
                                 (411,NULL,'Zyxel-Callback-Phone-Source','User',NULL,'Zyxel',NULL,NULL,NULL,NULL),
                                 (412,NULL,'Zyxel-Callback-Option','None',NULL,'Zyxel',NULL,NULL,NULL,NULL),
                                 (413,NULL,'Zyxel-Callback-Option','Optional',NULL,'Zyxel',NULL,NULL,NULL,NULL),
-                                (414,NULL,'Zyxel-Callback-Option','Mandatory',NULL,'Zyxel',NULL,NULL,NULL,NULL),
-                                (415,'string','Chargeable-User-Identity',NULL,NULL,'dictionary.rfc4372',NULL,NULL,NULL,NULL),
-                                (416,'integer','Acct-Session-Input-Octets',NULL,NULL,'Gemtek',NULL,NULL,NULL,NULL),
+                                (414,NULL,'Zyxel-Callback-Option','Mandatory',NULL,'Zyxel',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (415,'string','Chargeable-User-Identity',NULL,NULL,'dictionary.rfc4372',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (416,'integer','Acct-Session-Input-Octets',NULL,NULL,'Gemtek',NULL,NULL,NULL,NULL),
                                 (417,'integer','Acct-Session-Input-Gigawords',NULL,NULL,'Gemtek',NULL,NULL,NULL,NULL),
                                 (418,'integer','Acct-Session-Output-Octets',NULL,NULL,'Gemtek',NULL,NULL,NULL,NULL),
                                 (419,'integer','Acct-Session-Output-Gigawords',NULL,NULL,'Gemtek',NULL,NULL,NULL,NULL),
                                 (420,'integer','Acct-Session-Octets',NULL,NULL,'Gemtek',NULL,NULL,NULL,NULL),
-                                (421,'integer','Acct-Session-Gigawords',NULL,NULL,'Gemtek',NULL,NULL,NULL,NULL),
-                                (422,'string','Gandalf-Remote-LAN-Name',NULL,NULL,'Gandalf',NULL,NULL,NULL,NULL),
+                                (421,'integer','Acct-Session-Gigawords',NULL,NULL,'Gemtek',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (422,'string','Gandalf-Remote-LAN-Name',NULL,NULL,'Gandalf',NULL,NULL,NULL,NULL),
                                 (423,'integer','Gandalf-Operational-Modes',NULL,NULL,'Gandalf',NULL,NULL,NULL,NULL),
                                 (424,'integer','Gandalf-Compression-Status',NULL,NULL,'Gandalf',NULL,NULL,NULL,NULL),
                                 (425,'integer','Gandalf-Min-Outgoing-Bearer',NULL,NULL,'Gandalf',NULL,NULL,NULL,NULL),
@@ -835,14 +846,16 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (488,NULL,'Gandalf-Modem-Required-1','Disabled',NULL,'Gandalf',NULL,NULL,NULL,NULL),
                                 (489,NULL,'Gandalf-Modem-Required-1','Enabled',NULL,'Gandalf',NULL,NULL,NULL,NULL),
                                 (490,NULL,'Gandalf-Modem-Required-2','Disabled',NULL,'Gandalf',NULL,NULL,NULL,NULL),
-                                (491,NULL,'Gandalf-Modem-Required-2','Enabled',NULL,'Gandalf',NULL,NULL,NULL,NULL),
-                                (492,'integer','Egress-VLANID',NULL,NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
+                                (491,NULL,'Gandalf-Modem-Required-2','Enabled',NULL,'Gandalf',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (492,'integer','Egress-VLANID',NULL,NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
                                 (493,'integer','Ingress-Filters',NULL,NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
                                 (494,'string','Egress-VLAN-Name',NULL,NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
                                 (495,'octets','User-Priority-Table',NULL,NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
                                 (496,NULL,'Ingress-Filters','Enabled',NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
-                                (497,NULL,'Ingress-Filters','Disabled',NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
-                                (498,'integer','Nomadix-Bw-Up',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
+                                (497,NULL,'Ingress-Filters','Disabled',NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (498,'integer','Nomadix-Bw-Up',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
                                 (499,'integer','Nomadix-Bw-Down',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
                                 (500,'string','Nomadix-URL-Redirection',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
                                 (501,'integer','Nomadix-IP-Upsell',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
@@ -856,8 +869,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (509,'string','Nomadix-Config-URL',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
                                 (510,'string','Nomadix-Goodbye-URL',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
                                 (511,NULL,'Nomadix-IP-Upsell','PrivatePool',NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (512,NULL,'Nomadix-IP-Upsell','PublicPool',NULL,'Nomadix',NULL,NULL,NULL,NULL),
-                                (513,'integer','Multi-Link-Flag',NULL,NULL,'dictionary.usr',NULL,NULL,NULL,NULL),
+                                (512,NULL,'Nomadix-IP-Upsell','PublicPool',NULL,'Nomadix',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (513,'integer','Multi-Link-Flag',NULL,NULL,'dictionary.usr',NULL,NULL,NULL,NULL),
                                 (514,'integer','Char-Noecho',NULL,NULL,'dictionary.usr',NULL,NULL,NULL,NULL),
                                 (515,NULL,'Termination-Action','Manage-Resources',NULL,'dictionary.usr',NULL,NULL,NULL,NULL),
                                 (516,NULL,'Acct-Status-Type','Modem-Start',NULL,'dictionary.usr',NULL,NULL,NULL,NULL),
@@ -2350,8 +2364,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2003,NULL,'CW-Trans-Cld-Party-E164-Type','Network-Specific-Number',NULL,'USR',NULL,NULL,NULL,NULL),
                                 (2004,NULL,'CW-Trans-Cld-Party-E164-Type','Subscriber-Number',NULL,'USR',NULL,NULL,NULL,NULL),
                                 (2005,NULL,'CW-Trans-Cld-Party-E164-Type','Abbreviated-Number',NULL,'USR',NULL,NULL,NULL,NULL),
-                                (2006,NULL,'CW-Trans-Cld-Party-E164-Type','Reserved',NULL,'USR',NULL,NULL,NULL,NULL),
-                                (2007,'integer','Cajun-Service-Type',NULL,NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
+                                (2006,NULL,'CW-Trans-Cld-Party-E164-Type','Reserved',NULL,'USR',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2007,'integer','Cajun-Service-Type',NULL,NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
                                 (2008,NULL,'Cajun-Service-Type','Cajun-Read-Only-User',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
                                 (2009,NULL,'Cajun-Service-Type','Cajun-Read-Write-User',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
                                 (2010,NULL,'Cajun-Service-Type','Cajun-Admin-User',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
@@ -2364,8 +2379,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2017,NULL,'Avaya-PortPriority-Type','Type-4',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
                                 (2018,NULL,'Avaya-PortPriority-Type','Type-5',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
                                 (2019,NULL,'Avaya-PortPriority-Type','Type-6',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2020,NULL,'Avaya-PortPriority-Type','Type-7',NULL,'Cajun_p330',NULL,NULL,NULL,NULL),
-                                (2021,'integer','Fall-Through',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
+                                (2020,NULL,'Avaya-PortPriority-Type','Type-7',NULL,'Cajun_p330',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2021,'integer','Fall-Through',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2022,'string','Exec-Program',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2023,'string','Exec-Program-Wait',NULL,NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2024,'integer','Auth-Type',NULL,NULL,'dictionary.freeradius.internal',':=','check','authtype','An Authentication Type specifies which credentials the user is required to supply in order to be authenticated and where the users authentication data are stored'),
@@ -2661,17 +2677,21 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2314,NULL,'EAP-Code','Success',NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2315,NULL,'EAP-Code','Failure',NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
                                 (2316,NULL,'MS-CHAP-Use-NTLM-Auth','No',NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
-                                (2317,NULL,'MS-CHAP-Use-NTLM-Auth','Yes',NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL),
-                                (2318,'string','Telebit-Login-Command',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL),
+                                (2317,NULL,'MS-CHAP-Use-NTLM-Auth','Yes',NULL,'dictionary.freeradius.internal',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2318,'string','Telebit-Login-Command',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL),
                                 (2319,'string','Telebit-Port-Name',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL),
                                 (2320,'string','Telebit-Activate-Command',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL),
-                                (2321,'string','Telebit-Accounting-Info',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL),
-                                (2322,'string','Navini-AVPair',NULL,NULL,'Navini',NULL,NULL,NULL,NULL),
-                                (2323,'string','Riverstone-Command',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL),
+                                (2321,'string','Telebit-Accounting-Info',NULL,NULL,'Telebit',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2322,'string','Navini-AVPair',NULL,NULL,'Navini',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2323,'string','Riverstone-Command',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL),
                                 (2324,'string','Riverstone-System-Event',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL),
                                 (2325,'string','Riverstone-SNMP-Config-Change',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL),
-                                (2326,'integer','Riverstone-User-Level',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL),
-                                (2327,'string','ASN-IP-Pool-Name',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
+                                (2326,'integer','Riverstone-User-Level',NULL,NULL,'Riverstone',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2327,'string','ASN-IP-Pool-Name',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
                                 (2328,'integer','ASN-Kbps-Down',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
                                 (2329,'integer','ASN-Kbps-Down-Localmedia',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
                                 (2330,'integer','ASN-Kbps-Up',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
@@ -2700,8 +2720,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2353,NULL,'ASN-Webfilter-Mode','Allow',NULL,'ASN',NULL,NULL,NULL,NULL),
                                 (2354,'string','ASN-Webfilter-Redirect',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
                                 (2355,'string','ASN-Webfilter-Destination',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
-                                (2356,'string','ASN-Webfilter-Domain',NULL,NULL,'ASN',NULL,NULL,NULL,NULL),
-                                (2357,'integer','Xylan-Auth-Group',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
+                                (2356,'string','ASN-Webfilter-Domain',NULL,NULL,'ASN',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2357,'integer','Xylan-Auth-Group',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
                                 (2358,'string','Xylan-Slot-Port',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
                                 (2359,'string','Xylan-Time-of-Day',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
                                 (2360,'ipaddr','Xylan-Client-IP-Addr',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
@@ -2723,11 +2744,13 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2376,'octets','Xylan-Acce-Priv-F-W2',NULL,NULL,'Xylan',NULL,NULL,NULL,NULL),
                                 (2377,NULL,'Xylan-Access-Priv','Xylan-Read-Priv',NULL,'Xylan',NULL,NULL,NULL,NULL),
                                 (2378,NULL,'Xylan-Access-Priv','Xylan-Write-Priv',NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2379,NULL,'Xylan-Access-Priv','Xylan-Admin-Priv',NULL,'Xylan',NULL,NULL,NULL,NULL),
-                                (2380,'string','Fortinet-Group-Name',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL),
+                                (2379,NULL,'Xylan-Access-Priv','Xylan-Admin-Priv',NULL,'Xylan',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2380,'string','Fortinet-Group-Name',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL),
                                 (2381,'ipaddr','Fortinet-Client-IP-Address',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL),
-                                (2382,'string','Fortinet-Vdom-Name',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL),
-                                (2383,'ipaddr','RedCreek-Tunneled-IP-Addr',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
+                                (2382,'string','Fortinet-Vdom-Name',NULL,NULL,'Fortinet',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2383,'ipaddr','RedCreek-Tunneled-IP-Addr',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
                                 (2384,'ipaddr','RedCreek-Tunneled-IP-Netmask',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
                                 (2385,'ipaddr','RedCreek-Tunneled-Gateway',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
                                 (2386,'string','RedCreek-Tunneled-DNS-Server',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
@@ -2735,11 +2758,14 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2388,'string','RedCreek-Tunneled-WINS-Server2',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
                                 (2389,'string','RedCreek-Tunneled-HostName',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
                                 (2390,'string','RedCreek-Tunneled-DomainName',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2391,'string','RedCreek-Tunneled-Search-List',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL),
-                                (2392,'string','Colubris-AVPair',NULL,NULL,'Colubris',NULL,NULL,NULL,NULL),
-                                (2393,'integer','Colubris-Intercept',NULL,NULL,'Colubris',NULL,NULL,NULL,NULL),
-                                (2394,'integer','CBBSM-Bandwidth',NULL,NULL,'Cisco-BBSM',NULL,NULL,NULL,NULL),
-                                (2395,'string','WISPr-Location-ID',NULL,NULL,'WISPr',':=','check','','Location ID is set to the radiuslocationid option if present. Should be in the format: isocc=<ISO_Country_Code>, cc=<E.164_Country_Code>,ac=<E.164_Area_Code>,network=<ssid/ZONE>'),
+                                (2391,'string','RedCreek-Tunneled-Search-List',NULL,NULL,'RedCreek',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2392,'string','Colubris-AVPair',NULL,NULL,'Colubris',NULL,NULL,NULL,NULL),
+                                (2393,'integer','Colubris-Intercept',NULL,NULL,'Colubris',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2394,'integer','CBBSM-Bandwidth',NULL,NULL,'Cisco-BBSM',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2395,'string','WISPr-Location-ID',NULL,NULL,'WISPr',':=','check','','Location ID is set to the radiuslocationid option if present. Should be in the format: isocc=<ISO_Country_Code>, cc=<E.164_Country_Code>,ac=<E.164_Area_Code>,network=<ssid/ZONE>'),
                                 (2396,'string','WISPr-Location-Name',NULL,NULL,'WISPr','','check','','Location Name is set to the radiuslocationname option if present. Should be in the format: <HOTSPOT_OPERATOR_NAME>,<LOCATION>'),
                                 (2397,'string','WISPr-Logoff-URL',NULL,NULL,'WISPr','=','check','','Chilli includes this attribute in Access-Request messages in order to notify the operator of the log off URL to use for logging off clients. Defaults to \"http://192.168.182.1:3990/logoff\".'),
                                 (2398,'string','WISPr-Redirection-URL',NULL,NULL,'WISPr','=','reply','','If present the client will be redirected to this URL once authenticated. This URL should include a link to WISPr-Logoff-URL in order to enable the client to log off.'),
@@ -2749,8 +2775,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2402,'integer','WISPr-Bandwidth-Max-Down',NULL,NULL,'WISPr',':=','reply','bitspersecond','Maximum receive rate (b/s). Limits the bandwidth of the connection. Note that this attribute is specified in bits per second. For example (256000)'),
                                 (2403,'string','WISPr-Session-Terminate-Time',NULL,NULL,'WISPr','=','reply','','The time when the user should be disconnected in ISO 8601 format (YYYY-MM-DDThh:mm:ssTZD). If TZD is not specified local time is assumed. For example a disconnect on 18 December 2001 at 7:00 PM UTC would be specified as 2001-12-18T19:00:00+00:00.'),
                                 (2404,'string','WISPr-Session-Terminate-End-Of-Day',NULL,NULL,'WISPr',NULL,NULL,NULL,NULL),
-                                (2405,'string','WISPr-Billing-Class-Of-Service',NULL,NULL,'WISPr',NULL,NULL,NULL,NULL),
-                                (2406,NULL,'Service-Type','Sip-session',NULL,'dictionary.columbia_university',NULL,NULL,NULL,NULL),
+                                (2405,'string','WISPr-Billing-Class-Of-Service',NULL,NULL,'WISPr',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2406,NULL,'Service-Type','Sip-session',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
                                 (2407,'integer','Sip-Method',NULL,NULL,'Columbia-University',NULL,NULL,NULL,NULL),
                                 (2408,'string','Sip-From',NULL,NULL,'Columbia-University',NULL,NULL,NULL,NULL),
                                 (2409,'string','Sip-To',NULL,NULL,'Columbia-University',NULL,NULL,NULL,NULL),
@@ -2758,8 +2785,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2411,NULL,'Sip-Method','INVITE',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
                                 (2412,NULL,'Sip-Method','BYE',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
                                 (2413,NULL,'Sip-Method','REGISTER',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2414,NULL,'Sip-Method','OTHER',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2415,'string','ADSL-Agent-Circuit-Id',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
+                                (2414,NULL,'Sip-Method','OTHER',NULL,'Columbia-University',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2415,'string','ADSL-Agent-Circuit-Id',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
                                 (2416,'string','ADSL-Agent-Remote-Id',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
                                 (2417,'integer','Actual-Data-Rate-Upstream',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
                                 (2418,'integer','Actual-Data-Rate-Downstream',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
@@ -2776,8 +2804,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2429,'integer','Maximum-Interleaving-Delay-Downstream',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
                                 (2430,'integer','Actual-Interleaving-Delay-Downstream',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
                                 (2431,'octets','Access-Loop-Encapsulation',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
-                                (2432,'octets','IWF-Session',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
-                                (2433,'string','Alvariaon-VSA-1',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL),
+                                (2432,'octets','IWF-Session',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2433,'string','Alvariaon-VSA-1',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL),
                                 (2434,'string','Alvariaon-VSA-2',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL),
                                 (2435,'string','Alvariaon-VSA-3',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL),
                                 (2436,'string','Alvariaon-VSA-4',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL),
@@ -3042,16 +3071,18 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2695,'string','Breezecom-Attr8',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL),
                                 (2696,'string','Breezecom-Attr9',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL),
                                 (2697,'string','Breezecom-Attr10',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL),
-                                (2698,'string','Breezecom-Attr11',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL),
-                                (2699,'string','Acct-Tunnel-Connection',NULL,NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
+                                (2698,'string','Breezecom-Attr11',NULL,NULL,'Alvarion',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2699,'string','Acct-Tunnel-Connection',NULL,NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
                                 (2700,'integer','Acct-Tunnel-Packets-Lost',NULL,NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
                                 (2701,NULL,'Acct-Status-Type','Tunnel-Start',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
                                 (2702,NULL,'Acct-Status-Type','Tunnel-Stop',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
                                 (2703,NULL,'Acct-Status-Type','Tunnel-Reject',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
                                 (2704,NULL,'Acct-Status-Type','Tunnel-Link-Start',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
                                 (2705,NULL,'Acct-Status-Type','Tunnel-Link-Stop',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
-                                (2706,NULL,'Acct-Status-Type','Tunnel-Link-Reject',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL),
-                                (2707,'string','LE-Terminate-Detail',NULL,NULL,'Livingston',NULL,NULL,NULL,NULL),
+                                (2706,NULL,'Acct-Status-Type','Tunnel-Link-Reject',NULL,'dictionary.rfc2867',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2707,'string','LE-Terminate-Detail',NULL,NULL,'Livingston',NULL,NULL,NULL,NULL),
                                 (2708,'string','LE-Advice-of-Charge',NULL,NULL,'Livingston',NULL,NULL,NULL,NULL),
                                 (2709,'string','LE-Connect-Detail',NULL,NULL,'Livingston',NULL,NULL,NULL,NULL),
                                 (2710,'string','LE-IP-Pool',NULL,NULL,'Livingston',NULL,NULL,NULL,NULL),
@@ -3094,8 +3125,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2747,NULL,'LE-NAT-Log-Options','Failure-Off',NULL,'Livingston',NULL,NULL,NULL,NULL),
                                 (2748,NULL,'LE-NAT-Log-Options','Console-Off',NULL,'Livingston',NULL,NULL,NULL,NULL),
                                 (2749,NULL,'LE-NAT-Log-Options','Syslog-Off',NULL,'Livingston',NULL,NULL,NULL,NULL),
-                                (2750,NULL,'LE-Multicast-Client','On',NULL,'Livingston',NULL,NULL,NULL,NULL),
-                                (2751,'integer','Extreme-CLI-Authorization',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
+                                (2750,NULL,'LE-Multicast-Client','On',NULL,'Livingston',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2751,'integer','Extreme-CLI-Authorization',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
                                 (2752,'string','Extreme-Shell-Command',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
                                 (2753,'string','Extreme-Netlogin-Vlan',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
                                 (2754,'string','Extreme-Netlogin-Url',NULL,NULL,'Extreme',NULL,NULL,NULL,NULL),
@@ -3106,8 +3138,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2759,NULL,'Extreme-CLI-Authorization','Disabled',NULL,'Extreme',NULL,NULL,NULL,NULL),
                                 (2760,NULL,'Extreme-CLI-Authorization','Enabled',NULL,'Extreme',NULL,NULL,NULL,NULL),
                                 (2761,NULL,'Extreme-Netlogin-Only','Disabled',NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2762,NULL,'Extreme-Netlogin-Only','Enabled',NULL,'Extreme',NULL,NULL,NULL,NULL),
-                                (2763,'string','3GPP-IMSI',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
+                                (2762,NULL,'Extreme-Netlogin-Only','Enabled',NULL,'Extreme',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2763,'string','3GPP-IMSI',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
                                 (2764,'integer','3GPP-Charging-ID',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
                                 (2765,'integer','3GPP-PDP-Type',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
                                 (2766,'ipaddr','3GPP-Charging-Gateway-Address',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
@@ -3125,16 +3158,18 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2778,'ipv6addr','3GPP-GGSN-IPv6-Address',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
                                 (2779,'octets','3GPP-IPv6-DNS-Servers',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
                                 (2780,'string','3GPP-SGSN-MCC-MNC',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
-                                (2781,'octets','3GPP-Teardown-Indicator',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL),
-                                (2782,'string','Cosine-Connection-Profile-Name',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
+                                (2781,'octets','3GPP-Teardown-Indicator',NULL,NULL,'3GPP',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2782,'string','Cosine-Connection-Profile-Name',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
                                 (2783,'string','Cosine-Enterprise-ID',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
                                 (2784,'string','Cosine-Address-Pool-Name',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
                                 (2785,'integer','Cosine-DS-Byte',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
                                 (2786,'octets','Cosine-VPI-VCI',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
                                 (2787,'integer','Cosine-DLCI',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
                                 (2788,'ipaddr','Cosine-LNS-IP-Address',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
-                                (2789,'string','Cosine-CLI-User-Permission-ID',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL),
-                                (2790,'string','Digest-Response',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
+                                (2789,'string','Cosine-CLI-User-Permission-ID',NULL,NULL,'Cosine',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2790,'string','Digest-Response',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
                                 (2791,'octets','Digest-Attributes',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
                                 (2792,'string','Digest-Realm',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
                                 (2793,'string','Digest-Nonce',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
@@ -3145,8 +3180,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2798,'string','Digest-Body-Digest',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
                                 (2799,'string','Digest-CNonce',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
                                 (2800,'string','Digest-Nonce-Count',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2801,'string','Digest-User-Name',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL),
-                                (2802,'integer','Waverider-Grade-Of-Service',NULL,NULL,'Waverider',NULL,NULL,NULL,NULL),
+                                (2801,'string','Digest-User-Name',NULL,NULL,'dictionary.rfc4590',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2802,'integer','Waverider-Grade-Of-Service',NULL,NULL,'Waverider',NULL,NULL,NULL,NULL),
                                 (2803,'integer','Waverider-Priority-Enabled',NULL,NULL,'Waverider',NULL,NULL,NULL,NULL),
                                 (2804,'string','Waverider-Current-Password',NULL,NULL,'Waverider',NULL,NULL,NULL,NULL),
                                 (2805,'string','Waverider-New-Password',NULL,NULL,'Waverider',NULL,NULL,NULL,NULL),
@@ -3185,8 +3221,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2838,NULL,'Waverider-Rf-Power','p_23',NULL,'Waverider',NULL,NULL,NULL,NULL),
                                 (2839,NULL,'Waverider-Rf-Power','p_24',NULL,'Waverider',NULL,NULL,NULL,NULL),
                                 (2840,NULL,'Waverider-Rf-Power','p_25',NULL,'Waverider',NULL,NULL,NULL,NULL),
-                                (2841,NULL,'Waverider-Rf-Power','p_26',NULL,'Waverider',NULL,NULL,NULL,NULL),
-                                (2842,'integer','SS3-Firewall-User-Privilege',NULL,NULL,'SonicWall',NULL,NULL,NULL,NULL),
+                                (2841,NULL,'Waverider-Rf-Power','p_26',NULL,'Waverider',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2842,'integer','SS3-Firewall-User-Privilege',NULL,NULL,'SonicWall',NULL,NULL,NULL,NULL),
                                 (2843,'integer','SonicWall-User-Privilege',NULL,NULL,'SonicWall',NULL,NULL,NULL,NULL),
                                 (2844,NULL,'SonicWall-User-Privilege','Remote-Access',NULL,'SonicWall',NULL,NULL,NULL,NULL),
                                 (2845,NULL,'SonicWall-User-Privilege','Bypass-Filters',NULL,'SonicWall',NULL,NULL,NULL,NULL),
@@ -3197,12 +3234,14 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2850,NULL,'SonicWall-User-Privilege','Wireless-Guest',NULL,'SonicWall',NULL,NULL,NULL,NULL),
                                 (2851,NULL,'SonicWall-User-Privilege','Wireless-Add-ACL',NULL,'SonicWall',NULL,NULL,NULL,NULL),
                                 (2852,NULL,'SonicWall-User-Privilege','Internet-Access',NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2853,'string','SonicWall-User-Group',NULL,NULL,'SonicWall',NULL,NULL,NULL,NULL),
-                                (2854,'string','Garderos-Location-Name',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
+                                (2853,'string','SonicWall-User-Group',NULL,NULL,'SonicWall',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2854,'string','Garderos-Location-Name',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
                                 (2855,'string','Garderos-Service-Name',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
                                 (2856,'string','Garderos-MSISDN',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
-                                (2857,'string','Garderos-Proxy',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL),
-                                (2858,NULL,'Acct-Status-Type','WB-Login',NULL,'Walabi',NULL,NULL,NULL,NULL),
+                                (2857,'string','Garderos-Proxy',NULL,NULL,'Garderos',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2858,NULL,'Acct-Status-Type','WB-Login',NULL,'Walabi',NULL,NULL,NULL,NULL),
                                 (2859,NULL,'Acct-Status-Type','WB-Logout',NULL,'Walabi',NULL,NULL,NULL,NULL),
                                 (2860,NULL,'Acct-Status-Type','WB-WRitelog',NULL,'Walabi',NULL,NULL,NULL,NULL),
                                 (2861,'integer','WB-AUTH-Time-Left',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
@@ -3214,8 +3253,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2867,'integer','WB-Auth-Login-Time',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
                                 (2868,'integer','WB-Auth-Logout-Time',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
                                 (2869,'integer','WB-Auth-Time-Diff',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2870,'integer','WB-Auth-BW-Usage',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL),
-                                (2871,'string','Issanni-SoftFlow-Template',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
+                                (2870,'integer','WB-Auth-BW-Usage',NULL,NULL,'Walabi',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2871,'string','Issanni-SoftFlow-Template',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
                                 (2872,'string','Issanni-NAT-Support',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
                                 (2873,'string','Issanni-Routing-Context',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
                                 (2874,'string','Issanni-Tunnel-Name',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
@@ -3236,8 +3276,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2889,NULL,'Issanni-Tunnel-Type','ESP',NULL,'Issanni',NULL,NULL,NULL,NULL),
                                 (2890,NULL,'Issanni-Tunnel-Type','L2TP',NULL,'Issanni',NULL,NULL,NULL,NULL),
                                 (2891,NULL,'Issanni-NAT-Type','NAT',NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2892,NULL,'Issanni-NAT-Type','NAPT',NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2893,'string','Alteon-Group-Mapping',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
+                                (2892,NULL,'Issanni-NAT-Type','NAPT',NULL,'Issanni',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2893,'string','Alteon-Group-Mapping',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
                                 (2894,'integer','Alteon-VPN-Id',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
                                 (2895,'string','Alteon-Client-IP-Address',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
                                 (2896,'string','Alteon-Client-Netmask',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
@@ -3252,11 +3293,13 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (2905,NULL,'Alteon-Service-Type','Alteon-Oper',NULL,'Alteon',NULL,NULL,NULL,NULL),
                                 (2906,NULL,'Alteon-Service-Type','Alteon-L4oper',NULL,'Alteon',NULL,NULL,NULL,NULL),
                                 (2907,NULL,'Alteon-Service-Type','Alteon-Slboper',NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2908,NULL,'Alteon-Service-Type','Alteon-User',NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2909,'string','Merit-Proxy-Action',NULL,NULL,'Merit',NULL,NULL,NULL,NULL),
+                                (2908,NULL,'Alteon-Service-Type','Alteon-User',NULL,'Alteon',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2909,'string','Merit-Proxy-Action',NULL,NULL,'Merit',NULL,NULL,NULL,NULL),
                                 (2910,'string','Merit-User-Id',NULL,NULL,'Merit',NULL,NULL,NULL,NULL),
-                                (2911,'string','Merit-User-Realm',NULL,NULL,'Merit',NULL,NULL,NULL,NULL),
-                                (2912,'string','Altiga-Access-Hours-G/U',NULL,NULL,'Altiga',NULL,NULL,NULL,NULL),
+                                (2911,'string','Merit-User-Realm',NULL,NULL,'Merit',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (2912,'string','Altiga-Access-Hours-G/U',NULL,NULL,'Altiga',NULL,NULL,NULL,NULL),
                                 (2913,'integer','Altiga-Simultaneous-Logins-G/U',NULL,NULL,'Altiga',NULL,NULL,NULL,NULL),
                                 (2914,'integer','Altiga-Min-Password-Length-G',NULL,NULL,'Altiga',NULL,NULL,NULL,NULL),
                                 (2915,'integer','Altiga-Allow-Alpha-Only-Passwords-G',NULL,NULL,'Altiga',NULL,NULL,NULL,NULL),
@@ -3362,8 +3405,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3015,NULL,'Altiga-IPSec-User-Group-Lock-G','ON',NULL,'Altiga',NULL,NULL,NULL,NULL),
                                 (3016,NULL,'Altiga-IPSec-User-Group-Lock-G','OFF',NULL,'Altiga',NULL,NULL,NULL,NULL),
                                 (3017,NULL,'Altiga-IPSec-Over-NAT-G','ON',NULL,'Altiga',NULL,NULL,NULL,NULL),
-                                (3018,NULL,'Altiga-IPSec-Over-NAT-G','OFF',NULL,'Altiga',NULL,NULL,NULL,NULL),
-                                (3019,'string','Cisco-AVPair',NULL,NULL,'Cisco',NULL,NULL,NULL,NULL),
+                                (3018,NULL,'Altiga-IPSec-Over-NAT-G','OFF',NULL,'Altiga',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3019,'string','Cisco-AVPair',NULL,NULL,'Cisco',NULL,NULL,NULL,NULL),
                                 (3020,'string','Cisco-NAS-Port',NULL,NULL,'Cisco',NULL,NULL,NULL,NULL),
                                 (3021,'string','Cisco-Fax-Account-Id-Origin',NULL,NULL,'Cisco',NULL,NULL,NULL,NULL),
                                 (3022,'string','Cisco-Fax-Msg-Id',NULL,NULL,'Cisco',NULL,NULL,NULL,NULL),
@@ -3474,8 +3518,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3127,NULL,'Cisco-Disconnect-Cause','Session-Timeout',NULL,'Cisco',NULL,NULL,NULL,NULL),
                                 (3128,NULL,'Cisco-Disconnect-Cause','Session-Failed-Security',NULL,'Cisco',NULL,NULL,NULL,NULL),
                                 (3129,NULL,'Cisco-Disconnect-Cause','Session-End-Callback',NULL,'Cisco',NULL,NULL,NULL,NULL),
-                                (3130,NULL,'Cisco-Disconnect-Cause','Invalid-Protocol',NULL,'Cisco',NULL,NULL,NULL,NULL),
-                                (3131,'ipaddr','ITK-Auth-Serv-IP',NULL,NULL,'ITK',NULL,NULL,NULL,NULL),
+                                (3130,NULL,'Cisco-Disconnect-Cause','Invalid-Protocol',NULL,'Cisco',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3131,'ipaddr','ITK-Auth-Serv-IP',NULL,NULL,'ITK',NULL,NULL,NULL,NULL),
                                 (3132,'integer','ITK-Auth-Serv-Prot',NULL,NULL,'ITK',NULL,NULL,NULL,NULL),
                                 (3133,'integer','ITK-Provider-Id',NULL,NULL,'ITK',NULL,NULL,NULL,NULL),
                                 (3134,'integer','ITK-Usergroup',NULL,NULL,'ITK',NULL,NULL,NULL,NULL),
@@ -3506,8 +3551,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3159,'string','ITK-PPP-Compression-Prot',NULL,NULL,'ITK',NULL,NULL,NULL,NULL),
                                 (3160,'string','ITK-Username',NULL,NULL,'ITK',NULL,NULL,NULL,NULL),
                                 (3161,'string','ITK-Dest-No',NULL,NULL,'ITK',NULL,NULL,NULL,NULL),
-                                (3162,'string','ITK-DDI',NULL,NULL,'ITK',NULL,NULL,NULL,NULL),
-                                (3163,'string','Annex-Filter',NULL,NULL,'Bay-Networks',NULL,NULL,NULL,NULL),
+                                (3162,'string','ITK-DDI',NULL,NULL,'ITK',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3163,'string','Annex-Filter',NULL,NULL,'Bay-Networks',NULL,NULL,NULL,NULL),
                                 (3164,'string','Annex-CLI-Command',NULL,NULL,'Bay-Networks',NULL,NULL,NULL,NULL),
                                 (3165,'string','Annex-CLI-Filter',NULL,NULL,'Bay-Networks',NULL,NULL,NULL,NULL),
                                 (3166,'string','Annex-Host-Restrict',NULL,NULL,'Bay-Networks',NULL,NULL,NULL,NULL),
@@ -3678,8 +3724,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3331,NULL,'Acct-Status-Type','Annex-MP-Stop',NULL,'Bay-Networks',NULL,NULL,NULL,NULL),
                                 (3332,NULL,'Acct-Status-Type','Annex-Line-Seizure',NULL,'Bay-Networks',NULL,NULL,NULL,NULL),
                                 (3333,NULL,'Acct-Status-Type','Annex-Rlogin-Start',NULL,'Bay-Networks',NULL,NULL,NULL,NULL),
-                                (3334,NULL,'Acct-Status-Type','Annex-Rlogin-Stop',NULL,'Bay-Networks',NULL,NULL,NULL,NULL),
-                                (3335,'integer','Error-Cause',NULL,NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
+                                (3334,NULL,'Acct-Status-Type','Annex-Rlogin-Stop',NULL,'Bay-Networks',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3335,'integer','Error-Cause',NULL,NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
                                 (3336,NULL,'Service-Type','Authorize-Only',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
                                 (3337,NULL,'Error-Cause','Residual-Context-Removed',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
                                 (3338,NULL,'Error-Cause','Invalid-EAP-Packet',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
@@ -3695,8 +3742,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3348,NULL,'Error-Cause','Session-Context-Not-Removable',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
                                 (3349,NULL,'Error-Cause','Proxy-Processing-Error',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
                                 (3350,NULL,'Error-Cause','Resources-Unavailable',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3351,NULL,'Error-Cause','Request-Initiated',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3352,'string','CVX-Identification',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
+                                (3351,NULL,'Error-Cause','Request-Initiated',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3352,'string','CVX-Identification',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
                                 (3353,'integer','CVX-VPOP-ID',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
                                 (3354,'integer','CVX-SS7-Session-ID-Type',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
                                 (3355,'integer','CVX-Radius-Redirect',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
@@ -3734,8 +3782,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3387,'string','CVX-Data-Filter',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
                                 (3388,'integer','CVX-Idle-Limit',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
                                 (3389,'ipaddr','CVX-PPP-Address',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
-                                (3390,'integer','CVX-Xmit-Rate',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
-                                (3391,'string','Password',NULL,NULL,'dictionary.compat',NULL,NULL,NULL,NULL),
+                                (3390,'integer','CVX-Xmit-Rate',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3391,'string','Password',NULL,NULL,'dictionary.compat',NULL,NULL,NULL,NULL),
                                 (3392,'ipaddr','Client-Id',NULL,NULL,'dictionary.compat',NULL,NULL,NULL,NULL),
                                 (3393,'integer','Client-Port-Id',NULL,NULL,'dictionary.compat',NULL,NULL,NULL,NULL),
                                 (3394,'integer','User-Service-Type',NULL,NULL,'dictionary.compat',NULL,NULL,NULL,NULL),
@@ -3770,8 +3819,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3423,NULL,'User-Name-Is-Star','Yes',NULL,'dictionary.compat',NULL,NULL,NULL,NULL),
                                 (3424,NULL,'Auth-Type','None',NULL,'dictionary.compat',NULL,NULL,NULL,NULL),
                                 (3425,'integer','PostAuth-Type',NULL,NULL,'dictionary.compat',NULL,NULL,NULL,NULL),
-                                (3426,NULL,'PostAuth-Type','Local',NULL,'dictionary.compat',NULL,NULL,NULL,NULL),
-                                (3427,'string','Patton-Setup-Time',NULL,NULL,'Patton',NULL,NULL,NULL,NULL),
+                                (3426,NULL,'PostAuth-Type','Local',NULL,'dictionary.compat',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3427,'string','Patton-Setup-Time',NULL,NULL,'Patton',NULL,NULL,NULL,NULL),
                                 (3428,'string','Patton-Connect-Time',NULL,NULL,'Patton',NULL,NULL,NULL,NULL),
                                 (3429,'string','Patton-Disconnect-Time',NULL,NULL,'Patton',NULL,NULL,NULL,NULL),
                                 (3430,'integer','Patton-Disconnect-Cause',NULL,NULL,'Patton',NULL,NULL,NULL,NULL),
@@ -3868,8 +3918,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3521,NULL,'Patton-Disconnect-Cause','Recovery-on-timer-expiry',NULL,'Patton',NULL,NULL,NULL,NULL),
                                 (3522,NULL,'Patton-Disconnect-Cause','parameter-non-existent-or-not-implemented-passed-on',NULL,'Patton',NULL,NULL,NULL,NULL),
                                 (3523,NULL,'Patton-Disconnect-Cause','Protocol-error-unspecified',NULL,'Patton',NULL,NULL,NULL,NULL),
-                                (3524,NULL,'Patton-Disconnect-Cause','Internetworking-unspecified',NULL,'Patton',NULL,NULL,NULL,NULL),
-                                (3525,'integer','IPU-MIP-Spi',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
+                                (3524,NULL,'Patton-Disconnect-Cause','Internetworking-unspecified',NULL,'Patton',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3525,'integer','IPU-MIP-Spi',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
                                 (3526,'string','IPU-MIP-Key',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
                                 (3527,'integer','IPU-MIP-Alg-Type',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
                                 (3528,'integer','IPU-MIP-Alg-Mode',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
@@ -3878,8 +3929,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3531,'ipaddr','IPU-IKE-Local-Addr',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
                                 (3532,'string','IPU-IKE-Auth',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
                                 (3533,'string','IPU-IKE-Conf-Name',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3534,'string','IPU-IKE-Cmd',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL),
-                                (3535,'integer','Versanet-Termination-Cause',NULL,NULL,'Versanet',NULL,NULL,NULL,NULL),
+                                (3534,'string','IPU-IKE-Cmd',NULL,NULL,'ipUnplugged',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3535,'integer','Versanet-Termination-Cause',NULL,NULL,'Versanet',NULL,NULL,NULL,NULL),
                                 (3536,NULL,'Versanet-Termination-Cause','Normal-Hangup-No-Error-Occurred',NULL,'Versanet',NULL,NULL,NULL,NULL),
                                 (3537,NULL,'Versanet-Termination-Cause','Call-Waiting-Caused-Disconnect',NULL,'Versanet',NULL,NULL,NULL,NULL),
                                 (3538,NULL,'Versanet-Termination-Cause','Physical-Carrier-Loss',NULL,'Versanet',NULL,NULL,NULL,NULL),
@@ -3901,14 +3953,16 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3554,NULL,'Versanet-Termination-Cause','Key-abort-disconnect',NULL,'Versanet',NULL,NULL,NULL,NULL),
                                 (3555,NULL,'Versanet-Termination-Cause','Clears-previous-disc-reason',NULL,'Versanet',NULL,NULL,NULL,NULL),
                                 (3556,NULL,'Versanet-Termination-Cause','No-connection-established',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3557,NULL,'Versanet-Termination-Cause','Disconnect-after-three-retrains',NULL,'Versanet',NULL,NULL,NULL,NULL),
-                                (3558,'string','Aruba-User-Role',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
+                                (3557,NULL,'Versanet-Termination-Cause','Disconnect-after-three-retrains',NULL,'Versanet',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3558,'string','Aruba-User-Role',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
                                 (3559,'integer','Aruba-User-Vlan',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
                                 (3560,'integer','Aruba-Priv-Admin-User',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
                                 (3561,'string','Aruba-Admin-Role',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
                                 (3562,'string','Aruba-Essid-Name',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
-                                (3563,'string','Aruba-Location-Id',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
-                                (3564,'integer','Cabletron-Protocol-Enable',NULL,NULL,'Cabletron',NULL,NULL,NULL,NULL),
+                                (3563,'string','Aruba-Location-Id',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3564,'integer','Cabletron-Protocol-Enable',NULL,NULL,'Cabletron',NULL,NULL,NULL,NULL),
                                 (3565,'integer','Cabletron-Protocol-Callable',NULL,NULL,'Cabletron',NULL,NULL,NULL,NULL),
                                 (3566,NULL,'Cabletron-Protocol-Enable','IP-Enable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
                                 (3567,NULL,'Cabletron-Protocol-Enable','Bridge-Enable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
@@ -3919,14 +3973,16 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3572,NULL,'Cabletron-Protocol-Callable','Bridge-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
                                 (3573,NULL,'Cabletron-Protocol-Callable','IP-BR-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
                                 (3574,NULL,'Cabletron-Protocol-Callable','BR-IPX-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3575,NULL,'Cabletron-Protocol-Callable','IP-BR-IPX-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL),
-                                (3576,'ipv6addr','NAS-IPv6-Address',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
+                                (3575,NULL,'Cabletron-Protocol-Callable','IP-BR-IPX-Callable',NULL,'Cabletron',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3576,'ipv6addr','NAS-IPv6-Address',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
                                 (3577,'ifid','Framed-Interface-Id',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
                                 (3578,'ipv6prefix','Framed-IPv6-Prefix',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
                                 (3579,'ipv6addr','Login-IPv6-Host',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
                                 (3580,'string','Framed-IPv6-Route',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
-                                (3581,'string','Framed-IPv6-Pool',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL),
-                                (3582,'integer','SN-VPN-ID',NULL,NULL,'Starent',NULL,NULL,NULL,NULL),
+                                (3581,'string','Framed-IPv6-Pool',NULL,NULL,'dictionary.rfc3162',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3582,'integer','SN-VPN-ID',NULL,NULL,'Starent',NULL,NULL,NULL,NULL),
                                 (3583,'string','SN-VPN-Name',NULL,NULL,'Starent',NULL,NULL,NULL,NULL),
                                 (3584,'integer','SN-Disconnect-Reason',NULL,NULL,'Starent',NULL,NULL,NULL,NULL),
                                 (3585,'integer','SN-PPP-Progress-Code',NULL,NULL,'Starent',NULL,NULL,NULL,NULL),
@@ -4075,28 +4131,32 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3728,NULL,'SN-Simultaneous-SIP-MIP','Disabled',NULL,'Starent',NULL,NULL,NULL,NULL),
                                 (3729,NULL,'SN-Simultaneous-SIP-MIP','Enabled',NULL,'Starent',NULL,NULL,NULL,NULL),
                                 (3730,NULL,'SN-PPP-Data-Compression-Mode','Normal',NULL,'Starent',NULL,NULL,NULL,NULL),
-                                (3731,NULL,'SN-PPP-Data-Compression-Mode','Stateless',NULL,'Starent',NULL,NULL,NULL,NULL),
-                                (3732,'ipaddr','Xedia-DNS-Server',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
+                                (3731,NULL,'SN-PPP-Data-Compression-Mode','Stateless',NULL,'Starent',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3732,'ipaddr','Xedia-DNS-Server',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
                                 (3733,'ipaddr','Xedia-NetBios-Server',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
                                 (3734,'string','Xedia-Address-Pool',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
                                 (3735,'integer','Xedia-PPP-Echo-Interval',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
                                 (3736,'integer','Xedia-SSH-Privileges',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
                                 (3737,'string','Xedia-Client-Access-Network',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
                                 (3738,'integer','Xedia-Client-Firewall-Setting',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
-                                (3739,'integer','Xedia-Save-Password',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL),
-                                (3740,'integer','NN-Data-Rate',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
+                                (3739,'integer','Xedia-Save-Password',NULL,NULL,'Xedia',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3740,'integer','NN-Data-Rate',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
                                 (3741,'integer','NN-Data-Rate-Ceiling',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
                                 (3742,'ipaddr','NN-Homenode',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
                                 (3743,'ipaddr','NN-Homeservice',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
-                                (3744,'string','NN-Homeservice-Name',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL),
-                                (3745,'integer','CVPN5000-Tunnel-Throughput',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
+                                (3744,'string','NN-Homeservice-Name',NULL,NULL,'Bristol',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3745,'integer','CVPN5000-Tunnel-Throughput',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
                                 (3746,'string','CVPN5000-Client-Assigned-IP',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
                                 (3747,'string','CVPN5000-Client-Real-IP',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
                                 (3748,'string','CVPN5000-VPN-GroupInfo',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
                                 (3749,'string','CVPN5000-VPN-Password',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
                                 (3750,'integer','CVPN5000-Echo',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
-                                (3751,'integer','CVPN5000-Client-Assigned-IPX',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL),
-                                (3752,'string','Motorola-Canopy-Shared-Secret',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
+                                (3751,'integer','CVPN5000-Client-Assigned-IPX',NULL,NULL,'Cisco-VPN5000',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3752,'string','Motorola-Canopy-Shared-Secret',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
                                 (3753,'string','Motorola-Canopy-SULDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
                                 (3754,'string','Motorola-Canopy-SDLDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
                                 (3755,'string','Motorola-Canopy-ULBA',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
@@ -4108,8 +4168,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3761,'string','Motorola-Canopy-HPSULDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
                                 (3762,'string','Motorola-Canopy-HPSDLDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
                                 (3763,'string','Motorola-Canopy-HIGHERBW',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3764,'string','Motorola-Canopy-CIRENABLE',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3765,'integer','Airespace-Wlan-Id',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
+                                (3764,'string','Motorola-Canopy-CIRENABLE',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3765,'integer','Airespace-Wlan-Id',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
                                 (3766,'integer','Airespace-QOS-Level',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
                                 (3767,'integer','Airespace-DSCP',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
                                 (3768,'integer','Airespace-8021p-Tag',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
@@ -4119,14 +4180,16 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3772,NULL,'Airespace-QOS-Level','Silver',NULL,'Airespace',NULL,NULL,NULL,NULL),
                                 (3773,NULL,'Airespace-QOS-Level','Gold',NULL,'Airespace',NULL,NULL,NULL,NULL),
                                 (3774,NULL,'Airespace-QOS-Level','Platinum',NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3775,NULL,'Airespace-QOS-Level','Uranium',NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3776,'integer','Unix-FTP-UID',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
+                                (3775,NULL,'Airespace-QOS-Level','Uranium',NULL,'Airespace',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3776,'integer','Unix-FTP-UID',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
                                 (3777,'integer','Unix-FTP-GID',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
                                 (3778,'string','Unix-FTP-Home',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
                                 (3779,'string','Unix-FTP-Shell',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
                                 (3780,'string','Unix-FTP-Group-Names',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
-                                (3781,'string','Unix-FTP-Group-Ids',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
-                                (3782,'integer','Acct-Input-Gigawords',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                                (3781,'string','Unix-FTP-Group-Ids',NULL,NULL,'Unix',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3782,'integer','Acct-Input-Gigawords',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
                                 (3783,'integer','Acct-Output-Gigawords',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
                                 (3784,'date','Event-Timestamp',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
                                 (3785,'octets','ARAP-Password',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
@@ -4148,8 +4211,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (3801,NULL,'ARAP-Zone-Access','Zone-Filter-Inclusive',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
                                 (3802,NULL,'ARAP-Zone-Access','Zone-Filter-Exclusive',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
                                 (3803,NULL,'Prompt','No-Echo',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3804,NULL,'Prompt','Echo',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3805,'integer','Acc-Reason-Code',NULL,NULL,'Acc',NULL,NULL,NULL,NULL),
+                                (3804,NULL,'Prompt','Echo',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (3805,'integer','Acc-Reason-Code',NULL,NULL,'Acc',NULL,NULL,NULL,NULL),
                                 (3806,'integer','Acc-Ccp-Option',NULL,NULL,'Acc',NULL,NULL,NULL,NULL),
                                 (3807,'integer','Acc-Input-Errors',NULL,NULL,'Acc',NULL,NULL,NULL,NULL),
                                 (3808,'integer','Acc-Output-Errors',NULL,NULL,'Acc',NULL,NULL,NULL,NULL),
@@ -4367,8 +4431,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4020,NULL,'Acc-Igmp-Admin-State','Enabled',NULL,'Acc',NULL,NULL,NULL,NULL),
                                 (4021,NULL,'Acc-Igmp-Admin-State','Disabled',NULL,'Acc',NULL,NULL,NULL,NULL),
                                 (4022,NULL,'Acc-Igmp-Version','V1',NULL,'Acc',NULL,NULL,NULL,NULL),
-                                (4023,NULL,'Acc-Igmp-Version','V2',NULL,'Acc',NULL,NULL,NULL,NULL),
-                                (4024,'ipaddr','Client_DNS_Pri',NULL,NULL,'Redback',NULL,NULL,NULL,NULL),
+                                (4023,NULL,'Acc-Igmp-Version','V2',NULL,'Acc',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4024,'ipaddr','Client_DNS_Pri',NULL,NULL,'Redback',NULL,NULL,NULL,NULL),
                                 (4025,'ipaddr','Client_DNS_Sec',NULL,NULL,'Redback',NULL,NULL,NULL,NULL),
                                 (4026,'integer','DHCP_Max_Leases',NULL,NULL,'Redback',NULL,NULL,NULL,NULL),
                                 (4027,'string','Context_Name',NULL,NULL,'Redback',NULL,NULL,NULL,NULL),
@@ -4794,8 +4859,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4447,NULL,'Acct-Update-Reason','AAA_LOAD_ACCT_ACL_TIMERED_ACTION',NULL,'Redback',NULL,NULL,NULL,NULL),
                                 (4448,NULL,'Acct-Update-Reason','AAA_LOAD_ACCT_ACL_ACTION',NULL,'Redback',NULL,NULL,NULL,NULL),
                                 (4449,NULL,'Acct-Update-Reason','AAA_LOAD_ACCT_CMD',NULL,'Redback',NULL,NULL,NULL,NULL),
-                                (4450,NULL,'Acct-Update-Reason','AAA_LOAD_ACCT_TEST',NULL,'Redback',NULL,NULL,NULL,NULL),
-                                (4451,'integer','Ericsson-ViG-Balance',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL),
+                                (4450,NULL,'Acct-Update-Reason','AAA_LOAD_ACCT_TEST',NULL,'Redback',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4451,'integer','Ericsson-ViG-Balance',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL),
                                 (4452,'integer','Ericsson-ViG-Codec',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL),
                                 (4453,'string','Ericsson-ViG-Currency',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL),
                                 (4454,'string','Ericsson-ViG-Currency-Quote',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL),
@@ -4906,8 +4972,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4559,'ipaddr','Ericsson-ViG-Proxy-IP-Address',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL),
                                 (4560,'integer','Ericsson-ViG-Auth-DataRequest',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL),
                                 (4561,'integer','Ericsson-ViG-IPT-Time-Stamp',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL),
-                                (4562,'integer','Ericsson-ViG-User-Name-Info',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL),
-                                (4563,'string','Local-Web-Client-Ip',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
+                                (4562,'integer','Ericsson-ViG-User-Name-Info',NULL,NULL,'Ericsson',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4563,'string','Local-Web-Client-Ip',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
                                 (4564,'string','Local-Web-Border-Router',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
                                 (4565,'integer','Local-Web-Tx-Limit',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
                                 (4566,'integer','Local-Web-Rx-Limit',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
@@ -4921,14 +4988,16 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4574,'integer','Local-Web-Acct-Interim-Rx-Mgmt',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
                                 (4575,'integer','Local-Web-Acct-Tx-Mgmt',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
                                 (4576,'integer','Local-Web-Acct-Rx-Mgmt',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4577,'integer','Local-Web-Reauth-Counter',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL),
-                                (4578,'integer','HP-Privelege-Level',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
+                                (4577,'integer','Local-Web-Reauth-Counter',NULL,NULL,'Local-Web',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4578,'integer','HP-Privelege-Level',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
                                 (4579,'string','HP-Command-String',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
                                 (4580,'integer','HP-Command-Exception',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
                                 (4581,'string','HP-Port-Priority-Regeneration-Table',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
                                 (4582,'integer','HP-Bandwidth-Max-Ingress',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
-                                (4583,'string','HP-Nas-Filter-Rule',NULL,NULL,'HP',NULL,NULL,NULL,NULL),
-                                (4584,'octets','CableLabs-Reserved',NULL,NULL,'CableLabs',NULL,NULL,NULL,NULL),
+                                (4583,'string','HP-Nas-Filter-Rule',NULL,NULL,'HP',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4584,'octets','CableLabs-Reserved',NULL,NULL,'CableLabs',NULL,NULL,NULL,NULL),
                                 (4585,'octets','CableLabs-Event-Message',NULL,NULL,'CableLabs',NULL,NULL,NULL,NULL),
                                 (4586,'string','CableLabs-MTA-Endpoint-Name',NULL,NULL,'CableLabs',NULL,NULL,NULL,NULL),
                                 (4587,'string','CableLabs-Calling-Party-Number',NULL,NULL,'CableLabs',NULL,NULL,NULL,NULL),
@@ -5085,13 +5154,15 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4738,NULL,'CableLabs-Policy-Update-Reason','Multiple-Updates',NULL,'CableLabs',NULL,NULL,NULL,NULL),
                                 (4739,NULL,'CableLabs-Policy-Update-Reason','Other',NULL,'CableLabs',NULL,NULL,NULL,NULL),
                                 (4740,NULL,'CableLabs-Policy-Decision-Status','Policy-Approved',NULL,'CableLabs',NULL,NULL,NULL,NULL),
-                                (4741,NULL,'CableLabs-Policy-Decision-Status','Policy-Denied',NULL,'CableLabs',NULL,NULL,NULL,NULL),
-                                (4742,'integer','RP-Upstream-Speed-Limit',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
+                                (4741,NULL,'CableLabs-Policy-Decision-Status','Policy-Denied',NULL,'CableLabs',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4742,'integer','RP-Upstream-Speed-Limit',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
                                 (4743,'integer','RP-Downstream-Speed-Limit',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
                                 (4744,'string','RP-HURL',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
                                 (4745,'string','RP-MOTM',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
-                                (4746,'integer','RP-Max-Sessions-Per-User',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
-                                (4747,'integer','3GPP2-Ike-Preshared-Secret-Request',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
+                                (4746,'integer','RP-Max-Sessions-Per-User',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4747,'integer','3GPP2-Ike-Preshared-Secret-Request',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
                                 (4748,'integer','3GPP2-Security-Level',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
                                 (4749,'string','3GPP2-Pre-Shared-Secret',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
                                 (4750,'integer','3GPP2-Reverse-Tunnel-Spec',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
@@ -5164,8 +5235,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4817,'integer','3GPP2-DNS-Update-Capability',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
                                 (4818,'integer','3GPP2-Disconnect-Reason',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
                                 (4819,'octets','3GPP2-Remote-IPv6-Octet-Count',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
-                                (4820,'octets','3GPP2-PrePaid-Tariff-Switching',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
-                                (4821,'string','Epygi-AVPair',NULL,NULL,'Epygi',NULL,NULL,NULL,NULL),
+                                (4820,'octets','3GPP2-PrePaid-Tariff-Switching',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4821,'string','Epygi-AVPair',NULL,NULL,'Epygi',NULL,NULL,NULL,NULL),
                                 (4822,'string','Epygi-NAS-Port',NULL,NULL,'Epygi',NULL,NULL,NULL,NULL),
                                 (4823,'string','Epygi-h323-remote-address',NULL,NULL,'Epygi',NULL,NULL,NULL,NULL),
                                 (4824,'string','Epygi-h323-conf-id',NULL,NULL,'Epygi',NULL,NULL,NULL,NULL),
@@ -5257,15 +5329,17 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4910,NULL,'Epygi-CallDisconnectReason','Call-Origin-OnHook',NULL,'Epygi',NULL,NULL,NULL,NULL),
                                 (4911,NULL,'Epygi-CallDisconnectReason','Call-Temin-OnHook',NULL,'Epygi',NULL,NULL,NULL,NULL),
                                 (4912,NULL,'Epygi-CallDisconnectReason','Disconected-by-CAC',NULL,'Epygi',NULL,NULL,NULL,NULL),
-                                (4913,NULL,'Epygi-CallDisconnectReason','Other',NULL,'Epygi',NULL,NULL,NULL,NULL),
-                                (4914,NULL,'Acct-Terminate-Cause','Supplicant-Restart',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
+                                (4913,NULL,'Epygi-CallDisconnectReason','Other',NULL,'Epygi',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4914,NULL,'Acct-Terminate-Cause','Supplicant-Restart',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
                                 (4915,NULL,'Acct-Terminate-Cause','Reauthentication-Failure',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
                                 (4916,NULL,'Acct-Terminate-Cause','Port-Reinit',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
                                 (4917,NULL,'Acct-Terminate-Cause','Port-Disabled',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
                                 (4918,NULL,'NAS-Port-Type','Token-Ring',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
                                 (4919,NULL,'NAS-Port-Type','FDDI',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
-                                (4920,NULL,'Tunnel-Type','VLAN',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL),
-                                (4921,'integer','Foundry-Privilege-Level',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
+                                (4920,NULL,'Tunnel-Type','VLAN',NULL,'dictionary.rfc3580',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4921,'integer','Foundry-Privilege-Level',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
                                 (4922,'string','Foundry-Command-String',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
                                 (4923,'integer','Foundry-Command-Exception-Flag',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
                                 (4924,'integer','Foundry-INM-Privilege',NULL,NULL,'Foundry',NULL,NULL,NULL,NULL),
@@ -5284,8 +5358,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4937,NULL,'Foundry-INM-Privilege','AAA_pri_12',NULL,'Foundry',NULL,NULL,NULL,NULL),
                                 (4938,NULL,'Foundry-INM-Privilege','AAA_pri_13',NULL,'Foundry',NULL,NULL,NULL,NULL),
                                 (4939,NULL,'Foundry-INM-Privilege','AAA_pri_14',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4940,NULL,'Foundry-INM-Privilege','AAA_pri_15',NULL,'Foundry',NULL,NULL,NULL,NULL),
-                                (4941,'integer','3Com-User-Access-Level',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
+                                (4940,NULL,'Foundry-INM-Privilege','AAA_pri_15',NULL,'Foundry',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4941,'integer','3Com-User-Access-Level',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
                                 (4942,NULL,'3Com-User-Access-Level','3Com-Visitor',NULL,'3com',NULL,NULL,NULL,NULL),
                                 (4943,NULL,'3Com-User-Access-Level','3Com-Monitor',NULL,'3com',NULL,NULL,NULL,NULL),
                                 (4944,NULL,'3Com-User-Access-Level','3Com-Manager',NULL,'3com',NULL,NULL,NULL,NULL),
@@ -5293,16 +5368,18 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4946,'integer','3Com-Connect_Id',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
                                 (4947,'integer','3Com-NAS-Startup-Timestamp',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
                                 (4948,'string','3Com-Ip-Host-Addr',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4949,'string','3Com-Product-ID',NULL,NULL,'3com',NULL,NULL,NULL,NULL),
-                                (4950,'string','Trapeze-VLAN-Name',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
+                                (4949,'string','3Com-Product-ID',NULL,NULL,'3com',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4950,'string','Trapeze-VLAN-Name',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
                                 (4951,'string','Trapeze-Mobility-Profile',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
                                 (4952,'string','Trapeze-Encryption-Type',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
                                 (4953,'string','Trapeze-Time-Of-Day',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
                                 (4954,'string','Trapeze-SSID',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
                                 (4955,'string','Trapeze-End-Date',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
                                 (4956,'string','Trapeze-Start-Date',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
-                                (4957,'string','Trapeze-URL',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
-                                (4958,'string','T-Systems-Nova-Location-ID',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
+                                (4957,'string','Trapeze-URL',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4958,'string','T-Systems-Nova-Location-ID',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
                                 (4959,'string','T-Systems-Nova-Location-Name',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
                                 (4960,'string','T-Systems-Nova-Logoff-URL',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
                                 (4961,'string','T-Systems-Nova-Redirection-URL',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
@@ -5316,8 +5393,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (4969,'string','T-Systems-Nova-Service-Name',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
                                 (4970,'integer','T-Systems-Nova-Price-Of-Service',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
                                 (4971,'string','T-Systems-Nova-Visiting-Provider-Code',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4972,'string','T-Systems-Nova-UnknownAVP',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
-                                (4973,'integer','Tunnel-Type',NULL,NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
+                                (4972,'string','T-Systems-Nova-UnknownAVP',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (4973,'integer','Tunnel-Type',NULL,NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
                                 (4974,'integer','Tunnel-Medium-Type',NULL,NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
                                 (4975,'string','Tunnel-Client-Endpoint',NULL,NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
                                 (4976,'string','Tunnel-Server-Endpoint',NULL,NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
@@ -5354,8 +5432,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5007,NULL,'Tunnel-Medium-Type','Appletalk',NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
                                 (5008,NULL,'Tunnel-Medium-Type','DecNet-IV',NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
                                 (5009,NULL,'Tunnel-Medium-Type','Banyan-Vines',NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
-                                (5010,NULL,'Tunnel-Medium-Type','E.164-NSAP',NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL),
-                                (5011,'string','CVPN3000-Access-Hours',NULL,NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL),
+                                (5010,NULL,'Tunnel-Medium-Type','E.164-NSAP',NULL,'dictionary.rfc2868',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5011,'string','CVPN3000-Access-Hours',NULL,NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL),
                                 (5012,'integer','CVPN3000-Simultaneous-Logins',NULL,NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL),
                                 (5013,'integer','CVPN3000-Min-Password-Length',NULL,NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL),
                                 (5014,'integer','CVPN3000-Allow-Alpha-Only-Passwords',NULL,NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL),
@@ -5520,13 +5599,15 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5173,NULL,'CVPN3000-IPSec-Over-UDP','OFF',NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL),
                                 (5174,NULL,'CVPN3000-IPSec-Over-UDP','ON',NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL),
                                 (5175,NULL,'CVPN3000-Strip-Realm','FALSE',NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL),
-                                (5176,NULL,'CVPN3000-Strip-Realm','TRUE',NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL),
-                                (5177,'string','Juniper-Local-User-Name',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
+                                (5176,NULL,'CVPN3000-Strip-Realm','TRUE',NULL,'Cisco-VPN3000',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5177,'string','Juniper-Local-User-Name',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
                                 (5178,'string','Juniper-Allow-Commands',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
                                 (5179,'string','Juniper-Deny-Commands',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
                                 (5180,'string','Juniper-Allow-Configuration',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
-                                (5181,'string','Juniper-Deny-Configuration',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
-                                (5182,'integer','Sip-Method',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
+                                (5181,'string','Juniper-Deny-Configuration',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5182,'integer','Sip-Method',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
                                 (5183,'integer','Sip-Response-Code',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
                                 (5184,'string','Sip-Cseq',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
                                 (5185,'string','Sip-To-Tag',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
@@ -5543,8 +5624,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5196,NULL,'Sip-Method','OPTIONS',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
                                 (5197,NULL,'Sip-Method','ACK',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
                                 (5198,NULL,'Sip-Method','SUBSCRIBE',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5199,NULL,'Sip-Method','NOTIFY',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5200,'integer','Tropos-Unicast-Cipher',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
+                                (5199,NULL,'Sip-Method','NOTIFY',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5200,'integer','Tropos-Unicast-Cipher',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
                                 (5201,'integer','Tropos-Layer2-Input-Octets',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
                                 (5202,'integer','Tropos-Layer2-Output-Octets',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
                                 (5203,'integer','Tropos-Layer2-Input-Frames',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
@@ -5571,8 +5653,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5224,'string','Tropos-Cell-Location',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
                                 (5225,'string','Tropos-Serial-Number',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
                                 (5226,'string','Tropos-Latitude',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
-                                (5227,'string','Tropos-Longitude',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
-                                (5228,'integer','Acct-Status-Type',NULL,NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL),
+                                (5227,'string','Tropos-Longitude',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5228,'integer','Acct-Status-Type',NULL,NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL),
                                 (5229,'integer','Acct-Delay-Time',NULL,NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL),
                                 (5230,'integer','Acct-Input-Octets',NULL,NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL),
                                 (5231,'integer','Acct-Output-Octets',NULL,NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL),
@@ -5612,8 +5695,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5265,NULL,'Acct-Terminate-Cause','Service-Unavailable',NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL),
                                 (5266,NULL,'Acct-Terminate-Cause','Callback',NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL),
                                 (5267,NULL,'Acct-Terminate-Cause','User-Error',NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL),
-                                (5268,NULL,'Acct-Terminate-Cause','Host-Request',NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL),
-                                (5269,'string','ERX-Virtual-Router-Name',NULL,NULL,'ERX',NULL,NULL,NULL,NULL),
+                                (5268,NULL,'Acct-Terminate-Cause','Host-Request',NULL,'dictionary.rfc2866',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5269,'string','ERX-Virtual-Router-Name',NULL,NULL,'ERX',NULL,NULL,NULL,NULL),
                                 (5270,'string','ERX-Address-Pool-Name',NULL,NULL,'ERX',NULL,NULL,NULL,NULL),
                                 (5271,'string','ERX-Local-Loopback-Interface',NULL,NULL,'ERX',NULL,NULL,NULL,NULL),
                                 (5272,'ipaddr','ERX-Primary-Dns',NULL,NULL,'ERX',NULL,NULL,NULL,NULL),
@@ -5743,14 +5827,16 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5396,NULL,'ERX-IGMP-Version','v3',NULL,'ERX',NULL,NULL,NULL,NULL),
                                 (5397,NULL,'ERX-Service-Statistics','disabled',NULL,'ERX',NULL,NULL,NULL,NULL),
                                 (5398,NULL,'ERX-Service-Statistics','time',NULL,'ERX',NULL,NULL,NULL,NULL),
-                                (5399,NULL,'ERX-Service-Statistics','time-volume',NULL,'ERX',NULL,NULL,NULL,NULL),
-                                (5400,'integer','Propel-Accelerate',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
+                                (5399,NULL,'ERX-Service-Statistics','time-volume',NULL,'ERX',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5400,'integer','Propel-Accelerate',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
                                 (5401,'string','Propel-Dialed-Digits',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
                                 (5402,'ipaddr','Propel-Client-IP-Address',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
                                 (5403,'ipaddr','Propel-Client-NAS-IP-Address',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
                                 (5404,'integer','Propel-Client-Source-ID',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
-                                (5405,'integer','Propel-Content-Filter-ID',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
-                                (5406,'string','Asterisk-Acc-Code',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
+                                (5405,'integer','Propel-Content-Filter-ID',NULL,NULL,'Propel',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5406,'string','Asterisk-Acc-Code',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
                                 (5407,'string','Asterisk-Src',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
                                 (5408,'string','Asterisk-Dst',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
                                 (5409,'string','Asterisk-Dst-Ctx',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
@@ -5767,8 +5853,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5420,'string','Asterisk-Disposition',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
                                 (5421,'string','Asterisk-AMA-Flags',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
                                 (5422,'string','Asterisk-Unique-ID',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
-                                (5423,'string','Asterisk-User-Field',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
-                                (5424,'integer','UserLogon-Uid',NULL,NULL,'NTUA',NULL,NULL,NULL,NULL),
+                                (5423,'string','Asterisk-User-Field',NULL,NULL,'Digium',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5424,'integer','UserLogon-Uid',NULL,NULL,'NTUA',NULL,NULL,NULL,NULL),
                                 (5425,'integer','UserLogon-Gid',NULL,NULL,'NTUA',NULL,NULL,NULL,NULL),
                                 (5426,'string','UserLogon-HomeDir',NULL,NULL,'NTUA',NULL,NULL,NULL,NULL),
                                 (5427,'integer','UserLogon-Type',NULL,NULL,'NTUA',NULL,NULL,NULL,NULL),
@@ -5795,8 +5882,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5448,NULL,'UserLogon-Type','SMTP-Auth',NULL,'NTUA',NULL,NULL,NULL,NULL),
                                 (5449,NULL,'UserLogon-Type','Other',NULL,'NTUA',NULL,NULL,NULL,NULL),
                                 (5450,NULL,'UserLogon-Restriction','Anonymous-User',NULL,'NTUA',NULL,NULL,NULL,NULL),
-                                (5451,NULL,'UserLogon-Restriction','Admin-User',NULL,'NTUA',NULL,NULL,NULL,NULL),
-                                (5452,'integer','Lucent-Max-Shared-Users',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL),
+                                (5451,NULL,'UserLogon-Restriction','Admin-User',NULL,'NTUA',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5452,'integer','Lucent-Max-Shared-Users',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL),
                                 (5453,'integer','Lucent-IP-DSCP',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL),
                                 (5454,'string','Lucent-X25-X121-Source-Address',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL),
                                 (5455,'integer','Lucent-PPP-Circuit',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL),
@@ -6224,14 +6312,16 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5877,'integer','Lucent-Remote-Retrain-Requested',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL),
                                 (5878,'integer','Lucent-Connection-Time',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL),
                                 (5879,'integer','Lucent-Modem-Disconnect-Reason',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL),
-                                (5880,'integer','Lucent-Retrain-Reason',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL),
-                                (5881,'integer','Shasta-User-Privilege',NULL,NULL,'Shasta',NULL,NULL,NULL,NULL),
+                                (5880,'integer','Lucent-Retrain-Reason',NULL,NULL,'Lucent',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5881,'integer','Shasta-User-Privilege',NULL,NULL,'Shasta',NULL,NULL,NULL,NULL),
                                 (5882,'string','Shasta-Service-Profile',NULL,NULL,'Shasta',NULL,NULL,NULL,NULL),
                                 (5883,'string','Shasta-VPN-Name',NULL,NULL,'Shasta',NULL,NULL,NULL,NULL),
                                 (5884,NULL,'Shasta-User-Privilege','User',NULL,'Shasta',NULL,NULL,NULL,NULL),
                                 (5885,NULL,'Shasta-User-Privilege','Super-User',NULL,'Shasta',NULL,NULL,NULL,NULL),
-                                (5886,NULL,'Shasta-User-Privilege','SSuper-User',NULL,'Shasta',NULL,NULL,NULL,NULL),
-                                (5887,NULL,'Framed-Protocol','Bintec-X25',NULL,'BinTec',NULL,NULL,NULL,NULL),
+                                (5886,NULL,'Shasta-User-Privilege','SSuper-User',NULL,'Shasta',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5887,NULL,'Framed-Protocol','Bintec-X25',NULL,'BinTec',NULL,NULL,NULL,NULL),
                                 (5888,NULL,'Framed-Protocol','Bintec-X25-PPP',NULL,'BinTec',NULL,NULL,NULL,NULL),
                                 (5889,NULL,'Framed-Protocol','Bintec-IP-LAPB',NULL,'BinTec',NULL,NULL,NULL,NULL),
                                 (5890,NULL,'Framed-Protocol','Bintec-IP-HDLC',NULL,'BinTec',NULL,NULL,NULL,NULL),
@@ -6259,8 +6349,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (5912,'string','BinTec-ipFilterTable',NULL,NULL,'BinTec',NULL,NULL,NULL,NULL),
                                 (5913,'string','BinTec-ipQoSTable',NULL,NULL,'BinTec',NULL,NULL,NULL,NULL),
                                 (5914,'string','BinTec-qosIfTable',NULL,NULL,'BinTec',NULL,NULL,NULL,NULL),
-                                (5915,'string','BinTec-qosPolicyTable',NULL,NULL,'BinTec',NULL,NULL,NULL,NULL),
-                                (5916,'string','KarlNet-TurboCell-Name',NULL,NULL,'KarlNet',NULL,NULL,NULL,NULL),
+                                (5915,'string','BinTec-qosPolicyTable',NULL,NULL,'BinTec',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (5916,'string','KarlNet-TurboCell-Name',NULL,NULL,'KarlNet',NULL,NULL,NULL,NULL),
                                 (5917,'integer','KarlNet-TurboCell-TxRate',NULL,NULL,'KarlNet',NULL,NULL,NULL,NULL),
                                 (5918,NULL,'KarlNet-TurboCell-TxRate','TxRate-Local',NULL,'KarlNet',NULL,NULL,NULL,NULL),
                                 (5919,NULL,'KarlNet-TurboCell-TxRate','TxRate-MaxSpeed',NULL,'KarlNet',NULL,NULL,NULL,NULL),
@@ -8308,9 +8399,11 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (7961,NULL,'KarlNet-TurboCell-OpMode','Peer-to-Peer',NULL,'KarlNet',NULL,NULL,NULL,NULL),
                                 (7962,NULL,'KarlNet-TurboCell-OpMode','Base',NULL,'KarlNet',NULL,NULL,NULL,NULL),
                                 (7963,NULL,'KarlNet-TurboCell-OpMode','Base-Polling',NULL,'KarlNet',NULL,NULL,NULL,NULL),
-                                (7964,NULL,'KarlNet-TurboCell-OpMode','Satellite-NT',NULL,'KarlNet',NULL,NULL,NULL,NULL),
-                                (7965,'string','Packeteer-AVPair',NULL,NULL,'Packeteer',NULL,NULL,NULL,NULL),
-                                (7966,'integer','Ascend-Max-Shared-Users',NULL,NULL,'Ascend',NULL,NULL,NULL,NULL),
+                                (7964,NULL,'KarlNet-TurboCell-OpMode','Satellite-NT',NULL,'KarlNet',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (7965,'string','Packeteer-AVPair',NULL,NULL,'Packeteer',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (7966,'integer','Ascend-Max-Shared-Users',NULL,NULL,'Ascend',NULL,NULL,NULL,NULL),
                                 (7967,'string','Ascend-UU-Info',NULL,NULL,'Ascend',NULL,NULL,NULL,NULL),
                                 (7968,'integer','Ascend-CIR-Timer',NULL,NULL,'Ascend',NULL,NULL,NULL,NULL),
                                 (7969,'integer','Ascend-FR-08-Mode',NULL,NULL,'Ascend',NULL,NULL,NULL,NULL),
@@ -9435,8 +9528,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (9088,NULL,'X-Ascend-Data-Svc','Switched-ATM',NULL,'Ascend',NULL,NULL,NULL,NULL),
                                 (9089,NULL,'X-Ascend-Data-Svc','Switched-FR',NULL,'Ascend',NULL,NULL,NULL,NULL),
                                 (9090,NULL,'X-Ascend-Force-56','Force-56-No',NULL,'Ascend',NULL,NULL,NULL,NULL),
-                                (9091,NULL,'X-Ascend-Force-56','Force-56-Yes',NULL,'Ascend',NULL,NULL,NULL,NULL),
-                                (9594,'ipaddr','WiMAX-hHA-IP-MIP4',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
+                                (9091,NULL,'X-Ascend-Force-56','Force-56-Yes',NULL,'Ascend',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (9594,'ipaddr','WiMAX-hHA-IP-MIP4',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9595,'ipv6addr','WiMAX-hHA-IP-MIP6',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9596,'combo-ip','WiMAX-DHCPv4-Server',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9597,'combo-ip','WiMAX-DHCPv6-Server',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
@@ -9446,8 +9540,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (9593,'octets encrypt=2','WiMAX-MSK',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9587,'byte','WiMAX-Packet-Flow-Descriptor-Capabilities',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9588,'integer','WiMAX-ASN-Network-Service-Capabilities',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
-                                (9589,'integer','WiMAX-Authorized-IP-Services',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
-                                (9095, 'integer', 'CoovaChilli-Max-Input-Octets', NULL, NULL, 'CoovaChilli',':=','reply','volumebytes','Maximum number of octets the user is allowed to transmit. After this limit has been reached the user will be disconnected. (Specified in bytes)		'),
+                                (9589,'integer','WiMAX-Authorized-IP-Services',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (9095, 'integer', 'CoovaChilli-Max-Input-Octets', NULL, NULL, 'CoovaChilli',':=','reply','volumebytes','Maximum number of octets the user is allowed to transmit. After this limit has been reached the user will be disconnected. (Specified in bytes)		'),
                                 (9096, 'integer', 'CoovaChilli-Max-Output-Octets', NULL, NULL, 'CoovaChilli',':=','reply','volumebytes','Maximum number of octets the user is allowed to receive. After this limit has been reached the user will be disconnected. (Specified in bytes)'),
                                 (9097, 'integer', 'CoovaChilli-Max-Total-Octets', NULL, NULL, 'CoovaChilli',':=','reply','volumebytes','Maximum total octets the user is allowed to send or receive. After this limit has been reached the user will be disconnected. (Specified in bytes)'),
                                 (9098, 'integer', 'CoovaChilli-Bandwidth-Max-Up', NULL, NULL, 'CoovaChilli',':=','reply','bitspersecond','WISPr vendor specific attributes for setting the maximum bandwidth rate in bits per second.'),
@@ -9504,13 +9599,15 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (9149, 'integer', 'CoovaChilli-Other-Output-Gigawords', NULL, NULL, 'CoovaChilli',':=','reply', NULL, NULL),
                                 (9150, 'string', 'CoovaChilli-UAM-Allowed', NULL, NULL, 'CoovaChilli',':=','reply',NULL,'\r\n	When received from the radius server in an RFC 2882 style configuration management message this attribute will override the uamallowed command line option.'),
                                 (9151, 'string', 'CoovaChilli-MAC-Allowed', NULL, NULL, 'CoovaChilli',':=','reply',NULL,'When received from the radius server in an RFC 2882 style configuration management message this attribute will override the macallowed command line option.'),
-                                (9152, 'integer', 'CoovaChilli-Interval', NULL, NULL, 'CoovaChilli',':=','reply',NULL,'When received from the radius server in an RFC 2882 style configuration management message this attribute will override the interval command line option.'),
-                                (9582,'tlv','WiMAX-Capability',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
+                                (9152, 'integer', 'CoovaChilli-Interval', NULL, NULL, 'CoovaChilli',':=','reply',NULL,'When received from the radius server in an RFC 2882 style configuration management message this attribute will override the interval command line option.');
+
+INSERT INTO `dictionary` VALUES (9582,'tlv','WiMAX-Capability',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9583,NULL,'1       string',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9584,NULL,'2       byte',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9585,NULL,'3       byte',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
-                                (9586,NULL,'4       byte',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
-                                (9382,'ipaddr','WiMAX-DHCP-Msg-Server-IP',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
+                                (9586,NULL,'4       byte',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (9382,'ipaddr','WiMAX-DHCP-Msg-Server-IP',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9381,'integer','WiMAX-DHCP-RK-Lifetime',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9380,'integer','WiMAX-DHCP-RK-Key-Id',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9379,'octets encrypt=2','WiMAX-DHCP-RK',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
@@ -9638,8 +9735,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (9413,'ipv6addr','WiMAX-vDHCPv6-Server',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9414,'octets encrypt=2','WiMAX-vDHCP-RK',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9415,'integer','WiMAX-vDHCP-RK-Key-ID',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
-                                (9416,'integer','WiMAX-vDHCP-RK-Lifetime',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
-                                (9417,'integer','Max-All-Session',NULL,NULL,'dictionary.daloradius',':=','check',NULL,'Specifies the number of seconds in total (the counter never resets) for which the user may connect (very popular with prepaid accounts). Please notice that this attribute is internal to FreeRADIUS and is based on a respective sql module configuration in radiusd.conf'),
+                                (9416,'integer','WiMAX-vDHCP-RK-Lifetime',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (9417,'integer','Max-All-Session',NULL,NULL,'dictionary.daloradius',':=','check',NULL,'Specifies the number of seconds in total (the counter never resets) for which the user may connect (very popular with prepaid accounts). Please notice that this attribute is internal to FreeRADIUS and is based on a respective sql module configuration in radiusd.conf'),
                                 (9418,'integer','Max-Daily-Session',NULL,NULL,'dictionary.daloradius',':=','check',NULL,'Specifies the number of seconds (the counter resets daily) for which the user may connect each day (very popular with prepaid accounts). Please notice that this attribute is internal to FreeRADIUS and is based on a respective sql module configuration in radiusd.conf'),
                                 (9419,'integer','Max-Monthly-Session',NULL,NULL,'dictionary.daloradius',':=','check',NULL,'Specifies the number of seconds (the counter resets monthly) for which the user may connect each month in total (very popular with prepaid accounts). Please notice that this attribute is internal to FreeRADIUS and is based on a respective sql module configuration in radiusd.conf'),
                                 (9420,'integer','Access-Period',NULL,NULL,'dictionary.daloradius',':=','check',NULL,'Setting the number of seconds (e.g. X seconds) of this attribute for a user allows the user to log in only for the next X seconds specified. In other words, unlike Max-All-Session, this is NOT an attribute based on accumulated time, but rather a Time-To-Finish.'),
@@ -9662,8 +9760,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (9444,'integer','CS-Output-Octets-Monthly',NULL,NULL,'dictionary.daloradius',':=','check','volumebytes','ChilliSpot Output Octets attribute for limiting the output traffic of a user. The counter resets monthly.'),
                                 (9443,'integer','CS-Output-Octets-Weekly',NULL,NULL,'dictionary.daloradius',':=','check','volumebytes','ChilliSpot Output Octets attribute for limiting the output traffic of a user. The counter resets weekly.'),
                                 (9442,'integer','CS-Output-Octets-Daily',NULL,NULL,'dictionary.daloradius',':=','check','volumebytes','ChilliSpot Output Octets attribute for limiting the output traffic of a user. The counter resets daily.'),
-                                (9441,'integer','CS-Input-Octets-Daily',NULL,NULL,'dictionary.daloradius',':=','check','volumebytes','ChilliSpot Input Octets attribute for limiting the input traffic of a user. The counter resets daily.'),
-                                (9453,'tlv','WiMAX-Capability',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
+                                (9441,'integer','CS-Input-Octets-Daily',NULL,NULL,'dictionary.daloradius',':=','check','volumebytes','ChilliSpot Input Octets attribute for limiting the input traffic of a user. The counter resets daily.');
+
+INSERT INTO `dictionary` VALUES (9453,'tlv','WiMAX-Capability',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9454,'string','WiMAX-Release',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9455,'byte','WiMAX-Accounting-Capabilities',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9456,'byte','WiMAX-Hotlining-Capabilities',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
@@ -9791,8 +9890,9 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (9578,'ipv6addr','WiMAX-vDHCPv6-Server',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9579,'octets encrypt=2','WiMAX-vDHCP-RK',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
                                 (9580,'integer','WiMAX-vDHCP-RK-Key-ID',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
-                                (9581,'integer','WiMAX-vDHCP-RK-Lifetime',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL),
-                                (9598,'octets encrypt=2','WiMAX-MN-hHA-MIP4-Key',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
+                                (9581,'integer','WiMAX-vDHCP-RK-Lifetime',NULL,NULL,'dictionary.wimax',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (9598,'octets encrypt=2','WiMAX-MN-hHA-MIP4-Key',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9599,'integer','WiMAX-MN-hHA-MIP4-SPI',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9600,'octets encrypt=2','WiMAX-MN-hHA-MIP6-Key',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9601,'integer','WiMAX-MN-hHA-MIP6-SPI',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
@@ -9910,9 +10010,11 @@ INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'N
                                 (9713,'ipv6addr','WiMAX-vDHCPv6-Server',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9714,'octets encrypt=2','WiMAX-vDHCP-RK',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
                                 (9715,'integer','WiMAX-vDHCP-RK-Key-ID',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
-                                (9716,'integer','WiMAX-vDHCP-RK-Lifetime',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL),
-                                (9717,'ipaddr','CS-Total-Octets',NULL,NULL,'dictionary.daloradius',':=','check','volumebytes','ChilliSpot Total Octets attribute for limiting the total (up/down) traffic of a user. The counter never reset.'),
-                                (9718,'integer','HW-Input-Committed-Burst-Size',NULL,NULL,'Huawei',NULL,NULL,NULL,NULL),
+                                (9716,'integer','WiMAX-vDHCP-RK-Lifetime',NULL,NULL,'dictionary.wimax.wichorus',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (9717,'ipaddr','CS-Total-Octets',NULL,NULL,'dictionary.daloradius',':=','check','volumebytes','ChilliSpot Total Octets attribute for limiting the total (up/down) traffic of a user. The counter never reset.');
+
+INSERT INTO `dictionary` VALUES (9718,'integer','HW-Input-Committed-Burst-Size',NULL,NULL,'Huawei',NULL,NULL,NULL,NULL),
                                 (9719,'integer','HW-Input-Committed-Information-Rate',NULL,NULL,'Huawei',NULL,NULL,NULL,NULL),
                                 (9720,'integer','HW-Input-Peak-Information-Rate',NULL,NULL,'Huawei',NULL,NULL,NULL,NULL),
                                 (9721,'integer','HW-Output-Committed-Burst-Size',NULL,NULL,'Huawei',NULL,NULL,NULL,NULL),
