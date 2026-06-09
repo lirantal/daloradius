@@ -2875,31 +2875,38 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('integer','CVPN5000-Echo','Cisco-VPN5000',NULL,NULL,NULL,NULL),
                          ('integer','CVPN5000-Client-Assigned-IPX','Cisco-VPN5000',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (3752,'string','Motorola-Canopy-Shared-Secret',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3753,'string','Motorola-Canopy-SULDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3754,'string','Motorola-Canopy-SDLDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3755,'string','Motorola-Canopy-ULBA',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3756,'string','Motorola-Canopy-DLBA',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3757,'string','Motorola-Canopy-Enable',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3758,'string','Motorola-Canopy-LPSULDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3759,'string','Motorola-Canopy-LPSDLDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3760,'string','Motorola-Canopy-HPCENABLE',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3761,'string','Motorola-Canopy-HPSULDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3762,'string','Motorola-Canopy-HPSDLDR',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3763,'string','Motorola-Canopy-HIGHERBW',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL),
-                                (3764,'string','Motorola-Canopy-CIRENABLE',NULL,NULL,'Motorola',NULL,NULL,NULL,NULL);
+/* Motorola :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Motorola-Canopy-Shared-Secret','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-SULDR','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-SDLDR','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-ULBA','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-DLBA','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-Enable','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-LPSULDR','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-LPSDLDR','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-HPCENABLE','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-HPSULDR','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-HPSDLDR','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-HIGHERBW','Motorola',NULL,NULL,NULL,NULL),
+                         ('string','Motorola-Canopy-CIRENABLE','Motorola',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (3765,'integer','Airespace-Wlan-Id',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3766,'integer','Airespace-QOS-Level',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3767,'integer','Airespace-DSCP',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3768,'integer','Airespace-8021p-Tag',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3769,'string','Airespace-Interface-Name',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3770,'string','Airespace-ACL-Name',NULL,NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3771,NULL,'Airespace-QOS-Level','Bronze',NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3772,NULL,'Airespace-QOS-Level','Silver',NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3773,NULL,'Airespace-QOS-Level','Gold',NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3774,NULL,'Airespace-QOS-Level','Platinum',NULL,'Airespace',NULL,NULL,NULL,NULL),
-                                (3775,NULL,'Airespace-QOS-Level','Uranium',NULL,'Airespace',NULL,NULL,NULL,NULL);
+/* Airespace :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Airespace-Wlan-Id','Airespace',NULL,NULL,NULL,NULL),
+                         ('integer','Airespace-QOS-Level','Airespace',NULL,NULL,NULL,NULL),
+                         ('integer','Airespace-DSCP','Airespace',NULL,NULL,NULL,NULL),
+                         ('integer','Airespace-8021p-Tag','Airespace',NULL,NULL,NULL,NULL),
+                         ('string','Airespace-Interface-Name','Airespace',NULL,NULL,NULL,NULL),
+                         ('string','Airespace-ACL-Name','Airespace',NULL,NULL,NULL,NULL);
+
+/* Airespace :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Airespace-QOS-Level','Bronze','Airespace'),
+                         ('Airespace-QOS-Level','Silver','Airespace'),
+                         ('Airespace-QOS-Level','Gold','Airespace'),
+                         ('Airespace-QOS-Level','Platinum','Airespace'),
+                         ('Airespace-QOS-Level','Uranium','Airespace');
 
 INSERT INTO `dictionary` VALUES (3776,'integer','Unix-FTP-UID',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
                                 (3777,'integer','Unix-FTP-GID',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
