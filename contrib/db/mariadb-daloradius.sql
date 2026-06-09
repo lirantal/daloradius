@@ -4637,12 +4637,14 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('ERX-Service-Statistics','time','ERX'),
                          ('ERX-Service-Statistics','time-volume','ERX');
 
-INSERT INTO `dictionary` VALUES (5400,'integer','Propel-Accelerate',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
-                                (5401,'string','Propel-Dialed-Digits',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
-                                (5402,'ipaddr','Propel-Client-IP-Address',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
-                                (5403,'ipaddr','Propel-Client-NAS-IP-Address',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
-                                (5404,'integer','Propel-Client-Source-ID',NULL,NULL,'Propel',NULL,NULL,NULL,NULL),
-                                (5405,'integer','Propel-Content-Filter-ID',NULL,NULL,'Propel',NULL,NULL,NULL,NULL);
+/* Propel :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Propel-Accelerate','Propel',NULL,NULL,NULL,NULL),
+                         ('string','Propel-Dialed-Digits','Propel',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Propel-Client-IP-Address','Propel',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Propel-Client-NAS-IP-Address','Propel',NULL,NULL,NULL,NULL),
+                         ('integer','Propel-Client-Source-ID','Propel',NULL,NULL,NULL,NULL),
+                         ('integer','Propel-Content-Filter-ID','Propel',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (5406,'string','Asterisk-Acc-Code',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
                                 (5407,'string','Asterisk-Src',NULL,NULL,'Digium',NULL,NULL,NULL,NULL),
