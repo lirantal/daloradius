@@ -597,22 +597,24 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','SofaWare-Hotspot','SofaWare',NULL,NULL,NULL,NULL),
                          ('string','SofaWare-UFP','SofaWare',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (232,'string','ST-Acct-VC-Connection-Id',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (233,'string','ST-Service-Name',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (234,'integer','ST-Service-Domain',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (235,'string','ST-Policy-Name',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (236,'ipaddr','ST-Primary-DNS-Server',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (237,'ipaddr','ST-Secondary-DNS-Server',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (238,'ipaddr','ST-Primary-NBNS-Server',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (239,'ipaddr','ST-Secondary-NBNS-Server',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (240,'integer','ST-Physical-Port',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (241,'integer','ST-Physical-Slot',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (242,'integer','ST-Virtual-Path-ID',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (243,'integer','ST-Virtual-Circuit-ID',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (244,'string','ST-Realm-Name',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (245,'integer','ST-IPSec-Pfs-Group',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (246,'integer','ST-IPSec-Client-Firewall',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
-                                (247,'string','ST-IPSec-Client-Subnet',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL);
+/* SpringTide :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','ST-Acct-VC-Connection-Id','SpringTide',NULL,NULL,NULL,NULL),
+                         ('string','ST-Service-Name','SpringTide',NULL,NULL,NULL,NULL),
+                         ('integer','ST-Service-Domain','SpringTide',NULL,NULL,NULL,NULL),
+                         ('string','ST-Policy-Name','SpringTide',NULL,NULL,NULL,NULL),
+                         ('ipaddr','ST-Primary-DNS-Server','SpringTide',NULL,NULL,NULL,NULL),
+                         ('ipaddr','ST-Secondary-DNS-Server','SpringTide',NULL,NULL,NULL,NULL),
+                         ('ipaddr','ST-Primary-NBNS-Server','SpringTide',NULL,NULL,NULL,NULL),
+                         ('ipaddr','ST-Secondary-NBNS-Server','SpringTide',NULL,NULL,NULL,NULL),
+                         ('integer','ST-Physical-Port','SpringTide',NULL,NULL,NULL,NULL),
+                         ('integer','ST-Physical-Slot','SpringTide',NULL,NULL,NULL,NULL),
+                         ('integer','ST-Virtual-Path-ID','SpringTide',NULL,NULL,NULL,NULL),
+                         ('integer','ST-Virtual-Circuit-ID','SpringTide',NULL,NULL,NULL,NULL),
+                         ('string','ST-Realm-Name','SpringTide',NULL,NULL,NULL,NULL),
+                         ('integer','ST-IPSec-Pfs-Group','SpringTide',NULL,NULL,NULL,NULL),
+                         ('integer','ST-IPSec-Client-Firewall','SpringTide',NULL,NULL,NULL,NULL),
+                         ('string','ST-IPSec-Client-Subnet','SpringTide',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (248,'string','Shiva-User-Attributes',NULL,NULL,'Shiva',NULL,NULL,NULL,NULL),
                                 (249,'integer','Shiva-Compression',NULL,NULL,'Shiva',NULL,NULL,NULL,NULL),
