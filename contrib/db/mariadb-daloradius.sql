@@ -577,19 +577,25 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('ipaddr','Nokia-GGSN-IP-Address','Nokia',NULL,NULL,NULL,NULL),
                          ('ipaddr','Nokia-SGSN-IP-Address','Nokia',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (221,'integer','VNC-PPPoE-CBQ-RX',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
-                                (222,'integer','VNC-PPPoE-CBQ-TX',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
-                                (223,'integer','VNC-PPPoE-CBQ-RX-Fallback',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
-                                (224,'integer','VNC-PPPoE-CBQ-TX-Fallback',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
-                                (225,'integer','VNC-Splash',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
-                                (226,NULL,'VNC-Splash','Show',NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
-                                (227,NULL,'VNC-Splash','No-Show',NULL,'ValemountNetworks',NULL,NULL,NULL,NULL);
+/* ValemountNetworks :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','VNC-PPPoE-CBQ-RX','ValemountNetworks',NULL,NULL,NULL,NULL),
+                         ('integer','VNC-PPPoE-CBQ-TX','ValemountNetworks',NULL,NULL,NULL,NULL),
+                         ('integer','VNC-PPPoE-CBQ-RX-Fallback','ValemountNetworks',NULL,NULL,NULL,NULL),
+                         ('integer','VNC-PPPoE-CBQ-TX-Fallback','ValemountNetworks',NULL,NULL,NULL,NULL),
+                         ('integer','VNC-Splash','ValemountNetworks',NULL,NULL,NULL,NULL);
+
+/* ValemountNetworks :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('VNC-Splash','Show','ValemountNetworks'),
+                         ('VNC-Splash','No-Show','ValemountNetworks');
 
 INSERT INTO `dictionary` VALUES (228,'string','SofaWare-Admin',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
                                 (229,'string','SofaWare-VPN',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
                                 (230,'string','SofaWare-Hotspot',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
-                                (231,'string','SofaWare-UFP',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
-                                (232,'string','ST-Acct-VC-Connection-Id',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
+                                (231,'string','SofaWare-UFP',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL);
+
+INSERT INTO `dictionary` VALUES (232,'string','ST-Acct-VC-Connection-Id',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
                                 (233,'string','ST-Service-Name',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
                                 (234,'integer','ST-Service-Domain',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
                                 (235,'string','ST-Policy-Name',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
