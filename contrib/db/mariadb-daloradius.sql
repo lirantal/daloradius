@@ -539,18 +539,23 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('NAS-Port-Type','Wireless-Other','dictionary.rfc2865'),
                          ('NAS-Port-Type','Wireless-802.11','dictionary.rfc2865');
 
-INSERT INTO `dictionary` VALUES (192,'integer','NS-Admin-Privilege',NULL,NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (193,'string','NS-VSYS-Name',NULL,NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (194,'string','NS-User-Group',NULL,NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (195,'ipaddr','NS-Primary-DNS',NULL,NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (196,'ipaddr','NS-Secondary-DNS',NULL,NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (197,'ipaddr','NS-Primary-WINS',NULL,NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (198,'ipaddr','NS-Secondary-WINS',NULL,NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (199,NULL,'NS-Admin-Privilege','Root-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (200,NULL,'NS-Admin-Privilege','All-VSYS-Root-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (201,NULL,'NS-Admin-Privilege','VSYS-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (202,NULL,'NS-Admin-Privilege','Read-Only-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL),
-                                (203,NULL,'NS-Admin-Privilege','Read-Only-VSYS-Admin',NULL,'Netscreen',NULL,NULL,NULL,NULL);
+/* Netscreen :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','NS-Admin-Privilege','Netscreen',NULL,NULL,NULL,NULL),
+                         ('string','NS-VSYS-Name','Netscreen',NULL,NULL,NULL,NULL),
+                         ('string','NS-User-Group','Netscreen',NULL,NULL,NULL,NULL),
+                         ('ipaddr','NS-Primary-DNS','Netscreen',NULL,NULL,NULL,NULL),
+                         ('ipaddr','NS-Secondary-DNS','Netscreen',NULL,NULL,NULL,NULL),
+                         ('ipaddr','NS-Primary-WINS','Netscreen',NULL,NULL,NULL,NULL),
+                         ('ipaddr','NS-Secondary-WINS','Netscreen',NULL,NULL,NULL,NULL);
+
+/* Netscreen :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('NS-Admin-Privilege','Root-Admin','Netscreen'),
+                         ('NS-Admin-Privilege','All-VSYS-Root-Admin','Netscreen'),
+                         ('NS-Admin-Privilege','VSYS-Admin','Netscreen'),
+                         ('NS-Admin-Privilege','Read-Only-Admin','Netscreen'),
+                         ('NS-Admin-Privilege','Read-Only-VSYS-Admin','Netscreen');
 
 INSERT INTO `dictionary` VALUES (204,'string','Nokia-User-Profile',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
                                 (205,'octets','Nokia-Service-Name',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
