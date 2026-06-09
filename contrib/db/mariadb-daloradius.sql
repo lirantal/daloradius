@@ -1376,15 +1376,20 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','WISPr-Session-Terminate-End-Of-Day','WISPr',NULL,NULL,NULL,NULL),
                          ('string','WISPr-Billing-Class-Of-Service','WISPr',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (2406,NULL,'Service-Type','Sip-session',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2407,'integer','Sip-Method',NULL,NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2408,'string','Sip-From',NULL,NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2409,'string','Sip-To',NULL,NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2410,'string','Sip-Translated-Request-URI',NULL,NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2411,NULL,'Sip-Method','INVITE',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2412,NULL,'Sip-Method','BYE',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2413,NULL,'Sip-Method','REGISTER',NULL,'Columbia-University',NULL,NULL,NULL,NULL),
-                                (2414,NULL,'Sip-Method','OTHER',NULL,'Columbia-University',NULL,NULL,NULL,NULL);
+/* Columbia-University :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Sip-Method','Columbia-University',NULL,NULL,NULL,NULL),
+                         ('string','Sip-From','Columbia-University',NULL,NULL,NULL,NULL),
+                         ('string','Sip-To','Columbia-University',NULL,NULL,NULL,NULL),
+                         ('string','Sip-Translated-Request-URI','Columbia-University',NULL,NULL,NULL,NULL);
+
+/* Columbia-University :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Service-Type','Sip-session','Columbia-University'),
+                         ('Sip-Method','INVITE','Columbia-University'),
+                         ('Sip-Method','BYE','Columbia-University'),
+                         ('Sip-Method','REGISTER','Columbia-University'),
+                         ('Sip-Method','OTHER','Columbia-University');
 
 INSERT INTO `dictionary` VALUES (2415,'string','ADSL-Agent-Circuit-Id',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
                                 (2416,'string','ADSL-Agent-Remote-Id',NULL,NULL,'ADSL-Forum',NULL,NULL,NULL,NULL),
