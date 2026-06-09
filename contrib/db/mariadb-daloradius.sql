@@ -2917,29 +2917,34 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','Unix-FTP-Group-Names','Unix',NULL,NULL,NULL,NULL),
                          ('string','Unix-FTP-Group-Ids','Unix',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (3782,'integer','Acct-Input-Gigawords',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3783,'integer','Acct-Output-Gigawords',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3784,'date','Event-Timestamp',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3785,'octets','ARAP-Password',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3786,'octets','ARAP-Features',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3787,'integer','ARAP-Zone-Access',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3788,'integer','ARAP-Security',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3789,'string','ARAP-Security-Data',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3790,'integer','Password-Retry',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3791,'integer','Prompt',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3792,'string','Connect-Info',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3793,'string','Configuration-Token',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3794,'octets','EAP-Message',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3795,'octets','Message-Authenticator',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3796,'octets','ARAP-Challenge-Response',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3797,'integer','Acct-Interim-Interval',NULL,NULL,'dictionary.rfc2869',':=','reply','','If present in Access-Accept (in the reply packet) the NAS will generate interim accounting records every specified interval (seconds).'),
-                                (3798,'string','NAS-Port-Id',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3799,'string','Framed-Pool',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3800,NULL,'ARAP-Zone-Access','Default-Zone',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3801,NULL,'ARAP-Zone-Access','Zone-Filter-Inclusive',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3802,NULL,'ARAP-Zone-Access','Zone-Filter-Exclusive',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3803,NULL,'Prompt','No-Echo',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
-                                (3804,NULL,'Prompt','Echo',NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL);
+/* dictionary.rfc2869 :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Acct-Input-Gigawords','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('integer','Acct-Output-Gigawords','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('date','Event-Timestamp','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('octets','ARAP-Password','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('octets','ARAP-Features','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('integer','ARAP-Zone-Access','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('integer','ARAP-Security','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('string','ARAP-Security-Data','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('integer','Password-Retry','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('integer','Prompt','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('string','Connect-Info','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('string','Configuration-Token','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('octets','EAP-Message','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('octets','Message-Authenticator','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('octets','ARAP-Challenge-Response','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('integer','Acct-Interim-Interval','dictionary.rfc2869',':=','reply','','If present in Access-Accept (in the reply packet) the NAS will generate interim accounting records every specified interval (seconds).'),
+                         ('string','NAS-Port-Id','dictionary.rfc2869',NULL,NULL,NULL,NULL),
+                         ('string','Framed-Pool','dictionary.rfc2869',NULL,NULL,NULL,NULL);
+
+/* dictionary.rfc2869 :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('ARAP-Zone-Access','Default-Zone','dictionary.rfc2869'),
+                         ('ARAP-Zone-Access','Zone-Filter-Inclusive','dictionary.rfc2869'),
+                         ('ARAP-Zone-Access','Zone-Filter-Exclusive','dictionary.rfc2869'),
+                         ('Prompt','No-Echo','dictionary.rfc2869'),
+                         ('Prompt','Echo','dictionary.rfc2869');
 
 INSERT INTO `dictionary` VALUES (3805,'integer','Acc-Reason-Code',NULL,NULL,'Acc',NULL,NULL,NULL,NULL),
                                 (3806,'integer','Acc-Ccp-Option',NULL,NULL,'Acc',NULL,NULL,NULL,NULL),
