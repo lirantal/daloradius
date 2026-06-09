@@ -896,12 +896,17 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Gandalf-Modem-Required-2','Disabled','Gandalf'),
                          ('Gandalf-Modem-Required-2','Enabled','Gandalf');
 
-INSERT INTO `dictionary` VALUES (492,'integer','Egress-VLANID',NULL,NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
-                                (493,'integer','Ingress-Filters',NULL,NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
-                                (494,'string','Egress-VLAN-Name',NULL,NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
-                                (495,'octets','User-Priority-Table',NULL,NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
-                                (496,NULL,'Ingress-Filters','Enabled',NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL),
-                                (497,NULL,'Ingress-Filters','Disabled',NULL,'dictionary.rfc4675',NULL,NULL,NULL,NULL);
+/* dictionary.rfc4675 :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Egress-VLANID','dictionary.rfc4675',NULL,NULL,NULL,NULL),
+                         ('integer','Ingress-Filters','dictionary.rfc4675',NULL,NULL,NULL,NULL),
+                         ('string','Egress-VLAN-Name','dictionary.rfc4675',NULL,NULL,NULL,NULL),
+                         ('octets','User-Priority-Table','dictionary.rfc4675',NULL,NULL,NULL,NULL);
+
+/* dictionary.rfc4675 :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Ingress-Filters','Enabled','dictionary.rfc4675'),
+                         ('Ingress-Filters','Disabled','dictionary.rfc4675');
 
 INSERT INTO `dictionary` VALUES (498,'integer','Nomadix-Bw-Up',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
                                 (499,'integer','Nomadix-Bw-Down',NULL,NULL,'Nomadix',NULL,NULL,NULL,NULL),
