@@ -4398,24 +4398,29 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('string','Juniper-Allow-Configuration','Juniper',NULL,NULL,NULL,NULL),
                          ('string','Juniper-Deny-Configuration','Juniper',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (5182,'integer','Sip-Method',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5183,'integer','Sip-Response-Code',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5184,'string','Sip-Cseq',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5185,'string','Sip-To-Tag',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5186,'string','Sip-From-Tag',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5187,'string','Sip-Branch-ID',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5188,'string','Sip-Translated-Request-ID',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5189,'ipaddr','Sip-Source-IP-Address',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5190,'integer','Sip-Source-Port',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5191,NULL,'Service-Type','Sip-Session',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5192,NULL,'Sip-Method','INVITE',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5193,NULL,'Sip-Method','BYE',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5194,NULL,'Sip-Method','REGISTER',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5195,NULL,'Sip-Method','CANCEL',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5196,NULL,'Sip-Method','OPTIONS',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5197,NULL,'Sip-Method','ACK',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5198,NULL,'Sip-Method','SUBSCRIBE',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
-                                (5199,NULL,'Sip-Method','NOTIFY',NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL);
+/* dictionary.schulzrinne-sipping :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Sip-Method','dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
+                         ('integer','Sip-Response-Code','dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
+                         ('string','Sip-Cseq','dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
+                         ('string','Sip-To-Tag','dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
+                         ('string','Sip-From-Tag','dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
+                         ('string','Sip-Branch-ID','dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
+                         ('string','Sip-Translated-Request-ID','dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Sip-Source-IP-Address','dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
+                         ('integer','Sip-Source-Port','dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL);
+
+/* dictionary.schulzrinne-sipping :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Service-Type','Sip-Session','dictionary.schulzrinne-sipping'),
+                         ('Sip-Method','INVITE','dictionary.schulzrinne-sipping'),
+                         ('Sip-Method','BYE','dictionary.schulzrinne-sipping'),
+                         ('Sip-Method','REGISTER','dictionary.schulzrinne-sipping'),
+                         ('Sip-Method','CANCEL','dictionary.schulzrinne-sipping'),
+                         ('Sip-Method','OPTIONS','dictionary.schulzrinne-sipping'),
+                         ('Sip-Method','ACK','dictionary.schulzrinne-sipping'),
+                         ('Sip-Method','SUBSCRIBE','dictionary.schulzrinne-sipping'),
+                         ('Sip-Method','NOTIFY','dictionary.schulzrinne-sipping');
 
 INSERT INTO `dictionary` VALUES (5200,'integer','Tropos-Unicast-Cipher',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
                                 (5201,'integer','Tropos-Layer2-Input-Octets',NULL,NULL,'Tropos',NULL,NULL,NULL,NULL),
