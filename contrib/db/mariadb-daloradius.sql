@@ -3910,11 +3910,13 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('CableLabs-Policy-Decision-Status','Policy-Approved','CableLabs'),
                          ('CableLabs-Policy-Decision-Status','Policy-Denied','CableLabs');
 
-INSERT INTO `dictionary` VALUES (4742,'integer','RP-Upstream-Speed-Limit',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
-                                (4743,'integer','RP-Downstream-Speed-Limit',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
-                                (4744,'string','RP-HURL',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
-                                (4745,'string','RP-MOTM',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL),
-                                (4746,'integer','RP-Max-Sessions-Per-User',NULL,NULL,'Roaring-Penguin',NULL,NULL,NULL,NULL);
+/* Roaring-Penguin :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','RP-Upstream-Speed-Limit','Roaring-Penguin',NULL,NULL,NULL,NULL),
+                         ('integer','RP-Downstream-Speed-Limit','Roaring-Penguin',NULL,NULL,NULL,NULL),
+                         ('string','RP-HURL','Roaring-Penguin',NULL,NULL,NULL,NULL),
+                         ('string','RP-MOTM','Roaring-Penguin',NULL,NULL,NULL,NULL),
+                         ('integer','RP-Max-Sessions-Per-User','Roaring-Penguin',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (4747,'integer','3GPP2-Ike-Preshared-Secret-Request',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
                                 (4748,'integer','3GPP2-Security-Level',NULL,NULL,'3GPP2',NULL,NULL,NULL,NULL),
