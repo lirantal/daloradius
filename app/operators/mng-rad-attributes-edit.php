@@ -40,18 +40,18 @@
 
     function attribute_vendor_exist($dbSocket, $attribute, $vendor) {
         global $configValues, $logDebugSQL;
-        
+
         $sql = sprintf("SELECT COUNT(DISTINCT(id)) FROM %s WHERE attribute='%s' AND vendor='%s'",
                                $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
                                $dbSocket->escapeSimple($attribute),
                                $dbSocket->escapeSimple($vendor));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
-        
+
         return $res->fetchrow()[0] > 0;
     }
 
-    
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
@@ -63,22 +63,23 @@
                        ? str_replace("%", "", trim($_POST['attribute'])) : "";
             $attribute_enc = (!empty($attribute)) ? htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8') : "";
 
-            $type = (array_key_exists('type', $_POST) && !empty(trim($_POST['type'])) &&
-                     in_array(trim($_POST['type']), $valid_attributeTypes))
-                  ? $_POST['type'] : "";
+            // Validate attribute type: compare the pure type (without encrypt= flags or # comments) but keep the original value
+            $rawType = array_key_exists('type', $_POST) ? trim($_POST['type']) : "";
+            $baseType = strtolower(strtok($rawType, " \t#"));
+            $type = (!empty($rawType) && in_array($baseType, $valid_attributeTypes, true)) ? $rawType : "";
 
             $op = (array_key_exists('RecommendedOP', $_POST) && isset($_POST['RecommendedOP']) &&
                    in_array($_POST['RecommendedOP'], $valid_ops))
                 ? $_POST['RecommendedOP'] : "";
-            
+
             $table = (array_key_exists('RecommendedTable', $_POST) && isset($_POST['RecommendedTable']) &&
                       in_array($_POST['RecommendedTable'], $valid_tables))
                    ? $_POST['RecommendedTable'] : "";
-            
+
             $helper = (array_key_exists('RecommendedHelper', $_POST) && isset($_POST['RecommendedHelper']) &&
                        in_array($_POST['RecommendedHelper'], $valid_recommendedHelpers))
                     ? $_POST['RecommendedHelper'] : "";
-            
+
             $tooltip = (array_key_exists('RecommendedTooltip', $_POST) &&
                         !empty(str_replace("%", "", trim($_POST['RecommendedTooltip']))))
                      ? str_replace("%", "", trim($_POST['RecommendedTooltip'])) : "";
@@ -88,28 +89,28 @@
                 $failureMsg = "vendor and/or attribute are empty or invalid";
                 $logAction .= "Failed updating attribute [$attribute] (possible empty/invalid vendor and/or attribute) on page: ";
             } else {
-                
+
                 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-                
+
                 $exists = attribute_vendor_exist($dbSocket, $attribute, $vendor);
-                
+
                 if (!$exists) {
                     // vendor and/or attribute invalid
                     $failureMsg = "vendor and/or attribute are invalid";
                     $logAction .= "Failed updating attribute [$attribute] (possible invalid vendor and/or attribute) on page: ";
                 } else {
-                    
+
                     $sql = sprintf("UPDATE %s
                                        SET Type='%s', RecommendedOP='%s', RecommendedTable='%s',
                                            RecommendedTooltip='%s', RecommendedHelper='%s'
                                      WHERE Vendor='%s' AND Attribute='%s'",
                                    $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($type),
                                    $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($table),
-                                   $dbSocket->escapeSimple($tooltip), $dbSocket->escapeSimple($helper), 
+                                   $dbSocket->escapeSimple($tooltip), $dbSocket->escapeSimple($helper),
                                    $dbSocket->escapeSimple($vendor), $dbSocket->escapeSimple($attribute));
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
-                    
+
                     if (!DB::isError($res)) {
                         $format = "Attribute information has been updated in the dictionary (attribute: %s, vendor: %s)";
                         $successMsg = sprintf($format, $attribute_enc, $vendor_enc);
@@ -120,7 +121,7 @@
                         $logAction .= sprintf("Failed to add an attribute [$format] on page: ", $attribute, $vendor);
                     }
                 }
-                
+
                 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
             }
 
@@ -131,7 +132,7 @@
         }
     } else {
         // !POST
-        
+
         $vendor = (array_key_exists('vendor', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['vendor']))))
                 ? str_replace("%", "", trim($_REQUEST['vendor'])) : "";
         $vendor_enc = (!empty($vendor)) ? htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8') : "";
@@ -145,7 +146,7 @@
     // print HTML prologue
     $title = t('Intro','mngradattributesedit.php');
     $help = t('helpPage','mngradattributesedit');
-    
+
     print_html_prologue($title, $langCode);
 
     print_title_and_help($title, $help);
@@ -153,12 +154,12 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     $exists = attribute_vendor_exist($dbSocket, $attribute, $vendor);
-                    
+
     if (!$exists) {
         // vendor and/or attribute invalid
         $failureMsg = "vendor and/or attribute are invalid";
         $logAction .= "Failed updating attribute [$attribute] (possible invalid vendor and/or attribute) on page: ";
-        
+
     } else {
 
         $sql = sprintf("SELECT `type`, `value`, `format`, `recommendedOP`, `recommendedTable`, `recommendedHelper`, `recommendedTooltip`
@@ -168,35 +169,35 @@
                        $dbSocket->escapeSimple($vendor));
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
-        
+
         list($type, $value, $format, $recommendedOP, $table, $recommendedHelper, $recommendedTooltip) = $res->fetchrow();
     }
-    
+
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
 
     if (!isset($successMsg) && !empty($vendor) && !empty($attribute)) {
-        
+
         $fieldset0_descriptor = array(
                                         "title" => t('title','VendorAttribute'),
                                      );
 
-        
+
         $input_descriptors0 = array();
-        
+
         $input_descriptors0[] = array(
                                         "name" => "vendor",
                                         "type" => "hidden",
                                         "value" => (isset($vendor) ? $vendor : ""),
                                      );
-                                     
+
         $input_descriptors0[] = array(
                                         "name" => "attribute",
                                         "type" => "hidden",
                                         "value" => (isset($attribute) ? $attribute : ""),
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "vendor_presentation",
                                         "caption" => t('all','VendorName'),
@@ -205,7 +206,7 @@
                                         "value" => (isset($vendor) ? $vendor : ""),
                                         "disabled" => true
                                      );
-                                     
+
         $input_descriptors0[] = array(
                                         "name" => "attribute_presentation",
                                         "caption" => t('all','Attribute'),
@@ -214,16 +215,16 @@
                                         "value" => (isset($attribute) ? $attribute : ""),
                                         "disabled" => true
                                      );
-                              
+
         $input_descriptors0[] = array(
                                         "name" => "type",
                                         "caption" => t('all','Type'),
                                         "type" => "text",
-                                        "datalist" => $valid_attributeTypes,
+                                        "datalist" => $datalist_attributeTypes,
                                         "value" => ((isset($type)) ? $type : ""),
                                         "tooltipText" => t('Tooltip','typeTooltip'),
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "recommendedOP",
                                         "caption" => t('all','RecommendedOP'),
@@ -241,7 +242,7 @@
                                         "value" => ((isset($table)) ? $table : ""),
                                         "tooltipText" => t('Tooltip','RecommendedTableTooltip'),
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "recommendedHelper",
                                         "caption" => t('all','RecommendedHelper'),
@@ -250,7 +251,7 @@
                                         "value" => ((isset($recommendedHelper)) ? $recommendedHelper : ""),
                                         "tooltipText" => t('Tooltip','RecommendedHelperTooltip'),
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "recommendedTooltip",
                                         "caption" => t('all','RecommendedTooltip'),
@@ -258,7 +259,7 @@
                                         "tooltipText" => t('Tooltip','RecommendedTooltipTooltip'),
                                         "content" => (isset($recommendedTooltip) ? $recommendedTooltip : "")
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "csrf_token",
                                         "type" => "hidden",
@@ -270,17 +271,17 @@
                                         'name' => 'submit',
                                         'value' => t('buttons','apply')
                                      );
-        
+
         open_form();
-        
+
         open_fieldset($fieldset0_descriptor);
-        
+
         foreach ($input_descriptors0 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         close_form();
     }
 

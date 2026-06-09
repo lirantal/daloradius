@@ -23,10 +23,10 @@
 
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-    
+
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
-    
+
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
@@ -41,7 +41,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            
+
             $vendor = (array_key_exists('vendor', $_POST) && !empty(str_replace("%", "", trim($_POST['vendor']))))
                     ? str_replace("%", "", trim($_POST['vendor'])) : "";
             $vendor_enc = (!empty($vendor)) ? htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8') : "";
@@ -49,15 +49,16 @@
             $attribute = (array_key_exists('attribute', $_POST) && !empty(str_replace("%", "", trim($_POST['attribute']))))
                        ? str_replace("%", "", trim($_POST['attribute'])) : "";
             $attribute_enc = (!empty($attribute)) ? htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8') : "";
-            
-            $type = (array_key_exists('type', $_POST) && isset($_POST['type']) &&
-                     in_array($_POST['type'], $valid_attributeTypes))
-                  ? $_POST['type'] : "";
+
+            // Validate attribute type: compare the pure type (without encrypt= flags or # comments) but keep the original value
+            $rawType = array_key_exists('type', $_POST) ? trim($_POST['type']) : "";
+            $baseType = strtolower(strtok($rawType, " \t#"));
+            $type = (!empty($rawType) && in_array($baseType, $valid_attributeTypes, true)) ? $rawType : "";
 
             $op = (array_key_exists('RecommendedOP', $_POST) && isset($_POST['RecommendedOP']) &&
                    in_array($_POST['RecommendedOP'], $valid_ops))
                 ? $_POST['RecommendedOP'] : "";
-            
+
             $table = (array_key_exists('RecommendedTable', $_POST) && isset($_POST['RecommendedTable']) &&
                       in_array($_POST['RecommendedTable'], $valid_tables))
                    ? $_POST['RecommendedTable'] : "";
@@ -76,7 +77,7 @@
                 $logAction .= "Failed adding new attribute [$attribute] (possible empty/invalid vendor and/or attribute) on page: ";
             } else {
                 include('../common/includes/db_open.php');
-                
+
                 $sql = sprintf("SELECT DISTINCT(Vendor) FROM %s WHERE attribute='%s'",
                                $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($attribute));
                 $res = $dbSocket->query($sql);
@@ -86,15 +87,15 @@
                 while ($row = $res->fetchrow()) {
                     $vendors[] = $row[0];
                 }
-                
+
                 if (count($vendors) > 0) {
                     // already present
                     $format = "An attribute with the same name is already present in another dictionary (attribute: %s, vendor(s): %s)";
                     $failureMsg = sprintf($format, $attribute_enc, htmlspecialchars(implode(", ", $vendors), ENT_QUOTES, 'UTF-8'));
                     $logAction .= sprintf("Failed to add an attribute [$format] on page: ", $attribute, implode(", ", $vendors));
-                    
+
                 } else {
-                    
+
                     $sql = sprintf("INSERT INTO %s (id, Type, Attribute, Value, Format, Vendor, RecommendedOP,
                                                     RecommendedTable, RecommendedHelper, RecommendedTooltip)
                                             VALUES (0, '%s', '%s', '', '', '%s', '%s', '%s', '%s', '%s')",
@@ -105,7 +106,7 @@
                                    $dbSocket->escapeSimple($tooltip));
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "$sql;\n";
-                    
+
                     if (!DB::isError($res)) {
                         $format = "The new attribute has been inserted in the dictionary (attribute: %s, vendor: %s)";
                         $successMsg = sprintf($format, $attribute_enc, $vendor_enc)
@@ -118,26 +119,26 @@
                         $logAction .= sprintf("Failed to add an attribute [$format] on page: ", $attribute, $vendor);
                     }
                 }
-                
+
                 include('../common/includes/db_close.php');
             }
-            
+
         } else {
             // csrf
             $failureMsg = "CSRF token error";
             $logAction .= "$failureMsg on page: ";
         }
     }
-    
-    
+
+
     // print HTML prologue
     $title = t('Intro','mngradattributesnew.php');
     $help = t('helpPage','mngradattributesnew');
-    
+
     print_html_prologue($title, $langCode);
 
-    
-    
+
+
 
     print_title_and_help($title, $help);
 
@@ -149,9 +150,9 @@
                                         "title" => t('title','VendorAttribute'),
                                      );
 
-        
+
         $input_descriptors0 = array();
-        
+
         $input_descriptors0[] = array(
                                         "name" => "vendor",
                                         "caption" => t('all','VendorName'),
@@ -159,7 +160,7 @@
                                         "tooltipText" => t('Tooltip','vendorNameTooltip'),
                                         "value" => (isset($vendor) ? $vendor : "")
                                      );
-                                     
+
         $input_descriptors0[] = array(
                                         "name" => "attribute",
                                         "caption" => t('all','Attribute'),
@@ -167,16 +168,16 @@
                                         "tooltipText" => t('Tooltip','attributeTooltip'),
                                         "value" => (isset($attribute) ? $attribute : "")
                                      );
-                              
+
         $input_descriptors0[] = array(
                                         "name" => "type",
                                         "caption" => t('all','Type'),
                                         "type" => "text",
-                                        "datalist" => $valid_attributeTypes,
+                                        "datalist" => $datalist_attributeTypes,
                                         "value" => ((isset($type)) ? $type : ""),
                                         "tooltipText" => t('Tooltip','typeTooltip'),
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "RecommendedOP",
                                         "caption" => t('all','RecommendedOP'),
@@ -185,7 +186,7 @@
                                         "value" => ((isset($op)) ? $op : ""),
                                         "tooltipText" => t('Tooltip','RecommendedOPTooltip'),
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "RecommendedTable",
                                         "caption" => t('all','RecommendedTable'),
@@ -194,7 +195,7 @@
                                         "value" => ((isset($table)) ? $table : ""),
                                         "tooltipText" => t('Tooltip','RecommendedTableTooltip'),
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "RecommendedHelper",
                                         "caption" => t('all','RecommendedHelper'),
@@ -203,7 +204,7 @@
                                         "value" => ((isset($helper)) ? $helper : ""),
                                         "tooltipText" => t('Tooltip','RecommendedHelperTooltip'),
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "RecommendedTooltip",
                                         "caption" => t('all','RecommendedTooltip'),
@@ -211,7 +212,7 @@
                                         "tooltipText" => t('Tooltip','RecommendedTooltipTooltip'),
                                         "value" => (isset($tooltip) ? $tooltip : "")
                                      );
-        
+
         $input_descriptors0[] = array(
                                         "name" => "csrf_token",
                                         "type" => "hidden",
@@ -225,20 +226,20 @@
                                      );
 
         open_form();
-        
+
         open_fieldset($fieldset0_descriptor);
-        
+
         foreach ($input_descriptors0 as $input_descriptor) {
             print_form_component($input_descriptor);
         }
-        
+
         close_fieldset();
-        
+
         close_form();
     }
-    
+
     print_back_to_previous_page();
-    
+
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
 
