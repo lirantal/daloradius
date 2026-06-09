@@ -2401,23 +2401,28 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Acct-Status-Type','Annex-Rlogin-Start','Bay-Networks'),
                          ('Acct-Status-Type','Annex-Rlogin-Stop','Bay-Networks');
 
-INSERT INTO `dictionary` VALUES (3335,'integer','Error-Cause',NULL,NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3336,NULL,'Service-Type','Authorize-Only',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3337,NULL,'Error-Cause','Residual-Context-Removed',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3338,NULL,'Error-Cause','Invalid-EAP-Packet',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3339,NULL,'Error-Cause','Unsupported-Attribute',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3340,NULL,'Error-Cause','Missing-Attribute',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3341,NULL,'Error-Cause','NAS-Identification-Mismatch',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3342,NULL,'Error-Cause','Invalid-Request',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3343,NULL,'Error-Cause','Unsupported-Service',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3344,NULL,'Error-Cause','Unsupported-Extension',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3345,NULL,'Error-Cause','Administratively-Prohibited',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3346,NULL,'Error-Cause','Proxy-Request-Not-Routable',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3347,NULL,'Error-Cause','Session-Context-Not-Found',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3348,NULL,'Error-Cause','Session-Context-Not-Removable',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3349,NULL,'Error-Cause','Proxy-Processing-Error',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3350,NULL,'Error-Cause','Resources-Unavailable',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL),
-                                (3351,NULL,'Error-Cause','Request-Initiated',NULL,'dictionary.rfc3576',NULL,NULL,NULL,NULL);
+/* dictionary.rfc3576 :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Error-Cause','dictionary.rfc3576',NULL,NULL,NULL,NULL);
+
+/* dictionary.rfc3576 :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Service-Type','Authorize-Only','dictionary.rfc3576'),
+                         ('Error-Cause','Residual-Context-Removed','dictionary.rfc3576'),
+                         ('Error-Cause','Invalid-EAP-Packet','dictionary.rfc3576'),
+                         ('Error-Cause','Unsupported-Attribute','dictionary.rfc3576'),
+                         ('Error-Cause','Missing-Attribute','dictionary.rfc3576'),
+                         ('Error-Cause','NAS-Identification-Mismatch','dictionary.rfc3576'),
+                         ('Error-Cause','Invalid-Request','dictionary.rfc3576'),
+                         ('Error-Cause','Unsupported-Service','dictionary.rfc3576'),
+                         ('Error-Cause','Unsupported-Extension','dictionary.rfc3576'),
+                         ('Error-Cause','Administratively-Prohibited','dictionary.rfc3576'),
+                         ('Error-Cause','Proxy-Request-Not-Routable','dictionary.rfc3576'),
+                         ('Error-Cause','Session-Context-Not-Found','dictionary.rfc3576'),
+                         ('Error-Cause','Session-Context-Not-Removable','dictionary.rfc3576'),
+                         ('Error-Cause','Proxy-Processing-Error','dictionary.rfc3576'),
+                         ('Error-Cause','Resources-Unavailable','dictionary.rfc3576'),
+                         ('Error-Cause','Request-Initiated','dictionary.rfc3576');
 
 INSERT INTO `dictionary` VALUES (3352,'string','CVX-Identification',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
                                 (3353,'integer','CVX-VPOP-ID',NULL,NULL,'Aptis',NULL,NULL,NULL,NULL),
