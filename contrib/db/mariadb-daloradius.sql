@@ -4390,11 +4390,13 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('CVPN3000-Strip-Realm','FALSE','Cisco-VPN3000'),
                          ('CVPN3000-Strip-Realm','TRUE','Cisco-VPN3000');
 
-INSERT INTO `dictionary` VALUES (5177,'string','Juniper-Local-User-Name',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
-                                (5178,'string','Juniper-Allow-Commands',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
-                                (5179,'string','Juniper-Deny-Commands',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
-                                (5180,'string','Juniper-Allow-Configuration',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL),
-                                (5181,'string','Juniper-Deny-Configuration',NULL,NULL,'Juniper',NULL,NULL,NULL,NULL);
+/* Juniper :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Juniper-Local-User-Name','Juniper',NULL,NULL,NULL,NULL),
+                         ('string','Juniper-Allow-Commands','Juniper',NULL,NULL,NULL,NULL),
+                         ('string','Juniper-Deny-Commands','Juniper',NULL,NULL,NULL,NULL),
+                         ('string','Juniper-Allow-Configuration','Juniper',NULL,NULL,NULL,NULL),
+                         ('string','Juniper-Deny-Configuration','Juniper',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (5182,'integer','Sip-Method',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
                                 (5183,'integer','Sip-Response-Code',NULL,NULL,'dictionary.schulzrinne-sipping',NULL,NULL,NULL,NULL),
