@@ -1929,22 +1929,27 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Issanni-NAT-Type','NAT','Issanni'),
                          ('Issanni-NAT-Type','NAPT','Issanni');
 
-INSERT INTO `dictionary` VALUES (2893,'string','Alteon-Group-Mapping',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2894,'integer','Alteon-VPN-Id',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2895,'string','Alteon-Client-IP-Address',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2896,'string','Alteon-Client-Netmask',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2897,'string','Alteon-Primary-NBNS-Server',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2898,'string','Alteon-Secondary-NBNS-Server',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2899,'string','Alteon-Primary-DNS-Server',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2900,'string','Alteon-Secondary-DNS-Server',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2901,'string','Alteon-Domain-Name',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2902,'integer','Alteon-Service-Type',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2903,NULL,'Alteon-Service-Type','Alteon-L4admin',NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2904,NULL,'Alteon-Service-Type','Alteon-Slbadmin',NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2905,NULL,'Alteon-Service-Type','Alteon-Oper',NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2906,NULL,'Alteon-Service-Type','Alteon-L4oper',NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2907,NULL,'Alteon-Service-Type','Alteon-Slboper',NULL,'Alteon',NULL,NULL,NULL,NULL),
-                                (2908,NULL,'Alteon-Service-Type','Alteon-User',NULL,'Alteon',NULL,NULL,NULL,NULL);
+/* Alteon :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Alteon-Group-Mapping','Alteon',NULL,NULL,NULL,NULL),
+                         ('integer','Alteon-VPN-Id','Alteon',NULL,NULL,NULL,NULL),
+                         ('string','Alteon-Client-IP-Address','Alteon',NULL,NULL,NULL,NULL),
+                         ('string','Alteon-Client-Netmask','Alteon',NULL,NULL,NULL,NULL),
+                         ('string','Alteon-Primary-NBNS-Server','Alteon',NULL,NULL,NULL,NULL),
+                         ('string','Alteon-Secondary-NBNS-Server','Alteon',NULL,NULL,NULL,NULL),
+                         ('string','Alteon-Primary-DNS-Server','Alteon',NULL,NULL,NULL,NULL),
+                         ('string','Alteon-Secondary-DNS-Server','Alteon',NULL,NULL,NULL,NULL),
+                         ('string','Alteon-Domain-Name','Alteon',NULL,NULL,NULL,NULL),
+                         ('integer','Alteon-Service-Type','Alteon',NULL,NULL,NULL,NULL);
+
+/* Alteon :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Alteon-Service-Type','Alteon-L4admin','Alteon'),
+                         ('Alteon-Service-Type','Alteon-Slbadmin','Alteon'),
+                         ('Alteon-Service-Type','Alteon-Oper','Alteon'),
+                         ('Alteon-Service-Type','Alteon-L4oper','Alteon'),
+                         ('Alteon-Service-Type','Alteon-Slboper','Alteon'),
+                         ('Alteon-Service-Type','Alteon-User','Alteon');
 
 INSERT INTO `dictionary` VALUES (2909,'string','Merit-Proxy-Action',NULL,NULL,'Merit',NULL,NULL,NULL,NULL),
                                 (2910,'string','Merit-User-Id',NULL,NULL,'Merit',NULL,NULL,NULL,NULL),
