@@ -4145,14 +4145,16 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('3Com-User-Access-Level','3Com-Manager','3com'),
                          ('3Com-User-Access-Level','3Com-Administrator','3com');
 
-INSERT INTO `dictionary` VALUES (4950,'string','Trapeze-VLAN-Name',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
-                                (4951,'string','Trapeze-Mobility-Profile',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
-                                (4952,'string','Trapeze-Encryption-Type',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
-                                (4953,'string','Trapeze-Time-Of-Day',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
-                                (4954,'string','Trapeze-SSID',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
-                                (4955,'string','Trapeze-End-Date',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
-                                (4956,'string','Trapeze-Start-Date',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL),
-                                (4957,'string','Trapeze-URL',NULL,NULL,'Trapeze',NULL,NULL,NULL,NULL);
+/* Trapeze :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Trapeze-VLAN-Name','Trapeze',NULL,NULL,NULL,NULL),
+                         ('string','Trapeze-Mobility-Profile','Trapeze',NULL,NULL,NULL,NULL),
+                         ('string','Trapeze-Encryption-Type','Trapeze',NULL,NULL,NULL,NULL),
+                         ('string','Trapeze-Time-Of-Day','Trapeze',NULL,NULL,NULL,NULL),
+                         ('string','Trapeze-SSID','Trapeze',NULL,NULL,NULL,NULL),
+                         ('string','Trapeze-End-Date','Trapeze',NULL,NULL,NULL,NULL),
+                         ('string','Trapeze-Start-Date','Trapeze',NULL,NULL,NULL,NULL),
+                         ('string','Trapeze-URL','Trapeze',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (4958,'string','T-Systems-Nova-Location-ID',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
                                 (4959,'string','T-Systems-Nova-Location-Name',NULL,NULL,'T-Systems-Nova',NULL,NULL,NULL,NULL),
