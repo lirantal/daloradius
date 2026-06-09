@@ -1901,28 +1901,33 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Acct-Status-Type','WB-Logout','Walabi'),
                          ('Acct-Status-Type','WB-WRitelog','Walabi');
 
-INSERT INTO `dictionary` VALUES (2871,'string','Issanni-SoftFlow-Template',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2872,'string','Issanni-NAT-Support',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2873,'string','Issanni-Routing-Context',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2874,'string','Issanni-Tunnel-Name',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2875,'string','Issanni-IP-Pool-Name',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2876,'string','Issanni-PPPoE-URL',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2877,'string','Issanni-PPPoE-MOTM',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2878,'string','Issanni-Service',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2879,'ipaddr','Issanni-Pri-DNS',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2880,'ipaddr','Issanni-Sec-DNS',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2881,'ipaddr','Issanni-Pri-NBNS',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2882,'ipaddr','Issanni-Sec-NBNS',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2883,'string','Issanni-Traffic-Class',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2884,'integer','Issanni-Tunnel-Type',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2885,'integer','Issanni-NAT-Type',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2886,'string','Issanni-QOS-Class',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2887,'string','Issanni-Interface-Name',NULL,NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2888,NULL,'Issanni-Tunnel-Type','IP-IP',NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2889,NULL,'Issanni-Tunnel-Type','ESP',NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2890,NULL,'Issanni-Tunnel-Type','L2TP',NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2891,NULL,'Issanni-NAT-Type','NAT',NULL,'Issanni',NULL,NULL,NULL,NULL),
-                                (2892,NULL,'Issanni-NAT-Type','NAPT',NULL,'Issanni',NULL,NULL,NULL,NULL);
+/* Issanni :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Issanni-SoftFlow-Template','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-NAT-Support','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-Routing-Context','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-Tunnel-Name','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-IP-Pool-Name','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-PPPoE-URL','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-PPPoE-MOTM','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-Service','Issanni',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Issanni-Pri-DNS','Issanni',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Issanni-Sec-DNS','Issanni',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Issanni-Pri-NBNS','Issanni',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Issanni-Sec-NBNS','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-Traffic-Class','Issanni',NULL,NULL,NULL,NULL),
+                         ('integer','Issanni-Tunnel-Type','Issanni',NULL,NULL,NULL,NULL),
+                         ('integer','Issanni-NAT-Type','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-QOS-Class','Issanni',NULL,NULL,NULL,NULL),
+                         ('string','Issanni-Interface-Name','Issanni',NULL,NULL,NULL,NULL);
+
+/* Issanni :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Issanni-Tunnel-Type','IP-IP','Issanni'),
+                         ('Issanni-Tunnel-Type','ESP','Issanni'),
+                         ('Issanni-Tunnel-Type','L2TP','Issanni'),
+                         ('Issanni-NAT-Type','NAT','Issanni'),
+                         ('Issanni-NAT-Type','NAPT','Issanni');
 
 INSERT INTO `dictionary` VALUES (2893,'string','Alteon-Group-Mapping',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
                                 (2894,'integer','Alteon-VPN-Id',NULL,NULL,'Alteon',NULL,NULL,NULL,NULL),
