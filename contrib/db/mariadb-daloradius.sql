@@ -2654,12 +2654,14 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Versanet-Termination-Cause','No-connection-established','Versanet'),
                          ('Versanet-Termination-Cause','Disconnect-after-three-retrains','Versanet');
 
-INSERT INTO `dictionary` VALUES (3558,'string','Aruba-User-Role',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
-                                (3559,'integer','Aruba-User-Vlan',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
-                                (3560,'integer','Aruba-Priv-Admin-User',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
-                                (3561,'string','Aruba-Admin-Role',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
-                                (3562,'string','Aruba-Essid-Name',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL),
-                                (3563,'string','Aruba-Location-Id',NULL,NULL,'Aruba',NULL,NULL,NULL,NULL);
+/* Aruba :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Aruba-User-Role','Aruba',NULL,NULL,NULL,NULL),
+                         ('integer','Aruba-User-Vlan','Aruba',NULL,NULL,NULL,NULL),
+                         ('integer','Aruba-Priv-Admin-User','Aruba',NULL,NULL,NULL,NULL),
+                         ('string','Aruba-Admin-Role','Aruba',NULL,NULL,NULL,NULL),
+                         ('string','Aruba-Essid-Name','Aruba',NULL,NULL,NULL,NULL),
+                         ('string','Aruba-Location-Id','Aruba',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (3564,'integer','Cabletron-Protocol-Enable',NULL,NULL,'Cabletron',NULL,NULL,NULL,NULL),
                                 (3565,'integer','Cabletron-Protocol-Callable',NULL,NULL,'Cabletron',NULL,NULL,NULL,NULL),
