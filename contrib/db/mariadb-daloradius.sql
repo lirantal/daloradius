@@ -557,23 +557,25 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('NS-Admin-Privilege','Read-Only-Admin','Netscreen'),
                          ('NS-Admin-Privilege','Read-Only-VSYS-Admin','Netscreen');
 
-INSERT INTO `dictionary` VALUES (204,'string','Nokia-User-Profile',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (205,'octets','Nokia-Service-Name',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (206,'octets','Nokia-Service-Id',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (207,'octets','Nokia-Service-Username',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (208,'octets','Nokia-Service-Password',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (209,'octets','Nokia-Service-Primary-Indicator',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (210,'octets','Nokia-Service-Charging-Type',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (211,'octets','Nokia-Service-Encrypted-Password',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (212,'octets','Nokia-Session-Access-Method',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (213,'octets','Nokia-Session-Charging-Type',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (214,'ipaddr','Nokia-Primary-DNS-Server',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (215,'ipaddr','Nokia-Secondary-DNS-Server',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (216,'octets','Nokia-IMSI',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (217,'integer','Nokia-Charging-Id',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (218,'integer','Nokia-Prepaid-Ind',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (219,'ipaddr','Nokia-GGSN-IP-Address',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL),
-                                (220,'ipaddr','Nokia-SGSN-IP-Address',NULL,NULL,'Nokia',NULL,NULL,NULL,NULL);
+/* Nokia :: attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','Nokia-User-Profile','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-Service-Name','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-Service-Id','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-Service-Username','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-Service-Password','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-Service-Primary-Indicator','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-Service-Charging-Type','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-Service-Encrypted-Password','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-Session-Access-Method','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-Session-Charging-Type','Nokia',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Nokia-Primary-DNS-Server','Nokia',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Nokia-Secondary-DNS-Server','Nokia',NULL,NULL,NULL,NULL),
+                         ('octets','Nokia-IMSI','Nokia',NULL,NULL,NULL,NULL),
+                         ('integer','Nokia-Charging-Id','Nokia',NULL,NULL,NULL,NULL),
+                         ('integer','Nokia-Prepaid-Ind','Nokia',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Nokia-GGSN-IP-Address','Nokia',NULL,NULL,NULL,NULL),
+                         ('ipaddr','Nokia-SGSN-IP-Address','Nokia',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (221,'integer','VNC-PPPoE-CBQ-RX',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
                                 (222,'integer','VNC-PPPoE-CBQ-TX',NULL,NULL,'ValemountNetworks',NULL,NULL,NULL,NULL),
