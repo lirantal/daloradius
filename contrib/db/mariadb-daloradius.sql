@@ -557,7 +557,7 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('NS-Admin-Privilege','Read-Only-Admin','Netscreen'),
                          ('NS-Admin-Privilege','Read-Only-VSYS-Admin','Netscreen');
 
-/* Nokia :: attributes */
+/* Nokia :: single-valued attributes */
 INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
                          ('string','Nokia-User-Profile','Nokia',NULL,NULL,NULL,NULL),
                          ('octets','Nokia-Service-Name','Nokia',NULL,NULL,NULL,NULL),
@@ -590,10 +590,12 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('VNC-Splash','Show','ValemountNetworks'),
                          ('VNC-Splash','No-Show','ValemountNetworks');
 
-INSERT INTO `dictionary` VALUES (228,'string','SofaWare-Admin',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
-                                (229,'string','SofaWare-VPN',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
-                                (230,'string','SofaWare-Hotspot',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL),
-                                (231,'string','SofaWare-UFP',NULL,NULL,'SofaWare',NULL,NULL,NULL,NULL);
+/* SofaWare :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('string','SofaWare-Admin','SofaWare',NULL,NULL,NULL,NULL),
+                         ('string','SofaWare-VPN','SofaWare',NULL,NULL,NULL,NULL),
+                         ('string','SofaWare-Hotspot','SofaWare',NULL,NULL,NULL,NULL),
+                         ('string','SofaWare-UFP','SofaWare',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (232,'string','ST-Acct-VC-Connection-Id',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
                                 (233,'string','ST-Service-Name',NULL,NULL,'SpringTide',NULL,NULL,NULL,NULL),
