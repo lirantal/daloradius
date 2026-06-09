@@ -2908,12 +2908,14 @@ INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
                          ('Airespace-QOS-Level','Platinum','Airespace'),
                          ('Airespace-QOS-Level','Uranium','Airespace');
 
-INSERT INTO `dictionary` VALUES (3776,'integer','Unix-FTP-UID',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
-                                (3777,'integer','Unix-FTP-GID',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
-                                (3778,'string','Unix-FTP-Home',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
-                                (3779,'string','Unix-FTP-Shell',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
-                                (3780,'string','Unix-FTP-Group-Names',NULL,NULL,'Unix',NULL,NULL,NULL,NULL),
-                                (3781,'string','Unix-FTP-Group-Ids',NULL,NULL,'Unix',NULL,NULL,NULL,NULL);
+/* Unix :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Unix-FTP-UID','Unix',NULL,NULL,NULL,NULL),
+                         ('integer','Unix-FTP-GID','Unix',NULL,NULL,NULL,NULL),
+                         ('string','Unix-FTP-Home','Unix',NULL,NULL,NULL,NULL),
+                         ('string','Unix-FTP-Shell','Unix',NULL,NULL,NULL,NULL),
+                         ('string','Unix-FTP-Group-Names','Unix',NULL,NULL,NULL,NULL),
+                         ('string','Unix-FTP-Group-Ids','Unix',NULL,NULL,NULL,NULL);
 
 INSERT INTO `dictionary` VALUES (3782,'integer','Acct-Input-Gigawords',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
                                 (3783,'integer','Acct-Output-Gigawords',NULL,NULL,'dictionary.rfc2869',NULL,NULL,NULL,NULL),
