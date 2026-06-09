@@ -5133,12 +5133,17 @@ INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`Recommend
                          ('integer','Lucent-Modem-Disconnect-Reason','Lucent',NULL,NULL,NULL,NULL),
                          ('integer','Lucent-Retrain-Reason','Lucent',NULL,NULL,NULL,NULL);
 
-INSERT INTO `dictionary` VALUES (5881,'integer','Shasta-User-Privilege',NULL,NULL,'Shasta',NULL,NULL,NULL,NULL),
-                                (5882,'string','Shasta-Service-Profile',NULL,NULL,'Shasta',NULL,NULL,NULL,NULL),
-                                (5883,'string','Shasta-VPN-Name',NULL,NULL,'Shasta',NULL,NULL,NULL,NULL),
-                                (5884,NULL,'Shasta-User-Privilege','User',NULL,'Shasta',NULL,NULL,NULL,NULL),
-                                (5885,NULL,'Shasta-User-Privilege','Super-User',NULL,'Shasta',NULL,NULL,NULL,NULL),
-                                (5886,NULL,'Shasta-User-Privilege','SSuper-User',NULL,'Shasta',NULL,NULL,NULL,NULL);
+/* Shasta :: single-valued attributes */
+INSERT INTO `dictionary` (`Type`,`Attribute`,`Vendor`,`RecommendedOP`,`RecommendedTable`,`RecommendedHelper`,`RecommendedTooltip`) VALUES
+                         ('integer','Shasta-User-Privilege','Shasta',NULL,NULL,NULL,NULL),
+                         ('string','Shasta-Service-Profile','Shasta',NULL,NULL,NULL,NULL),
+                         ('string','Shasta-VPN-Name','Shasta',NULL,NULL,NULL,NULL);
+
+/* Shasta :: multi-valued attributes */
+INSERT INTO `dictionary` (`Attribute`,`Value`,`Vendor`) VALUES
+                         ('Shasta-User-Privilege','User','Shasta'),
+                         ('Shasta-User-Privilege','Super-User','Shasta'),
+                         ('Shasta-User-Privilege','SSuper-User','Shasta');
 
 INSERT INTO `dictionary` VALUES (5887,NULL,'Framed-Protocol','Bintec-X25',NULL,'BinTec',NULL,NULL,NULL,NULL),
                                 (5888,NULL,'Framed-Protocol','Bintec-X25-PPP',NULL,'BinTec',NULL,NULL,NULL,NULL),
