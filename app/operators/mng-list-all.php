@@ -73,6 +73,7 @@
         $cols["auth"] = t('all','Password');
     }
 
+    $cols["framedipaddress"] = t('all','FramedIPAddress');
     $cols["lastlogin"] = t('all','LastLoginTime');
     $cols[] = t('title','Groups');
 
@@ -138,9 +139,11 @@
         // we execute and log the actual data query
         $sql = sprintf("SELECT ui.id AS id, rc.username AS username, rc.value AS auth, rc.attribute,
                                CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
+                               (SELECT MAX(value) FROM %s WHERE username = rc.username AND attribute = 'Framed-IP-Address') AS framedipaddress,
                                (SELECT MAX(acctstarttime) FROM %s WHERE username = rc.username) AS lastlogin
                           FROM %s %s
-                         GROUP BY rc.username", 
+                         GROUP BY rc.username",
+                         $configValues['CONFIG_DB_TBL_RADREPLY'],
                          $configValues['CONFIG_DB_TBL_RADACCT'],
                          $_SESSION['reportTable'], $_SESSION['reportQuery']);
 
@@ -180,6 +183,7 @@
                 'groups' => array(),
                 'type' => $type,
                 'id' => $row['id'],
+                'framedipaddress' => $row['framedipaddress'],
                 'lastlogin' => $row['lastlogin'],
             );
             // in the same pass we init the $usernamelist
@@ -305,6 +309,8 @@
             $auth = htmlspecialchars($data['auth'], ENT_QUOTES, 'UTF-8');
 
             $fullname = htmlspecialchars($data['fullname'], ENT_QUOTES, 'UTF-8');
+            $framedipaddress = (!empty($data['framedipaddress']))
+                            ? htmlspecialchars($data['framedipaddress'], ENT_QUOTES, 'UTF-8') : "(n/a)";
             $lastlogin = (!empty($data['lastlogin']))
                        ? htmlspecialchars($data['lastlogin'], ENT_QUOTES, 'UTF-8') : "(n/a)";
             $grouplist = implode("<br>", $data['groups']);
@@ -340,6 +346,7 @@
                 $table_row[] = ($type == 'USER') ? $auth : "(n/a)";
             }
 
+            $table_row[] = $framedipaddress;
             $table_row[] = $lastlogin;
             $table_row[] = $grouplist;
 
