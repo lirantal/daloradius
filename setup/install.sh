@@ -256,6 +256,13 @@ freeradius_setup_sql_mod() {
 freeradius_setup_sqlcounter_mod() {
     echo -n "[+] Setting up freeRADIUS SQL counter module... "
 
+    local freeradius_default_tmp
+    freeradius_default_tmp=$(mktemp) || {
+        print_red "KO"
+        echo "[!] Failed to create temporary file. Aborting." >&2
+        exit 1
+    }
+
     if ! sed -Ei 's/^[[:space:]#]*dialect[[:space:]]+=[[:space:]]+.*$/	dialect = "mysql"/g' "${FREERADIUS_SQLCOUNTER_MOD_PATH}" >/dev/null 2>&1; then
         print_red "KO"
         echo "[!] Failed to configure freeRADIUS SQL counter module. Aborting." >&2
@@ -283,15 +290,62 @@ freeradius_setup_sqlcounter_mod() {
             /^authenticate[[:space:]]*[{]/ { in_authorize = 0 }
             { print }
             END { exit added ? 0 : 1 }
-        ' "${FREERADIUS_DEFAULT_SITE_PATH}" > /tmp/freeradius-default; then
-            rm -f /tmp/freeradius-default
+        ' "${FREERADIUS_DEFAULT_SITE_PATH}" > "${freeradius_default_tmp}"; then
+            rm -f "${freeradius_default_tmp}"
             print_red "KO"
             echo "[!] Failed to add noresetcounter to freeRADIUS authorize section. Aborting." >&2
             exit 1
         fi
-        mv /tmp/freeradius-default "${FREERADIUS_DEFAULT_SITE_PATH}"
+        mv "${freeradius_default_tmp}" "${FREERADIUS_DEFAULT_SITE_PATH}"
+    else
+        rm -f "${freeradius_default_tmp}"
     fi
 
+    print_green "OK"
+}
+
+
+# Function to set up SQL-backed session tracking for Simultaneous-Use
+freeradius_setup_sql_session_tracking() {
+    echo -n "[+] Setting up freeRADIUS SQL session tracking... "
+
+    local freeradius_default_tmp
+    freeradius_default_tmp=$(mktemp) || {
+        print_red "KO"
+        echo "[!] Failed to create temporary file. Aborting." >&2
+        exit 1
+    }
+
+    if ! awk '
+        BEGIN { in_session = 0; in_post_auth = 0; session_sql = 0; sql_session_start = 0 }
+        /^session[[:space:]]*[{]/ { in_session = 1 }
+        in_session && /^[[:space:]]*#[[:space:]]*sql[[:space:]]*$/ {
+            print "	sql"
+            session_sql = 1
+            next
+        }
+        in_session && /^[[:space:]]*sql[[:space:]]*$/ { session_sql = 1 }
+        in_session && /^}/ { in_session = 0 }
+
+        /^post-auth[[:space:]]*[{]/ { in_post_auth = 1 }
+        in_post_auth && /^[[:space:]]*#[[:space:]]*sql_session_start[[:space:]]*$/ {
+            print "	sql_session_start"
+            sql_session_start = 1
+            next
+        }
+        in_post_auth && /^[[:space:]]*sql_session_start[[:space:]]*$/ { sql_session_start = 1 }
+        in_post_auth && /^}/ { in_post_auth = 0 }
+
+        { print }
+        END { exit (session_sql && sql_session_start) ? 0 : 1 }
+    ' "${FREERADIUS_DEFAULT_SITE_PATH}" > "${freeradius_default_tmp}"; then
+        rm -f "${freeradius_default_tmp}"
+        print_red "KO"
+        echo "[!] Failed to enable SQL session tracking in freeRADIUS. Aborting." >&2
+        exit 1
+    fi
+
+    mv "${freeradius_default_tmp}" "${FREERADIUS_DEFAULT_SITE_PATH}"
     print_green "OK"
 }
 
@@ -300,7 +354,15 @@ freeradius_setup_sqlcounter_mod() {
 freeradius_setup_group_nas_restrictions() {
     echo -n "[+] Setting up freeRADIUS group NAS restriction policy... "
 
+    local freeradius_default_tmp
+    freeradius_default_tmp=$(mktemp) || {
+        print_red "KO"
+        echo "[!] Failed to create temporary file. Aborting." >&2
+        exit 1
+    }
+
     if grep -q "daloRADIUS group NAS restriction policy" "${FREERADIUS_DEFAULT_SITE_PATH}"; then
+        rm -f "${freeradius_default_tmp}"
         print_green "OK"
         return
     fi
@@ -325,14 +387,14 @@ freeradius_setup_group_nas_restrictions() {
             }
         }
         END { exit added ? 0 : 1 }
-    ' "${FREERADIUS_DEFAULT_SITE_PATH}" > /tmp/freeradius-default; then
-        rm -f /tmp/freeradius-default
+    ' "${FREERADIUS_DEFAULT_SITE_PATH}" > "${freeradius_default_tmp}"; then
+        rm -f "${freeradius_default_tmp}"
         print_red "KO"
         echo "[!] Failed to add daloRADIUS group NAS restriction policy to freeRADIUS authorize section. Aborting." >&2
         exit 1
     fi
 
-    mv /tmp/freeradius-default "${FREERADIUS_DEFAULT_SITE_PATH}"
+    mv "${freeradius_default_tmp}" "${FREERADIUS_DEFAULT_SITE_PATH}"
     print_green "OK"
 }
 
@@ -688,6 +750,7 @@ main() {
     freeradius_install
     freeradius_setup_sql_mod
     freeradius_setup_sqlcounter_mod
+    freeradius_setup_sql_session_tracking
     freeradius_setup_group_nas_restrictions
     freeradius_enable_restart
 
