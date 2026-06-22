@@ -116,6 +116,30 @@ system_ensure_root() {
   fi
 }
 
+# Function to ensure systemd can run services that protect kernel tunables.
+# Some container environments, such as Proxmox LXC containers without the
+# nesting feature enabled, cannot set up the mount namespace required by the
+# Debian FreeRADIUS unit (ProtectKernelTunables=true). Detect this before the
+# installer mutates the system and leaves a partial installation behind.
+system_check_service_namespace_support() {
+    echo -n "[+] Checking systemd service namespace support... "
+
+    if ! command -v systemd-run >/dev/null 2>&1; then
+        print_red "KO"
+        echo "[!] systemd-run is required to validate service namespace support. Aborting." >&2
+        exit 1
+    fi
+
+    if ! systemd-run --wait --collect --quiet -p ProtectKernelTunables=yes /bin/true >/dev/null 2>&1; then
+        print_red "KO"
+        echo "[!] This system cannot run services with protected kernel tunables." >&2
+        echo "[!] In Proxmox LXC containers, enable the nesting feature or provide write access to /proc/sys before running this installer." >&2
+        exit 1
+    fi
+
+    print_green "OK"
+}
+
 # Function to install necessary system packages and perform system update
 system_update() {
     echo -n "[+] Updating system package lists... "
@@ -646,6 +670,7 @@ system_finalize() {
 # Main function calling other functions in the correct order
 main() {
     system_ensure_root
+    system_check_service_namespace_support
     system_update
 
     mariadb_install
