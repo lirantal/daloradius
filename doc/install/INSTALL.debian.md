@@ -27,6 +27,26 @@ Lastly, all the commands and procedures mentioned in this guide assume the use o
 
 **The authors of this guide disclaims any responsibility for any direct, indirect, incidental, consequential or other damages arising from the use of this guide.**
 
+
+# Proxmox LXC containers
+
+This installation can run inside Proxmox LXC containers, but the container must allow systemd services such as FreeRADIUS to use the required namespace protections.
+
+For Proxmox LXC, enable the `nesting` feature before running the installer or following this guide:
+
+```bash
+pct set <CTID> -features nesting=1
+```
+
+Without this feature, FreeRADIUS may fail to start with an error similar to:
+
+```text
+Failed to set up mount namespacing: /run/systemd/unit-root/proc: Permission denied
+Failed at step NAMESPACE
+```
+
+If you see this error, enable nesting for the container or use a full virtual machine instead of a restricted LXC container.
+
 # Installing MariaDB
 
 To install the MariaDB server, run the following command:
