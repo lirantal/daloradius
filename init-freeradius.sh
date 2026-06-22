@@ -147,9 +147,16 @@ function init_freeradius {
 }
 
 function enable_noresetcounter {
+	local freeradius_default_tmp
+	freeradius_default_tmp=$(mktemp) || {
+		echo "Failed to create temporary file."
+		exit 1
+	}
+
 	# Enforce Max-All-Session limits through FreeRADIUS sqlcounter.
 	# The sqlcounter module must run in authorize; enabling mods-enabled/sqlcounter alone is not enough.
 	if grep -q "^[[:space:]]*noresetcounter[[:space:]]*$" "$RADIUS_PATH/sites-available/default"; then
+		rm -f "$freeradius_default_tmp"
 		return
 	fi
 
@@ -165,14 +172,20 @@ function enable_noresetcounter {
 		/^authenticate[[:space:]]*[{]/ { in_authorize = 0 }
 		{ print }
 		END { exit added ? 0 : 1 }
-	' "$RADIUS_PATH/sites-available/default" > /tmp/freeradius-default; then
-		rm -f /tmp/freeradius-default
+	' "$RADIUS_PATH/sites-available/default" > "$freeradius_default_tmp"; then
+		rm -f "$freeradius_default_tmp"
 		echo "Failed to add noresetcounter to FreeRADIUS authorize section."
 		exit 1
 	fi
-	mv /tmp/freeradius-default "$RADIUS_PATH/sites-available/default"
+	mv "$freeradius_default_tmp" "$RADIUS_PATH/sites-available/default"
 }
 function enable_sql_session_tracking {
+	local freeradius_default_tmp
+	freeradius_default_tmp=$(mktemp) || {
+		echo "Failed to create temporary file."
+		exit 1
+	}
+
 	# Enforce Simultaneous-Use limits with SQL-backed session tracking.
 	# The SQL module must run in the session section; enabling mods-enabled/sql
 	# alone is not enough. sql_session_start creates an accounting row at
@@ -199,22 +212,29 @@ function enable_sql_session_tracking {
 
 		{ print }
 		END { exit (session_sql && sql_session_start) ? 0 : 1 }
-	' "$RADIUS_PATH/sites-available/default" > /tmp/freeradius-default; then
-		rm -f /tmp/freeradius-default
+	' "$RADIUS_PATH/sites-available/default" > "$freeradius_default_tmp"; then
+		rm -f "$freeradius_default_tmp"
 		echo "Failed to enable SQL session tracking in FreeRADIUS."
 		exit 1
 	fi
-	mv /tmp/freeradius-default "$RADIUS_PATH/sites-available/default"
+	mv "$freeradius_default_tmp" "$RADIUS_PATH/sites-available/default"
 }
 
 
 function enable_group_nas_restrictions {
+	local freeradius_default_tmp
+	freeradius_default_tmp=$(mktemp) || {
+		echo "Failed to create temporary file."
+		exit 1
+	}
+
 	# Enforce daloRADIUS group/profile NAS restrictions stored in radgroupcheck.
 	# FreeRADIUS uses radgroupcheck to decide whether group reply items apply; it
 	# does not automatically reject a user who already authenticated via radcheck.
 	# This policy rejects users when their SQL group has NAS-IP-Address == rows
 	# and the request NAS-IP-Address does not match any of those allowed values.
 	if grep -q "daloRADIUS group NAS restriction policy" "$RADIUS_PATH/sites-available/default"; then
+		rm -f "$freeradius_default_tmp"
 		return
 	fi
 
@@ -238,12 +258,12 @@ function enable_group_nas_restrictions {
 			}
 		}
 		END { exit added ? 0 : 1 }
-	' "$RADIUS_PATH/sites-available/default" > /tmp/freeradius-default; then
-		rm -f /tmp/freeradius-default
+	' "$RADIUS_PATH/sites-available/default" > "$freeradius_default_tmp"; then
+		rm -f "$freeradius_default_tmp"
 		echo "Failed to add daloRADIUS group NAS restriction policy to FreeRADIUS authorize section."
 		exit 1
 	fi
-	mv /tmp/freeradius-default "$RADIUS_PATH/sites-available/default"
+	mv "$freeradius_default_tmp" "$RADIUS_PATH/sites-available/default"
 }
 
 function ensure_daloradius_schema {
