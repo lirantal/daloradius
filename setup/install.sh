@@ -296,6 +296,44 @@ freeradius_setup_sqlcounter_mod() {
 }
 
 
+# Function to set up SQL-backed session tracking for Simultaneous-Use
+freeradius_setup_sql_session_tracking() {
+    echo -n "[+] Setting up freeRADIUS SQL session tracking... "
+
+    if ! awk '
+        BEGIN { in_session = 0; in_post_auth = 0; session_sql = 0; sql_session_start = 0 }
+        /^session[[:space:]]*[{]/ { in_session = 1 }
+        in_session && /^[[:space:]]*#[[:space:]]*sql[[:space:]]*$/ {
+            print "	sql"
+            session_sql = 1
+            next
+        }
+        in_session && /^[[:space:]]*sql[[:space:]]*$/ { session_sql = 1 }
+        in_session && /^}/ { in_session = 0 }
+
+        /^post-auth[[:space:]]*[{]/ { in_post_auth = 1 }
+        in_post_auth && /^[[:space:]]*#[[:space:]]*sql_session_start[[:space:]]*$/ {
+            print "	sql_session_start"
+            sql_session_start = 1
+            next
+        }
+        in_post_auth && /^[[:space:]]*sql_session_start[[:space:]]*$/ { sql_session_start = 1 }
+        in_post_auth && /^}/ { in_post_auth = 0 }
+
+        { print }
+        END { exit (session_sql && sql_session_start) ? 0 : 1 }
+    ' "${FREERADIUS_DEFAULT_SITE_PATH}" > /tmp/freeradius-default; then
+        rm -f /tmp/freeradius-default
+        print_red "KO"
+        echo "[!] Failed to enable SQL session tracking in freeRADIUS. Aborting." >&2
+        exit 1
+    fi
+
+    mv /tmp/freeradius-default "${FREERADIUS_DEFAULT_SITE_PATH}"
+    print_green "OK"
+}
+
+
 # Function to enforce daloRADIUS group/profile NAS restrictions in freeRADIUS
 freeradius_setup_group_nas_restrictions() {
     echo -n "[+] Setting up freeRADIUS group NAS restriction policy... "
@@ -688,6 +726,7 @@ main() {
     freeradius_install
     freeradius_setup_sql_mod
     freeradius_setup_sqlcounter_mod
+    freeradius_setup_sql_session_tracking
     freeradius_setup_group_nas_restrictions
     freeradius_enable_restart
 

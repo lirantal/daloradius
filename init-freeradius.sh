@@ -172,6 +172,41 @@ function enable_noresetcounter {
 	fi
 	mv /tmp/freeradius-default "$RADIUS_PATH/sites-available/default"
 }
+function enable_sql_session_tracking {
+	# Enforce Simultaneous-Use limits with SQL-backed session tracking.
+	# The SQL module must run in the session section; enabling mods-enabled/sql
+	# alone is not enough. sql_session_start creates an accounting row at
+	# Access-Accept time to reduce the race before Accounting-Start arrives.
+	if ! awk '
+		BEGIN { in_session = 0; in_post_auth = 0; session_sql = 0; sql_session_start = 0 }
+		/^session[[:space:]]*[{]/ { in_session = 1 }
+		in_session && /^[[:space:]]*#[[:space:]]*sql[[:space:]]*$/ {
+			print "	sql"
+			session_sql = 1
+			next
+		}
+		in_session && /^[[:space:]]*sql[[:space:]]*$/ { session_sql = 1 }
+		in_session && /^}/ { in_session = 0 }
+
+		/^post-auth[[:space:]]*[{]/ { in_post_auth = 1 }
+		in_post_auth && /^[[:space:]]*#[[:space:]]*sql_session_start[[:space:]]*$/ {
+			print "	sql_session_start"
+			sql_session_start = 1
+			next
+		}
+		in_post_auth && /^[[:space:]]*sql_session_start[[:space:]]*$/ { sql_session_start = 1 }
+		in_post_auth && /^}/ { in_post_auth = 0 }
+
+		{ print }
+		END { exit (session_sql && sql_session_start) ? 0 : 1 }
+	' "$RADIUS_PATH/sites-available/default" > /tmp/freeradius-default; then
+		rm -f /tmp/freeradius-default
+		echo "Failed to enable SQL session tracking in FreeRADIUS."
+		exit 1
+	fi
+	mv /tmp/freeradius-default "$RADIUS_PATH/sites-available/default"
+}
+
 
 function enable_group_nas_restrictions {
 	# Enforce daloRADIUS group/profile NAS restrictions stored in radgroupcheck.
@@ -286,6 +321,7 @@ if test -L "$RADIUS_PATH/mods-enabled/sqlcounter"; then
 fi
 
 if test -L "$RADIUS_PATH/mods-enabled/sql"; then
+	enable_sql_session_tracking
 	enable_group_nas_restrictions
 fi
 
