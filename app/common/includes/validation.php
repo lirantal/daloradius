@@ -77,6 +77,7 @@ $valid_passwordTypes = array(
                                 "NT-Password",
                                 "MD5-Password",
                                 "SHA1-Password",
+                                "SHA2-Password",
                                 "User-Password",
                                 "Crypt-Password",
                                 //~ "CHAP-Password"

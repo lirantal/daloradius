@@ -686,6 +686,7 @@ function populate_password_types($elementName = "", $cssClass = "form", $mode = 
             <option value='Crypt-Password'>Crypt-Password</option>
             <option value='MD5-Password'>MD5-Password</option>
             <option value='SHA1-Password'>SHA1-Password</option>
+            <option value='SHA2-Password'>SHA2-Password</option>
             <option value='CHAP-Password'>CHAP-Password</option>
             </select>";
 }
