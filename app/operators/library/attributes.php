@@ -59,6 +59,9 @@ function hashPasswordAttribute($attribute, $value) {
         case "SHA1-Password":
             return sha1($value);
 
+        case "SHA2-Password":
+            return hash('sha256', $value);
+
         case "NT-Password":
             return strtoupper(bin2hex(mhash(MHASH_MD4, iconv('UTF-8', 'UTF-16LE', $value))));
 

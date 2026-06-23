@@ -586,7 +586,7 @@ $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(descriptive n
 $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
 
 $l['Tooltip']['usernameTooltip'] = "Example: john_doe. The exact username the user will use to connect to the system.";
-$l['Tooltip']['passwordTypeTooltip'] = "Example: Cleartext-Password, MD5-Password, SHA1-Password. The password type used to authenticate the user in RADIUS.";
+$l['Tooltip']['passwordTypeTooltip'] = "Example: Cleartext-Password, MD5-Password, SHA1-Password, SHA2-Password. The password type used to authenticate the user in RADIUS.";
 $l['Tooltip']['passwordTooltip'] = "Example: P@ssw0rd!. The user's password. Note that some systems use case-sensitive passwords, so please take extra care.";
 $l['Tooltip']['groupTooltip'] = "Example: Premium_Users. The group to which the user will be added. By adding a user to a specific group, they become subject to that group's attributes.";
 $l['Tooltip']['macaddressTooltip'] = "Example: 00:AA:BB:CC:DD:EE. The MAC Address format should be the same as sent by the NAS. Usually, this is without any separating characters.";
