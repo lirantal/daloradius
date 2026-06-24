@@ -37,12 +37,13 @@ function open_accordion_item($descriptor) {
     $parent_id = $descriptor['parent_id'];
     $key = (isset($descriptor['key'])) ? $descriptor['key'] : "key-" . rand();
     $show = (isset($descriptor['open']) && $descriptor['open']) ? " show" : "";
+    $collapsed = (isset($descriptor['open']) && $descriptor['open']) ? "" : " collapsed";
     $expanded = (isset($descriptor['open']) && $descriptor['open']) ? "true" : "false";
 
     echo <<<EOF
 <div class="accordion-item">
     <h2 class="accordion-header" id="{$key}-head">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+        <button class="accordion-button{$collapsed}" type="button" data-bs-toggle="collapse"
             data-bs-target="#{$key}-content" aria-expanded="{$expanded}" aria-controls="{$key}-content">
             {$label}
         </button>
