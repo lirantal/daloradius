@@ -106,16 +106,16 @@ $valid_recommendedHelpers = array(
                                     "kbitspersecond", "bitspersecond", "volumebytes", "mikrotikRateLimit",
                                  );
 
-$valid_attributeTypes = array(
-                                "string",
-                                "integer",
-                                "ipaddr",
-                                "date",
-                                "octets",
-                                "ipv6addr",
-                                "ifid",
-                                "abinary",
-                             );
+// Populate the datalist (UX): only types meant to be picked by hand
+$datalist_attributeTypes = array(
+    "string", "integer", "ipaddr", "ipv6addr", "ipv6prefix",
+    "date", "octets", "byte", "short", "signed", "ifid", "abinary",
+);
+
+// Validate on save (correctness): full set, including structural/exotic types
+$valid_attributeTypes = array_merge($datalist_attributeTypes, array(
+    "tlv", "combo-ip", "ipv4prefix", "integer64", "ether",
+));
 
 $valid_db_engines = array(
                             "mysql" => "MySQL",
