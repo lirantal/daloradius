@@ -233,7 +233,7 @@ Create `/etc/httpd/conf.d/daloradius.conf` with the following content:
 Listen 8000
 
 <VirtualHost *:8000>
-  ServerAdmin admin@daloradius.local
+  ServerAdmin admin@daloradius.example.org
   DocumentRoot /var/www/daloradius/app/operators
 
   <Directory /var/www/daloradius/app/operators>
@@ -251,7 +251,7 @@ Listen 8000
 </VirtualHost>
 
 <VirtualHost *:80>
-  ServerAdmin admin@daloradius.local
+  ServerAdmin admin@daloradius.example.org
   DocumentRoot /var/www/daloradius/app/users
 
   <Directory /var/www/daloradius/app/users>
@@ -345,9 +345,9 @@ systemctl restart httpd
 
 To ensure proper functionality of daloRADIUS, follow these steps to access the RADIUS Management and User Portal applications:
 
-1. **RADIUS Management application**: Access the application using the URL [http://daloradius.local:8000](http://daloradius.local:8000). Replace `daloradius.local` with the domain name or IP address associated with your system.
+1. **RADIUS Management application**: Access the application using the URL [http://daloradius.example.org:8000](http://daloradius.example.org:8000). Replace `daloradius.example.org` with the domain name or IP address associated with your system.
 
-2. **User Portal application**: Access the application using the URL [http://daloradius.local](http://daloradius.local). Again, replace `daloradius.local` with the appropriate domain name or IP address.
+2. **User Portal application**: Access the application using the URL [http://daloradius.example.org](http://daloradius.example.org). Replace `daloradius.example.org` with the domain name or IP address associated with your system.
 
 The port numbers `80` and `8000` reflect the choices made in the previous sections of this guide. Please ensure that you have a web browser installed and a network connection to the daloRADIUS server.
 
