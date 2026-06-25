@@ -52,7 +52,7 @@ print_blue() {
 
 print_spinner() {
     PID=$1
-    
+
     i=1
     sp="/-\|"
     echo -n ' '
@@ -342,11 +342,11 @@ daloradius_install_dep() {
 daloradius_installation() {
     SCRIPT_PATH=$(realpath $0)
     SCRIPT_DIR=$(dirname ${SCRIPT_PATH})
-    
+
     if [ "${SCRIPT_DIR}" = "${DALORADIUS_ROOT_DIRECTORY}/setup" ]; then
         # local installation
         echo -n "[+] Setting up daloRADIUS... "
-        
+
         if [ ! -f "${DALORADIUS_CONF_FILE}.sample" ]; then
             print_red "KO"
             print_red "[!] daloRADIUS code seems to be corrupted. Aborting." >&2
@@ -509,7 +509,7 @@ EOF
 # Function to set up Apache site for operators
 apache_setup_operators_site() {
     echo -n "[+] Setting up Apache site for operators... "
-    
+
     cat <<EOF > /etc/apache2/sites-available/operators.conf
 <VirtualHost *:\${DALORADIUS_OPERATORS_PORT}>
   ServerAdmin \${DALORADIUS_SERVER_ADMIN}
@@ -596,23 +596,39 @@ apache_enable_restart() {
 # Function to load daloRADIUS SQL schema into MariaDB
 daloradius_load_sql_schema() {
     DB_DIR="${DALORADIUS_ROOT_DIRECTORY}/contrib/db"
-    echo -n "[+] Loading daloRADIUS SQL schema into MariaDB... "
+    echo -n "[+] Loading daloRADIUS SQL schemas into MariaDB... "
 
-    mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/fr3-mariadb-freeradius.sql" >/dev/null 2>&1 &
-    print_spinner $!
-    wait $!
-    if [ $? -ne 0 ]; then
+    if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/fr3-mariadb-freeradius.sql" >/dev/null 2>&1; then
         print_red "KO"
-        print_red "[!] Failed to load freeRADIUS SQL schema into MariaDB. Aborting." >&2
+        print_red "[!] Failed to load FreeRADIUS base schema into MariaDB. Aborting." >&2
         exit 1
     fi
 
-    mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius.sql" >/dev/null 2>&1 &
-    print_spinner $!
-    wait $!
-    if [ $? -ne 0 ]; then
+    if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius.sql" >/dev/null 2>&1; then
         print_red "KO"
-        print_red "[!] Failed to load daloRADIUS SQL schema into MariaDB. Aborting." >&2
+        print_red "[!] Failed to load daloRADIUS dictionaries into MariaDB. Aborting." >&2
+        exit 1
+    fi
+
+    if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius-dictionaries.sql" >/dev/null 2>&1; then
+        print_red "KO"
+        print_red "[!] Failed to load daloRADIUS base schema into MariaDB. Aborting." >&2
+        exit 1
+    fi
+
+    for f in "${DB_DIR}"/migrations/*.sql; do
+        [ -e "$f" ] || continue
+
+        if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "$f" >/dev/null 2>&1; then
+            print_red "KO"
+            print_red "[!] Failed to load daloRADIUS migration schema ${f} into MariaDB. Aborting." >&2
+            exit 1
+        fi
+    done
+
+    if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/update-performance-indexes.sql" >/dev/null 2>&1; then
+        print_red "KO"
+        print_red "[!] Failed to load daloRADIUS performance indexes into MariaDB. Aborting." >&2
         exit 1
     fi
 
