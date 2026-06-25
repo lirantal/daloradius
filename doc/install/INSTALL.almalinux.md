@@ -191,13 +191,33 @@ cd /var/www
 git clone https://github.com/lirantal/daloradius.git
 ```
 
-The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to load the FreeRADIUS and daloRADIUS SQL schemas:
+The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to load the schemas in the correct order: the FreeRADIUS base schema first, then the daloRADIUS base schema, then every migration in alphabetical order, and finally the performance indexes. This can be accomplished by executing the following commands:
 
 ```bash
 cd /var/www/daloradius/contrib/db
-mariadb -u raduser -p raddb < fr3-mariadb-freeradius.sql
-mariadb -u raduser -p raddb < mariadb-daloradius.sql
-```
+
+# Set the database password
+export MYSQL_PWD='radpass'
+
+# Load FreeRADIUS base schema
+mariadb -u raduser raddb < fr3-mariadb-freeradius.sql
+
+# Load daloRADIUS base schema
+mariadb -u raduser raddb < mariadb-daloradius.sql
+
+# Load daloRADIUS dictionaries
+mariadb -u raduser raddb < mariadb-daloradius-dictionaries.sql
+
+# Load daloRADIUS migration schemas
+for f in $(ls -1 migrations/*.sql); do
+    mariadb -u raduser raddb < "$f"
+done
+
+# Load daloRADIUS performance indexes
+mariadb -u raduser raddb < update-performance-indexes.sql
+
+# Clean up
+unset MYSQL_PWD
 
 Afterwards, it is necessary to create the log directories for `daloradius/operators` and `daloradius/users`:
 

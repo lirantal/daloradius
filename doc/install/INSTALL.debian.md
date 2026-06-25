@@ -305,10 +305,10 @@ export MYSQL_PWD='radpass'
 # Load FreeRADIUS base schema
 mariadb -u raduser raddb < fr3-mariadb-freeradius.sql
 
-# Load daloRADIUS dictionaries
+# Load daloRADIUS base schema
 mariadb -u raduser raddb < mariadb-daloradius.sql
 
-# Load daloRADIUS base schema
+# Load daloRADIUS dictionaries
 mariadb -u raduser raddb < mariadb-daloradius-dictionaries.sql
 
 # Load daloRADIUS migration schemas
