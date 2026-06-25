@@ -295,11 +295,32 @@ chown -R www-data:www-data var
 chmod -R 775 var
 ```
 
-The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to guarantee the correct loading of FreeRADIUS's SQL schema. This can be accomplished by executing the following commands:
+The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to load the schemas in the correct order: the FreeRADIUS base schema first, then the daloRADIUS base schema, then every migration (in alphabetical order, since they are named `year-month-...`), and finally the performance indexes. This can be accomplished by executing the following commands:
 ```bash
 cd /var/www/daloradius/contrib/db
-mariadb -u raduser -p raddb < fr3-mariadb-freeradius.sql
-mariadb -u raduser -p raddb < mariadb-daloradius.sql
+
+# Set the database password
+export MYSQL_PWD='radpass'
+
+# Load FreeRADIUS base schema
+mariadb -u raduser raddb < fr3-mariadb-freeradius.sql
+
+# Load daloRADIUS dictionaries
+mariadb -u raduser raddb < mariadb-daloradius.sql
+
+# Load daloRADIUS base schema
+mariadb -u raduser raddb < mariadb-daloradius-dictionaries.sql
+
+# Load daloRADIUS migration schemas
+for f in $(ls -1 migrations/*.sql); do
+    mariadb -u raduser raddb < "$f"
+done
+
+# Load daloRADIUS performance indexes
+mariadb -u raduser raddb < update-performance-indexes.sql
+
+# Clean up
+unset MYSQL_PWD
 ```
 
 Finally, to complete the configuration, it is necessary to disable the default site, enable the newly created sites, ensure that Apache 2 is enabled, and restart it by executing the following commands:
@@ -309,7 +330,6 @@ a2ensite operators.conf users.conf
 systemctl enable apache2
 systemctl restart apache2
 ```
-
 
 # Testing the Infrastructure
 
