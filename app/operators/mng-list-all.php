@@ -345,7 +345,7 @@
             $tooltip1 = get_tooltip_list_str($tooltip1);
 
             // create Framed-IP-Address tooltip
-            if (preg_match(LOOSE_IP_REGEX, $framedipaddress, $m) !== false) {
+            if (preg_match(LOOSE_IP_REGEX, $framedipaddress, $m)) {
                 $tooltip2 = [
                     'subject' => $framedipaddress,
                     'actions' => array(),
