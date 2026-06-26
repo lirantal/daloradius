@@ -137,11 +137,11 @@
                         );
 
         $descriptors = array();
-        $descriptors['start'] = array( 'common_controls' => 'nashost[]', 'additional_controls' => $additional_controls );
+        $descriptors['start'] = array( 'common_controls' => 'nasname[]', 'additional_controls' => $additional_controls );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
         print_table_prologue($descriptors);
 
-        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => $form_name ), );
+        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'GET', 'name' => $form_name ), );
 
         // print table top
         print_table_top($form_descriptor);
@@ -175,13 +175,13 @@
                                 'actions' => array(),
                             );
             $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-nas-edit.php?nasname=%s', $nasname_enc, ), 'label' => t('button','EditNAS'), );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-nas-del.php?nashost=%s', $nasname_enc, ), 'label' => t('button','RemoveNAS'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-nas-del.php?nasname[]=%s', $nasname_enc, ), 'label' => t('button','RemoveNAS'), );
 
             // create tooltip
             $tooltip = get_tooltip_list_str($tooltip);
 
             // create checkbox
-            $d = array( 'name' => 'nashost[]', 'value' => $nasname, 'label' => $id );
+            $d = array( 'name' => 'nasname[]', 'value' => $nasname, 'label' => $id );
             $checkbox = get_checkbox_str($d);
 
             // build table row

@@ -89,14 +89,17 @@
 
             $shortname = (array_key_exists('shortname', $_POST) && !empty(str_replace("%", "", trim($_POST['shortname']))))
                        ? str_replace("%", "", trim($_POST['shortname'])) : "";
+
             $ports = (array_key_exists('ports', $_POST) && !empty(trim($_POST['ports'])) &&
-                      intval(trim($_POST['ports'])) >= 1 && intval(trim($_POST['ports'])) <= 65535)
-                   ? intval(trim($_POST['ports'])) : "";
+                         intval(trim($_POST['ports'])) >= 0 && intval(trim($_POST['ports'])) <= 99999)
+                      ? intval(trim($_POST['ports'])) : 0;
 
             $description = (array_key_exists('description', $_POST) && !empty(str_replace("%", "", trim($_POST['description']))))
                          ? str_replace("%", "", trim($_POST['description'])) : "";
+
             $community = (array_key_exists('community', $_POST) && !empty(str_replace("%", "", trim($_POST['community']))))
                        ? str_replace("%", "", trim($_POST['community'])) : "";
+
             $server = (array_key_exists('server', $_POST) && !empty(str_replace("%", "", trim($_POST['server']))))
                            ? str_replace("%", "", trim($_POST['server'])) : "";
 
@@ -186,7 +189,7 @@
                                         "type" => "text",
                                         "value" => ((isset($nasname)) ? $nasname : ""),
                                         "disabled" => true,
-                                        "tooltipText" => "Enter the IP address or hostname of the NAS device."
+                                        "tooltipText" => "IP address or hostname of the NAS device. (Required)"
                                      );
 
         $input_descriptors0[] = array(
@@ -194,7 +197,7 @@
                                         "caption" => t('all','NasSecret'),
                                         "type" => "text",
                                         "value" => ((isset($secret)) ? $secret : ""),
-                                        "tooltipText" => "Enter the shared secret used for RADIUS communication."
+                                        "tooltipText" => "Shared secret used to authenticate RADIUS traffic with the NAS. (Required)"
                                      );
 
         // preserve legacy/custom NAS type values loaded from DB
@@ -228,9 +231,8 @@
                                         "caption" => t('all','NasShortname'),
                                         "type" => "text",
                                         "value" => ((isset($shortname)) ? $shortname : ""),
-                                        "tooltipText" => "A friendly short name to identify this NAS."
+                                        "tooltipText" => "Friendly short name to identify this NAS. (Optional)"
                                      );
-
 
         $input_descriptors1 = array();
 
@@ -238,10 +240,10 @@
                                         "name" => "ports",
                                         "caption" => t('all','NasPorts'),
                                         "type" => "number",
-                                        "min" => "1",
-                                        "max" => "65535",
+                                        "min" => "0",
+                                        "max" => "99999",
                                         "value" => ((isset($ports)) ? $ports : ""),
-                                        "tooltipText" => "e.g. 1700, 3799, etc.",
+                                        "tooltipText" => "Number of ports on the NAS; informational only, not used by the server. (Optional)"
                                      );
 
         $input_descriptors1[] = array(
@@ -249,7 +251,7 @@
                                         "caption" => t('all','NasCommunity'),
                                         "type" => "text",
                                         "value" => ((isset($community)) ? $community : ""),
-                                        "tooltipText" => "SNMP community string for querying the NAS (optional)."
+                                        "tooltipText" => "SNMP community string for querying the NAS. (Optional)"
                                      );
 
         $input_descriptors1[] = array(
@@ -257,7 +259,7 @@
                                         "caption" => t('all','NasVirtualServer'),
                                         "type" => "text",
                                         "value" => ((isset($server)) ? $server : ""),
-                                        "tooltipText" => "FreeRADIUS virtual server to process requests from this NAS (optional)."
+                                        "tooltipText" => "FreeRADIUS virtual server that processes requests from this NAS. (Optional)"
                                      );
 
         $input_descriptors1[] = array(
@@ -265,7 +267,7 @@
                                         "caption" => t('all','NasDescription'),
                                         "type" => "textarea",
                                         "content" => ((isset($description)) ? $description : ""),
-                                        "tooltipText" => "Additional details or notes about this NAS device."
+                                        "tooltipText" => "Notes or additional details about this NAS. (Optional)"
                                      );
 
         $input_descriptors2 = array();
