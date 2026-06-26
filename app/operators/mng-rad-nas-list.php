@@ -34,6 +34,9 @@
     $logQuery = "performed query on page: ";
     $logDebugSQL = "";
 
+    // init other useful variables
+    $hide_secrets = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
+
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
@@ -56,6 +59,7 @@
                     'community' => t('all','NasCommunity'),
                     'description' => t('all','NasDescription'),
                  );
+
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
 
@@ -159,6 +163,11 @@
             }
 
             list($id, $nasname, $shortname, $type, $ports, $secret, $server, $community, $description) = $row;
+
+            if ($hide_secrets) {
+                $secret = "[secret is hidden]";
+            }
+
             $nasname_enc = urlencode($nasname);
 
             $tooltip = array(
