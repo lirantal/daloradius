@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
@@ -21,13 +21,13 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-    include_once("lang/main.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -37,6 +37,14 @@
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
+    // the array $cols has multiple purposes:
+    // - its keys (when non-numerical) can be used
+    //   - for validating user input
+    //   - for table ordering purpose
+    // - its value can be used for table headings presentation
+    //
+    // the variables cols, colspan, and half_colspan
+    // can be used for validation and presentation purpose
     $cols = array(
                     'id' => t('all','NasID'),
                     'nasname' => t('all','NasIPHost'),
@@ -50,10 +58,10 @@
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
-                 
+
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
-    
+
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
@@ -67,46 +75,47 @@
     // print HTML prologue
     $title = t('Intro','mngradnaslist.php');
     $help = t('helpPage','mngradnaslist');
-    
+
     print_html_prologue($title, $langCode);
-    
+
     // start printing content
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
-    include('include/management/pages_common.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
-    // we use this simplified query just to initialize $numrows
+    // compute total number of rows matching the query for pagination
     $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADNAS']);
     $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
+    $numrows = (!DB::isError($res)) ? $res->fetchrow()[0] : 0;
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+        // must be included after opendb because it needs to read
+        // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-                     
+
         // we execute and log the actual query
         $sql = sprintf("SELECT id, nasname, shortname, type, ports, secret, server, community, description
                           FROM %s ORDER BY %s %s LIMIT %s, %s", $configValues['CONFIG_DB_TBL_RADNAS'],
                                                                 $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
-        
+
         $per_page_numrows = $res->numRows();
-        
-        // this can be passed as form attribute and 
+
+        // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-rad-nas-del.php";
         $form_name = "form_" . rand();
-        
+
         // we prepare the "controls bar" (aka the table prologue bar)
         $additional_controls = array();
         $additional_controls[] = array(
@@ -122,14 +131,14 @@
                             'order_by' => $orderBy,
                             'order_type' => $orderType,
                         );
-        
+
         $descriptors = array();
         $descriptors['start'] = array( 'common_controls' => 'nashost[]', 'additional_controls' => $additional_controls );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
         print_table_prologue($descriptors);
-        
+
         $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => $form_name ), );
-        
+
         // print table top
         print_table_top($form_descriptor);
 
@@ -138,29 +147,30 @@
 
         // closes table header, opens table body
         print_table_middle();
-   
+
         // table content
         $count = 0;
         while ($row = $res->fetchRow()) {
             $rowlen = count($row);
-        
+
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
-            
+
             list($id, $nasname, $shortname, $type, $ports, $secret, $server, $community, $description) = $row;
-            
+            $nasname_enc = urlencode($nasname);
+
             $tooltip = array(
                                 'subject' => $nasname,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-nas-edit.php?nasname=%s', urlencode($nasname), ), 'label' => t('button','EditNAS'), );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-nas-del.php?nashost=%s', urlencode($nasname), ), 'label' => t('button','RemoveNAS'), );
-            
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-nas-edit.php?nasname=%s', $nasname_enc, ), 'label' => t('button','EditNAS'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-nas-del.php?nashost=%s', $nasname_enc, ), 'label' => t('button','RemoveNAS'), );
+
             // create tooltip
             $tooltip = get_tooltip_list_str($tooltip);
-            
+
             // create checkbox
             $d = array( 'name' => 'nashost[]', 'value' => $nasname, 'label' => $id );
             $checkbox = get_checkbox_str($d);
@@ -193,12 +203,9 @@
 
     } else {
         $failureMsg = "Nothing to display";
-        include_once("include/management/actionMessages.php");
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
-    
-    include('../common/includes/db_close.php');
 
-    include('include/config/logging.php');
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-?>
