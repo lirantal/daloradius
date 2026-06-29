@@ -23,7 +23,7 @@
  *********************************************************************************************************
  */
 
-    
+
     include implode(DIRECTORY_SEPARATOR, [ __DIR__, 'library', 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
     include implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
@@ -52,7 +52,7 @@
         $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = "testing123";
     }
 
-    $radclient_path = is_radclient_present();
+    $radclient_path = RadClient::is_radclient_present();
 
     if ($radclient_path !== false) {
 
@@ -99,11 +99,11 @@
                     // required
                     $failureMsg = "This user does not exist";
                 } else {
-                    $selected_dictionary = (isset($_POST['selected_dictionary']) && !empty(trim($_POST['selected_dictionary'])) &&
-                                       in_array(trim($_POST['selected_dictionary']), $valid_dictionaryPaths))
-                                    ? trim($_POST['selected_dictionary']) : "";
+                    $selected_dictionary = (isset($_POST['dictionary']) && !empty(trim($_POST['dictionary'])) &&
+                                            in_array(trim($_POST['dictionary']), $valid_dictionaries, true))
+                                        ? trim($_POST['dictionary']) : "";
 
-                    $dictionaryPath = (!empty($selected_dictionary)) ? "$dictionaryDir/dictionary.$selected_dictionary" : "";
+                    $dictionaryPath = ($selected_dictionary !== "") ? "$dictionaryDir/dictionary.$selected_dictionary" : "";
 
                     $debug = (isset($_POST['debug']) && in_array($_POST['debug'], array("yes", "no"))) ? $_POST['debug'] : "no";
                     $timeout = (isset($_POST['timeout']) && intval($_POST['timeout']) > 0) ? intval($_POST['timeout']) : 3;
@@ -116,7 +116,7 @@
                     $password1 = (isset($_POST['password1']) && !empty(trim($_POST['password1']))) ? trim($_POST['password1']) : "";
                     $password2 = (isset($_POST['password2']) && !empty(trim($_POST['password2']))) ? trim($_POST['password2']) : "";
 
-                    // this will be passed to user_auth function
+                    // this will be passed to RadClient::check_connectivity()
                     $params =  array(
                                         "command" => "auth",
                                         "server" => $radius_addr,
@@ -159,7 +159,11 @@
                         include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'config_write.php' ]);
 
                         // test user
-                        $result = user_auth($params);
+                        try {
+                            $result = (new RadClient($params))->check_connectivity($params);
+                        } catch (RuntimeException $e) {
+                            $result = array("error" => true, "output" => $e->getMessage());
+                        }
 
                         $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
 
@@ -212,61 +216,78 @@
 
         $input_descriptors0 = array();
         $input_descriptors0[] = array(
-                                        "name" => "username",
-                                        "caption" => t('all','Username'),
-                                        "type" => "text",
-                                        "value" => ((isset($username)) ? $username : ""),
-                                     );
-
+            "name" => "username",
+            "caption" => t('all','Username'),
+            "type" => "text",
+            "value" => ((isset($username)) ? $username : ""),
+            "tooltipText" => "Username to authenticate against the RADIUS server. (Required)"
+        );
         $input_descriptors0[] = array(
-                                        "name" => "password1",
-                                        "caption" => t('all','Password'),
-                                        "type" => "password",
-                                        "value" => ((isset($password)) ? $password : ""),
-                                     );
-
+            "name" => "password1",
+            "caption" => t('all','Password'),
+            "type" => "password",
+            "value" => ((isset($password)) ? $password : ""),
+            "tooltipText" => "Password for the user being tested. (Required)"
+        );
         $input_descriptors0[] = array(
-                                        "name" => "password2",
-                                        "caption" => t('all','Password') . " (confirmation)",
-                                        "type" => "password",
-                                        "value" => ((isset($password)) ? $password : ""),
-                                     );
-
+            "name" => "password2",
+            "caption" => t('all','Password') . " (confirmation)",
+            "type" => "password",
+            "value" => ((isset($password)) ? $password : ""),
+            "tooltipText" => "Re-enter the password to confirm it matches. (Required)"
+        );
         $input_descriptors0[] = array(
-                                        "name" => "radius_addr",
-                                        "caption" => t('all','RadiusServer'),
-                                        "type" => "text",
-                                        "value" => ((isset($radius_addr)) ? $radius_addr : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER']),
-                                     );
-
+            "name" => "radius_addr",
+            "caption" => t('all','RadiusServer'),
+            "type" => "text",
+            "value" => ((isset($radius_addr)) ? $radius_addr : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER']),
+            "tooltipText" => "IP address of the RADIUS server to query. Defaults to the saved value. (Optional)"
+        );
         $input_descriptors0[] = array(
-                                        "name" => "radius_port",
-                                        "caption" => t('all','RadiusPort'),
-                                        "type" => "number",
-                                        "min" => 1,
-                                        "max" => 65535,
-                                        "value" => ((isset($radius_port)) ? $radius_port : $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT']),
-                                     );
-
-        $input_descriptors0[] = array( "name" => "secret",
-                                       "caption" => t('all','NasSecret'),
-                                       "type" => "text",
-                                       "value" => ((isset($secret)) ? $secret : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET']),
-                                     );
-
+            "name" => "radius_port",
+            "caption" => t('all','RadiusPort'),
+            "type" => "number",
+            "min" => 1,
+            "max" => 65535,
+            "value" => ((isset($radius_port)) ? $radius_port : $configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT']),
+            "tooltipText" => "UDP authentication port of the RADIUS server. Default 1812. (Optional)"
+        );
         $input_descriptors0[] = array(
-                                        "name" => "simulate",
-                                        "caption" => "Simulate (only show command, don't execute)",
-                                        "type" => "checkbox",
-                                        "checked" => (isset($simulate) ? $simulate : false),
-                                     );
+            "name" => "secret",
+            "caption" => t('all','NasSecret'),
+            "type" => "text",
+            "value" => ((isset($secret)) ? $secret : $configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET']),
+            "tooltipText" => "Shared secret between this client and the RADIUS server. (Optional)"
+        );
+        $input_descriptors0[] = array(
+            "name" => "simulate",
+            "caption" => "Simulate (only show command, don't execute)",
+            "type" => "checkbox",
+            "checked" => (isset($simulate) ? $simulate : false),
+            "tooltipText" => "Show the radclient command that would run, without executing it. (Optional)"
+        );
 
         $input_descriptors1 = array();
-        $input_descriptors1[] = array( "name" => "debug", "caption" => t('all','Debug'), "type" => "select", "options" => array("yes", "no"), );
-        $input_descriptors1[] = array( "name" => "timeout", "caption" => t('all','Timeout'), "type" => "number", "value" => "3", "min" => "1", );
-        $input_descriptors1[] = array( "name" => "retries", "caption" => t('all','Retries'), "type" => "number", "value" => "3", "min" => "0", );
-        $input_descriptors1[] = array( "name" => "count", "caption" => t('all','Count'), "type" => "number", "value" => "1", "min" => "1", );
-        $input_descriptors1[] = array( "name" => "requests", "caption" => t('all','Requests'), "type" => "number", "value" => "3", "min" => "1", );
+        $input_descriptors1[] = array(
+            "name" => "debug", "caption" => t('all','Debug'), "type" => "select", "options" => array("yes", "no"),
+            "tooltipText" => "Enable radclient verbose output (-x) for troubleshooting. (Optional)"
+        );
+        $input_descriptors1[] = array(
+            "name" => "timeout", "caption" => t('all','Timeout'), "type" => "number", "value" => "3", "min" => "1",
+            "tooltipText" => "Seconds to wait for a reply before retrying (-t). Default 3. (Optional)"
+        );
+        $input_descriptors1[] = array(
+            "name" => "retries", "caption" => t('all','Retries'), "type" => "number", "value" => "3", "min" => "0",
+            "tooltipText" => "Number of times to resend a packet on timeout (-r). (Optional)"
+        );
+        $input_descriptors1[] = array(
+            "name" => "count", "caption" => t('all','Count'), "type" => "number", "value" => "1", "min" => "1",
+            "tooltipText" => "Number of times to send each packet (-c). Default 1. (Optional)"
+        );
+        $input_descriptors1[] = array(
+            "name" => "requests", "caption" => t('all','Requests'), "type" => "number", "value" => "3", "min" => "1",
+            "tooltipText" => "Number of packets sent in parallel (-n). (Optional)"
+        );
 
         if (count($valid_dictionaries) > 0) {
 
@@ -274,10 +295,10 @@
             array_unshift($options, "");
 
             $input_descriptors1[] = array(
-                                            "name" => "dictionaryPath",
+                                            "name" => "dictionary",
                                             "caption" => t('all','RADIUSDictionaryPath'),
                                             "type" => "select",
-                                            "selected_value" => ((isset($dictionaryPath)) ? $dictionaryPath : ""),
+                                            "selected_value" => ((isset($selected_dictionary)) ? $selected_dictionary : ""),
                                             "options" => $options,
                                          );
         }

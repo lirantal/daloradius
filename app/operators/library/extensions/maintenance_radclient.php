@@ -37,328 +37,258 @@ if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
 $extension_file_enc = htmlspecialchars($extension_file, ENT_QUOTES, 'UTF-8');
 
 /**
- * Check if the radclient binary is present in the system.
+ * Thin wrapper around the `radclient` utility.
  *
- * This function executes the shell command to check the availability of the radclient binary.
- * If found, it returns the absolute path of the radclient binary; otherwise, it returns false.
+ * Shared "advanced" options (count, requests, retries, timeout, dictionary,
+ * simulate) are normalised once in the constructor; the two public methods only
+ * receive action-specific parameters:
  *
- * @return string|false The absolute path of the radclient binary if found, otherwise false.
+ *   - disconnect()         -> sends a CoA / Packet-of-Disconnect to a NAS
+ *   - check_connectivity() -> sends an auth / status request to a RADIUS server
+ *
+ * Both return: array("error" => bool, "output" => string)
+ *
+ * NOTE: the destination UDP port for CoA/PoD is a dedicated parameter
+ * (default 3799), NOT the `ports` column of the `nas` table, which is a purely
+ * informational field and must never be used as a network port.
  */
-function is_radclient_present() {
-    exec("(which radclient || command -v radclient) 2> /dev/null", $output, $result_code);
-    return ($result_code === 0) ? $output[0] : false;
-}
+class RadClient {
 
+    const DEFAULT_COA_PORT  = 3799;   // RFC 5176 (some legacy NAS use 1700)
+    const DEFAULT_AUTH_PORT = 1812;
 
-/**
- * Ensure that optional radclient parameters are correctly set up.
- *
- * This function checks if optional parameters for radclient are provided and sets default values if not.
- * It also converts the parameters to the appropriate data types.
- *
- * @param array $params An associative array containing radclient parameters.
- *                     Possible parameters include 'count', 'requests', 'retries', 'timeout', 'debug', and 'simulate'.
- * @return array An associative array containing radclient parameters with correct values and data types.
- */
-function radclient_common_options($params) {
-    // Set default values for optional parameters if not provided
-    $count = (array_key_exists('count', $params) && $params['count'] > 0) ? $params['count'] : 1;
-    $requests = (array_key_exists('requests', $params) && $params['requests'] > 0) ? $params['requests'] : 1;
-    $retries = (array_key_exists('retries', $params) && $params['retries'] > 0) ? $params['retries'] : 10;
-    $timeout = (array_key_exists('timeout', $params) && $params['timeout'] > 0) ? $params['timeout'] : 3;
-    $debug = (array_key_exists('debug', $params) && $params['debug'] == true) ? "-x" : "";
-    $simulate = (array_key_exists('simulate', $params) && $params['simulate'] == true);
+    private $path;
+    private $options;
+    private $simulate;
 
-    // Convert parameters to appropriate data types
-    $params["count"] = intval($count);
-    $params["requests"] = intval($requests);
-    $params["retries"] = intval($retries);
-    $params["timeout"] = intval($timeout);
-    $params["debug"] = boolval($debug);
-    $params["simulate"] = boolval($simulate);
-
-    return $params;
-}
-
-
-/**
- * Disconnects a user from the network.
- *
- * This function disconnects a user from the network by sending a COA (Change of Authorization)
- * or disconnect command to the RADIUS server using the radclient utility.
- * It requires certain parameters to be provided, including 'nas_id', 'command', and 'username'.
- * If any of the required parameters are missing or if the command is invalid, an error message is returned.
- * The function also retrieves necessary information from the database, such as NAS details.
- * Additionally, it prepares radclient arguments, custom attributes, and other radclient options
- * based on the provided parameters. It then executes the radclient command to disconnect the user.
- *
- * @param array $params An associative array containing the parameters required for disconnecting the user.
- *                      Required parameters: 'nas_id', 'command', 'username'.
- *                      Optional parameters: 'count', 'requests', 'retries', 'timeout', 'debug', 'customAttributes', 'dictionary', 'simulate'.
- * @return array An associative array containing the result of the operation.
- *               If successful, 'error' will be set to false and 'output' will contain the command executed and the result.
- *               If unsuccessful, 'error' will be set to true and 'output' will contain an error message.
- */
-function user_disconnect($params) {
-    global $configValues;
-
-    // Check if radclient binary is present
-    $radclient_path = is_radclient_present();
-
-    // Return error if radclient binary is not found
-    if ($radclient_path === false) {
-        return array(
-            "error" => true,
-            "output" => "radclient binary not found on the system",
-        );
-    }
-
-    // Required parameters for disconnecting the user
-    $required_params = array("nas_id", "command", "username");
-
-    // Check for missing required parameters
-    $missing_params = array();
-    foreach ($required_params as $required_param) {
-        if (!array_key_exists($required_param, $params)) {
-            $missing_params[] = $required_param;
+    /**
+     * @param array $params Shared options: count, requests, retries, timeout,
+     *                       dictionary, simulate.
+     * @throws RuntimeException if the radclient binary is not available.
+     */
+    public function __construct(array $params = array()) {
+        $this->path = self::is_radclient_present();
+        if ($this->path === false) {
+            throw new RuntimeException("radclient binary not found on the system");
         }
-    }
 
-    // Return error if any required parameter is missing
-    if (!empty($missing_params)) {
-        return array(
-            "error" => true,
-            "output" => "Missing required parameter(s): " . implode(', ', $missing_params),
+        // normalise the shared advanced options a single time
+        $params = $this->radclient_common_options($params);
+
+        $this->options = array(
+            'count'      => $params['count'],
+            'requests'   => $params['requests'],
+            'retries'    => $params['retries'],
+            'timeout'    => $params['timeout'],
+            'dictionary' => isset($params['dictionary']) ? trim($params['dictionary']) : '',
         );
+
+        $this->simulate = !empty($params['simulate']);
     }
 
-    // Valid commands for radclient
-    $valid_commands = array("coa", "disconnect");
+    /**
+     * Disconnect a user via CoA / Packet-of-Disconnect.
+     *
+     * Required: nas_id, command ("coa"|"disconnect"), username
+     * Optional: port (1-65535, default 3799), customAttributes
+     */
+    public function disconnect(array $params) {
+        $missing = $this->missing_params($params, array("nas_id", "command", "username"));
+        if (!empty($missing)) {
+            return $this->fail("Missing required parameter(s): " . implode(", ", $missing));
+        }
 
-    // Return error if command is invalid
-    if (!in_array($params['command'], $valid_commands)) {
-        return array(
-            "error" => true,
-            "output" => sprintf("'%s': invalid command", $params['command']),
-        );
+        if (!in_array($params['command'], array("coa", "disconnect"), true)) {
+            return $this->fail(sprintf("'%s': invalid command", $params['command']));
+        }
+
+        // dedicated CoA/PoD port, decoupled from the DB `ports` column
+        $port = $this->valid_port($params, self::DEFAULT_COA_PORT);
+
+        $nas = $this->get_nas($params['nas_id']);
+        if ($nas === null) {
+            return $this->fail("NAS not found");
+        }
+        list($addr, $secret) = $nas;
+
+        $query  = sprintf("User-Name=%s", escapeshellarg($params['username']));
+        $query .= $this->build_custom_attributes($params);
+
+        return $this->run(sprintf("%s:%d", $addr, $port), $params['command'], $secret, $query);
     }
 
-    // Get NAS details from the database
-    include implode(DIRECTORY_SEPARATOR, [$configValues['COMMON_INCLUDES'], 'db_open.php']);
+    /**
+     * Test connectivity / credentials via auth or status request.
+     *
+     * Required: command ("auth"|"status"), username, password, password_type,
+     *           server (IP), port, secret
+     */
+    public function check_connectivity(array $params) {
+        include_once implode(DIRECTORY_SEPARATOR, [$GLOBALS['configValues']['COMMON_INCLUDES'], 'validation.php']);
+        global $valid_passwordTypes;
 
-    $sql = sprintf("SELECT DISTINCT(`nasname`), `ports`, `secret`
-                      FROM `%s` WHERE `id`=?", $configValues['CONFIG_DB_TBL_RADNAS']);
-    $prepared = $dbSocket->prepare($sql);
-    $res = $dbSocket->execute($prepared, $params['nas_id']);
+        $required = array("command", "username", "password", "password_type", "server", "port", "secret");
+        $missing  = $this->missing_params($params, $required);
+        if (!empty($missing)) {
+            return $this->fail("Missing required parameter(s): " . implode(", ", $missing));
+        }
 
-    list($addr, $port, $secret) = $res->fetchrow();
+        if (!in_array($params['command'], array("auth", "status"), true)) {
+            return $this->fail(sprintf("'%s': invalid command", $params['command']));
+        }
 
-    include implode(DIRECTORY_SEPARATOR, [$configValues['COMMON_INCLUDES'], 'db_close.php']);
+        if (!in_array($params['password_type'], $valid_passwordTypes, true)) {
+            return $this->fail(sprintf("'%s': invalid password type", $params['password_type']));
+        }
 
-    // Set radclient options
-    $params = radclient_common_options($params);
+        if (filter_var(trim($params['server']), FILTER_VALIDATE_IP) === false) {
+            return $this->fail("Invalid RADIUS server IP address");
+        }
 
-    // Prepare radclient arguments
-    $count = $params['count'];
-    $requests = $params['requests'];
-    $retries = $params['retries'];
-    $timeout = $params['timeout'];
-    $debug = $params['debug'];
-    $command = in_array($params['command'], $valid_commands) ? $params['command'] : "auth";
+        $port   = $this->valid_port($params, self::DEFAULT_AUTH_PORT);
+        $secret = (trim($params['secret']) !== "") ? trim($params['secret']) : "testing123";
 
-    // Prepare radclient query
-    $server_port = sprintf("%s:%d", $addr, $port);
-    $positional_args = sprintf("%s %s %s", escapeshellarg($server_port), escapeshellarg($command), escapeshellarg($secret));
+        // password_type is whitelist-validated above, so it is safe unescaped
+        $query = sprintf("User-Name=%s,%s=%s",
+            escapeshellarg($params['username']), $params['password_type'], escapeshellarg($params['password']));
 
-    // Include custom attributes in the query
-    $query = sprintf("User-Name=%s", escapeshellarg($params['username']));
-    if (isset($params['customAttributes']) && !empty($params['customAttributes'])) {
-        $attr_values = explode(",", $params['customAttributes']);
-        foreach ($attr_values as $attr_value) {
-            list($attr, $value) = explode("=", $attr_value);
-            $attr = trim($attr);
+        $server = sprintf("%s:%d", trim($params['server']), $port);
+        return $this->run($server, $params['command'], $secret, $query);
+    }
+
+    // ---------------------------------------------------------------- helpers
+
+    /**
+     * Check if the radclient binary is present in the system.
+     *
+     * @return string|false The absolute path of the radclient binary if found, otherwise false.
+     */
+    public static function is_radclient_present() {
+        exec("(which radclient || command -v radclient) 2> /dev/null", $output, $result_code);
+        return ($result_code === 0) ? $output[0] : false;
+    }
+
+    /**
+     * Ensure that optional radclient parameters are correctly set up.
+     *
+     * @param array $params Shared radclient parameters.
+     * @return array Normalized parameters.
+     */
+    private function radclient_common_options($params) {
+        $count = (array_key_exists('count', $params) && $params['count'] > 0) ? $params['count'] : 1;
+        $requests = (array_key_exists('requests', $params) && $params['requests'] > 0) ? $params['requests'] : 1;
+        $retries = (array_key_exists('retries', $params) && $params['retries'] > 0) ? $params['retries'] : 10;
+        $timeout = (array_key_exists('timeout', $params) && $params['timeout'] > 0) ? $params['timeout'] : 3;
+        $debug = (array_key_exists('debug', $params) && $params['debug'] == true) ? "-x" : "";
+        $simulate = (array_key_exists('simulate', $params) && $params['simulate'] == true);
+
+        $params["count"] = intval($count);
+        $params["requests"] = intval($requests);
+        $params["retries"] = intval($retries);
+        $params["timeout"] = intval($timeout);
+        $params["debug"] = boolval($debug);
+        $params["simulate"] = boolval($simulate);
+
+        return $params;
+    }
+
+    /** Build and (optionally) execute the radclient command. */
+    private function run($server_port, $command, $secret, $query) {
+        $positional = sprintf("%s %s %s",
+            escapeshellarg($server_port), escapeshellarg($command), escapeshellarg($secret));
+
+        $cmd = sprintf('echo "%s" | %s %s %s 2>&1',
+            escapeshellcmd($query), $this->path, $this->build_options(), $positional);
+
+        if ($this->simulate) {
+            return array("error" => false, "output" => "$cmd (not executed)");
+        }
+
+        $result = shell_exec($cmd);
+        if (empty($result)) {
+            return array("error" => true, "output" => "Command did not return any output");
+        }
+
+        return array("error" => false, "output" => "$cmd\n$result");
+    }
+
+    /** Common radclient flags (-c -n -r -t -x [-d]). */
+    private function build_options() {
+        $opts = sprintf(" -c %s -n %s -r %s -t %s -x",
+            escapeshellarg($this->options['count']),
+            escapeshellarg($this->options['requests']),
+            escapeshellarg($this->options['retries']),
+            escapeshellarg($this->options['timeout']));
+
+        if ($this->options['dictionary'] !== '') {
+            $opts .= sprintf(" -d %s", escapeshellarg($this->options['dictionary']));
+        }
+
+        return $opts;
+    }
+
+    /** Fetch nasname + secret for a given NAS id (ports column intentionally ignored). */
+    private function get_nas($nas_id) {
+        global $configValues;
+
+        include implode(DIRECTORY_SEPARATOR, [$configValues['COMMON_INCLUDES'], 'db_open.php']);
+
+        $sql      = sprintf("SELECT DISTINCT(`nasname`), `secret` FROM `%s` WHERE `id`=?",
+                            $configValues['CONFIG_DB_TBL_RADNAS']);
+        $prepared = $dbSocket->prepare($sql);
+        $res      = $dbSocket->execute($prepared, $nas_id);
+        $row      = $res->fetchRow();
+
+        include implode(DIRECTORY_SEPARATOR, [$configValues['COMMON_INCLUDES'], 'db_close.php']);
+
+        return $row ? array($row[0], $row[1]) : null;
+    }
+
+    /** Parse, validate and shell-escape optional custom attributes. */
+    private function build_custom_attributes($params) {
+        global $configValues;
+
+        if (empty($params['customAttributes'])) {
+            return "";
+        }
+
+        include_once implode(DIRECTORY_SEPARATOR, [$configValues['COMMON_INCLUDES'], 'validation.php']);
+
+        $out = "";
+        foreach (explode(",", $params['customAttributes']) as $pair) {
+            if (strpos($pair, "=") === false) {
+                continue; // skip malformed entries instead of triggering a notice
+            }
+
+            list($attr, $value) = explode("=", $pair, 2);
+            $attr  = trim($attr);
             $value = trim($value);
 
-            include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
-            if (!empty($attr) && !empty($value) && $attr !== 'User-Name' && preg_match(ALLOWED_ATTRIBUTE_CHARS_REGEX, $attr) === 1) {
-                $query .= sprintf(", %s=%s", $attr, escapeshellarg($value));
+            if ($attr !== "" && $value !== "" && $attr !== 'User-Name'
+                && preg_match(ALLOWED_ATTRIBUTE_CHARS_REGEX, $attr) === 1) {
+                $out .= sprintf(", %s=%s", $attr, escapeshellarg($value));
             }
         }
+
+        return $out;
     }
 
-    // Set radclient options
-    $radclient_options = sprintf(" -c %s -n %s -r %s -t %s -x", escapeshellarg($count), escapeshellarg($requests),
-        escapeshellarg($retries), escapeshellarg($timeout));
-
-    // Add dictionary option if provided
-    if (isset($params['dictionary']) && !empty(trim($params['dictionary']))) {
-        $radclient_options .= sprintf(" -d %s", escapeshellarg(trim($params['dictionary'])));
+    private function valid_port($params, $default) {
+        return (isset($params['port']) && intval($params['port']) >= 1 && intval($params['port']) <= 65535)
+             ? intval($params['port']) : $default;
     }
 
-    // Construct radclient command
-    $cmd = sprintf('echo "%s" | %s %s %s 2>&1', escapeshellcmd($query), $radclient_path, $radclient_options, $positional_args);
-
-    // Simulate mode
-    if ($params['simulate']) {
-        return array(
-            "error" => false,
-            "output" => "$cmd (not executed)",
-        );
-    }
-
-    // Execute radclient command
-    $result = shell_exec($cmd);
-
-    // Return error if command did not return any output
-    if (empty($result)) {
-        return array(
-            "error" => true,
-            "output" => "Command did not return any output",
-        );
-    }
-
-    return array(
-        "error" => false,
-        "output" => "$cmd\n$result"
-    );
-}
-
-
-/**
- * Authenticate a user against the RADIUS server.
- *
- * This function authenticates a user against the RADIUS server by sending an authentication
- * request using the radclient utility. It requires several parameters to be provided,
- * including 'command', 'username', 'password', 'password_type', 'server', 'port', and 'secret'.
- * If any of the required parameters are missing or if the command, password type, or server IP address is invalid,
- * an error message is returned. The function also validates other parameters such as port and secret.
- * Additionally, it prepares radclient arguments, custom attributes, and other radclient options
- * based on the provided parameters. It then executes the radclient command to authenticate the user.
- *
- * @param array $params An associative array containing the parameters required for authenticating the user.
- *                      Required parameters: 'command', 'username', 'password', 'password_type', 'server', 'port', 'secret'.
- *                      Optional parameters: 'count', 'requests', 'retries', 'timeout', 'debug', 'dictionary', 'simulate'.
- * @return array An associative array containing the result of the authentication operation.
- *               If successful, 'error' will be set to false and 'output' will contain the command executed and the result.
- *               If unsuccessful, 'error' will be set to true and 'output' will contain an error message.
- */
-function user_auth($params) {
-    global $configValues;
-
-    // Check if radclient binary is present
-    $radclient_path = is_radclient_present();
-
-    // Return error if radclient binary is not found
-    if ($radclient_path === false) {
-        return array(
-            "error" => true,
-            "output" => "radclient binary not found on the system",
-        );
-    }
-
-    // Include validation functions
-    include_once implode(DIRECTORY_SEPARATOR, [$configValues['COMMON_INCLUDES'], 'validation.php']);
-    global $valid_passwordTypes;
-
-    // Required parameters for user authentication
-    $required_params = array("command", "username", "password", "password_type", "server", "port", "secret");
-
-    // Check for missing required parameters
-    $missing_params = array();
-    foreach ($required_params as $required_param) {
-        if (!array_key_exists($required_param, $params)) {
-            $missing_params[] = $required_param;
+    private function missing_params($params, $required) {
+        $missing = array();
+        foreach ($required as $name) {
+            if (!array_key_exists($name, $params)) {
+                $missing[] = $name;
+            }
         }
+        return $missing;
     }
 
-    // Return error if any required parameter is missing
-    if (!empty($missing_params)) {
-        return array(
-            "error" => true,
-            "output" => "Missing required parameter(s): " . implode(", ", $missing_params),
-        );
+    private function fail($message) {
+        return array("error" => true, "output" => $message);
     }
-
-    // Valid commands for radclient
-    $valid_commands = array("auth", "status");
-
-    // Return error if command is invalid
-    if (!in_array($params['command'], $valid_commands)) {
-        return array(
-            "error" => true,
-            "output" => sprintf("'%s': invalid command", $params['command']),
-        );
-    }
-
-    // Return error if password type is invalid
-    if (!in_array($params['password_type'], $valid_passwordTypes)) {
-        return array(
-            "error" => true,
-            "output" => sprintf("'%s': invalid password type", $params['password_type']),
-        );
-    }
-
-    // Return error if server IP address is invalid
-    if (filter_var(trim($params['server']), FILTER_VALIDATE_IP) === false) {
-        return array(
-            "error" => true,
-            "output" => "Invalid RADIUS server IP address",
-        );
-    }
-
-    // Validate other parameters
-    $command = in_array($params['command'], $valid_commands) ? $params['command'] : "auth";
-    $port = ($params['port'] >= 1 && $params['port'] <= 65535) ? $params['port'] : 1812;
-    $secret = !empty(trim($params['secret'])) ? escapeshellarg(trim($params['secret'])) : "testing123";
-
-    // Set radclient options
-    $params = radclient_common_options($params);
-    $count = $params['count'];
-    $requests = $params['requests'];
-    $retries = $params['retries'];
-    $timeout = $params['timeout'];
-    $debug = $params['debug'];
-
-    // Prepare radclient arguments
-    $server_port = sprintf("%s:%d", $params['server'], $params['port']);
-    $positional_args = sprintf("%s %s %s", escapeshellarg($server_port), escapeshellarg($command), $secret);
-
-    // Prepare radclient query
-    $query = sprintf("User-Name=%s,%s=%s", escapeshellarg($params['username']), $params['password_type'], escapeshellarg($params['password']));
-
-    // Other radclient options
-    $radclient_options = sprintf(" -c %s -n %s -r %s -t %s -x", escapeshellarg($count), escapeshellarg($requests),
-        escapeshellarg($retries), escapeshellarg($timeout));
-
-    // Add dictionary option if provided
-    if (isset($params['dictionary']) && !empty(trim($params['dictionary']))) {
-        $radclient_options .= sprintf(" -d %s", escapeshellarg(trim($params['dictionary'])));
-    }
-
-    // Construct radclient command
-    $cmd = sprintf('echo "%s" | %s %s %s 2>&1', escapeshellcmd($query), $radclient_path, $radclient_options, $positional_args);
-
-    // Simulate mode
-    if ($params['simulate']) {
-        return array(
-            "error" => false,
-            "output" => "$cmd (not executed)",
-        );
-    }
-
-    // Execute radclient command
-    $result = shell_exec($cmd);
-
-    // Return error if command did not return any output
-    if (empty($result)) {
-        return array(
-            "error" => true,
-            "output" => "Command did not return any output",
-        );
-    }
-
-    return array(
-        "error" => false,
-        "output" => "$cmd\n$result"
-    );
 }
