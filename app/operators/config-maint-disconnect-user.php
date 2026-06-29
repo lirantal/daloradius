@@ -21,45 +21,43 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include("include/management/functions.php");
-    include("library/extensions/maintenance_radclient.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY_EXTENSIONS'], 'maintenance_radclient.php' ]);
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-
     $valid_packetTypes = array(
                                     "disconnect" => 'PoD - Packet of Disconnect',
                                     "coa" => 'CoA - Change of Authorization'
                               );
 
-    include('../common/includes/db_open.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
-    $sql = sprintf("SELECT DISTINCT(nasname), ports, shortname, CONCAT('nas-', id) FROM %s ORDER BY nasname ASC",
+    $sql = sprintf("SELECT DISTINCT(nasname), shortname, CONCAT('nas-', id) FROM %s ORDER BY nasname ASC",
                    $configValues['CONFIG_DB_TBL_RADNAS']);
     $res = $dbSocket->query($sql);
 
     $valid_nas_ids = array();
     while ($row = $res->fetchRow()) {
-        $value = $row[3];
-        $label = sprintf("%s (%s:%d)", $row[2], $row[0], intval($row[1]));
-        $valid_nas_ids[$value] = $label;
+        list($nasname, $shortname, $nas_id) = $row;
+        $shortname = trim($shortname);
+        $valid_nas_ids[$nas_id] = ($shortname !== "") ? sprintf("%s (%s)", $shortname, $nasname) : $nasname;
     }
 
-    include('../common/includes/db_close.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
-    $radclient_path = is_radclient_present();
+    $radclient_path = RadClient::is_radclient_present();
 
     if ($radclient_path !== false) {
 
@@ -85,11 +83,14 @@
                     $logAction .= "$failureMsg on page: ";
                 } else {
 
-                    $packetType = (isset($_POST['packetType']) && in_array(trim($_POST['packetType']), array_keys($valid_packetTypes)))
-                                ? trim($_POST['packetType']) : $valid_packetTypes[0];
+                    $packetType = (isset($_POST['packetType']) && array_key_exists(trim($_POST['packetType']), $valid_packetTypes))
+                                ? trim($_POST['packetType']) : array_key_first($valid_packetTypes);
                     $customAttributes = (array_key_exists('customAttributes', $_POST) && !empty(trim($_POST['customAttributes'])))
                                       ? trim($_POST['customAttributes']) : "";
 
+                    $port = (array_key_exists('port', $_POST) && !empty(trim($_POST['port'])) &&
+                             intval(trim($_POST['port'])) >= 1 && intval(trim($_POST['port'])) <= 65535)
+                          ? intval(trim($_POST['port'])) : RadClient::DEFAULT_COA_PORT;
                     $debug = (isset($_POST['debug']) && in_array($_POST['debug'], array("yes", "no"))) ? $_POST['debug'] : "no";
                     $timeout = (isset($_POST['timeout']) && intval($_POST['timeout']) > 0) ? intval($_POST['timeout']) : 3;
                     $retries = (isset($_POST['retries']) && intval($_POST['retries']) > 0) ? intval($_POST['retries']) : 3;
@@ -98,22 +99,27 @@
 
                     $simulate = (isset($_POST['simulate']) && $_POST['simulate'] === "on");
 
-                    // this will be passed to user_auth function
-                    $params =  array(
-                                        "nas_id" => intval(str_replace("nas-", "", $nas_id)),
-                                        "username" => $username,
-                                        "count" => $count,
-                                        "requests" => $requests,
-                                        "retries" => $retries,
-                                        "timeout" => $timeout,
-                                        "debug" => ($debug == "yes"),
-                                        "command" => $packetType,
-                                        "customAttributes" => $customAttributes,
-                                        "simulate" => $simulate,
-                                    );
+                    // this will be passed to RadClient::disconnect()
+                    $params = array(
+                        "nas_id"           => intval(str_replace("nas-", "", $nas_id)),
+                        "username"         => $username,
+                        "count"            => $count,
+                        "requests"         => $requests,
+                        "retries"          => $retries,
+                        "timeout"          => $timeout,
+                        "debug"            => ($debug == "yes"),
+                        "command"          => $packetType,
+                        "customAttributes" => $customAttributes,
+                        "simulate"         => $simulate,
+                        "port"             => $port,   // CoA/PoD port, default 3799
+                    );
 
                     // disconnect user
-                    $result = user_disconnect($params);
+                    try {
+                        $result = (new RadClient($params))->disconnect($params);
+                    } catch (RuntimeException $e) {
+                        $result = array("error" => true, "output" => $e->getMessage());
+                    }
 
                     $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
 
@@ -160,15 +166,15 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     if ($radclient_path !== false) {
-
-        include("include/management/populate_selectbox.php");
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
 
         $options = get_online_users();
         array_unshift($options, "");
 
+        // descriptors 0
         $input_descriptors0 = array();
         $input_descriptors0[] = array(
                                         "name" => "username",
@@ -214,6 +220,10 @@
         // descriptors 1
         $input_descriptors1 = array();
         $input_descriptors1[] = array( "name" => "debug", "caption" => t('all','Debug'), "type" => "select", "options" => array("yes", "no"), );
+        $input_descriptors1[] = array( "name" => "port", "caption" => "CoA/PoD Port", "type" => "number", "min" => "1",
+                                       "max" => "65535", "value" => ((isset($port)) ? $port : RadClient::DEFAULT_COA_PORT),
+                                       "tooltipText" => "UDP port the NAS listens on for CoA/PoD packets. Default 3799 (some legacy NAS use 1700). (Optional)"
+                                     );
         $input_descriptors1[] = array( "name" => "timeout", "caption" => t('all','Timeout'), "type" => "number", "value" => "3", "min" => "1", );
         $input_descriptors1[] = array( "name" => "retries", "caption" => t('all','Retries'), "type" => "number", "value" => "3", "min" => "0", );
         $input_descriptors1[] = array( "name" => "count", "caption" => t('all','Count'), "type" => "number", "value" => "1", "min" => "1", );
@@ -231,11 +241,11 @@
         $input_descriptors2[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
-                                        "value" => t('all','TestUser'),
+                                        "value" => t('button','DisconnectUser'),
                                      );
 
         // set navbar stuff
-        $navkeys = array( 'Settings', 'Advanced', );
+        $navkeys = array( t('title','Settings'), t('title','Advanced'), );
 
         // print navbar controls
         print_tab_header($navkeys);
@@ -251,7 +261,7 @@
 
         // open a fieldset
         $fieldset0_descriptor = array(
-                                        "title" => "Disconnect User",
+                                        "title" => t('button','DisconnectUser'),
                                      );
 
         open_fieldset($fieldset0_descriptor);
@@ -293,7 +303,5 @@
 
     }
 
-    include('include/config/logging.php');
-
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-?>
