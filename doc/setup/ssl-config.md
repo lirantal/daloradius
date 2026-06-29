@@ -35,7 +35,7 @@ Generate a self-signed certificate valid for 365 days:
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout /etc/ssl/private/daloradius.key \
   -out /etc/ssl/certs/daloradius.crt \
-  -subj "/CN=daloradius.local"
+  -subj "/CN=daloradius.example.org"
 ```
 
 Set appropriate permissions on the private key:
