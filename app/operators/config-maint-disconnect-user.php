@@ -174,6 +174,7 @@
         $options = get_online_users();
         array_unshift($options, "");
 
+        // descriptors 0
         $input_descriptors0 = array();
         $input_descriptors0[] = array(
                                         "name" => "username",
@@ -240,11 +241,11 @@
         $input_descriptors2[] = array(
                                         "type" => "submit",
                                         "name" => "submit",
-                                        "value" => t('all','TestUser'),
+                                        "value" => t('button','DisconnectUser'),
                                      );
 
         // set navbar stuff
-        $navkeys = array( 'Settings', 'Advanced', );
+        $navkeys = array( t('title','Settings'), t('title','Advanced'), );
 
         // print navbar controls
         print_tab_header($navkeys);
@@ -260,7 +261,7 @@
 
         // open a fieldset
         $fieldset0_descriptor = array(
-                                        "title" => "Disconnect User",
+                                        "title" => t('button','DisconnectUser'),
                                      );
 
         open_fieldset($fieldset0_descriptor);

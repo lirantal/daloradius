@@ -317,7 +317,7 @@
                                      );
 
         // set navbar stuff
-        $navkeys = array( 'Settings', 'Advanced', );
+        $navkeys = array( t('title','Settings'), t('title','Advanced'), );
 
         // print navbar controls
         print_tab_header($navkeys);
@@ -333,7 +333,7 @@
 
         // open a fieldset
         $fieldset0_descriptor = array(
-                                        "title" => "Test User Connectivity",
+                                        "title" => t('button','TestUserConnectivity'),
                                      );
 
         open_fieldset($fieldset0_descriptor);
