@@ -43,9 +43,12 @@
                                     'CONFIG_DB_TBL_RADUSERGROUP' => t('all','usergroup'),
                                     'CONFIG_DB_TBL_RADACCT' => t('all','radacct'),
                                     'CONFIG_DB_TBL_RADNAS' => t('all','nas'),
+                                    'CONFIG_DB_TBL_NASRELOAD' => 'nasreload',
                                     'CONFIG_DB_TBL_RADHG' => t('all','hunt'),
                                     'CONFIG_DB_TBL_RADPOSTAUTH' => t('all','radpostauth'),
                                     'CONFIG_DB_TBL_RADIPPOOL' => t('all','radippool'),
+                                    'CONFIG_DB_TBL_CUI' => 'cui',
+                                    'CONFIG_DB_TBL_WIMAX' => 'wimax',
                                     'CONFIG_DB_TBL_DALOUSERINFO' => t('all','userinfo'),
                                     'CONFIG_DB_TBL_DALODICTIONARY' => t('all','dictionary'),
                                     'CONFIG_DB_TBL_DALOREALMS' => t('all','realms'),
@@ -69,6 +72,7 @@
                                     'CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES' => t('all','operators_acl_files'),
                                     'CONFIG_DB_TBL_DALOHOTSPOTS' => t('all','hotspots'),
                                     'CONFIG_DB_TBL_DALONODE' => t('all','node'),
+                                    'CONFIG_DB_TBL_MESSAGES' => 'messages'
                                 );
 
     $generic_db_conf_params = array(
