@@ -88,7 +88,7 @@
             // if the form has been submitted we validate and store the configuration
             if (array_key_exists('CONFIG_DB_ENGINE', $_POST) && isset($_POST['CONFIG_DB_ENGINE']) &&
                 in_array(strtolower($_POST['CONFIG_DB_ENGINE']), array_keys($valid_db_engines))) {
-                $configValues['CONFIG_DB_ENGINE'] = $_POST['CONFIG_DB_ENGINE'];
+                $configValues['CONFIG_DB_ENGINE'] = strtolower($_POST['CONFIG_DB_ENGINE']);
             }
 
             if (array_key_exists('CONFIG_DB_PORT', $_POST) && isset($_POST['CONFIG_DB_PORT']) &&
@@ -104,7 +104,7 @@
 
             // validate table name
             foreach ($db_tbl_param_label as $param => $label) {
-                if (array_key_exists($param, $_POST) && isset($_POST[$param]) && preg_match(DB_TABLE_NAME_REGEX, $_POST[$param]) !== false) {
+                if (array_key_exists($param, $_POST) && isset($_POST[$param]) && preg_match(DB_TABLE_NAME_REGEX, $_POST[$param]) === 1) {
                     $configValues[$param] = $_POST[$param];
                 }
             }
