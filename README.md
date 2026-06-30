@@ -16,9 +16,7 @@ At the end of this procedure, **the installation script will generate random cre
 
 ---
 ### installation guide
-To install daloRADIUS, you can follow the installation guide available in the project's official wiki:
-
-- [Wiki: Installing daloRADIUS](../../wiki/Installing-daloRADIUS)
+To install daloRADIUS, you can follow the installation guide available in the project's official [wiki](../../wiki/).
 
 Alternatively, you can also find the installation guide in the `doc/install` folder of this repository.
 
