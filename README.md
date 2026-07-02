@@ -173,7 +173,7 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
 
 ### Database migrations
 
-Fresh installations use the schema in `contrib/db/mariadb-daloradius.sql`. When upgrading an existing daloRADIUS installation, check `contrib/db/migrations/` and apply the relevant SQL migrations to your database before using newly added features.
+For new installations, use the schemas found in `contrib/db/mariadb-daloradius*.sql`. If you're upgrading an existing daloRADIUS setup, review `contrib/db/migrations/` and apply the relevant SQL migrations before using any newly introduced features. See the [upgrade notes](../../wiki/daloRADIUS-upgrade-notes-(Debian)) in the wiki for details.
 
 
 
