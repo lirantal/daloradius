@@ -141,6 +141,7 @@
                    ra.acctoutputoctets AS download,
                    hs.name AS hotspot,
                    rn.shortname AS nasshortname,
+                   rn.id AS nasid,
                    ui.firstname AS firstname,
                    ui.lastname AS lastname
               FROM %s AS ra LEFT JOIN %s AS hs ON hs.mac=ra.calledstationid
@@ -231,7 +232,7 @@
             list(
                     $this_username, $this_framedipaddress, $this_callingstationid, $this_starttime, $this_sessiontime,
                     $this_nasipaddress, $this_calledstationid, $this_sessionid, $this_upload, $this_download,
-                    $this_hotspot, $this_nasshortname, $this_firstname, $this_lastname
+                    $this_hotspot, $this_nasshortname, $this_nasid, $this_firstname, $this_lastname
                 ) = $row;
 
             $this_sessiontime = time2str($this_sessiontime);
@@ -260,7 +261,7 @@
             // tooltip and ajax stuff
             $custom_attributes = sprintf("Acct-Session-Id=%s,Framed-IP-Address=%s", $this_sessionid, $this_framedipaddress);
             $tooltip_disconnect_href = sprintf("config-maint-disconnect-user.php?username=%s&nasaddr=%s&customattributes=%s",
-                                               urlencode($this_username), urlencode($this_nasipaddress), urlencode($custom_attributes));
+                                               urlencode($this_username), urlencode("nas-" . $this_nasid), urlencode($custom_attributes));
 
             $ajax_id = "divContainerUserInfo_" . $count;
             $param = sprintf('username=%s', urlencode($this_username));
