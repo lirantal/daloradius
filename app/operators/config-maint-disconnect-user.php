@@ -150,7 +150,7 @@
                 $failureMsg = "CSRF token error";
                 $logAction .= "$failureMsg on page: ";
             }
-        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') { //input from online user page
             $username = (isset($_GET['username']) && !empty(trim($_GET['username']))) ? trim($_GET['username']) : "";
             $packetType = (isset($_GET['username']) && !empty(trim($_GET['username']))) ? "disconnect" : "";
             $nas_id = (isset($_GET['nasaddr']) && !empty(trim($_GET['nasaddr']))) ? trim($_GET['nasaddr']) : "";
