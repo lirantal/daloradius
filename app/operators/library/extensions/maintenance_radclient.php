@@ -254,20 +254,15 @@ class RadClient {
 
         include_once implode(DIRECTORY_SEPARATOR, [$configValues['COMMON_INCLUDES'], 'validation.php']);
 
+        $customAttributes = normalize_custom_attributes($params['customAttributes']);
+        if ($customAttributes === "") {
+            return "";
+        }
+
         $out = "";
-        foreach (explode(",", $params['customAttributes']) as $pair) {
-            if (strpos($pair, "=") === false) {
-                continue; // skip malformed entries instead of triggering a notice
-            }
-
+        foreach (explode(",", $customAttributes) as $pair) {
             list($attr, $value) = explode("=", $pair, 2);
-            $attr  = trim($attr);
-            $value = trim($value);
-
-            if ($attr !== "" && $value !== "" && $attr !== 'User-Name'
-                && preg_match(ALLOWED_ATTRIBUTE_CHARS_REGEX, $attr) === 1) {
-                $out .= sprintf(", %s=%s", $attr, escapeshellarg($value));
-            }
+            $out .= sprintf(", %s=%s", trim($attr), escapeshellarg(trim($value)));
         }
 
         return $out;

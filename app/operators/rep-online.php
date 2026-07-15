@@ -21,15 +21,15 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include_once('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
 
     // validate this parameter before including menu
     $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
@@ -112,8 +112,8 @@
     // open first tab (shown)
     open_tab($navkeys, 0, true);
 
-    include('../common/includes/db_open.php');
-    include('include/management/pages_common.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     // ra is a placeholder in the SQL statements below
     // except for $usernameLastConnect, which has been only partially escaped,
@@ -141,6 +141,7 @@
                    ra.acctoutputoctets AS download,
                    hs.name AS hotspot,
                    rn.shortname AS nasshortname,
+                   rn.id AS nasid,
                    ui.firstname AS firstname,
                    ui.lastname AS lastname
               FROM %s AS ra LEFT JOIN %s AS hs ON hs.mac=ra.calledstationid
@@ -158,8 +159,9 @@
         /* START - Related to pages_numbering.php */
 
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        // must be included after opendb because it needs to read
+        // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
 
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
@@ -180,7 +182,7 @@
         // this can be passed as form attribute and
         // printTableFormControls function parameter
         $action = "mng-del.php";
-        
+
         $descriptors = array();
 
         $descriptors['start'] = array( 'common_controls' => 'clearSessionsUsers[]' );
@@ -211,7 +213,7 @@
 
         // second line of table header
         printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-        
+
         // closes table header, opens table body
         print_table_middle();
 
@@ -231,14 +233,14 @@
             list(
                     $this_username, $this_framedipaddress, $this_callingstationid, $this_starttime, $this_sessiontime,
                     $this_nasipaddress, $this_calledstationid, $this_sessionid, $this_upload, $this_download,
-                    $this_hotspot, $this_nasshortname, $this_firstname, $this_lastname
+                    $this_hotspot, $this_nasshortname, $this_nasid, $this_firstname, $this_lastname
                 ) = $row;
 
+            // validation
             $this_sessiontime = time2str($this_sessiontime);
-
             $this_hotspot = (!empty($this_hotspot)) ? $this_hotspot : "(n/d)";
-
             $this_name = $this_firstname . "<br>" . $this_lastname;
+            $this_nasid = intval($this_nasid);
 
             $tooltip1 = "(n/d)";
             $tmp = $this_upload + $this_download;
@@ -248,19 +250,19 @@
                 $this_traffic = t('all','Upload') . ": " . $this_upload
                               . "<br>"
                               . t('all','Download') . ": " . $this_download;
-                              
+
                 $tooltip1 = array(
                                 'subject' => toxbyte($tmp),
                                 'content' => $this_traffic
                              );
-                             
+
                 $tooltip1 = get_tooltip_list_str($tooltip1);
             }
 
             // tooltip and ajax stuff
             $custom_attributes = sprintf("Acct-Session-Id=%s,Framed-IP-Address=%s", $this_sessionid, $this_framedipaddress);
-            $tooltip_disconnect_href = sprintf("config-maint-disconnect-user.php?username=%s&nasaddr=%s&customattributes=%s",
-                                               urlencode($this_username), urlencode($this_nasipaddress), urlencode($custom_attributes));
+            $tooltip_disconnect_href = sprintf("config-maint-disconnect-user.php?username=%s&nas_id=nas-%d&customAttributes=%s",
+                                               urlencode($this_username), $this_nasid, urlencode($custom_attributes));
 
             $ajax_id = "divContainerUserInfo_" . $count;
             $param = sprintf('username=%s', urlencode($this_username));
@@ -271,14 +273,14 @@
                                 'ajax_id' => $ajax_id,
                                 'actions' => array(),
                              );
-                             
+
             $tooltip2['actions'][] = array( 'href' => sprintf('rep-online.php?username=%s', urlencode($this_username)), 'label' => "Filter this user", );
             $tooltip2['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($this_username)), 'label' => t('Tooltip','UserEdit'), );
             $tooltip2['actions'][] = array( 'href' => $tooltip_disconnect_href, 'label' => t('all','Disconnect'), );
 
             // create tooltip
             $tooltip2 = get_tooltip_list_str($tooltip2);
-            
+
             // create checkbox
             $d = array( 'name' => 'clearSessionsUsers[]',
                         'value' => sprintf("%s||%s", $this_username, $this_starttime));
@@ -314,10 +316,10 @@
 
     } else {
         $failureMsg = "Nothing to display";
-        include_once("include/management/actionMessages.php");
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include('../common/includes/db_close.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     close_tab($navkeys, 0);
 
@@ -333,7 +335,6 @@
     // close tab wrapper
     close_tab_wrapper();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
 
     print_footer_and_html_epilogue();
-?>
