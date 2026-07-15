@@ -288,14 +288,14 @@ freeradius_setup_sqlcounter_mod() {
             echo "[!] Failed to enable freeRADIUS SQL counter module. Aborting." >&2
             exit 1
         fi
+    fi
 
-        # ensure freerad ownership
-        if ! chown freerad:freerad "${FREERADIUS_MODS_AVAIL_PATH}/sqlcounter" >/dev/null 2>&1 || \
-           ! chown -h freerad:freerad "${FREERADIUS_MODS_ENABL_PATH}/sqlcounter" >/dev/null 2>&1; then
-            print_red "KO"
-            echo "[!] Failed to set ownership of freeRADIUS SQL counter module. Aborting." >&2
-            exit 1
-        fi
+    # ensure freerad ownership
+    if ! chown freerad:freerad "${FREERADIUS_MODS_AVAIL_PATH}/sqlcounter" >/dev/null 2>&1 || \
+        ! chown -h freerad:freerad "${FREERADIUS_MODS_ENABL_PATH}/sqlcounter" >/dev/null 2>&1; then
+        print_red "KO"
+        echo "[!] Failed to set ownership of freeRADIUS SQL counter module. Aborting." >&2
+        exit 1
     fi
 
     if ! grep -q "^[[:space:]]*noresetcounter[[:space:]]*$" "${FREERADIUS_SITES_AVAIL_PATH}/default"; then
