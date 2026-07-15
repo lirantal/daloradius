@@ -52,6 +52,48 @@ define("DB_TABLE_NAME_REGEX", '/^[a-zA-Z0-9_]+$/');
 define("ALLOWED_RANDOM_CHARS_REGEX", DB_TABLE_NAME_REGEX);
 define("ALLOWED_ATTRIBUTE_CHARS_REGEX", '/^[a-zA-Z0-9-]+$/');
 
+if (!function_exists('normalize_custom_attributes')) {
+    /**
+     * Validate optional custom RADIUS attributes and drop malformed entries.
+     *
+     * Keeps only items shaped like `Attribute=Value`, rejects empty values,
+     * rejects `User-Name`, and allows only attribute names that match the
+     * shared whitelist regex.
+     *
+     * @param string $customAttributes Comma-separated `Attr=Value` pairs.
+     * @return string Normalized comma-separated list of valid pairs.
+     */
+    function normalize_custom_attributes($customAttributes) {
+        $customAttributes = trim((string)$customAttributes);
+        if ($customAttributes === "") {
+            return "";
+        }
+
+        $out = array();
+        foreach (explode(",", $customAttributes) as $pair) {
+            if (strpos($pair, "=") === false) {
+                continue;
+            }
+
+            list($attr, $value) = explode("=", $pair, 2);
+            $attr  = trim($attr);
+            $value = trim($value);
+
+            if ($attr === "" || $value === "" || $attr === 'User-Name') {
+                continue;
+            }
+
+            if (preg_match(ALLOWED_ATTRIBUTE_CHARS_REGEX, $attr) !== 1) {
+                continue;
+            }
+
+            $out[] = sprintf("%s=%s", $attr, $value);
+        }
+
+        return implode(", ", $out);
+    }
+}
+
 define("SENDER_NAME_REGEX", '/^[a-zA-Z0-9 -]+$/');
 define("SUBJECT_PREFIX_REGEX", '/^[a-zA-Z0-9 -\[\]]+$/');
 define("RECIPIENT_NAME_REGEX", '/^[a-zA-Z0-9 -]+$/');

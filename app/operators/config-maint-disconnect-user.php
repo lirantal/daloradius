@@ -86,7 +86,7 @@
                     $packetType = (isset($_POST['packetType']) && array_key_exists(trim($_POST['packetType']), $valid_packetTypes))
                                 ? trim($_POST['packetType']) : array_key_first($valid_packetTypes);
                     $customAttributes = (array_key_exists('customAttributes', $_POST) && !empty(trim($_POST['customAttributes'])))
-                                      ? trim($_POST['customAttributes']) : "";
+                                      ? normalize_custom_attributes($_POST['customAttributes']) : "";
 
                     $port = (array_key_exists('port', $_POST) && !empty(trim($_POST['port'])) &&
                              intval(trim($_POST['port'])) >= 1 && intval(trim($_POST['port'])) <= 65535)
@@ -151,10 +151,12 @@
                 $logAction .= "$failureMsg on page: ";
             }
         } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') { //input from online user page
-            $username = (isset($_GET['username']) && !empty(trim($_GET['username']))) ? trim($_GET['username']) : "";
-            $packetType = (isset($_GET['username']) && !empty(trim($_GET['username']))) ? "disconnect" : "";
-            $nas_id = (isset($_GET['nasaddr']) && !empty(trim($_GET['nasaddr']))) ? trim($_GET['nasaddr']) : "";
-
+            $username = (isset($_GET['username']) && is_string($_GET['username']) && strlen(trim($_GET['username'])) > 0)
+                      ? trim($_GET['username']) : "";
+            $nas_id = (isset($_GET['nas_id']) && in_array(trim($_GET['nas_id']), array_keys($valid_nas_ids)))
+                    ? trim($_GET['nas_id']) : "";
+            $customAttributes = (array_key_exists('customAttributes', $_GET) && !empty(trim($_GET['customAttributes'])))
+                              ? normalize_custom_attributes($_GET['customAttributes']) : "";
         }
 
     } else {
@@ -189,14 +191,11 @@
                                         "selected_value" => ((isset($username)) ? $username : ""),
                                      );
 
-        $options = $valid_packetTypes;
-        array_unshift($options, "");
-
         $input_descriptors0[] = array(
                                         "name" => "packetType",
                                         "caption" => t('all','PacketType'),
                                         "type" => "select",
-                                        "options" => $options,
+                                        "options" => $valid_packetTypes,
                                         "selected_value" => ((isset($packetType)) ? $packetType : ""),
                                      );
 
