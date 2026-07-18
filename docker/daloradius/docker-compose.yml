@@ -48,10 +48,12 @@ services:
       - PASSWORD_MIN_LENGTH=${PASSWORD_MIN_LENGTH:-}
       - PASSWORD_MAX_LENGTH=${PASSWORD_MAX_LENGTH:-}
     secrets:
+      - MYSQL_ROOT_PASSWORD
       - MYSQL_PASSWORD
       - DEFAULT_CLIENT_SECRET
     volumes:
       - ../../data/daloradius:/data
+      - ../../logs/freeradius:/var/log/freeradius
     networks:
       - radius-network
 
@@ -61,6 +63,8 @@ networks:
     driver: bridge
 
 secrets:
+  MYSQL_ROOT_PASSWORD:
+    file: ../../secrets/db/mysql_root_password
   MYSQL_PASSWORD:
     file: ../../secrets/db/mysql_password
   DEFAULT_CLIENT_SECRET:

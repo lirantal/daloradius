@@ -28,7 +28,7 @@ services:
     secrets:
       - MYSQL_ROOT_PASSWORD
     ports:
-      - '${MYSQL_PORT:-3306}:3306'
+      - '${MYSQL_HOST_PORT:-3306}:3306'
     volumes:
       - "../../data/mysql:/var/lib/mysql"
       # TLS: mount tls.cnf and certs (uncomment to enable):
@@ -54,6 +54,6 @@ secrets:
 
 volumes:
   mariadb_certs:
-    # TLS certificates volume. Populated manually or via setup/install-docker-compose.sh.
+    # TLS certificates volume. Populated manually (see docker/mariadb/README.md).
     # Created automatically on first use when TLS is enabled.
     name: mariadb_certs

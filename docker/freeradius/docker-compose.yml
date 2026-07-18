@@ -42,6 +42,7 @@ services:
       - DEFAULT_CLIENT_SECRET
     volumes:
       - ../../data/freeradius:/data
+      - ../../logs/freeradius:/var/log/freeradius
     healthcheck:
       test: ["CMD-SHELL", "echo 'FreeRADIUS-Statistics-Type = 1' | radclient -q -r 1 -t 3 127.0.0.1:18121 status adminsecret >/dev/null"]
       interval: 10s
