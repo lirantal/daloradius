@@ -13,7 +13,7 @@ This directory contains the TLS configuration for the MariaDB (`radius-mysql`) s
 
 1. `tls.cnf` is mounted into the MariaDB container at `/etc/mysql/conf.d/tls.cnf`
 2. It references certificates located in `/etc/mysql/certs/` (a named volume `mariadb_certs`)
-3. The `mariadb_certs` volume is populated by `setup/install-docker.sh` (not automatically)
+3. The `mariadb_certs` volume is populated manually (see "Enabling TLS" below) — there is no automated setup script yet
 
 ### Certificate paths expected by tls.cnf
 
@@ -35,23 +35,18 @@ FREERADIUS_SQL_TLS=require
 
 ### 2. Generate or provide certificates
 
-Run the setup script (recommended):
-
-```bash
-./setup/install-docker.sh
-```
-
-Or manually place your own certificates in `./secrets/db/`:
+Place your certificates in `./secrets/db/`:
 
 - `mysql_ca.pem`
 - `mysql_server.pem`
 - `mysql_server.key.pem`
 
-Then populate the Docker volume:
+Then populate the Docker volume. The `mariadb:11.8` image runs the server
+as the `mysql` user (UID 999), so the key file must be owned by that UID:
 
 ```bash
 docker volume create mariadb_certs
-docker run --rm -v mariadb_certs:/certs -v "$PWD/secrets/db":/hostsecrets alpine:latest sh -c 'cp /hostsecrets/*.pem /certs/ && chmod 644 /certs/*.pem && chmod 600 /certs/*key.pem'
+docker run --rm -v mariadb_certs:/certs -v "$PWD/secrets/db":/hostsecrets alpine:latest sh -c 'cp /hostsecrets/*.pem /certs/ && chown 999:999 /certs/*key.pem && chmod 644 /certs/*.pem && chmod 600 /certs/*key.pem'
 ```
 
 ### 3. Uncomment TLS volumes in docker-compose.yml

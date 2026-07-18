@@ -6,8 +6,9 @@
 # Usage:
 #   docker compose --project-directory . -f docker/mariadb/docker-compose.yml up -d
 #
-# To enable TLS, set FREERADIUS_SQL_TLS=require in .env
-# and ensure certificates exist in ./secrets/db/ (see README.md).
+# To enable TLS, uncomment the tls.cnf and mariadb_certs volume mounts below.
+# The FREERADIUS_SQL_TLS variable is consumed by FreeRADIUS's SQL client, not by MariaDB.
+# Also ensure certificates exist in ./secrets/db/ (see README.md).
 
 services:
 
