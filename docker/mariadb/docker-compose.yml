@@ -1,0 +1,52 @@
+# Standalone MariaDB service for daloRADIUS.
+#
+# Use this compose file when you want to run MariaDB independently
+# (e.g., for TLS setup, debugging, or as an external database).
+#
+# Usage:
+#   docker compose -f docker/mariadb/docker-compose.yml up -d
+#
+# To enable TLS, set FREERADIUS_SQL_TLS=enabled in .env
+# and ensure certificates exist in ./secrets/db/ (see README.md).
+
+services:
+
+  radius-mysql:
+    image: mariadb:11.8
+    container_name: radius-mysql
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
+      - MYSQL_USER=${MYSQL_USER:-radius}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
+    volumes:
+      - "./data/mysql:/var/lib/mysql"
+      # TLS: mount tls.cnf and certs when FREERADIUS_SQL_TLS=enabled
+      # Uncomment these lines to enable TLS:
+      # - "./docker/mariadb/tls.cnf:/etc/mysql/conf.d/tls.cnf:ro"
+      # - "mariadb_certs:/etc/mysql/certs:ro"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: ${MYSQL_HEALTH_START_PERIOD:-10m}
+    networks:
+      - radius-network
+
+networks:
+  radius-network:
+    name: radius-network
+    driver: bridge
+
+volumes:
+  mariadb_certs:
+    # External volume populated by setup/install-docker.sh with SSL certs.
+    # Created automatically on first use when TLS is enabled.
+    name: mariadb_certs
