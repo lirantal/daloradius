@@ -11,7 +11,7 @@ FROM freeradius/freeradius-server:3.2.8
 LABEL maintainer="Liran Tal <liran.tal@gmail.com>"
 LABEL Description="FreeRADIUS 3.2.8 Docker image optimized for daloRADIUS." \
 	License="GPLv2" \
-	Usage="docker build -t lirantal/dalofreeradius -f docker/freeradius/Dockerfile && docker run -d -p 1812:1812/udp -p 1813:1813/udp lirantal/dalofreeradius" \
+	Usage="docker build -t lirantal/dalofreeradius -f docker/freeradius/Dockerfile . && docker run -d -p 1812:1812/udp -p 1813:1813/udp lirantal/dalofreeradius" \
 	Version="1.0"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -41,6 +41,6 @@ RUN sed -i 's/\r$//' /app/init-freeradius.sh \
 	&& chmod +x /app/init-freeradius.sh
 
 # Expose FreeRADIUS Ports
-EXPOSE 1812 1813
+EXPOSE 1812/udp 1813/udp
 
 ENTRYPOINT ["/app/init-freeradius.sh"]

@@ -12,7 +12,6 @@ MYSQL_DATABASE=${MYSQL_DATABASE:-raddb}
 MYSQL_USER=${MYSQL_USER:-raduser}
 MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-5}
 FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
-DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-testing123}
 
 MYSQL_DEFAULTS_FILE=""
 
@@ -34,8 +33,12 @@ read_secret_or_env() {
 	fi
 }
 
-# Resolve sensitive values: secret file > env var > default
-MYSQL_PASSWORD="$(read_secret_or_env "MYSQL_PASSWORD" "MYSQL_PASSWORD" "radiusdbpw")"
+# Resolve sensitive values: secret file > env var (NO hardcoded fallback — must come from .env or Docker secrets)
+MYSQL_PASSWORD="$(read_secret_or_env "MYSQL_PASSWORD" "MYSQL_PASSWORD")"
+[ -z "$MYSQL_PASSWORD" ] && { echo "FATAL: MYSQL_PASSWORD not set. Define it in .env or as a Docker secret." >&2; exit 1; }
+
+DEFAULT_CLIENT_SECRET="$(read_secret_or_env "DEFAULT_CLIENT_SECRET" "DEFAULT_CLIENT_SECRET")"
+[ -z "$DEFAULT_CLIENT_SECRET" ] && { echo "FATAL: DEFAULT_CLIENT_SECRET not set. Define it in .env or as a Docker secret." >&2; exit 1; }
 
 # ---------------------------------------------------------------------------
 # MySQL defaults file (secure temp file with trap cleanup)
@@ -166,7 +169,7 @@ function init_freeradius {
 	sql_config_set "server" "$MYSQL_HOST"
 	sql_config_set "port" "$MYSQL_PORT"
 	sed -i "1,\$s/radius_db.*/radius_db=\"$(escape_sed_replacement "$MYSQL_DATABASE")\"/g" "$RADIUS_PATH/mods-available/sql"
-	sql_config_set "password" "$MYSQL_PASSWORD"
+	sql_config_set "password" "${MYSQL_PASSWORD//\"/\\\"}"
 	sql_config_set "login" "$MYSQL_USER"
 
 	sed -i "s|testing123|$(escape_sed_replacement "$DEFAULT_CLIENT_SECRET")|" "$RADIUS_PATH/mods-available/sql"
@@ -274,8 +277,8 @@ function enable_group_nas_restrictions {
 				print "\t\t# Enforce radgroupcheck NAS-IP-Address == restrictions as an"
 				print "\t\t# authentication deny rule for users assigned to SQL groups."
 				print "\t\tif (&request:NAS-IP-Address) {"
-				print "\t\t\tif (\"%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '\''%{User-Name}'\'' AND gc.attribute = '\''NAS-IP-Address'\'' AND gc.op = '\''=='\''}\" != \"0\") {"
-				print "\t\t\t\tif (\"%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '\''%{User-Name}'\'' AND gc.attribute = '\''NAS-IP-Address'\'' AND gc.op = '\''=='\'' AND gc.value = '\''%{NAS-IP-Address}'\''}\" == \"0\") {"
+				print "\t\t\tif (\"%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '\''%{SQL-User-Name}'\'' AND gc.attribute = '\''NAS-IP-Address'\'' AND gc.op = '\''=='\''}\" != \"0\") {"
+				print "\t\t\t\tif (\"%{sql:SELECT COUNT(*) FROM radusergroup ug JOIN radgroupcheck gc ON gc.groupname = ug.groupname WHERE ug.username = '\''%{SQL-User-Name}'\'' AND gc.attribute = '\''NAS-IP-Address'\'' AND gc.op = '\''=='\'' AND gc.value = '\''%{NAS-IP-Address}'\''}\" == \"0\") {"
 				print "\t\t\t\t\treject"
 				print "\t\t\t\t}"
 				print "\t\t\t}"
@@ -312,7 +315,7 @@ function ensure_docker_client {
 	container_ip_address=$(ifconfig eth0 2>/dev/null | awk '/inet /{ print $2; exit }')
 	container_netmask=$(ifconfig eth0 2>/dev/null | awk '/netmask/{ print $4; exit }')
 	container_cidr=$(ipcalc "$container_ip_address" "$container_netmask" 2>/dev/null | awk '/Network/{ print $2; exit }')
-	client_secret=${DEFAULT_CLIENT_SECRET:-testing123}
+	client_secret="$DEFAULT_CLIENT_SECRET"
 	container_cidr_sql=$(sql_escape "$container_cidr")
 	client_secret_sql=$(sql_escape "$client_secret")
 
