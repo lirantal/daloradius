@@ -80,6 +80,11 @@ sanitize_file_for_linux() {
   done
 }
 
+# Escape &, \, and | for use in sed replacement strings
+escape_sed_replacement() {
+  printf '%s' "$1" | sed -e 's/[&\\|]/\\&/g'
+}
+
 prompt_or_generate_secret() {
   local filename="$1"
   local description="$2"
@@ -126,8 +131,33 @@ mkdir -p "$SECRETS_DIR"
 
 prompt_or_generate_secret "mysql_root_password"    "MariaDB root password"
 prompt_or_generate_secret "mysql_password"         "Application DB password (radius user)"
-prompt_or_generate_secret "daloradius_client_secret" "RADIUS shared secret (NAS client)"
 print_green "  Secrets ready."
+
+# === daloRADIUS client secret (in secrets/daloradius/) ===
+DALORADIUS_SECRETS_DIR="$REPO_ROOT/secrets/daloradius"
+mkdir -p "$DALORADIUS_SECRETS_DIR"
+CLIENT_SECRET_FILE="$DALORADIUS_SECRETS_DIR/daloradius_client_secret"
+if [ -f "$CLIENT_SECRET_FILE" ]; then
+  echo "  daloradius_client_secret already exists, keeping it."
+  chmod 600 "$CLIENT_SECRET_FILE" 2>/dev/null || true
+else
+  echo ""
+  echo "  Secret 'daloradius_client_secret' (RADIUS shared secret) not found."
+  read -r -p "  Generate automatically? [Y/n] " answer
+  if [[ "$answer" =~ ^[Nn] ]]; then
+    read -r -s -p "  Enter value (silent): " custom_val
+    echo ""
+    echo -n "$custom_val" > "$CLIENT_SECRET_FILE"
+    echo "  Written to $CLIENT_SECRET_FILE"
+  else
+    local generated
+    generated="$(generate_random_string)"
+    echo -n "$generated" > "$CLIENT_SECRET_FILE"
+    echo "  Generated secret written to $CLIENT_SECRET_FILE"
+  fi
+  chmod 600 "$CLIENT_SECRET_FILE"
+fi
+print_green "  daloRADIUS client secret ready."
 
 # ============================================================
 # STEP 2: TLS certificates (only if FREERADIUS_SQL_TLS=enabled/require)
@@ -216,16 +246,21 @@ echo "==> STEP 3: Ensuring .env file with generated secrets..."
 # Read generated secrets
 MYSQL_ROOT_PASSWORD_VAL="$(cat "$SECRETS_DIR/mysql_root_password" 2>/dev/null || echo "")"
 MYSQL_PASSWORD_VAL="$(cat "$SECRETS_DIR/mysql_password" 2>/dev/null || echo "")"
-CLIENT_SECRET_VAL="$(cat "$SECRETS_DIR/daloradius_client_secret" 2>/dev/null || echo "")"
+CLIENT_SECRET_VAL="$(cat "$DALORADIUS_SECRETS_DIR/daloradius_client_secret" 2>/dev/null || echo "")"
+
+# Escape sed replacement metacharacters
+MYSQL_ROOT_PASSWORD_ESC=$(escape_sed_replacement "$MYSQL_ROOT_PASSWORD_VAL")
+MYSQL_PASSWORD_ESC=$(escape_sed_replacement "$MYSQL_PASSWORD_VAL")
+CLIENT_SECRET_ESC=$(escape_sed_replacement "$CLIENT_SECRET_VAL")
 
 if [ ! -f "$ENV_FILE" ]; then
   EXAMPLE_ENV="$REPO_ROOT/.env.example"
   if [ -f "$EXAMPLE_ENV" ]; then
     cp "$EXAMPLE_ENV" "$ENV_FILE"
     # Replace placeholders with generated values
-    [ -n "$MYSQL_ROOT_PASSWORD_VAL" ] && sed -i "s|CHANGE_ME_ROOT_DB_PASSWORD|$MYSQL_ROOT_PASSWORD_VAL|" "$ENV_FILE" 2>/dev/null || true
-    [ -n "$MYSQL_PASSWORD_VAL" ] && sed -i "s|CHANGE_ME_RADIUS_DB_PASSWORD|$MYSQL_PASSWORD_VAL|" "$ENV_FILE" 2>/dev/null || true
-    [ -n "$CLIENT_SECRET_VAL" ] && sed -i "s|CHANGE_ME_RADIUS_SHARED_SECRET|$CLIENT_SECRET_VAL|" "$ENV_FILE" 2>/dev/null || true
+    [ -n "$MYSQL_ROOT_PASSWORD_VAL" ] && sed -i "s|CHANGE_ME_ROOT_DB_PASSWORD|$MYSQL_ROOT_PASSWORD_ESC|" "$ENV_FILE" 2>/dev/null || true
+    [ -n "$MYSQL_PASSWORD_VAL" ] && sed -i "s|CHANGE_ME_RADIUS_DB_PASSWORD|$MYSQL_PASSWORD_ESC|" "$ENV_FILE" 2>/dev/null || true
+    [ -n "$CLIENT_SECRET_VAL" ] && sed -i "s|CHANGE_ME_RADIUS_SHARED_SECRET|$CLIENT_SECRET_ESC|" "$ENV_FILE" 2>/dev/null || true
     echo "  Created $ENV_FILE from .env.example with generated secrets."
   else
     echo "  Warning: .env.example not found, creating minimal .env"
@@ -241,9 +276,9 @@ EOF
 else
   # Update existing .env placeholders if still present
   if grep -q "CHANGE_ME" "$ENV_FILE" 2>/dev/null; then
-    [ -n "$MYSQL_ROOT_PASSWORD_VAL" ] && sed -i "s|MYSQL_ROOT_PASSWORD=CHANGE_ME_ROOT_DB_PASSWORD|MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD_VAL|" "$ENV_FILE" 2>/dev/null || true
-    [ -n "$MYSQL_PASSWORD_VAL" ] && sed -i "s|MYSQL_PASSWORD=CHANGE_ME_RADIUS_DB_PASSWORD|MYSQL_PASSWORD=$MYSQL_PASSWORD_VAL|" "$ENV_FILE" 2>/dev/null || true
-    [ -n "$CLIENT_SECRET_VAL" ] && sed -i "s|DEFAULT_CLIENT_SECRET=CHANGE_ME_RADIUS_SHARED_SECRET|DEFAULT_CLIENT_SECRET=$CLIENT_SECRET_VAL|" "$ENV_FILE" 2>/dev/null || true
+    [ -n "$MYSQL_ROOT_PASSWORD_VAL" ] && sed -i "s|MYSQL_ROOT_PASSWORD=CHANGE_ME_ROOT_DB_PASSWORD|MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD_ESC|" "$ENV_FILE" 2>/dev/null || true
+    [ -n "$MYSQL_PASSWORD_VAL" ] && sed -i "s|MYSQL_PASSWORD=CHANGE_ME_RADIUS_DB_PASSWORD|MYSQL_PASSWORD=$MYSQL_PASSWORD_ESC|" "$ENV_FILE" 2>/dev/null || true
+    [ -n "$CLIENT_SECRET_VAL" ] && sed -i "s|DEFAULT_CLIENT_SECRET=CHANGE_ME_RADIUS_SHARED_SECRET|DEFAULT_CLIENT_SECRET=$CLIENT_SECRET_ESC|" "$ENV_FILE" 2>/dev/null || true
     echo "  Updated .env placeholder values."
   else
     echo "  .env already has custom values."
@@ -283,8 +318,8 @@ MYSQL_USER_NAME="${MYSQL_USER:-radius}"
 APP_PW="$(cat "$SECRETS_DIR/mysql_password" 2>/dev/null || echo "")"
 [ -z "$APP_PW" ] && { echo "Error: mysql_password secret not found" >&2; exit 1; }
 
-# Escape single quotes in passwords for SQL safety
-sql_escape() { printf '%s' "$1" | sed "s/'/''/g"; }
+# Escape backslashes and single quotes in passwords for SQL safety
+sql_escape() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e "s/'/''/g"; }
 APP_PW_ESCAPED=$(sql_escape "$APP_PW")
 
 docker exec radius-mysql mysql -uroot -p"$ROOT_PW" \
@@ -303,9 +338,15 @@ DB_DIR="$REPO_ROOT/contrib/db"
 if docker exec radius-mysql mysql -uroot -p"$ROOT_PW" -e "USE \`$MYSQL_DB\`; SHOW TABLES LIKE 'nas';" 2>/dev/null | grep -q 'nas'; then
   echo "  Schema already loaded (nas table exists), skipping."
 else
-  # FreeRADIUS schema is loaded by the radius container's init-freeradius.sh
-  # entrypoint. Skipping here to avoid conflicts with existing tables.
-  echo "  FreeRADIUS schema will be loaded by the radius container entrypoint."
+  # Load FreeRADIUS schema first — daloRADIUS schema depends on these tables.
+  # The radius container entrypoint also loads it, but that runs in Step 7.
+  if [ -f "$DB_DIR/fr3-mariadb-freeradius.sql" ]; then
+    echo "  Loading FreeRADIUS schema..."
+    docker exec -i radius-mysql mysql -uroot -p"$ROOT_PW" "$MYSQL_DB" < "$DB_DIR/fr3-mariadb-freeradius.sql"
+    echo "  FreeRADIUS schema loaded."
+  else
+    echo "  Warning: $DB_DIR/fr3-mariadb-freeradius.sql not found" >&2
+  fi
 
   if [ -f "$DB_DIR/mariadb-daloradius.sql" ]; then
     echo "  Loading daloRADIUS schema..."
@@ -369,7 +410,7 @@ echo "  ┌───────────────────────
 echo "  │  RADIUS                              │"
 echo "  ├─────────────────────────────────────┤"
 echo "  │  NAS shared secret (default client): │"
-echo "  │    stored in secrets/db/daloradius_client_secret │"
+echo "  │    stored in secrets/daloradius/daloradius_client_secret │"
 echo "  │                                     │"
 echo "  │  Default NAS IP (auto-registered):   │"
 echo "  │    Docker network gateway            │"

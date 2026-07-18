@@ -1,0 +1,8 @@
+[mysqld]
+# SSL/TLS configuration
+ssl-ca=/etc/mysql/certs/mysql_ca.pem
+ssl-cert=/etc/mysql/certs/mysql_server.pem
+ssl-key=/etc/mysql/certs/mysql_server.key.pem
+
+# Optional: force secure connections (uncomment for production)
+# require_secure_transport = ON

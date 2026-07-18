@@ -13,11 +13,11 @@ secrets/
 │   ├── .gitkeep
 │   ├── mysql_root_password      ← MariaDB root password
 │   ├── mysql_password           ← radius app DB password
-│   └── daloradius_client_secret ← RADIUS shared secret (NAS client)
 ├── freeradius/                  ← FreeRADIUS secrets (future use)
 │   └── .gitkeep
-└── daloradius/                  ← daloRADIUS web secrets (future use)
-    └── .gitkeep
+└── daloradius/                  ← daloRADIUS web secrets
+    ├── .gitkeep
+    └── daloradius_client_secret ← RADIUS shared secret (NAS client)
 ```
 
 ## Secret files
@@ -26,7 +26,7 @@ Each file under `secrets/db/` contains a single line with the secret value.
 The init scripts (`read_secret_or_env()`) read from the secret file first,
 falling back to environment variables if the file is absent.
 
-> **Note:** Secret-file mounting via Docker Compose (`docker-secret:` + `file:`
+> **Note:** Secret-file mounting via Docker Compose (`secrets:` + `file:`
 > paths) is wired into the standalone compose files. The files listed below
 > are **not committed** — they must be created locally before running Compose.
 > Use `setup/install-docker-compose.sh` to generate them automatically.
@@ -71,7 +71,9 @@ It will:
 
 The init scripts (`init.sh`, `init-freeradius.sh`) include a
 `read_secret_or_env()` function that checks `/run/secrets/<name>` first,
-then falls back to `*_FILE` environment variables.
+then falls back to environment variables with the same name.
+MariaDB&#39;s official image supports `*_FILE` suffixed variables natively;
+the init scripts do not — they read the matching env var directly.
 
 The standalone compose files now mount Docker Secrets via:
 - `secrets:` section in each service

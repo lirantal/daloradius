@@ -70,4 +70,4 @@ secrets:
   MYSQL_PASSWORD:
     file: ../../secrets/db/mysql_password
   DEFAULT_CLIENT_SECRET:
-    file: ../../secrets/db/daloradius_client_secret
+    file: ../../secrets/daloradius/daloradius_client_secret
