@@ -23,10 +23,9 @@ services:
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
       - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/MYSQL_ROOT_PASSWORD
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
       - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
-    secrets:
-      - MYSQL_ROOT_PASSWORD
     ports:
       - '${MYSQL_HOST_PORT:-3306}:3306'
     volumes:
