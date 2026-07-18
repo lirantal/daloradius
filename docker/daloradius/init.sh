@@ -50,7 +50,7 @@ function init_daloradius {
 	[ -n "$PASSWORD_MAX_LENGTH" ] && sed -i "s/\$configValues\['CONFIG_DB_PASSWORD_MAX_LENGTH'\] = .*;/\$configValues\['CONFIG_DB_PASSWORD_MAX_LENGTH'\] = '$PASSWORD_MAX_LENGTH';/" $DALORADIUS_CONF_PATH
 
 	local FREERADIUS_SERVER="${DEFAULT_FREERADIUS_SERVER:-radius}"
-	local FREERADIUS_PORT="${DEFAULT_FREERADIUS_PORT:-18121}"
+	local FREERADIUS_PORT="${DEFAULT_FREERADIUS_PORT:-1812}"
 	local CLIENT_SECRET
 	CLIENT_SECRET=$(read_secret_or_env "DEFAULT_CLIENT_SECRET" "DEFAULT_CLIENT_SECRET")
 	[ -z "$CLIENT_SECRET" ] && { echo "FATAL: DEFAULT_CLIENT_SECRET not set. Define it in .env or as a Docker secret." >&2; exit 1; }
