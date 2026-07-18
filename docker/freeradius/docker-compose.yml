@@ -1,0 +1,63 @@
+# Standalone FreeRADIUS service for daloRADIUS.
+#
+# Use this compose file to run FreeRADIUS independently
+# (e.g., for debugging, testing, or as a standalone RADIUS server).
+#
+# Usage:
+#   docker compose -f docker/freeradius/docker-compose.yml up -d
+#
+# Includes MariaDB automatically. To use an external DB, set MYSQL_HOST.
+
+include:
+  - ../mariadb/docker-compose.yml
+
+services:
+
+  radius:
+    image: lirantal/dalofreeradius
+    container_name: radius
+    build:
+      context: ../..
+      dockerfile: docker/freeradius/Dockerfile
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
+    depends_on:
+      radius-mysql:
+        condition: service_healthy
+    ports:
+      - '1812:1812/udp'
+      - '1813:1813/udp'
+    environment:
+      - TZ=${TZ:-Europe/Vienna}
+      - MYSQL_HOST=${MYSQL_HOST:-radius-mysql}
+      - MYSQL_PORT=${MYSQL_PORT:-3306}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
+      - MYSQL_USER=${MYSQL_USER:-radius}
+      - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
+    secrets:
+      - MYSQL_PASSWORD
+      - DEFAULT_CLIENT_SECRET
+    volumes:
+      - ../../data/freeradius:/data
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'FreeRADIUS-Statistics-Type = 1' | radclient -q -r 1 -t 3 127.0.0.1:18121 status adminsecret >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - radius-network
+
+networks:
+  radius-network:
+    name: radius-network
+    driver: bridge
+
+secrets:
+  MYSQL_PASSWORD:
+    file: ../../secrets/db/mysql_password
+  DEFAULT_CLIENT_SECRET:
+    file: ../../secrets/db/daloradius_client_secret

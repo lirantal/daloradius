@@ -23,9 +23,10 @@ services:
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
       - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/MYSQL_ROOT_PASSWORD
       - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
+    secrets:
+      - MYSQL_ROOT_PASSWORD
     ports:
       - '${MYSQL_PORT:-3306}:3306'
     volumes:
@@ -46,6 +47,10 @@ networks:
   radius-network:
     name: radius-network
     driver: bridge
+
+secrets:
+  MYSQL_ROOT_PASSWORD:
+    file: ../../secrets/db/mysql_root_password
 
 volumes:
   mariadb_certs:

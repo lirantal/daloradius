@@ -38,9 +38,7 @@ services:
       - MYSQL_PORT=${MYSQL_PORT:-3306}
       - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
       - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
       # Optional Settings:
-      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env}
       - DEFAULT_FREERADIUS_SERVER=${DEFAULT_FREERADIUS_SERVER:-radius}
       - DEFAULT_FREERADIUS_PORT=${DEFAULT_FREERADIUS_PORT:-1812}
       - MAIL_SMTPADDR=${MAIL_SMTPADDR:-127.0.0.1}
@@ -49,6 +47,9 @@ services:
       - MAIL_AUTH=${MAIL_AUTH:-}
       - PASSWORD_MIN_LENGTH=${PASSWORD_MIN_LENGTH:-}
       - PASSWORD_MAX_LENGTH=${PASSWORD_MAX_LENGTH:-}
+    secrets:
+      - MYSQL_PASSWORD
+      - DEFAULT_CLIENT_SECRET
     volumes:
       - ../../data/daloradius:/data
     networks:
@@ -58,3 +59,9 @@ networks:
   radius-network:
     name: radius-network
     driver: bridge
+
+secrets:
+  MYSQL_PASSWORD:
+    file: ../../secrets/db/mysql_password
+  DEFAULT_CLIENT_SECRET:
+    file: ../../secrets/db/daloradius_client_secret
