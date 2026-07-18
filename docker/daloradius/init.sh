@@ -108,7 +108,7 @@ else
 fi
 
 # wait for MySQL-Server to be ready
-local MYSQL_ROOT_PASSWORD
+
 MYSQL_ROOT_PASSWORD=$(read_secret_or_env "MYSQL_ROOT_PASSWORD" "MYSQL_ROOT_PASSWORD")
 [ -z "$MYSQL_ROOT_PASSWORD" ] && { echo "FATAL: MYSQL_ROOT_PASSWORD not set. Define it in .env or as a Docker secret." >&2; exit 1; }
 echo -n "Waiting for mysql ($MYSQL_HOST)..."
@@ -125,6 +125,9 @@ else
 	init_database
 	date > $DB_LOCK
 fi
+
+# Suppress Apache FQDN warning
+echo "ServerName radius-web" >> /etc/apache2/apache2.conf
 
 # Start Apache2 in the foreground
 /usr/sbin/apachectl -DFOREGROUND -k start

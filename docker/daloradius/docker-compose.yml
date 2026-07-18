@@ -14,7 +14,6 @@ include:
 services:
 
   radius-web:
-    image: lirantal/daloradius
     container_name: radius-web
     build:
       context: ../..
@@ -38,9 +37,9 @@ services:
       - MYSQL_PORT=${MYSQL_PORT:-3306}
       - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
       - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
-      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env}
+      - MYSQL_PASSWORD_FILE=/run/secrets/MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/MYSQL_ROOT_PASSWORD
+      - DEFAULT_CLIENT_SECRET_FILE=/run/secrets/DEFAULT_CLIENT_SECRET
       # Optional Settings:
       - DEFAULT_FREERADIUS_SERVER=${DEFAULT_FREERADIUS_SERVER:-radius}
       - DEFAULT_FREERADIUS_PORT=${DEFAULT_FREERADIUS_PORT:-1812}
@@ -53,6 +52,10 @@ services:
     volumes:
       - ../../data/daloradius:/data
       - ../../logs/freeradius:/var/log/freeradius
+    secrets:
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
+      - DEFAULT_CLIENT_SECRET
     networks:
       - radius-network
 
@@ -60,3 +63,11 @@ networks:
   radius-network:
     name: radius-network
     driver: bridge
+
+secrets:
+  MYSQL_ROOT_PASSWORD:
+    file: ../../secrets/db/mysql_root_password
+  MYSQL_PASSWORD:
+    file: ../../secrets/db/mysql_password
+  DEFAULT_CLIENT_SECRET:
+    file: ../../secrets/db/daloradius_client_secret

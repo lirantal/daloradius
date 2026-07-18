@@ -14,7 +14,6 @@ include:
 services:
 
   radius:
-    image: lirantal/dalofreeradius
     container_name: radius
     build:
       context: ../..
@@ -36,12 +35,15 @@ services:
       - MYSQL_PORT=${MYSQL_PORT:-3306}
       - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
       - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
-      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env}
+      - MYSQL_PASSWORD_FILE=/run/secrets/MYSQL_PASSWORD
+      - DEFAULT_CLIENT_SECRET_FILE=/run/secrets/DEFAULT_CLIENT_SECRET
       - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
     volumes:
       - ../../data/freeradius:/data
       - ../../logs/freeradius:/var/log/freeradius
+    secrets:
+      - MYSQL_PASSWORD
+      - DEFAULT_CLIENT_SECRET
     healthcheck:
       test: ["CMD-SHELL", "echo 'FreeRADIUS-Statistics-Type = 1' | radclient -q -r 1 -t 3 127.0.0.1:18121 status adminsecret >/dev/null"]
       interval: 10s
@@ -55,3 +57,9 @@ networks:
   radius-network:
     name: radius-network
     driver: bridge
+
+secrets:
+  MYSQL_PASSWORD:
+    file: ../../secrets/db/mysql_password
+  DEFAULT_CLIENT_SECRET:
+    file: ../../secrets/db/daloradius_client_secret

@@ -23,8 +23,8 @@ services:
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
       - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      - MYSQL_PASSWORD_FILE=/run/secrets/MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/MYSQL_ROOT_PASSWORD
       - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
     ports:
       - '${MYSQL_HOST_PORT:-3306}:3306'
@@ -33,6 +33,9 @@ services:
       # TLS: mount tls.cnf and certs (uncomment to enable):
       # - "../../docker/mariadb/tls.cnf:/etc/mysql/conf.d/tls.cnf:ro"
       # - "mariadb_certs:/etc/mysql/certs:ro"
+    secrets:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_PASSWORD
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -50,6 +53,8 @@ networks:
 secrets:
   MYSQL_ROOT_PASSWORD:
     file: ../../secrets/db/mysql_root_password
+  MYSQL_PASSWORD:
+    file: ../../secrets/db/mysql_password
 
 volumes:
   mariadb_certs:
