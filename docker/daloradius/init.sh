@@ -126,8 +126,8 @@ else
 	date > $DB_LOCK
 fi
 
-# Suppress Apache FQDN warning
-echo "ServerName radius-web" >> /etc/apache2/apache2.conf
+# Suppress Apache FQDN warning (guard against duplicate on restart)
+grep -qxF 'ServerName radius-web' /etc/apache2/apache2.conf || echo "ServerName radius-web" >> /etc/apache2/apache2.conf
 
 # Start Apache2 in the foreground
 /usr/sbin/apachectl -DFOREGROUND -k start

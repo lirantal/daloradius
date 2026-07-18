@@ -35,8 +35,8 @@ services:
       - MYSQL_PORT=${MYSQL_PORT:-3306}
       - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
       - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_PASSWORD_FILE=/run/secrets/MYSQL_PASSWORD
-      - DEFAULT_CLIENT_SECRET_FILE=/run/secrets/DEFAULT_CLIENT_SECRET
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env or secret}
+      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env or secret}
       - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
     volumes:
       - ../../data/freeradius:/data
@@ -59,7 +59,5 @@ networks:
     driver: bridge
 
 secrets:
-  MYSQL_PASSWORD:
-    file: ../../secrets/db/mysql_password
   DEFAULT_CLIENT_SECRET:
     file: ../../secrets/db/daloradius_client_secret
