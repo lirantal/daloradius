@@ -26,11 +26,12 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
       - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
+    ports:
+      - '${MYSQL_PORT:-3306}:3306'
     volumes:
-      - "./data/mysql:/var/lib/mysql"
-      # TLS: mount tls.cnf and certs when FREERADIUS_SQL_TLS=enabled
-      # Uncomment these lines to enable TLS:
-      # - "./docker/mariadb/tls.cnf:/etc/mysql/conf.d/tls.cnf:ro"
+      - "../../data/mysql:/var/lib/mysql"
+      # TLS: mount tls.cnf and certs (uncomment to enable):
+      # - "../../docker/mariadb/tls.cnf:/etc/mysql/conf.d/tls.cnf:ro"
       # - "mariadb_certs:/etc/mysql/certs:ro"
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
@@ -48,6 +49,6 @@ networks:
 
 volumes:
   mariadb_certs:
-    # External volume populated by setup/install-docker.sh with SSL certs.
+    # TLS certificates volume. Populated manually or via setup/install-docker-compose.sh.
     # Created automatically on first use when TLS is enabled.
     name: mariadb_certs
