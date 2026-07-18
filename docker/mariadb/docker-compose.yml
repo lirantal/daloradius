@@ -4,9 +4,9 @@
 # (e.g., for TLS setup, debugging, or as an external database).
 #
 # Usage:
-#   docker compose -f docker/mariadb/docker-compose.yml up -d
+#   docker compose --project-directory . -f docker/mariadb/docker-compose.yml up -d
 #
-# To enable TLS, set FREERADIUS_SQL_TLS=enabled in .env
+# To enable TLS, set FREERADIUS_SQL_TLS=require in .env
 # and ensure certificates exist in ./secrets/db/ (see README.md).
 
 services:
