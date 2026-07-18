@@ -1,3 +1,9 @@
+# TLS template for MariaDB.
+# Activate by setting FREERADIUS_SQL_TLS=enabled|require in .env
+# and running setup/install-docker-compose.sh.
+# The installer regenerates this file from its internal template.
+# Edits here will be overwritten on next TLS-enabled install run.
+
 [mysqld]
 # SSL/TLS configuration
 ssl-ca=/etc/mysql/certs/mysql_ca.pem

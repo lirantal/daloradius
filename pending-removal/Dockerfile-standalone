@@ -1,9 +1,11 @@
+# This file was moved to docker/freeradius/Dockerfile and docker/daloradius/Dockerfile.
+# This copy is kept temporarily for reference and will be removed after PR approval.
+# See docker/<service>/Dockerfile for the current version.
+
 FROM alpine AS source
 
 RUN apk add git
-
 WORKDIR /tmp/
-
 RUN git clone https://github.com/lirantal/daloradius.git /tmp/daloradius
 
 

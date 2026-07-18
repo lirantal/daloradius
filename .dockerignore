@@ -14,3 +14,13 @@ var/log/
 var/backup/
 app/common/includes/daloradius.conf.php
 app/common/library/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/HTML/
+
+# Exclude subdirs but keep files needed by Dockerfile COPY
+docker/
+!docker/*/Dockerfile
+!docker/*/init*.sh
+setup/
+secrets/
+pending-removal/
+
+# Apache site configs are kept (required by docker/daloradius/Dockerfile COPY)

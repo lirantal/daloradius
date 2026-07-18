@@ -27,20 +27,21 @@ The init scripts (`read_secret_or_env()`) read from the secret file first,
 falling back to environment variables if the file is absent.
 
 > **Note:** Secret-file mounting via Docker Compose (`secrets:` + `file:`
-> paths) is wired into the standalone compose files. The files listed below
-> are **not committed** — they must be created locally before running Compose.
-> Use `setup/install-docker-compose.sh` to generate them automatically.
+> paths) is wired into the standalone compose files.
+> Use `setup/install-docker-compose.sh` to generate everything automatically.
 
-### Required files (must be created locally)
+### Required files (created by the installer)
 
-These paths are not committed. Create each file with a real secret value before
-running a standalone Compose file:
+The root `docker-compose.yml` is **generated on the fly** by
+`setup/install-docker-compose.sh`. Do not create it manually.
+
+Secret files are created in their respective directories:
 
 - `secrets/db/mysql_root_password`
 - `secrets/db/mysql_password`
-- `secrets/db/daloradius_client_secret`
+- `secrets/daloradius/daloradius_client_secret`
 
-Run `setup/install-docker-compose.sh` to auto-generate all three.
+Run `setup/install-docker-compose.sh` to auto-generate all of the above.
 
 ## Auto-generation
 
@@ -78,5 +79,17 @@ the init scripts do not — they read the matching env var directly.
 The standalone compose files now mount Docker Secrets via:
 - `secrets:` section in each service
 - `MYSQL_ROOT_PASSWORD_FILE`, `MYSQL_PASSWORD_FILE`, `DEFAULT_CLIENT_SECRET_FILE` set to `/run/secrets/<name>`
+
+> **⚠️ Note on duplicate secret definitions:**
+> `MYSQL_PASSWORD` is defined in both `docker/mariadb/docker-compose.yml` and
+> `docker/freeradius/docker-compose.yml` (same file source, same content).
+> This produces a harmless Compose warning ("duplicate resource"), but it is
+> intentional: each service mounts the secret independently via `secrets:`
+> so the password is **never exposed as an environment variable**.
+>
+> **Security over clean logs.** An env var would leak the password into
+> `docker inspect`, logs, and process listings. A file-backed secret
+> (`/run/secrets/MYSQL_PASSWORD`) is readable only by the container user.
+> The warning is cosmetic — the running services are unaffected.
 
 See `docker/*/docker-compose.yml` for the current wiring.

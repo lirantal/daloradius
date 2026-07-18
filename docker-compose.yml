@@ -1,103 +1,12 @@
-services:
-
-  radius-mysql:
-    image: mariadb:11.8
-    container_name: radius-mysql
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - NET_RAW
-    environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
-      - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
-    volumes:
-      - "./data/mysql:/var/lib/mysql"
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: ${MYSQL_HEALTH_START_PERIOD:-10m}
-
-  radius:
-    image: lirantal/dalofreeradius
-    container_name: radius
-    build:
-      context: .
-      dockerfile: Dockerfile-freeradius
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - NET_RAW
-    depends_on:
-      radius-mysql:
-        condition: service_healthy
-    ports:
-      - '1812:1812/udp'
-      - '1813:1813/udp'
-    environment:
-      - TZ=${TZ:-Europe/Vienna}
-      - MYSQL_HOST=${MYSQL_HOST:-radius-mysql}
-      - MYSQL_PORT=${MYSQL_PORT:-3306}
-      - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
-      - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
-      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env}
-      - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
-    volumes:
-      - ./data/freeradius:/data
-      - radius_logs:/var/log/freeradius
-    healthcheck:
-      test: ["CMD-SHELL", "echo 'FreeRADIUS-Statistics-Type = 1' | radclient -q -r 1 -t 3 127.0.0.1:18121 status adminsecret >/dev/null"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-    # Uncomment below to enable debug logging.
-    #command: -X
-
-  radius-web:
-    image: lirantal/daloradius
-    build: .
-    container_name: radius-web
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - NET_RAW
-    depends_on:
-      radius-mysql:
-        condition: service_healthy
-      radius:
-        condition: service_healthy
-    ports:
-      - '80:80'
-      - '${DALORADIUS_OPERATORS_BIND:-127.0.0.1:8000}:8000'
-    environment:
-      - TZ=${TZ:-Europe/Vienna}
-      - MYSQL_HOST=${MYSQL_HOST:-radius-mysql}
-      - MYSQL_PORT=${MYSQL_PORT:-3306}
-      - MYSQL_DATABASE=${MYSQL_DATABASE:-radius}
-      - MYSQL_USER=${MYSQL_USER:-radius}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
-      # Optional Settings:
-      - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env}
-      - DEFAULT_FREERADIUS_SERVER=${DEFAULT_FREERADIUS_SERVER:-radius}
-      - DEFAULT_FREERADIUS_PORT=${DEFAULT_FREERADIUS_PORT:-1812}
-      - MAIL_SMTPADDR=${MAIL_SMTPADDR:-127.0.0.1}
-      - MAIL_PORT=${MAIL_PORT:-25}
-      - MAIL_FROM=${MAIL_FROM:-root@daloradius.example.com}
-      - MAIL_AUTH=${MAIL_AUTH:-}
-      - PASSWORD_MIN_LENGTH=${PASSWORD_MIN_LENGTH:-}
-      - PASSWORD_MAX_LENGTH=${PASSWORD_MAX_LENGTH:-}
-
-    volumes:
-      - ./data/daloradius:/data
-      - radius_logs:/var/log/freeradius
-
-volumes:
-  radius_logs:
+# Root docker-compose.yml placeholder.
+# Run setup/install-docker-compose.sh to generate the full orchestrator.
+# 
+# After the first run, use:
+#   docker compose up -d
+#
+# For standalone usage, run directly from docker/<service>/:
+#   docker compose -f docker/<service>/docker-compose.yml up -d
+#
+# All service configuration lives in docker/<service>/docker-compose.yml.
+# The install script creates this file with an `include:` directive pointing
+# to docker/daloradius/docker-compose.yml (which includes the other two).
