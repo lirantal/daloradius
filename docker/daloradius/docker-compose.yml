@@ -52,6 +52,7 @@ services:
     volumes:
       - ../../data/daloradius:/data
       - ../../logs/freeradius:/var/log/freeradius
+      - ../../logs/daloradius:/var/www/daloradius/var/log
     secrets:
       - MYSQL_PASSWORD
       - MYSQL_ROOT_PASSWORD
