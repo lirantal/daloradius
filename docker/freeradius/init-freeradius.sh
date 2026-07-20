@@ -148,6 +148,8 @@ function init_freeradius {
 	sed -i 's|dialect = ${modules.sql.dialect}|dialect = "mysql"|' "$RADIUS_PATH/mods-available/sqlcounter"
 	configure_sql_tls
 	sed -i 's|#\s*read_clients = yes|read_clients = yes|' "$RADIUS_PATH/mods-available/sql"
+	sed -i 's|#\s*read_profiles = yes|read_profiles = yes|' "$RADIUS_PATH/mods-available/sql"
+	sed -i 's|#\s*read_groups = yes|read_groups = yes|' "$RADIUS_PATH/mods-available/sql"
 	ln -sf "$RADIUS_PATH/mods-available/sql" "$RADIUS_PATH/mods-enabled/sql"
 	ln -sf "$RADIUS_PATH/mods-available/sqlcounter" "$RADIUS_PATH/mods-enabled/sqlcounter"
 	ln -sf "$RADIUS_PATH/mods-available/sqlippool" "$RADIUS_PATH/mods-enabled/sqlippool"
@@ -156,6 +158,9 @@ function init_freeradius {
 
 	# Enable tunnel for UniFi
 	sed -i 's|use_tunneled_reply = no|use_tunneled_reply = yes|' "$RADIUS_PATH/mods-available/eap"
+
+	# Enable VLAN assignment via post-auth (Dynamic VLAN from radgroupreply)
+	enable_vlan_post_auth
 
 	# Log authentication
 	sed -i 's|auth = no|auth = yes|' "$RADIUS_PATH/radiusd.conf"
@@ -333,6 +338,46 @@ function init_database {
 	ensure_daloradius_schema
 	ensure_docker_client
 	echo "Database initialization for freeradius completed."
+}
+
+# ---------------------------------------------------------------------------
+# VLAN post-auth — Dynamic VLAN assignment from radgroupreply
+# ---------------------------------------------------------------------------
+function enable_vlan_post_auth {
+	local freeradius_default_tmp
+	freeradius_default_tmp=$(mktemp) || {
+		echo "Failed to create temporary file."
+		exit 1
+	}
+
+	if ! awk '
+		BEGIN { in_post_auth = 0; added = 0 }
+		/^post-auth[[:space:]]*[{]/ { in_post_auth = 1; print; next }
+		in_post_auth && !added && /^[[:space:]]*update reply[[:space:]]*[{]/ {
+			print
+			added = 1
+			next
+		}
+		in_post_auth && !added && /^[[:space:]]*exec[[:space:]]*$/ {
+			print "\tupdate reply {"
+			print "\t\tTunnel-Type := VLAN"
+			print "\t\tTunnel-Medium-Type := IEEE-802"
+			print "\t\tTunnel-Private-Group-ID := \"%{sql:SELECT value FROM radgroupreply WHERE attribute='\''Tunnel-Private-Group-Id'\'' AND groupname = (SELECT groupname FROM radusergroup WHERE username = '\''%{SQL-User-Name}'\'' LIMIT 1)}\""
+			print "\t}"
+			added = 1
+			print
+			next
+		}
+		in_post_auth && /^[[:space:]]*}[[:space:]]*$/ { in_post_auth = 0 }
+		{ print }
+		END { exit added ? 0 : 1 }
+	' "$RADIUS_PATH/sites-available/default" > "$freeradius_default_tmp"; then
+		rm -f "$freeradius_default_tmp"
+		echo "Failed to add VLAN post-auth to FreeRADIUS sites-available/default."
+		exit 1
+	fi
+	mv "$freeradius_default_tmp" "$RADIUS_PATH/sites-available/default"
+	echo "VLAN post-auth enabled."
 }
 
 # ---------------------------------------------------------------------------
