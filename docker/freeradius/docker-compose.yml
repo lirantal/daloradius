@@ -6,6 +6,10 @@
 # Usage:
 #   docker compose -f docker/freeradius/docker-compose.yml up -d
 #
+# Note: All relative paths use ../../ prefix (resolved from the compose file's
+# directory = docker/freeradius/ -> project root). Do NOT use --project-directory
+# with these files, as it changes path resolution and will break volume mounts.
+#
 # Includes MariaDB automatically. To use an external DB, set MYSQL_HOST.
 
 include:
@@ -29,6 +33,12 @@ services:
     ports:
       - '1812:1812/udp'
       - '1813:1813/udp'
+    # ----------------------------------------------------------------------
+    # note: MYSQL_PASSWORD and DEFAULT_CLIENT_SECRET are listed here as env
+    # vars for documentation purposes. The actual credential source is the
+    # Docker Secret at /run/secrets/*, which read_secret_or_env() reads
+    # first. These env vars are never used when secrets are mounted.
+    # ----------------------------------------------------------------------
     environment:
       - TZ=${TZ:-Europe/Vienna}
       - MYSQL_HOST=${MYSQL_HOST:-radius-mysql}

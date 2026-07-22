@@ -1,17 +1,21 @@
 # Official daloRADIUS Dockerfile
 # GitHub: https://github.com/lirantal/daloradius
 #
+# This image is designed to run as part of the Docker Compose stack.
+# Standalone usage requires external MariaDB and FreeRADIUS, plus
+# secrets mounted at /run/secrets/. See README.docker-compose.md.
+#
 # Build image:
 #   docker build -t lirantal/daloradius -f docker/daloradius/Dockerfile .
 #
-# Run the container:
-#   docker run -p 80:80 -p 8000:8000 -d lirantal/daloradius
+# Run with Compose stack:
+#   docker compose up -d --build
 
 FROM debian:13-slim
 LABEL maintainer="Liran Tal <liran.tal@gmail.com>"
 LABEL Description="daloRADIUS Official Docker based on Debian 13 and PHP 8.4." \
 	License="GPLv2" \
-	Usage="docker build . -t lirantal/daloradius && docker run -d -p 80:80 -p 8000:8000 lirantal/daloradius" \
+	Usage="Use docker compose up -d --build to start the full stack. See README.docker-compose.md." \
 	Version="2.3"
 
 ENV DEBIAN_FRONTEND=noninteractive

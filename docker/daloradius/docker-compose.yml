@@ -6,6 +6,10 @@
 #
 # Usage:
 #   docker compose -f docker/daloradius/docker-compose.yml up -d
+#
+# Note: All relative paths use ../../ prefix (resolved from the compose file's
+# directory = docker/daloradius/ -> project root). Do NOT use --project-directory
+# with these files, as it changes path resolution and will break volume mounts.
 
 include:
   - ../mariadb/docker-compose.yml
@@ -30,7 +34,7 @@ services:
         condition: service_healthy
     ports:
       - '80:80'
-      - '${DALORADIUS_OPERATORS_BIND:-127.0.0.1:8000}:8000'
+      - '${DALORADIUS_OPERATORS_BIND:-0.0.0.0:8000}:8000'
     environment:
       - TZ=${TZ:-Europe/Vienna}
       - MYSQL_HOST=${MYSQL_HOST:-radius-mysql}
