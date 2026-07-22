@@ -342,41 +342,33 @@ function init_database {
 
 # ---------------------------------------------------------------------------
 # VLAN post-auth — Dynamic VLAN assignment from radgroupreply
+# Uses sed to add VLAN block inside post-auth section.
 # ---------------------------------------------------------------------------
 function enable_vlan_post_auth {
-	local freeradius_default_tmp
-	freeradius_default_tmp=$(mktemp) || {
-		echo "Failed to create temporary file."
-		exit 1
-	}
-
-	if ! awk '
-		BEGIN { in_post_auth = 0; added = 0 }
-		/^post-auth[[:space:]]*[{]/ { in_post_auth = 1; print; next }
-		in_post_auth && !added && /^[[:space:]]*update reply[[:space:]]*[{]/ {
-			print
-			added = 1
-			next
-		}
-		in_post_auth && !added && /^[[:space:]]*exec[[:space:]]*$/ {
-			print "\tupdate reply {"
-			print "\t\tTunnel-Type := VLAN"
-			print "\t\tTunnel-Medium-Type := IEEE-802"
-			print "\t\tTunnel-Private-Group-ID := \"%{sql:SELECT value FROM radgroupreply WHERE attribute='\''Tunnel-Private-Group-Id'\'' AND groupname = (SELECT groupname FROM radusergroup WHERE username = '\''%{SQL-User-Name}'\'' LIMIT 1)}\""
-			print "\t}"
-			added = 1
-			print
-			next
-		}
-		in_post_auth && /^[[:space:]]*}[[:space:]]*$/ { in_post_auth = 0 }
-		{ print }
-		END { exit added ? 0 : 1 }
-	' "$RADIUS_PATH/sites-available/default" > "$freeradius_default_tmp"; then
-		rm -f "$freeradius_default_tmp"
-		echo "Failed to add VLAN post-auth to FreeRADIUS sites-available/default."
-		exit 1
+	if grep -q "VLAN CONFIG" "$RADIUS_PATH/sites-available/default" 2>/dev/null; then
+		echo "VLAN post-auth already applied, skipping."
+		return
 	fi
-	mv "$freeradius_default_tmp" "$RADIUS_PATH/sites-available/default"
+
+	# Insert VLAN block before the first Post-Auth-Type section inside post-auth
+	sed -i '/^[[:space:]]*Post-Auth-Type REJECT/{
+		i\
+	# VLAN CONFIG - Dynamic VLAN assignment from radgroupreply\n\
+	if (reply:Tunnel-Private-Group-Id) {\n\
+		# already set by authorize/sql\n\
+	} else {\n\
+		update reply {\n\
+			Tunnel-Private-Group-Id := "%{sql:SELECT value FROM radgroupreply WHERE attribute='\''Tunnel-Private-Group-Id'\'' AND groupname = (SELECT groupname FROM radusergroup WHERE username = '\''%{User-Name}'\'' LIMIT 1)}"\n\
+		}\n\
+	}\n\
+\n\
+	update reply {\n\
+		Tunnel-Type := VLAN\n\
+		Tunnel-Medium-Type := IEEE-802\n\
+		Tunnel-Private-Group-Id := "%{reply:Tunnel-Private-Group-Id}"\n\
+	}\n
+	}' "$RADIUS_PATH/sites-available/default"
+
 	echo "VLAN post-auth enabled."
 }
 
