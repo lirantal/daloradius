@@ -1,18 +1,19 @@
-# Official daloRADIUS Dockerfile for FreeRADIUS
+# Dockerfile for daloRADIUS FreeRADIUS service
 # GitHub: https://github.com/lirantal/daloradius
 #
-# Build image:
-#   docker build -t lirantal/dalofreeradius -f docker/freeradius/Dockerfile .
+# Build:
+#   docker compose -f docker/freeradius/docker-compose.yml build
 #
-# Run the container:
-#   docker run -d -p 1812:1812/udp -p 1813:1813/udp lirantal/dalofreeradius
+# Run:
+#   docker compose -f docker/freeradius/docker-compose.yml up -d
 
-FROM freeradius/freeradius-server:3.2.8
+FROM freeradius/freeradius-server:latest
 LABEL maintainer="Liran Tal <liran.tal@gmail.com>"
-LABEL Description="FreeRADIUS 3.2.8 Docker image optimized for daloRADIUS." \
+LABEL Description="FreeRADIUS Docker image optimized for daloRADIUS." \
 	License="GPLv2" \
-	Usage="docker build -t lirantal/dalofreeradius -f docker/freeradius/Dockerfile . && docker run -d -p 1812:1812/udp -p 1813:1813/udp lirantal/dalofreeradius" \
-	Version="1.0"
+	Usage="docker compose -f docker/freeradius/docker-compose.yml up -d" \
+	Version="3.2"
+
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -24,7 +25,6 @@ RUN apt-get update \
 	&& apt-get install --yes --no-install-recommends \
 		ipcalc \
 		tzdata \
-		net-tools \
 		mariadb-client \
 	&& rm -rf /var/lib/apt/lists/*
 
