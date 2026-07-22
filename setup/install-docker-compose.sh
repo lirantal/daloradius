@@ -45,16 +45,14 @@ echo "  Directory: $REPO_ROOT"
 echo "============================================"
 echo ""
 
-# --- Dependency checks ---
+# --- Dependency checks: require Docker Compose v2 (plugin) ---
+# docker-compose v1 is NOT supported — it lacks the `include:` directive
+# required by the modular compose structure.
 DOCKER_COMPOSE="docker compose"
 if ! docker compose version >/dev/null 2>&1; then
-  if command -v docker-compose >/dev/null 2>&1; then
-    DOCKER_COMPOSE="docker-compose"
-    echo "  Using docker-compose (legacy)."
-  else
-    echo "Error: neither 'docker compose' nor 'docker-compose' found." >&2
-    exit 1
-  fi
+  echo "Error: 'docker compose' (v2) not found." >&2
+  echo "Install Docker Engine 24+ or Docker Desktop: https://docs.docker.com/engine/install/" >&2
+  exit 1
 fi
 
 for cmd in docker openssl; do
@@ -89,7 +87,10 @@ echo ""
 
 FIRST_RUN=false
 
-# --- Helpers ---
+# ---------------------------------------------------------------------------
+# Helper functions
+# ---------------------------------------------------------------------------
+
 generate_random_string() {
   local len=${1:-20}
   openssl rand -base64 $((len+4)) | tr -dc 'A-Za-z0-9' | cut -c1-"$len"
@@ -149,7 +150,10 @@ prompt_or_generate_secret() {
   chmod 600 "$filepath"
 }
 
-# --- Re-run detection ---
+# ---------------------------------------------------------------------------
+# Re-run detection
+# If secrets already exist, show interactive menu instead of fresh install.
+# ---------------------------------------------------------------------------
 if [ -f "$SECRETS_DIR/mysql_root_password" ] || { [ -f "$ENV_FILE" ] && ! grep -q "CHANGE_ME" "$ENV_FILE" 2>/dev/null; }; then
   while true; do
     echo ""
@@ -201,8 +205,7 @@ if [ -f "$SECRETS_DIR/mysql_root_password" ] || { [ -f "$ENV_FILE" ] && ! grep -
         echo '     docker exec radius-mysql mariadb-dump -uroot -p"$(cat secrets/db/mysql_root_password)" radius > "$BACKUP_DIR/radius-db.sql"'
         echo ""
         echo "  3. Clean up:"
-        echo "     docker compose down -v"
-        echo "     docker system prune -a -f"
+        echo "     $DOCKER_COMPOSE down -v"
         echo "     rm -rf secrets/db/ secrets/daloradius/"
         echo "     rm -f .env docker-compose.yml"
         echo ""
@@ -223,10 +226,10 @@ if [ -f "$SECRETS_DIR/mysql_root_password" ] || { [ -f "$ENV_FILE" ] && ! grep -
         echo "  ════════════════════════════════════════════════════════════"
         echo ""
         echo "  This option will DESTROY your current configuration:"
-        echo "    - Remove all secrets (DB passwords, RADIUS secrets)"
         echo "    - Remove docker-compose.yml and .env"
         echo "    - Stop and remove all containers and volumes"
         echo "    - WARNING: Docker volumes will be DELETED (data loss)"
+        echo "    - Secrets are preserved (backed up first)"
         echo ""
         echo "  ════════════════════════════════════════════════════════════"
         echo "  ⚠️  LIABILITY DISCLAIMER"
@@ -256,7 +259,7 @@ if [ -f "$SECRETS_DIR/mysql_root_password" ] || { [ -f "$ENV_FILE" ] && ! grep -
           continue
         fi
         echo ""
-        echo "  ✅ Confirmation received. Proceding..."
+        echo "  Confirmation received. Proceeding..."
         echo ""
         echo "  Backing up current configuration..."
         BACKUP_DIR="backup-$(date +%Y%m%d-%H%M%S)"
@@ -278,9 +281,7 @@ if [ -f "$SECRETS_DIR/mysql_root_password" ] || { [ -f "$ENV_FILE" ] && ! grep -
         fi
         echo ""
         echo "  Stopping services and cleaning up..."
-        docker compose down -v 2>/dev/null || true
-        docker system prune -a -f 2>/dev/null || true
-        rm -rf "$REPO_ROOT/secrets/db/" "$REPO_ROOT/secrets/daloradius/" 2>/dev/null || true
+        $DOCKER_COMPOSE down -v --rmi local 2>/dev/null || true
         rm -f "$ENV_FILE" "$REPO_ROOT/docker-compose.yml" 2>/dev/null || true
         echo "  Clean up done. Proceeding with fresh installation..."
         echo ""
@@ -297,9 +298,14 @@ if [ -f "$SECRETS_DIR/mysql_root_password" ] || { [ -f "$ENV_FILE" ] && ! grep -
   done
 fi
 
-# ============================================================
+# ===========================================================================
 # STEP 0: Create data directories for bind mounts
-# ============================================================
+#
+# These directories store persistent data on the host so that container
+# restarts and upgrades do not lose database files, FreeRADIUS state, or
+# daloRADIUS uploads. Created here (not by Compose) so they exist before
+# MariaDB attempts to initialize.
+# ===========================================================================
 echo "==> STEP 0: Creating data directories..."
 mkdir -p "$REPO_ROOT/data/mysql"
 mkdir -p "$REPO_ROOT/data/freeradius"
@@ -429,7 +435,6 @@ EOF
   ' || echo "  Warning: chown failed, MariaDB may not read keys" >&2
 
   # Create a Compose override to activate TLS mounts for MariaDB
-  # This is applied automatically when the stack starts
   TLS_OVERRIDE="$REPO_ROOT/docker/mariadb/tls-compose.yml"
   cat > "$TLS_OVERRIDE" <<EOF
 # Auto-generated by install-docker-compose.sh — TLS MariaDB mounts
@@ -440,6 +445,12 @@ services:
       - "mariadb_certs:/etc/mysql/certs:ro"
 EOF
   echo "  TLS Compose override written to $TLS_OVERRIDE"
+
+  # Include the TLS override in the root orchestrator
+  if [ -f "$ORCHESTRATOR_FILE" ]; then
+    sed -i '/^include:/a\  - docker/mariadb/tls-compose.yml' "$ORCHESTRATOR_FILE"
+    echo "  Added tls-compose.yml to root orchestrator."
+  fi
 
   print_green "  TLS certificates ready."
 else
@@ -527,7 +538,7 @@ MYSQL_USER_NAME="${MYSQL_USER:-radius}"
 APP_PW="$(cat "$SECRETS_DIR/mysql_password" 2>/dev/null || echo "")"
 [ -z "$APP_PW" ] && { echo "Error: mysql_password secret not found" >&2; exit 1; }
 
-# Escape backslashes and single quotes in passwords for SQL safety
+# Escape backslashes and single quotes for SQL safety
 sql_escape() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e "s/'/''/g"; }
 APP_PW_ESCAPED=$(sql_escape "$APP_PW")
 
@@ -584,7 +595,7 @@ MYSQL_PORT="${MYSQL_PORT:-3306}"
 
 echo ""
 echo "============================================"
-echo "  ✅ daloRADIUS stack is up!"
+echo "  daloRADIUS stack is up!"
 echo ""
 echo "  🌐 Access the web UI:"
 echo "     Admin panel:  http://localhost:8000  (or http://<server-ip>:8000)"
