@@ -4,7 +4,11 @@
 # (e.g., for TLS setup, debugging, or as an external database).
 #
 # Usage:
-#   docker compose --project-directory . -f docker/mariadb/docker-compose.yml up -d
+#   docker compose -f docker/mariadb/docker-compose.yml up -d
+#
+# Note: All relative paths use ../../ prefix (resolved from the compose file's
+# directory = docker/mariadb/ -> project root). Do NOT use --project-directory
+# with these files, as it changes path resolution and will break volume mounts.
 #
 # To enable TLS, uncomment the tls.cnf and mariadb_certs volume mounts below.
 # The FREERADIUS_SQL_TLS variable is consumed by FreeRADIUS's SQL client, not by MariaDB.
