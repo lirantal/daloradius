@@ -1,12 +1,10 @@
 # Root docker-compose.yml placeholder.
 # Run setup/install-docker-compose.sh to generate the full orchestrator.
-# 
-# After the first run, use:
-#   docker compose up -d
-#
-# For standalone usage, run directly from docker/<service>/:
-#   docker compose -f docker/<service>/docker-compose.yml up -d
-#
-# All service configuration lives in docker/<service>/docker-compose.yml.
-# The install script creates this file with an `include:` directive pointing
-# to docker/daloradius/docker-compose.yml (which includes the other two).
+
+services:
+  setup-required:
+    image: alpine:3.21
+    container_name: setup-required
+    restart: "no"
+    entrypoint: >
+      sh -c 'echo "ERROR: Run setup/install-docker-compose.sh first to generate the full orchestrator." && exit 1'
