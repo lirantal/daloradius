@@ -28,7 +28,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SECRETS_DIR="$REPO_ROOT/secrets/db"
-TLS_CONF_DIR="$REPO_ROOT/docker/db"
+TLS_CONF_DIR="$REPO_ROOT/docker/mariadb"
 TLS_CONF_FILE="$TLS_CONF_DIR/tls.cnf"
 
 # --- Colored output ---
