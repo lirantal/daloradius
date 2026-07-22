@@ -45,10 +45,9 @@ TZ=Europe/Vienna
 >
 > **`MYSQL_HOST_PORT`**: controls the host port for MariaDB (default `3306`).
 > MariaDB is exposed on all interfaces by default (`0.0.0.0`), which is
-> suitable for development and for container-to-container communication
-> within the Docker network. For production environments where direct
-> database access from outside the host is not needed, restrict it to
-> localhost by setting `MYSQL_HOST_PORT=127.0.0.1:3306` in your `.env`.
+> suitable for development and for debugging with external tools. For production
+> environments where direct database access from outside the host is not needed,
+> restrict it to localhost by setting `MYSQL_HOST_PORT=127.0.0.1:3306` in your `.env`.
 
 > **Passwords are stored in `secrets/db/` and `secrets/daloradius/` and mounted**
 > as Docker Secrets (`/run/secrets/*`). The `MYSQL_PASSWORD` and
