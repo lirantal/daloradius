@@ -39,11 +39,19 @@ function init_daloradius {
 	[ -z "$MYSQL_PASSWORD" ] && { echo "FATAL: MYSQL_PASSWORD not set. Define it in .env or as a Docker secret." >&2; exit 1; }
 	local MYSQL_DATABASE="${MYSQL_DATABASE:-radius}"
 
-	sed -i "s/\$configValues\['CONFIG_DB_HOST'\] = .*;/\$configValues\['CONFIG_DB_HOST'\] = '$MYSQL_HOST';/" $DALORADIUS_CONF_PATH
-	sed -i "s/\$configValues\['CONFIG_DB_PORT'\] = .*;/\$configValues\['CONFIG_DB_PORT'\] = '$MYSQL_PORT';/" $DALORADIUS_CONF_PATH
-	sed -i "s/\$configValues\['CONFIG_DB_PASS'\] = .*;/\$configValues\['CONFIG_DB_PASS'\] = '$MYSQL_PASSWORD';/" $DALORADIUS_CONF_PATH
-	sed -i "s/\$configValues\['CONFIG_DB_USER'\] = .*;/\$configValues\['CONFIG_DB_USER'\] = '$MYSQL_USER';/" $DALORADIUS_CONF_PATH
-	sed -i "s/\$configValues\['CONFIG_DB_NAME'\] = .*;/\$configValues\['CONFIG_DB_NAME'\] = '$MYSQL_DATABASE';/" $DALORADIUS_CONF_PATH
+	# Escape values for PHP single-quoted string context and sed metacharacters
+	local esc_host esc_port esc_pass esc_user esc_name
+	printf -v esc_host '%s' "$MYSQL_HOST"; esc_host=$(sed 's/[\/&|]|/\&/g; s/\x27/\x27\\\x27\x27/g' <<<"$esc_host")
+	printf -v esc_port '%s' "$MYSQL_PORT"
+	printf -v esc_pass '%s' "$MYSQL_PASSWORD"; esc_pass=$(sed 's/[\/&|]|/\&/g; s/\x27/\x27\\\x27\x27/g' <<<"$esc_pass")
+	printf -v esc_user '%s' "$MYSQL_USER"; esc_user=$(sed 's/[\/&|]|/\&/g; s/\x27/\x27\\\x27\x27/g' <<<"$esc_user")
+	printf -v esc_name '%s' "$MYSQL_DATABASE"; esc_name=$(sed 's/[\/&|]|/\&/g; s/\x27/\x27\\\x27\x27/g' <<<"$esc_name")
+
+	sed -i "s/\$configValues\['CONFIG_DB_HOST'\] = .*;/\$configValues\['CONFIG_DB_HOST'\] = '$esc_host';/" $DALORADIUS_CONF_PATH
+	sed -i "s/\$configValues\['CONFIG_DB_PORT'\] = .*;/\$configValues\['CONFIG_DB_PORT'\] = '$esc_port';/" $DALORADIUS_CONF_PATH
+	sed -i "s/\$configValues\['CONFIG_DB_PASS'\] = .*;/\$configValues\['CONFIG_DB_PASS'\] = '$esc_pass';/" $DALORADIUS_CONF_PATH
+	sed -i "s/\$configValues\['CONFIG_DB_USER'\] = .*;/\$configValues\['CONFIG_DB_USER'\] = '$esc_user';/" $DALORADIUS_CONF_PATH
+	sed -i "s/\$configValues\['CONFIG_DB_NAME'\] = .*;/\$configValues\['CONFIG_DB_NAME'\] = '$esc_name';/" $DALORADIUS_CONF_PATH
 	sed -i "s/\$configValues\['FREERADIUS_VERSION'\] = .*;/\$configValues\['FREERADIUS_VERSION'\] = '3';/" $DALORADIUS_CONF_PATH
 	sed -i "s/\$configValues\['CONFIG_DB_PASSWORD_ENCRYPTION'\] = .*;/\$configValues\['CONFIG_DB_PASSWORD_ENCRYPTION'\] = 'no';/" $DALORADIUS_CONF_PATH
 	[ -n "$PASSWORD_MIN_LENGTH" ] && sed -i "s/\$configValues\['CONFIG_DB_PASSWORD_MIN_LENGTH'\] = .*;/\$configValues\['CONFIG_DB_PASSWORD_MIN_LENGTH'\] = '$PASSWORD_MIN_LENGTH';/" $DALORADIUS_CONF_PATH
@@ -127,8 +135,7 @@ DB_LOCK=/data/.db_init_done
 if test -f "$DB_LOCK"; then
 	echo "Database lock file exists, skipping initial setup of mysql database."
 else
-	init_database
-	date > $DB_LOCK
+	init_database && date > $DB_LOCK
 fi
 
 # Suppress Apache FQDN warning (guard against duplicate on restart)
