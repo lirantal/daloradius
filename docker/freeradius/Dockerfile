@@ -25,6 +25,7 @@ RUN apt-get update \
 	&& apt-get install --yes --no-install-recommends \
 		ipcalc \
 		tzdata \
+		net-tools \
 		mariadb-client \
 	&& rm -rf /var/lib/apt/lists/*
 
