@@ -13,7 +13,9 @@ This directory contains the TLS configuration for the MariaDB (`radius-mysql`) s
 
 1. `tls.cnf` is mounted into the MariaDB container at `/etc/mysql/conf.d/tls.cnf`
 2. It references certificates located in `/etc/mysql/certs/` (a named volume `mariadb_certs`)
-3. The `mariadb_certs` volume is populated manually (see "Enabling TLS" below) — there is no automated setup script yet
+3. The `mariadb_certs` volume is populated automatically by `setup/install-docker-compose.sh` when `FREERADIUS_SQL_TLS=enabled|require`. For manual setup without the installer, see "Enabling TLS" below.
+
+The `../../docker/mariadb/tls.cnf` paths in the compose file resolve from the compose file directory (`docker/mariadb/`). Do NOT use `--project-directory .` with standalone compose files.
 
 ### Certificate paths expected by tls.cnf
 
@@ -47,17 +49,26 @@ as the `mysql` user (UID 999), so the key file must be owned by that UID:
 ```bash
 docker volume create mariadb_certs
 docker run --rm -v mariadb_certs:/certs -v "$PWD/secrets/db":/hostsecrets alpine:latest sh -c 'cp /hostsecrets/*.pem /certs/ && chown 999:999 /certs/*key.pem && chmod 644 /certs/*.pem && chmod 600 /certs/*key.pem'
+# alpine:latest is intentional — it is a stable, well-maintained base image.
+# Pinning to a specific version would require active maintenance to avoid
+# using an outdated image with potential security issues.
 ```
 
 ### 3. Uncomment TLS volumes in docker-compose.yml
 
-In `docker/mariadb/docker-compose.yml`, uncomment the TLS volume mounts:
+In `docker/mariadb/docker-compose.yml`, uncomment the TLS volume mounts.
+The compose file uses `../../docker/mariadb/tls.cnf` (relative to the compose
+file's directory). When running with `--project-directory .`, use:
 
 ```yaml
 volumes:
-  - "./docker/mariadb/tls.cnf:/etc/mysql/conf.d/tls.cnf:ro"
+  - "../../docker/mariadb/tls.cnf:/etc/mysql/conf.d/tls.cnf:ro"
   - "mariadb_certs:/etc/mysql/certs:ro"
 ```
+
+> **Note**: The path `../../docker/mariadb/tls.cnf` resolves from the compose
+> file location (`docker/mariadb/`). With `--project-directory .`, paths resolve
+> from the project root, so use `./docker/mariadb/tls.cnf` instead.
 
 ### 4. Start the service
 
