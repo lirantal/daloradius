@@ -7,7 +7,7 @@
 # Run:
 #   docker compose -f docker/freeradius/docker-compose.yml up -d
 
-FROM freeradius/freeradius-server:latest
+FROM freeradius/freeradius-server:3.2.8
 LABEL maintainer="Liran Tal <liran.tal@gmail.com>"
 LABEL Description="FreeRADIUS Docker image optimized for daloRADIUS." \
 	License="GPLv2" \
