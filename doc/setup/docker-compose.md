@@ -211,21 +211,34 @@ These are mounted as Docker Secrets (`/run/secrets/*`) in each container.
 
 See `doc/setup/ssl-config.md` for TLS configuration between FreeRADIUS and MariaDB.
 
-## EAP/TLS Certificates (WiFi authentication)
+> **⚠️ These are SQL connection certificates, NOT the same as EAP/WiFi certificates below.**
+> SQL TLS certs are stored in `secrets/db/` and only protect the link between FreeRADIUS and the database.
+> They are never presented to network clients (WiFi access points, switches, VPNs).
 
-FreeRADIUS uses TLS certificates for EAP authentication (PEAP, TTLS). The container
-handles certificates automatically:
+## EAP/TLS Certificates (WiFi & wired 802.1X authentication)
 
-### Auto-generated certificates (default)
+FreeRADIUS uses TLS certificates for EAP authentication (PEAP, TTLS, EAP-TLS). These are the
+certificates presented to **network clients** — WiFi access points, wired switches using
+802.1X, VPN concentrators, and any other NAS device that authenticates via EAP.
+
+> **⚠️ These are NOT the same as the SQL TLS certificates above.** EAP certificates
+> are stored inside the FreeRADIUS container and authenticate users on your network.
+> SQL TLS certificates only encrypt the database connection.
+
+The container handles EAP certificates automatically:
+
+### Auto-generated certificates (default — development only)
 
 On first start (or if certificates are missing/expired), `init-freeradius.sh` generates
 self-signed certificates with **10 years validity** using FreeRADIUS built-in Makefile.
 
-No action needed — it just works.
+> **⚠️ Not recommended for production.** Self-signed certificates will trigger
+> security warnings on client devices and may not be accepted by all 802.1X
+> supplicants. Use externally-signed certificates for production deployments.
 
-### External certificates (Let's Encrypt, custom CA, etc.)
+### External certificates (production — Let's Encrypt, enterprise CA, etc.)
 
-To use your own certificates:
+To use your own certificates signed by a trusted Certificate Authority:
 
 1. Mount them via volumes in `docker/freeradius/docker-compose.yml` (already configured):
 
@@ -239,9 +252,9 @@ To use your own certificates:
 
    | Host path | Required file |
    |-----------|--------------|
-   | `ssl/cert_ext/server.pem` | Server certificate + intermediate chain |
-   | `ssl/cert_ext/ca.pem` | CA certificate |
-   | `ssl/private_ext/server.key` | Private key |
+   | `docker/freeradius/ssl/cert_ext/server.pem` | Server certificate + intermediate chain |
+   | `docker/freeradius/ssl/cert_ext/ca.pem` | CA certificate (trusted root) |
+   | `docker/freeradius/ssl/private_ext/server.key` | Private key |
 
 3. Restart the container:
 
@@ -252,7 +265,19 @@ To use your own certificates:
 The init script detects external certificates automatically and configures EAP to use them.
 External certificates are **never overwritten** by the auto-generation process.
 
-See `Documentacion/daloradius/16-certificados-freeradius-docker.md` for full details.
+### Certificate usage summary
+
+Two independent TLS systems exist in this stack. **They are NOT interchangeable.**
+
+| | **EAP/TLS** (WiFi / 802.1X) | **SQL TLS** (DB connection) |
+|---|---|---|
+| **What it does** | Authenticates the RADIUS server to network clients (WiFi APs, switches, VPNs) so they trust it before sending user credentials. | Encrypts the connection between FreeRADIUS and MariaDB. Never seen by network clients. |
+| **Where files live inside the container** | `/etc/freeradius/certs/` | Mounted as secrets: `/run/secrets/mysql_*.pem` |
+| **Where you put them on the host** | **Auto-generated**: nowhere — they are created inside the container and lost on container delete.<br>**External (production)**: `docker/freeradius/ssl/cert_ext/` + `docker/freeradius/ssl/private_ext/` → mounted as bind volumes. | `secrets/db/mysql_*.pem` → mounted as Docker Secrets. |
+| **How to provide them** | Default: nothing to do — FreeRADIUS generates them on first start.<br>Production: place `.pem`/`.key` files on the host and restart the container. | Set `FREERADIUS_SQL_TLS=enabled|require` in `.env` and run the installer, or place files manually. |
+| **What happens if missing** | FreeRADIUS auto-generates self-signed ones. | SQL connection falls back to plain (no encryption). |
+
+**Key takeaway**: EAP certificates live **inside the FreeRADIUS container** (`/etc/freeradius/certs/`). They are either auto-generated there, or mounted from your host into the `cert_ext/` and `private_ext/` subdirectories. You never interact with the container's internal paths directly — you either let the container create them, or place files on your host and Docker maps them in.
 
 ## Database migrations
 

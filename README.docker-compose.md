@@ -8,6 +8,12 @@ The Compose setup in `docker-compose.yml` starts a complete daloRADIUS stack:
 
 For the standalone image (single container with external DB/RADIUS), see `README.docker-standalone.md`.
 
+### EAP/TLS Certificates
+
+When using the Docker Compose stack (`setup/install-docker-compose.sh`), FreeRADIUS auto-generates self-signed TLS/EAP certificates on first start. These are intended for **development and testing only** and are **not recommended for production**.
+
+For production, mount your own CA-signed certificates (e.g. Let's Encrypt, internal PKI) via Docker bind-mount volumes. See `doc/setup/docker-compose.md` → section **EAP/TLS Certificates** for detailed instructions on both auto-generated and external certificate workflows.
+
 ## Full Compose stack
 
 Create an environment file from the template:
