@@ -541,11 +541,13 @@ APP_PW="$(cat "$SECRETS_DIR/mysql_password" 2>/dev/null || echo "")"
 # Escape backslashes and single quotes for SQL safety
 sql_escape() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e "s/'/''/g"; }
 APP_PW_ESCAPED=$(sql_escape "$APP_PW")
+MYSQL_DB_ESCAPED=$(sql_escape "$MYSQL_DB")
+MYSQL_USER_ESCAPED=$(sql_escape "$MYSQL_USER_NAME")
 
 docker exec radius-mysql mariadb -uroot -p"$ROOT_PW" \
-  -e "CREATE DATABASE IF NOT EXISTS \`$MYSQL_DB\`;" \
-  -e "CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'%' IDENTIFIED BY '$APP_PW_ESCAPED';" \
-  -e "GRANT ALL PRIVILEGES ON \`$MYSQL_DB\`.* TO '$MYSQL_USER_NAME'@'%';" \
+  -e "CREATE DATABASE IF NOT EXISTS \`$MYSQL_DB_ESCAPED\`;" \
+  -e "CREATE USER IF NOT EXISTS '$MYSQL_USER_ESCAPED'@'%' IDENTIFIED BY '$APP_PW_ESCAPED';" \
+  -e "GRANT ALL PRIVILEGES ON \`$MYSQL_DB_ESCAPED\`.* TO '$MYSQL_USER_ESCAPED'@'%';" \
   -e "FLUSH PRIVILEGES;" 2>&1 || echo "  Warning: DB/user creation failed (may already exist)." >&2
 print_green "  Database/user ready."
 
