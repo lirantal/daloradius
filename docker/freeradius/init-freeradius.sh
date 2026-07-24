@@ -121,8 +121,12 @@ function configure_sql_tls {
 			;;
 		require)
 			;;
+		enabled)
+			# Opportunistic TLS: try TLS but fall back to plain if server doesn't support it
+			sed -i 's|tls_required = yes|tls_required = no|' "$RADIUS_PATH/mods-available/sql"
+			;;
 		*)
-			echo "Invalid FREERADIUS_SQL_TLS value '$FREERADIUS_SQL_TLS'. Use 'disabled' or 'require'." >&2
+			echo "Invalid FREERADIUS_SQL_TLS value '$FREERADIUS_SQL_TLS'. Use 'disabled', 'enabled', or 'require'." >&2
 			exit 1
 			;;
 	esac
