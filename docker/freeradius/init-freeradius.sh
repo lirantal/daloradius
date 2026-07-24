@@ -437,7 +437,9 @@ function init_database {
 
 # ---------------------------------------------------------------------------
 # VLAN post-auth — Dynamic VLAN assignment from radgroupreply
-# Uses sed to add VLAN block inside post-auth section.
+# Uses awk (not sed) to safely insert a multi-line block before
+# Post-Auth-Type REJECT, avoiding sed's special character issues
+# with !, &, and embedded newlines.
 # ---------------------------------------------------------------------------
 function enable_vlan_post_auth {
 	if grep -q "VLAN CONFIG" "$RADIUS_PATH/sites-available/default" 2>/dev/null; then
@@ -445,34 +447,44 @@ function enable_vlan_post_auth {
 		return
 	fi
 
-	# Insert VLAN block before the first Post-Auth-Type section inside post-auth
-	sed -i '/^[[:space:]]*Post-Auth-Type REJECT/{
-		i\
-	# VLAN CONFIG - Dynamic VLAN assignment from radgroupreply\n\
-	if (reply:Tunnel-Private-Group-Id) {\n\
-		# already set by authorize/sql\n\
-	} else {\n\
-		update reply {\n\
-			Tunnel-Private-Group-Id := "%{sql:SELECT value FROM radgroupreply WHERE attribute='\''Tunnel-Private-Group-Id'\'' AND groupname = (SELECT groupname FROM radusergroup WHERE username = '\''%{User-Name}'\'' LIMIT 1)}"\n\
-		}\n\
-	}\n\
-\n\
-	update reply {\n\
-		Tunnel-Type := VLAN\n\
-		Tunnel-Medium-Type := IEEE-802\n\
-		Tunnel-Private-Group-Id := "%{reply:Tunnel-Private-Group-Id}"\n\
-	}\n\
-\n\
-	# DEFAULT SESSION TIMEOUT - 1 hour (28800 seconds)\n\
-	# Applied to all users who don't have one set by their group.\n\
-	# Covers existing, migrated, and newly created groups automatically.\n\
-	if (!&reply:Session-Timeout) {\n\
-		update reply {\n\
-			Session-Timeout := 28800\n\
-		}\n\
-	}\n
-	}' "$RADIUS_PATH/sites-available/default"
+	local tmpfile
+	tmpfile=$(mktemp) || {
+		echo "Failed to create temporary file."
+		exit 1
+	}
 
+	awk '
+		BEGIN { inserted = 0 }
+		/^[[:space:]]*Post-Auth-Type REJECT/ && !inserted {
+			print "# VLAN CONFIG - Dynamic VLAN assignment from radgroupreply"
+			print "if (reply:Tunnel-Private-Group-Id) {"
+			print "	# already set by authorize/sql"
+			print "} else {"
+			print "	update reply {"
+			print "		Tunnel-Private-Group-Id := \"%{sql:SELECT value FROM radgroupreply WHERE attribute='\''Tunnel-Private-Group-Id'\'' AND groupname = (SELECT groupname FROM radusergroup WHERE username = '\''%{User-Name}'\'' LIMIT 1)}\""
+			print "	}"
+			print "}"
+			print ""
+			print "update reply {"
+			print "	Tunnel-Type := VLAN"
+			print "	Tunnel-Medium-Type := IEEE-802"
+			print "	Tunnel-Private-Group-Id := \"%{reply:Tunnel-Private-Group-Id}\""
+			print "}"
+			print ""
+			print "# DEFAULT SESSION TIMEOUT - 1 hour (3600 seconds)"
+			print "# Applied to all users who don'\''t have one set by their group."
+			print "# Covers existing, migrated, and newly created groups automatically."
+			print "if (!&reply:Session-Timeout) {"
+			print "	update reply {"
+			print "		Session-Timeout := 3600"
+			print "	}"
+			print "}"
+			inserted = 1
+		}
+		{ print }
+	' "$RADIUS_PATH/sites-available/default" > "$tmpfile"
+
+	mv "$tmpfile" "$RADIUS_PATH/sites-available/default"
 	echo "VLAN post-auth and default Session-Timeout enabled."
 }
 
