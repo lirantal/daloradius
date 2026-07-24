@@ -129,6 +129,77 @@ function configure_sql_tls {
 }
 
 # ---------------------------------------------------------------------------
+# Auto-generate certificates if missing (first run or rebuild)
+# Uses FreeRADIUS built-in Makefile
+# ---------------------------------------------------------------------------
+function ensure_certificates {
+	local cert_dir="$RADIUS_PATH/certs"
+	local regenerate=0
+
+	# Check if any required cert file is missing
+	if [ ! -f "$cert_dir/server.pem" ] || [ ! -f "$cert_dir/server.key" ] || [ ! -f "$cert_dir/ca.pem" ]; then
+		echo "Certificates not found, generating new ones..."
+		regenerate=1
+	fi
+
+	# Check expiration date (warn if less than 30 days, regenerate if expired)
+	if [ -f "$cert_dir/server.pem" ] && [ "$regenerate" -eq 0 ]; then
+		if command -v openssl &>/dev/null; then
+			local expiry
+			expiry=$(openssl x509 -in "$cert_dir/server.pem" -noout -enddate 2>/dev/null | cut -d= -f2)
+			if [ -n "$expiry" ]; then
+				local expiry_epoch now_epoch
+				expiry_epoch=$(date -d "$expiry" +%s 2>/dev/null || echo 0)
+				now_epoch=$(date +%s)
+				if [ "$expiry_epoch" -le "$now_epoch" ]; then
+					echo "Certificates expired ($expiry), regenerating..."
+					regenerate=1
+				elif [ "$((expiry_epoch - now_epoch))" -lt "$((30 * 86400))" ]; then
+					echo "WARNING: Certificates will expire soon ($expiry). Consider renewing."
+				fi
+			fi
+		fi
+	fi
+
+	if [ "$regenerate" -eq 1 ]; then
+		# Extend certificate validity to 10 years (3650 days) before generating
+		sed -i 's|default_days		= 60|default_days		= 3650|' "$cert_dir/ca.cnf" 2>/dev/null || true
+		sed -i 's|default_days		= 60|default_days		= 3650|' "$cert_dir/server.cnf" 2>/dev/null || true
+
+		cd "$cert_dir" && rm -f *.pem *.der *.csr *.crt *.key *.p12 serial index.txt serial.old index.txt.old \
+			&& touch index.txt && echo '01' > serial && make
+		echo "Certificates generated (valid for 10 years)."
+	else
+		echo "Certificates already exist and are valid, skipping generation."
+	fi
+}
+
+# ---------------------------------------------------------------------------
+# External certificates — prefer cert_ext/private_ext when present
+# ---------------------------------------------------------------------------
+function configure_external_certs {
+	local eap_file="$RADIUS_PATH/mods-available/eap"
+	local cert_ext_path="/etc/freeradius/certs/cert_ext"
+	local private_ext_path="/etc/freeradius/certs/private_ext"
+
+	# First, ensure default certs exist
+	ensure_certificates
+
+	if [ -d "$cert_ext_path" ] && [ -d "$private_ext_path" ] && \
+	   [ -f "$cert_ext_path/server.pem" ] && [ -f "$private_ext_path/server.key" ]; then
+		echo "External certificates found in $cert_ext_path and $private_ext_path, configuring EAP..."
+		chown -R freerad:freerad "$cert_ext_path" "$private_ext_path"
+		chmod -R 640 "$cert_ext_path"/*.pem "$private_ext_path"/*.key
+		sed -i 's|private_key_file = .*|private_key_file = '"$private_ext_path"'/server.key|' "$eap_file"
+		sed -i 's|certificate_file = .*|certificate_file = '"$cert_ext_path"'/server.pem|' "$eap_file"
+		sed -i 's|ca_file = .*|ca_file = '"$cert_ext_path"'/ca.pem|' "$eap_file"
+		echo "EAP configured to use external certificates."
+	else
+		echo "No external certificates found in $cert_ext_path / $private_ext_path, using default FreeRADIUS certs."
+	fi
+}
+
+# ---------------------------------------------------------------------------
 # Log preparation
 # ---------------------------------------------------------------------------
 function prepare_freeradius_logs {
@@ -181,6 +252,10 @@ function init_freeradius {
 
 	chown root:freerad "$RADIUS_PATH/mods-available/sql"
 	chmod 0640 "$RADIUS_PATH/mods-available/sql"
+
+	# External certificates (if mounted via docker-compose volumes)
+	configure_external_certs
+
 	echo "freeradius initialization completed."
 }
 

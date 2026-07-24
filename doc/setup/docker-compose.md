@@ -207,9 +207,52 @@ These are mounted as Docker Secrets (`/run/secrets/*`) in each container.
 | `data/daloradius/` | *(various)* | daloRADIUS uploads and state |
 | `logs/freeradius/` | `/var/log/freeradius` | FreeRADIUS log files |
 
-## TLS
+## TLS (SQL connection)
 
 See `doc/setup/ssl-config.md` for TLS configuration between FreeRADIUS and MariaDB.
+
+## EAP/TLS Certificates (WiFi authentication)
+
+FreeRADIUS uses TLS certificates for EAP authentication (PEAP, TTLS). The container
+handles certificates automatically:
+
+### Auto-generated certificates (default)
+
+On first start (or if certificates are missing/expired), `init-freeradius.sh` generates
+self-signed certificates with **10 years validity** using FreeRADIUS built-in Makefile.
+
+No action needed — it just works.
+
+### External certificates (Let's Encrypt, custom CA, etc.)
+
+To use your own certificates:
+
+1. Mount them via volumes in `docker/freeradius/docker-compose.yml` (already configured):
+
+   ```yaml
+   volumes:
+     - ../../docker/freeradius/ssl/cert_ext:/etc/freeradius/certs/cert_ext
+     - ../../docker/freeradius/ssl/private_ext:/etc/freeradius/certs/private_ext
+   ```
+
+2. Place your certificate files:
+
+   | Host path | Required file |
+   |-----------|--------------|
+   | `ssl/cert_ext/server.pem` | Server certificate + intermediate chain |
+   | `ssl/cert_ext/ca.pem` | CA certificate |
+   | `ssl/private_ext/server.key` | Private key |
+
+3. Restart the container:
+
+   ```bash
+   docker compose -f docker/freeradius/docker-compose.yml restart radius
+   ```
+
+The init script detects external certificates automatically and configures EAP to use them.
+External certificates are **never overwritten** by the auto-generation process.
+
+See `Documentacion/daloradius/16-certificados-freeradius-docker.md` for full details.
 
 ## Database migrations
 

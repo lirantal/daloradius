@@ -51,6 +51,8 @@ services:
     volumes:
       - ../../data/freeradius:/data
       - ../../logs/freeradius:/var/log/freeradius
+      - ../../docker/freeradius/ssl/cert_ext:/etc/freeradius/certs/cert_ext
+      - ../../docker/freeradius/ssl/private_ext:/etc/freeradius/certs/private_ext
     secrets:
       - MYSQL_PASSWORD
       - DEFAULT_CLIENT_SECRET
