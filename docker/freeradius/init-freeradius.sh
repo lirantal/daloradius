@@ -180,17 +180,29 @@ function ensure_certificates {
 
 # ---------------------------------------------------------------------------
 # External certificates — prefer cert_ext/private_ext when present
+# Falls back to default FreeRADIUS built-in certificates.
+#
+# Directory structure for external certificates (bind-mount volumes):
+#   docker/freeradius/ssl/cert_ext/       → /etc/freeradius/certs/cert_ext/
+#   docker/freeradius/ssl/private_ext/    → /etc/freeradius/certs/private_ext/
+#
+# This layout is designed so that users can replace self-signed certs with
+# CA-signed certificates (Let's Encrypt, commercial CA, etc.) by simply
+# placing the new files in these directories and restarting the container.
+# No Dockerfile rebuild or structural changes are required.
 # ---------------------------------------------------------------------------
 function configure_external_certs {
 	local eap_file="$RADIUS_PATH/mods-available/eap"
 	local cert_ext_path="/etc/freeradius/certs/cert_ext"
 	local private_ext_path="/etc/freeradius/certs/private_ext"
+	local default_cert_dir="$RADIUS_PATH/certs"
 
-	# First, ensure default certs exist
+	# First, ensure default certs exist (always needed as fallback)
 	ensure_certificates
 
 	if [ -d "$cert_ext_path" ] && [ -d "$private_ext_path" ] && \
-	   [ -f "$cert_ext_path/server.pem" ] && [ -f "$private_ext_path/server.key" ]; then
+	   [ -f "$cert_ext_path/server.pem" ] && [ -f "$cert_ext_path/ca.pem" ] && \
+	   [ -f "$private_ext_path/server.key" ]; then
 		echo "External certificates found in $cert_ext_path and $private_ext_path, configuring EAP..."
 		chown -R freerad:freerad "$cert_ext_path" "$private_ext_path"
 		chmod -R 640 "$cert_ext_path"/*.pem "$private_ext_path"/*.key
@@ -200,6 +212,10 @@ function configure_external_certs {
 		echo "EAP configured to use external certificates."
 	else
 		echo "No external certificates found in $cert_ext_path / $private_ext_path, using default FreeRADIUS certs."
+		# Restore default certificate paths (in case they were previously set to external)
+		sed -i 's|private_key_file = .*|private_key_file = '"$default_cert_dir"'/server.key|' "$eap_file"
+		sed -i 's|certificate_file = .*|certificate_file = '"$default_cert_dir"'/server.pem|' "$eap_file"
+		sed -i 's|ca_file = .*|ca_file = '"$default_cert_dir"'/ca.pem|' "$eap_file"
 	fi
 }
 
