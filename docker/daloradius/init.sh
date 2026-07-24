@@ -45,7 +45,7 @@ function init_daloradius {
 		# Escape sed metacharacters: / & | \
 		val=$(printf '%s' "$val" | sed 's/[\/&|\\]/\\&/g')
 		# Escape PHP single quotes: ' -> \'
-		printf '%s' "$val" | sed "s/'/\\\\'/g"
+		printf '%s' "$val" | sed "s/'/\\\\\\\\'/g"
 	}
 
 	# Escape values for PHP single-quoted string context and sed metacharacters
