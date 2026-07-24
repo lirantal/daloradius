@@ -21,7 +21,7 @@ If you discover a security vulnerability, please use one of the following
 means of communications to report it to us:
 
 - If enabled, report the security issue via GitHub's private vulnerability reporting
-- As a secondary method, you may contact the maintainer via email
+- As a secondary method, you may contact the maintainer via email at tomasecastro@gmail.com
 
 We sincerely appreciate your efforts to responsibly disclose your findings
 with us.
