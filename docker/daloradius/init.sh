@@ -102,6 +102,17 @@ function init_database {
 
 	# Import schema using client option to disable SSL if server does not have it
 	mysql --skip-ssl -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" < $DALORADIUS_PATH/contrib/db/mariadb-daloradius.sql
+
+	# Fix collations: ensure all tables use the DB default collation
+	# (MariaDB 11.8+ defaults to utf8mb4_uca1400_ai_ci, older versions used utf8mb4_general_ci.
+	#  The schema SQL doesn't specify COLLATE, so mixed collations break JOIN queries.)
+	local tables
+	tables=$(mysql --skip-ssl -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" -N -e \
+		"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='$MYSQL_DATABASE' AND TABLE_TYPE='BASE TABLE';")
+	for table in $tables; do
+		mysql --skip-ssl -h "$MYSQL_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" \
+			-e "ALTER TABLE \`$table\` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;" 2>/dev/null || true
+	done
 	echo "Database initialization for daloRADIUS completed."
 }
 
