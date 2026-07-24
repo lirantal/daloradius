@@ -441,10 +441,19 @@ function enable_vlan_post_auth {
 		Tunnel-Type := VLAN\n\
 		Tunnel-Medium-Type := IEEE-802\n\
 		Tunnel-Private-Group-Id := "%{reply:Tunnel-Private-Group-Id}"\n\
+	}\n\
+\n\
+	# DEFAULT SESSION TIMEOUT - 1 hour (28800 seconds)\n\
+	# Applied to all users who don't have one set by their group.\n\
+	# Covers existing, migrated, and newly created groups automatically.\n\
+	if (!&reply:Session-Timeout) {\n\
+		update reply {\n\
+			Session-Timeout := 28800\n\
+		}\n\
 	}\n
 	}' "$RADIUS_PATH/sites-available/default"
 
-	echo "VLAN post-auth enabled."
+	echo "VLAN post-auth and default Session-Timeout enabled."
 }
 
 # ---------------------------------------------------------------------------
