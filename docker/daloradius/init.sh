@@ -113,6 +113,15 @@ function init_database {
 		mysql --skip-ssl -h "$MYSQL_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" \
 			-e "ALTER TABLE \`$table\` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;" 2>/dev/null || true
 	done
+
+	# Import VLAN vendor dictionary (custom vendor "VLAN" for easier management)
+	if [ -f "$DALORADIUS_PATH/docker/daloradius/config/dictionary-vlan-config.sql" ]; then
+		echo "Importing VLAN vendor dictionary..."
+		mysql --skip-ssl -h "$MYSQL_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" \
+			< "$DALORADIUS_PATH/docker/daloradius/config/dictionary-vlan-config.sql" 2>/dev/null || true
+		echo "VLAN vendor dictionary import completed."
+	fi
+
 	echo "Database initialization for daloRADIUS completed."
 }
 
