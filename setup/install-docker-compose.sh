@@ -557,8 +557,8 @@ print_green "  Database/user ready."
 echo "==> STEP 6: Loading SQL schemas..."
 DB_DIR="$REPO_ROOT/contrib/db"
 
-if docker exec radius-mysql mariadb -uroot -p"$ROOT_PW" -e "USE \`$MYSQL_DB\`; SHOW TABLES LIKE 'operators';" 2>/dev/null | grep -q 'operators'; then
-  echo "  Schema already loaded (operators table exists), skipping."
+if docker exec radius-mysql mariadb -uroot -p"$ROOT_PW" -e "USE \`$MYSQL_DB\`; SHOW TABLES LIKE 'operators';" 2>/dev/null | grep -q 'operators' && docker exec radius-mysql mariadb -uroot -p"$ROOT_PW" -e "USE \`$MYSQL_DB\`; SHOW TABLES LIKE 'radacct';" 2>/dev/null | grep -q 'radacct'; then
+  echo "  Schema already loaded (both daloRADIUS and FreeRADIUS tables exist), skipping."
 else
   # Load FreeRADIUS schema first — daloRADIUS schema depends on these tables.
   # The radius container entrypoint also loads it, but that runs in Step 7.

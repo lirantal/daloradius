@@ -44,8 +44,8 @@ function init_daloradius {
 		local val="$1"
 		# Escape sed metacharacters: / & | \
 		val=$(printf '%s' "$val" | sed 's/[\/&|\\]/\\&/g')
-		# Escape PHP single quotes: ' -> '\''
-		printf '%s' "$val" | sed "s/'/'\\\\''/g"
+		# Escape PHP single quotes: ' -> \'
+		printf '%s' "$val" | sed "s/'/\\\\'/g"
 	}
 
 	# Escape values for PHP single-quoted string context and sed metacharacters
@@ -199,7 +199,6 @@ MYSQL_ROOT_PASSWORD=$(read_secret_or_env "MYSQL_ROOT_PASSWORD" "MYSQL_ROOT_PASSW
 [ -z "$MYSQL_ROOT_PASSWORD" ] && { echo "FATAL: MYSQL_ROOT_PASSWORD not set. Define it in .env or as a Docker secret." >&2; exit 1; }
 echo -n "Waiting for mysql ($MYSQL_HOST)..."
 # Use defaults file for mysqladmin ping to avoid exposing password in process list
-local ping_defaults_file
 ping_defaults_file=$(mktemp)
 chmod 600 "$ping_defaults_file"
 {
