@@ -182,6 +182,9 @@ function ensure_certificates {
 # External certificates — prefer cert_ext/private_ext when present
 # Falls back to default FreeRADIUS built-in certificates.
 #
+# This function handles EAP/TLS certificate configuration for WPA2/WPA3
+# Enterprise WiFi authentication (PEAP, EAP-TTLS, EAP-TLS).
+#
 # Directory structure for external certificates (bind-mount volumes):
 #   docker/freeradius/ssl/cert_ext/       → /etc/freeradius/certs/cert_ext/
 #   docker/freeradius/ssl/private_ext/    → /etc/freeradius/certs/private_ext/
@@ -211,11 +214,22 @@ function configure_external_certs {
 		sed -i 's|ca_file = .*|ca_file = '"$cert_ext_path"'/ca.pem|' "$eap_file"
 		echo "EAP configured to use external certificates."
 	else
-		echo "No external certificates found in $cert_ext_path / $private_ext_path, using default FreeRADIUS certs."
-		# Restore default certificate paths (in case they were previously set to external)
-		sed -i 's|private_key_file = .*|private_key_file = '"$default_cert_dir"'/server.key|' "$eap_file"
-		sed -i 's|certificate_file = .*|certificate_file = '"$default_cert_dir"'/server.pem|' "$eap_file"
-		sed -i 's|ca_file = .*|ca_file = '"$default_cert_dir"'/ca.pem|' "$eap_file"
+		# Fallback: use Debian snakeoil certificates (valid for 10 years, part of ssl-cert package)
+		if [ -f /etc/ssl/certs/ssl-cert-snakeoil.pem ] && [ -f /etc/ssl/private/ssl-cert-snakeoil.key ]; then
+			echo "External certs not found — configuring EAP to use snakeoil certificates."
+			# Ensure freerad user can read the private key
+			usermod -aG ssl-cert freerad 2>/dev/null || true
+			sed -i 's|private_key_file = .*|private_key_file = /etc/ssl/private/ssl-cert-snakeoil.key|' "$eap_file"
+			sed -i 's|certificate_file = .*|certificate_file = /etc/ssl/certs/ssl-cert-snakeoil.pem|' "$eap_file"
+			sed -i 's|ca_file = .*|ca_file = /etc/ssl/certs/ssl-cert-snakeoil.pem|' "$eap_file"
+			echo "EAP configured to use snakeoil certificates."
+		else
+			echo "No external or snakeoil certificates found, using default FreeRADIUS certs."
+			# Restore default certificate paths (in case they were previously set to external)
+			sed -i 's|private_key_file = .*|private_key_file = '"$default_cert_dir"'/server.key|' "$eap_file"
+			sed -i 's|certificate_file = .*|certificate_file = '"$default_cert_dir"'/server.pem|' "$eap_file"
+			sed -i 's|ca_file = .*|ca_file = '"$default_cert_dir"'/ca.pem|' "$eap_file"
+		fi
 	fi
 }
 

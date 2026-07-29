@@ -62,7 +62,7 @@ RUN rm -f /var/www/daloradius/app/operators/static /var/www/daloradius/app/users
   && ln -s ../common/static /var/www/daloradius/app/users/static
 
 # Copy init script from the docker/ directory (source of truth for Docker deploys)
-COPY docker/daloradius/init.sh /var/www/daloradius/init.sh
+COPY docker/daloradius/init-daloradius.sh /var/www/daloradius/init.sh
 RUN sed -i 's/\r$//' /var/www/daloradius/init.sh
 
 RUN chown -R www-data:www-data /var/www/daloradius

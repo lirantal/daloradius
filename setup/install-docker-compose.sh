@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # daloRADIUS Docker Compose installer
 # GitHub: https://github.com/lirantal/daloradius
 #
@@ -27,9 +27,15 @@ set -euo pipefail
 # =============================================================================
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SECRETS_DIR="$REPO_ROOT/secrets/db"
+SECRETS_DIR="${SECRETS_DIR:-$REPO_ROOT/secrets/db}"
 TLS_CONF_DIR="$REPO_ROOT/docker/mariadb"
 TLS_CONF_FILE="$TLS_CONF_DIR/tls.cnf"
+
+# Environment variables (spec 002 §6)
+VERSION_FILE="${VERSION_FILE:-$REPO_ROOT/app/common/includes/version.php}"
+MYSQL_HOST="${MYSQL_HOST:-radius-mysql}"
+MYSQL_DATABASE="${MYSQL_DATABASE:-radius}"
+ENV_FILE="$REPO_ROOT/.env"
 
 # --- Colored output ---
 GREEN='\e[32m'; RED='\e[31m'; YELLOW='\e[33m'; BLUE='\e[34m'; NC='\e[0m'
@@ -43,6 +49,49 @@ echo "============================================"
 echo "  daloRADIUS Docker Compose installer"
 echo "  Directory: $REPO_ROOT"
 echo "============================================"
+echo ""
+
+# --- Version detection helpers (spec 002 §2) ---
+# Defined here so the banner below can print the code version.
+
+compare_versions() {
+    local v1="$1" v2="$2"
+    local major1="${v1%%.*}" minor1="${v1#*.}"
+    local major2="${v2%%.*}" minor2="${v2#*.}"
+    if [ "$major1" -gt "$major2" ] 2>/dev/null; then return 1; fi
+    if [ "$major1" -lt "$major2" ] 2>/dev/null; then return 2; fi
+    if [ "$minor1" -gt "$minor2" ] 2>/dev/null; then return 1; fi
+    if [ "$minor1" -lt "$minor2" ] 2>/dev/null; then return 2; fi
+    return 0
+}
+
+read_version_php() {
+    local version_file="$VERSION_FILE"
+    if [ ! -f "$version_file" ]; then
+        echo "Error: version.php not found at $version_file" >&2
+        return 1
+    fi
+    local code_version code_date
+    code_version=$(awk -F"'" '/DALORADIUS_VERSION/{print $4}' "$version_file")
+    code_date=$(awk -F"'" '/DALORADIUS_DATE/{print $4}' "$version_file")
+    if [ -z "$code_version" ] || [ -z "$code_date" ]; then
+        echo "Error: could not extract version from $version_file" >&2
+        return 1
+    fi
+    echo "$code_version|$code_date"
+}
+
+# Print code version banner (spec 002 §5.3, spec 005 v2.0 §4.1 item [4])
+CODE_VERSION_DATA=""
+if CODE_VERSION_DATA=$(read_version_php 2>/dev/null); then
+    CODE_VERSION="${CODE_VERSION_DATA%%|*}"
+    CODE_DATE="${CODE_VERSION_DATA##*|}"
+    echo "  Versión del código: $CODE_VERSION ($CODE_DATE)"
+else
+    CODE_VERSION=""
+    CODE_DATE=""
+    echo "  Warning: could not read version.php (continuing anyway)"
+fi
 echo ""
 
 # --- Dependency checks: require Docker Compose v2 (plugin) ---
@@ -63,7 +112,6 @@ for cmd in docker openssl; do
 done
 
 # --- Source .env to read FREERADIUS_SQL_TLS ---
-ENV_FILE="$REPO_ROOT/.env"
 if [ -f "$ENV_FILE" ]; then
   set -o allexport
   # shellcheck disable=SC1091
@@ -151,152 +199,486 @@ prompt_or_generate_secret() {
 }
 
 # ---------------------------------------------------------------------------
-# Re-run detection
-# If secrets already exist, show interactive menu instead of fresh install.
+# Version helpers (spec 002 §2.4, §3)
 # ---------------------------------------------------------------------------
-if [ -f "$SECRETS_DIR/mysql_root_password" ] || { [ -f "$ENV_FILE" ] && ! grep -q "CHANGE_ME" "$ENV_FILE" 2>/dev/null; }; then
-  while true; do
-    echo ""
-    echo "============================================"
-    echo "  ⚠️  Existing installation detected."
-    echo "============================================"
-    echo ""
-    echo "  What would you like to do?"
-    echo ""
-    echo "  1. Show current configuration"
-    echo "  2. Show manual steps to reconfigure from scratch"
-    echo "  3. Reconfigure automatically from scratch"
-    echo "  4. Exit"
-    echo ""
-    read -r -p "  Choose an option [1/2/3/4]: " menu_choice
-    echo ""
 
-    case "$menu_choice" in
-      1)
-        echo "  🌐 Access the web UI:"
-        echo "     Admin panel:  http://localhost:8000  (or http://<server-ip>:8000)"
-        echo "     Users portal: http://localhost:80    (or http://<server-ip>:80)"
-        echo ""
-        echo "     Default login for ADMIN panel only:"
-        echo "       Username: administrator"
-        echo "       Password: radius"
-        echo ""
-        echo "  🔑 View all generated passwords:"
-        echo '     for f in secrets/db/mysql_root_password secrets/db/mysql_password secrets/daloradius/daloradius_client_secret; do echo "--- $f ---"; cat "$f"; echo; done'
-        echo ""
-        echo "  TLS: $FREERADIUS_SQL_TLS"
-        echo ""
-        echo "  📂 Data directories:"
-        echo "    - ./data/mysql       (MariaDB storage)"
-        echo "    - ./data/freeradius  (FreeRADIUS persistent data)"
-        echo "    - ./data/daloradius  (daloRADIUS persistent data)"
-        echo ""
-        read -r -p "  Press Enter to return to menu..."
-        ;;
-      2)
-        echo "  ⚠️  To reconfigure manually, follow these steps:"
-        echo ""
-        echo "  1. Backup your current data:"
-        echo '     BACKUP_DIR="backup-$(date +%Y%m%d-%H%M%S)"'
-        echo '     mkdir -p "$BACKUP_DIR"'
-        echo '     cp -r secrets/ .env docker-compose.yml data/ "$BACKUP_DIR"/'
-        echo ""
-        echo "  2. Backup your database:"
-        echo '     docker exec radius-mysql mariadb-dump -uroot -p"$(cat secrets/db/mysql_root_password)" radius > "$BACKUP_DIR/radius-db.sql"'
-        echo ""
-        echo "  3. Clean up:"
-        echo "     $DOCKER_COMPOSE down -v"
-        echo "     rm -rf secrets/db/ secrets/daloradius/"
-        echo "     rm -f .env docker-compose.yml"
-        echo ""
-        echo "     # Only if you want a completely fresh database:"
-        echo "     # rm -rf data/"
-        echo ""
-        echo "  4. Re-run:"
-        echo "     bash setup/install-docker-compose.sh"
-        echo ""
-        echo "  Exiting. Follow the steps above, then re-run the script."
-        exit 0
-        ;;
-      3)
-        echo "  ⚠️  Reconfiguring automatically from scratch..."
-        echo ""
-        echo "  ════════════════════════════════════════════════════════════"
-        echo "  ⚠️  DATA LOSS WARNING — READ CAREFULLY"
-        echo "  ════════════════════════════════════════════════════════════"
-        echo ""
-        echo "  This option will DESTROY your current configuration:"
-        echo "    - Remove docker-compose.yml and .env"
-        echo "    - Stop and remove all containers and volumes"
-        echo "    - WARNING: Docker volumes will be DELETED (data loss)"
-        echo "    - Secrets are preserved (backed up first)"
-        echo ""
-        echo "  ════════════════════════════════════════════════════════════"
-        echo "  ⚠️  LIABILITY DISCLAIMER"
-        echo "  ════════════════════════════════════════════════════════════"
-        echo ""
-        echo "  By proceeding, you acknowledge and agree that:"
-        echo ""
-        echo "  1. YOU are solely responsible for backing up your data."
-        echo "  2. WE (the authors, contributors, and maintainers) are NOT"
-        echo "     liable for any data loss, corruption, or damage resulting"
-        echo "     from the use of this script."
-        echo "  3. This script is provided AS IS, without warranty of any"
-        echo "     kind, express or implied."
-        echo "  4. It is your responsibility to ensure you have a valid,"
-        echo "     tested, and restorable backup before proceeding."
-        echo ""
-        echo "  ════════════════════════════════════════════════════════════"
-        echo ""
-        echo "  To proceed, you must already have a valid backup."
-        echo "  If you haven't made one, cancel now and use options 1 or 2."
-        echo ""
-        read -r -p "  Type the word 'confirm' to continue, or anything else to cancel: " confirm_word
-        if [ "$confirm_word" != "confirm" ]; then
-          echo ""
-          echo "  Cancelled. No changes were made."
-          echo "  Please create a backup first, then try again."
-          continue
-        fi
-        echo ""
-        echo "  Confirmation received. Proceeding..."
-        echo ""
-        echo "  Backing up current configuration..."
-        BACKUP_DIR="backup-$(date +%Y%m%d-%H%M%S)"
-        mkdir -p "$BACKUP_DIR"
-        [ -d "$REPO_ROOT/secrets" ] && cp -r "$REPO_ROOT/secrets/" "$BACKUP_DIR/secrets/" 2>/dev/null || true
-        [ -f "$ENV_FILE" ] && cp "$ENV_FILE" "$BACKUP_DIR/" 2>/dev/null || true
-        [ -f "$REPO_ROOT/docker-compose.yml" ] && cp "$REPO_ROOT/docker-compose.yml" "$BACKUP_DIR/" 2>/dev/null || true
-        [ -d "$REPO_ROOT/data" ] && cp -r "$REPO_ROOT/data/" "$BACKUP_DIR/data/" 2>/dev/null || true
-        echo "  Backup saved to: $BACKUP_DIR/"
-        echo ""
-        echo "  Backing up database..."
-        if docker inspect radius-mysql >/dev/null 2>&1; then
-          ROOT_PW_BCK="$(cat "$SECRETS_DIR/mysql_root_password" 2>/dev/null || true)"
-          if [ -n "$ROOT_PW_BCK" ]; then
-            docker exec radius-mysql mariadb-dump -uroot -p"$ROOT_PW_BCK" radius > "$BACKUP_DIR/radius-db.sql" 2>/dev/null || echo "  Warning: database dump failed (container may not be running)." >&2
-          fi
-        else
-          echo "  Skipping database dump (container not found)."
-        fi
-        echo ""
-        echo "  Stopping services and cleaning up..."
-        $DOCKER_COMPOSE down -v --rmi local 2>/dev/null || true
-        rm -f "$ENV_FILE" "$REPO_ROOT/docker-compose.yml" 2>/dev/null || true
-        echo "  Clean up done. Proceeding with fresh installation..."
-        echo ""
-        break
-        ;;
-      4)
-        echo "  Exiting."
-        exit 0
-        ;;
-      *)
-        echo "  Invalid option. Please choose 1, 2, 3, or 4."
-        ;;
+# read_db_version()
+# Reads `_app_version.version` from inside the radius-mysql container using
+# --defaults-extra-file passed via stdin. NEVER uses `-p"$PASS"` on the command
+# line (auditoría C8). Returns "version|date" on stdout, or "||" on failure.
+read_db_version() {
+    local root_pw
+    root_pw=$(cat "$SECRETS_DIR/mysql_root_password" 2>/dev/null || echo "")
+    if [ -z "$root_pw" ]; then
+        echo "||"; return 1
+    fi
+
+    local mysql_host="${MYSQL_HOST:-radius-mysql}"
+    local mysql_db="${MYSQL_DATABASE:-radius}"
+
+    # Build defaults file on the host (mktemp + chmod 600)
+    local defaults_file
+    defaults_file=$(mktemp)
+    chmod 600 "$defaults_file"
+    {
+        printf '[client]\n'
+        printf 'host=%s\n' "$mysql_host"
+        printf 'user=root\n'
+        printf 'password=%s\n' "$root_pw"
+    } > "$defaults_file"
+
+    # Pipe the defaults file into the container via stdin (-i keeps stdin open).
+    # mariadb --defaults-extra-file=/dev/stdin reads the [client] section from
+    # stdin before processing the -e query. The password never appears in `ps`.
+    local result
+    result=$(docker exec -i radius-mysql mariadb --defaults-extra-file=/dev/stdin \
+        --batch --skip-column-names \
+        -e "SELECT CONCAT(version, '|', version_date) FROM \`$mysql_db\`._app_version ORDER BY id DESC LIMIT 1;" \
+        < "$defaults_file" 2>/dev/null || echo "||")
+
+    rm -f "$defaults_file"
+    echo "$result"
+}
+
+# detect_installation_state()
+# Returns one of: "fresh" | "installed" | "upgrade" | "rollback" | "unknown"
+# Always returns exit code 0 (the caller decides what to do with the state).
+detect_installation_state() {
+    # 1. Does secrets/db/mysql_root_password exist?
+    if [ ! -f "$SECRETS_DIR/mysql_root_password" ]; then
+        echo "fresh"; return 0
+    fi
+
+    # 2. Does .env have non-placeholder values (no CHANGE_ME)?
+    if [ ! -f "$ENV_FILE" ] || grep -q "CHANGE_ME" "$ENV_FILE" 2>/dev/null; then
+        echo "fresh"; return 0
+    fi
+
+    # 3. Does the radius-mysql container respond to `docker inspect` and is it running?
+    if ! docker inspect -f '{{.State.Status}}' radius-mysql >/dev/null 2>&1; then
+        echo "unknown"; return 0
+    fi
+    if [ "$(docker inspect -f '{{.State.Status}}' radius-mysql 2>/dev/null)" != "running" ]; then
+        echo "unknown"; return 0
+    fi
+
+    # 4. Read versions (code + db) and compare
+    local code_version code_date
+    local php_data
+    php_data=$(read_version_php) || { echo "unknown"; return 0; }
+    code_version="${php_data%%|*}"
+    code_date="${php_data##*|}"
+
+    local db_data
+    db_data=$(read_db_version)
+    if [ "$db_data" = "||" ]; then
+        echo "unknown"; return 0
+    fi
+    local db_version db_date
+    db_version="${db_data%%|*}"
+    db_date="${db_data##*|}"
+
+    # Compare code vs DB
+    compare_versions "$code_version" "$db_version"
+    case $? in
+        0) echo "installed" ;;
+        1) echo "upgrade" ;;
+        2) echo "rollback" ;;
     esac
-  done
+}
+
+# ---------------------------------------------------------------------------
+# Contextual menus (spec 002 §4, ADR-0003 §"Menús contextuales")
+# ---------------------------------------------------------------------------
+
+show_fresh_menu() {
+    while true; do
+        echo ""
+        echo "============================================"
+        echo "  daloRADIUS Docker Compose installer"
+        echo "  Directory: $REPO_ROOT"
+        if [ -n "$CODE_VERSION" ] && [ -n "$CODE_DATE" ]; then
+            echo "  Versión del código: $CODE_VERSION ($CODE_DATE)"
+        fi
+        echo "============================================"
+        echo ""
+        echo "  No se detectó una instalación previa."
+        echo ""
+        echo "  1. Instalar daloRADIUS"
+        echo "  2. Salir"
+        echo ""
+        read -r -p "  Elija una opción [1/2]: " choice
+        case "$choice" in
+            1)
+                # Fresh = automático: ejecuta STEP 0-7 (es seguro — sin datos)
+                break
+                ;;
+            2)
+                echo "  Saliendo."
+                exit 0
+                ;;
+            *)
+                echo "  Opción inválida. Elija 1 o 2."
+                ;;
+        esac
+    done
+}
+
+show_upgrade_instructions() {
+    local code_version="$1" code_date="$2"
+    local db_version="$3" db_date="$4"
+
+    cat <<EOF
+═══════════════════════════════════════════════════════════════════
+  UPGRADE DISPONIBLE — Procedimiento Manual
+═══════════════════════════════════════════════════════════════════
+
+  Versión instalada en BD:  $db_version ($db_date)
+  Versión del código:        $code_version ($code_date)
+
+  El upgrade NO se ejecuta automáticamente. El backup es
+  responsabilidad del usuario. Ejecutá los pasos manuales
+  a continuación en orden. Todos los comandos MySQL usan
+  --defaults-extra-file (no -p en línea de comandos).
+
+  ── Paso 0: Verificar que el código está actualizado ──
+  cd \$REPO_ROOT
+  git log --oneline -5
+  grep DALORADIUS_VERSION app/common/includes/version.php
+
+  ── Paso 1: Backup COMPLETO (responsabilidad del usuario) ──
+  mkdir -p \$BACKUP_DIR
+  # 1b. Backup de BD con --defaults-extra-file (ver spec 003 §4 paso 1b)
+  # 1c. Backup de secrets/, .env, docker-compose.yml
+  # 1d. git rev-parse HEAD > \$BACKUP_DIR/commit-before-upgrade.txt
+
+  ── Paso 2: Detener servicios ──
+  docker compose down
+
+  ── Paso 3: Reconstruir imagen (OBLIGATORIO tras git pull) ──
+  docker compose build
+
+  ── Paso 4: Iniciar MariaDB y esperar healthcheck ──
+  docker compose up -d radius-mysql
+  # until docker inspect -f '{{.State.Health.Status}}' radius-mysql = healthy; do sleep 2; done
+
+  ── Paso 5: Aplicar migraciones de BD ──
+  docker compose exec -T radius-web bash /var/www/daloradius/docker/daloradius/install-db.sh
+
+  ── Paso 6: Iniciar el resto de los servicios ──
+  docker compose up -d
+
+  ── Paso 7: Verificar ──
+  docker compose ps
+  # Probar login en http://localhost:8000
+  # Verificar versión en BD con --defaults-extra-file (ver spec 003 §4 paso 7c)
+
+  ── Si el upgrade falla: reversión manual ──
+  Ver spec 003 §5 (Paso R1-R7) para revertir desde el backup.
+
+═══════════════════════════════════════════════════════════════════
+  Documentación completa: agents/documentador/003-upgrade-automatico.md
+═══════════════════════════════════════════════════════════════════
+EOF
+    exit 0
+}
+
+# Helper shared by show_installed_menu / show_upgrade_menu: render the menu
+# header + options and dispatch. $1=state_label, $2=allow_upgrade (1/0),
+# $3=code_version, $4=code_date, $5=db_version, $6=db_date.
+_show_installed_or_upgrade_menu() {
+    local state_label="$1" allow_upgrade="$2"
+    local c_ver="$3" c_date="$4" d_ver="$5" d_date="$6"
+    while true; do
+        echo ""
+        echo "============================================"
+        echo "  ⚠️  Instalación detectada"
+        echo "============================================"
+        echo ""
+        echo "  Versión instalada en BD: $d_ver ($d_date)"
+        echo "  Versión del código:      $c_ver ($c_date)"
+        echo "  Estado:                  $state_label"
+        echo ""
+        echo "  1. Show current configuration"
+        echo "  2. Show manual steps to reconfigure from scratch"
+        if [ "$allow_upgrade" = "1" ]; then
+            echo "  3. ⭐ Upgrade a versión $c_ver"
+        else
+            echo "  3. [NO DISPONIBLE] Upgrade — ya está en la última versión"
+        fi
+        echo "  4. Reinstall (mantiene secrets, reconstruye imágenes)"
+        echo "  5. Steps para hard reset (incluye backup)"
+        echo "  6. Exit"
+        echo ""
+        if [ "$allow_upgrade" = "1" ]; then
+            read -r -p "  Elija una opción [1/2/3/4/5/6]: " choice
+        else
+            read -r -p "  Elija una opción [1/2/4/5/6]: " choice
+        fi
+        case "$choice" in
+            1) _show_current_configuration; continue ;;
+            2) _show_manual_steps; exit 0 ;;
+            3)
+                if [ "$allow_upgrade" = "1" ]; then
+                    show_upgrade_instructions "$c_ver" "$c_date" "$d_ver" "$d_date"
+                else
+                    echo "  Opción 3 no disponible: ya está en la última versión."
+                    continue
+                fi
+                ;;
+            4)
+                # Reinstall: código == BD. Pasamos code_version/code_date
+                # (db_version == code_version, no se pasa por separado).
+                show_reinstall_instructions "$c_ver" "$c_date"
+                ;;
+            5) _show_hard_reset_steps; exit 0 ;;
+            6) echo "  Saliendo."; exit 0 ;;
+            *) echo "  Opción inválida." ;;
+        esac
+    done
+}
+
+show_installed_menu() {
+    # $1=code_version $2=code_date $3=db_version $4=db_date
+    _show_installed_or_upgrade_menu "✅ Actualizado" 0 "$1" "$2" "$3" "$4"
+}
+
+show_upgrade_menu() {
+    # $1=code_version $2=code_date $3=db_version $4=db_date
+    _show_installed_or_upgrade_menu "⭐ Upgrade disponible" 1 "$1" "$2" "$3" "$4"
+}
+
+show_rollback_error() {
+    # $1=code_version $2=code_date $3=db_version $4=db_date
+    local c_ver="$1" c_date="$2" d_ver="$3" d_date="$4"
+    echo ""
+    echo "============================================"
+    echo "  ⚠️  ERROR: Rollback detectado"
+    echo "============================================"
+    echo ""
+    echo "  Versión instalada en BD: $d_ver ($d_date)"
+    echo "  Versión del código:      $c_ver ($c_date)"
+    echo ""
+    echo "  ⛔  La versión en la base de datos es SUPERIOR a la del código."
+    echo "      No se puede continuar con esta versión del código."
+    echo ""
+    echo "  Para resolver:"
+    echo "  1. Actualizar el código a la versión $d_ver o superior"
+    echo "  2. O restaurar un backup de BD de la versión $c_ver"
+    echo ""
+    echo "  Saliendo..."
+}
+
+show_unknown_menu() {
+    while true; do
+        echo ""
+        echo "============================================"
+        echo "  ⚠️  Instalación detectada — BD no accesible"
+        echo "============================================"
+        echo ""
+        echo "  No se pudo leer la versión en la base de datos."
+        echo "  Verifica que el contenedor \`radius-mysql\` esté corriendo:"
+        echo ""
+        echo "    docker compose ps"
+        echo "    docker compose up -d radius-mysql"
+        echo ""
+        echo "  Opciones disponibles (sin información de versión):"
+        echo ""
+        echo "  1. Show current configuration"
+        echo "  2. Reinstall (mantiene secrets, reconstruye imágenes)"
+        echo "  3. Exit"
+        echo ""
+        read -r -p "  Elija una opción [1/2/3]: " choice
+        case "$choice" in
+            1) _show_current_configuration; continue ;;
+            2)
+                # Estado unknown: no podemos leer la versión de BD, pero el código
+                # está disponible. Pasamos code_version/code_date para que el heredoc
+                # los muestre (en unknown, db_version == code_version por convención).
+                show_reinstall_instructions "$CODE_VERSION" "$CODE_DATE"
+                ;;
+            3) echo "  Saliendo."; exit 0 ;;
+            *) echo "  Opción inválida. Elija 1, 2 o 3." ;;
+        esac
+    done
+}
+
+# ---------------------------------------------------------------------------
+# Reinstall instructions (spec 004 v3.0 §7)
+# ---------------------------------------------------------------------------
+# Recibe 2 parámetros: code_version, code_date.
+# En Reinstall, código == BD, así que db_version == code_version (no se pasa
+# por separado, a diferencia de Upgrade que recibe 4).
+# NO ejecuta nada: solo imprime los pasos manuales con cat <<EOF...EOF y sale
+# con exit 0. El backup y todos los comandos los ejecuta el usuario a mano.
+show_reinstall_instructions() {
+    local code_version="$1" code_date="$2"
+
+    cat <<EOF
+═══════════════════════════════════════════════════════════════════
+  REINSTALL — Procedimiento Manual
+═══════════════════════════════════════════════════════════════════
+
+  Versión instalada en BD:  $code_version ($code_date)
+  Versión del código:        $code_version ($code_date)  (misma)
+
+  El reinstall NO se ejecuta automáticamente. El backup es
+  responsabilidad del usuario. Ejecutá los pasos manuales
+  a continuación en orden. Esto BORRA imágenes, volúmenes
+  y lock files — reconstruye todo desde cero.
+
+  ── Paso 0: Verificar código ──
+  cd \$REPO_ROOT && git log --oneline -5
+  grep DALORADIUS_VERSION app/common/includes/version.php
+
+  ── Paso 1: Backup COMPLETO (obligatorio) ──
+  # 1b. mariadb-dump con --defaults-extra-file (ver spec 004 §5 paso 1b)
+  # 1c. cp secrets/, .env, docker-compose.yml a \$BACKUP_DIR
+  # 1d. git rev-parse HEAD > \$BACKUP_DIR/commit-before-reinstall.txt
+
+  ── Paso 2: down -v --rmi all (BORRA volúmenes e imágenes) ──
+  docker compose down -v --rmi all
+  docker image prune -f
+
+  ── Paso 3: build --no-cache (rebuild total) ──
+  docker compose build --no-cache
+
+  ── Paso 4: Eliminar lock files ──
+  find data/ -name ".init_done" -type f -delete
+
+  ── Paso 5: Iniciar MariaDB + esperar healthcheck ──
+  docker compose up -d radius-mysql
+  # until docker inspect -f '{{.State.Health.Status}}' radius-mysql = healthy; do sleep 2; done
+
+  ── Paso 6: install-db.sh (Phase 1 schemas + Phase 2 migraciones + Phase 3 INSERT) ──
+  docker compose exec -T radius-web bash /var/www/daloradius/docker/daloradius/install-db.sh
+
+  ── Paso 7: Restaurar datos + UPDATE updated_at ──
+  # 7a. mariadb < full-db.sql con --force + --defaults-extra-file
+  # 7b. UPDATE _app_version SET updated_at = NOW() WHERE version = '$code_version'
+
+  ── Paso 8: Restaurar config (si fue modificada) ──
+  # cp secrets/, .env, docker-compose.yml desde backup
+
+  ── Paso 9: Iniciar el resto ──
+  docker compose up -d
+
+  ── Paso 10: Verificar ──
+  docker compose ps
+  # Login en http://localhost:8000
+  # SELECT version, updated_at FROM _app_version (con --defaults-extra-file)
+
+  ── Si el reinstall falla: reversión manual ──
+  Ver spec 004 §6 (Paso R1-R7) para revertir desde el backup.
+
+═══════════════════════════════════════════════════════════════════
+  Documentación completa: agents/documentador/004-reinstall.md
+═══════════════════════════════════════════════════════════════════
+EOF
+    exit 0
+}
+
+# Shared submenu helpers (preserved from the previous 4-option menu)
+
+_show_current_configuration() {
+    echo ""
+    echo "  🌐 Access the web UI:"
+    echo "     Admin panel:  http://localhost:8000  (or http://<server-ip>:8000)"
+    echo "     Users portal: http://localhost:80    (or http://<server-ip>:80)"
+    echo ""
+    echo "     Default login for ADMIN panel only:"
+    echo "       Username: administrator"
+    echo "       Password: radius"
+    echo ""
+    echo "  🔑 View all generated passwords:"
+    echo '     for f in secrets/db/mysql_root_password secrets/db/mysql_password secrets/daloradius/daloradius_client_secret; do echo "--- $f ---"; cat "$f"; echo; done'
+    echo ""
+    echo "  TLS: $FREERADIUS_SQL_TLS"
+    echo ""
+    echo "  📂 Data directories:"
+    echo "    - ./data/mysql       (MariaDB storage)"
+    echo "    - ./data/freeradius  (FreeRADIUS persistent data)"
+    echo "    - ./data/daloradius  (daloRADIUS persistent data)"
+    echo ""
+    read -r -p "  Press Enter to return to menu..."
+}
+
+_show_manual_steps() {
+    echo "  ⚠️  To reconfigure manually, follow these steps:"
+    echo ""
+    echo "  1. Backup your current data:"
+    echo '     BACKUP_DIR="backup-$(date +%Y%m%d-%H%M%S)"'
+    echo '     mkdir -p "$BACKUP_DIR"'
+    echo '     cp -r secrets/ .env docker-compose.yml data/ "$BACKUP_DIR"/'
+    echo ""
+    echo "  2. Backup your database (use --defaults-extra-file, never -p on CLI):"
+    echo '     d=$(mktemp); chmod 600 "$d";'
+    echo '     printf "[client]\nhost=radius-mysql\nuser=root\npassword=$(cat secrets/db/mysql_root_password)\n" > "$d"'
+    echo '     docker exec -i radius-mysql mariadb-dump --defaults-extra-file=/dev/stdin radius < "$d" > "$BACKUP_DIR/radius-db.sql"'
+    echo '     rm -f "$d"'
+    echo ""
+    echo "  3. Clean up:"
+    echo "     $DOCKER_COMPOSE down -v"
+    echo "     rm -rf secrets/db/ secrets/daloradius/"
+    echo "     rm -f .env docker-compose.yml"
+    echo ""
+    echo "     # Only if you want a completely fresh database:"
+    echo "     # rm -rf data/"
+    echo ""
+    echo "  4. Re-run:"
+    echo "     bash setup/install-docker-compose.sh"
+    echo ""
+    echo "  Exiting. Follow the steps above, then re-run the script."
+}
+
+_show_hard_reset_steps() {
+    echo "  ⚠️  Steps para hard reset (incluye backup):"
+    echo ""
+    echo "  1. Haga un backup COMPLETO primero (ver opción 2 'manual steps')."
+    echo "  2. Detenga el stack:"
+    echo "     $DOCKER_COMPOSE down -v --rmi local"
+    echo "  3. Elimine secrets, .env y docker-compose.yml:"
+    echo "     rm -rf secrets/ .env docker-compose.yml"
+    echo "  4. (Opcional, ADVERTENCIA: borra datos) Elimine data/:"
+    echo "     rm -rf data/"
+    echo "  5. Re-ejecute el installer:"
+    echo "     bash setup/install-docker-compose.sh"
+    echo ""
+    echo "  Exiting. Follow the steps above, then re-run the script."
+}
+
+# ---------------------------------------------------------------------------
+# Installation state detection + contextual menu dispatch (spec 002 §5.2)
+# Replaces the previous 4-option re-run detection block.
+# ---------------------------------------------------------------------------
+INSTALL_STATE=$(detect_installation_state)
+DB_VERSION=""
+DB_DATE=""
+if [ "$INSTALL_STATE" = "installed" ] || [ "$INSTALL_STATE" = "upgrade" ] || [ "$INSTALL_STATE" = "rollback" ]; then
+    # Read DB version once more for the menu display (state already validated)
+    _db_data=$(read_db_version 2>/dev/null || echo "||")
+    DB_VERSION="${_db_data%%|*}"
+    DB_DATE="${_db_data##*|}"
 fi
+
+case "$INSTALL_STATE" in
+    fresh)
+        show_fresh_menu
+        ;;
+    installed)
+        show_installed_menu "$CODE_VERSION" "$CODE_DATE" "$DB_VERSION" "$DB_DATE"
+        ;;
+    upgrade)
+        show_upgrade_menu "$CODE_VERSION" "$CODE_DATE" "$DB_VERSION" "$DB_DATE"
+        ;;
+    rollback)
+        show_rollback_error "$CODE_VERSION" "$CODE_DATE" "$DB_VERSION" "$DB_DATE"
+        exit 1
+        ;;
+    unknown)
+        show_unknown_menu
+        ;;
+esac
 
 # ===========================================================================
 # STEP 0: Create data directories for bind mounts
