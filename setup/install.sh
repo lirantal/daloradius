@@ -757,13 +757,13 @@ daloradius_load_sql_schema() {
 
     if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius.sql" >/dev/null 2>&1; then
         print_red "KO"
-        print_red "[!] Failed to load daloRADIUS dictionaries into MariaDB. Aborting." >&2
+        print_red "[!] Failed to load daloRADIUS base schema into MariaDB. Aborting." >&2
         exit 1
     fi
 
     if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius-dictionaries.sql" >/dev/null 2>&1; then
         print_red "KO"
-        print_red "[!] Failed to load daloRADIUS base schema into MariaDB. Aborting." >&2
+        print_red "[!] Failed to load daloRADIUS dictionaries into MariaDB. Aborting." >&2
         exit 1
     fi
 
