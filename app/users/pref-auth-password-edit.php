@@ -50,7 +50,7 @@
                 // crypt() picks the algorithm from the salt prefix. A salt that does not
                 // start with $ selects traditional DES: 8-character truncation and, here,
                 // a salt shared by every user. Use SHA-512 crypt with a per-user salt.
-                return crypt($value, '$6$' . bin2hex(random_bytes(8)));
+                return crypt($value, '$6$' . bin2hex(random_bytes(8)) . '$');
                 
             case "MD5-Password":
                 return strtoupper(md5($value));
@@ -128,9 +128,13 @@
                             $id = intval($id);
                             
                             // For Crypt-Password, crypt() can read the salt from the stored hash.
-                            $ok = ($password_type === "Crypt-Password")
-                                ? hash_equals($password_value, crypt($current_password, $password_value))
-                                : hash_equals($password_value, (string) hashPasswordAttribute($password_type, $current_password));
+                            if ($password_type === "Crypt-Password") {
+                                $ok = hash_equals($password_value, crypt($current_password, $password_value));
+                            } else {
+                                $current_hashed_password = hashPasswordAttribute($password_type, $current_password);
+                                $ok = ($current_hashed_password !== false)
+                                    && hash_equals($password_value, (string) $current_hashed_password);
+                            }
                             
                             if (!$ok) {
                                 continue;
