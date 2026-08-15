@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $readyCount++;
                         }
 
-                        if ($nasname !== '') {
+                        if ($nasname !== '' && count($row['errors']) === 0) {
                             $seenNames[$nasnameKey] = true;
                         }
 
@@ -208,9 +208,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $entries = $preview['entries'] ?? array();
             $excludedRows = $preview['excluded_rows'] ?? array();
             include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+            $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
 
-            $transaction = $dbSocket->query('START TRANSACTION');
-            $importError = DB::isError($transaction);
+            $importLock = $dbSocket->getOne("SELECT GET_LOCK('daloradius_nas_import', 30)");
+            $importLockAcquired = !DB::isError($importLock) && intval($importLock) === 1;
+            $transaction = $importLockAcquired ? $dbSocket->query('START TRANSACTION') : false;
+            $importError = !$importLockAcquired || DB::isError($transaction);
             $insertedRows = array();
             $skippedRows = array();
 
@@ -219,6 +222,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $configValues['CONFIG_DB_TBL_RADNAS']
             );
             $prepared = $dbSocket->prepare($insertSql);
+            if (DB::isError($prepared)) {
+                $importError = true;
+            }
 
             foreach ($entries as $index => $candidate) {
                 if ($importError) {
@@ -228,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $entry = $candidate['data'];
                 $rowNumber = intval($candidate['row_number']);
                 $existsSql = sprintf(
-                    "SELECT COUNT(id) FROM %s WHERE nasname='%s'",
+                    "SELECT COUNT(id) FROM %s WHERE LOWER(nasname)=LOWER('%s')",
                     $configValues['CONFIG_DB_TBL_RADNAS'],
                     $dbSocket->escapeSimple($entry['nasname'])
                 );
@@ -259,6 +265,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $entry['community'],
                     $entry['description'],
                 ));
+
+                if (nas_import_is_duplicate_error($res)) {
+                    $skippedRows[] = array(
+                        'row_number' => $rowNumber,
+                        'data' => $entry,
+                        'status' => 'skipped',
+                        'information' => 'NAS name was added after the preview and already exists',
+                    );
+                    continue;
+                }
 
                 if (DB::isError($res)) {
                     $importError = true;
@@ -327,6 +343,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!DB::isError($prepared)) {
                 $dbSocket->freePrepared($prepared);
             }
+            if ($importLockAcquired) {
+                $dbSocket->query("SELECT RELEASE_LOCK('daloradius_nas_import')");
+            }
+            $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
             include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
             unset($_SESSION['nas_import_preview']);
         }

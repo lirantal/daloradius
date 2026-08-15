@@ -77,12 +77,13 @@ function nas_backup_normalize_entry($entry, $row_number) {
     }
 
     $shortname = nas_backup_normalize_optional_string($entry['shortname'] ?? null, 'shortname', 32, $errors);
-    $type = nas_backup_normalize_optional_string($entry['type'] ?? 'other', 'type', 30, $errors);
+    $typeValue = array_key_exists('type', $entry) ? $entry['type'] : 'other';
+    $type = nas_backup_normalize_optional_string($typeValue, 'type', 30, $errors);
     $server = nas_backup_normalize_optional_string($entry['server'] ?? null, 'server', 64, $errors);
     $community = nas_backup_normalize_optional_string($entry['community'] ?? null, 'community', 50, $errors);
     $description = nas_backup_normalize_optional_string($entry['description'] ?? null, 'description', 200, $errors);
 
-    if ($type === null || trim($type) === '') {
+    if ($type !== null && trim($type) === '') {
         $type = 'other';
     }
 
@@ -135,7 +136,8 @@ function nas_backup_parse_document($contents) {
     if (($document['version'] ?? null) !== NAS_BACKUP_VERSION) {
         $errors[] = sprintf('Unsupported backup version; expected %d', NAS_BACKUP_VERSION);
     }
-    if (!isset($document['nas']) || !is_array($document['nas'])) {
+    if (!isset($document['nas']) || !is_array($document['nas']) ||
+        array_values($document['nas']) !== $document['nas']) {
         $errors[] = 'The backup does not contain a NAS list';
         return array('rows' => array(), 'errors' => $errors);
     }
@@ -150,4 +152,19 @@ function nas_backup_parse_document($contents) {
     }
 
     return array('rows' => $rows, 'errors' => $errors);
+}
+
+function nas_import_is_duplicate_error($error) {
+    if (!DB::isError($error)) {
+        return false;
+    }
+
+    $details = $error->getMessage();
+    foreach (array('getUserInfo', 'getDebugInfo') as $method) {
+        if (method_exists($error, $method)) {
+            $details .= ' ' . $error->{$method}();
+        }
+    }
+
+    return preg_match('/(?:nativecode[=:\\s]*1062|duplicate entry|duplicate key|unique constraint)/i', $details) === 1;
 }

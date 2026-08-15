@@ -59,6 +59,19 @@ $document = array(
     'nas' => $nas,
 );
 
+$json = json_encode(
+    $document,
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+);
+
+if ($json === false) {
+    http_response_code(500);
+    header('Content-Type: application/json; charset=UTF-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    echo json_encode(array('error' => 'Unable to export the NAS list because it contains invalid UTF-8'));
+    exit;
+}
+
 $filename = sprintf('daloradius-nas-%s.json', gmdate('Ymd-His'));
 header('Content-Type: application/json; charset=UTF-8');
 header(sprintf('Content-Disposition: attachment; filename="%s"', $filename));
@@ -66,8 +79,5 @@ header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 header('X-Content-Type-Options: nosniff');
 
-echo json_encode(
-    $document,
-    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE
-);
+echo $json;
 exit;
