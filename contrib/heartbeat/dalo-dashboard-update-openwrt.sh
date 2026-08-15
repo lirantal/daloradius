@@ -40,6 +40,12 @@ get_l3_device() {
     ubus call "network.interface.$1" status 2>/dev/null | jsonfilter -e '@.l3_device' 2>/dev/null
 }
 
+get_wifi_device() {
+    ubus call network.wireless status 2>/dev/null |
+        jsonfilter -e '@.*.interfaces[*].ifname' 2>/dev/null |
+        awk 'NF { print; exit }'
+}
+
 get_ipv4() {
     ip -4 addr show dev "$1" 2>/dev/null |
         awk '/inet / { split($2, address, "/"); print address[1]; exit }'
@@ -82,8 +88,8 @@ lan_iface="${LAN_DEV:-$(get_l3_device lan)}"
 [ -n "$lan_iface" ] || lan_iface="$(uci -q get network.lan.device)"
 [ -n "$lan_iface" ] || lan_iface="$(uci -q get network.lan.ifname)"
 
-wifi_iface="${WLAN_DEV:-$(uci -q get wireless.default_radio0.ifname)}"
-[ -n "$wifi_iface" ] || wifi_iface="wlan0"
+wifi_iface="${WLAN_DEV:-$(get_wifi_device)}"
+[ -n "$wifi_iface" ] || wifi_iface="$(uci -q get wireless.default_radio0.ifname)"
 
 wan_ip="$(get_ipv4 "$wan_iface")"
 wan_mac="$(get_mac "$wan_iface")"
