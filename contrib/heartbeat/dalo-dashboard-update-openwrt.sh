@@ -42,8 +42,9 @@ get_l3_device() {
 
 get_wifi_device() {
     ubus call network.wireless status 2>/dev/null |
-        jsonfilter -e '@.*.interfaces[*].ifname' 2>/dev/null |
-        awk 'NF { print; exit }'
+        jsonfilter -l 1 \
+            -e '@[@.up=true].interfaces[@.section="default_radio0"].ifname' \
+            2>/dev/null
 }
 
 get_ipv4() {
