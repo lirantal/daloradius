@@ -213,7 +213,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $importLock = $dbSocket->getOne("SELECT GET_LOCK('daloradius_nas_import', 30)");
             $importLockAcquired = !DB::isError($importLock) && intval($importLock) === 1;
             $transaction = $importLockAcquired ? $dbSocket->query('START TRANSACTION') : false;
-            $importError = !$importLockAcquired || DB::isError($transaction);
+            $confirmExistingNames = ($importLockAcquired && !DB::isError($transaction))
+                ? nas_import_existing_names($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'])
+                : false;
+            $importError = $importLockAcquired &&
+                (DB::isError($transaction) || $confirmExistingNames === false);
             $insertedRows = array();
             $skippedRows = array();
 
@@ -221,18 +225,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'INSERT INTO %s (nasname, shortname, type, ports, secret, server, community, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 $configValues['CONFIG_DB_TBL_RADNAS']
             );
-            $prepared = $dbSocket->prepare($insertSql);
-            if (DB::isError($prepared)) {
+            $prepared = ($importLockAcquired && !$importError) ? $dbSocket->prepare($insertSql) : false;
+            if ($importLockAcquired && DB::isError($prepared)) {
                 $importError = true;
             }
 
             foreach ($entries as $index => $candidate) {
-                if ($importError) {
+                if (!$importLockAcquired || $importError) {
                     break;
                 }
 
                 $entry = $candidate['data'];
                 $rowNumber = intval($candidate['row_number']);
+                $nasnameKey = nas_import_name_key($entry['nasname']);
+
+                if (isset($confirmExistingNames[$nasnameKey])) {
+                    $skippedRows[] = array(
+                        'row_number' => $rowNumber,
+                        'data' => $entry,
+                        'status' => 'skipped',
+                        'information' => 'NAS name was added after the preview and already exists',
+                    );
+                    continue;
+                }
+
                 $existsSql = sprintf(
                     "SELECT COUNT(id) FROM %s WHERE LOWER(nasname)=LOWER('%s')",
                     $configValues['CONFIG_DB_TBL_RADNAS'],
@@ -246,6 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 if (intval($exists) > 0) {
+                    $confirmExistingNames[$nasnameKey] = true;
                     $skippedRows[] = array(
                         'row_number' => $rowNumber,
                         'data' => $entry,
@@ -287,9 +304,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'status' => 'imported',
                     'information' => 'NAS added successfully',
                 );
+                $confirmExistingNames[$nasnameKey] = true;
             }
 
-            if ($importError) {
+            if (!$importLockAcquired) {
+                $failureMsg = DB::isError($importLock)
+                    ? 'Unable to acquire the NAS import lock; please retry the import'
+                    : 'Another NAS import is currently running; please retry in a moment';
+                $logAction .= 'NAS import lock was unavailable on page: ';
+
+                $readyCount = count($entries);
+                $previewToken = (string)($preview['token'] ?? '');
+                foreach ($entries as $candidate) {
+                    $previewRows[] = array(
+                        'row_number' => intval($candidate['row_number']),
+                        'data' => $candidate['data'],
+                        'errors' => array(),
+                        'status' => 'ready',
+                        'information' => 'New NAS name',
+                    );
+                }
+                foreach ($excludedRows as $excludedRow) {
+                    $previewRows[] = $excludedRow;
+                    if (($excludedRow['status'] ?? '') === 'skipped') {
+                        $skippedCount++;
+                    } elseif (($excludedRow['status'] ?? '') === 'invalid') {
+                        $invalidCount++;
+                    }
+                }
+                usort($previewRows, function ($a, $b) {
+                    return intval($a['row_number']) <=> intval($b['row_number']);
+                });
+            } elseif ($importError) {
                 $dbSocket->query('ROLLBACK');
                 $failureMsg = 'The NAS import failed and all new rows were rolled back';
                 foreach ($entries as $candidate) {
@@ -340,15 +386,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            if (!DB::isError($prepared)) {
+            if ($prepared !== false && !DB::isError($prepared)) {
                 $dbSocket->freePrepared($prepared);
             }
             if ($importLockAcquired) {
-                $dbSocket->query("SELECT RELEASE_LOCK('daloradius_nas_import')");
+                $releaseLock = $dbSocket->getOne("SELECT RELEASE_LOCK('daloradius_nas_import')");
+                if (DB::isError($releaseLock) || intval($releaseLock) !== 1) {
+                    $logAction .= 'NAS import advisory lock release could not be confirmed on page: ';
+                }
             }
             $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
             include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
-            unset($_SESSION['nas_import_preview']);
+            if ($importLockAcquired) {
+                unset($_SESSION['nas_import_preview']);
+            }
         }
     } else {
         $failureMsg = 'Unsupported NAS import action';
