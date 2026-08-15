@@ -11,7 +11,7 @@ if (strpos($_SERVER['PHP_SELF'] ?? '', '/include/management/nasImportExport.php'
 const NAS_BACKUP_FORMAT = 'daloradius-nas-backup';
 const NAS_BACKUP_VERSION = 1;
 const NAS_BACKUP_BINARY_VERSION = 2;
-const NAS_BACKUP_MAX_BYTES = 8388608;
+const NAS_BACKUP_MAX_BYTES = 2097152;
 const NAS_BACKUP_MAX_ENTRIES = 5000;
 
 function nas_backup_lock_name($dbSocket, $table) {

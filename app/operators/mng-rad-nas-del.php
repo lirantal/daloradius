@@ -40,6 +40,7 @@
     if ($csrfValid) {
         $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
         $nasLock = nas_backup_acquire_lock($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'], 30);
+        $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
     }
 
     // build a whitelist of existing NAS names; only these can be deleted
@@ -117,10 +118,11 @@
         }
     }
 
-    if ($nasLock['acquired'] && !nas_backup_release_lock($dbSocket, $nasLock['name'])) {
-        $logAction .= 'NAS advisory lock release could not be confirmed on page: ';
-    }
-    if ($csrfValid) {
+    if ($nasLock['acquired']) {
+        $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+        if (!nas_backup_release_lock($dbSocket, $nasLock['name'])) {
+            $logAction .= 'NAS advisory lock release could not be confirmed on page: ';
+        }
         $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
     }
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);

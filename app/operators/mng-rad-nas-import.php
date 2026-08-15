@@ -283,13 +283,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     continue;
                 }
 
-                $existsSql = sprintf(
-                    "SELECT COUNT(id) FROM %s WHERE LOWER(nasname)=LOWER('%s') OR HEX(nasname)='%s'",
-                    $configValues['CONFIG_DB_TBL_RADNAS'],
-                    $dbSocket->escapeSimple($entry['nasname']),
-                    nas_import_hex_value($entry['nasname'])
-                );
-                $exists = $dbSocket->getOne($existsSql);
+                $nasnameHex = nas_import_hex_value($entry['nasname']);
+                $nasnameIsText = nas_backup_is_valid_utf8($entry['nasname']) &&
+                                 !preg_match('/[\x00-\x1F\x7F]/', $entry['nasname']);
+                if ($nasnameIsText) {
+                    $existsSql = sprintf(
+                        'SELECT COUNT(id) FROM %s
+                          WHERE LOWER(nasname)=LOWER(CONVERT(UNHEX(?) USING utf8mb4))
+                             OR HEX(nasname)=?',
+                        $configValues['CONFIG_DB_TBL_RADNAS']
+                    );
+                    $existsParams = array($nasnameHex, $nasnameHex);
+                } else {
+                    $existsSql = sprintf(
+                        'SELECT COUNT(id) FROM %s WHERE HEX(nasname)=?',
+                        $configValues['CONFIG_DB_TBL_RADNAS']
+                    );
+                    $existsParams = array($nasnameHex);
+                }
+                $exists = $dbSocket->getOne($existsSql, $existsParams);
 
                 if (DB::isError($exists)) {
                     $importError = true;
