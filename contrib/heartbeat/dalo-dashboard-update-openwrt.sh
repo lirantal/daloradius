@@ -57,6 +57,23 @@ get_tx_bytes() {
     awk -v iface="$1:" '$1 == iface { print $10; exit }' /proc/net/dev
 }
 
+urlencode() {
+    printf '%s' "$1" | LC_ALL=C od -An -tu1 |
+        awk '{
+            for (i = 1; i <= NF; i++) {
+                byte = $i
+                if ((byte >= 48 && byte <= 57) ||
+                    (byte >= 65 && byte <= 90) ||
+                    (byte >= 97 && byte <= 122) ||
+                    byte == 45 || byte == 46 || byte == 95 || byte == 126) {
+                    printf "%c", byte
+                } else {
+                    printf "%%%02X", byte
+                }
+            }
+        }'
+}
+
 wan_iface="${WAN_DEV:-$(get_l3_device wan)}"
 [ -n "$wan_iface" ] || wan_iface="$(uci -q get network.wan.device)"
 [ -n "$wan_iface" ] || wan_iface="$(uci -q get network.wan.ifname)"
@@ -74,7 +91,7 @@ wan_gateway="$(ip route show default dev "$wan_iface" 2>/dev/null | awk '/defaul
 wifi_ip="$(uci -q get 'chilli.@chilli[0].uamlisten')"
 [ -n "$wifi_ip" ] || wifi_ip="$(uci -q get chilli.chilli1.uamlisten)"
 wifi_mac="$(get_mac "$wifi_iface")"
-wifi_ssid="$(uci -q get wireless.default_radio0.ssid | awk '{ gsub(/ /,""); print }')"
+wifi_ssid="$(uci -q get wireless.default_radio0.ssid)"
 wifi_key=""
 wifi_channel="$(uci -q get wireless.radio0.channel)"
 lan_ip="$(get_ipv4 "$lan_iface")"
@@ -168,7 +185,41 @@ then
 fi
 
 
-wget -O /tmp/heartbeat.txt "$DALO_HEARTBEAT_ADDR?secret_key=$SECRET_KEY&nas_mac=$NAS_MAC&firmware=$firmware&firmware_revision=$firmware_revision&wan_iface=$wan_iface&wan_ip=$wan_ip&wan_mac=$wan_mac&wan_gateway=$wan_gateway&wifi_iface=$wifi_iface&wifi_ip=$wifi_ip&wifi_mac=$wifi_mac&wifi_ssid=$wifi_ssid&wifi_key=$wifi_key&wifi_channel=$wifi_channel&lan_iface=$lan_iface&lan_ip=$lan_ip&lan_mac=$lan_mac&uptime=$uptime&memfree=$memfree&wan_bup=$wan_bup&wan_bdown=$wan_bdown&cpu=$cpu"
+heartbeat_query=""
+append_heartbeat_parameter() {
+    parameter="$1=$(urlencode "$2")"
+    if [ -n "$heartbeat_query" ]
+    then
+        heartbeat_query="$heartbeat_query&$parameter"
+    else
+        heartbeat_query="$parameter"
+    fi
+}
+
+append_heartbeat_parameter secret_key "$SECRET_KEY"
+append_heartbeat_parameter nas_mac "$NAS_MAC"
+append_heartbeat_parameter firmware "$firmware"
+append_heartbeat_parameter firmware_revision "$firmware_revision"
+append_heartbeat_parameter wan_iface "$wan_iface"
+append_heartbeat_parameter wan_ip "$wan_ip"
+append_heartbeat_parameter wan_mac "$wan_mac"
+append_heartbeat_parameter wan_gateway "$wan_gateway"
+append_heartbeat_parameter wifi_iface "$wifi_iface"
+append_heartbeat_parameter wifi_ip "$wifi_ip"
+append_heartbeat_parameter wifi_mac "$wifi_mac"
+append_heartbeat_parameter wifi_ssid "$wifi_ssid"
+append_heartbeat_parameter wifi_key "$wifi_key"
+append_heartbeat_parameter wifi_channel "$wifi_channel"
+append_heartbeat_parameter lan_iface "$lan_iface"
+append_heartbeat_parameter lan_ip "$lan_ip"
+append_heartbeat_parameter lan_mac "$lan_mac"
+append_heartbeat_parameter uptime "$uptime"
+append_heartbeat_parameter memfree "$memfree"
+append_heartbeat_parameter wan_bup "$wan_bup"
+append_heartbeat_parameter wan_bdown "$wan_bdown"
+append_heartbeat_parameter cpu "$cpu"
+
+wget -O /tmp/heartbeat.txt "$DALO_HEARTBEAT_ADDR?$heartbeat_query"
 
 
 if [ "$DEBUG_MODE" = "1" ]
