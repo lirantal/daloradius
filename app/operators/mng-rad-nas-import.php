@@ -32,11 +32,14 @@ $invalidCount = 0;
 
 function nas_import_name_key($nasname) {
     $nasname = (string)$nasname;
+    if (!nas_backup_is_valid_utf8($nasname)) {
+        return 'binary:' . bin2hex($nasname);
+    }
     return function_exists('mb_strtolower') ? mb_strtolower($nasname, 'UTF-8') : strtolower($nasname);
 }
 
 function nas_import_existing_names($dbSocket, $table) {
-    $sql = sprintf('SELECT nasname FROM %s', $table);
+    $sql = sprintf('SELECT HEX(nasname) FROM %s', $table);
     $res = $dbSocket->query($sql);
     if (DB::isError($res)) {
         return false;
@@ -44,9 +47,28 @@ function nas_import_existing_names($dbSocket, $table) {
 
     $names = array();
     while ($row = $res->fetchRow()) {
-        $names[nas_import_name_key($row[0])] = true;
+        $nasname = nas_backup_decode_database_hex($row[0]);
+        if ($nasname === false) {
+            return false;
+        }
+        $names[nas_import_name_key($nasname)] = true;
     }
     return $names;
+}
+
+function nas_import_hex_value($value) {
+    return ($value === null) ? null : strtoupper(bin2hex($value));
+}
+
+function nas_import_row_matches($stored, $entry) {
+    foreach (array('nasname', 'shortname', 'type', 'secret', 'server', 'community', 'description') as $field) {
+        if (($stored[$field . '_hex'] ?? null) !== nas_import_hex_value($entry[$field])) {
+            return false;
+        }
+    }
+
+    $storedPorts = ($stored['ports'] === null) ? null : intval($stored['ports']);
+    return $storedPorts === $entry['ports'];
 }
 
 function nas_import_badge($status) {
@@ -60,6 +82,17 @@ function nas_import_badge($status) {
         default:
             return '<span class="badge text-bg-danger">Invalid</span>';
     }
+}
+
+function nas_import_display_value($value) {
+    if ($value === null) {
+        return '';
+    }
+    $value = (string)$value;
+    if (!nas_backup_is_valid_utf8($value) || preg_match('/[\x00-\x1F\x7F]/', $value)) {
+        return sprintf('Binary value (%d bytes)', strlen($value));
+    }
+    return $value;
 }
 
 function nas_import_render_rows($rows, $table_id) {
@@ -88,9 +121,9 @@ function nas_import_render_rows($rows, $table_id) {
             '<tr data-status="%s"><td>%d</td><td><code>%s</code></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>',
             htmlspecialchars($status, ENT_QUOTES, 'UTF-8'),
             intval($row['row_number']),
-            htmlspecialchars((string)($data['nasname'] ?? ''), ENT_QUOTES, 'UTF-8'),
-            htmlspecialchars((string)($data['shortname'] ?? ''), ENT_QUOTES, 'UTF-8'),
-            htmlspecialchars((string)($data['type'] ?? ''), ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars(nas_import_display_value($data['nasname'] ?? null), ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars(nas_import_display_value($data['shortname'] ?? null), ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars(nas_import_display_value($data['type'] ?? null), ENT_QUOTES, 'UTF-8'),
             nas_import_badge($status),
             htmlspecialchars($information, ENT_QUOTES, 'UTF-8')
         );
@@ -222,7 +255,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $skippedRows = array();
 
             $insertSql = sprintf(
-                'INSERT INTO %s (nasname, shortname, type, ports, secret, server, community, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                'INSERT INTO %s (nasname, shortname, type, ports, secret, server, community, description)
+                 VALUES (UNHEX(?), UNHEX(?), UNHEX(?), ?, UNHEX(?), UNHEX(?), UNHEX(?), UNHEX(?))',
                 $configValues['CONFIG_DB_TBL_RADNAS']
             );
             $prepared = ($importLockAcquired && !$importError) ? $dbSocket->prepare($insertSql) : false;
@@ -250,9 +284,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $existsSql = sprintf(
-                    "SELECT COUNT(id) FROM %s WHERE LOWER(nasname)=LOWER('%s')",
+                    "SELECT COUNT(id) FROM %s WHERE LOWER(nasname)=LOWER('%s') OR HEX(nasname)='%s'",
                     $configValues['CONFIG_DB_TBL_RADNAS'],
-                    $dbSocket->escapeSimple($entry['nasname'])
+                    $dbSocket->escapeSimple($entry['nasname']),
+                    nas_import_hex_value($entry['nasname'])
                 );
                 $exists = $dbSocket->getOne($existsSql);
 
@@ -273,14 +308,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $res = $dbSocket->execute($prepared, array(
-                    $entry['nasname'],
-                    $entry['shortname'],
-                    $entry['type'],
+                    nas_import_hex_value($entry['nasname']),
+                    nas_import_hex_value($entry['shortname']),
+                    nas_import_hex_value($entry['type']),
                     $entry['ports'],
-                    $entry['secret'],
-                    $entry['server'],
-                    $entry['community'],
-                    $entry['description'],
+                    nas_import_hex_value($entry['secret']),
+                    nas_import_hex_value($entry['server']),
+                    nas_import_hex_value($entry['community']),
+                    nas_import_hex_value($entry['description']),
                 ));
 
                 if (nas_import_is_duplicate_error($res)) {
@@ -294,6 +329,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 if (DB::isError($res)) {
+                    $importError = true;
+                    break;
+                }
+
+                $insertedId = $dbSocket->getOne('SELECT LAST_INSERT_ID()');
+                if (DB::isError($insertedId)) {
+                    $importError = true;
+                    break;
+                }
+                $verifySql = sprintf(
+                    'SELECT HEX(nasname) AS nasname_hex, HEX(shortname) AS shortname_hex,
+                            HEX(type) AS type_hex, ports, HEX(secret) AS secret_hex,
+                            HEX(server) AS server_hex, HEX(community) AS community_hex,
+                            HEX(description) AS description_hex
+                       FROM %s WHERE id=%d',
+                    $configValues['CONFIG_DB_TBL_RADNAS'],
+                    intval($insertedId)
+                );
+                $stored = $dbSocket->getRow($verifySql, array(), DB_FETCHMODE_ASSOC);
+                if (DB::isError($stored) || !is_array($stored) || !nas_import_row_matches($stored, $entry)) {
                     $importError = true;
                     break;
                 }
@@ -451,7 +506,10 @@ if (count($previewRows) > 0) {
     $csrfToken = dalo_csrf_token();
     echo '<div class="card my-3"><div class="card-body">';
     echo '<h5 class="card-title">Select a NAS JSON backup</h5>';
-    echo '<p class="card-text">All valid NAS entries with a new, unique NAS name will be added. Existing NAS entries are skipped and are never modified or deleted. The maximum file size is 2 MiB.</p>';
+    printf(
+        '<p class="card-text">All valid NAS entries with a new, unique NAS name will be added. Existing NAS entries are skipped and are never modified or deleted. The maximum file size is %d MiB.</p>',
+        intval(NAS_BACKUP_MAX_BYTES / 1048576)
+    );
     echo '<form method="POST" action="mng-rad-nas-import.php" enctype="multipart/form-data">';
     printf('<input type="hidden" name="csrf_token" value="%s">', htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'));
     echo '<input type="hidden" name="nas_import_action" value="preview">';

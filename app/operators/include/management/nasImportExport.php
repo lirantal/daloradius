@@ -11,7 +11,7 @@ if (strpos($_SERVER['PHP_SELF'] ?? '', '/include/management/nasImportExport.php'
 const NAS_BACKUP_FORMAT = 'daloradius-nas-backup';
 const NAS_BACKUP_VERSION = 1;
 const NAS_BACKUP_BINARY_VERSION = 2;
-const NAS_BACKUP_MAX_BYTES = 2097152;
+const NAS_BACKUP_MAX_BYTES = 8388608;
 const NAS_BACKUP_MAX_ENTRIES = 5000;
 
 function nas_backup_lock_name($dbSocket, $table) {
@@ -20,7 +20,7 @@ function nas_backup_lock_name($dbSocket, $table) {
         return false;
     }
 
-    return 'daloradius:nas:' . substr(hash('sha256', $database . "\0" . $table), 0, 40);
+    return 'daloradius:nas:' . substr(hash('sha256', $database . "\0" . $table), 0, 48);
 }
 
 function nas_backup_acquire_lock($dbSocket, $table, $timeout) {
@@ -58,8 +58,22 @@ function nas_backup_is_valid_utf8($value) {
     return !is_string($value) || preg_match('//u', $value) === 1;
 }
 
+function nas_backup_decode_database_hex($value) {
+    if ($value === null) {
+        return null;
+    }
+    if ($value === '') {
+        return '';
+    }
+    if (!is_string($value) || strlen($value) % 2 !== 0 || !ctype_xdigit($value)) {
+        return false;
+    }
+    return hex2bin($value);
+}
+
 function nas_backup_encode_export_value($value, &$usesBinaryEncoding) {
-    if (!is_string($value) || nas_backup_is_valid_utf8($value)) {
+    if (!is_string($value) ||
+        (nas_backup_is_valid_utf8($value) && !preg_match('/[\x00-\x1F\x7F]/', $value))) {
         return $value;
     }
 
@@ -67,10 +81,11 @@ function nas_backup_encode_export_value($value, &$usesBinaryEncoding) {
     return array(
         'encoding' => 'base64',
         'data' => base64_encode($value),
+        'byte_length' => strlen($value),
     );
 }
 
-function nas_backup_decode_entry($entry, $version, &$errors) {
+function nas_backup_decode_entry($entry, $version, &$errors, &$binaryFields) {
     if (!is_array($entry) || $version !== NAS_BACKUP_BINARY_VERSION) {
         return $entry;
     }
@@ -82,19 +97,26 @@ function nas_backup_decode_entry($entry, $version, &$errors) {
         }
 
         $encoded = $entry[$field];
-        if (($encoded['encoding'] ?? '') !== 'base64' || !is_string($encoded['data'] ?? null)) {
+        if (($encoded['encoding'] ?? '') !== 'base64' || !is_string($encoded['data'] ?? null) ||
+            !is_int($encoded['byte_length'] ?? null) || $encoded['byte_length'] < 0) {
             $errors[] = sprintf('%s has an invalid binary encoding descriptor', $field);
             $entry[$field] = null;
             continue;
         }
 
         $decoded = base64_decode($encoded['data'], true);
-        if ($decoded === false) {
+        if ($decoded === false || base64_encode($decoded) !== $encoded['data']) {
             $errors[] = sprintf('%s contains invalid Base64 data', $field);
             $entry[$field] = null;
             continue;
         }
+        if (strlen($decoded) !== $encoded['byte_length']) {
+            $errors[] = sprintf('%s byte length does not match its binary data', $field);
+            $entry[$field] = null;
+            continue;
+        }
         $entry[$field] = $decoded;
+        $binaryFields[$field] = true;
     }
 
     return $entry;
@@ -107,7 +129,7 @@ function nas_backup_string_length($value) {
     return strlen($value);
 }
 
-function nas_backup_normalize_optional_string($value, $field, $max_length, &$errors) {
+function nas_backup_normalize_optional_string($value, $field, $max_length, &$errors, $allowBinary = false) {
     if ($value === null) {
         return null;
     }
@@ -117,7 +139,7 @@ function nas_backup_normalize_optional_string($value, $field, $max_length, &$err
         return null;
     }
 
-    if (preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value)) {
+    if (!$allowBinary && preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value)) {
         $errors[] = sprintf('%s contains control characters', $field);
     }
 
@@ -128,7 +150,7 @@ function nas_backup_normalize_optional_string($value, $field, $max_length, &$err
     return $value;
 }
 
-function nas_backup_normalize_entry($entry, $row_number) {
+function nas_backup_normalize_entry($entry, $row_number, $preserveValues = false, $binaryFields = array()) {
     $errors = array();
 
     if (!is_array($entry)) {
@@ -144,14 +166,16 @@ function nas_backup_normalize_entry($entry, $row_number) {
         $errors[] = 'nasname must be a string';
         $nasname = '';
     } else {
-        $nasname = trim($nasname);
+        if (!$preserveValues) {
+            $nasname = trim($nasname);
+        }
         if ($nasname === '') {
             $errors[] = 'nasname is required';
         }
         if (nas_backup_string_length($nasname) > 128) {
             $errors[] = 'nasname exceeds 128 characters';
         }
-        if (preg_match('/[\x00-\x1F\x7F]/', $nasname)) {
+        if (!isset($binaryFields['nasname']) && preg_match('/[\x00-\x1F\x7F]/', $nasname)) {
             $errors[] = 'nasname contains control characters';
         }
     }
@@ -162,18 +186,18 @@ function nas_backup_normalize_entry($entry, $row_number) {
         $secret = '';
     } elseif (nas_backup_string_length($secret) > 60) {
         $errors[] = 'secret exceeds 60 characters';
-    } elseif (preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $secret)) {
+    } elseif (!isset($binaryFields['secret']) && preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $secret)) {
         $errors[] = 'secret contains control characters';
     }
 
-    $shortname = nas_backup_normalize_optional_string($entry['shortname'] ?? null, 'shortname', 32, $errors);
+    $shortname = nas_backup_normalize_optional_string($entry['shortname'] ?? null, 'shortname', 32, $errors, isset($binaryFields['shortname']));
     $typeValue = array_key_exists('type', $entry) ? $entry['type'] : 'other';
-    $type = nas_backup_normalize_optional_string($typeValue, 'type', 30, $errors);
-    $server = nas_backup_normalize_optional_string($entry['server'] ?? null, 'server', 64, $errors);
-    $community = nas_backup_normalize_optional_string($entry['community'] ?? null, 'community', 50, $errors);
-    $description = nas_backup_normalize_optional_string($entry['description'] ?? null, 'description', 200, $errors);
+    $type = nas_backup_normalize_optional_string($typeValue, 'type', 30, $errors, isset($binaryFields['type']));
+    $server = nas_backup_normalize_optional_string($entry['server'] ?? null, 'server', 64, $errors, isset($binaryFields['server']));
+    $community = nas_backup_normalize_optional_string($entry['community'] ?? null, 'community', 50, $errors, isset($binaryFields['community']));
+    $description = nas_backup_normalize_optional_string($entry['description'] ?? null, 'description', 200, $errors, isset($binaryFields['description']));
 
-    if ($type !== null && trim($type) === '') {
+    if (!$preserveValues && $type !== null && trim($type) === '') {
         $type = 'other';
     }
 
@@ -244,8 +268,14 @@ function nas_backup_parse_document($contents) {
     $rows = array();
     foreach ($document['nas'] as $index => $entry) {
         $decodeErrors = array();
-        $entry = nas_backup_decode_entry($entry, $version, $decodeErrors);
-        $row = nas_backup_normalize_entry($entry, $index + 1);
+        $binaryFields = array();
+        $entry = nas_backup_decode_entry($entry, $version, $decodeErrors, $binaryFields);
+        $row = nas_backup_normalize_entry(
+            $entry,
+            $index + 1,
+            $version === NAS_BACKUP_BINARY_VERSION,
+            $binaryFields
+        );
         $row['errors'] = array_values(array_unique(array_merge($decodeErrors, $row['errors'])));
         $rows[] = $row;
     }
