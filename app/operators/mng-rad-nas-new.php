@@ -30,6 +30,7 @@
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'nasImportExport.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -69,41 +70,55 @@
                 $logAction .= "Failed adding (possible empty user/pass) new operator on page: ";
             } else {
                 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+                $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+                $nasLock = nas_backup_acquire_lock($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'], 30);
 
-                $sql = sprintf("SELECT COUNT(id) FROM %s WHERE nasname='%s'", $configValues['CONFIG_DB_TBL_RADNAS'],
-                                                                              $dbSocket->escapeSimple($nasname));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                $exists = $res->fetchrow()[0] > 0;
-
-                if ($exists) {
-                    // name already taken
-                    $failureMsg = sprintf("This %s already exists: <b>%s</b>", t('all','NasIPHost'), $nasname_enc);
-                    $logAction .= "Failed adding a new NAS [$nasname already exists] on page: ";
+                if (!$nasLock['acquired']) {
+                    $failureMsg = $nasLock['error']
+                        ? 'Unable to coordinate the NAS change; please retry'
+                        : 'Another NAS change is currently running; please retry in a moment';
+                    $logAction .= "Failed adding a new NAS [NAS lock unavailable] on page: ";
                 } else {
-
-                    $sql = sprintf("INSERT INTO %s (nasname, shortname, type, ports, secret, server, community, description)
-                                            VALUES ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s')", $configValues['CONFIG_DB_TBL_RADNAS'],
-                                   $dbSocket->escapeSimple($nasname), $dbSocket->escapeSimple($shortname), $dbSocket->escapeSimple($nastype),
-                                   $dbSocket->escapeSimple($ports), $dbSocket->escapeSimple($secret), $dbSocket->escapeSimple($server),
-                                   $dbSocket->escapeSimple($community), $dbSocket->escapeSimple($description));
-                    $res = $dbSocket->query($sql);
+                    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE LOWER(nasname)=LOWER('%s')",
+                                   $configValues['CONFIG_DB_TBL_RADNAS'], $dbSocket->escapeSimple($nasname));
+                    $res = $dbSocket->getOne($sql);
                     $logDebugSQL .= "$sql;\n";
 
-                    if (!DB::isError($res)) {
-                        $successMsg = sprintf('Successfully added a new NAS (<strong>%s</strong>) '
-                                            . '<a href="mng-rad-nas-edit.php?nasname=%s" title="Edit">Edit</a>',
-                                              $nasname_enc, urlencode($nasname_enc));
-                        $successMsg .= '<br><strong>Restart FreeRADIUS for NAS changes to take effect.</strong>';
-                        $logAction .= "Successfully added a new NAS [$nasname] on page: ";
+                    if (DB::isError($res)) {
+                        $failureMsg = 'Unable to check whether the NAS already exists';
+                        $logAction .= "Failed adding a new NAS [database lookup failed] on page: ";
+                    } elseif (intval($res) > 0) {
+                        // name already taken
+                        $failureMsg = sprintf("This %s already exists: <b>%s</b>", t('all','NasIPHost'), $nasname_enc);
+                        $logAction .= "Failed adding a new NAS [$nasname already exists] on page: ";
                     } else {
-                        // it seems that operator could not be added
-                        $f = "Failed to add a new NAS [%s] to database";
-                        $failureMsg = sprintf($f, $nasname_enc);
-                        $logAction .= sprintf($f, $nasname);
+
+                        $sql = sprintf("INSERT INTO %s (nasname, shortname, type, ports, secret, server, community, description)
+                                                VALUES ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s')", $configValues['CONFIG_DB_TBL_RADNAS'],
+                                       $dbSocket->escapeSimple($nasname), $dbSocket->escapeSimple($shortname), $dbSocket->escapeSimple($nastype),
+                                       $dbSocket->escapeSimple($ports), $dbSocket->escapeSimple($secret), $dbSocket->escapeSimple($server),
+                                       $dbSocket->escapeSimple($community), $dbSocket->escapeSimple($description));
+                        $res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+
+                        if (!DB::isError($res)) {
+                            $successMsg = sprintf('Successfully added a new NAS (<strong>%s</strong>) '
+                                                . '<a href="mng-rad-nas-edit.php?nasname=%s" title="Edit">Edit</a>',
+                                                  $nasname_enc, urlencode($nasname_enc));
+                            $successMsg .= '<br><strong>Restart FreeRADIUS for NAS changes to take effect.</strong>';
+                            $logAction .= "Successfully added a new NAS [$nasname] on page: ";
+                        } else {
+                            $f = "Failed to add a new NAS [%s] to database";
+                            $failureMsg = sprintf($f, $nasname_enc);
+                            $logAction .= sprintf($f, $nasname);
+                        }
                     }
                 }
+
+                if ($nasLock['acquired'] && !nas_backup_release_lock($dbSocket, $nasLock['name'])) {
+                    $logAction .= 'NAS advisory lock release could not be confirmed on page: ';
+                }
+                $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
 
                 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
             }

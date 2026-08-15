@@ -10,11 +10,101 @@ if (strpos($_SERVER['PHP_SELF'] ?? '', '/include/management/nasImportExport.php'
 
 const NAS_BACKUP_FORMAT = 'daloradius-nas-backup';
 const NAS_BACKUP_VERSION = 1;
+const NAS_BACKUP_BINARY_VERSION = 2;
 const NAS_BACKUP_MAX_BYTES = 2097152;
 const NAS_BACKUP_MAX_ENTRIES = 5000;
 
+function nas_backup_lock_name($dbSocket, $table) {
+    $database = $dbSocket->getOne('SELECT DATABASE()');
+    if (DB::isError($database) || !is_string($database) || $database === '') {
+        return false;
+    }
+
+    return 'daloradius:nas:' . substr(hash('sha256', $database . "\0" . $table), 0, 40);
+}
+
+function nas_backup_acquire_lock($dbSocket, $table, $timeout) {
+    $lockName = nas_backup_lock_name($dbSocket, $table);
+    if ($lockName === false) {
+        return array('name' => '', 'acquired' => false, 'error' => true);
+    }
+
+    $result = $dbSocket->getOne(sprintf(
+        "SELECT GET_LOCK('%s', %d)",
+        $dbSocket->escapeSimple($lockName),
+        max(0, intval($timeout))
+    ));
+
+    return array(
+        'name' => $lockName,
+        'acquired' => !DB::isError($result) && intval($result) === 1,
+        'error' => DB::isError($result),
+    );
+}
+
+function nas_backup_release_lock($dbSocket, $lockName) {
+    if (!is_string($lockName) || $lockName === '') {
+        return false;
+    }
+
+    $result = $dbSocket->getOne(sprintf(
+        "SELECT RELEASE_LOCK('%s')",
+        $dbSocket->escapeSimple($lockName)
+    ));
+    return !DB::isError($result) && intval($result) === 1;
+}
+
+function nas_backup_is_valid_utf8($value) {
+    return !is_string($value) || preg_match('//u', $value) === 1;
+}
+
+function nas_backup_encode_export_value($value, &$usesBinaryEncoding) {
+    if (!is_string($value) || nas_backup_is_valid_utf8($value)) {
+        return $value;
+    }
+
+    $usesBinaryEncoding = true;
+    return array(
+        'encoding' => 'base64',
+        'data' => base64_encode($value),
+    );
+}
+
+function nas_backup_decode_entry($entry, $version, &$errors) {
+    if (!is_array($entry) || $version !== NAS_BACKUP_BINARY_VERSION) {
+        return $entry;
+    }
+
+    $fields = array('nasname', 'shortname', 'type', 'secret', 'server', 'community', 'description');
+    foreach ($fields as $field) {
+        if (!array_key_exists($field, $entry) || !is_array($entry[$field])) {
+            continue;
+        }
+
+        $encoded = $entry[$field];
+        if (($encoded['encoding'] ?? '') !== 'base64' || !is_string($encoded['data'] ?? null)) {
+            $errors[] = sprintf('%s has an invalid binary encoding descriptor', $field);
+            $entry[$field] = null;
+            continue;
+        }
+
+        $decoded = base64_decode($encoded['data'], true);
+        if ($decoded === false) {
+            $errors[] = sprintf('%s contains invalid Base64 data', $field);
+            $entry[$field] = null;
+            continue;
+        }
+        $entry[$field] = $decoded;
+    }
+
+    return $entry;
+}
+
 function nas_backup_string_length($value) {
-    return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
+    if (function_exists('mb_strlen') && nas_backup_is_valid_utf8($value)) {
+        return mb_strlen($value, 'UTF-8');
+    }
+    return strlen($value);
 }
 
 function nas_backup_normalize_optional_string($value, $field, $max_length, &$errors) {
@@ -133,8 +223,13 @@ function nas_backup_parse_document($contents) {
     if (($document['format'] ?? '') !== NAS_BACKUP_FORMAT) {
         $errors[] = sprintf('Unsupported backup format; expected %s', NAS_BACKUP_FORMAT);
     }
-    if (($document['version'] ?? null) !== NAS_BACKUP_VERSION) {
-        $errors[] = sprintf('Unsupported backup version; expected %d', NAS_BACKUP_VERSION);
+    $version = $document['version'] ?? null;
+    if (!in_array($version, array(NAS_BACKUP_VERSION, NAS_BACKUP_BINARY_VERSION), true)) {
+        $errors[] = sprintf(
+            'Unsupported backup version; expected %d or %d',
+            NAS_BACKUP_VERSION,
+            NAS_BACKUP_BINARY_VERSION
+        );
     }
     if (!isset($document['nas']) || !is_array($document['nas']) ||
         array_values($document['nas']) !== $document['nas']) {
@@ -148,7 +243,11 @@ function nas_backup_parse_document($contents) {
 
     $rows = array();
     foreach ($document['nas'] as $index => $entry) {
-        $rows[] = nas_backup_normalize_entry($entry, $index + 1);
+        $decodeErrors = array();
+        $entry = nas_backup_decode_entry($entry, $version, $decodeErrors);
+        $row = nas_backup_normalize_entry($entry, $index + 1);
+        $row['errors'] = array_values(array_unique(array_merge($decodeErrors, $row['errors'])));
+        $rows[] = $row;
     }
 
     return array('rows' => $rows, 'errors' => $errors);

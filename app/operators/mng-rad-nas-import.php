@@ -210,8 +210,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
             $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
 
-            $importLock = $dbSocket->getOne("SELECT GET_LOCK('daloradius_nas_import', 30)");
-            $importLockAcquired = !DB::isError($importLock) && intval($importLock) === 1;
+            $importLock = nas_backup_acquire_lock($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'], 30);
+            $importLockAcquired = $importLock['acquired'];
             $transaction = $importLockAcquired ? $dbSocket->query('START TRANSACTION') : false;
             $confirmExistingNames = ($importLockAcquired && !DB::isError($transaction))
                 ? nas_import_existing_names($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'])
@@ -308,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if (!$importLockAcquired) {
-                $failureMsg = DB::isError($importLock)
+                $failureMsg = $importLock['error']
                     ? 'Unable to acquire the NAS import lock; please retry the import'
                     : 'Another NAS import is currently running; please retry in a moment';
                 $logAction .= 'NAS import lock was unavailable on page: ';
@@ -390,8 +390,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $dbSocket->freePrepared($prepared);
             }
             if ($importLockAcquired) {
-                $releaseLock = $dbSocket->getOne("SELECT RELEASE_LOCK('daloradius_nas_import')");
-                if (DB::isError($releaseLock) || intval($releaseLock) !== 1) {
+                if (!nas_backup_release_lock($dbSocket, $importLock['name'])) {
                     $logAction .= 'NAS import advisory lock release could not be confirmed on page: ';
                 }
             }

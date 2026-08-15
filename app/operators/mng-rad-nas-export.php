@@ -35,29 +35,46 @@ if (DB::isError($res)) {
 }
 
 $nas = array();
+$usesBinaryEncoding = false;
+$encodedFields = array();
+$rowNumber = 0;
 while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-    $nas[] = array(
-        'nasname' => $row['nasname'],
-        'shortname' => $row['shortname'],
-        'type' => $row['type'],
+    $rowNumber++;
+    $entry = array(
+        'nasname' => nas_backup_encode_export_value($row['nasname'], $usesBinaryEncoding),
+        'shortname' => nas_backup_encode_export_value($row['shortname'], $usesBinaryEncoding),
+        'type' => nas_backup_encode_export_value($row['type'], $usesBinaryEncoding),
         'ports' => ($row['ports'] === null) ? null : intval($row['ports']),
-        'secret' => $row['secret'],
-        'server' => $row['server'],
-        'community' => $row['community'],
-        'description' => $row['description'],
+        'secret' => nas_backup_encode_export_value($row['secret'], $usesBinaryEncoding),
+        'server' => nas_backup_encode_export_value($row['server'], $usesBinaryEncoding),
+        'community' => nas_backup_encode_export_value($row['community'], $usesBinaryEncoding),
+        'description' => nas_backup_encode_export_value($row['description'], $usesBinaryEncoding),
     );
+    $rowEncodedFields = array();
+    foreach ($entry as $field => $value) {
+        if (is_array($value) && ($value['encoding'] ?? '') === 'base64') {
+            $rowEncodedFields[] = $field;
+        }
+    }
+    if (count($rowEncodedFields) > 0) {
+        $encodedFields[] = array('row' => $rowNumber, 'fields' => $rowEncodedFields);
+    }
+    $nas[] = $entry;
 }
 
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
 $document = array(
     'format' => NAS_BACKUP_FORMAT,
-    'version' => NAS_BACKUP_VERSION,
+    'version' => $usesBinaryEncoding ? NAS_BACKUP_BINARY_VERSION : NAS_BACKUP_VERSION,
     'exported_at' => gmdate('c'),
     'includes_secrets' => true,
     'count' => count($nas),
     'nas' => $nas,
 );
+if ($usesBinaryEncoding) {
+    $document['encoded_fields'] = $encodedFields;
+}
 
 $json = json_encode(
     $document,
@@ -68,7 +85,7 @@ if ($json === false) {
     http_response_code(500);
     header('Content-Type: application/json; charset=UTF-8');
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-    echo json_encode(array('error' => 'Unable to export the NAS list because it contains invalid UTF-8'));
+    echo json_encode(array('error' => 'Unable to encode the NAS backup'));
     exit;
 }
 
