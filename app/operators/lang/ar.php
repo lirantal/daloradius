@@ -1296,7 +1296,6 @@ $l['helpPage']['mngradattributesedit'] = "تعديل سمة-صفة";
 $l['helpPage']['mngradattributessearch'] = "البحث عن سمة-صفة";
 $l['helpPage']['mngradattributesdel'] = "حذف سمة-صفة";
 $l['helpPage']['mngradattributesimport'] = "إستيراد سمات مزود";
-$l['helpPage']['mngimportusers'] = "استيراد مستخدمين";
 
 
 $l['helpPage']['msgerrorpermissions'] = "ليس لديك الصلاحية لعرض هذه الصفحة";

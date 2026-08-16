@@ -31,6 +31,7 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
  
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
 
     // init logging variables
@@ -55,6 +56,10 @@
         $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
     }
 
+    $generatepassword = 'no';
+    $generatedPasswords = array();
+    $generatedCredentials = array();
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
@@ -75,6 +80,9 @@
             $enableportallogin = $_POST['enableportallogin'] ?? 'no';
             $enableportallogin = ($enableportallogin === 'no') ? 0 : 1;
 
+            $generatepassword = (isset($_POST['generatepassword']) && $_POST['generatepassword'] === 'yes')
+                              ? 'yes' : 'no';
+
             $data = array();
             $passwordType = "";
 
@@ -86,6 +94,7 @@
 
                 foreach ($csvFormattedData as $csvLine) {
 
+                    $passwordGenerated = false;
                     $arr = str_getcsv($csvLine, ",");
 
                     // Support 5-20 fields:
@@ -122,6 +131,11 @@
                     $sessiontimeout = trim($sessiontimeout);
                     $idletimeout = trim($idletimeout);
                     $maxdailysession = trim($maxdailysession);
+
+                    if ($generatepassword === 'yes' && $password === '') {
+                        $password = createPassword(8, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] ?? '');
+                        $passwordGenerated = true;
+                    }
 
                     // Validate IP address format if provided
                     if (!empty($framedipaddress) && preg_match(IP_REGEX, $framedipaddress) !== 1) {
@@ -164,6 +178,10 @@
                                                   $department, $company, $mobilephone, $workphone, $homephone,
                                                   $address, $city, $state, $country, $zip,
                                                   $sessiontimeout, $idletimeout, $maxdailysession );
+
+                        if ($passwordGenerated) {
+                            $generatedPasswords[$username] = $password;
+                        }
                     }
                 }
 
@@ -262,7 +280,9 @@
                                    );
 
                     if ($authType == 'userAuth') {
-                        $params["portalloginpassword"] = $value;
+                        if ($enableportallogin === 1) {
+                            $params["portalloginpassword"] = $value;
+                        }
                         $params["enableportallogin"] = $enableportallogin;
                         $params["changeuserinfo"] = $enableportallogin;
                     }
@@ -332,6 +352,10 @@
                         $addedBillingInfo = add_user_billing_info($dbSocket, $subject, $params);
                     }
 
+                    if (array_key_exists($subject, $generatedPasswords)) {
+                        $generatedCredentials[] = array($subject, $generatedPasswords[$subject]);
+                    }
+
                     $counter++;
                 }
 
@@ -359,6 +383,35 @@
     }
 
 
+    $generatedPasswordExportToken = '';
+    if (!empty($generatedCredentials)) {
+        $exportCreatedAt = time();
+        $exportLifetime = 300;
+
+        if (!isset($_SESSION['generated_password_exports']) ||
+            !is_array($_SESSION['generated_password_exports'])) {
+            $_SESSION['generated_password_exports'] = array();
+        }
+
+        foreach ($_SESSION['generated_password_exports'] as $token => $export) {
+            if (!is_array($export) || !isset($export['created_at']) ||
+                intval($export['created_at']) <= ($exportCreatedAt - $exportLifetime)) {
+                unset($_SESSION['generated_password_exports'][$token]);
+            }
+        }
+
+        // Keep generated credentials out of the HTML and expose them through a short-lived, session-bound token.
+        $generatedPasswordExportToken = bin2hex(random_bytes(32));
+        $_SESSION['generated_password_exports'][$generatedPasswordExportToken] = array(
+            'created_at' => $exportCreatedAt,
+            'accounts' => array_merge(array(array('Username', 'Password')), $generatedCredentials),
+        );
+
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+    }
+
+
     // print HTML prologue
     $title = t('Intro','mngimportusers.php');
     $help = t('helpPage','mngimportusers');
@@ -368,6 +421,20 @@
     print_title_and_help($title, $help);
 
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+
+    if (!empty($generatedCredentials)) {
+        $exportFormId = 'generated-passwords-export-form';
+
+        echo '<div class="alert alert-warning" role="alert">'
+           . '<h2 class="h6">Generated passwords</h2>'
+           . '<p class="mb-2">Download the generated credentials now. This one-time CSV download expires after five minutes and contains only passwords generated during this import.</p>'
+           . sprintf('<form target="_blank" id="%s" method="POST" action="include/common/fileExportCSV.php">', $exportFormId)
+           . sprintf('<input type="hidden" name="export_token" value="%s">',
+                     htmlspecialchars($generatedPasswordExportToken, ENT_QUOTES, 'UTF-8'))
+           . '<button class="btn btn-primary" type="submit">'
+           . '<i class="bi bi-filetype-csv me-2"></i>Download Generated Passwords CSV</button>'
+           . '</form></div>';
+    }
 
     if (!isset($successMsg)) {
 
@@ -455,11 +522,21 @@
         }
 
         $input_descriptors1[] = array(
+                                        "type" => "select",
+                                        "name" => "generatepassword",
+                                        "caption" => "Generate Password",
+                                        "options" => [ "yes", "no" ],
+                                        "selected_value" => ((isset($failureMsg)) ? $generatepassword : "no"),
+                                        "tooltipText" => "If set to 'yes', an 8-character random password is generated when the CSV password field is empty.",
+                                    );
+
+        $input_descriptors1[] = array(
                                         "caption" => t('all','CSVData'),
                                         "type" => "textarea",
                                         "name" => "csvdata",
                                         "tooltipText" => 'Paste a CSV-formatted data input of users.<br/><br/>' .
-                                                         '<b>Required fields (5):</b> username,password,email,firstname,lastname<br/><br/>' .
+                                                         '<b>Required fields (5):</b> username,password,email,firstname,lastname<br/>' .
+                                                         'Leave the password field empty to generate one when Generate Password is set to yes.<br/><br/>' .
                                                          '<b>Optional fields (15):</b><br/>' .
                                                          '• framedipaddress - Valid IPv4 address<br/>' .
                                                          '• expiration - Date in YYYY-MM-DD format<br/>' .

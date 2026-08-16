@@ -1250,7 +1250,22 @@ $l['helpPage']['mngradattributesedit'] = "";
 $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
-$l['helpPage']['mngimportusers'] = "";
+$l['helpPage']['mngimportusers'] = <<<EOF
+<h1 class="fs-5">Import Users</h1>
+<p>Use this page to create multiple RADIUS users from CSV-formatted data. You can select the authentication type, assign the imported users to groups, and optionally associate them with a billing plan.</p>
+
+<h2 class="fs-6">Username and password import</h2>
+<p>For <strong>Based on username and password</strong>, each CSV row must contain at least these five fields:</p>
+<pre><code>username,password,email,firstname,lastname</code></pre>
+<p>Additional optional fields can be added after the first five fields, as described in the CSV Data field.</p>
+
+<h2 class="fs-6">Generate Password</h2>
+<p>Set <strong>Generate Password</strong> to <strong>yes</strong> to generate an 8-character random password when the password field in a CSV row is empty. If a password is already provided, it is preserved. When this option is set to <strong>no</strong>, rows with an empty password are rejected.</p>
+<p>To request a generated password, keep the second CSV field empty:</p>
+<pre><code>user001,,user001@example.com,John,Doe</code></pre>
+<p>After a successful import, use <strong>Download Generated Passwords CSV</strong> to retrieve the credentials generated during that import. Passwords supplied in the original CSV are not included. The download is available once and expires after five minutes.</p>
+<p>The generated value is stored using the selected Password Type. With a one-way hashed password type, the original cannot be recovered later from the stored RADIUS attribute. When portal login is disabled, the original is not copied to the user information record; when portal login is enabled, it is also stored as the portal login password.</p>
+EOF;
 
 $l['helpPage']['msgerrorpermissions'] = "Sorry, you do not have the necessary permissions to access this area.<br>Please contact the system administrator.";
 

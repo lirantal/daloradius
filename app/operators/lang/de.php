@@ -1250,7 +1250,6 @@ $l['helpPage']['mngradattributesedit'] = "";
 $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
-$l['helpPage']['mngimportusers'] = "";
 
 $l['helpPage']['msgerrorpermissions'] = "Leider haben Sie nicht die erforderlichen Berechtigungen, um auf diesen Bereich zuzugreifen. <br>Bitte kontaktieren Sie den System-Administrator.";
 
