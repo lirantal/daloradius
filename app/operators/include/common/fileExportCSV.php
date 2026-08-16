@@ -26,27 +26,81 @@
  */
 
     include('../../library/checklogin.php');
+    include_once('../management/pages_common.php');
 
     $redirect = (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE'])))
               ? trim($_SESSION['PREV_LIST_PAGE'])
               : "../../index.php";
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('accounts', $_POST) && !empty($_POST['accounts']) && is_array($_POST['accounts'])) {
-            
-            $content = "";
-            foreach ($_POST['accounts'] as $account) {
-                $content .= implode(",", $account) . "\r\n";
+        $accounts = null;
+        $filename_prefix = "users";
+        $exportToken = $_POST['export_token'] ?? null;
+        cleanupGeneratedPasswordExports();
+
+        // This session-bound random token is one-time export authorization and is independent of global CSRF rotation.
+        if (is_string($exportToken) && preg_match('/^[a-f0-9]{64}$/', $exportToken) === 1 &&
+            isset($_SESSION['generated_password_exports'][$exportToken])) {
+            $export = $_SESSION['generated_password_exports'][$exportToken];
+            unset($_SESSION['generated_password_exports'][$exportToken]);
+
+            if (isset($export['accounts']) && is_array($export['accounts'])) {
+                $accounts = $export['accounts'];
+                $filename_prefix = "generated-passwords";
             }
-            
-            $filename_prefix = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])) &&
-                                preg_match("/^[\w\-. ]+$/", trim($_POST['batch_name'])) !== false)
-                             ? trim($_POST['batch_name']) : "users";
-            
-            header("Content-type: text/csv; charset=utf-8");
-            header(sprintf("Content-disposition: csv; filename=%s__%s.csv; size=%s", $filename_prefix, date("Ymd"), strlen($content)));
-            print $content;
-            exit;
+        } else {
+            $csrfToken = $_POST['csrf_token'] ?? null;
+            $csrfValid = is_string($csrfToken) && dalo_check_csrf_token($csrfToken);
+
+            if ($csrfValid && array_key_exists('accounts', $_POST) &&
+                !empty($_POST['accounts']) && is_array($_POST['accounts'])) {
+                $accounts = $_POST['accounts'];
+                $filename_prefix = (array_key_exists('batch_name', $_POST) &&
+                                    is_string($_POST['batch_name']) &&
+                                    !empty(trim($_POST['batch_name'])) &&
+                                    preg_match("/^[\w\-. ]+$/", trim($_POST['batch_name'])) === 1)
+                                 ? trim($_POST['batch_name']) : "users";
+            }
+        }
+
+        if (is_array($accounts)) {
+            $stream = fopen('php://temp', 'w+');
+
+            foreach ($accounts as $account) {
+                if (!is_array($account)) {
+                    continue;
+                }
+
+                $fields = array();
+                foreach ($account as $value) {
+                    if (!is_scalar($value)) {
+                        continue 2;
+                    }
+                    $fields[] = str_replace([ "\r\n", "\r" ], "\n", (string)$value);
+                }
+
+                if (count($fields) < 2) {
+                    continue;
+                }
+
+                fputcsv($stream, $fields, ',', '"', '');
+            }
+
+            rewind($stream);
+            $content = str_replace("\n", "\r\n", stream_get_contents($stream));
+            fclose($stream);
+
+            if (!empty($content)) {
+                header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+                header("Pragma: no-cache");
+                header("X-Content-Type-Options: nosniff");
+                header("Content-type: text/csv; charset=utf-8");
+                header(sprintf('Content-Disposition: attachment; filename="%s__%s.csv"',
+                               $filename_prefix, date("Ymd")));
+                header("Content-Length: " . strlen($content));
+                print $content;
+                exit;
+            }
         }
     }
     

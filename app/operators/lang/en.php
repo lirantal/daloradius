@@ -59,6 +59,10 @@ $l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
 
 $l['all']['CSVData'] = "CSV-formatted data";
+$l['all']['GeneratePassword'] = "Generate Password";
+$l['all']['GeneratedPasswords'] = "Generated passwords";
+$l['all']['Yes'] = "yes";
+$l['all']['No'] = "no";
 
 $l['all']['CPU'] = "CPU";
 
@@ -461,6 +465,8 @@ $l['Tooltip']['EditPayType'] = "Edit Payment Type";
 $l['Tooltip']['RemovePayType'] = "Remove Payment Type";
 $l['Tooltip']['paymentTypeTooltip'] = "The payment type friendly name,<br/>to describe the purpose of the payment";
 $l['Tooltip']['paymentTypeNotesTooltip'] = "The payment type description, to describe<br/>the operation of the payment type";
+$l['Tooltip']['generatePasswordTooltip'] = "If set to 'yes', an 8-character random password is generated when the CSV password field is empty.";
+$l['Tooltip']['CSVDataGeneratePasswordHint'] = "Leave the password field empty to generate one when Generate Password is set to yes.";
 $l['Tooltip']['EditPayment'] = "Edit Payment";
 $l['Tooltip']['PaymentId'] = "The Payment Id";
 $l['Tooltip']['RemovePayment'] = "Remove Payment";
@@ -1250,7 +1256,22 @@ $l['helpPage']['mngradattributesedit'] = "";
 $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
-$l['helpPage']['mngimportusers'] = "";
+$l['helpPage']['mngimportusers'] = <<<EOF
+<h1 class="fs-5">Import Users</h1>
+<p>Use this page to create multiple RADIUS users from CSV-formatted data. You can select the authentication type, assign the imported users to groups, and optionally associate them with a billing plan.</p>
+
+<h2 class="fs-6">Username and password import</h2>
+<p>For <strong>Based on username and password</strong>, each CSV row must contain at least these five fields:</p>
+<pre><code>username,password,email,firstname,lastname</code></pre>
+<p>Additional optional fields can be added after the first five fields, as described in the CSV Data field.</p>
+
+<h2 class="fs-6">Generate Password</h2>
+<p>Set <strong>Generate Password</strong> to <strong>yes</strong> to generate an 8-character random password when the password field in a CSV row is empty. If a password is already provided, it is preserved. When this option is set to <strong>no</strong>, rows with an empty password are rejected.</p>
+<p>To request a generated password, keep the second CSV field empty:</p>
+<pre><code>user001,,user001@example.com,John,Doe</code></pre>
+<p>After a successful import, use <strong>Download Generated Passwords CSV</strong> to retrieve the credentials generated during that import. Passwords supplied in the original CSV are not included. The download is available once and expires after five minutes.</p>
+<p>The generated value is stored using the selected Password Type. With a one-way hashed password type, the original cannot be recovered later from the stored RADIUS attribute. When portal login is disabled, the original is not copied to the user information record; when portal login is enabled, it is also stored as the portal login password.</p>
+EOF;
 
 $l['helpPage']['msgerrorpermissions'] = "Sorry, you do not have the necessary permissions to access this area.<br>Please contact the system administrator.";
 
@@ -1832,6 +1853,7 @@ EOF;
 
 
 
+$l['messages']['generatedPasswordsExportNotice'] = "Download the generated credentials now. This one-time CSV download expires after %d minutes and contains only passwords generated during this import.";
 $l['messages']['noCheckAttributesForUser'] = "This user has no check attributes associated with it";
 $l['messages']['noReplyAttributesForUser'] = "This user has no reply attributes associated with it";
 
@@ -1872,6 +1894,7 @@ EOF;
 
 $l['buttons']['savesettings'] = "Save Settings";
 $l['buttons']['apply'] = "Apply";
+$l['buttons']['downloadGeneratedPasswordsCSV'] = "Download Generated Passwords CSV";
 
 $l['menu']['Home'] = "Home";
 $l['menu']['Managment'] = "Management";
