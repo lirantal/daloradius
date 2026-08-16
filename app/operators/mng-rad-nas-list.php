@@ -93,6 +93,19 @@
     $res = $dbSocket->query($sql);
     $numrows = (!DB::isError($res)) ? $res->fetchrow()[0] : 0;
 
+    $nas_import_export_controls = array(
+        array(
+            'onclick' => "location.href='mng-rad-nas-import.php'",
+            'label' => 'JSON Import',
+            'class' => 'btn-light',
+        ),
+        array(
+            'onclick' => "location.href='mng-rad-nas-export.php'",
+            'label' => 'JSON Export',
+            'class' => 'btn-light',
+        ),
+    );
+
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
 
@@ -139,6 +152,7 @@
         $descriptors = array();
         $descriptors['start'] = array( 'common_controls' => 'nasname[]', 'additional_controls' => $additional_controls );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+        $descriptors['end'] = $nas_import_export_controls;
         print_table_prologue($descriptors);
 
         $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'GET', 'name' => $form_name ), );
@@ -211,6 +225,10 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
+        $descriptors = array();
+        $descriptors['end'] = $nas_import_export_controls;
+        print_table_prologue($descriptors);
+
         $failureMsg = "Nothing to display";
         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }

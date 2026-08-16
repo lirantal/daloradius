@@ -29,6 +29,7 @@
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'nasImportExport.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -36,6 +37,14 @@
     $logDebugSQL = "";
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+    $nasLock = array('name' => '', 'acquired' => false, 'error' => false);
+    $csrfValid = $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) &&
+                 dalo_check_csrf_token($_POST['csrf_token']);
+    if ($csrfValid) {
+        $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+        $nasLock = nas_backup_acquire_lock($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'], 30);
+        $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
+    }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nasname = (array_key_exists('nasname', $_POST) && !empty(str_replace("%", "", trim($_POST['nasname']))))
@@ -63,7 +72,7 @@
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        if ($csrfValid && $nasLock['acquired']) {
             $secret = (array_key_exists('secret', $_POST) && !empty(str_replace("%", "", trim($_POST['secret']))))
                     ? str_replace("%", "", trim($_POST['secret'])) : "";
 
@@ -133,8 +142,10 @@
             }
 
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
+            $failureMsg = $csrfValid
+                ? ($nasLock['error'] ? 'Unable to coordinate the NAS change; please retry'
+                                     : 'Another NAS change is currently running; please retry in a moment')
+                : 'CSRF token error';
             $logAction .= "$failureMsg on page: ";
         }
     }
@@ -156,6 +167,13 @@
         $logAction .= sprintf("Requested editing invalid NAS (%s) on page: ", $failureMsg);
     }
 
+    if ($nasLock['acquired']) {
+        $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+        if (!nas_backup_release_lock($dbSocket, $nasLock['name'])) {
+            $logAction .= 'NAS advisory lock release could not be confirmed on page: ';
+        }
+        $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
+    }
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     // print HTML prologue

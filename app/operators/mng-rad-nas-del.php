@@ -26,6 +26,7 @@
     $operator = $_SESSION['operator_user'];
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'nasImportExport.php' ]);
 
     // init logging variables
     $logAction = "";
@@ -33,6 +34,14 @@
     $log = "visited page: ";
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+    $nasLock = array('name' => '', 'acquired' => false, 'error' => false);
+    $csrfValid = $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) &&
+                 dalo_check_csrf_token($_POST['csrf_token']);
+    if ($csrfValid) {
+        $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+        $nasLock = nas_backup_acquire_lock($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'], 30);
+        $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
+    }
 
     // build a whitelist of existing NAS names; only these can be deleted
     $valid_values = array();
@@ -65,7 +74,7 @@
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
-        array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        $csrfValid && $nasLock['acquired']) {
         $deleted_values = array();
 
         if (count($selected_values) > 0) {
@@ -101,11 +110,21 @@
     } else {
         $success = false;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $failureMsg = "CSRF token error";
+            $failureMsg = $csrfValid
+                ? ($nasLock['error'] ? 'Unable to coordinate the NAS change; please retry'
+                                     : 'Another NAS change is currently running; please retry in a moment')
+                : 'CSRF token error';
             $logAction .= "$failureMsg on page: ";
         }
     }
 
+    if ($nasLock['acquired']) {
+        $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+        if (!nas_backup_release_lock($dbSocket, $nasLock['name'])) {
+            $logAction .= 'NAS advisory lock release could not be confirmed on page: ';
+        }
+        $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
+    }
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
