@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 $secret_key = (array_key_exists('secret_key', $_GET) && !empty(trim($_GET['secret_key'])))
             ? trim($_GET['secret_key']) : "";
 
-if (empty($secretKey)) {
+if (empty($secret_key)) {
     die("secret_key not provided");
 }
 
