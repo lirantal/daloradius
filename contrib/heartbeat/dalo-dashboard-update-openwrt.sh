@@ -82,12 +82,12 @@ get_wifi_section() {
         esac
     done
 
-    if [ -n "$wifi_section_lan_fallback" ]
-    then
-        printf '%s' "$wifi_section_lan_fallback"
-    elif [ -n "$wifi_section_active_fallback" ]
+    if [ -n "$wifi_section_active_fallback" ]
     then
         printf '%s' "$wifi_section_active_fallback"
+    elif [ -n "$wifi_section_lan_fallback" ]
+    then
+        printf '%s' "$wifi_section_lan_fallback"
     else
         printf '%s' "$wifi_section_fallback"
     fi
