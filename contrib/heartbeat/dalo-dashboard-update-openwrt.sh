@@ -40,10 +40,41 @@ get_l3_device() {
     ubus call "network.interface.$1" status 2>/dev/null | jsonfilter -e '@.l3_device' 2>/dev/null
 }
 
+get_wifi_section() {
+    wifi_section_fallback=""
+
+    for wifi_section_candidate in $(
+        uci -q show wireless 2>/dev/null |
+            sed -n 's/^wireless\.\([^.=]*\)=wifi-iface$/\1/p'
+    )
+    do
+        wifi_section_disabled="$(uci -q get "wireless.$wifi_section_candidate.disabled")"
+        [ "$wifi_section_disabled" = "1" ] && continue
+
+        wifi_section_mode="$(uci -q get "wireless.$wifi_section_candidate.mode")"
+        [ -n "$wifi_section_mode" ] && [ "$wifi_section_mode" != "ap" ] && continue
+
+        wifi_radio="$(uci -q get "wireless.$wifi_section_candidate.device")"
+        [ "$(uci -q get "wireless.$wifi_radio.disabled")" = "1" ] && continue
+
+        [ -n "$wifi_section_fallback" ] || wifi_section_fallback="$wifi_section_candidate"
+        wifi_section_network="$(uci -q get "wireless.$wifi_section_candidate.network")"
+        case " $wifi_section_network " in
+            *" lan "*)
+                printf '%s' "$wifi_section_candidate"
+                return
+                ;;
+        esac
+    done
+
+    printf '%s' "$wifi_section_fallback"
+}
+
 get_wifi_device() {
+    [ -n "$1" ] || return
     ubus call network.wireless status 2>/dev/null |
         jsonfilter -l 1 \
-            -e '@[@.up=true].interfaces[@.section="default_radio0"].ifname' \
+            -e "@[@.up=true].interfaces[@.section=\"$1\"].ifname" \
             2>/dev/null
 }
 
@@ -89,8 +120,9 @@ lan_iface="${LAN_DEV:-$(get_l3_device lan)}"
 [ -n "$lan_iface" ] || lan_iface="$(uci -q get network.lan.device)"
 [ -n "$lan_iface" ] || lan_iface="$(uci -q get network.lan.ifname)"
 
-wifi_iface="${WLAN_DEV:-$(get_wifi_device)}"
-[ -n "$wifi_iface" ] || wifi_iface="$(uci -q get wireless.default_radio0.ifname)"
+wifi_section="$(get_wifi_section)"
+wifi_iface="${WLAN_DEV:-$(get_wifi_device "$wifi_section")}"
+[ -n "$wifi_iface" ] || wifi_iface="$(uci -q get "wireless.$wifi_section.ifname")"
 
 wan_ip="$(get_ipv4 "$wan_iface")"
 wan_mac="$(get_mac "$wan_iface")"
@@ -98,9 +130,10 @@ wan_gateway="$(ip route show default dev "$wan_iface" 2>/dev/null | awk '/defaul
 wifi_ip="$(uci -q get 'chilli.@chilli[0].uamlisten')"
 [ -n "$wifi_ip" ] || wifi_ip="$(uci -q get chilli.chilli1.uamlisten)"
 wifi_mac="$(get_mac "$wifi_iface")"
-wifi_ssid="$(uci -q get wireless.default_radio0.ssid)"
+wifi_ssid="$(uci -q get "wireless.$wifi_section.ssid")"
 wifi_key=""
-wifi_channel="$(uci -q get wireless.radio0.channel)"
+wifi_radio="$(uci -q get "wireless.$wifi_section.device")"
+wifi_channel="$(uci -q get "wireless.$wifi_radio.channel")"
 lan_ip="$(get_ipv4 "$lan_iface")"
 lan_mac="$(get_mac "$lan_iface")"
 ip=$wan_ip
