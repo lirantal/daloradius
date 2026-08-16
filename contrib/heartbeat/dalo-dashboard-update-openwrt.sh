@@ -42,6 +42,8 @@ get_l3_device() {
 
 get_wifi_section() {
     wifi_section_fallback=""
+    wifi_section_active_fallback=""
+    wifi_section_lan_fallback=""
 
     for wifi_section_candidate in $(
         uci -q show wireless 2>/dev/null |
@@ -58,16 +60,37 @@ get_wifi_section() {
         [ "$(uci -q get "wireless.$wifi_radio.disabled")" = "1" ] && continue
 
         [ -n "$wifi_section_fallback" ] || wifi_section_fallback="$wifi_section_candidate"
+        wifi_section_runtime_device="$(get_wifi_device "$wifi_section_candidate")"
         wifi_section_network="$(uci -q get "wireless.$wifi_section_candidate.network")"
         case " $wifi_section_network " in
             *" lan "*)
-                printf '%s' "$wifi_section_candidate"
-                return
+                if [ -n "$wifi_section_runtime_device" ]
+                then
+                    printf '%s' "$wifi_section_candidate"
+                    return
+                fi
+                [ -n "$wifi_section_lan_fallback" ] ||
+                    wifi_section_lan_fallback="$wifi_section_candidate"
+                ;;
+            *)
+                if [ -n "$wifi_section_runtime_device" ] &&
+                   [ -z "$wifi_section_active_fallback" ]
+                then
+                    wifi_section_active_fallback="$wifi_section_candidate"
+                fi
                 ;;
         esac
     done
 
-    printf '%s' "$wifi_section_fallback"
+    if [ -n "$wifi_section_lan_fallback" ]
+    then
+        printf '%s' "$wifi_section_lan_fallback"
+    elif [ -n "$wifi_section_active_fallback" ]
+    then
+        printf '%s' "$wifi_section_active_fallback"
+    else
+        printf '%s' "$wifi_section_fallback"
+    fi
 }
 
 get_wifi_device() {
