@@ -26,6 +26,7 @@
  */
 
     include('../../library/checklogin.php');
+    include_once('../management/pages_common.php');
 
     $redirect = (array_key_exists('PREV_LIST_PAGE', $_SESSION) && !empty(trim($_SESSION['PREV_LIST_PAGE'])))
               ? trim($_SESSION['PREV_LIST_PAGE'])
@@ -35,18 +36,7 @@
         $accounts = null;
         $filename_prefix = "users";
         $exportToken = $_POST['export_token'] ?? null;
-        $exportLifetime = 300;
-        $now = time();
-
-        if (isset($_SESSION['generated_password_exports']) &&
-            is_array($_SESSION['generated_password_exports'])) {
-            foreach ($_SESSION['generated_password_exports'] as $token => $export) {
-                if (!is_array($export) || !isset($export['created_at']) ||
-                    intval($export['created_at']) <= ($now - $exportLifetime)) {
-                    unset($_SESSION['generated_password_exports'][$token]);
-                }
-            }
-        }
+        cleanupGeneratedPasswordExports();
 
         // This session-bound random token is one-time export authorization and is independent of global CSRF rotation.
         if (is_string($exportToken) && preg_match('/^[a-f0-9]{64}$/', $exportToken) === 1 &&
@@ -86,7 +76,7 @@
                     if (!is_scalar($value)) {
                         continue 2;
                     }
-                    $fields[] = (string)$value;
+                    $fields[] = str_replace([ "\r\n", "\r" ], "\n", (string)$value);
                 }
 
                 if (count($fields) < 2) {

@@ -386,18 +386,11 @@
     $generatedPasswordExportToken = '';
     if (!empty($generatedCredentials)) {
         $exportCreatedAt = time();
-        $exportLifetime = 300;
+        cleanupGeneratedPasswordExports($exportCreatedAt);
 
         if (!isset($_SESSION['generated_password_exports']) ||
             !is_array($_SESSION['generated_password_exports'])) {
             $_SESSION['generated_password_exports'] = array();
-        }
-
-        foreach ($_SESSION['generated_password_exports'] as $token => $export) {
-            if (!is_array($export) || !isset($export['created_at']) ||
-                intval($export['created_at']) <= ($exportCreatedAt - $exportLifetime)) {
-                unset($_SESSION['generated_password_exports'][$token]);
-            }
         }
 
         // Keep generated credentials out of the HTML and expose them through a short-lived, session-bound token.
@@ -425,14 +418,18 @@
     if (!empty($generatedCredentials)) {
         $exportFormId = 'generated-passwords-export-form';
 
+        $exportLifetimeMinutes = intval(GENERATED_PASSWORD_EXPORT_LIFETIME_SECONDS / 60);
+        $exportNotice = sprintf(t('messages', 'generatedPasswordsExportNotice'), $exportLifetimeMinutes);
+
         echo '<div class="alert alert-warning" role="alert">'
-           . '<h2 class="h6">Generated passwords</h2>'
-           . '<p class="mb-2">Download the generated credentials now. This one-time CSV download expires after five minutes and contains only passwords generated during this import.</p>'
+           . sprintf('<h2 class="h6">%s</h2>', t('all', 'GeneratedPasswords'))
+           . sprintf('<p class="mb-2">%s</p>', $exportNotice)
            . sprintf('<form target="_blank" id="%s" method="POST" action="include/common/fileExportCSV.php">', $exportFormId)
            . sprintf('<input type="hidden" name="export_token" value="%s">',
                      htmlspecialchars($generatedPasswordExportToken, ENT_QUOTES, 'UTF-8'))
            . '<button class="btn btn-primary" type="submit">'
-           . '<i class="bi bi-filetype-csv me-2"></i>Download Generated Passwords CSV</button>'
+           . sprintf('<i class="bi bi-filetype-csv me-2"></i>%s</button>',
+                     t('buttons', 'downloadGeneratedPasswordsCSV'))
            . '</form></div>';
     }
 
@@ -524,10 +521,10 @@
         $input_descriptors1[] = array(
                                         "type" => "select",
                                         "name" => "generatepassword",
-                                        "caption" => "Generate Password",
-                                        "options" => [ "yes", "no" ],
+                                        "caption" => t('all', 'GeneratePassword'),
+                                        "options" => [ "yes" => t('all', 'Yes'), "no" => t('all', 'No') ],
                                         "selected_value" => ((isset($failureMsg)) ? $generatepassword : "no"),
-                                        "tooltipText" => "If set to 'yes', an 8-character random password is generated when the CSV password field is empty.",
+                                        "tooltipText" => t('Tooltip', 'generatePasswordTooltip'),
                                     );
 
         $input_descriptors1[] = array(
@@ -536,7 +533,7 @@
                                         "name" => "csvdata",
                                         "tooltipText" => 'Paste a CSV-formatted data input of users.<br/><br/>' .
                                                          '<b>Required fields (5):</b> username,password,email,firstname,lastname<br/>' .
-                                                         'Leave the password field empty to generate one when Generate Password is set to yes.<br/><br/>' .
+                                                         t('Tooltip', 'CSVDataGeneratePasswordHint') . '<br/><br/>' .
                                                          '<b>Optional fields (15):</b><br/>' .
                                                          '• framedipaddress - Valid IPv4 address<br/>' .
                                                          '• expiration - Date in YYYY-MM-DD format<br/>' .

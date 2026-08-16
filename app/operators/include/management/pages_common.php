@@ -51,6 +51,25 @@ function createPassword($length, $chars) {
     return $pass;
 }
 
+// Generated-password exports are session-bound and short-lived.
+define('GENERATED_PASSWORD_EXPORT_LIFETIME_SECONDS', 300);
+
+function cleanupGeneratedPasswordExports($now = null) {
+    if (!isset($_SESSION['generated_password_exports']) ||
+        !is_array($_SESSION['generated_password_exports'])) {
+        return;
+    }
+
+    $now = is_null($now) ? time() : intval($now);
+
+    foreach ($_SESSION['generated_password_exports'] as $token => $export) {
+        if (!is_array($export) || !isset($export['created_at']) ||
+            intval($export['created_at']) <= ($now - GENERATED_PASSWORD_EXPORT_LIFETIME_SECONDS)) {
+            unset($_SESSION['generated_password_exports'][$token]);
+        }
+    }
+}
+
 /* convert byte to to size */
 function toxbyte($size) {
     if (!is_numeric($size) || $size <= 0) {

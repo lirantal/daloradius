@@ -59,6 +59,10 @@ $l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
 
 $l['all']['CSVData'] = "CSV-formatted data";
+$l['all']['GeneratePassword'] = "Generate Password";
+$l['all']['GeneratedPasswords'] = "Generated passwords";
+$l['all']['Yes'] = "yes";
+$l['all']['No'] = "no";
 
 $l['all']['CPU'] = "CPU";
 
@@ -461,6 +465,8 @@ $l['Tooltip']['EditPayType'] = "Edit Payment Type";
 $l['Tooltip']['RemovePayType'] = "Remove Payment Type";
 $l['Tooltip']['paymentTypeTooltip'] = "The payment type friendly name,<br/>to describe the purpose of the payment";
 $l['Tooltip']['paymentTypeNotesTooltip'] = "The payment type description, to describe<br/>the operation of the payment type";
+$l['Tooltip']['generatePasswordTooltip'] = "If set to 'yes', an 8-character random password is generated when the CSV password field is empty.";
+$l['Tooltip']['CSVDataGeneratePasswordHint'] = "Leave the password field empty to generate one when Generate Password is set to yes.";
 $l['Tooltip']['EditPayment'] = "Edit Payment";
 $l['Tooltip']['PaymentId'] = "The Payment Id";
 $l['Tooltip']['RemovePayment'] = "Remove Payment";
@@ -1847,6 +1853,7 @@ EOF;
 
 
 
+$l['messages']['generatedPasswordsExportNotice'] = "Download the generated credentials now. This one-time CSV download expires after %d minutes and contains only passwords generated during this import.";
 $l['messages']['noCheckAttributesForUser'] = "This user has no check attributes associated with it";
 $l['messages']['noReplyAttributesForUser'] = "This user has no reply attributes associated with it";
 
@@ -1887,6 +1894,7 @@ EOF;
 
 $l['buttons']['savesettings'] = "Save Settings";
 $l['buttons']['apply'] = "Apply";
+$l['buttons']['downloadGeneratedPasswordsCSV'] = "Download Generated Passwords CSV";
 
 $l['menu']['Home'] = "Home";
 $l['menu']['Managment'] = "Management";
