@@ -233,7 +233,6 @@ $l['all']['ActiveUsers'] = "Active Users";
 $l['all']['TotalBilled'] = "Total Billed";
 $l['all']['TotalPayed'] = "Total Paid";
 $l['all']['Balance'] = "Balance";
-$l['all']['CardBank'] = "Card Bank";
 $l['all']['Type'] = "Type";
 $l['all']['CardBank'] = "CardBank";
 $l['all']['MACAddress'] = "MAC Address";
@@ -356,7 +355,6 @@ $l['all']['BandwidthDown'] = "Bandwidth Down";
 
 $l['all']['BatchCost'] = "Batch Cost";
 
-$l['all']['PaymentDate'] = "Payment Date";
 $l['all']['PaymentStatus'] = "Payment Status";
 $l['all']['FirstName'] = "First name";
 $l['all']['LastName'] = "Last name";
@@ -974,7 +972,6 @@ $l['Intro']['configdashboard.php'] = "Dashbard Settings";
 $l['Intro']['paymenttypesmain.php'] = "Payment Types Page";
 $l['Intro']['paymenttypesdel.php'] = "Delete Payment Type entry";
 $l['Intro']['paymenttypesedit.php'] = "Edit Payment Type Details";
-$l['Intro']['paymenttypeslist.php'] = "Payment Types Table";
 $l['Intro']['paymenttypesnew.php'] = "New Payment Type entry";
 $l['Intro']['paymenttypeslist.php'] = "Payment Types Table";
 $l['Intro']['paymentslist.php'] = "Payments Table";
@@ -1093,7 +1090,6 @@ $l['Intro']['repstatus.php'] = "Status Page";
 $l['Intro']['reptopusers.php'] = "Top Users";
 $l['Intro']['repusername.php'] = "Users Listing";
 
-$l['Intro']['mngbatch.php'] = "Create batch users";
 $l['Intro']['mngbatchdel.php'] = "Delete batch sessions";
 
 $l['Intro']['mngdel.php'] = "Remove User";

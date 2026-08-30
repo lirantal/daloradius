@@ -159,7 +159,6 @@ $l['all']['RateCost'] = "Pretul de cost";
 $l['all']['Billed'] = "Facturat";
 $l['all']['TotalUsers'] = "Total Utilizatori";
 $l['all']['TotalBilled'] = "Total facturat";
-$l['all']['CardBank'] = "Card bancar";
 $l['all']['Type'] = "Tip";
 $l['all']['CardBank'] = "CardBank";
 $l['all']['MACAddress'] = "MAC Address";
@@ -681,7 +680,6 @@ $l['title']['VendorAttribute'] = "Vendor atribut";
 $l['title']['AccountRemoval'] = "Contul de eliminare";
 $l['title']['AccountInfo'] = "Informa?ii despre cont";
 
-$l['title']['Profile'] = "Profiluri";
 $l['title']['ProfileInfo'] = "Profil Info";
 
 $l['title']['GroupInfo'] = "informa?ii despre grup";
@@ -865,7 +863,6 @@ $l['Intro']['replogssystem.php'] = "System Logfile";
 $l['Intro']['replogsradius.php'] = "RADIUS server Logfile";
 $l['Intro']['replogsdaloradius.php'] = "daloRADIUS Logfile";
 $l['Intro']['replogsboot.php'] = "boot Logfile";
-$l['Intro']['replogs.php'] = "Rapoarte";
 
 $l['Intro']['rephsall.php'] = "hotspots Listing ";
 $l['Intro']['repmain.php'] = "Rapoarte Page";

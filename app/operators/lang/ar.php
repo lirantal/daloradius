@@ -226,7 +226,6 @@ $l['all']['ActiveUsers'] = "المستخدمين النشطين";
 $l['all']['TotalBilled'] = "إجمالي المفوتر";
 $l['all']['TotalPayed'] = "إجمالي المدفوع";
 $l['all']['Balance'] = "الرصيد";
-$l['all']['CardBank'] = "كارت البنك";
 $l['all']['Type'] = "النوع";
 $l['all']['CardBank'] = "كارت البنك";
 $l['all']['MACAddress'] = "عنوان ماك";
@@ -349,7 +348,6 @@ $l['all']['BandwidthDown'] = "حجم التحميل";
 
 $l['all']['BatchCost'] = "تكلفة الدفعة";
 
-$l['all']['PaymentDate'] = "تاريخ الدفع";
 $l['all']['PaymentStatus'] = "حالة الدفع";
 $l['all']['FirstName'] = "الاسم الاول";
 $l['all']['LastName'] = "الاسم الاخير";
@@ -1013,7 +1011,6 @@ $l['Intro']['configdashboard.php'] = "اعدادات لوحة التحكم";
 $l['Intro']['paymenttypesmain.php'] = "صفحة أصناف الدفع";
 $l['Intro']['paymenttypesdel.php'] = "حذف صنف الدفع";
 $l['Intro']['paymenttypesedit.php'] = "تعديل صنف الدفع";
-$l['Intro']['paymenttypeslist.php'] = "جدول أصناف المدفوعات";
 $l['Intro']['paymenttypesnew.php'] = "انشاء صنف دفع جديد";
 $l['Intro']['paymenttypeslist.php'] = "جدول أصناف المدفوعات";
 $l['Intro']['paymentslist.php'] = "جدول المدفوعات";
@@ -1133,7 +1130,6 @@ $l['Intro']['reptopusers.php'] = "أعلى المستخدمين";
 $l['Intro']['repusername.php'] = "عرض المستخدمين";
 
 
-$l['Intro']['mngbatch.php'] = "إنشاء حزمة كروت";
 $l['Intro']['mngbatchdel.php'] = "حذف جلسات دفعة";
 
 $l['Intro']['mngdel.php'] = "حذف مستخدم";

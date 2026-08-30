@@ -68,9 +68,6 @@ $l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
 
 
 $l['all']['DashboardSecretKey'] = "Kontrol Paneli Gizli Anahtarı";
-$l['all']['DashboardDebug'] = "Debug";
-$l['all']['DashboardDelaySoft'] = "Time in minutes to consider a 'soft' delay limit";
-$l['all']['DashboardDelayHard'] = "Time in minutes to consider a 'hard' delay limit";
 $l['all']['DashboardDebug'] = "Hata Ayıklama";
 $l['all']['DashboardDelaySoft'] = "'soft' bir gecikme limitini dikkate almak için dakika cinsinden süre";
 $l['all']['DashboardDelayHard'] = "'hard' bir gecikme limitini dikkate almak için dakika cinsinden süre";
@@ -233,7 +230,6 @@ $l['all']['ActiveUsers'] = "Aktif Kullanıcılar";
 $l['all']['TotalBilled'] = "Toplam Faturalanan";
 $l['all']['TotalPayed'] = "Toplam Ödenen";
 $l['all']['Balance'] = "Bakiye";
-$l['all']['CardBank'] = "Kart Bankası";
 $l['all']['Type'] = "Tip";
 $l['all']['CardBank'] = "Kart Bankası";
 $l['all']['MACAddress'] = "MAC Adresi";
@@ -355,7 +351,6 @@ $l['all']['BandwidthDown'] = "Bandwidth Down";
 
 $l['all']['BatchCost'] = "Toplu Maliyet";
 
-$l['all']['PaymentDate'] = "Ödeme Tarihi";
 $l['all']['PaymentStatus'] = "Ödeme Durumu";
 $l['all']['FirstName'] = "Ad";
 $l['all']['LastName'] = "Soyadı";
@@ -1014,7 +1009,6 @@ $l['Giriş']['configdashboard.php'] = "Kontrol Paneli Ayarları";
 $l['Giriş']['paymenttypesmain.php'] = "Ödeme Türleri Sayfası";
 $l['Intro']['paymenttypesdel.php'] = "Ödeme Türü Girişini Silin";
 $l['Intro']['paymenttypesedit.php'] = "Ödeme Türü Ayrıntılarını Düzenle";
-$l['Intro']['paymenttypeslist.php'] = "Ödeme Türleri Tablosu";
 $l['Intro']['paymenttypesnew.php'] = "Yeni Ödeme Tipi";
 $l['Intro']['paymenttypeslist.php'] = "Ödeme Türleri Tablosu";
 $l['Giriş']['paymentslist.php'] = "Ödeme Tablosu";
