@@ -233,7 +233,6 @@ $l['all']['ActiveUsers'] = "活動使用者";
 $l['all']['TotalBilled'] = "總記帳";
 $l['all']['TotalPayed'] = "總支付";
 $l['all']['Balance'] = "餘額";
-$l['all']['CardBank'] = "銀行卡";
 $l['all']['Type'] = "類型";
 $l['all']['CardBank'] = "銀行卡";
 $l['all']['MACAddress'] = "MAC位址";
@@ -356,7 +355,6 @@ $l['all']['BandwidthDown'] = "下載頻寬";
 
 $l['all']['BatchCost'] = "批次花費";
 
-$l['all']['PaymentDate'] = "付款日";
 $l['all']['PaymentStatus'] = "付款狀態";
 $l['all']['FirstName'] = "名";
 $l['all']['LastName'] = "姓";
@@ -1024,7 +1022,6 @@ $l['Intro']['configdashboard.php'] = "儀表板設定";
 $l['Intro']['paymenttypesmain.php'] = "支付類型頁面";
 $l['Intro']['paymenttypesdel.php'] = "刪除支付類型條目";
 $l['Intro']['paymenttypesedit.php'] = "編輯支付類型明細";
-$l['Intro']['paymenttypeslist.php'] = "支付類型表格";
 $l['Intro']['paymenttypesnew.php'] = "新建支付類型條目";
 $l['Intro']['paymenttypeslist.php'] = "支付類型表格";
 $l['Intro']['paymentslist.php'] = "支付表格";
@@ -1143,7 +1140,6 @@ $l['Intro']['repstatus.php'] = "狀態頁面";
 $l['Intro']['reptopusers.php'] = "使用者使用詳情";
 $l['Intro']['repusername.php'] = "使用者清單";
 
-$l['Intro']['mngbatch.php'] = "建立批次使用者";
 $l['Intro']['mngbatchdel.php'] = "刪除批次工作階段";
 
 $l['Intro']['mngdel.php'] = "移除使用者";
