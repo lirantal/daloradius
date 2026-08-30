@@ -1,7 +1,7 @@
 <?php
 include('../checklogin.php');
 include('../../lang/main.php');
-include('../validation.php');
+include_once implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', '..', '..', 'common', 'includes', 'validation.php'));
 include('../../../common/includes/chart.php');
 
 $startdate = isset($_GET['startdate']) && preg_match(DATE_REGEX, trim($_GET['startdate']), $m) && checkdate($m[2], $m[3], $m[1])
