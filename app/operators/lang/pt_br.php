@@ -158,7 +158,6 @@ $l['all']['RateCost'] = "Custo da taxa";
 $l['all']['Billed'] = "Faturado";
 $l['all']['TotalUsers'] = "Total de Usuários";
 $l['all']['TotalBilled'] = "Total de Cobranças";
-$l['all']['CardBank'] = "Cartão de credito";
 $l['all']['Type'] = "Tipo";
 $l['all']['CardBank'] = "Cartão de credito";
 $l['all']['MACAddress'] = "Endereço do MAC";
@@ -844,7 +843,6 @@ $l['Intro']['replogssystem.php'] = "Logfile do sistema";
 $l['Intro']['replogsradius.php'] = "Logfile do servidor RADIUS";
 $l['Intro']['replogsdaloradius.php'] = "Logfile daloRADIUS";
 $l['Intro']['replogsboot.php'] = "Logfile do Boot";
-$l['Intro']['replogs.php'] = "Logs";
 
 $l['Intro']['rephsall.php'] = "Lista de Hotspots";
 $l['Intro']['repmain.php'] = "Pagina de relatório";

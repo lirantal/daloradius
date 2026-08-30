@@ -110,7 +110,6 @@ $l['all']['Rate'] = "Rate";
 $l['all']['Billed'] = "Billed";
 $l['all']['TotalUsers'] = "Всего пользователей";
 $l['all']['TotalBilled'] = "Всего начислено";
-$l['all']['CardBank'] = "Card Bank";
 $l['all']['Type'] = "Type";
 $l['all']['CardBank'] = "CardBank";
 $l['all']['MACAddress'] = "MAC-адрес";
@@ -498,7 +497,6 @@ $l['Intro']['replogssystem.php'] = "System Logfile";
 $l['Intro']['replogsradius.php'] = "RADIUS Server Logfile";
 $l['Intro']['replogsdaloradius.php'] = "daloRADIUS Logfile";
 $l['Intro']['replogsboot.php'] = "Boot Logfile";
-$l['Intro']['replogs.php'] = "Logs";
 
 $l['Intro']['rephsall.php'] = "Hotspots Listing";
 $l['Intro']['repmain.php'] = "Reports Page";

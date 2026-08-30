@@ -352,7 +352,6 @@ $l['all']['BandwidthDown'] = "Downstream-Bandbreite";
 
 $l['all']['BatchCost'] = "Batch-Gebühr";
 
-$l['all']['PaymentDate'] = "Zahlungsdatum";
 $l['all']['PaymentStatus'] = "Zahlungsstatus";
 $l['all']['FirstName'] = "Vorname";
 $l['all']['LastName'] = "Nachname";
@@ -1087,7 +1086,6 @@ $l['Intro']['repstatus.php'] = "Statusseite";
 $l['Intro']['reptopusers.php'] = "Top-Benutzer";
 $l['Intro']['repusername.php'] = "Benutzer auflisten";
 
-$l['Intro']['mngbatch.php'] = "Batch-Benutzer erstellen";
 $l['Intro']['mngbatchdel.php'] = "Batch-Sessions löschen";
 
 $l['Intro']['mngdel.php'] = "Benutzer entfernen";
