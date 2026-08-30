@@ -61,7 +61,7 @@
     $title = t('Intro','graphsoveralldownload.php');
     $help = t('helpPage','graphsoveralldownload');
 
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, array(), array("static/js/chart.umd.min.js", "static/js/daloradius-charts.js"));
 
     print_title_and_help($title, $help);
 
@@ -83,7 +83,7 @@
         // tab 0
         open_tab($navkeys, 0, true);
 
-        $img_format = '<script src="static/js/chart.umd.min.js"></script><script src="static/js/daloradius-charts.js"></script><div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
+        $img_format = '<div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
         $src = sprintf("library/graphs/overall_users_data.php?category=download&type=%s&size=%s&user=%s", $type, $size, $username_enc);
         $alt = sprintf("traffic downloaded by user %s", $username_enc);
         printf($img_format, $src, $alt);

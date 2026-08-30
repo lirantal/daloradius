@@ -14,7 +14,7 @@
     function render(canvas) {
         fetch(canvas.dataset.chartSource, {
             credentials: 'same-origin',
-            headers: { 'Accept': 'application/json' }
+            headers: { Accept: 'application/json' }
         })
             .then(function (response) {
                 if (!response.ok) {
@@ -30,7 +30,13 @@
             });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function initializeCharts() {
         document.querySelectorAll('canvas[data-chart-source]').forEach(render);
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeCharts);
+    } else {
+        initializeCharts();
+    }
 }());

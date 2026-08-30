@@ -34,11 +34,11 @@
     $title = t('Intro','mngmain.php');
     $help = "";
 
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, array(), array("static/js/chart.umd.min.js", "static/js/daloradius-charts.js"));
 
     print_title_and_help($title, $help);
 
-    $img_format = '<script src="static/js/chart.umd.min.js"></script><script src="static/js/daloradius-charts.js"></script><div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
+    $img_format = '<div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
     $alt = "Total Users";
     $src = "library/graphs/total_users.php";
 
