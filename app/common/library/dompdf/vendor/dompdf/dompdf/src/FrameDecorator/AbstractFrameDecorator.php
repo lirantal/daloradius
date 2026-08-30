@@ -173,7 +173,13 @@ abstract class AbstractFrameDecorator extends Frame
             $node->removeAttribute("id");
         }
 
-        return Factory::decorate_frame($frame, $this->_dompdf, $this->_root);
+        $deco = Factory::decorate_frame($frame, $this->_dompdf, $this->_root);
+
+        if ($this instanceof Text) {
+            $deco->trailingWs = $this->trailingWs;
+        }
+
+        return $deco;
     }
 
     /**
@@ -196,6 +202,10 @@ abstract class AbstractFrameDecorator extends Frame
         }
 
         $deco = Factory::decorate_frame($frame, $this->_dompdf, $this->_root);
+
+        if ($this instanceof Text) {
+            $deco->trailingWs = $this->trailingWs;
+        }
 
         foreach ($this->get_children() as $child) {
             $deco->append_child($child->deep_copy());
@@ -897,7 +907,7 @@ abstract class AbstractFrameDecorator extends Frame
     /**
      * @param Block|null $block
      */
-    final function reflow(Block $block = null)
+    final function reflow(?Block $block = null)
     {
         // Uncomment this to see the frames before they're laid out, instead of
         // during rendering.

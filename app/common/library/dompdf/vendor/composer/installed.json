@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "dompdf/dompdf",
-            "version": "v3.0.0",
-            "version_normalized": "3.0.0.0",
+            "version": "v3.1.6",
+            "version_normalized": "3.1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dompdf/dompdf.git",
-                "reference": "fbc7c5ee5d94f7a910b78b43feb7931b7f971b59"
+                "reference": "6d4b4eb8500f7a786da8868ba463a71b725a4005"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/fbc7c5ee5d94f7a910b78b43feb7931b7f971b59",
-                "reference": "fbc7c5ee5d94f7a910b78b43feb7931b7f971b59",
+                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/6d4b4eb8500f7a786da8868ba463a71b725a4005",
+                "reference": "6d4b4eb8500f7a786da8868ba463a71b725a4005",
                 "shasum": ""
             },
             "require": {
@@ -28,7 +28,7 @@
                 "ext-json": "*",
                 "ext-zip": "*",
                 "mockery/mockery": "^1.3",
-                "phpunit/phpunit": "^7.5 || ^8 || ^9 || ^10",
+                "phpunit/phpunit": "^7.5 || ^8 || ^9 || ^10 || ^11",
                 "squizlabs/php_codesniffer": "^3.5",
                 "symfony/process": "^4.4 || ^5.4 || ^6.2 || ^7.0"
             },
@@ -38,7 +38,7 @@
                 "ext-imagick": "Improves image processing performance",
                 "ext-zlib": "Needed for pdf stream compression"
             },
-            "time": "2024-04-29T14:01:28+00:00",
+            "time": "2026-07-20T12:29:38+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -63,23 +63,23 @@
             "homepage": "https://github.com/dompdf/dompdf",
             "support": {
                 "issues": "https://github.com/dompdf/dompdf/issues",
-                "source": "https://github.com/dompdf/dompdf/tree/v3.0.0"
+                "source": "https://github.com/dompdf/dompdf/tree/v3.1.6"
             },
             "install-path": "../dompdf/dompdf"
         },
         {
             "name": "dompdf/php-font-lib",
-            "version": "1.0.0",
-            "version_normalized": "1.0.0.0",
+            "version": "1.0.2",
+            "version_normalized": "1.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dompdf/php-font-lib.git",
-                "reference": "991d6a954f6bbd7e41022198f00586b230731441"
+                "reference": "a6e9a688a2a80016ac080b97be73d3e10c444c9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dompdf/php-font-lib/zipball/991d6a954f6bbd7e41022198f00586b230731441",
-                "reference": "991d6a954f6bbd7e41022198f00586b230731441",
+                "url": "https://api.github.com/repos/dompdf/php-font-lib/zipball/a6e9a688a2a80016ac080b97be73d3e10c444c9a",
+                "reference": "a6e9a688a2a80016ac080b97be73d3e10c444c9a",
                 "shasum": ""
             },
             "require": {
@@ -87,9 +87,9 @@
                 "php": "^7.1 || ^8.0"
             },
             "require-dev": {
-                "symfony/phpunit-bridge": "^3 || ^4 || ^5 || ^6"
+                "phpunit/phpunit": "^7.5 || ^8 || ^9 || ^10 || ^11 || ^12"
             },
-            "time": "2024-04-29T13:40:38+00:00",
+            "time": "2026-01-20T14:10:26+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -111,34 +111,34 @@
             "homepage": "https://github.com/dompdf/php-font-lib",
             "support": {
                 "issues": "https://github.com/dompdf/php-font-lib/issues",
-                "source": "https://github.com/dompdf/php-font-lib/tree/1.0.0"
+                "source": "https://github.com/dompdf/php-font-lib/tree/1.0.2"
             },
             "install-path": "../dompdf/php-font-lib"
         },
         {
             "name": "dompdf/php-svg-lib",
-            "version": "1.0.0",
-            "version_normalized": "1.0.0.0",
+            "version": "1.0.2",
+            "version_normalized": "1.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dompdf/php-svg-lib.git",
-                "reference": "eb045e518185298eb6ff8d80d0d0c6b17aecd9af"
+                "reference": "8259ffb930817e72b1ff1caef5d226501f3dfeb1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dompdf/php-svg-lib/zipball/eb045e518185298eb6ff8d80d0d0c6b17aecd9af",
-                "reference": "eb045e518185298eb6ff8d80d0d0c6b17aecd9af",
+                "url": "https://api.github.com/repos/dompdf/php-svg-lib/zipball/8259ffb930817e72b1ff1caef5d226501f3dfeb1",
+                "reference": "8259ffb930817e72b1ff1caef5d226501f3dfeb1",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
                 "php": "^7.1 || ^8.0",
-                "sabberworm/php-css-parser": "^8.4"
+                "sabberworm/php-css-parser": "^8.4 || ^9.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5"
+                "phpunit/phpunit": "^7.5 || ^8 || ^9 || ^10 || ^11"
             },
-            "time": "2024-04-29T13:26:35+00:00",
+            "time": "2026-01-02T16:01:13+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -160,23 +160,23 @@
             "homepage": "https://github.com/dompdf/php-svg-lib",
             "support": {
                 "issues": "https://github.com/dompdf/php-svg-lib/issues",
-                "source": "https://github.com/dompdf/php-svg-lib/tree/1.0.0"
+                "source": "https://github.com/dompdf/php-svg-lib/tree/1.0.2"
             },
             "install-path": "../dompdf/php-svg-lib"
         },
         {
             "name": "masterminds/html5",
-            "version": "2.9.0",
-            "version_normalized": "2.9.0.0",
+            "version": "2.10.1",
+            "version_normalized": "2.10.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Masterminds/html5-php.git",
-                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6"
+                "reference": "fd5018f6815fff903946d0564977b44ce8010e29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
-                "reference": "f5ac2c0b0a2eefca70b2ce32a5809992227e75a6",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/fd5018f6815fff903946d0564977b44ce8010e29",
+                "reference": "fd5018f6815fff903946d0564977b44ce8010e29",
                 "shasum": ""
             },
             "require": {
@@ -184,9 +184,9 @@
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7 || ^8 || ^9"
+                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7 || ^8 || ^9 || ^10"
             },
-            "time": "2024-03-31T07:05:07+00:00",
+            "time": "2026-06-23T18:43:15+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -230,36 +230,37 @@
             ],
             "support": {
                 "issues": "https://github.com/Masterminds/html5-php/issues",
-                "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
+                "source": "https://github.com/Masterminds/html5-php/tree/2.10.1"
             },
             "install-path": "../masterminds/html5"
         },
         {
             "name": "sabberworm/php-css-parser",
-            "version": "v8.5.1",
-            "version_normalized": "8.5.1.0",
+            "version": "v8.9.0",
+            "version_normalized": "8.9.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MyIntervals/PHP-CSS-Parser.git",
-                "reference": "4a3d572b0f8b28bb6fd016ae8bbfc445facef152"
+                "reference": "d8e916507b88e389e26d4ab03c904a082aa66bb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MyIntervals/PHP-CSS-Parser/zipball/4a3d572b0f8b28bb6fd016ae8bbfc445facef152",
-                "reference": "4a3d572b0f8b28bb6fd016ae8bbfc445facef152",
+                "url": "https://api.github.com/repos/MyIntervals/PHP-CSS-Parser/zipball/d8e916507b88e389e26d4ab03c904a082aa66bb9",
+                "reference": "d8e916507b88e389e26d4ab03c904a082aa66bb9",
                 "shasum": ""
             },
             "require": {
                 "ext-iconv": "*",
-                "php": ">=5.6.20"
+                "php": "^5.6.20 || ^7.0.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.7.27"
+                "phpunit/phpunit": "5.7.27 || 6.5.14 || 7.5.20 || 8.5.41",
+                "rawr/cross-data-providers": "^2.0.0"
             },
             "suggest": {
                 "ext-mbstring": "for parsing UTF-8 CSS"
             },
-            "time": "2024-02-15T16:41:13+00:00",
+            "time": "2025-07-11T13:20:48+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -298,7 +299,7 @@
             ],
             "support": {
                 "issues": "https://github.com/MyIntervals/PHP-CSS-Parser/issues",
-                "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.5.1"
+                "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.9.0"
             },
             "install-path": "../sabberworm/php-css-parser"
         }

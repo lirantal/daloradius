@@ -120,7 +120,7 @@ class BinaryStream {
    * @return bool True if the $offset position exists in the file
    */
   public function seek($offset) {
-    return fseek($this->f, $offset, SEEK_SET) == 0;
+    return fseek($this->f, (int)$offset, SEEK_SET) == 0;
   }
 
   /**
@@ -158,7 +158,11 @@ class BinaryStream {
   }
 
   public function readUInt8() {
-    return ord($this->read(1));
+    $byte = $this->read(1);
+    if ($byte === '') {
+      return 0;
+    }
+    return ord($byte);
   }
 
   public function readUInt8Many($count) {

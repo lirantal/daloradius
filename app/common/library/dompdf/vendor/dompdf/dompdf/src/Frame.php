@@ -50,14 +50,14 @@ class Frame
     /**
      * This frame's calculated style
      *
-     * @var Style
+     * @var Style|null
      */
     protected $_style;
 
     /**
      * This frame's parent in the document tree.
      *
-     * @var Frame
+     * @var Frame|null
      */
     protected $_parent;
 
@@ -65,28 +65,28 @@ class Frame
      * This frame's first child.  All children are handled as a
      * doubly-linked list.
      *
-     * @var Frame
+     * @var Frame|null
      */
     protected $_first_child;
 
     /**
      * This frame's last child.
      *
-     * @var Frame
+     * @var Frame|null
      */
     protected $_last_child;
 
     /**
      * This frame's previous sibling in the document tree.
      *
-     * @var Frame
+     * @var Frame|null
      */
     protected $_prev_sibling;
 
     /**
      * This frame's next sibling in the document tree.
      *
-     * @var Frame
+     * @var Frame|null
      */
     protected $_next_sibling;
 
@@ -677,9 +677,12 @@ class Frame
     public function set_containing_block($x = null, $y = null, $w = null, $h = null)
     {
         if (is_array($x)) {
-            foreach ($x as $key => $val) {
-                $$key = $val;
-            }
+            list($x, $y, $w, $h) = [
+                $x["x"] ?? null,
+                $x["y"] ?? null,
+                $x["w"] ?? null,
+                $x["h"] ?? null
+            ];
         }
 
         if (is_numeric($x)) {
@@ -1167,8 +1170,8 @@ class Frame
 
         if ($this->is_text_node()) {
             $tmp = htmlspecialchars($this->_node->nodeValue);
-            $str .= "<pre>'" . mb_substr($tmp, 0, 70) .
-                (mb_strlen($tmp) > 70 ? "..." : "") . "'</pre>";
+            $str .= "<pre>'" . mb_substr($tmp, 0, 70, "UTF-8") .
+                (mb_strlen($tmp, "UTF-8") > 70 ? "..." : "") . "'</pre>";
         } elseif ($css_class = $this->_node->getAttribute("class")) {
             $str .= "CSS class: '$css_class'<br/>";
         }
