@@ -17,4 +17,3 @@ $dataset = array(
     'borderWidth' => 1,
 );
 dalo_chart_response('bar', array(''), array($dataset), strtolower(t('all', 'TotalUsers')), '', strtolower(t('all', 'Users')));
-

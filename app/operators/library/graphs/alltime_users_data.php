@@ -43,4 +43,3 @@ $dataset = array(
     'borderWidth' => 1,
 );
 dalo_chart_response('bar', $labels, array($dataset), sprintf('all-time %s statistics', $category), ucfirst($type) . ' distribution', $ytitle);
-

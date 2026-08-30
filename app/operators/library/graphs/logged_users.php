@@ -59,4 +59,3 @@ if ($day !== '') {
 }
 include('../../../common/includes/db_close.php');
 dalo_chart_response('bar', $labels, $datasets, $title, $xtitle, 'accounted users');
-

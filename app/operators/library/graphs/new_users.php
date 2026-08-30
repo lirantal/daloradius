@@ -39,4 +39,3 @@ $dataset = array(
     'borderWidth' => 1,
 );
 dalo_chart_response('bar', $labels, array($dataset), 'new users amount', 'per-month distribution', 'users');
-

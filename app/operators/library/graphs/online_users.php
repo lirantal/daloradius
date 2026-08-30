@@ -21,4 +21,3 @@ $dataset = array(
     'backgroundColor' => array('rgba(54, 162, 235, 0.65)', 'rgba(255, 99, 132, 0.65)'),
 );
 dalo_chart_response('pie', $labels, array($dataset), 'online/offline users');
-

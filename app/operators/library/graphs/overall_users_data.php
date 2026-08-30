@@ -51,4 +51,3 @@ $dataset = array(
     'borderWidth' => 1,
 );
 dalo_chart_response('bar', $labels, array($dataset), $title, ucfirst($type) . ' distribution', $ytitle);
-

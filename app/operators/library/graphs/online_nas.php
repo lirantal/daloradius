@@ -21,4 +21,3 @@ $dataset = array(
     'borderWidth' => 1,
 );
 dalo_chart_response('bar', $labels, array($dataset), 'per-NAS online users', 'NAS', 'users');
-
