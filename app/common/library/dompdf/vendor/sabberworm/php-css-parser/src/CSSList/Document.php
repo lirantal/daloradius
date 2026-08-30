@@ -8,7 +8,6 @@ use Sabberworm\CSS\Parsing\SourceException;
 use Sabberworm\CSS\Property\Selector;
 use Sabberworm\CSS\RuleSet\DeclarationBlock;
 use Sabberworm\CSS\RuleSet\RuleSet;
-use Sabberworm\CSS\Value\Value;
 
 /**
  * This class represents the root of a parsed CSS file. It contains all top-level CSS contents: mostly declaration
@@ -28,6 +27,8 @@ class Document extends CSSBlockList
      * @return Document
      *
      * @throws SourceException
+     *
+     * @internal since V8.8.0
      */
     public static function parse(ParserState $oParserState)
     {
@@ -76,33 +77,6 @@ class Document extends CSSBlockList
     }
 
     /**
-     * Returns all `Value` objects found recursively in `Rule`s in the tree.
-     *
-     * @param CSSList|RuleSet|string $mElement
-     *        the `CSSList` or `RuleSet` to start the search from (defaults to the whole document).
-     *        If a string is given, it is used as rule name filter.
-     * @param bool $bSearchInFunctionArguments whether to also return Value objects used as Function arguments.
-     *
-     * @return array<int, Value>
-     *
-     * @see RuleSet->getRules()
-     */
-    public function getAllValues($mElement = null, $bSearchInFunctionArguments = false)
-    {
-        $sSearchString = null;
-        if ($mElement === null) {
-            $mElement = $this;
-        } elseif (is_string($mElement)) {
-            $sSearchString = $mElement;
-            $mElement = $this;
-        }
-        /** @var array<int, Value> $aResult */
-        $aResult = [];
-        $this->allValues($mElement, $aResult, $sSearchString, $bSearchInFunctionArguments);
-        return $aResult;
-    }
-
-    /**
      * Returns all `Selector` objects with the requested specificity found recursively in the tree.
      *
      * Note that this does not yield the full `DeclarationBlock` that the selector belongs to
@@ -128,6 +102,8 @@ class Document extends CSSBlockList
      * Expands all shorthand properties to their long value.
      *
      * @return void
+     *
+     * @deprecated since 8.7.0, will be removed without substitution in version 9.0 in #511
      */
     public function expandShorthands()
     {
@@ -140,6 +116,8 @@ class Document extends CSSBlockList
      * Create shorthands properties whenever possible.
      *
      * @return void
+     *
+     * @deprecated since 8.7.0, will be removed without substitution in version 9.0 in #511
      */
     public function createShorthands()
     {
@@ -155,7 +133,7 @@ class Document extends CSSBlockList
      *
      * @return string
      */
-    public function render(OutputFormat $oOutputFormat = null)
+    public function render($oOutputFormat = null)
     {
         if ($oOutputFormat === null) {
             $oOutputFormat = new OutputFormat();

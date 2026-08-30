@@ -33,6 +33,8 @@ class URL extends PrimitiveValue
      * @throws SourceException
      * @throws UnexpectedEOFException
      * @throws UnexpectedTokenException
+     *
+     * @internal since V8.8.0
      */
     public static function parse(ParserState $oParserState)
     {
@@ -79,6 +81,8 @@ class URL extends PrimitiveValue
 
     /**
      * @return string
+     *
+     * @deprecated in V8.8.0, will be removed in V9.0.0. Use `render` instead.
      */
     public function __toString()
     {
@@ -86,9 +90,11 @@ class URL extends PrimitiveValue
     }
 
     /**
+     * @param OutputFormat|null $oOutputFormat
+     *
      * @return string
      */
-    public function render(OutputFormat $oOutputFormat)
+    public function render($oOutputFormat)
     {
         return "url({$this->oURL->render($oOutputFormat)})";
     }

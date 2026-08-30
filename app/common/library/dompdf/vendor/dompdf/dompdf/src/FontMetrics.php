@@ -22,13 +22,10 @@ use FontLib\Font;
 class FontMetrics
 {
     /**
-     * Name of the user font families file
+     * Name of the user font families lookup cache file
      *
-     * This file must be writable by the webserver process only to update it
-     * with save_font_families() after adding the .afm file references of a new font family
-     * with FontMetrics::saveFontFamilies().
-     * This is typically done only from command line with load_font.php on converting
-     * ttf fonts to ufm with php-font-lib.
+     * This file must be readable and writable by the executing (webserver)
+     * process in order to cache user installed font information.
      */
     const USER_FONTS_FILE = "installed-fonts.json";
 
@@ -171,7 +168,7 @@ class FontMetrics
      */
     public function registerFont($style, $remoteFile, $context = null)
     {
-        $fontname = mb_strtolower($style["family"]);
+        $fontname = mb_strtolower($style["family"], "UTF-8");
         $families = $this->getFontFamilies();
 
         $entry = [];
@@ -390,7 +387,7 @@ class FontMetrics
         if ($returnSubstring) {
             // build the string for each mapping
             foreach ($char_mapping as $start_index => &$info) {
-                $info["text"] = mb_substr($text, $start_index, $info["length"]);
+                $info["text"] = mb_substr($text, $start_index, $info["length"], "UTF-8");
             }
         }
 
@@ -460,6 +457,13 @@ class FontMetrics
     public function getFont($familyRaw, $subtypeRaw = "normal")
     {
         static $cache = [];
+
+        if (!$familyRaw) {
+            $familyRaw = $familyRaw === null ? 0 : $this->options->getDefaultFont();
+        }
+        if (!$subtypeRaw) {
+            $subtypeRaw = "normal";
+        }
 
         if (isset($cache[$familyRaw][$subtypeRaw])) {
             return $cache[$familyRaw][$subtypeRaw];
@@ -538,7 +542,7 @@ class FontMetrics
      */
     public function getFamily($family)
     {
-        $family = str_replace(["'", '"'], "", mb_strtolower($family));
+        $family = str_replace(["'", '"'], "", mb_strtolower($family, "UTF-8"));
         $families = $this->getFontFamilies();
 
         if (isset($families[$family])) {
@@ -654,7 +658,7 @@ class FontMetrics
      */
     public function setFontFamily($fontname, $entry)
     {
-        $this->userFonts[mb_strtolower($fontname)] = $entry;
+        $this->userFonts[mb_strtolower($fontname, "UTF-8")] = $entry;
         $this->saveFontFamilies();
         unset($this->fontFamilies);
     }

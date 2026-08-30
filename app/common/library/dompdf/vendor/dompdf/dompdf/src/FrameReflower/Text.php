@@ -51,14 +51,6 @@ class Text extends AbstractFrameReflower
     protected $_frame;
 
     /**
-     * Saves trailing whitespace trimmed after a line break, so it can be
-     * restored when needed.
-     *
-     * @var string|null
-     */
-    protected $trailingWs = null;
-
-    /**
      * @var FontMetrics
      */
     private $fontMetrics;
@@ -92,10 +84,10 @@ class Text extends AbstractFrameReflower
                 $text = Helpers::mb_ucwords($text);
                 break;
             case "uppercase":
-                $text = mb_convert_case($text, MB_CASE_UPPER);
+                $text = mb_convert_case($text, MB_CASE_UPPER, "UTF-8");
                 break;
             case "lowercase":
-                $text = mb_convert_case($text, MB_CASE_LOWER);
+                $text = mb_convert_case($text, MB_CASE_LOWER, "UTF-8");
                 break;
             default:
                 break;
@@ -230,10 +222,10 @@ class Text extends AbstractFrameReflower
 
             if ($break_word) {
                 $s = "";
-                $len = mb_strlen($word);
+                $len = mb_strlen($word, "UTF-8");
 
                 for ($j = 0; $j < $len; $j++) {
-                    $c = mb_substr($word, $j, 1);
+                    $c = mb_substr($word, $j, 1, "UTF-8");
                     $w = $fontMetrics->getTextWidth($s . $c, $font, $size, $word_spacing, $letter_spacing);
 
                     if (Helpers::lengthGreater($w, $available_width)) {
@@ -250,7 +242,7 @@ class Text extends AbstractFrameReflower
             }
         }
 
-        $offset = mb_strlen($str);
+        $offset = mb_strlen($str, "UTF-8");
         return $offset;
     }
 
@@ -260,7 +252,7 @@ class Text extends AbstractFrameReflower
      */
     protected function newline_break(string $text)
     {
-        if (($i = mb_strpos($text, "\n")) === false) {
+        if (($i = mb_strpos($text, "\n", 0, "UTF-8")) === false) {
             return false;
         }
 
@@ -308,7 +300,7 @@ class Text extends AbstractFrameReflower
             case "pre-wrap":
                 $hard_split = $this->newline_break($text);
                 $first_line = $hard_split !== false
-                    ? mb_substr($text, 0, $hard_split)
+                    ? mb_substr($text, 0, $hard_split, "UTF-8")
                     : $text;
                 $soft_split = $this->line_break($first_line, $block, $nowrap);
 
@@ -351,7 +343,7 @@ class Text extends AbstractFrameReflower
         }
 
         // Final split point is determined
-        if ($split !== false && $split < mb_strlen($text)) {
+        if ($split !== false && $split < mb_strlen($text, "UTF-8")) {
             // Split the line
             $frame->set_text($text);
             $frame->split_text($split, true);
@@ -359,9 +351,9 @@ class Text extends AbstractFrameReflower
 
             // Remove inner soft hyphens
             $t = $frame->get_text();
-            $shyPosition = mb_strpos($t, self::SOFT_HYPHEN);
-            if (false !== $shyPosition && $shyPosition < mb_strlen($t) - 1) {
-                $t = str_replace(self::SOFT_HYPHEN, "", mb_substr($t, 0, -1)) . mb_substr($t, -1);
+            $shyPosition = mb_strpos($t, self::SOFT_HYPHEN, 0, "UTF-8");
+            if (false !== $shyPosition && $shyPosition < mb_strlen($t, "UTF-8") - 1) {
+                $t = str_replace(self::SOFT_HYPHEN, "", mb_substr($t, 0, -1, "UTF-8")) . mb_substr($t, -1, null, "UTF-8");
                 $frame->set_text($t);
             }
         } else {
@@ -381,7 +373,7 @@ class Text extends AbstractFrameReflower
      * @param BlockFrameDecorator|null $block
      * @throws Exception
      */
-    function reflow(BlockFrameDecorator $block = null)
+    function reflow(?BlockFrameDecorator $block = null)
     {
         $frame = $this->_frame;
         $page = $frame->get_root();
@@ -445,30 +437,12 @@ class Text extends AbstractFrameReflower
      */
     public function trim_trailing_ws(): void
     {
-        $frame = $this->_frame;
-        $text = $frame->get_text();
-        $trailing = mb_substr($text, -1);
-
-        // White space is always collapsed to the standard space character
-        // currently, so only handle that for now
-        if ($trailing === " ") {
-            $this->trailingWs = $trailing;
-            $frame->set_text(mb_substr($text, 0, -1));
-            $frame->recalculate_width();
-        }
+        $this->_frame->trim_trailing_ws();
     }
 
     public function reset(): void
     {
         parent::reset();
-
-        // Restore trimmed trailing white space, as the frame will go through
-        // another reflow and line breaks might be different after a split
-        if ($this->trailingWs !== null) {
-            $text = $this->_frame->get_text();
-            $this->_frame->set_text($text . $this->trailingWs);
-            $this->trailingWs = null;
-        }
     }
 
     //........................................................................
@@ -534,7 +508,7 @@ class Text extends AbstractFrameReflower
                 // the latter case.
                 // https://www.w3.org/TR/css-text-3/#overflow-wrap-property
                 if ($style->overflow_wrap === "anywhere") {
-                    $char = mb_substr($visible_text, 0, 1);
+                    $char = mb_substr($visible_text, 0, 1, "UTF-8");
                     $min = $fontMetrics->getTextWidth($char, $font, $size, $word_spacing, $letter_spacing);
                 } else {
                     // Find the longest word
