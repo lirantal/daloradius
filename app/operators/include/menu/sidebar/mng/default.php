@@ -85,11 +85,11 @@ $descriptors2 = array();
 $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ImportUsers'), 'href' =>'mng-import-users.php',
                          'icon' => 'upload', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 $sections = array();
-$sections[] = array( 'title' => 'Users Management', 'descriptors' => $descriptors1 );
-$sections[] = array( 'title' => 'Extended Capabilities', 'descriptors' => $descriptors2 );
+$sections[] = array( 'title' => t('sidebar', 'UsersManagement'), 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'ExtendedCapabilities'), 'descriptors' => $descriptors2 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );

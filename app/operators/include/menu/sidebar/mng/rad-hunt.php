@@ -55,8 +55,8 @@ if (count($menu_options) > 0) {
                             "selected_value" => ((isset($item)) ? $item : ""),
                             "required" => true,
                             "options" => $menu_options,
-                            "caption" => "Huntgroup",
-                            "tooltipText" => "Please select a Huntgroup",
+                            "caption" => t('sidebar', 'Huntgroup'),
+                            "tooltipText" => sprintf(t('sidebar', 'PleaseSelectA'), t('sidebar', 'Huntgroup')),
                           );
 
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditHG'), 'action' => 'mng-rad-hunt-edit.php', 'method' => 'GET',
@@ -68,10 +68,10 @@ if (count($menu_options) > 0) {
 
 
 $sections = array();
-$sections[] = array( 'title' => 'Huntgroups Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'HuntgroupsManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );

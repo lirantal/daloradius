@@ -44,7 +44,7 @@ $components[] = array(
                         "selected_value" => ((isset($hotspot)) ? $hotspot : ""),
                         "options" => $menu_options,
                         "caption" => t('all','HotSpots'),
-                        "tooltipText" => "Please select one or multiple " . t('all','HotSpots'),
+                        "tooltipText" => sprintf(t('sidebar', 'PleaseSelectOneOrMultiple'), t('all','HotSpots')),
                         "multiple" => true,
                         "size" => 5,
                         "show_controls" => true,
@@ -58,11 +58,11 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','HotspotsCompar
                          'href' => 'acct-hotspot-compare.php', 'icon' => 'router-fill', );
 
 $sections = array();
-$sections[] = array( 'title' => 'Hotspots Accounting', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'HotspotsAccounting'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Accounting',
+                'title' => t('sidebar', 'Accounting'),
                 'sections' => $sections,
              );

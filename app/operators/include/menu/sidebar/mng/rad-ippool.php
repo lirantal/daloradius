@@ -67,10 +67,10 @@ if (count($menu_options) > 0) {
 
 
 $sections = array();
-$sections[] = array( 'title' => 'IP-Pools Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'IPPoolsManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );

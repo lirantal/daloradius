@@ -99,7 +99,7 @@ $components[] = array(
                         "name" => "ipaddress",
                         "type" => "text",
                         "value" => ((isset($ipaddress)) ? $ipaddress : ""),
-                        "caption" => "IP address",
+                        "caption" => t('all', 'IPAddress'),
                         "tooltipText" => t('Tooltip','IPAddress'),
                         "sidebar" => true,
                         "pattern" => trim(LOOSE_IP_REGEX, "/"),
@@ -116,7 +116,7 @@ $components[] = array(
                         "name" => "nasipaddress",
                         "type" => "text",
                         "value" => ((isset($nasipaddress)) ? $nasipaddress : ""),
-                        "caption" => "NAS IP address",
+                        "caption" => t('all', 'NASIPAddress'),
                         "tooltipText" => t('all','NASIPAddress'),
                         "sidebar" => true,
                         "pattern" => trim(LOOSE_IP_REGEX, "/"),
@@ -132,11 +132,11 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ActiveRecords'
                          'icon' => 'table', );
 
 $sections = array();
-$sections[] = array( 'title' => 'Users Accounting', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'UsersAccounting'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Accounting',
+                'title' => t('sidebar', 'Accounting'),
                 'sections' => $sections,
              );

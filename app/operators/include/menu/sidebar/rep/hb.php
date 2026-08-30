@@ -37,6 +37,6 @@ $sections[] = array( 'title' => t('button','Dashboard'), 'descriptors' => $descr
 
 // add sections to menu
 $menu = array(
-                'title' => 'Heartbeat',
+                'title' => t('sidebar', 'Heartbeat'),
                 'sections' => $sections,
              );

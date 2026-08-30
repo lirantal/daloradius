@@ -43,17 +43,17 @@ $descriptors1[] = array(
                             'type' => 'textarea',
                             'content' => sprintf('daloRADIUS - RADIUS Management%s', $content),
                             'readmore' => array( 'href' => 'https://github.com/lirantal/daloradius',
-                                                 'title' => 'Read More',
-                                                 'label' => 'Read More',
+                                                 'title' => t('sidebar', 'ReadMore'),
+                                                 'label' => t('sidebar', 'ReadMore'),
                                                ),
                        );
 
 // add descriptors to a sections
 $sections = array();
-$sections[] = array( 'title' => 'Support', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'Support'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Help',
+                'title' => t('sidebar', 'Help'),
                 'sections' => $sections,
              );

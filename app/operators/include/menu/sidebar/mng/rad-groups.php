@@ -150,11 +150,11 @@ if (count($menu_groups) > 0 && count($radgroupreply_options) > 0) {
 }
 
 $sections = array();
-$sections[] = array( 'title' => 'Group Check Management', 'descriptors' => $descriptors1 );
-$sections[] = array( 'title' => 'Group Reply Management', 'descriptors' => $descriptors2 );
+$sections[] = array( 'title' => t('sidebar', 'GroupCheckManagement'), 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'GroupReplyManagement'), 'descriptors' => $descriptors2 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );
