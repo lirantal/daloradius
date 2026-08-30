@@ -38,7 +38,7 @@
 
     print_title_and_help($title, $help);
 
-    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
+    $img_format = '<script src="static/js/chart.umd.min.js"></script><script src="static/js/daloradius-charts.js"></script><div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
     $alt = "Total Users";
     $src = "library/graphs/total_users.php";
 

@@ -323,7 +323,7 @@
 
     close_tab($navkeys, 0);
 
-    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
+    $img_format = '<script src="static/js/chart.umd.min.js"></script><script src="static/js/daloradius-charts.js"></script><div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
     open_tab($navkeys, 1);
     printf($img_format, "library/graphs/online_users.php", "Online users");
     close_tab($navkeys, 1);
