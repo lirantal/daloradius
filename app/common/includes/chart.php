@@ -33,15 +33,17 @@ function dalo_chart_overall_user_statistics($dbSocket, $radacct_table, $username
                 ? 'COUNT(AcctStartTime)'
                 : ($category === 'upload' ? 'SUM(AcctInputOctets)' : 'SUM(AcctOutputOctets)');
 
+            $session_filter = $category === 'login' ? '' : ' AND AcctStopTime>0';
+
             if ($type === 'yearly') {
-                $sql = "SELECT YEAR(AcctStartTime), %s FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY YEAR(AcctStartTime) ORDER BY YEAR(AcctStartTime) DESC LIMIT 36";
+                $sql = "SELECT YEAR(AcctStartTime), %s FROM %s WHERE username='%s'%s GROUP BY YEAR(AcctStartTime) ORDER BY YEAR(AcctStartTime) DESC LIMIT 36";
             } elseif ($type === 'monthly') {
-                $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'), %s FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY YEAR(AcctStartTime), MONTH(AcctStartTime) ORDER BY YEAR(AcctStartTime) DESC, MONTH(AcctStartTime) DESC LIMIT 36";
+                $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'), %s FROM %s WHERE username='%s'%s GROUP BY YEAR(AcctStartTime), MONTH(AcctStartTime) ORDER BY YEAR(AcctStartTime) DESC, MONTH(AcctStartTime) DESC LIMIT 36";
             } else {
-                $sql = "SELECT DATE(AcctStartTime), %s FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY DATE(AcctStartTime) ORDER BY DATE(AcctStartTime) DESC LIMIT 36";
+                $sql = "SELECT DATE(AcctStartTime), %s FROM %s WHERE username='%s'%s GROUP BY DATE(AcctStartTime) ORDER BY DATE(AcctStartTime) DESC LIMIT 36";
             }
 
-            $res = $dbSocket->query(sprintf($sql, $dbfield, $radacct_table, $escaped_username));
+            $res = $dbSocket->query(sprintf($sql, $dbfield, $radacct_table, $escaped_username, $session_filter));
             $division = $size === 'gigabytes' ? 1073741824 : 1048576;
 
             while ($row = $res->fetchRow()) {
