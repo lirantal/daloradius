@@ -36,7 +36,7 @@ if (strpos($_SERVER['PHP_SELF'], '/lang/zh_tw.php') !== false) {
 
 $l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
 $l['all']['daloRADIUSVersion'] = sprintf("版本 %s ", $configValues['DALORADIUS_VERSION']);
-$l['all']['copyright1'] = 'RADIUS 管理、報告、會計和帳單 <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
+$l['all']['copyright1'] = 'RADIUS 管理、報表、計費與帳務 <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
 $l['all']['copyright2'] = 'daloRADIUS - Copyright &copy; 2007-' . date('Y') . <<<EOF
  <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Follow @filippolauria on GitHub">
   <a target="_blank" href="https://github.com/filippolauria">Filippo Lauria</a>
@@ -46,7 +46,7 @@ EOF;
 $l['all']['ID'] = "ID";
 $l['all']['PoolName'] = "IP位址名稱";
 $l['all']['CalledStationId'] = "被叫號碼";
-$l['all']['CallingStationID'] = "被叫號碼";
+$l['all']['CallingStationID'] = "主叫號碼";
 $l['all']['ExpiryTime'] = "到期時間";
 $l['all']['PoolKey'] = "池金鑰";
 
@@ -119,7 +119,7 @@ $l['all']['EndingDate'] = "結束日期";
 
 $l['all']['Realm'] = "域";
 $l['all']['RealmName'] = "域名";
-$l['all']['RealmSecret'] = "域安全";
+$l['all']['RealmSecret'] = "網域共用金鑰";
 $l['all']['AuthHost'] = "認證主機";
 $l['all']['AcctHost'] = "統計主機";
 $l['all']['Ldflag'] = "ld標識";
@@ -129,7 +129,7 @@ $l['all']['Hints'] = "提示";
 
 $l['all']['Proxy'] = "代理";
 $l['all']['ProxyName'] = "代理名稱";
-$l['all']['ProxySecret'] = "代理安全";
+$l['all']['ProxySecret'] = "代理共用金鑰";
 $l['all']['DeadTime'] = "停滯時間";
 $l['all']['RetryDelay'] = "延遲重試";
 $l['all']['RetryCount'] = "重試次數";
@@ -171,8 +171,8 @@ $l['all']['NasIPHost'] = "NAS IP/主機";
 $l['all']['NasShortname'] = "NAS 簡稱";
 $l['all']['NasType'] = "NAS類型";
 $l['all']['NasPorts'] = "NAS連接埠";
-$l['all']['NasSecret'] = "NAS安全";
-$l['all']['NasCommunity'] = "NAS組";
+$l['all']['NasSecret'] = "NAS 共用金鑰";
+$l['all']['NasCommunity'] = "NAS 社群字串";
 $l['all']['NasDescription'] = "NAS描述";
 $l['all']['PacketType'] = "封包類型";
 $l['all']['HotSpot'] = "熱點";
@@ -183,13 +183,13 @@ $l['all']['Username'] = "使用者名稱";
 $l['all']['Password'] = "密碼";
 $l['all']['PasswordType'] = "密碼類型";
 $l['all']['IPAddress'] = "IP位址";
-$l['all']['Profile'] = "使用者設定檔案";
-$l['all']['Group'] = "組";
-$l['all']['Groupname'] = "組名稱";
-$l['all']['ProfilePriority'] = "優先的設定檔案";
-$l['all']['GroupPriority'] = "優先的組";
-$l['all']['CurrentGroupname'] = "通用組名稱";
-$l['all']['NewGroupname'] = "新建組名稱";
+$l['all']['Profile'] = "使用者設定檔";
+$l['all']['Group'] = "群組";
+$l['all']['Groupname'] = "群組名稱";
+$l['all']['ProfilePriority'] = "設定檔優先順序";
+$l['all']['GroupPriority'] = "群組優先順序";
+$l['all']['CurrentGroupname'] = "目前的群組名稱";
+$l['all']['NewGroupname'] = "新增群組名稱";
 $l['all']['Priority'] = "優先";
 $l['all']['Attribute'] = "屬性";
 $l['all']['Operator'] = "操作員";
@@ -318,9 +318,9 @@ $l['all']['IdleTimeout'] = "閒置逾時";
 $l['all']['DBEngine'] = "伺服器引擎";
 $l['all']['radcheck'] = "radius檢查";
 $l['all']['radreply'] = "radius回覆";
-$l['all']['radgroupcheck'] = "radius組檢查";
-$l['all']['radgroupreply'] = "radius組回覆";
-$l['all']['usergroup'] = "使用者組";
+$l['all']['radgroupcheck'] = "radius群組檢查";
+$l['all']['radgroupreply'] = "radius群組回覆";
+$l['all']['usergroup'] = "使用者群組";
 $l['all']['radacct'] = "radius帳單";
 $l['all']['operators'] = "操作人";
 $l['all']['operators_acl'] = "操作人存取控制清單";
@@ -380,7 +380,7 @@ $l['all']['PlanCost'] = "方案花費";
 $l['all']['PlanSetupCost'] = "方案安裝花費";
 $l['all']['PlanTax'] = "方案稅額";
 $l['all']['PlanCurrency'] = "方案貨幣";
-$l['all']['PlanGroup'] = "方案個人使用者設定（組）";
+$l['all']['PlanGroup'] = "方案設定檔（群組）";
 $l['all']['PlanType'] = "方案類型";
 $l['all']['PlanName'] = "方案名稱";
 $l['all']['PlanId'] = "方案ID";
@@ -547,7 +547,7 @@ $l['Tooltip']['proxyDefaultFallbackTooltip'] = "如果所有完全匹配的域 <
                         ";
 $l['Tooltip']['realmNameTooltip'] = "域名";
 $l['Tooltip']['realmTypeTooltip'] = "設定預設radius";
-$l['Tooltip']['realmSecretTooltip'] = "域RADIUS共享金鑰安全";
+$l['Tooltip']['realmSecretTooltip'] = "網域 RADIUS 共用金鑰";
 $l['Tooltip']['realmAuthhostTooltip'] = "域認證主機";
 $l['Tooltip']['realmAccthostTooltip'] = "域帳單主機";
 $l['Tooltip']['realmLdflagTooltip'] = "允許負載平衡<br/>
@@ -593,11 +593,11 @@ $l['Tooltip']['RemoveHG'] = "移除尋線群";
 $l['Tooltip']['hgNasIpAddress'] = "輸入主機/IP位址";
 $l['Tooltip']['hgGroupName'] = "輸入NAS組名稱";
 $l['Tooltip']['hgNasPortId'] = "輸入NAS連接埠Id";
-$l['Tooltip']['EditUserGroup'] = "編輯使用者組";
-$l['Tooltip']['ListUserGroups'] = "使用者組清單";
-$l['Tooltip']['DeleteUserGroup'] = "刪除關聯使用者組";
+$l['Tooltip']['EditUserGroup'] = "編輯使用者群組";
+$l['Tooltip']['ListUserGroups'] = "使用者群組清單";
+$l['Tooltip']['DeleteUserGroup'] = "刪除關聯使用者群組";
 
-$l['Tooltip']['EditProfile'] = "編輯個人設定檔案";
+$l['Tooltip']['EditProfile'] = "編輯設定檔";
 
 $l['Tooltip']['EditRealm'] = "編輯域";
 $l['Tooltip']['EditProxy'] = "編輯代理";
@@ -668,7 +668,7 @@ $l['Tooltip']['reassignplanprofiles'] = "如果開啟,當應用使用者資訊 <
 $l['button']['DashboardSettings'] = "儀表板設定";
 
 
-$l['button']['GenerateReport'] = "產生報告";
+$l['button']['GenerateReport'] = "產生報表";
 
 $l['button']['ListPayTypes'] = "顯示付款類型";
 $l['button']['NewPayType'] = "新建付款類型";
@@ -760,29 +760,29 @@ $l['button']['ListHG'] = "顯示尋線群";
 $l['button']['NewHG'] = "新建尋線群";
 $l['button']['EditHG'] = "編輯尋線群";
 $l['button']['RemoveHG'] = "移除尋線群";
-$l['button']['ListUserGroup'] = "顯示使用者組";
-$l['button']['ListUsersGroup'] = "顯示使用者組";
-$l['button']['NewUserGroup'] = "新建使用者組";
-$l['button']['EditUserGroup'] = "編輯使用者組";
-$l['button']['RemoveUserGroup'] = "移除使用者組";
+$l['button']['ListUserGroup'] = "顯示使用者群組";
+$l['button']['ListUsersGroup'] = "顯示使用者群組";
+$l['button']['NewUserGroup'] = "新建使用者群組";
+$l['button']['EditUserGroup'] = "編輯使用者群組";
+$l['button']['RemoveUserGroup'] = "移除使用者群組";
 
-$l['button']['ListProfiles'] = "設定檔案清單";
-$l['button']['NewProfile'] = "新建設定檔案";
-$l['button']['EditProfile'] = "編輯設定檔案";
-$l['button']['DuplicateProfile'] = "複製設定檔案";
-$l['button']['RemoveProfile'] = "刪除設定檔案";
+$l['button']['ListProfiles'] = "設定檔清單";
+$l['button']['NewProfile'] = "新增設定檔";
+$l['button']['EditProfile'] = "編輯設定檔";
+$l['button']['DuplicateProfile'] = "複製設定檔";
+$l['button']['RemoveProfile'] = "刪除設定檔";
 
-$l['button']['ListGroupReply'] = "顯示組回覆";
-$l['button']['SearchGroupReply'] = "搜尋組回覆";
-$l['button']['NewGroupReply'] = "新建組回覆";
-$l['button']['EditGroupReply'] = "編輯組回覆";
-$l['button']['RemoveGroupReply'] = "移除組回覆";
+$l['button']['ListGroupReply'] = "顯示群組回覆";
+$l['button']['SearchGroupReply'] = "搜尋群組回覆";
+$l['button']['NewGroupReply'] = "新建群組回覆";
+$l['button']['EditGroupReply'] = "編輯群組回覆";
+$l['button']['RemoveGroupReply'] = "移除群組回覆";
 
-$l['button']['ListGroupCheck'] = "顯示組檢查";
-$l['button']['SearchGroupCheck'] = "搜尋組檢查";
-$l['button']['NewGroupCheck'] = "新建組檢查";
-$l['button']['EditGroupCheck'] = "編輯組檢查";
-$l['button']['RemoveGroupCheck'] = "移除組檢查";
+$l['button']['ListGroupCheck'] = "顯示群組檢查";
+$l['button']['SearchGroupCheck'] = "搜尋群組檢查";
+$l['button']['NewGroupCheck'] = "新建群組檢查";
+$l['button']['EditGroupCheck'] = "編輯群組檢查";
+$l['button']['RemoveGroupCheck'] = "移除群組檢查";
 
 $l['button']['UserAccounting'] = "使用者帳單";
 $l['button']['IPAccounting'] = "IP帳單";
@@ -824,7 +824,7 @@ $l['button']['LanguageSettings'] = "語言設定";
 $l['button']['LoggingSettings'] = "日誌設定";
 $l['button']['InterfaceSettings'] = "介面設定";
 
-$l['button']['ReAssignPlanProfiles'] = "重新分配方案個人設定檔案";
+$l['button']['ReAssignPlanProfiles'] = "重新指派方案設定檔";
 
 $l['button']['TestUserConnectivity'] = "測試使用者連通性";
 $l['button']['DisconnectUser'] = "斷開使用者";
@@ -895,8 +895,8 @@ $l['title']['VendorAttribute'] = "裝置屬性";
 $l['title']['AccountRemoval'] = "帳單移除";
 $l['title']['AccountInfo'] = "帳單資訊";
 
-$l['title']['Profiles'] = "個人設定";
-$l['title']['ProfileInfo'] = "個人設定資訊";
+$l['title']['Profiles'] = "設定檔";
+$l['title']['ProfileInfo'] = "設定檔資訊";
 
 $l['title']['GroupInfo'] = "組資訊";
 $l['title']['GroupAttributes'] = "組屬性";
@@ -908,7 +908,7 @@ $l['title']['UserInfo'] = "使用者資訊";
 $l['title']['BillingInfo'] = "記帳資訊";
 
 $l['title']['Attributes'] = "屬性";
-$l['title']['ProfileAttributes'] = "個人設定屬性";
+$l['title']['ProfileAttributes'] = "設定檔屬性";
 
 $l['title']['HotspotInfo'] = "熱點資訊";
 $l['title']['HotspotRemoval'] = "熱點移除";
@@ -917,8 +917,8 @@ $l['title']['ContactInfo'] = "聯絡資訊";
 
 $l['title']['Plan'] = "方案";
 
-$l['title']['Profile'] = "個人設定";
-$l['title']['Groups'] = "組";
+$l['title']['Profile'] = "設定檔";
+$l['title']['Groups'] = "群組";
 $l['title']['RADIUSCheck'] = "檢查屬性";
 $l['title']['RADIUSReply'] = "回覆屬性";
 
@@ -1090,7 +1090,7 @@ $l['Intro']['billinvoice.php'] = "會計帳單";
 $l['Intro']['billinvoicedel.php'] = "刪除帳單條目";
 $l['Intro']['billinvoiceedit.php'] = "編輯帳單";
 $l['Intro']['billinvoicelist.php'] = "顯示帳單";
-$l['Intro']['billinvoicereport.php'] = "帳單報告";
+$l['Intro']['billinvoicereport.php'] = "發票報表";
 $l['Intro']['billinvoicenew.php'] = "新建帳單";
 
 $l['Intro']['billplans.php'] = "記帳方案頁面";
@@ -1106,7 +1106,7 @@ $l['Intro']['billposlist.php'] = "顯示使用者";
 $l['Intro']['billposnew.php'] = "新建使用者";
 
 $l['Intro']['giseditmap.php'] = "編輯地圖模式";
-$l['Intro']['gismain.php'] = "GIS繪圖";
+$l['Intro']['gismain.php'] = "GIS 地圖";
 $l['Intro']['gisviewmap.php'] = "V檢視地圖模式";
 
 $l['Intro']['graphmain.php'] = "使用圖表";
@@ -1135,7 +1135,7 @@ $l['Intro']['repbatchlist.php'] = "批次使用者清單";
 $l['Intro']['repbatchdetails.php'] = "批次明細";
 
 $l['Intro']['rephsall.php'] = "熱點清單";
-$l['Intro']['repmain.php'] = "報告頁面";
+$l['Intro']['repmain.php'] = "報表頁面";
 $l['Intro']['repstatus.php'] = "狀態頁面";
 $l['Intro']['reptopusers.php'] = "使用者使用詳情";
 $l['Intro']['repusername.php'] = "使用者清單";
@@ -1156,12 +1156,12 @@ $l['Intro']['mnghsedit.php'] = "編輯熱點明細";
 $l['Intro']['mnghslist.php'] = "顯示熱點";
 $l['Intro']['mnghsnew.php'] = "新建熱點";
 
-$l['Intro']['mngradusergroupdel.php'] = "移除使用者組繪圖";
-$l['Intro']['mngradusergroup.php'] = "使用者組設定";
-$l['Intro']['mngradusergroupnew.php'] = "新建使用者組繪圖";
-$l['Intro']['mngradusergrouplist'] = "資料庫使用者組繪圖";
-$l['Intro']['mngradusergrouplistuser'] = "資料庫使用者組繪圖";
-$l['Intro']['mngradusergroupedit'] = "編輯使用者組繪圖";
+$l['Intro']['mngradusergroupdel.php'] = "移除使用者群組對應";
+$l['Intro']['mngradusergroup.php'] = "使用者群組設定";
+$l['Intro']['mngradusergroupnew.php'] = "新建使用者群組對應";
+$l['Intro']['mngradusergrouplist'] = "資料庫使用者群組對應";
+$l['Intro']['mngradusergrouplistuser'] = "資料庫使用者群組對應";
+$l['Intro']['mngradusergroupedit'] = "編輯使用者群組對應";
 
 $l['Intro']['mngradippool.php'] = "IP位址池設定";
 $l['Intro']['mngradippoolnew.php'] = "新建IP位址池";
@@ -1181,26 +1181,26 @@ $l['Intro']['mngradhuntlist.php'] = "資料庫尋線群清單";
 $l['Intro']['mngradhuntedit.php'] = "編輯尋線群記錄";
 $l['Intro']['mngradhuntdel.php'] = "移除尋線群記錄";
 
-$l['Intro']['mngradprofiles.php'] = "設定檔案清單";
-$l['Intro']['mngradprofilesedit.php'] = "編輯組設定";
-$l['Intro']['mngradprofilesduplicate.php'] = "複製組設定";
-$l['Intro']['mngradprofilesdel.php'] = "刪除組設定";
-$l['Intro']['mngradprofileslist.php'] = "顯示組設定";
-$l['Intro']['mngradprofilesnew.php'] = "新建組設定";
+$l['Intro']['mngradprofiles.php'] = "設定檔清單";
+$l['Intro']['mngradprofilesedit.php'] = "編輯設定檔";
+$l['Intro']['mngradprofilesduplicate.php'] = "複製設定檔";
+$l['Intro']['mngradprofilesdel.php'] = "刪除設定檔";
+$l['Intro']['mngradprofileslist.php'] = "設定檔清單";
+$l['Intro']['mngradprofilesnew.php'] = "新增設定檔";
 
 $l['Intro']['mngradgroups.php'] = "設定組";
 
-$l['Intro']['mngradgroupreplynew.php'] = "新建組回覆繪圖";
-$l['Intro']['mngradgroupreplylist.php'] = "資料庫組回覆繪圖";
-$l['Intro']['mngradgroupreplyedit.php'] = "編輯組回覆繪圖";
-$l['Intro']['mngradgroupreplydel.php'] = "移除組回覆繪圖";
-$l['Intro']['mngradgroupreplysearch.php'] = "搜尋組回覆繪圖";
+$l['Intro']['mngradgroupreplynew.php'] = "新建群組回覆對應";
+$l['Intro']['mngradgroupreplylist.php'] = "資料庫群組回覆對應";
+$l['Intro']['mngradgroupreplyedit.php'] = "編輯群組回覆對應";
+$l['Intro']['mngradgroupreplydel.php'] = "移除群組回覆對應";
+$l['Intro']['mngradgroupreplysearch.php'] = "搜尋群組回覆對應";
 
-$l['Intro']['mngradgroupchecknew.php'] = "新建組檢查繪圖";
-$l['Intro']['mngradgroupchecklist.php'] = "資料庫組檢查繪圖";
-$l['Intro']['mngradgroupcheckedit.php'] = "編輯組檢查繪圖";
-$l['Intro']['mngradgroupcheckdel.php'] = "移除組檢查繪圖";
-$l['Intro']['mngradgroupchecksearch.php'] = "搜尋組檢查繪圖";
+$l['Intro']['mngradgroupchecknew.php'] = "新建群組檢查對應";
+$l['Intro']['mngradgroupchecklist.php'] = "資料庫群組檢查對應";
+$l['Intro']['mngradgroupcheckedit.php'] = "編輯群組檢查對應";
+$l['Intro']['mngradgroupcheckdel.php'] = "移除群組檢查對應";
+$l['Intro']['mngradgroupchecksearch.php'] = "搜尋群組檢查對應";
 
 $l['Intro']['configuser.php'] = "設定使用者";
 $l['Intro']['configmail.php'] = "設定郵件";
@@ -1315,72 +1315,72 @@ $l['helpPage']['mngradusergroupedit'] = "";
 
 
 $l['helpPage']['mngradprofiles'] = "
-<b>Profiles Management</b> - 管理使用者設定檔案透過組合一組應答並檢查屬性 <br/>
+<b>Profiles Management</b> - 管理使用者設定檔透過組合一群組回覆並檢查屬性 <br/>
 設定檔案可以被認為是組織構成的答覆和檢查組的組成。<br/>
-<h200><b>設定檔案清單 </b></h200> - List Profiles <br/>
-<h200><b>新建設定檔案 </b></h200> - Add a Profile <br/>
-<h200><b>編輯設定檔案 </b></h200> - Edit a Profile <br/>
-<h200><b>刪除設定檔案 </b></h200> - Delete a Profile <br/>
+<h200><b>設定檔清單 </b></h200> - List Profiles <br/>
+<h200><b>新增設定檔 </b></h200> - Add a Profile <br/>
+<h200><b>編輯設定檔 </b></h200> - Edit a Profile <br/>
+<h200><b>刪除設定檔 </b></h200> - Delete a Profile <br/>
 ";
 $l['helpPage']['mngradprofilesedit'] = "
 <h200><b>編輯個人資料</b></h200> - 編輯個人資料 <br/>
 ";
 $l['helpPage']['mngradprofilesdel'] = "
-<h200><b>刪除組設定 </b></h200> - 刪除設定檔案資料<br/>
+<h200><b>刪除組設定 </b></h200> - 刪除設定檔資料<br/>
 ";
 $l['helpPage']['mngradprofilesduplicate'] = "
 <h200><b>複製檔案 </b></h200> - 複製一個概要檔案的屬性設定為一個新建不同的設定檔名稱 <br/>
 ";
 $l['helpPage']['mngradprofileslist'] = "
-<h200><b>設定檔案清單 </b></h200> - 設定檔案清單 <br/>
+<h200><b>設定檔清單 </b></h200> - 設定檔清單 <br/>
 ";
 $l['helpPage']['mngradprofilesnew'] = "
-<h200><b>新建設定檔案</b></h200> - 新增一個設定檔案 <br/>
+<h200><b>新增設定檔</b></h200> - 新增一個設定檔案 <br/>
 ";
 
 $l['helpPage']['mngradgroups'] = "
 <b>組織管理</b> - 管理組織回覆和組織檢查(radgroupreply/radgroupcheck tables).<br/>
 <h200><b>回覆/檢視清單組 </b></h200> - 回覆/檢視錶組<br/>
-<h200><b>搜尋組回覆/檢視 </b></h200> - 搜尋一組回覆/檢視(你可以使用萬用字元) <br/>
-<h200><b>新組回覆/檢視 </b></h200> - 新增一組回覆/檢查 <br/>
-<h200><b>編輯組回覆/檢視 </b></h200> - 編輯一組回覆/檢視地圖<br/>
-<h200><b>刪除組回覆/檢視 </b></h200> - 刪除一個回覆/檢視地圖 <br/>
+<h200><b>搜尋群組回覆/檢視 </b></h200> - 搜尋一群組回覆/檢視(你可以使用萬用字元) <br/>
+<h200><b>新群組回覆/檢視 </b></h200> - 新增一群組回覆/檢查 <br/>
+<h200><b>編輯群組回覆/檢視 </b></h200> - 編輯一群組回覆/檢視地圖<br/>
+<h200><b>刪除群組回覆/檢視 </b></h200> - 刪除一個回覆/檢視地圖 <br/>
 ";
 
 
 $l['helpPage']['mngradgroupchecknew'] = "
-<h200><b>新組檢查 </b></h200> - 新增一個檢查組 <br/>
+<h200><b>新群組檢查 </b></h200> - 新增一個檢查組 <br/>
 ";
 $l['helpPage']['mngradgroupcheckdel'] = "
-<h200><b>刪除組檢查 </b></h200> - 刪除一組檢查 <br/>
+<h200><b>刪除群組檢查 </b></h200> - 刪除一群組檢查 <br/>
 ";
 
 $l['helpPage']['mngradgroupchecklist'] = "
 <h200><b>組織檢查清單 </b></h200> - 組清單檢查 <br/>
 ";
 $l['helpPage']['mngradgroupcheckedit'] = "
-<h200><b>編輯組檢查 </b></h200> - 編輯檢查組 <br/>
+<h200><b>編輯群組檢查 </b></h200> - 編輯檢查組 <br/>
 ";
 $l['helpPage']['mngradgroupchecksearch'] = "
-<h200><b>搜尋組檢查 </b></h200> - 搜尋一組檢查 <br/>
+<h200><b>搜尋群組檢查 </b></h200> - 搜尋一群組檢查 <br/>
 使用萬用字元，你既可以鍵入 ‘％’ 字元是在熟悉SQL，或者您可以使用更常見‘*’
 為方便起見，並daloRADIUS將它翻譯成‘％’
 ";
 
 $l['helpPage']['mngradgroupreplynew'] = "
-<h200><b>新組回覆 </b></h200> - 新增一組回答的 <br/>
+<h200><b>新群組回覆 </b></h200> - 新增一組回答的 <br/>
 ";
 $l['helpPage']['mngradgroupreplydel'] = "
-<h200><b>刪除組回覆</b></h200> - 刪除一組回答的 <br/>
+<h200><b>刪除群組回覆</b></h200> - 刪除一組回答的 <br/>
 ";
 $l['helpPage']['mngradgroupreplylist'] = "
-<h200><b>清單組回覆</b></h200> - 組回覆清單<br/>
+<h200><b>清單群組回覆</b></h200> - 群組回覆清單<br/>
 ";
 $l['helpPage']['mngradgroupreplyedit'] = "
 <h200><b>編輯組回答 </b></h200> - 編輯回答一組 <br/>
 ";
 $l['helpPage']['mngradgroupreplysearch'] = "
-<h200><b>搜尋組的回覆</b></h200> - 搜尋組應答</ 繪圖 <br/>
+<h200><b>搜尋組的回覆</b></h200> - 搜尋群群組回覆對應 <br/>
 使用萬用字元，你既可以鍵入 ‘％’ 字元是在熟悉SQL，或者您可以使用更常見‘*’
 為方便起見，並daloRADIUS將它翻譯成‘％’
 ";
@@ -1388,7 +1388,7 @@ $l['helpPage']['mngradgroupreplysearch'] = "
 
 $l['helpPage']['mngradippool'] = "
 <h200><b>IP位址池清單</b></h200> - 清單設定IP位址池及其分配IP位址 <br/>
-<h200><b>新建IP位址池/b></h200> - 新增一個新建IP位址設定IP位址池 <br/>
+<h200><b>新建IP位址池</b></h200> - 新增一個新建IP位址設定IP位址池 <br/>
 <h200><b>編輯IP位址池</b></h200> - 編輯一個IP位址設定IP位址池 <br/>
 <h200><b>刪除IP位址池</b></h200> - 刪除一個IP位址從一個設定IP位址池 <br/>
 ";
@@ -1462,7 +1462,7 @@ $l['helpPage']['configmain'] = "
 
 <b>子類設定</b>
 <h200><b>維護</b></h200> - 維護選項用於測試使用者連線或終止工作階段 <br/>
-<h200><b>裝置/b></h200> - 裝置設定存取控制清單(ACL) <br/>
+<h200><b>裝置</b></h200> - 裝置設定存取控制清單(ACL) <br/>
 ";
 $l['helpPage']['configbusiness'] = "
 <b>業務資訊</b><br/>
@@ -1532,7 +1532,7 @@ $l['helpPage']['graphmain'] = "
 由用戶端上傳的資料量是正在被計算的值。該圖伴隨上傳量即時顯示<br/>
 <br/>
 <h200><b>所有時間登入/點選</b></h200> - 繪出登入到伺服器上的給定時間週期的圖形圖表。<br/>
-<h200><b>所有流量對比</b></h200> - 繪製圖表的下載和上傳 statisticse.</br>
+<h200><b>所有流量對比</b></h200> - 繪製圖表的下載和上傳 統計資料。<br/>
 <h200><b>登入使用者</b></h200> - 繪製指定期間中的登入的使用者的圖表
 按天、 月、 年僅按月份和年份圖每小時圖或篩選器篩選 （選擇 \"---\"天） 圖的最小和最大登入的使用者在所選的一個月.
 ";
@@ -1569,15 +1569,15 @@ $l['helpPage']['replogs'] = "
 <h200><b>Boot Log</b></h200> - 監控作業系統啟動日誌——相當於執行dmesg命令。
 ";
 $l['helpPage']['repmain'] = "
-<b>普通的報告</b><br/>
+<b>一般報表</b><br/>
 <h200><b>線上使用者</b></h200> - 提供了一個清單的所有使用者
 發現線上透過會計表在資料庫中。為使用者正在執行的檢查
 沒有結束時間(AcctStopTime)。重要的是要注意,這些使用者也會過期的工作階段
 這當NASs由於某種原因未能傳送accounting-stop包。.<br/>
 <h200><b>Last Connection Attempts</b></h200> - 提供所有Access-Accept的清單和Access-Reject(接受和失敗)登入為使用者。 <br/>
 這些從資料庫的postauth表需要定義FreeRADIUS設定檔案的實際記錄這些.<br/>
-<h200><b>使用者使用詳情</b></h200> - 提供了一個清單的前N使用者頻寬消耗和工作階段時間使用br/><br/>
-<b>Sub-範疇的報告</b><br/>
+<h200><b>使用者使用詳情</b></h200> - 提供了一個清單的前N使用者頻寬消耗和工作階段時間使用。<br/><br/>
+<b>子分類報表</b><br/>
 <h200><b>Logs</b></h200> - 提供daloRADIUS日誌檔案、FreeRADIUSs日誌檔案系統的日誌檔案和啟動日誌檔案<br/>
 <h200><b>Status</b></h200> - 提供伺服器狀態資訊和RADIUS元件狀態";
 $l['helpPage']['repstatradius'] = "提供關於伺服器本身的一般資訊:CPU使用率,流程,正常執行時間、記憶體使用情況,等等";
@@ -1649,7 +1649,7 @@ $l['helpPage']['acctmain'] = "
 <br/>
 <b>Sub-Category Accounting</b><br/>
 <h200><b>Custom</b></h200> -
-    提供了最靈活的自定義查詢到資料庫上執行。
+    提供了最靈活的自訂查詢到資料庫上執行。
 <br/>
 <h200><b>Hotspots</b></h200> -
     提供不同的管理熱點資訊、比較,和其他有用的資訊。
@@ -1672,18 +1672,18 @@ $l['helpPage']['accthotspotaccounting'] = "
 ";
 $l['helpPage']['accthotspotcompare'] = "
     提供了基本的會計資訊比較資料庫中找到的所有活躍的熱點。
-       會計提供的資訊:< br / > < br / >
-    熱點名稱——熱點的名稱< br / >
-    獨特的使用者-使用者已登入,只有透過這個熱點< br / >
-    總點選——總登入,進行從這個熱點(獨特的和非獨特的)< br / >
-    平均時間——平均時間使用者花在這個熱點< br / >
+       會計提供的資訊:<br/> <br/>
+    熱點名稱——熱點的名稱<br/>
+    獨特的使用者-使用者已登入,只有透過這個熱點<br/>
+    總點選——總登入,進行從這個熱點(獨特的和非獨特的)<br/>
+    平均時間——平均時間使用者花在這個熱點<br/>
     總時間——所有使用者的accumolated花時間在這個熱點<br/>
 
 <br/>
-    提供了一個圖塊不同的比較了< br / >
-    圖:< br / > < br / >
-    每個熱點分佈的獨特使用者< br / >
-    分配每個熱點的點選< br / >
+    提供了一個圖塊不同的比較了<br/>
+    圖:<br/> <br/>
+    每個熱點分佈的獨特使用者<br/>
+    分配每個熱點的點選<br/>
     每個熱點分佈的時間使用 <br/>
 <br/>
 ";
@@ -1696,25 +1696,25 @@ $l['helpPage']['accthotspot'] = "
 提供了一個圖塊不同的比較。
 <br/>
 ";
-// 會計自定義查詢部分
+// 會計自訂查詢部分
 $l['helpPage']['acctcustom'] = "
 <h200><b>Custom</b></h200> -
-    提供最靈活的自定義查詢資料庫上執行。< br / >
-你可以調整查詢的max透過修改設定在左側欄。< br / >
+    提供最靈活的自訂查詢資料庫上執行。<br/>
+你可以調整查詢的max透過修改設定在左側欄。<br/>
 <br/>
-    <b> 日期< / b > -設定開始和結束日期.
+    <b> 日期</b> -設定開始和結束日期.
 <br/>
-    <b> < / b >——設定資料庫中的欄位(像一個鍵)你想匹配,選擇如果值
+    <b> </b>——設定資料庫中的欄位(像一個鍵)你想匹配,選擇如果值
 比賽應該等於(=)或它包含你搜尋的一部分價值(如一個正規表示式)。如果你
 選擇使用包含運算子你不應該新增任何常見的萬用字元“*”而是
 您輸入的值將自動搜尋這種形式:* *價值(或mysql風格:%值%)。
 <br/>
-    < b > < / b >查詢會計領域,你可以選擇你想要的欄位出現在結果中
+    <b> </b>查詢會計領域,你可以選擇你想要的欄位出現在結果中
 清單。
-< br / >
-< b > < / b >訂單——選擇你想訂場的結果和它的類型(提升
+<br/>
+<b> </b>訂單——選擇你想訂場的結果和它的類型(提升
 或降序)
-< br / >
+<br/>
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
@@ -1754,7 +1754,7 @@ $l['helpPage']['gisviewmap'] = "
 ";
 $l['helpPage']['gismain'] = "
 <b> 一般資訊 </b>
-GIS熱點位置的提供了視覺化世界各地的地圖使用Google Maps API。< br / >
+GIS熱點位置的提供了視覺化世界各地的地圖使用Google Maps API。<br/>
 在管理頁面你可以向資料庫新增新建熱點條目,那裡也是一個欄位
 稱為地理位置,這是Google Maps API使用以有定位的準確數值
 位置在地圖上的熱點。<br/><br/>
@@ -1811,9 +1811,9 @@ $l['messages']['loginerror'] = "<br/><br/>下面之一：<br/>
 $l['buttons']['savesettings'] = "儲存設定";
 $l['buttons']['apply'] = "應用";
 
-$l['menu']['Home'] = "主頁";
+$l['menu']['Home'] = "首頁";
 $l['menu']['Managment'] = "管理";
-$l['menu']['Reports'] = "報告";
+$l['menu']['Reports'] = "報表";
 $l['menu']['Accounting'] = "連線紀錄";
 $l['menu']['Billing'] = "帳務";
 $l['menu']['Gis'] = "GIS";
@@ -1844,7 +1844,7 @@ $l['sidebar']['GroupCheckManagement'] = "群組 Check 屬性管理";
 $l['sidebar']['GroupReplyManagement'] = "群組 Reply 屬性管理";
 $l['sidebar']['Heartbeat'] = "心跳監控";
 $l['sidebar']['Help'] = "說明";
-$l['sidebar']['Home'] = "主頁";
+$l['sidebar']['Home'] = "首頁";
 $l['sidebar']['HotspotsAccounting'] = "熱點連線紀錄";
 $l['sidebar']['HotspotsManagement'] = "熱點管理";
 $l['sidebar']['Huntgroup'] = "尋線組";
@@ -1881,7 +1881,7 @@ $l['sidebar']['ReadMore'] = "了解更多";
 $l['sidebar']['RealmsManagement'] = "網域管理";
 $l['sidebar']['RecurringTasksSettings'] = "排程工作設定";
 $l['sidebar']['ReportingSettings'] = "報表設定";
-$l['sidebar']['Reports'] = "報告";
+$l['sidebar']['Reports'] = "報表";
 $l['sidebar']['ShowOnlySelectedLines'] = "只顯示所選的行數";
 $l['sidebar']['Status'] = "狀態";
 $l['sidebar']['Support'] = "支援資訊";
@@ -1918,8 +1918,8 @@ $l['submenu']['Dashboard'] = "控制檯";
 $l['submenu']['Users'] = "使用者";
 $l['submenu']['Hotspots'] = "熱點";
 $l['submenu']['Nas'] = "Nas";
-$l['submenu']['User-Groups'] = "使用者組";
-$l['submenu']['Profiles'] = "資料資訊";
+$l['submenu']['User-Groups'] = "使用者群組";
+$l['submenu']['Profiles'] = "設定檔";
 $l['submenu']['HuntGroups'] = "尋線組";
 $l['submenu']['Attributes'] = "屬性";
 $l['submenu']['Realm/Proxy'] = "域/代理";
@@ -1931,7 +1931,7 @@ $l['submenu']['Merchant-Transactions'] = "交易管理";
 $l['submenu']['Billing-History'] = "帳單記錄";
 $l['submenu']['Invoices'] = "發票";
 $l['submenu']['Payments'] = "支付管理";
-$l['submenu']['Custom'] = "自定義查詢";
+$l['submenu']['Custom'] = "自訂查詢";
 $l['submenu']['Hotspot'] = "熱點";
 
 //
