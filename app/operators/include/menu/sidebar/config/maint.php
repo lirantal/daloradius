@@ -35,11 +35,11 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DisconnectUser
                          'icon' => 'person-x', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 
 $sections = array();
-$sections[] = array( 'title' => 'Global Settings', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'GlobalSettings'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Configuration',
+                'title' => t('sidebar', 'Configuration'),
                 'sections' => $sections,
              );

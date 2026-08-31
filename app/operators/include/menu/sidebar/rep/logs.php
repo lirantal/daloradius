@@ -44,8 +44,8 @@ $count_select = array(
                             "selected_value" => ((isset($count)) ? $count : ""),
                             "options" => $count_options,
                             "integer_value" => true,
-                            "caption" => "Lines count",
-                            "tooltipText" => "Show only the selected number of lines",
+                            "caption" => t('sidebar', 'LinesCount'),
+                            "tooltipText" => t('sidebar', 'ShowOnlySelectedLines'),
                         );
 
 $daloradius_options = array(
@@ -72,7 +72,7 @@ $components[] = array(
                         "type" => "select",
                         "selected_value" => ((isset($filter)) ? $filter : ""),
                         "options" => $daloradius_options,
-                        "caption" => "Filter",
+                        "caption" => t('sidebar', 'Filter'),
                      );
 
 $components[] = $count_select;
@@ -88,7 +88,7 @@ $components[] = array(
                         "type" => "select",
                         "selected_value" => ((isset($filter)) ? $filter : ""),
                         "options" => $radius_options,
-                        "caption" => "Filter",
+                        "caption" => t('sidebar', 'Filter'),
                      );
 
 $components[] = $count_select;
@@ -103,7 +103,7 @@ $components[] = array(
                         "name" => "filter",
                         "type" => "text",
                         "value" => ((isset($filter)) ? $filter : ""),
-                        "caption" => "Filter",
+                        "caption" => t('sidebar', 'Filter'),
                         "tooltipText" => t('Tooltip', 'Filter'),
                         "sidebar" => true,
                      );
@@ -117,10 +117,10 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','BootLog'),
                          'action' => 'rep-logs-boot.php', 'method' => 'GET', 'form_components' => $components, );
 
 $sections = array();
-$sections[] = array( 'title' => 'Log Files', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'LogFiles'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Logs',
+                'title' => t('sidebar', 'Logs'),
                 'sections' => $sections,
              );

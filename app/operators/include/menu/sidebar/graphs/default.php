@@ -126,10 +126,10 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','LoggedUsers'),
                          'icon' => 'graph-up', 'form_components' => $components, );
 
 $sections = array();
-$sections[] = array( 'title' => 'User Charts', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'UserCharts'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Charts',
+                'title' => t('sidebar', 'Charts'),
                 'sections' => $sections,
              );

@@ -99,10 +99,10 @@ if (count($menu_usernames) > 0) {
 }
 
 $sections = array();
-$sections[] = array( 'title' => 'User-Group Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'UserGroupManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );

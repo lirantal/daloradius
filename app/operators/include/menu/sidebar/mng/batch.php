@@ -38,10 +38,10 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','RemoveBatch'),
                          'icon' => 'person-fill-x', 'img' => array( 'src' => 'static/images/icons/userRemove.gif', ), );
 
 $sections = array();
-$sections[] = array( 'title' => 'Batch Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'BatchManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );

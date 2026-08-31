@@ -133,7 +133,7 @@ HTML;
         [
             "title" => t('submenu', 'Users'),
             "total" => sprintf("%s: <strong>%d</strong>", t('all', 'Total'), $total_users),
-            "linkText" => "Go to users list",
+            "linkText" => t('dashboard', 'GoToUsersList'),
             "linkURL" => "mng-list-all.php",
             "bgColor" => "success",
             "icon" => "people-fill"
@@ -141,7 +141,7 @@ HTML;
         [
             "title" => t('submenu', 'Nas'),
             "total" => sprintf("%s: <strong>%d</strong>", t('all', 'Total'), $total_nas),
-            "linkText" => "Go to NAS list",
+            "linkText" => t('dashboard', 'GoToNASList'),
             "linkURL" => "mng-rad-nas-list.php",
             "bgColor" => "danger",
             "icon" => "router-fill"
@@ -149,7 +149,7 @@ HTML;
         [
             "title" => t('submenu', 'Hotspots'),
             "total" => sprintf("%s: <strong>%d</strong>", t('all', 'Total'), $total_hotspots),
-            "linkText" => "Go to hotspots list",
+            "linkText" => t('dashboard', 'GoToHotspotsList'),
             "linkURL" => "mng-hs-list.php",
             "bgColor" => "primary",
             "icon" => "wifi"
@@ -210,7 +210,7 @@ HTML;
         print_dashboard_table_bottom();
     
     } else {
-        print_dashboard_info_message('no data to show');
+        print_dashboard_info_message(t('messages', 'noDataToShow'));
     }
 
     echo '</div>';
@@ -222,10 +222,10 @@ HTML;
     $numrows = $res->numRows();
 
     echo '<div class="col-12 col-xl-6 m-0 px-3">';
-    print_title('Currently online', "rep-online.php?orderBy=acctstarttime&orderType=desc", "bi-box-arrow-up-right");
+    print_title(t('dashboard', 'CurrentlyOnline'), "rep-online.php?orderBy=acctstarttime&orderType=desc", "bi-box-arrow-up-right");
 
     if ($numrows > 0) {
-        print_dashboard_table_head(array(t('all', 'Username'), 'Online since'));
+        print_dashboard_table_head(array(t('all', 'Username'), t('dashboard', 'OnlineSince')));
         
         while ($row = $res->fetchRow()) {
             // Apply htmlspecialchars to each element of the row
@@ -239,7 +239,7 @@ HTML;
         print_dashboard_table_bottom();
     
     } else {
-        print_dashboard_info_message('no data to show');
+        print_dashboard_info_message(t('messages', 'noDataToShow'));
     }
 
     echo <<<HTML
@@ -266,7 +266,7 @@ HTML;
     // Date one month ago
     $one_month_ago = date("Y-m-d", strtotime("-1 month"));
     $href = sprintf('rep-topusers.php?startdate=%s&enddate=%s&orderBy=Time&orderType=desc', $one_month_ago, $today);
-    $title = "Last month top users";
+    $title = t('dashboard', 'LastMonthTopUsers');
 
     echo '<div class="col-12 m-0 px-3">';
     print_title($title, $href, 'bi-box-arrow-up-right');
@@ -289,7 +289,7 @@ HTML;
         print_dashboard_table_bottom();
     
     } else {
-        print_dashboard_info_message('no data to show');
+        print_dashboard_info_message(t('messages', 'noDataToShow'));
     }
 
     echo '</div>';

@@ -55,7 +55,7 @@ if (count($menu_options) > 0) {
                             "required" => true,
                             "options" => $menu_options,
                             "caption" => t('all','Realm'),
-                            "tooltipText" => "Please select a " . t('all','Realm'),
+                            "tooltipText" => sprintf(t('sidebar', 'PleaseSelectA'), t('all','Realm')),
                           );
 
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditRealm'), 'action' => 'mng-rad-realms-edit.php', 'method' => 'GET',
@@ -88,7 +88,7 @@ if (count($menu_options) > 0) {
                             "required" => true,
                             "options" => $menu_options,
                             "caption" => t('all','Proxy'),
-                            "tooltipText" => "Please select a " . t('all','Proxy'),
+                            "tooltipText" => sprintf(t('sidebar', 'PleaseSelectA'), t('all','Proxy')),
                           );
 
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditProxy'), 'action' => 'mng-rad-proxys-edit.php', 'method' => 'GET',
@@ -99,11 +99,11 @@ if (count($menu_options) > 0) {
 }
 
 $sections = array();
-$sections[] = array( 'title' => 'Realms Management', 'descriptors' => $descriptors1 );
-$sections[] = array( 'title' => 'Proxies Management', 'descriptors' => $descriptors2 );
+$sections[] = array( 'title' => t('sidebar', 'RealmsManagement'), 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'ProxiesManagement'), 'descriptors' => $descriptors2 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );

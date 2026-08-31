@@ -126,11 +126,11 @@ if (count($menu_paymentnames) > 0) {
 }
 
 $sections = array();
-$sections[] = array( 'title' => 'Payments Management', 'descriptors' => $descriptors1 );
-$sections[] = array( 'title' => 'Payments Types Management', 'descriptors' => $descriptors2 );
+$sections[] = array( 'title' => t('sidebar', 'PaymentsManagement'), 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'PaymentsTypesManagement'), 'descriptors' => $descriptors2 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Billing',
+                'title' => t('sidebar', 'Billing'),
                 'sections' => $sections,
              );

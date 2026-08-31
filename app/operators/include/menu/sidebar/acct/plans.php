@@ -103,11 +103,11 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','PlanUsage'), '
 
 
 $sections = array();
-$sections[] = array( 'title' => 'Plan Accounting', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'PlanAccounting'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Accounting',
+                'title' => t('sidebar', 'Accounting'),
                 'sections' => $sections,
              );

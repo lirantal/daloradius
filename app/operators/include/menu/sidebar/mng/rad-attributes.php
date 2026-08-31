@@ -108,11 +108,11 @@ $descriptors2[] = array( 'type' => 'link', 'label' => t('button','ImportVendorDi
                          'icon' => 'upload', 'img' => array( 'src' => 'static/images/icons/groupsAdd.png', ), );
 
 $sections = array();
-$sections[] = array( 'title' => 'Attributes Management', 'descriptors' => $descriptors1 );
-$sections[] = array( 'title' => 'Extended Capabilities', 'descriptors' => $descriptors2 );
+$sections[] = array( 'title' => t('sidebar', 'AttributesManagement'), 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'ExtendedCapabilities'), 'descriptors' => $descriptors2 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );

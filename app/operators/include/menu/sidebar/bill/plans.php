@@ -62,10 +62,10 @@ if (count($menu_planNames) > 0) {
 }
 
 $sections = array();
-$sections[] = array( 'title' => 'Plans Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'PlansManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );
