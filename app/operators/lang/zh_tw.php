@@ -73,8 +73,8 @@ $l['all']['RADIUSDictionaryPath'] = "RADIUS字典路徑";
 
 $l['all']['DashboardSecretKey'] = "儀表板金鑰";
 $l['all']['DashboardDebug'] = "除錯";
-$l['all']['DashboardDelaySoft'] = "在幾分鐘的時間來考慮一個‘軟’延遲限制";
-$l['all']['DashboardDelayHard'] = "在幾分鐘的時間來考慮一個‘硬’延遲限制";
+$l['all']['DashboardDelaySoft'] = "在幾分鐘的時間來考慮一個「軟」延遲限制";
+$l['all']['DashboardDelayHard'] = "在幾分鐘的時間來考慮一個「硬」延遲限制";
 
 
 
@@ -473,7 +473,7 @@ $l['Tooltip']['paymentInvoiceTooltip'] = "此次付款相關的帳單";
 
 $l['Tooltip']['Username'] = "使用者名稱類型";
 $l['Tooltip']['BatchName'] = "批次名稱類型";
-$l['Tooltip']['UsernameWildcard'] = "提示: 你可以用字元 * 或 % 來制定一個萬用字元";
+$l['Tooltip']['UsernameWildcard'] = "提示: 您可以用字元 * 或 % 來制定一個萬用字元";
 $l['Tooltip']['HotspotName'] = "熱點名稱類型";
 $l['Tooltip']['NasName'] = "NAS名稱類型";
 $l['Tooltip']['GroupName'] = "群組名稱類型";
@@ -541,7 +541,7 @@ $l['Tooltip']['proxyRetryCountTooltip'] = "傳送重試次數 <br/>
 $l['Tooltip']['proxyDeadTimeTooltip'] = "如果主機不響應 <br/>
                     給任意一個多重嘗試，<br/>
                     然後FreeRADIUS將停止傳送給它。<br/>
-                    代理請求，然後標記它‘廢棄’。";
+                    代理請求，然後標記它「廢棄」。";
 $l['Tooltip']['proxyDefaultFallbackTooltip'] = "如果所有完全匹配的域 <br/>
                         不響應，我們可以嘗試 <br/>
                         ";
@@ -551,8 +551,8 @@ $l['Tooltip']['realmSecretTooltip'] = "網域 RADIUS 共用金鑰";
 $l['Tooltip']['realmAuthhostTooltip'] = "域認證主機";
 $l['Tooltip']['realmAccthostTooltip'] = "域帳單主機";
 $l['Tooltip']['realmLdflagTooltip'] = "允許負載平衡<br/>
-                    允許值為‘失效轉移’ <br/>
-                    和‘輪叫排程’。";
+                    允許值為「失效轉移」 <br/>
+                    和「輪叫排程」。";
 $l['Tooltip']['realmNostripTooltip'] = "不論是否去除 <br/>
                     域字尾";
 $l['Tooltip']['realmHintsTooltip'] = "";
@@ -627,7 +627,7 @@ $l['Tooltip']['macaddressTooltip'] = "範例：00:AA:BB:CC:DD:EE<br/>&nbsp;&nbsp
                     沒有字元";
 $l['Tooltip']['pincodeTooltip'] = "範例：khrivnxufi101<br/>&nbsp;&nbsp;&nbsp;
                     這是準確的pin碼將作為使用者進入它<br/>&nbsp;&nbsp;&nbsp;
-                    你可以使用alpha數字字元";
+                    您可以使用alpha數字字元";
 $l['Tooltip']['usernamePrefixTooltip'] = "範例：TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
                     這個使用者名稱字首會增加<br/>&nbsp;&nbsp;&nbsp;
                     產生的使用者名稱最終。";
@@ -1227,7 +1227,7 @@ $l['Intro']['configoperatorslist.php'] = "操作人清單";
 
 $l['Intro']['login.php'] = "登入";
 
-$l['captions']['providebillratetodel'] = "提供你想去除的價格類型條目";
+$l['captions']['providebillratetodel'] = "提供您想去除的價格類型條目";
 $l['captions']['detailsofnewrate'] = "可以填充下面新建價格的明細";
 $l['captions']['filldetailsofnewrate'] = "填充下面新建價格條目的明細";
 
@@ -1235,18 +1235,32 @@ $l['captions']['filldetailsofnewrate'] = "填充下面新建價格條目的明�
  * 說明頁面資訊
  *每個頁面都有一個標題是前奏類的標題，當點選
  *它會顯示/隱藏helpPage格的內容是具體的描述
- *頁，基本上你的擴充套件工具提示。
+ *頁，基本上您的擴充套件工具提示。
  ************************************************************************************/
 
-$l['helpPage']['configdashboard'] = "控制檯設定";
+$l['helpPage']['mngradnasnew'] = <<<EOF
+<p>您可以在下面填寫新 NAS 設備新增到資料庫的詳細資訊。</p>
+EOF;
+$l['helpPage']['mngradnasedit'] = <<<EOF
+<p>您可以在下面編輯 NAS 裝置的詳細資訊。</p>
+EOF;
+$l['helpPage']['configdashboard'] = <<<EOF
+<h2 class="fs-6">儀表板設定</h2>
+EOF;
 
 
-$l['helpPage']['repnewusers'] = "下拉表顯示了每個月建立的新使用者.";
+$l['helpPage']['repnewusers'] = <<<EOF
+<p>下表列出了每個月新增的使用者。</p>
+EOF;
 
 $l['helpPage']['login'] = "";
 
-$l['helpPage']['billpaypaltransactions'] = "顯示所有支付寶交易";
-$l['helpPage']['billhistoryquery'] = "顯示所有使用者計費歷史(年代)";
+$l['helpPage']['billpaypaltransactions'] = <<<EOF
+<h2 class="fs-6">顯示所有PayPal 交易</h2>
+EOF;
+$l['helpPage']['billhistoryquery'] = <<<EOF
+<h2 class="fs-6">顯示所有使用者計費歷史</h2>
+EOF;
 
 $l['helpPage']['billinvoicereport'] = "";
 
@@ -1303,8 +1317,9 @@ $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
 
-$l['helpPage']['msgerrorpermissions'] = "你沒有權限存取該頁面。<br/>
-請諮詢您的系統管理員。 <br/>";
+$l['helpPage']['msgerrorpermissions'] = <<<EOF
+<p>抱歉，您沒有必要的權限來存取此區域。請聯絡系統管理員。</p>
+EOF;
 
 $l['helpPage']['mngradusergroup'] = "";
 $l['helpPage']['mngradusergroupdel'] = "為了從資料庫中刪除使用者條目，您必須提供帳戶的使用者名稱";
@@ -1314,58 +1329,66 @@ $l['helpPage']['mngradusergrouplistuser'] = "";
 $l['helpPage']['mngradusergroupedit'] = "";
 
 
-$l['helpPage']['mngradprofiles'] = "
-<b>Profiles Management</b> - 管理使用者設定檔透過組合一群組回覆並檢查屬性 <br/>
-設定檔案可以被認為是組織構成的答覆和檢查組的組成。<br/>
-<h200><b>設定檔清單 </b></h200> - List Profiles <br/>
-<h200><b>新增設定檔 </b></h200> - Add a Profile <br/>
-<h200><b>編輯設定檔 </b></h200> - Edit a Profile <br/>
-<h200><b>刪除設定檔 </b></h200> - Delete a Profile <br/>
-";
-$l['helpPage']['mngradprofilesedit'] = "
-<h200><b>編輯個人資料</b></h200> - 編輯個人資料 <br/>
-";
-$l['helpPage']['mngradprofilesdel'] = "
-<h200><b>刪除組設定 </b></h200> - 刪除設定檔資料<br/>
-";
-$l['helpPage']['mngradprofilesduplicate'] = "
-<h200><b>複製檔案 </b></h200> - 複製一個概要檔案的屬性設定為一個新建不同的設定檔名稱 <br/>
-";
-$l['helpPage']['mngradprofileslist'] = "
-<h200><b>設定檔清單 </b></h200> - 設定檔清單 <br/>
-";
-$l['helpPage']['mngradprofilesnew'] = "
-<h200><b>新增設定檔</b></h200> - 新增一個設定檔案 <br/>
-";
+$l['helpPage']['mngradprofiles'] = <<<EOF
+<p>設定檔管理 - 管理使用者設定檔，透過群組組合進行回覆和檢查屬性</p>
+<p>設定檔可以被視為組織構成的回覆及檢查群組的組件。</p>
+<h1 class="fs-5">設定檔清單</h1>
+<ul><li>列出設定檔</li></ul>
+<h2 class="fs-6">新增設定檔</h2>
+<ul><li>新增設定檔</li></ul>
+<h2 class="fs-6">編輯設定檔</h2>
+<ul><li>編輯設定檔</li></ul>
+<h2 class="fs-6">刪除設定檔</h2>
+<ul><li>刪除設定檔</li></ul>
+EOF;
+$l['helpPage']['mngradprofilesedit'] = <<<EOF
+<h2 class="fs-6">編輯設定檔</h2>
+<p>如果您需要修改現有的設定檔，可以使用此功能。您可以變更與該設定檔相關的回覆和檢查屬性。</p>
+EOF;
+$l['helpPage']['mngradprofilesdel'] = <<<EOF
+<h2 class="fs-6">刪除設定檔</h2>
+<p>如果您不再需要某個設定檔，可以用這個功能刪掉它。要注意，刪除設定檔也會把它與系統中使用者的關聯一起移除。</p>
+EOF;
+$l['helpPage']['mngradprofilesduplicate'] = <<<EOF
+<h2 class="fs-6">複製設定檔</h2>
+<p>這個功能可以讓您快速根據現有的設定檔建立一個新的檔案。只需選擇您想複製的設定檔，給複製的檔案取一個新名字，然後點選「複製」按鈕。新檔案將具有與原始設定檔相同的回覆屬性和檢查屬性，讓您可以輕鬆進行調整。</p>
+EOF;
+$l['helpPage']['mngradprofileslist'] = <<<EOF
+<h2 class="fs-6">列出設定檔</h2>
+<p>這個功能讓您可以查看系統中所有可用的設定檔清單。您可以選擇一個設定檔來查看其詳細資訊，或編輯或刪除它。</p>
+EOF;
+$l['helpPage']['mngradprofilesnew'] = <<<EOF
+<h2 class="fs-6">新增設定檔</h2>
+<p>使用此功能可以建立新的檔案。您需要指定應與該檔案關聯的回覆(Reply)和檢查(Check)屬性。建立檔案後，系統中的使用者就可以使用它。</p>
+EOF;
 
-$l['helpPage']['mngradgroups'] = "
-<b>組織管理</b> - 管理組織回覆和組織檢查(radgroupreply/radgroupcheck tables).<br/>
-<h200><b>回覆/檢視清單組 </b></h200> - 回覆/檢視錶組<br/>
-<h200><b>搜尋群組回覆/檢視 </b></h200> - 搜尋一群組回覆/檢視(你可以使用萬用字元) <br/>
-<h200><b>新群組回覆/檢視 </b></h200> - 新增一群組回覆/檢查 <br/>
-<h200><b>編輯群組回覆/檢視 </b></h200> - 編輯一群組回覆/檢視地圖<br/>
-<h200><b>刪除群組回覆/檢視 </b></h200> - 刪除一個回覆/檢視地圖 <br/>
-";
+$l['helpPage']['mngradgroups'] = <<<EOF
+<h1 class="fs-5">群組管理</h1>
+<p>輕鬆管理 radgroupreply/radgroupcheck 表中的群組回覆和群組檢查對應關係。</p>
+EOF;
 
 
-$l['helpPage']['mngradgroupchecknew'] = "
-<h200><b>新群組檢查 </b></h200> - 新增一個檢查組 <br/>
-";
-$l['helpPage']['mngradgroupcheckdel'] = "
-<h200><b>刪除群組檢查 </b></h200> - 刪除一群組檢查 <br/>
-";
+$l['helpPage']['mngradgroupchecknew'] = <<<EOF
+<h2 class="fs-6">新增群組回覆/檢查對應</h2>
+<p>透過直覺化介面輕鬆建立新的群組回覆/檢查對應。</p>
+EOF;
+$l['helpPage']['mngradgroupcheckdel'] = <<<EOF
+<h2 class="fs-6">刪除群組回覆/檢查對應</h2>
+<p>移除不必要的群組回覆/檢查對應，保持資料庫最新且有條理。</p>
+EOF;
 
-$l['helpPage']['mngradgroupchecklist'] = "
-<h200><b>組織檢查清單 </b></h200> - 組清單檢查 <br/>
-";
-$l['helpPage']['mngradgroupcheckedit'] = "
-<h200><b>編輯群組檢查 </b></h200> - 編輯檢查組 <br/>
-";
-$l['helpPage']['mngradgroupchecksearch'] = "
-<h200><b>搜尋群組檢查 </b></h200> - 搜尋一群組檢查 <br/>
-使用萬用字元，你既可以鍵入 ‘％’ 字元是在熟悉SQL，或者您可以使用更常見‘*’
-為方便起見，並daloRADIUS將它翻譯成‘％’
-";
+$l['helpPage']['mngradgroupchecklist'] = <<<EOF
+<h2 class="fs-6">列出群組回覆/檢查對應</h2>
+<p>快速查看所有現有的群組回覆/檢查對應。</p>
+EOF;
+$l['helpPage']['mngradgroupcheckedit'] = <<<EOF
+<h2 class="fs-6">編輯群組回覆/檢查對應</h2>
+<p>修改現有的群組回覆/檢查對應，確保您的網路運作順暢。</p>
+EOF;
+$l['helpPage']['mngradgroupchecksearch'] = <<<EOF
+<h2 class="fs-6">搜尋群組回覆/檢查對應</h2>
+<p>使用名稱、屬性或數值搜尋特定的群組回覆/檢查對應。系統會自動在搜尋文字後加上萬用字元，幫您更精準地找到結果。</p>
+EOF;
 
 $l['helpPage']['mngradgroupreplynew'] = "
 <h200><b>新群組回覆 </b></h200> - 新增一組回答的 <br/>
@@ -1380,35 +1403,46 @@ $l['helpPage']['mngradgroupreplyedit'] = "
 <h200><b>編輯組回答 </b></h200> - 編輯回答一組 <br/>
 ";
 $l['helpPage']['mngradgroupreplysearch'] = "
-<h200><b>搜尋組的回覆</b></h200> - 搜尋群群組回覆對應 <br/>
-使用萬用字元，你既可以鍵入 ‘％’ 字元是在熟悉SQL，或者您可以使用更常見‘*’
-為方便起見，並daloRADIUS將它翻譯成‘％’
+<h200><b>搜尋組的回覆</b></h200> - 搜尋群組回覆對應 <br/>
+使用萬用字元，您既可以鍵入 「％」 字元是在熟悉SQL，或者您可以使用更常見「*」
+為方便起見，並daloRADIUS將它翻譯成「％」
 ";
 
 
-$l['helpPage']['mngradippool'] = "
-<h200><b>IP位址池清單</b></h200> - 清單設定IP位址池及其分配IP位址 <br/>
-<h200><b>新建IP位址池</b></h200> - 新增一個新建IP位址設定IP位址池 <br/>
-<h200><b>編輯IP位址池</b></h200> - 編輯一個IP位址設定IP位址池 <br/>
-<h200><b>刪除IP位址池</b></h200> - 刪除一個IP位址從一個設定IP位址池 <br/>
-";
-$l['helpPage']['mngradippoollist'] = "<h200><b>IP位址池清單</b></h200> - 清單設定IP位址池及其分配IP位址 <br/>";
+$l['helpPage']['mngradippool'] = <<<EOF
+<h1 class="fs-5">IP 位址池管理</h1>
+<p>IP 位址池是可以分配給網路中各種裝置、虛擬機器或應用程式的一組 IP 位址。管理 IP 位址池很重要，可以確保所有需要的裝置都有足夠的 IP 位址，同時避免使用重複或無效的 IP 位址。</p>
+EOF;
+$l['helpPage']['mngradippoollist'] = <<<EOF
+<h2 class="fs-6">列出 IP 位址池</h2>
+<p>列出所有已設定的 IP 位址池及其分配的 IP 位址。</p>
+EOF;
 $l['helpPage']['mngradippoolnew'] = "<h200><b>新建IP位址池</b></h200> - 新增一個新建IP位址設定IP位址池 <br/>";
-$l['helpPage']['mngradippooledit'] = "<h200><b>編輯IP位址池</b></h200> - 編輯一個IP位址設定IP位址池 <br/>";
-$l['helpPage']['mngradippooldel'] = "<h200><b>刪除IP位址池</b></h200> - 刪除一個IP位址從一個設定IP位址池 <br/>";
+$l['helpPage']['mngradippooledit'] = <<<EOF
+<h2 class="fs-6">編輯 IP 池</h2>
+<p>編輯已設定 IP 池的 IP 位址。</p>
+EOF;
+$l['helpPage']['mngradippooldel'] = <<<EOF
+<h2 class="fs-6">移除 IP 位址池</h2>
+<p>從已設定的 IP 位址池中移除一個 IP 位址。</p>
+EOF;
 
 
-$l['helpPage']['mngradnas'] = "";
-$l['helpPage']['mngradnasdel'] = "刪除一個nas ip /從資料庫主機條目必須提供的ip /主機帳戶";
-$l['helpPage']['mngradnasnew'] = "";
+$l['helpPage']['mngradnas'] = <<<EOF
+<h1 class="fs-5">NAS 管理</h1>
+<p>網路存取伺服器（NAS）就像網路的守門員。 在 FreeRADIUS 環境下，NAS 是實體或虛擬設備（例如路由器、交換器、VPN 閘道或無線存取點），會向 RADIUS 伺服器發送認證、授權和計費請求。</p>
+<p>管理 NAS 項目很重要。每個 NAS 裝置都必須在 FreeRADIUS 中明確設定 IP 位址（或主機名稱）和共享金鑰。沒有這個設定，RADIUS 伺服器將會默默忽略來自該裝置的任何請求。</p>
+EOF;
+$l['helpPage']['mngradnasdel'] = <<<EOF
+<p>要從資料庫中移除 NAS IP/主機項目，您必須提供該帳號的 IP/主機</p>
+EOF;
 $l['helpPage']['mngradnaslist'] = "";
-$l['helpPage']['mngradnasedit'] = "";
 
 $l['helpPage']['mngradhunt'] = "HuntGroup開始工作之前,請閱讀 <a href='http://wiki.freeradius.org/SQL_Huntgroup_HOWTO' target='_blank'>http://wiki.freeradius.org/SQL_Huntgroup_HOWTO</a>.
 <br/>
 特別是:
 ...
-<i>找到你的radiusd.conf或網站功能/ defaut設定檔案中的授權部分和編輯它。在預處理模組後，授權部分的頂部插入這些行：</i>
+<i>找到您的radiusd.conf或網站功能/ defaut設定檔案中的授權部分和編輯它。在預處理模組後，授權部分的頂部插入這些行：</i>
 <br/>
 <pre>
 update request {
@@ -1418,40 +1452,68 @@ update request {
 <i> 這是使用IP位址作為回報huntgroup名字中的一個重要radhuntgroup表中執行查詢。然後新增一個屬性/值對該請求的屬性名稱是huntgroup的名字和它的值就是從SQL查詢返回的。如果查詢沒有發現任何值是空字串。 </i>";
 
 
-$l['helpPage']['mngradhuntdel'] = "從資料庫中刪除組條目必須提供的ip /主機和連接埠id";
+$l['helpPage']['mngradhuntdel'] = <<<EOF
+<p>要從資料庫移除搜尋群組(huntgroup)的項目，您需要提供該搜尋群組(huntgroup)的 IP/主機和埠號</p>
+EOF;
 $l['helpPage']['mngradhuntnew'] = "";
 $l['helpPage']['mngradhuntlist'] = "";
 $l['helpPage']['mngradhuntedit'] = "";
 
-$l['helpPage']['mnghsdel'] = "從資料庫中刪除一個熱點必須提供熱點的名稱<br/>";
-$l['helpPage']['mnghsedit'] = "您可以編輯以下細節熱點<br/>";
-$l['helpPage']['mnghsnew'] = "您可以填寫以下細節的新熱點除了資料庫";
-$l['helpPage']['mnghslist'] = "資料庫中的所有熱點的清單。您可以使用快速連結來編輯或刪除資料庫中的一個熱點。";
+$l['helpPage']['mnghsdel'] = <<<EOF
+<h2 class="fs-6">要從資料庫中移除熱點，您必須提供熱點的名稱</h2>
+EOF;
+$l['helpPage']['mnghsedit'] = <<<EOF
+<h2 class="fs-6">您可以編輯下方的熱點資料</h2>
+EOF;
+$l['helpPage']['mnghsnew'] = <<<EOF
+<h2 class="fs-6">您可以在下面填寫新增熱點到資料庫的資料</h2>
+EOF;
+$l['helpPage']['mnghslist'] = <<<EOF
+<p>資料庫中所有熱點的清單。您可以使用快速連結來編輯或刪除資料庫中的熱點。</p>
+EOF;
 
 $l['helpPage']['configdb'] = "
 <b>資料庫設定</b> - 設定資料庫引擎，連線設定，表名，如果
 預設沒有被使用，並在資料庫中的密碼加密類型.<br/>
 <h200><b>全域性設定</b></h200> - 資料庫儲存引擎<br/>
-<h200><b>表設定</b></h200> - 如果不使用預設FreeRADIUS模式你可以改變名字
+<h200><b>表設定</b></h200> - 如果不使用預設FreeRADIUS模式您可以改變名字
 表的名稱<br/>
-<h200><b>高階設定</b></h200> - 你想在資料庫中儲存使用者的密碼不在是
-純文字,而是讓它以某種方式你可以選擇一個MD5或加密<br/>
+<h200><b>高階設定</b></h200> - 您想在資料庫中儲存使用者的密碼不在是
+純文字,而是讓它以某種方式您可以選擇一個MD5或加密<br/>
 ";
 $l['helpPage']['configlang'] = "
 <h200><b>語言設定</b></h200> - 設定介面語言<br/>
 ";
-$l['helpPage']['configuser'] = "
-<h200><b>使用者設定</b></h200> - 設定使用者管理行為。<br/>
-";
-$l['helpPage']['configmail'] = "
-<h200><b>使用者設定</b></h200> - 設定郵件設定。<br/>
-";
-$l['helpPage']['configlogging'] = "
-<h200><b>日誌設定</b></h200> - 設定日誌規則和設施 <br/>
-請確保您指定的檔名寫權限的網頁伺服器<br/>";
-$l['helpPage']['configinterface'] = "
-<h200><b>介面設定</b></h200> - 設定介面佈局設定和behvaiour <br/>
-";
+$l['helpPage']['configuser'] = <<<EOF
+<h2 class="fs-6">使用者設定</h2>
+<p>選擇是否允許在資料庫中使用明文密碼，以及隨機建立密碼和/或使用者名稱時允許使用哪些字元。</p>
+EOF;
+$l['helpPage']['configmail'] = <<<EOF
+<h2 class="fs-6">郵件設定</h2>
+<p><strong>啟用：</strong><br>選擇是否啟用 SMTP 用戶端以傳送郵件。</p>
+<p><strong>SMTP 伺服器位址：</strong><br>輸入 SMTP 伺服器的位址。<br>這是負責發送郵件的伺服器。</p>
+<p><strong>SMTP 伺服器連接埠：</strong><br>指定 SMTP 伺服器使用的連接埠號碼。預設值為 25。</p>
+<p><strong>SMTP 安全設定：</strong><br>選擇 SMTP 連線的安全協定。<br>選擇「none」（無）表示不使用安全加密，或選擇「tls」表示使用 TLS 加密。</p>
+<p><strong>寄件者信箱地址：</strong><br>提供將作為郵件寄件者的郵箱地址。</p>
+<p><strong>寄件者姓名：</strong><br>輸入與寄件者信箱地址相關聯的姓名。<br>僅限使用字母、數字和空格。</p>
+<p><strong>主題前綴：</strong><br>設定郵件主題的前綴。<br>允許使用的字元包括字母、數字、空格和方括號。</p>
+<p><strong>SMTP 使用者名稱和密碼：</strong><br>如果需要，提供用於 SMTP 驗證的使用者名稱和密碼。<br>若無需身份驗證，請將這兩個欄位留空。</p>
+<p>注意：變更設定後，請務必點選「應用」以儲存設定。</p>
+EOF;
+$l['helpPage']['configlogging'] = <<<EOF
+<h2 class="fs-6">daloRADIUS 設定表單</h2>
+<p>本節用於設定 daloRADIUS 的日誌記錄設定及其他日誌選項。</p>
+<h2 class="fs-6">daloRADIUS 日誌設定</h2>
+<ul><li><strong>{$l['all']['PagesLogging']}：</strong>啟用或停用頁面存取記錄。</li><li><strong>{$l['all']['QueriesLogging']}：</strong>啟用或停用查詢日誌記錄。</li><li><strong>{$l['all']['ActionsLogging']}：</strong>啟用或停用操作日誌記錄（例如表單提交）。</li><li><strong>{$l['all']['LoggingDebugInfo']}：</strong>啟用或停用偵錯資訊日誌記錄。</li><li><strong>{$l['all']['LoggingDebugOnPages']}：</strong>啟用或停用特定於頁面的偵錯資訊日誌記錄。</li></ul>
+<p>daloRADIUS {$l['all']['FilenameLogging']}：指定日誌檔案的絕對路徑。</p>
+<p>例如：/var/www/daloradius/var/log/daloradius.log</p>
+<h2 class="fs-6">其他日誌設定</h2>
+<ul><li><strong>SYSLOG {$l['all']['FilenameLogging']}：</strong>指定 SYSLOG 日誌檔案的絕對路徑。</li><li><strong>例如：</strong>/var/log/syslog</li><li><strong>RADIUSLOG {$l['all']['FilenameLogging']}：</strong>指定 RADIUSLOG 日誌檔案的絕對路徑。例如：/var/log/freeradius/radius.log</li><li><strong>BOOTLOG {$l['all']['FilenameLogging']}：</strong>指定 BOOTLOG 日誌檔案的絕對路徑。例如：/var/log/boot.log</li></ul>
+EOF;
+$l['helpPage']['configinterface'] = <<<EOF
+<h2 class="fs-6">介面設定</h2>
+<ul><li>設定介面佈局設定和行為</li></ul>
+EOF;
 $l['helpPage']['configmain'] = "
 <b>全域性設定</b><br/>
 <h200><b>資料庫設定</b></h200> - 設定資料庫引擎，連線設定，表名，如果
@@ -1469,55 +1531,56 @@ $l['helpPage']['configbusiness'] = "
 <h200><b>業務聯絡</b></h200> - 設定業務聯絡人資訊(所有者、標題、地址、電話等)<br/>
 ";
 $l['helpPage']['configbusinessinfo'] = "";
-$l['helpPage']['configmaint'] = "
-<b>維護</b><br/>
-<h200><b>測試使用者連線</b></h200> - 傳送一個存取請求的RADIUS伺服器檢查使用者憑證是有效的<br/>
-<h200><b>斷開連線的使用者</b></h200> - 發出一個POD（包斷開連線）或CoA（改變權限）的封包NAS伺服器
-要斷開使用者並在一個特定的NAS終止他/她工作階段。<br/>
-";
-$l['helpPage']['configmainttestuser'] = "
-<h200><b>測試使用者連線</b></h200> - RADIUS伺服器的存取請求傳送給檢查使用者憑證是否有效。<br/>
-ddaloradius使用RADIUS用戶端二進位實用程式來執行測試並返回命令結果完成後。 <br/>
-daloRADIUS計數的RADIUS用戶端的二進位檔案在\$ PATH環境變數可用，如果不是，請
-更正庫/extensions/maintenance_radclient.php 檔案<br/><br/>
-
-請注意，它可能需要一段時間的測試完成（幾秒[ 10-20秒左右]）由於故障和
-radclient將重發的封包。
-
-在“高階”索引標籤可以調整測試選項：<br/>
-逾時等待逾時秒後重試（可能是一個浮點數）<br/>
-如果逾時重試，重試傳送該封包的重試的次數。<br/>
-計數傳送每個封包的數倍<br/>
-從並行檔案請求傳送的封包數<br/>
-";
-$l['helpPage']['configmaintdisconnectuser'] = "
-<h200><b>斷開使用者</b></h200> - 發出一個POD（包斷開連線）或CoA（改變權限）的封包NAS伺服器
-要斷開使用者並在一個特定的NAS終止他/她工作階段。<br/>
-終止使用者工作階段，要求在NAS支援POD或AOC包類型，請諮詢您的NAS裝置或
-文件這一點。此外，它需要知道在NAS連接埠POD或AOC封包，而較新建NAS的使用連接埠3799
-而其他的被設定成接收在連接埠1700的封包。
-
-ddaloradius使用RADIUS用戶端二進位實用程式來執行測試並返回命令結果完成後。 <br/>
-daloRADIUS計數的RADIUS用戶端的二進位檔案在\$ PATH環境變數可用，如果不是，請
-更正庫/extensions/maintenance_radclient.php 檔案<br/><br/
-
-請注意，它可能需要一段時間的測試完成（幾秒[ 10-20秒左右]）由於故障和
-radclient將重發的封包。
-
-在“高階”索引標籤可以調整測試選項：<br/>
-逾時等待逾時秒後重試（可能是一個浮點數）<br/>
-如果逾時重試，重試傳送該封包的重試的次數。<br/>
-計數傳送每個封包的數倍<br/>
-從並行檔案請求傳送的封包數<br/>
-
-
-";
+$l['helpPage']['configmaint'] = <<<EOF
+<h1 class="fs-5">維護</h1>
+<h2 class="fs-6">測試使用者連接性</h2>
+<p>向 RADIUS 伺服器傳送 Access-Request（存取請求），以驗證使用者憑證是否有效。</p>
+<h2 class="fs-6">斷開使用者連接</h2>
+<p>向 NAS 伺服器發送 PoD（斷開連接封包）或 CoA（授權變更）封包，以中斷使用者連線並終止其在指定 NAS 上的工作階段。</p>
+EOF;
+$l['helpPage']['configmainttestuser'] = <<<EOF
+<h1 class="fs-5">測試使用者連接性</h1>
+<p>向 RADIUS 伺服器傳送 Access-Request（存取請求），以驗證使用者憑證是否有效。</p>
+<p>daloRADIUS 使用 radclient 二進位工具執行測試，並在完成後傳回指令執行結果。</p>
+<p>daloRADIUS 依賴系統 \$PATH 環境變數中可用的 radclient 二進位程式。如果找不到程式，請修改 <code>library/extensions/maintenance_radclient.php</code> 檔案進行相應調整。</p>
+<p>請注意，由於可能出現失敗及 radclient 的封包重傳機制，測試過程可能需要一些時間（最長可達 10-20 秒左右）。</p>
+<p>在「進階」（Advanced）標籤中，您可以微調測試的相關參數：</p>
+<p>Timeout（逾時時間） - 重試前等待的秒數（可為浮點數）</p>
+<p>Retries（重試次數） - 發生逾時後，重新傳送封包的次數</p>
+<h2 class="fs-6">Count（單包發送次數） - 每個封包的發送次數</h2>
+<p>Requests（並發請求數） - 並行發送檔案中的封包數量</p>
+EOF;
+$l['helpPage']['configmaintdisconnectuser'] = <<<EOF
+<h1 class="fs-5">斷開使用者連接</h1>
+<p>向 NAS 伺服器發送 PoD（斷開連接封包）或 CoA（授權變更）封包，以中斷使用者連線並終止其在特定 NAS 上的工作階段。</p>
+<p>若要終止使用者工作階段，NAS 必須支援 PoD 或 CoA 封包類型；請查閱 NAS 供應商的資料或相關文件以確認這一點。此外，還需要知道用於 PoD 或 CoA 封包的 NAS 連接埠：較新的 NAS 通常使用連接埠 3799，而其他 NAS 則可能設定為在連接埠 1700 接收此類封包。</p>
+<p>daloRADIUS 使用 radclient 二進位工具執行測試，並在操作完成後傳回指令結果。</p>
+<p>daloRADIUS 依賴系統 \$PATH 環境變數中可用的 radclient 二進位；如果找不到該檔案，請修改 <code>library/extensions/maintenance_radclient.php</code> 檔案。</p>
+<p>請注意，由於可能發生故障導致 radclient 重傳封包，測試完成可能需要一些時間（長達數秒，約 10-20 秒）。</p>
+<p>在「進階」（Advanced）標籤中，可以微調測試參數：</p>
+<p>Timeout（逾時） - 重試前等待的秒數（可以是浮點數）</p>
+<p>Retries（重試次數） - 發生逾時後，重新傳送封包的次數</p>
+<h2 class="fs-6">Count（計數） - 每個封包發送的次數</h2>
+<p>Requests（請求） - 並行發送文件中的封包數量（num）</p>
+EOF;
 $l['helpPage']['configoperatorsdel'] = "從資料庫中刪除的操作員必須提供使用者名稱。";
-$l['helpPage']['configoperatorsedit'] = "下面編輯裝置使用者詳細資訊";
-$l['helpPage']['configoperatorsnew'] = "你可以填寫下面的一個新建裝置的使用者除了資料庫的詳細資訊";
-$l['helpPage']['configoperatorslist'] = "顯示所有裝置的資料庫";
-$l['helpPage']['configoperators'] = "裝置的設定";
-$l['helpPage']['configbackup'] = "執行備份";
+$l['helpPage']['configoperatorsedit'] = <<<EOF
+<h2 class="fs-6">編輯下方的操作員詳細資訊</h2>
+EOF;
+$l['helpPage']['configoperatorsnew'] = <<<EOF
+<h2 class="fs-6">您可以在下面填寫詳細資訊來新增一個操作員到資料庫</h2>
+EOF;
+$l['helpPage']['configoperatorslist'] = <<<EOF
+<h2 class="fs-6">列出資料庫中的所有操作員</h2>
+EOF;
+$l['helpPage']['configoperators'] = <<<EOF
+<h1 class="fs-5">操作員</h1>
+<p>設定操作員的設定與行為。</p>
+EOF;
+$l['helpPage']['configbackup'] = <<<EOF
+<h1 class="fs-5">備份</h1>
+<p>管理資料庫備份</p>
+EOF;
 $l['helpPage']['configbackupcreatebackups'] = "建立備份";
 $l['helpPage']['configbackupmanagebackups'] = "管理備份";
 
@@ -1536,57 +1599,97 @@ $l['helpPage']['graphmain'] = "
 <h200><b>登入使用者</b></h200> - 繪製指定期間中的登入的使用者的圖表
 按天、 月、 年僅按月份和年份圖每小時圖或篩選器篩選 （選擇 \"---\"天） 圖的最小和最大登入的使用者在所選的一個月.
 ";
-$l['helpPage']['graphsalltimelogins'] = "登入到伺服器的歷史統計資料基於分佈在一段時間內";
-$l['helpPage']['graphsalltimetrafficcompare'] = "透過伺服器基於分佈在一段時間內流量資料統計。";
-$l['helpPage']['graphsloggedusers'] = "繪製已登入的總的圖表";
-$l['helpPage']['graphsoveralldownload'] = "繪製圖表伺服器的已下載位元組數";
-$l['helpPage']['graphsoverallupload'] = "繪製圖表的上傳到伺服器的位元組";
-$l['helpPage']['graphsoveralllogins'] = "繪製圖表對伺服器的登入嘗試";
+$l['helpPage']['graphsalltimelogins'] = <<<EOF
+<h2 class="fs-6">累計登入/點選數</h2>
+<p>產生一個圖表，顯示在特定時間段內伺服器的登入次數。</p>
+EOF;
+$l['helpPage']['graphsalltimetrafficcompare'] = <<<EOF
+<h2 class="fs-6">歷史流量比較</h2>
+<p>產生一個圖表，比較在指定時間段內下載和上傳的資料量。</p>
+EOF;
+$l['helpPage']['graphsloggedusers'] = <<<EOF
+<h2 class="fs-6">已登入使用者</h2>
+<p>產生一個圖表，顯示在特定時間段內的登入使用者數量。使用者可以按天、月、年篩選以建立每小時圖表，或者僅按月和年篩選（在天欄選擇「―」）來繪製所選月份的最少和最多登入使用者數量。</p>
+EOF;
+$l['helpPage']['graphsoveralldownload'] = <<<EOF
+<h2 class="fs-6">整體下載統計</h2>
+<p>產生一個圖表，顯示特定使用者在特定時間段內下載的資料量。圖表旁會附上一個清單表格。</p>
+EOF;
+$l['helpPage']['graphsoverallupload'] = <<<EOF
+<h2 class="fs-6">整體上傳統計</h2>
+<p>產生一個圖表，顯示特定使用者在特定時間段內上傳的資料量。圖表旁邊會附上一個列出詳細資料的表格。</p>
+EOF;
+$l['helpPage']['graphsoveralllogins'] = <<<EOF
+<h2 class="fs-6">總登入次數/點選次數</h2>
+<p>產生一個圖表，顯示特定使用者在特定時間段內的使用情況。圖表會顯示登入次數（或對 NAS 的「點選」次數），並附有一個表格清單。</p>
+EOF;
 
 
 
-$l['helpPage']['rephistory'] = "顯示所有活動執行管理項目和提供資訊<br/>
-建立日期,建立和更新日期和更新歷史領域";
-$l['helpPage']['replastconnect'] = "顯示所有RADIUS伺服器的登入嘗試,成功和失敗的登入";
-$l['helpPage']['replogsboot'] = "監控作業系統啟動日誌——相當於執行dmesg命令。";
-$l['helpPage']['replogsdaloradius'] = "監控daloRADIUS的日誌檔案";
-$l['helpPage']['replogsradius'] = "監控FreeRADIUS的日誌檔案。";
-$l['helpPage']['replogssystem'] = "監控作業系統日誌檔案。";
+$l['helpPage']['rephistory'] = <<<EOF
+<p>列出所有管理項目的操作紀錄，並提供建立日期、建立者以及更新日期和更新者的資訊</p>
+EOF;
+$l['helpPage']['replastconnect'] = <<<EOF
+<p>列出所有對 RADIUS 伺服器的登入嘗試，包括成功和失敗的登入</p>
+EOF;
+$l['helpPage']['replogsboot'] = <<<EOF
+<p>{$l['Intro']['replogsboot.php']} 讓您可以監控作業系統啟動日誌，相當於執行 dmesg 指令。您可以透過設定顯示行數及套用篩選條件來自訂檢視結果。</p>
+EOF;
+$l['helpPage']['replogsdaloradius'] = <<<EOF
+<p>{$l['Intro']['replogsdaloradius.php']} 讓您可以監控 daloRADIUS 的日誌。您可以自訂顯示行數，並依查詢、通知、插入或查選來篩選日誌。</p>
+EOF;
+$l['helpPage']['replogsradius'] = <<<EOF
+<p>{$l['Intro']['replogsradius.php']} 讓您可以監控 freeRADIUS 的事件日誌，您可以自訂要顯示的行數，並使用篩選器查看像 'Auth'、'Info' 或 'Error' 等訊息類型。</p>
+EOF;
+$l['helpPage']['replogssystem'] = <<<EOF
+<p>{$l['Intro']['replogssystem.php']} 讓您可以查看系統日誌，例如 syslog 和 messages，您可以自行設定顯示的行數，還有選擇性使用的篩選器來縮小檢視範圍。</p>
+EOF;
 $l['helpPage']['rephb'] = "";
 $l['helpPage']['rephbdashboard'] = "";
 $l['helpPage']['repbatch'] = "";
 $l['helpPage']['repbatchlist'] = "";
 $l['helpPage']['mngbatchlist'] = "";
 $l['helpPage']['mngbatchdel'] = "";
-$l['helpPage']['repbatchdetails'] = "提供了一個活躍使用者的這批例項的清單";
-$l['helpPage']['replogs'] = "
-<b>Logs</b><br/>
-<h200><b>daloRADIUS日誌</b></h200> - 監控daloRADIUS的日誌檔案。<br/>
-<h200><b>RADIUS日誌</b></h200> - 監控FreeRADIUS的日誌檔案,在 /var/log/freeradius/radius.log 或 /usr/local/var/log/radius/radius.log.
-日誌檔案可能在其他可能的地方,如果是這樣的話請相應地調整設定.<br/>
-<h200><b>系統日誌</b></h200> - 監控作業系統日誌檔案,在 /var/log/syslog or /var/log/訊息在大多數平臺上。
-日誌檔案可能在其他可能的地方,如果是這樣的話請相應地調整設定。<br/>
-<h200><b>Boot Log</b></h200> - 監控作業系統啟動日誌——相當於執行dmesg命令。
-";
-$l['helpPage']['repmain'] = "
-<b>一般報表</b><br/>
-<h200><b>線上使用者</b></h200> - 提供了一個清單的所有使用者
-發現線上透過會計表在資料庫中。為使用者正在執行的檢查
-沒有結束時間(AcctStopTime)。重要的是要注意,這些使用者也會過期的工作階段
-這當NASs由於某種原因未能傳送accounting-stop包。.<br/>
-<h200><b>Last Connection Attempts</b></h200> - 提供所有Access-Accept的清單和Access-Reject(接受和失敗)登入為使用者。 <br/>
-這些從資料庫的postauth表需要定義FreeRADIUS設定檔案的實際記錄這些.<br/>
-<h200><b>使用者使用詳情</b></h200> - 提供了一個清單的前N使用者頻寬消耗和工作階段時間使用。<br/><br/>
-<b>子分類報表</b><br/>
-<h200><b>Logs</b></h200> - 提供daloRADIUS日誌檔案、FreeRADIUSs日誌檔案系統的日誌檔案和啟動日誌檔案<br/>
-<h200><b>Status</b></h200> - 提供伺服器狀態資訊和RADIUS元件狀態";
+$l['helpPage']['repbatchdetails'] = <<<EOF
+<h2 class="fs-6">提供特定批次的詳細資訊</h2>
+EOF;
+$l['helpPage']['replogs'] = <<<EOF
+<h1 class="fs-5">日誌</h1>
+<p>{$l['helpPage']['replogsdaloradius']}</p>
+<p>{$l['helpPage']['replogsradius']}</p>
+<p>{$l['helpPage']['replogssystem']}</p>
+<p>{$l['helpPage']['replogsboot']}</p>
+<h2 class="fs-6">daloRADIUS 日誌</h2>
+<ul><li>用來監控 daloRADIUS 的日誌檔案。</li></ul>
+<h2 class="fs-6">RADIUS 日誌</h2>
+<ul><li>用來監控 FreeRADIUS 的日誌檔案，路徑可能在 /var/log/freeradius/radius.log 或 /usr/local/var/log/radius/radius.log。如檔案位於其他地方，請相應調整設定。</li></ul>
+<h2 class="fs-6">系統日誌</h2>
+<ul><li>用來監控作業系統日誌，通常在 /var/log/syslog 或 /var/log/訊息。如檔案位於其他地方，請相應調整設定。</li></ul>
+<h2 class="fs-6">啟動日誌</h2>
+<ul><li>監控作業系統啟動日誌，相當於執行 dmesg 命令。</li></ul>
+EOF;
+$l['helpPage']['repmain'] = <<<EOF
+<h1 class="fs-5">一般報表</h1>
+<h2 class="fs-6">線上使用者</h2>
+<p>透過檢查資料庫中的計費表，提供目前所有線上使用者的清單。檢查的條件是使用者沒有設定結束時間（AcctStopTime）。需要注意的是，由於NAS未能發送計費停止封包，有些使用者的工作階段可能已過期。請注意，只有在有線上使用者時，這個分頁才會顯示。</p>
+<h2 class="fs-6">最近連線嘗試</h2>
+<p>提供所有Access-Accept和Access-Reject（成功和失敗）登入的使用者清單。這些資訊從資料庫的postauth表中取得，必須在FreeRADIUS的設定檔中設定以啟用日誌。</p>
+<h2 class="fs-6">熱門使用者</h2>
+<p>提供前N名使用者的頻寬消耗和使用的工作階段時間清單。</p>
+<h2 class="fs-6">子分類報表</h2>
+<h2 class="fs-6">日誌</h2>
+<p>提供對daloRADIUS日誌檔、FreeRADIUS日誌檔、系統日誌檔及啟動日誌檔的存取。</p>
+<h2 class="fs-6">狀態</h2>
+<p>提供伺服器狀態及RADIUS元件狀態的資訊。</p>
+EOF;
 $l['helpPage']['repstatradius'] = "提供關於伺服器本身的一般資訊:CPU使用率,流程,正常執行時間、記憶體使用情況,等等";
 $l['helpPage']['repstatserver'] = "提供關於FreeRADIUS常駐程式的一般資訊和MySQL資料庫伺服器";
 $l['helpPage']['repstatus'] = "<b>狀態</b><br/>
 <h200><b>伺服器狀態</b></h200> - 提供關於伺服器本身的一般資訊:CPU使用率,流程,正常執行時間、記憶體使用情況,等等。<br/>
 <h200><b>RADIUS 狀態</b></h200> - 提供關於FreeRADIUS常駐程式的一般資訊和MySQL資料庫伺服器";
-$l['helpPage']['reptopusers'] = "下面顯示記錄為高階使用者,那些獲得了最高消費的工作階段
-時間和頻寬使用情況。清單的使用者類別: ";
+$l['helpPage']['reptopusers'] = <<<EOF
+<p>以下列出的使用者獲得了最高的工作階段時間或頻寬使用量的最高使用者記錄。列出此類使用者：</p>
+EOF;
 $l['helpPage']['repusername'] = "記錄發現的使用者:";
 $l['helpPage']['reponline'] = "
 下表顯示了目前連線使用者
@@ -1594,34 +1697,45 @@ $l['helpPage']['reponline'] = "
 這意味著使用者斷線但NAS沒有傳送或不是
 能夠傳送停止會計包RADIUS伺服器。";
 
-$l['helpPage']['mnglistall'] = "清單中的使用者資料庫";
+$l['helpPage']['mnglistall'] = <<<EOF
+<h2 class="fs-6">列出資料庫中的使用者</h2>
+EOF;
 $l['helpPage']['mngsearch'] = "搜尋使用者： ";
-$l['helpPage']['mngnew'] = "您可以填寫以下資訊新使用者除了資料庫<br/>";
+$l['helpPage']['mngnew'] = <<<EOF
+<h2 class="fs-6">您可以填寫以下資料來新增使用者到資料庫</h2>
+EOF;
 $l['helpPage']['mngedit'] = "編輯下面的使用者詳細資訊<br/>";
-$l['helpPage']['mngdel'] = "為了從資料庫中刪除使用者條目，你必須提供帳戶的使用者名稱<br/>";
+$l['helpPage']['mngdel'] = "為了從資料庫中刪除使用者條目，您必須提供帳戶的使用者名稱<br/>";
 $l['helpPage']['mngbatch'] = "您可以填寫以下資訊新使用者除了資料庫。<br/>
-請注意，這些設定將適用於所有你所建立的使用者。<br/>";
-$l['helpPage']['mngnewquick'] = "下面的使用者/卡是預付費類型。<br/>
-在時間信用證規定的時間內將被用作 Session-Timeout（工作階段逾時） 和 Max-All-Session（最大-所有-工作階段） RADIUS屬性";
+請注意，這些設定將適用於所有您所建立的使用者。<br/>";
+$l['helpPage']['mngnewquick'] = <<<EOF
+<p>以下的使用者/卡片是預付型的。</p>
+<p>在時間信用證(Time Credit) 指定的時間將用作 Session-Timeout（工作階段逾時） 和 Max-All-Session（最大-所有-工作階段）的 radius 屬性</p>
+EOF;
 
 // 帳單部分
-$l['helpPage']['acctactive'] = "
-    規定，將被證明是用於跟蹤活動或過期的資料庫中的使用者有用的資訊
-其中有一個到期屬性或馬克斯 - 所有工作階段屬性的使用者而言。
-<br/>
-";
-$l['helpPage']['acctall'] = "
-    為資料庫中的所有工作階段的完整的會計資訊。
-<br/>
-";
-$l['helpPage']['acctdate'] = "
-    為給定的2日期為特定使用者之間的所有工作階段完整的會計資訊。
-<br/>
-";
-$l['helpPage']['acctipaddress'] = "
-    為起源與特定IP位址的所有工作階段的完整的會計資訊。
-<br/>
-";
+$l['helpPage']['acctmaintenancecleanup'] = <<<EOF
+<h2 class="fs-6">清理陳舊工作階段</h2>
+<p>此功能用於清理那些在 FreeRADIUS（進而也在 daloRADIUS）中仍顯示為活躍狀態，但實際上使用者已與 NAS 斷開連接的陳舊工作階段。當 NAS 未能發送計費停止（Accounting STOP）記錄時，就會產生此類陳舊工作階段，導致系統中出現錯誤的線上使用者記錄。</p>
+<p>清理陳舊工作階段有兩種方式：</p>
+<ul><li>按使用者名稱清理：此選項將關閉 FreeRADIUS 資料庫中特定使用者名稱的所有活躍工作階段。請謹慎使用此選項。</li><li>按日期清理：此選項將刪除 FreeRADIUS 資料庫中早於指定日期的所有活躍工作階段。同樣，請謹慎使用此選項。</li></ul>
+EOF;
+$l['helpPage']['acctactive'] = <<<EOF
+<h2 class="fs-6">活動計費記錄</h2>
+<p>提供有助於追蹤資料庫中活動使用者或已過期使用者的資訊，例如具有「過期」屬性或「最大工作階段總數」屬性的使用者。</p>
+EOF;
+$l['helpPage']['acctall'] = <<<EOF
+<h2 class="fs-6">所有計費記錄</h2>
+<p>提供資料庫中所有工作階段的詳細計費資訊。</p>
+EOF;
+$l['helpPage']['acctdate'] = <<<EOF
+<h2 class="fs-6">按日期計費統計</h2>
+<p>提供特定使用者在兩個指定日期之間所有工作階段的詳細計費資訊。</p>
+EOF;
+$l['helpPage']['acctipaddress'] = <<<EOF
+<h2 class="fs-6">IP 計費</h2>
+<p>提供來自特定 IP 位址的所有工作階段的詳細計費資訊。</p>
+EOF;
 
 $l['helpPage']['acctplans'] = "";
 $l['helpPage']['acctmain'] = "
@@ -1655,14 +1769,14 @@ $l['helpPage']['acctmain'] = "
     提供不同的管理熱點資訊、比較,和其他有用的資訊。
 <br/>
 ";
-$l['helpPage']['acctnasipaddress'] = "
-    提供完整的會計資訊的所有工作階段的具體處理NAS IP位址。
-<br/>
-";
-$l['helpPage']['acctusername'] = "
-    提供完整的會計資訊對特定使用者的資料庫中的所有工作階段。
-<br/>
-";
+$l['helpPage']['acctnasipaddress'] = <<<EOF
+<h2 class="fs-6">NAS 計費</h2>
+<p>提供由特定 NAS IP 位址處理的所有工作階段的詳細計費資訊。</p>
+EOF;
+$l['helpPage']['acctusername'] = <<<EOF
+<h2 class="fs-6">使用者計費</h2>
+<p>提供資料庫中與特定使用者相關的所有工作階段的詳細計費資訊。</p>
+EOF;
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = "
     提供完整的會計資訊的所有工作階段起源於這個特定的熱點。
@@ -1670,56 +1784,40 @@ $l['helpPage']['accthotspotaccounting'] = "
 欄位匹配一個熱點中的熱點的MAC位址條目的管理資料庫。
 <br/>
 ";
-$l['helpPage']['accthotspotcompare'] = "
-    提供了基本的會計資訊比較資料庫中找到的所有活躍的熱點。
-       會計提供的資訊:<br/> <br/>
-    熱點名稱——熱點的名稱<br/>
-    獨特的使用者-使用者已登入,只有透過這個熱點<br/>
-    總點選——總登入,進行從這個熱點(獨特的和非獨特的)<br/>
-    平均時間——平均時間使用者花在這個熱點<br/>
-    總時間——所有使用者的accumolated花時間在這個熱點<br/>
-
-<br/>
-    提供了一個圖塊不同的比較了<br/>
-    圖:<br/> <br/>
-    每個熱點分佈的獨特使用者<br/>
-    分配每個熱點的點選<br/>
-    每個熱點分佈的時間使用 <br/>
-<br/>
-";
-$l['helpPage']['accthotspot'] = "
-<h200><b>Hotspot Accounting</b></h200> -
-    提供完整的會計資訊的所有工作階段起源於這個特定的熱點。
-<br/>
-<h200><b>Hotspot Comparison</b></h200> -
-    提供了基本的會計資訊比較資料庫中找到的所有活躍的熱點。
-提供了一個圖塊不同的比較。
-<br/>
-";
+$l['helpPage']['accthotspotcompare'] = <<<EOF
+<h1 class="fs-5">熱點對比</h1>
+<h2 class="fs-6">基本訊息</h2>
+<p>本部分提供用於對比資料庫中所有活躍熱點的基本統計資訊，具體包括：</p>
+<ul><li>熱點名稱：熱點的名稱</li><li>獨立使用者數：僅透過此熱點登入的使用者數量</li><li>總造訪次數：透過此熱點進行的登入總次數（包含獨立使用者及非獨立使用者的登入）</li><li>平均長度：使用者在該熱點的平均停留時長</li><li>總時長：所有使用者在該熱點的累積停留時長</li></ul>
+<h2 class="fs-6">圖表</h2>
+<p>本部分提供不同熱點的圖形化比較分析，包含以下圖表：</p>
+<h2 class="fs-6">各熱點獨立使用者數分佈</h2>
+<h2 class="fs-6">各熱點造訪次數分佈</h2>
+<p>各熱點使用時長分佈</p>
+EOF;
+$l['helpPage']['accthotspot'] = <<<EOF
+<h2 class="fs-6">熱點計費</h2>
+<ul><li>提供源自該特定熱點的所有工作階段的完整計費資訊。</li></ul>
+<h2 class="fs-6">熱點對比</h2>
+<ul><li>提供基礎計費資訊，用於比較資料庫中所有活躍熱點，並產生相應的對比圖表。</li></ul>
+EOF;
 // 會計自訂查詢部分
-$l['helpPage']['acctcustom'] = "
-<h200><b>Custom</b></h200> -
-    提供最靈活的自訂查詢資料庫上執行。<br/>
-你可以調整查詢的max透過修改設定在左側欄。<br/>
-<br/>
-    <b> 日期</b> -設定開始和結束日期.
-<br/>
-    <b> </b>——設定資料庫中的欄位(像一個鍵)你想匹配,選擇如果值
-比賽應該等於(=)或它包含你搜尋的一部分價值(如一個正規表示式)。如果你
-選擇使用包含運算子你不應該新增任何常見的萬用字元“*”而是
-您輸入的值將自動搜尋這種形式:* *價值(或mysql風格:%值%)。
-<br/>
-    <b> </b>查詢會計領域,你可以選擇你想要的欄位出現在結果中
-清單。
-<br/>
-<b> </b>訂單——選擇你想訂場的結果和它的類型(提升
-或降序)
-<br/>
-";
+$l['helpPage']['acctcustom'] = <<<EOF
+<h2 class="fs-6">自訂查詢</h2>
+<p>此功能支援對資料庫進行高度可自訂的查詢，讓操作人員能夠根據具體需求精確設定資料檢索方式。您可以在左側邊欄調整查詢設定，以最佳化資料擷取效果。</p>
+<h2 class="fs-6">起始與結束日期</h2>
+<p>指定起始和結束日期，以檢索特定時間範圍內的資料。</p>
+<h2 class="fs-6">條件（Where）</h2>
+<p>指定用於符合的資料庫欄位（即作為查詢依據的欄位）。利用對應的運算子，選擇精確匹配（「等於」）或部分匹配（「包含」）。請勿使用「*」等萬用字元，因為系統會自動格式化輸入值以進行搜尋（例如處理為 *value* 或 %value%）。</p>
+<h2 class="fs-6">查詢計費欄位</h2>
+<p>選擇您希望在結果清單中包含的欄位。</p>
+<h2 class="fs-6">排序欄位與排序方式</h2>
+<p>指定用於對結果進行排序的欄位，並選擇升序或降序排列。</p>
+EOF;
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
 <h200><b>清理過期工作階段</b></h200> -
-    ‘過期工作階段’可能經常存在因為會影響NAS無法提供計費停止紀錄<<br/>
+    「過期工作階段」可能經常存在因為會影響NAS無法提供計費停止紀錄<<br/>
     如不不清理長時間的過期使用者工作階段，會導致假的使用者登入記錄的存在
     記錄 (false positive).
 <br/>
@@ -1728,48 +1826,33 @@ $l['helpPage']['acctmaintenance'] = "
     除了管理員存取這個頁面。
 <br/>
 ";
-$l['helpPage']['acctmaintenancecleanup'] = "";
 $l['helpPage']['acctmaintenancedelete'] = "";
 
 
 
 $l['helpPage']['giseditmap'] = "
-    編輯地圖模式，在這種模式下你可以簡單地透過點選新增或刪除熱點
+    編輯地圖模式，在這種模式下您可以簡單地透過點選新增或刪除熱點
 在地圖上的位置或透過點選一個熱點（分別）<br/><br/>
-    <b> 新增熱點 </b> - 只需點選一個清晰的地圖上的位置,你將提供
+    <b> 新增熱點 </b> - 只需點選一個清晰的地圖上的位置,您將提供
 熱點的名稱和它的MAC位址。這些關鍵細節後用於識別這個熱點
 在會計表中。務必提供正確的MAC位址！
 <br/><br/>
-    <b> 刪除熱點 </b> - 只需點選一個熱點的圖示，你確定它刪除從
+    <b> 刪除熱點 </b> - 只需點選一個熱點的圖示，您確定它刪除從
 資料庫。
 <br/>
 ";
-$l['helpPage']['gisviewmap'] = "
-檢視地圖模式-在此模式下你可以瀏覽他們的熱點進行佈局
-在利用GoogleMaps服務提供的地圖圖示。<br/><br/>
-
-    <b> 點選一個熱點 </b> -將提供您更深入的細節上的熱點。
-    如聯絡資訊的熱點，統計資訊。
-<br/>
-";
-$l['helpPage']['gismain'] = "
-<b> 一般資訊 </b>
-GIS熱點位置的提供了視覺化世界各地的地圖使用Google Maps API。<br/>
-在管理頁面你可以向資料庫新增新建熱點條目,那裡也是一個欄位
-稱為地理位置,這是Google Maps API使用以有定位的準確數值
-位置在地圖上的熱點。<br/><br/>
-
-<h200><b>2 提供的操作模式:</b></h200>
-一個是<b>檢視地圖</b>模式使“網上衝浪”透過世界地圖
-檢視目前位置的熱點在資料庫和另一個<b>編輯地圖</b> -該模式
-一個可以使用以建立熱點的直觀簡單的左點選地圖或刪除
-現有的熱點條目，左鍵點選現有熱點的標誌。.<br/><br/>
-
-另一個重要的問題是,網路上的每臺計算機需要一個獨特的註冊碼,你
-從Google Maps API頁面可以獲得透過提供完整的web託管目錄的地址嗎
-daloRADIUS伺服器上的應用程式。一旦你從谷歌獲得程式碼,只需貼上的
-註冊框,然後點選“註冊碼”按鈕來寫它。
-然後你可以使用谷歌地圖服務。 <br/><br/>";
+$l['helpPage']['gisviewmap'] = <<<EOF
+<h1 class="fs-5">查看地圖模式</h1>
+<p>在此模式下，您可以瀏覽以圖示形式分佈在地圖上的熱門地點。</p>
+<p>點選熱門地點後，您可以查看更多關於它的詳細資訊，包括聯絡方式及其他相關細節。</p>
+EOF;
+$l['helpPage']['gismain'] = <<<EOF
+<p>GIS 功能可以讓您看到全球熱點位置的視覺化地圖。</p>
+<p>新增熱點時，您可以提供其緯度和經度來設定地理位置，這樣就能在地圖上精確標記它。</p>
+<p>GIS 功能有兩種操作模式：</p>
+<p>在檢視地圖模式下，您可以探索世界地圖，點選圖示就能看到資料庫中所有熱點的目前位置；</p>
+<p>在編輯地圖模式下，您可以透過左鍵點選任意空白位置來新增熱點，或者左鍵點選現有熱點圖示來刪除它們。</p>
+EOF;
 
 /* ********************************************************************************** */
 
@@ -1782,7 +1865,7 @@ $l['messages']['noCheckAttributesForGroup'] = "這個組沒有檢查相關聯的
 $l['messages']['noReplyAttributesForGroup'] = "這個組沒有回複相關聯的屬性";
 
 $l['messages']['nogroupdefinedforuser'] = "這個使用者沒有相關聯的組";
-$l['messages']['wouldyouliketocreategroup'] = "你想建立一個？";
+$l['messages']['wouldyouliketocreategroup'] = "您想建立一個？";
 
 
 $l['messages']['missingratetype'] = "錯誤：缺失價格類型";
@@ -1790,7 +1873,7 @@ $l['messages']['missingtype'] = "錯誤：丟失類型";
 $l['messages']['missingcardbank'] = "錯誤：丟失銀行卡";
 $l['messages']['missingrate'] = "錯誤：丟失價格";
 $l['messages']['success'] = "成功";
-$l['messages']['gisedit1'] = "歡迎,你目前在編輯模式";
+$l['messages']['gisedit1'] = "歡迎,您目前在編輯模式";
 $l['messages']['gisedit2'] = "從地圖和資料庫刪除目前標記?";
 $l['messages']['gisedit3'] = "請輸入熱點的名稱";
 $l['messages']['gisedit4'] = "新增目前標記到資料庫嗎?";
