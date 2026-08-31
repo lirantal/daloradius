@@ -26,7 +26,15 @@ If you encounter any issues during the installation or have any questions, feel 
 
 The documentation for daloRADIUS is available in Markdown format and can be found in the `doc` folder of this repository.
 
-For Docker usage, including the Compose stack and standalone web image, see [README.docker-standalone.md](README.docker-standalone.md).
+### Docker
+
+For a complete local stack, copy `.env.example` to `.env`, set the required secrets, and start MariaDB, FreeRADIUS, and the web interfaces with:
+
+```bash
+docker compose up -d --build
+```
+
+The primary `Dockerfile` can also run the web interfaces alone against externally managed MariaDB and FreeRADIUS services. See the [Docker usage guide](README.docker.md) for environment variables, ports, persistence, upgrades, and both deployment modes.
 
 ## Contributors
 

@@ -6,7 +6,7 @@ The Compose setup in `docker-compose.yml` starts a complete local daloRADIUS sta
 - `radius`: FreeRADIUS;
 - `radius-web`: daloRADIUS users and operators web interfaces.
 
-Use `Dockerfile-standalone` only when MariaDB and FreeRADIUS are already managed outside this repository.
+The primary `Dockerfile` also supports a web-only container connected to MariaDB and FreeRADIUS services managed outside this repository.
 
 ## Full Compose stack
 
@@ -134,20 +134,41 @@ docker compose down
 rm -rf ./data
 ```
 
-## Standalone web image
+## Web-only container with external services
 
-Build the standalone web image:
+The primary `Dockerfile` can run only the daloRADIUS web interfaces while using an existing MariaDB database and FreeRADIUS server.
+
+Build the same web image used by the Compose stack:
 
 ```bash
-docker build -t daloradius-standalone -f Dockerfile-standalone .
+docker build -t daloradius-web .
 ```
 
-Create a `daloradius.conf.php` for your external database and RADIUS settings, then mount it into the container:
+Create an environment file for the external services and restrict its permissions:
+
+```dotenv
+MYSQL_HOST=db.example.com
+MYSQL_PORT=3306
+MYSQL_DATABASE=radius
+MYSQL_USER=radius
+MYSQL_PASSWORD=CHANGE_ME_RADIUS_DB_PASSWORD
+DEFAULT_FREERADIUS_SERVER=radius.example.com
+DEFAULT_CLIENT_SECRET=CHANGE_ME_RADIUS_SHARED_SECRET
+```
 
 ```bash
-docker run --name daloradius-standalone \
-  -v /path/to/daloradius.conf.php:/var/www/html/daloradius/common/includes/daloradius.conf.php:ro \
+chmod 600 daloradius-web.env
+```
+
+Start the web container:
+
+```bash
+docker run --name daloradius-web \
+  --env-file ./daloradius-web.env \
+  -v daloradius-data:/data \
   -p 80:80 \
   -p 127.0.0.1:8000:8000 \
-  -d daloradius-standalone
+  -d daloradius-web
 ```
+
+`DEFAULT_CLIENT_SECRET` is only needed by the operators UI connectivity test. The external database must already contain the FreeRADIUS and daloRADIUS schemas; review `contrib/db/migrations/` when connecting a deployment created by an older release.
