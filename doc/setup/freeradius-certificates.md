@@ -4,6 +4,16 @@ This guide explains how to manage the certificates used by **FreeRADIUS** for PE
 
 These are separate from the Apache certificates that protect browser access to daloRADIUS. For the web interface, see [Enabling HTTPS (SSL/TLS) for daloRADIUS](ssl-config.md).
 
+## Before you start
+
+Choose the path that matches your situation:
+
+- **You already have a CA certificate and a server certificate:** follow the Docker or manual-install steps and skip the certificate-generation section.
+- **You only need a lab setup:** generate example certificates with the FreeRADIUS templates, then install only the runtime files.
+- **You use EAP-TLS:** in addition to the server certificate, plan how client certificates will be issued and revoked. The example `client.pem` is only a test certificate, not a production enrollment process.
+
+Before changing a working server, record the current EAP configuration and back up the current certificate directory. Run all Docker commands from the directory containing `docker-compose.yml`.
+
 ## Certificate files and paths
 
 The active paths depend on the installation method:
@@ -26,6 +36,28 @@ Common files include:
 
 For PEAP and EAP-TTLS, clients must validate the FreeRADIUS server certificate and trust its issuing CA. EAP-TLS additionally requires FreeRADIUS to validate client certificates against the intended client CA.
 
+For example, an organization using `radius.example.org` might have:
+
+- a CA certificate named `Example Network CA`, stored as `ca.pem`;
+- a server certificate whose Subject Alternative Name (SAN) contains `DNS:radius.example.org`, stored with its private key as `server.pem`;
+- client profiles configured to trust `Example Network CA` and accept only `radius.example.org` as the authentication server.
+
+PEM files are Base64 text and are commonly used by FreeRADIUS. DER contains the same certificate in a binary format accepted by some client platforms. If a client requires DER and only `ca.pem` is available, convert the public CA certificate with:
+
+```bash
+openssl x509 -in ca.pem -outform DER -out ca.der
+```
+
+Before installation, inspect the certificate identity and validity period:
+
+```bash
+openssl x509 -in server.pem -noout \
+  -subject -issuer -dates -ext subjectAltName
+openssl verify -CAfile ca.pem server.pem
+```
+
+The verification example assumes that `ca.pem` directly signed the server certificate. When intermediate CAs are used, include them in the verification and server chain according to your CA's instructions. Replace `server.pem` with the certificate file when the private key is stored separately. Check that the SAN contains the name that client devices will be configured to expect.
+
 Never distribute a server or CA private key. Do not configure clients to skip server certificate validation.
 
 ## Docker install
@@ -33,6 +65,14 @@ Never distribute a server or CA private key. Do not configure clients to skip se
 FreeRADIUS runs in the `radius` container. Certificates belong to that container, not to `radius-web`.
 
 Keep certificates on the host and bind-mount them read-only. Files edited only inside a running container disappear when it is recreated.
+
+The usual Docker workflow is:
+
+1. put the runtime files in a host directory;
+2. update EAP only if the filenames or key password differ from the defaults;
+3. add read-only mounts to Compose;
+4. validate the configuration;
+5. recreate the `radius` service and test one client.
 
 ### 1. Prepare a runtime certificate directory
 
@@ -54,6 +94,20 @@ Place the runtime files in that directory:
 
 If a separate private key or certificate chain is used instead of the combined `server.pem`, place those files there too and update the EAP paths in the next step.
 
+Typical mappings are:
+
+| Files supplied by your CA | EAP settings to use |
+|---|---|
+| One `server.pem` containing the certificate and encrypted key | Use `server.pem` for both `private_key_file` and `certificate_file` |
+| `server.key` plus `server.crt` | Use `server.key` for `private_key_file` and `server.crt` for `certificate_file` |
+| `server.key`, `server.crt`, and intermediate certificates | Build `server-chain.pem` with the server certificate first, followed by the intermediate certificates; do not append the root CA |
+
+For one intermediate CA, the chain file can be assembled with:
+
+```bash
+cat server.crt intermediate-ca.pem > server-chain.pem
+```
+
 ### 2. Configure the EAP module when required
 
 The image defaults normally reference:
@@ -66,6 +120,8 @@ ca_file = ${cadir}/ca.pem
 ```
 
 The default paths need no change when the host directory is mounted at `/etc/freeradius/certs`. Update the EAP configuration if the filenames differ or the private key password is not `whatever`.
+
+`private_key_password` must be the password that decrypts the server private key. It is not a RADIUS shared secret, database password, or Wi-Fi user password. The value `whatever` matches the bundled test templates; do not assume it matches a certificate supplied by your own CA.
 
 Do not edit the file only inside the running container. Copy it to the host:
 
@@ -163,6 +219,14 @@ docker compose logs --tail=100 radius
 
 A successful configuration check proves that FreeRADIUS can load the files. Complete validation still requires an EAP authentication from a client configured to verify the expected server name and CA.
 
+On the first test client, confirm all three results before deploying the profile more widely:
+
+- authentication succeeds;
+- the client reports the expected server name, such as `radius.example.org`;
+- removing the test CA or configuring a wrong server name makes authentication fail.
+
+The negative test confirms that the client is actually validating the server certificate instead of silently accepting any RADIUS server.
+
 ### Optional: generate lab certificates from the image templates
 
 The FreeRADIUS templates generate short-lived example certificates for testing. Do not use them as an unattended production PKI.
@@ -248,27 +312,32 @@ Use the distribution's certificate directory:
 
 Set `private_key_file`, `certificate_file`, `ca_file`, and, when applicable, `private_key_password` in the active EAP module. Use the same certificate-chain and EAP-TLS trust restrictions described in the Docker section.
 
-Set restrictive permissions.
+The following examples assume that the new files are temporarily stored in `/root/radius-certs`. Replace that source path and filenames with your own. `install` copies each file while applying its final owner and mode.
 
 Debian or Ubuntu example:
 
 ```bash
-sudo chown freerad:freerad /etc/freeradius/3.0/certs/server.pem
-sudo chmod 600 /etc/freeradius/3.0/certs/server.pem
-sudo chmod 644 /etc/freeradius/3.0/certs/ca.pem \
-  /etc/freeradius/3.0/certs/ca.der
+sudo install -o freerad -g freerad -m 600 \
+  /root/radius-certs/server.pem \
+  /etc/freeradius/3.0/certs/server.pem
+sudo install -o root -g root -m 644 \
+  /root/radius-certs/ca.pem \
+  /etc/freeradius/3.0/certs/ca.pem
 ```
 
 RHEL-like example:
 
 ```bash
-sudo chown radiusd:radiusd /etc/raddb/certs/server.pem
-sudo chmod 600 /etc/raddb/certs/server.pem
-sudo chmod 644 /etc/raddb/certs/ca.pem /etc/raddb/certs/ca.der
+sudo install -o radiusd -g radiusd -m 600 \
+  /root/radius-certs/server.pem \
+  /etc/raddb/certs/server.pem
+sudo install -o root -g root -m 644 \
+  /root/radius-certs/ca.pem \
+  /etc/raddb/certs/ca.pem
 sudo restorecon -RFv /etc/raddb/certs
 ```
 
-Adjust ownership when the service account reported by `freeradius -XC` or `radiusd -XC` differs.
+Install `ca.der`, a separate private key, and a certificate-chain file in the same way when they are used. Public certificates can normally use mode `644`; private keys should use `600` and be owned by the FreeRADIUS service account. Adjust ownership when the service account reported by `freeradius -XC` or `radiusd -XC` differs.
 
 ### 3. Optional: generate lab certificates from package templates
 
@@ -319,6 +388,8 @@ ca.pem or ca.der
 ```
 
 Configure clients or MDM profiles with the expected authentication-server name (CN or SAN) as well as the CA. Do not distribute `server.pem`, `server.key`, `ca.key`, private client keys, or the EAP private key password.
+
+For the `radius.example.org` example, a client profile should contain the CA certificate and `radius.example.org` as the allowed server name. A user should not be asked to approve a different or untrusted certificate during normal connection.
 
 ## Troubleshooting
 
