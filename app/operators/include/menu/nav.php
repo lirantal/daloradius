@@ -48,14 +48,19 @@ if (!in_array($detect_category, array_keys($nav))) {
 
 ?>
 
-<header class="border-bottom">
-    <div class="row p-2">
-        <div class="d-flex align-items-center justify-content-center justify-content-lg-start">
-            <a href="index.php" class="d-flex align-items-center mb-1 mb-lg-0 text-dark text-decoration-none">
-                <img src="static/images/daloradius_small.png">
+<header class="app-header border-bottom">
+    <div class="container-fluid px-2 px-lg-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 py-2">
+            <button class="btn btn-outline-secondary btn-sm d-lg-none" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas" aria-label="Open menu">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <a href="index.php" class="app-brand d-flex align-items-center text-dark text-decoration-none">
+                <img src="static/images/daloradius_small.png" alt="daloRADIUS">
             </a>
       
-            <ul class="nav col-12 col-lg-auto mx-2 me-lg-auto mb-1 justify-content-center mb-md-0">
+            <ul class="nav app-primary-nav flex-nowrap flex-lg-wrap overflow-auto mx-lg-2 me-lg-auto order-3 order-lg-0 w-100 w-lg-auto">
 <?php
                 foreach ($nav as $category => $arr) {
                     list($label, $href) = $arr;
@@ -68,7 +73,7 @@ if (!in_array($detect_category, array_keys($nav))) {
 ?>
             </ul>
       
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" action="mng-search.php" method="GET">
+            <form class="app-search col-12 col-lg-auto me-lg-3 order-4 order-lg-0" role="search" action="mng-search.php" method="GET">
                 <div class="input-group">
                     <button class="input-group-text btn btn-outline-secondary" id="search-icon">
                         <i class="bi bi-search"></i>
@@ -79,7 +84,7 @@ if (!in_array($detect_category, array_keys($nav))) {
                 </div>
             </form>
             
-            <div class="dropdown text-end dropstart">
+            <div class="dropdown text-end dropstart ms-auto order-2 order-lg-0">
                 <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-person-circle"></i>
@@ -101,5 +106,5 @@ if (!in_array($detect_category, array_keys($nav))) {
                 </ul>
             </div><!-- -dropdown text-end -->
         </div>
-    </div><!-- .container -->
+    </div><!-- .container-fluid -->
 </header>

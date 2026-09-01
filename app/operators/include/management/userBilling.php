@@ -42,9 +42,9 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/userBilling.php') !== fals
  *********************************************************************************************************
  */
 function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()) {
-    global $logDebugSQL;
+    global $configValues, $logDebugSQL;
 
-    include('../common/includes/db_open.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     $user_id = false;
 
@@ -133,7 +133,7 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
 
 
 
-    include('../common/includes/db_close.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     return true;
 

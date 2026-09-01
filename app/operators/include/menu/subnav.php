@@ -110,9 +110,9 @@ if (!empty($detect_category) && count($subnav[$detect_category]) > 0) {
 
 ?>
 
-<nav class="border-bottom text-bg-light py-1">
-    <div class="d-flex">
-        <ul class="nav ms-4">
+<nav class="app-subnav border-bottom text-bg-light py-1">
+    <div class="container-fluid px-2 px-lg-3">
+        <ul class="nav flex-nowrap overflow-auto">
 <?php
             foreach ($subnav[$detect_category] as $label => $href) {
                 $label = htmlspecialchars(strip_tags(trim(t('submenu', $label))), ENT_QUOTES, 'UTF-8');

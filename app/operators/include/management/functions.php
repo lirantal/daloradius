@@ -29,6 +29,49 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/functions.php') !== false)
 }
 
 
+
+function quote_sql_identifier($identifier) {
+    if (!is_string($identifier) || !preg_match('/^[A-Za-z0-9_]+$/', $identifier)) {
+        return '';
+    }
+
+    return sprintf('`%s`', $identifier);
+}
+
+function get_table_column_names($dbSocket, $table_name, $fallback_columns=array()) {
+    $quoted_table_name = quote_sql_identifier($table_name);
+    if (empty($quoted_table_name)) {
+        return $fallback_columns;
+    }
+
+    $sql = sprintf('SHOW COLUMNS FROM %s', $quoted_table_name);
+    $columns = $dbSocket->getCol($sql);
+
+    if (!is_array($columns) || count($columns) == 0) {
+        return $fallback_columns;
+    }
+
+    $valid_columns = array();
+    foreach ($columns as $column) {
+        if (is_string($column) && preg_match('/^[A-Za-z0-9_]+$/', $column)) {
+            $valid_columns[] = $column;
+        }
+    }
+
+    return (count($valid_columns) > 0) ? $valid_columns : $fallback_columns;
+}
+
+function get_accounting_custom_query_options($dbSocket, $radacct_table, $fallback_all, $fallback_default) {
+    $all = get_table_column_names($dbSocket, $radacct_table, $fallback_all);
+    $default = array_values(array_intersect($fallback_default, $all));
+
+    if (count($default) == 0) {
+        $default = array_slice($all, 0, min(10, count($all)));
+    }
+
+    return array($all, $default);
+}
+
 // add invoice items contained in the $_POST array.
 // a single items is an associatime array starting with the string 'item'
 // and containing exactly 4 elements: plan, amount, tax and notes
@@ -171,6 +214,26 @@ function group_exists($dbSocket, $groupname) {
 
 }
 
+if (!defined('DALO_DISABLED_USERS_GROUP')) {
+    define('DALO_DISABLED_USERS_GROUP', 'daloRADIUS-Disabled-Users');
+}
+if (!defined('DALO_DISABLED_USERS_GROUP_PRIORITY')) {
+    define('DALO_DISABLED_USERS_GROUP_PRIORITY', -1);
+}
+
+function is_disabled_users_group($groupname) {
+    return trim($groupname) === DALO_DISABLED_USERS_GROUP;
+}
+
+function normalize_user_group_priority($groupname, $priority=0) {
+    if (is_disabled_users_group($groupname)) {
+        return DALO_DISABLED_USERS_GROUP_PRIORITY;
+    }
+
+    $priority = intval($priority);
+    return ($priority < 0) ? 0 : $priority;
+}
+
 function update_user_group_mapping_priority($dbSocket, $username, $groupname, $new_priority) {
     global $configValues, $logDebugSQL;
 
@@ -188,7 +251,7 @@ function update_user_group_mapping_priority($dbSocket, $username, $groupname, $n
 
 
     if ($numrows > 0) {
-        $priority = (intval($new_priority) < 0) ? 0 : intval($new_priority);
+        $priority = normalize_user_group_priority($groupname, $new_priority);
 
         if ($numrows == 1) {
             $sql = sprintf("UPDATE %s SET priority=%d WHERE username='%s' AND groupname='%s'",
@@ -231,7 +294,7 @@ function insert_single_user_group_mapping($dbSocket, $username, $groupname, $pri
         return false;
     }
 
-    $priority = (intval($priority) < 0) ? 0 : intval($priority);
+    $priority = normalize_user_group_priority($groupname, $priority);
 
     $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
@@ -360,11 +423,12 @@ function insert_multiple_user_group_mappings($dbSocket, $username, $groupnames) 
             continue;
         }
 
-        // insert user-group mapping with default priority 0
-        $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', 0)",
+        // insert user-group mapping with default priority 0, except reserved disabled users group
+        $priority = normalize_user_group_priority($groupname, 0);
+        $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
                        $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
                        $dbSocket->escapeSimple($username),
-                       $dbSocket->escapeSimple($groupname));
+                       $dbSocket->escapeSimple($groupname), $priority);
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 

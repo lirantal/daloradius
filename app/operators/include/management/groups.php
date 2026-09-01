@@ -109,7 +109,12 @@ foreach ($_groups as $g => $p) {
     
     echo '<div>';
     printf('<label for="group-%d-priority">%s</label>', $counter, $prorityLabel);
-    printf('<input class="form-control" type="number" min="0" value="%d" name="groups[%d][1]" id="group-%d-priority">', $p, $counter, $counter);
+    $is_disabled_users_group = is_disabled_users_group($g);
+    $p = normalize_user_group_priority($g, $p);
+    printf('<input class="form-control%s" type="number" min="%d" value="%d" name="groups[%d][1]" id="group-%d-priority"%s>',
+           ($is_disabled_users_group ? ' bg-body-secondary text-muted' : ''),
+           ($is_disabled_users_group ? DALO_DISABLED_USERS_GROUP_PRIORITY : 0), $p, $counter, $counter,
+           ($is_disabled_users_group ? ' readonly title="Reserved disabled-users group; priority is locked to -1 so it is evaluated before normal groups."' : ''));
     echo '</div>';
     
     
@@ -130,14 +135,15 @@ echo '</div><!-- .container -->';
 
 echo "<script>" . "\n";
 
-echo "var selected_groups = [";
-if (count($_groups) > 0) {
-    echo "'" . implode("', '", array_keys($_groups)) . "'";
-}
-echo "]" . "\n";
-
+$selected_groups_js = json_encode(array_keys($_groups));
+$disabled_users_group_js = json_encode(DALO_DISABLED_USERS_GROUP);
+$disabled_users_group_priority_js = json_encode((string)DALO_DISABLED_USERS_GROUP_PRIORITY);
 
 echo <<<EOF
+var selected_groups = {$selected_groups_js};
+var disabledUsersGroupName = {$disabled_users_group_js};
+var disabledUsersGroupPriority = {$disabled_users_group_priority_js};
+
 function add_group() {
     var sel = document.getElementById('groups'),
         selected_group = sel.options[sel.selectedIndex].text;
@@ -161,9 +167,17 @@ function add_group() {
             +  `<input class="form-control" type="text" value="\${selected_group}" name="groups[\${num}][0]" id="group-\${num}-name">`
             +  '</div>';
     
+    var disabledUsersGroup = selected_group === disabledUsersGroupName;
+    var priorityValue = disabledUsersGroup ? disabledUsersGroupPriority : '0';
+    var priorityMin = disabledUsersGroup ? disabledUsersGroupPriority : '0';
+    var priorityLock = disabledUsersGroup
+        ? ' readonly title="Reserved disabled-users group; priority is locked to -1 so it is evaluated before normal groups."'
+        : '';
+    var priorityClass = disabledUsersGroup ? ' bg-body-secondary text-muted' : '';
+
     content += '<div>'
             +  `<label for="group-\${num}-priority">{$prorityLabel}</label>`
-            +  `<input class="form-control" type="number" min="0" value="0" name="groups[\${num}][1]" id="group-\${num}-priority">`
+            +  `<input class="form-control\${priorityClass}" type="number" min="\${priorityMin}" value="\${priorityValue}" name="groups[\${num}][1]" id="group-\${num}-priority"\${priorityLock}>`
             +  '</div>';
     
     var id = "group-" + num;

@@ -32,16 +32,16 @@ $descriptors1 = array();
 
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','MailSettings'), 'href' => 'config-mail-settings.php',
                          'icon' => 'envelope-at',  );
-$descriptors1[] = array( 'type' => 'link', 'label' => "Test email", 'href' => 'config-mail-testing.php',
+$descriptors1[] = array( 'type' => 'link', 'label' => t('sidebar', 'TestEmail'), 'href' => 'config-mail-testing.php',
                          'icon' => 'envelope-at',  );
 
 
 $sections = array();
-$sections[] = array( 'title' => 'Mail', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'Mail'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Configuration',
+                'title' => t('sidebar', 'Configuration'),
                 'sections' => $sections,
              );

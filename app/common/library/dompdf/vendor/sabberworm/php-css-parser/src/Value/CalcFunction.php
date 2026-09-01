@@ -6,15 +6,22 @@ use Sabberworm\CSS\Parsing\ParserState;
 use Sabberworm\CSS\Parsing\UnexpectedEOFException;
 use Sabberworm\CSS\Parsing\UnexpectedTokenException;
 
+/**
+ * Support for `-webkit-calc` and `-moz-calc` is deprecated in version 8.8.0, and will be removed in version 9.0.0.
+ */
 class CalcFunction extends CSSFunction
 {
     /**
      * @var int
+     *
+     * @internal
      */
     const T_OPERAND = 1;
 
     /**
      * @var int
+     *
+     * @internal
      */
     const T_OPERATOR = 2;
 
@@ -26,6 +33,8 @@ class CalcFunction extends CSSFunction
      *
      * @throws UnexpectedTokenException
      * @throws UnexpectedEOFException
+     *
+     * @internal since V8.8.0
      */
     public static function parse(ParserState $oParserState, $bIgnoreCase = false)
     {
@@ -87,7 +96,7 @@ class CalcFunction extends CSSFunction
                         sprintf(
                             'Next token was expected to be an operand of type %s. Instead "%s" was found.',
                             implode(', ', $aOperators),
-                            $oVal
+                            $oParserState->peek()
                         ),
                         '',
                         'custom',

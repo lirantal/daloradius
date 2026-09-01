@@ -245,7 +245,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             }
             break;
 
-        case 'userRefillSessionTime':
+        case 'refillSessionTime':
             // we update the sessiontime value to be 0 - this will only work though
             // for accumulative type accounts. For TTF accounts we need to completely
             // delete the record.
@@ -289,7 +289,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                                                     creditcardtype, creditcardexp, creationdate, creationby)
                                           VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
                                                   '%s', '%s',  '%s')",
-                                   $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'], $username, $row['planName'], $row['planTimeRefillCost'],
+                                   $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'], $username, $row['PlanID'], $row['planTimeRefillCost'],
                                    'Refill Session Time', 'daloRADIUS Web Interface', 'Refill Session Time', $row['paymentmethod'],
                                    $row['cash'], $row['creditcardname'], $row['creditcardnumber'], $row['creditcardverification'],
                                    $row['creditcardtype'], $row['creditcardexp'], $current_datetime, $currBy);
@@ -329,7 +329,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
 
             break;
 
-         case 'userRefillSessionTraffic':
+         case 'refillSessionTraffic':
             $sql = sprintf("UPDATE %s SET AcctInputOctets=0, AcctOutputOctets=0 WHERE Username IN (%s)",
                            $configValues['CONFIG_DB_TBL_RADACCT'], $username_list);
 
@@ -369,7 +369,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                                                     creditcardtype, creditcardexp, creationdate, creationby)
                                           VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
                                                   '%s', '%s',  '%s')",
-                                   $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'], $username, $row['planName'], $row['planTimeRefillCost'],
+                                   $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'], $username, $row['PlanID'], $row['planTrafficRefillCost'],
                                    'Refill Session Traffic', 'daloRADIUS Web Interface', 'Refill Session Traffic', $row['paymentmethod'],
                                    $row['cash'], $row['creditcardname'], $row['creditcardnumber'], $row['creditcardverification'],
                                    $row['creditcardtype'], $row['creditcardexp'], $current_datetime, $currBy);

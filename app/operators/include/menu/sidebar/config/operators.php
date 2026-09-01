@@ -40,6 +40,9 @@ $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewOperator'), 'href' =>'config-operators-new.php',
                          'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
+$descriptors1[] = array( 'type' => 'link', 'label' => t('sidebar', 'TwoFactorAuthentication'), 'href' =>'config-operator-2fa.php',
+                         'icon' => 'shield-lock', 'img' => array( 'src' => 'static/images/icons/userEdit.gif', ), );
+
 if (count($menu_datalist) > 0) {
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListOperators'), 'href' => 'config-operators-list.php',
                              'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
@@ -64,10 +67,10 @@ if (count($menu_datalist) > 0) {
 
 
 $sections = array();
-$sections[] = array( 'title' => 'Operators Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'OperatorsManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Configuration',
+                'title' => t('sidebar', 'Configuration'),
                 'sections' => $sections,
              );

@@ -172,7 +172,6 @@ $l['all']['HgPortId'] = "ハントグループポート ID";
 
 $l['all']['NasID'] = "NAS ID";
 $l['all']['Nas'] = "NAS ";
-$l['all']['Nas'] = "NAS ";
 $l['all']['NasIPHost'] = "NAS IP/ホスト";
 $l['all']['NasShortname'] = "NAS 短い名前";
 $l['all']['NasType'] = "NASタイプ";
@@ -382,7 +381,6 @@ $l['all']['BandwidthDown'] = "Bandwidth Down";
 
 $l['all']['BatchCost'] = "バッチコスト";
 
-$l['all']['PaymentDate'] = "支払日";
 
 $l['all']['PaymentStatus'] = "支払い状況";
 $l['all']['FirstName'] = "姓";
@@ -1250,7 +1248,6 @@ $l['Intro']['repstatus.php'] = "状態ページ";
 $l['Intro']['reptopusers.php'] = "トップユーザ";
 $l['Intro']['repusername.php'] = "ユーザ一覧";
 
-$l['Intro']['mngbatch.php'] = "バッチユーザ作成";
 $l['Intro']['mngbatchdel.php'] = "バッチセッション削除";
 
 $l['Intro']['mngdel.php'] = "ユーザ削除";
@@ -1437,7 +1434,6 @@ $l['helpPage']['mngradattributesedit'] = "";
 $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
-$l['helpPage']['mngimportusers'] = "";
 
 $l['helpPage']['msgerrorpermissions'] = "ページにアクセスする権限がありません。 <br/>
 システム管理者に問い合わせてください <br/>";

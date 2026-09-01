@@ -71,13 +71,19 @@
     }
 
     function print_dashboard_table_head($headers) {
-        echo '<table class="table table-hover table-striped"><tr>';
+        echo '<div class="table-responsive dashboard-table-wrapper mb-3">';
+        echo '<table class="table table-hover table-striped dashboard-table"><tr>';
         
         foreach ($headers as $header) {
             printf('<th>%s</th>', $header);
         }
 
         echo '</tr>';
+    }
+
+    function print_dashboard_table_bottom() {
+        echo '</table>';
+        echo '</div>';
     }
 
     function print_dashboard_table_row($items) {
@@ -127,7 +133,7 @@ HTML;
         [
             "title" => t('submenu', 'Users'),
             "total" => sprintf("%s: <strong>%d</strong>", t('all', 'Total'), $total_users),
-            "linkText" => "Go to users list",
+            "linkText" => t('dashboard', 'GoToUsersList'),
             "linkURL" => "mng-list-all.php",
             "bgColor" => "success",
             "icon" => "people-fill"
@@ -135,7 +141,7 @@ HTML;
         [
             "title" => t('submenu', 'Nas'),
             "total" => sprintf("%s: <strong>%d</strong>", t('all', 'Total'), $total_nas),
-            "linkText" => "Go to NAS list",
+            "linkText" => t('dashboard', 'GoToNASList'),
             "linkURL" => "mng-rad-nas-list.php",
             "bgColor" => "danger",
             "icon" => "router-fill"
@@ -143,7 +149,7 @@ HTML;
         [
             "title" => t('submenu', 'Hotspots'),
             "total" => sprintf("%s: <strong>%d</strong>", t('all', 'Total'), $total_hotspots),
-            "linkText" => "Go to hotspots list",
+            "linkText" => t('dashboard', 'GoToHotspotsList'),
             "linkURL" => "mng-hs-list.php",
             "bgColor" => "primary",
             "icon" => "wifi"
@@ -180,7 +186,7 @@ HTML;
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
 
-    echo '<div class="col-sm-12 col-md-6 m-0 px-3">';
+    echo '<div class="col-12 col-xl-6 m-0 px-3">';
     $title = t('button', 'LastConnectionAttempts');
     print_title($title, "rep-lastconnect.php", "bi-box-arrow-up-right");
 
@@ -201,10 +207,10 @@ HTML;
             print_dashboard_table_row(array($user, $reply, $datetime));
         }
 
-        echo '</table>';
+        print_dashboard_table_bottom();
     
     } else {
-        print_dashboard_info_message('no data to show');
+        print_dashboard_info_message(t('messages', 'noDataToShow'));
     }
 
     echo '</div>';
@@ -215,11 +221,11 @@ HTML;
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
 
-    echo '<div class="col-sm-12 col-md-6 m-0 px-3">';
-    print_title('Currently online', "rep-online.php?orderBy=acctstarttime&orderType=desc", "bi-box-arrow-up-right");
+    echo '<div class="col-12 col-xl-6 m-0 px-3">';
+    print_title(t('dashboard', 'CurrentlyOnline'), "rep-online.php?orderBy=acctstarttime&orderType=desc", "bi-box-arrow-up-right");
 
     if ($numrows > 0) {
-        print_dashboard_table_head(array(t('all', 'Username'), 'Online since'));
+        print_dashboard_table_head(array(t('all', 'Username'), t('dashboard', 'OnlineSince')));
         
         while ($row = $res->fetchRow()) {
             // Apply htmlspecialchars to each element of the row
@@ -230,10 +236,10 @@ HTML;
             print_dashboard_table_row($row);
         }
 
-        echo '</table>';
+        print_dashboard_table_bottom();
     
     } else {
-        print_dashboard_info_message('no data to show');
+        print_dashboard_info_message(t('messages', 'noDataToShow'));
     }
 
     echo <<<HTML
@@ -260,7 +266,7 @@ HTML;
     // Date one month ago
     $one_month_ago = date("Y-m-d", strtotime("-1 month"));
     $href = sprintf('rep-topusers.php?startdate=%s&enddate=%s&orderBy=Time&orderType=desc', $one_month_ago, $today);
-    $title = "Last month top users";
+    $title = t('dashboard', 'LastMonthTopUsers');
 
     echo '<div class="col-12 m-0 px-3">';
     print_title($title, $href, 'bi-box-arrow-up-right');
@@ -280,10 +286,10 @@ HTML;
             print_dashboard_table_row(array($username, $session_time, $uploaded_bytes, $downloaded_bytes));
         }
 
-        echo '</table>';
+        print_dashboard_table_bottom();
     
     } else {
-        print_dashboard_info_message('no data to show');
+        print_dashboard_info_message(t('messages', 'noDataToShow'));
     }
 
     echo '</div>';

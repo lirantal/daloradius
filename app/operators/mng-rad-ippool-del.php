@@ -21,16 +21,15 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include_once("include/management/populate_selectbox.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -45,7 +44,7 @@
     } else {
         $item = (array_key_exists('item', $_REQUEST) && !empty($_REQUEST['item'])) ? $_REQUEST['item'] : "";
     }
-    
+
     $arr = array();
     $tmp = (!is_array($item)) ? array( $item ) : $item;
     foreach ($tmp as $tmp_item) {
@@ -55,7 +54,7 @@
 
         $arr[] = $tmp_item;
     }
-    
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
@@ -64,7 +63,7 @@
                 $failureMsg = "Empty or invalid ippool item(s)";
                 $logAction .= sprintf("Failed deleting ippool item(s) [%s] on page: ", $failureMsg);
             } else {
-                include('../common/includes/db_open.php');
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
                 $deleted = 0;
                 foreach ($arr as $arr_item) {
@@ -91,7 +90,7 @@
                     $logAction .= sprintf("Failed deleting ippool item(s) [%s] on page: ", $failureMsg);
                 }
 
-                include('../common/includes/db_close.php');
+                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
             }
         } else {
             // csrf
@@ -104,15 +103,15 @@
     // print HTML prologue
     $title = t('Intro','mngradippooldel.php');
     $help = t('helpPage','mngradippooldel');
-    
+
     print_html_prologue($title, $langCode);
 
-    
-    
+
+
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     if (!isset($successMsg)) {
         $options = $valid_ippools;
@@ -134,7 +133,7 @@
                                         "title" => t('title','IPPoolInfo'),
                                         "disabled" => (count($options) == 0)
                                      );
-                                     
+
         open_form();
 
         open_fieldset($fieldset0_descriptor);
@@ -168,7 +167,7 @@
 
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
 
 ?>

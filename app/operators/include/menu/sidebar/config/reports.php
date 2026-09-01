@@ -33,11 +33,11 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DashboardSetti
                          'icon' => 'speedometer2', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png', ), );
 
 $sections = array();
-$sections[] = array( 'title' => 'Reporting Settings', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'ReportingSettings'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Configuration',
+                'title' => t('sidebar', 'Configuration'),
                 'sections' => $sections,
              );

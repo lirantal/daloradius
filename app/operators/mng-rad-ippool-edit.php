@@ -21,25 +21,24 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include_once("include/management/populate_selectbox.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
-    
+
     // load valid ippools
     $valid_ippools = get_ippools();
-    
+
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $item = (array_key_exists('item', $_POST) && !empty(str_replace("%", "", trim($_POST['item']))))
@@ -50,7 +49,7 @@
     }
 
     $exists = in_array($item, array_keys($valid_ippools));
-    
+
     if (!$exists) {
         // we reset the rate if it does not exist
         $item = "";
@@ -63,7 +62,7 @@
     $selected_ippool = $item;
 
 
-    include('../common/includes/db_open.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -74,20 +73,20 @@
                 $failureMsg = sprintf("Selected an empty/invalid ippool item");
                 $logAction .= "$failureMsg on page: ";
             } else {
-            
+
                 $pool_name = (array_key_exists('pool_name', $_POST) && !empty(str_replace("%", "", trim($_POST['pool_name']))))
                            ? str_replace("%", "", trim($_POST['pool_name'])) : "";
-                          
+
                 $framedipaddress = (array_key_exists('framedipaddress', $_POST) && !empty(trim($_POST['framedipaddress'])) &&
                                     filter_var(trim($_POST['framedipaddress']), FILTER_VALIDATE_IP) !== false)
                                  ? trim($_POST['framedipaddress']) : "";
-                
+
                 if (empty($framedipaddress) || empty($pool_name)) {
                     // required
                     $failureMsg = sprintf("Empty/invalid %s and/or %s", t('all','PoolName'), t('all','IPAddress'));
                     $logAction .= "$failureMsg on page: ";
                 } else {
-                
+
                     $sql = sprintf("SELECT COUNT(id)
                                       FROM %s
                                      WHERE framedipaddress=? AND id<>?", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
@@ -127,7 +126,7 @@
             $logAction .= "$failureMsg on page: ";
         }
     }
-    
+
     if (empty($internal_id)) {
         $failureMsg = sprintf("Selected an empty/invalid ippool element");
         $logAction .= "Failed updating ippool element (possible empty or invalid ippool element id) on page: ";
@@ -143,23 +142,19 @@
         list( $pool_name, $framedipaddress ) = $res->fetchrow();
     }
 
-    include('../common/includes/db_close.php');
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
 
     // print HTML prologue
     $title = t('Intro','mngradippoolnew.php');
     $help = t('helpPage','mngradippoolnew');
-    
+
     print_html_prologue($title, $langCode);
-
-    
-
-
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
-    
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+
+
     if (!empty($internal_id)) {
 
         // descriptors 0
@@ -172,7 +167,7 @@
                                         'value' => $pool_name,
                                         'required' => true
                                      );
-                                     
+
         $input_descriptors0[] = array(
                                         'name' => 'framedipaddress',
                                         'caption' => t('all','IPAddress'),
@@ -181,7 +176,7 @@
                                         'pattern' => trim(IP_REGEX, '/'),
                                         'required' => true
                                      );
-                                     
+
         // descriptors 1
         $input_descriptors1 = array();
 
@@ -227,7 +222,7 @@
 
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-    
+
 ?>

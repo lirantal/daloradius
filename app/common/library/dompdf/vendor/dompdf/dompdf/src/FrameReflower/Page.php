@@ -91,7 +91,7 @@ class Page extends AbstractFrameReflower
      *
      * @param BlockFrameDecorator|null $block
      */
-    function reflow(BlockFrameDecorator $block = null)
+    function reflow(?BlockFrameDecorator $block = null)
     {
         /** @var PageFrameDecorator $frame */
         $frame = $this->_frame;
@@ -99,6 +99,17 @@ class Page extends AbstractFrameReflower
         $fixed_children = [];
         $prev_child = null;
         $current_page = 0;
+
+        // Only if it's the first page, we save the nodes with a fixed position
+        if ($child) {
+            foreach ($child->get_children() as $onechild) {
+                if ($onechild->get_style()->position === "fixed") {
+                    $fixed_children[] = $onechild->deep_copy();
+                    $child->remove_child($onechild);
+                }
+            }
+            $fixed_children = array_reverse($fixed_children);
+        }
 
         while ($child) {
             $this->apply_page_style($frame, $current_page + 1);
@@ -117,27 +128,15 @@ class Page extends AbstractFrameReflower
             $content_width = $cb["w"] - $left - $right;
             $content_height = $cb["h"] - $top - $bottom;
 
-            // Only if it's the first page, we save the nodes with a fixed position
-            if ($current_page == 0) {
-                foreach ($child->get_children() as $onechild) {
-                    if ($onechild->get_style()->position === "fixed") {
-                        $fixed_children[] = $onechild->deep_copy();
-                    }
-                }
-                $fixed_children = array_reverse($fixed_children);
-            }
-
             $child->set_containing_block($content_x, $content_y, $content_width, $content_height);
+
+            //Insert a copy of each node which have a fixed position
+            foreach ($fixed_children as $fixed_child) {
+                $child->prepend_child($fixed_child->deep_copy());
+            }
 
             // Check for begin reflow callback
             $this->_check_callbacks("begin_page_reflow", $child);
-
-            //Insert a copy of each node which have a fixed position
-            if ($current_page >= 1) {
-                foreach ($fixed_children as $fixed_child) {
-                    $child->insert_child_before($fixed_child->deep_copy(), $child->get_first_child());
-                }
-            }
 
             $child->reflow();
             $next_child = $child->get_next_sibling();

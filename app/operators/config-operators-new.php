@@ -23,6 +23,7 @@
  
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+    $operator_id = $_SESSION['operator_id'];
 
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
@@ -255,7 +256,7 @@
         open_tab($navkeys, 2);
 
         include_once('include/management/operator_acls.php');
-        drawOperatorACLs();
+        drawOperatorACLs($operator_id);
 
         close_tab($navkeys, 2);
 

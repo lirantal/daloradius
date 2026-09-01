@@ -159,7 +159,6 @@ $l['all']['RateCost'] = "Rate Cost";
 $l['all']['Billed'] = "Számlázott";
 $l['all']['TotalUsers'] = "Összes felhasználó";
 $l['all']['TotalBilled'] = "Összes számlázott";
-$l['all']['CardBank'] = "Bank neve";
 $l['all']['Type'] = "Típusa";
 $l['all']['CardBank'] = "Bank";
 $l['all']['MACAddress'] = "MAC Cím";
@@ -328,8 +327,6 @@ $l['Tooltip']['RateName'] = "Type the Rate name";
 $l['Tooltip']['OperatorName'] = "Type the Operator name";
 $l['Tooltip']['BillingPlanName'] = "Type the Billing Plan name";
 
-$l['Tooltip']['EditRate'] = "Edit Rate";
-$l['Tooltip']['RemoveRate'] = "Remove Rate";
 
 $l['Tooltip']['EditRate'] = "Edit Rate";
 $l['Tooltip']['RemoveRate'] = "Remove Rate";
@@ -850,7 +847,6 @@ $l['Intro']['replogssystem.php'] = "Rendszernapló";
 $l['Intro']['replogsradius.php'] = "RADIUS Szerver napló";
 $l['Intro']['replogsdaloradius.php'] = "daloRADIUS napló";
 $l['Intro']['replogsboot.php'] = "Boot napló";
-$l['Intro']['replogs.php'] = "Naplók";
 
 $l['Intro']['rephsall.php'] = "Hotspotok listája";
 $l['Intro']['repmain.php'] = "Jelentések oldal";

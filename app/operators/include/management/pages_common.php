@@ -51,6 +51,25 @@ function createPassword($length, $chars) {
     return $pass;
 }
 
+// Generated-password exports are session-bound and short-lived.
+define('GENERATED_PASSWORD_EXPORT_LIFETIME_SECONDS', 300);
+
+function cleanupGeneratedPasswordExports($now = null) {
+    if (!isset($_SESSION['generated_password_exports']) ||
+        !is_array($_SESSION['generated_password_exports'])) {
+        return;
+    }
+
+    $now = is_null($now) ? time() : intval($now);
+
+    foreach ($_SESSION['generated_password_exports'] as $token => $export) {
+        if (!is_array($export) || !isset($export['created_at']) ||
+            intval($export['created_at']) <= ($now - GENERATED_PASSWORD_EXPORT_LIFETIME_SECONDS)) {
+            unset($_SESSION['generated_password_exports'][$token]);
+        }
+    }
+}
+
 /* convert byte to to size */
 function toxbyte($size) {
     if (!is_numeric($size) || $size <= 0) {
@@ -401,8 +420,8 @@ function printTableHead($cols, $orderBy="", $orderType="asc", $partial_query_str
 
             $partial_query_string_safe = str_replace('%', '%%', $partial_query_string);
             $href_format = '?orderBy=%s&orderType=%s' . $partial_query_string_safe; 
-            $href_asc = sprintf($href_format, $param, 'asc');
-            $href_desc = sprintf($href_format, $param, 'desc');
+            $href_asc = htmlspecialchars(sprintf($href_format, $param, 'asc'), ENT_QUOTES, 'UTF-8', false);
+            $href_desc = htmlspecialchars(sprintf($href_format, $param, 'desc'), ENT_QUOTES, 'UTF-8', false);
 
             //~ $img_format = '<img src="%s" alt="%s">';
             //~ $img_asc = sprintf($img_format, 'static/images/icons/arrow_up.png', '^');

@@ -50,7 +50,7 @@
     $title = t('Intro','graphsalltimetrafficcompare.php');
     $help = t('helpPage','graphsalltimetrafficcompare');
 
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, array(), array("static/js/chart.umd.min.js", "static/js/daloradius-charts.js"));
 
     print_title_and_help($title, $help);
 
@@ -63,7 +63,7 @@
     // print navbar controls
     print_tab_header($navkeys);
 
-    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
+    $img_format = '<div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
 
     // open tab wrapper
     open_tab_wrapper();

@@ -24,7 +24,8 @@
 	require_once(dirname(__FILE__)."/../../notifications/processNotificationUserInvoice.php");
 	require_once(dirname(__FILE__)."/../../../common/includes/config_read.php");
 	
-	isset($_GET['invoice_id']) ? $invoice_id = $_GET['invoice_id'] : $invoice_id = "";
+	$invoice_id = (array_key_exists('invoice_id', $_GET) && intval(trim($_GET['invoice_id'])) > 0)
+	            ? intval(trim($_GET['invoice_id'])) : "";
 	isset($_GET['destination']) ? $destination = $_GET['destination'] : $destination = "download";
 	
 	$login = $_SESSION['login_user'];
@@ -47,22 +48,27 @@
 	}
 	
 	
-	function getInvoiceDetails($invoice_id = NULL, $username) {
+	function getInvoiceDetails($invoice_id, $username) {
 		
 		require(dirname(__FILE__)."/../../../common/includes/db_open.php");
 		require_once(dirname(__FILE__)."/../../lang/main.php");
 		
-		global $configValues;
+		global $configValues, $logDebugSQL;
+
+		if (!isset($logDebugSQL))
+			$logDebugSQL = "";
 		
 
 		$sql = "SELECT id, contactperson, city, state, username FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
 		" WHERE username = '".$dbSocket->escapeSimple($username)."'";
 		$res = $dbSocket->query($sql);
 		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-		$user_id = $row['id'];
+		$user_id = ($row && array_key_exists('id', $row)) ? $row['id'] : null;
 		
-		if (!$user_id)
+		if (!$user_id) {
+			require(dirname(__FILE__)."/../../../common/includes/db_close.php");
 			return false;
+		}
 		
 		if ($invoice_id == NULL || empty($invoice_id))
 			exit;
@@ -133,10 +139,11 @@
 			";
 
 		// get all invoice items
-		$sql = 'SELECT a.id, a.plan_id, a.amount, a.tax_amount, a.notes, b.planName '.
-				' FROM '.$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'].' a '.
-				' LEFT JOIN '.$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].' b ON a.plan_id = b.id '.
-				' WHERE a.invoice_id = '.$invoice_id.' ORDER BY a.id ASC';
+		$sql = sprintf("SELECT a.id, a.plan_id, a.amount, a.tax_amount, a.notes, b.planName
+		                  FROM %s a LEFT JOIN %s b ON a.plan_id = b.id
+		                 WHERE a.invoice_id = %d ORDER BY a.id ASC",
+		               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
+		               $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $invoice_id);
 		$res = $dbSocket->query($sql);
 		$logDebugSQL .= $sql . "\n";
 		

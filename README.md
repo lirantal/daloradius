@@ -16,9 +16,7 @@ At the end of this procedure, **the installation script will generate random cre
 
 ---
 ### installation guide
-To install daloRADIUS, you can follow the installation guide available in the project's official wiki:
-
-- [Wiki: Installing daloRADIUS](../../wiki/Installing-daloRADIUS)
+To install daloRADIUS, you can follow the installation guide available in the project's official [wiki](../../wiki/).
 
 Alternatively, you can also find the installation guide in the `doc/install` folder of this repository.
 
@@ -27,6 +25,16 @@ If you encounter any issues during the installation or have any questions, feel 
 ## Documentation
 
 The documentation for daloRADIUS is available in Markdown format and can be found in the `doc` folder of this repository.
+
+### Docker
+
+For a complete local stack, copy `.env.example` to `.env`, set the required secrets, and start MariaDB, FreeRADIUS, and the web interfaces with:
+
+```bash
+docker compose up -d --build
+```
+
+The primary `Dockerfile` can also run the web interfaces alone against externally managed MariaDB and FreeRADIUS services. See the [Docker usage guide](README.docker.md) for environment variables, ports, persistence, upgrades, and both deployment modes.
 
 ## Contributors
 
@@ -169,6 +177,11 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
 - **Create New Operator**
 - **Edit Operator**
 - **Delete Operator**
+- **Two-Factor Authentication**: Operators can enable TOTP-based MFA for their own account. Administrators can reset an operator's MFA from the UI or from the server command line; see [Operator two-factor authentication recovery](doc/setup/operator-mfa.md).
+
+### Database migrations
+
+For new installations, use the schemas found in `contrib/db/mariadb-daloradius*.sql`. If you're upgrading an existing daloRADIUS setup, review `contrib/db/migrations/` and apply the relevant SQL migrations before using any newly introduced features. See the [upgrade notes](../../wiki/daloRADIUS-upgrade-notes-(Debian)) in the wiki for details.
 
 
 
@@ -180,8 +193,10 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
 * bootstrap icons - [https://icons.getbootstrap.com/](https://icons.getbootstrap.com/)
 * dompdf - [https://github.com/dompdf](https://github.com/dompdf)
 * htmlpurifier - [https://github.com/ezyang/htmlpurifier](https://github.com/ezyang/htmlpurifier)
-* jpgraph - [https://jpgraph.net/](https://jpgraph.net/)
+* Chart.js - [https://www.chartjs.org/](https://www.chartjs.org/)
 * phpmailer - [https://github.com/PHPMailer/PHPMailer](https://github.com/PHPMailer/PHPMailer)
+* php-svg-qrcode - [https://github.com/philronan/php-svg-qrcode](https://github.com/philronan/php-svg-qrcode)
+* totp-php - [https://github.com/remotemerge/totp-php](https://github.com/remotemerge/totp-php)
 
 
 # Support
@@ -193,3 +208,7 @@ Helpful resources to find help and support with daloRADIUS:
 - [Filippo Lauria](https://github.com/filippolauria/), main mainteiner of this repository;
 - [Liran Tal](https://github.com/lirantal/), the original creator of daloRADIUS;
 - [Miguel García](https://github.com/MiguelVis) and all contributors for their valuable work.
+
+## Contributing
+
+Please consult [CONTRIBUTING](./CONTRIBUTING.md) for guidelines on contributing to this project.

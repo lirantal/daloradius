@@ -1,10 +1,10 @@
-This guide will walk you through the process of deploying a **basic open-source AAA infrastructure** on a dedicated instance of [Debian](https://www.debian.org/download). The configurations that have been tested are provided separately for Debian 11 and Debian 12, as outlined in the table below:
-Package\OS|Debian 11|Debian 12|
---|--|--|
-[MariaDB](https://mariadb.org/download/)|10.5|10.11
-[FreeRADIUS](https://freeradius.org/releases/)|3.0.x|3.2.x
-[Apache 2](https://httpd.apache.org/download.cgi)|2.4.x|2.4.x
-[PHP](https://www.php.net/downloads.php)|7.4.x|8.2.x
+This guide will walk you through the process of deploying a **basic open-source AAA infrastructure** on a dedicated instance of [Debian](https://www.debian.org/download). The configurations that have been tested are provided separately for Debian 11, Debian 12, and Debian 13, as outlined in the table below:
+Package\OS|Debian 11|Debian 12|Debian 13|
+--|--|--|--|
+[MariaDB](https://mariadb.org/download/)|10.5|10.11|11.8
+[FreeRADIUS](https://freeradius.org/releases/)|3.0.x|3.2.x|3.2.x
+[Apache 2](https://httpd.apache.org/download.cgi)|2.4.x|2.4.x|2.4.x
+[PHP](https://www.php.net/downloads.php)|7.4.x|8.2.x|8.4.x
 
 # Prerequisites
 Before proceeding with the installation, please ensure the following:
@@ -26,6 +26,26 @@ Please note that this guide covers only the basic deployment of the AAA infrastr
 Lastly, all the commands and procedures mentioned in this guide assume the use of the **root** user. Please exercise caution when executing commands as the root user.
 
 **The authors of this guide disclaims any responsibility for any direct, indirect, incidental, consequential or other damages arising from the use of this guide.**
+
+
+# Proxmox LXC containers
+
+This installation can run inside Proxmox LXC containers, but the container must allow systemd services such as FreeRADIUS to use the required namespace protections.
+
+For Proxmox LXC, enable the `nesting` feature before running the installer or following this guide:
+
+```bash
+pct set <CTID> -features nesting=1
+```
+
+Without this feature, FreeRADIUS may fail to start with an error similar to:
+
+```text
+Failed to set up mount namespacing: /run/systemd/unit-root/proc: Permission denied
+Failed at step NAMESPACE
+```
+
+If you see this error, enable nesting for the container or use a full virtual machine instead of a restricted LXC container.
 
 # Installing MariaDB
 
@@ -124,6 +144,26 @@ authorize {
 
 This lets FreeRADIUS compare the user's accumulated accounting time with daloRADIUS check attributes such as `Max-All-Session`.
 
+To enforce simultaneous session limits such as `Simultaneous-Use`, enable SQL-backed session tracking in the `session` section of `/etc/freeradius/3.0/sites-available/default`:
+
+```text
+session {
+    sql
+}
+```
+
+This lets FreeRADIUS check active sessions in the SQL accounting table (`radacct`). Make sure your NAS sends accounting packets (`Accounting-Start`, `Accounting-Stop`, and ideally interim updates), otherwise FreeRADIUS cannot reliably know which sessions are currently active.
+
+To reduce the race between `Access-Accept` and the NAS sending `Accounting-Start`, also enable `sql_session_start` in the `post-auth` section:
+
+```text
+post-auth {
+    ...
+    sql_session_start
+    ...
+}
+```
+
 To enforce daloRADIUS profile/group NAS restrictions configured as `radgroupcheck` rows, also add the following policy immediately after `noresetcounter` in the same `authorize` section:
 
 ```text
@@ -199,7 +239,7 @@ export DALORADIUS_OPERATORS_PORT=8000
 export DALORADIUS_ROOT_DIRECTORY=/var/www/daloradius  
 
 # daloRADIUS administrator's email
-export DALORADIUS_SERVER_ADMIN=admin@daloradius.local
+export DALORADIUS_SERVER_ADMIN=admin@daloradius.example.org
 EOF
 ```
 These variables define the ports for the users and operators interfaces, the root directory of the daloRADIUS package, and the email address of the daloRADIUS administrator.
@@ -295,11 +335,32 @@ chown -R www-data:www-data var
 chmod -R 775 var
 ```
 
-The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to guarantee the correct loading of FreeRADIUS's SQL schema. This can be accomplished by executing the following commands:
+The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to load the schemas in the correct order: the FreeRADIUS base schema first, then the daloRADIUS base schema, then every migration (in alphabetical order, since they are named `year-month-...`), and finally the performance indexes. This can be accomplished by executing the following commands:
 ```bash
 cd /var/www/daloradius/contrib/db
-mariadb -u raduser -p raddb < fr3-mariadb-freeradius.sql
-mariadb -u raduser -p raddb < mariadb-daloradius.sql
+
+# Set the database password
+export MYSQL_PWD='radpass'
+
+# Load FreeRADIUS base schema
+mariadb -u raduser raddb < fr3-mariadb-freeradius.sql
+
+# Load daloRADIUS base schema
+mariadb -u raduser raddb < mariadb-daloradius.sql
+
+# Load daloRADIUS dictionaries
+mariadb -u raduser raddb < mariadb-daloradius-dictionaries.sql
+
+# Load daloRADIUS migration schemas
+for f in $(ls -1 migrations/*.sql); do
+    mariadb -u raduser raddb < "$f"
+done
+
+# Load daloRADIUS performance indexes
+mariadb -u raduser raddb < update-performance-indexes.sql
+
+# Clean up
+unset MYSQL_PWD
 ```
 
 Finally, to complete the configuration, it is necessary to disable the default site, enable the newly created sites, ensure that Apache 2 is enabled, and restart it by executing the following commands:
@@ -310,14 +371,13 @@ systemctl enable apache2
 systemctl restart apache2
 ```
 
-
 # Testing the Infrastructure
 
 To ensure proper functionality of daloRADIUS, follow these steps to access the RADIUS Management and User Portal applications:
 
-1. **RADIUS Management application**: Access the application using the URL [http://daloradius.local:8000](http://daloradius.local:8000). Replace `daloradius.local` with the domain name or IP address associated with your system.
+1. **RADIUS Management application**: Access the application using the URL [http://daloradius.example.org:8000](http://daloradius.example.org:8000). Replace `daloradius.example.org` with the domain name or IP address associated with your system.
 
-2. **User Portal application**: Access the application using the URL [http://daloradius.local](http://daloradius.local). Again, replace `daloradius.local` with the appropriate domain name or IP address.
+2. **User Portal application**: Access the application using the URL [http://daloradius.example.org](http://daloradius.example.org). Replace `daloradius.example.org` with the domain name or IP address associated with your system.
 
 The port numbers `80` and `8000` reflect the choices made in the previous sections of this guide. Please ensure that you have a web browser installed and a network connection to the daloRADIUS server.
 
@@ -332,6 +392,32 @@ Upon logging in, it is highly recommended to **update the administrator's passwo
 2. Locate the option to change the password for the administrator account.
 3. Choose a new password that is secure, using a combination of uppercase and lowercase letters, numbers, and special characters.
 4. Save the changes to update the administrator's password.
+
+You can also validate the local services from the command line:
+
+```bash
+systemctl status mariadb freeradius apache2 --no-pager
+curl -I http://127.0.0.1/
+curl -I http://127.0.0.1:8000/
+```
+
+To validate a basic FreeRADIUS SQL authentication flow, add a test user and run `radtest`:
+
+```bash
+mariadb -u raduser -p raddb
+```
+
+```sql
+INSERT INTO radcheck (username, attribute, op, value)
+VALUES ('testuser', 'Cleartext-Password', ':=', 'testpass');
+EXIT;
+```
+
+```bash
+radtest testuser testpass 127.0.0.1 0 testing123
+```
+
+A successful response includes `Access-Accept`.
 
 # Credits
 This guide was created by **Filippo Lauria** and **Andrea De Vita**.

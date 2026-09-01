@@ -59,11 +59,11 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','BatchDetails')
                          'icon' => 'info-circle', 'form_components' => $components, );
 
 $sections = array();
-$sections[] = array( 'title' => 'List', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'List'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Batch Users',
+                'title' => t('sidebar', 'BatchUsers'),
                 'sections' => $sections,
              );

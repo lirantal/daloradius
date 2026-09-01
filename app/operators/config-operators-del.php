@@ -150,9 +150,9 @@
                                       );
         
         if (count($options) > 0) {
-            $input_descriptor[0]['datalist'] = $options;
+            $input_descriptors1[0]['datalist'] = $options;
         } else {
-            $input_descriptor[0]['disabled'] = true;
+            $input_descriptors1[0]['disabled'] = true;
         }
 
         $input_descriptors1[] = array(

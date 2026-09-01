@@ -23,12 +23,16 @@ DB_HOST=localhost
 DB_PORT=3306
 DALORADIUS_USERS_PORT=80
 DALORADIUS_OPERATORS_PORT=8000
-DALORADIUS_ROOT_DIRECTORY=/var/www/daloradius
-DALORADIUS_CONF_FILE="${DALORADIUS_ROOT_DIRECTORY}/app/common/includes/daloradius.conf.php"
-DALORADIUS_SERVER_ADMIN=admin@daloradius.local
-FREERADIUS_SQL_MOD_PATH="/etc/freeradius/3.0/mods-available/sql"
-FREERADIUS_SQLCOUNTER_MOD_PATH="/etc/freeradius/3.0/mods-available/sqlcounter"
-FREERADIUS_DEFAULT_SITE_PATH="/etc/freeradius/3.0/sites-available/default"
+DALORADIUS_ROOT_DIR=/var/www/daloradius
+DALORADIUS_CONF_FILE="${DALORADIUS_ROOT_DIR}/app/common/includes/daloradius.conf.php"
+DALORADIUS_SERVER_ADMIN=admin@daloradius.example.org
+
+FREERADIUS_ROOT_DIR="/etc/freeradius/3.0"
+FREERADIUS_MODS_AVAIL_PATH="${FREERADIUS_ROOT_DIR}/mods-available"
+FREERADIUS_MODS_ENABL_PATH="${FREERADIUS_ROOT_DIR}/mods-enabled"
+FREERADIUS_SITES_ENABL_PATH="${FREERADIUS_ROOT_DIR}/sites-enabled"
+FREERADIUS_SITES_AVAIL_PATH="${FREERADIUS_ROOT_DIR}/sites-available"
+
 
 # Function to print an OK message in green
 print_green() {
@@ -52,7 +56,7 @@ print_blue() {
 
 print_spinner() {
     PID=$1
-    
+
     i=1
     sp="/-\|"
     echo -n ' '
@@ -114,6 +118,30 @@ system_ensure_root() {
       exit 1
     fi
   fi
+}
+
+# Function to ensure systemd can run services that protect kernel tunables.
+# Some container environments, such as Proxmox LXC containers without the
+# nesting feature enabled, cannot set up the mount namespace required by the
+# Debian FreeRADIUS unit (ProtectKernelTunables=true). Detect this before the
+# installer mutates the system and leaves a partial installation behind.
+system_check_service_namespace_support() {
+    echo -n "[+] Checking systemd service namespace support... "
+
+    if ! command -v systemd-run >/dev/null 2>&1; then
+        print_red "KO"
+        echo "[!] systemd-run is required to validate service namespace support. Aborting." >&2
+        exit 1
+    fi
+
+    if ! systemd-run --wait --collect --quiet -p ProtectKernelTunables=yes /bin/true >/dev/null 2>&1; then
+        print_red "KO"
+        echo "[!] This system cannot run services with protected kernel tunables." >&2
+        echo "[!] In Proxmox LXC containers, enable the nesting feature or provide write access to /proc/sys before running this installer." >&2
+        exit 1
+    fi
+
+    print_green "OK"
 }
 
 # Function to install necessary system packages and perform system update
@@ -209,21 +237,30 @@ freeradius_install() {
 # Function to set up freeRADIUS SQL module
 freeradius_setup_sql_mod() {
     echo -n "[+] Setting up freeRADIUS SQL module... "
-    if ! sed -Ei '/^[\t\s#]*tls\s+\{/, /[\t\s#]*\}/ s/^/#/' "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! sed -Ei 's/^[\t\s#]*dialect\s+=\s+.*$/\tdialect = "mysql"/g' "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! sed -Ei 's/^[\t\s#]*driver\s+=\s+"rlm_sql_null"/\tdriver = "rlm_sql_\${dialect}"/g' "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! sed -Ei "s/^[\t\s#]*server\s+=\s+\"localhost\"/\tserver = \"${DB_HOST}\"/g" "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! sed -Ei "s/^[\t\s#]*port\s+=\s+[0-9]+/\tport = ${DB_PORT}/g" "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! sed -Ei "s/^[\t\s#]*login\s+=\s+\"radius\"/\tlogin = \"${DB_USER}\"/g" "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! sed -Ei "s/^[\t\s#]*password\s+=\s+\"radpass\"/\tpassword = \"${DB_PASS}\"/g" "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! sed -Ei "s/^[\t\s#]*radius_db\s+=\s+\"radius\"/\tradius_db = \"${DB_SCHEMA}\"/g" "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! sed -Ei 's/^[\t\s#]*read_clients\s+=\s+.*$/\tread_clients = yes/g' "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! sed -Ei 's/^[\t\s#]*client_table\s+=\s+.*$/\tclient_table = "nas"/g' "${FREERADIUS_SQL_MOD_PATH}" >/dev/null 2>&1 || \
-       ! ln -s "${FREERADIUS_SQL_MOD_PATH}" /etc/freeradius/3.0/mods-enabled/ >/dev/null 2>&1; then
+    if ! sed -Ei '/^[\t\s#]*tls\s+\{/, /[\t\s#]*\}/ s/^/#/' "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! sed -Ei 's/^[\t\s#]*dialect\s+=\s+.*$/\tdialect = "mysql"/g' "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! sed -Ei 's/^[\t\s#]*driver\s+=\s+"rlm_sql_null"/\tdriver = "rlm_sql_\${dialect}"/g' "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! sed -Ei "s/^[\t\s#]*server\s+=\s+\"localhost\"/\tserver = \"${DB_HOST}\"/g" "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! sed -Ei "s/^[\t\s#]*port\s+=\s+[0-9]+/\tport = ${DB_PORT}/g" "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! sed -Ei "s/^[\t\s#]*login\s+=\s+\"radius\"/\tlogin = \"${DB_USER}\"/g" "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! sed -Ei "s/^[\t\s#]*password\s+=\s+\"radpass\"/\tpassword = \"${DB_PASS}\"/g" "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! sed -Ei "s/^[\t\s#]*radius_db\s+=\s+\"radius\"/\tradius_db = \"${DB_SCHEMA}\"/g" "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! sed -Ei 's/^[\t\s#]*read_clients\s+=\s+.*$/\tread_clients = yes/g' "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! sed -Ei 's/^[\t\s#]*client_table\s+=\s+.*$/\tclient_table = "nas"/g' "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! ln -s "${FREERADIUS_MODS_AVAIL_PATH}/sql" "${FREERADIUS_MODS_ENABL_PATH}/sql" >/dev/null 2>&1; then
         print_red "KO"
         echo "[!] Failed to set up freeRADIUS SQL module. Aborting." >&2
         exit 1
     fi
+
+    # ensure freerad ownership
+    if ! chown freerad:freerad "${FREERADIUS_MODS_AVAIL_PATH}/sql" >/dev/null 2>&1 || \
+       ! chown -h freerad:freerad "${FREERADIUS_MODS_ENABL_PATH}/sql" >/dev/null 2>&1; then
+        print_red "KO"
+        echo "[!] Failed to set ownership of freeRADIUS SQL module. Aborting." >&2
+        exit 1
+    fi
+
     print_green "OK"
 }
 
@@ -232,21 +269,36 @@ freeradius_setup_sql_mod() {
 freeradius_setup_sqlcounter_mod() {
     echo -n "[+] Setting up freeRADIUS SQL counter module... "
 
-    if ! sed -Ei 's/^[[:space:]#]*dialect[[:space:]]+=[[:space:]]+.*$/	dialect = "mysql"/g' "${FREERADIUS_SQLCOUNTER_MOD_PATH}" >/dev/null 2>&1; then
+    local freeradius_default_tmp
+    freeradius_default_tmp=$(mktemp) || {
+        print_red "KO"
+        echo "[!] Failed to create temporary file. Aborting." >&2
+        exit 1
+    }
+
+    if ! sed -Ei 's/^[[:space:]#]*dialect[[:space:]]+=[[:space:]]+.*$/	dialect = "mysql"/g' "${FREERADIUS_MODS_AVAIL_PATH}/sqlcounter" >/dev/null 2>&1; then
         print_red "KO"
         echo "[!] Failed to configure freeRADIUS SQL counter module. Aborting." >&2
         exit 1
     fi
 
-    if [ ! -e /etc/freeradius/3.0/mods-enabled/sqlcounter ]; then
-        if ! ln -s "${FREERADIUS_SQLCOUNTER_MOD_PATH}" /etc/freeradius/3.0/mods-enabled/ >/dev/null 2>&1; then
+    if [ ! -e "${FREERADIUS_MODS_ENABL_PATH}/sqlcounter" ]; then
+        if ! ln -s "${FREERADIUS_MODS_AVAIL_PATH}/sqlcounter" "${FREERADIUS_MODS_ENABL_PATH}/sqlcounter" >/dev/null 2>&1; then
             print_red "KO"
             echo "[!] Failed to enable freeRADIUS SQL counter module. Aborting." >&2
             exit 1
         fi
     fi
 
-    if ! grep -q "^[[:space:]]*noresetcounter[[:space:]]*$" "${FREERADIUS_DEFAULT_SITE_PATH}"; then
+    # ensure freerad ownership
+    if ! chown freerad:freerad "${FREERADIUS_MODS_AVAIL_PATH}/sqlcounter" >/dev/null 2>&1 || \
+        ! chown -h freerad:freerad "${FREERADIUS_MODS_ENABL_PATH}/sqlcounter" >/dev/null 2>&1; then
+        print_red "KO"
+        echo "[!] Failed to set ownership of freeRADIUS SQL counter module. Aborting." >&2
+        exit 1
+    fi
+
+    if ! grep -q "^[[:space:]]*noresetcounter[[:space:]]*$" "${FREERADIUS_SITES_AVAIL_PATH}/default"; then
         if ! awk '
             BEGIN { in_authorize = 0; added = 0 }
             /^authorize[[:space:]]*[{]/ { in_authorize = 1 }
@@ -259,14 +311,62 @@ freeradius_setup_sqlcounter_mod() {
             /^authenticate[[:space:]]*[{]/ { in_authorize = 0 }
             { print }
             END { exit added ? 0 : 1 }
-        ' "${FREERADIUS_DEFAULT_SITE_PATH}" > /tmp/freeradius-default; then
-            rm -f /tmp/freeradius-default
+        ' "${FREERADIUS_SITES_AVAIL_PATH}/default" > "${freeradius_default_tmp}"; then
+            rm -f "${freeradius_default_tmp}"
             print_red "KO"
             echo "[!] Failed to add noresetcounter to freeRADIUS authorize section. Aborting." >&2
             exit 1
         fi
-        mv /tmp/freeradius-default "${FREERADIUS_DEFAULT_SITE_PATH}"
+        mv "${freeradius_default_tmp}" "${FREERADIUS_SITES_AVAIL_PATH}/default"
+    else
+        rm -f "${freeradius_default_tmp}"
     fi
+
+    print_green "OK"
+}
+
+
+# Function to set up SQL-backed session tracking for Simultaneous-Use
+freeradius_setup_sql_session_tracking() {
+    echo -n "[+] Setting up freeRADIUS SQL session tracking... "
+
+    local freeradius_default_tmp
+    freeradius_default_tmp=$(mktemp) || {
+        print_red "KO"
+        echo "[!] Failed to create temporary file. Aborting." >&2
+        exit 1
+    }
+
+    if ! awk '
+        BEGIN { in_session = 0; in_post_auth = 0; session_sql = 0; sql_session_start = 0 }
+        /^session[[:space:]]*[{]/ { in_session = 1 }
+        in_session && /^[[:space:]]*#[[:space:]]*sql[[:space:]]*$/ {
+            print "	sql"
+            session_sql = 1
+            next
+        }
+        in_session && /^[[:space:]]*sql[[:space:]]*$/ { session_sql = 1 }
+        in_session && /^}/ { in_session = 0 }
+
+        /^post-auth[[:space:]]*[{]/ { in_post_auth = 1 }
+        in_post_auth && /^[[:space:]]*#[[:space:]]*sql_session_start[[:space:]]*$/ {
+            print "	sql_session_start"
+            sql_session_start = 1
+            next
+        }
+        in_post_auth && /^[[:space:]]*sql_session_start[[:space:]]*$/ { sql_session_start = 1 }
+        in_post_auth && /^}/ { in_post_auth = 0 }
+
+        { print }
+        END { exit (session_sql && sql_session_start) ? 0 : 1 }
+    ' "${FREERADIUS_SITES_AVAIL_PATH}/default" > "${freeradius_default_tmp}"; then
+        rm -f "${freeradius_default_tmp}"
+        print_red "KO"
+        echo "[!] Failed to enable SQL session tracking in freeRADIUS. Aborting." >&2
+        exit 1
+    fi
+
+    mv "${freeradius_default_tmp}" "${FREERADIUS_SITES_AVAIL_PATH}/default"
 
     print_green "OK"
 }
@@ -276,7 +376,15 @@ freeradius_setup_sqlcounter_mod() {
 freeradius_setup_group_nas_restrictions() {
     echo -n "[+] Setting up freeRADIUS group NAS restriction policy... "
 
-    if grep -q "daloRADIUS group NAS restriction policy" "${FREERADIUS_DEFAULT_SITE_PATH}"; then
+    local freeradius_default_tmp
+    freeradius_default_tmp=$(mktemp) || {
+        print_red "KO"
+        echo "[!] Failed to create temporary file. Aborting." >&2
+        exit 1
+    }
+
+    if grep -q "daloRADIUS group NAS restriction policy" "${FREERADIUS_SITES_AVAIL_PATH}/default"; then
+        rm -f "${freeradius_default_tmp}"
         print_green "OK"
         return
     fi
@@ -301,14 +409,57 @@ freeradius_setup_group_nas_restrictions() {
             }
         }
         END { exit added ? 0 : 1 }
-    ' "${FREERADIUS_DEFAULT_SITE_PATH}" > /tmp/freeradius-default; then
-        rm -f /tmp/freeradius-default
+    ' "${FREERADIUS_SITES_AVAIL_PATH}/default" > "${freeradius_default_tmp}"; then
+        rm -f "${freeradius_default_tmp}"
         print_red "KO"
         echo "[!] Failed to add daloRADIUS group NAS restriction policy to freeRADIUS authorize section. Aborting." >&2
         exit 1
     fi
 
-    mv /tmp/freeradius-default "${FREERADIUS_DEFAULT_SITE_PATH}"
+    mv "${freeradius_default_tmp}" "${FREERADIUS_SITES_AVAIL_PATH}/default"
+    print_green "OK"
+}
+
+# Function to ensure ownership and enable the default freeRADIUS site
+freeradius_ensure_default_site() {
+    echo -n "[+] Ensuring freeRADIUS default site ownership and symlink... "
+
+    local default_site="${FREERADIUS_SITES_AVAIL_PATH}/default"
+    local default_link="${FREERADIUS_SITES_ENABL_PATH}/default"
+
+    if [ ! -f "${default_site}" ]; then
+        print_red "KO"
+        echo "[!] freeRADIUS default site file not found at ${default_site}. Aborting." >&2
+        exit 1
+    fi
+
+    if [ -e "${default_link}" ] && [ ! -L "${default_link}" ]; then
+        print_red "KO"
+        echo "[!] ${default_link} exists but is not a symbolic link. Aborting." >&2
+        exit 1
+    fi
+
+    if [ ! -L "${default_link}" ]; then
+        if ! ln -s "${default_site}" "${default_link}" >/dev/null 2>&1; then
+            print_red "KO"
+            echo "[!] Failed to enable the freeRADIUS default site. Aborting." >&2
+            exit 1
+        fi
+    fi
+
+    if [ "$(readlink -f "${default_link}")" != "$(readlink -f "${default_site}")" ]; then
+        print_red "KO"
+        echo "[!] ${default_link} does not point to ${default_site}. Aborting." >&2
+        exit 1
+    fi
+
+    if ! chown freerad:freerad "${default_site}" || \
+       ! chown -h freerad:freerad "${default_link}"; then
+        print_red "KO"
+        echo "[!] Failed to set ownership on the freeRADIUS default site. Aborting." >&2
+        exit 1
+    fi
+
     print_green "OK"
 }
 
@@ -342,11 +493,11 @@ daloradius_install_dep() {
 daloradius_installation() {
     SCRIPT_PATH=$(realpath $0)
     SCRIPT_DIR=$(dirname ${SCRIPT_PATH})
-    
-    if [ "${SCRIPT_DIR}" = "${DALORADIUS_ROOT_DIRECTORY}/setup" ]; then
+
+    if [ "${SCRIPT_DIR}" = "${DALORADIUS_ROOT_DIR}/setup" ]; then
         # local installation
         echo -n "[+] Setting up daloRADIUS... "
-        
+
         if [ ! -f "${DALORADIUS_CONF_FILE}.sample" ]; then
             print_red "KO"
             print_red "[!] daloRADIUS code seems to be corrupted. Aborting." >&2
@@ -356,13 +507,13 @@ daloradius_installation() {
     else
         # remote installation
         echo -n "[+] Downloading and setting up daloRADIUS... "
-        if [ -d "${DALORADIUS_ROOT_DIRECTORY}" ]; then
+        if [ -d "${DALORADIUS_ROOT_DIR}" ]; then
             print_red "KO"
-            print_red "[!] Directory ${DALORADIUS_ROOT_DIRECTORY} already exists. Aborting." >&2
+            print_red "[!] Directory ${DALORADIUS_ROOT_DIR} already exists. Aborting." >&2
             exit 1
         fi
 
-        git clone https://github.com/lirantal/daloradius.git "${DALORADIUS_ROOT_DIRECTORY}" >/dev/null 2>&1 &
+        git clone https://github.com/lirantal/daloradius.git "${DALORADIUS_ROOT_DIR}" >/dev/null 2>&1 &
         print_spinner $!
         wait $!
         if [ $? -ne 0 ]; then
@@ -386,19 +537,19 @@ daloradius_setup_required_dirs() {
         exit 1
     fi
 
-    if ! mkdir -p ${DALORADIUS_ROOT_DIRECTORY}/var/{log,backup} >/dev/null 2>&1; then
+    if ! mkdir -p ${DALORADIUS_ROOT_DIR}/var/{log,backup} >/dev/null 2>&1; then
         print_red "KO"
         print_red "[!] Failed to create log and backup directories. Aborting." >&2
         exit 1
     fi
 
-    if ! chown -R www-data:www-data ${DALORADIUS_ROOT_DIRECTORY}/var >/dev/null 2>&1; then
+    if ! chown -R www-data:www-data ${DALORADIUS_ROOT_DIR}/var >/dev/null 2>&1; then
         print_red "KO"
         print_red "[!] Failed to change ownership of var directory. Aborting." >&2
         exit 1
     fi
 
-    if ! chmod -R 775 ${DALORADIUS_ROOT_DIRECTORY}/var >/dev/null 2>&1; then
+    if ! chmod -R 775 ${DALORADIUS_ROOT_DIR}/var >/dev/null 2>&1; then
         print_red "KO"
         print_red "[!] Failed to change permissions of var directory. Aborting." >&2
         exit 1
@@ -410,7 +561,7 @@ daloradius_setup_required_dirs() {
 # Function to set up daloRADIUS
 daloradius_setup_required_files() {
     echo -n "[+] Setting up daloRADIUS... "
-    DALORADIUS_CONF_FILE="${DALORADIUS_ROOT_DIRECTORY}/app/common/includes/daloradius.conf.php"
+    DALORADIUS_CONF_FILE="${DALORADIUS_ROOT_DIR}/app/common/includes/daloradius.conf.php"
 
     if ! cp "${DALORADIUS_CONF_FILE}.sample" "${DALORADIUS_CONF_FILE}" >/dev/null 2>&1; then
         print_red "KO"
@@ -443,7 +594,7 @@ daloradius_setup_required_files() {
         exit 1
     fi
 
-    if ! chown www-data:www-data ${DALORADIUS_ROOT_DIRECTORY}/contrib/scripts/dalo-crontab >/dev/null 2>&1; then
+    if ! chown www-data:www-data ${DALORADIUS_ROOT_DIR}/contrib/scripts/dalo-crontab >/dev/null 2>&1; then
         print_red "KO"
         print_red "[!] Failed to change ownership of dalo-crontab script. Aborting." >&2
         exit 1
@@ -477,7 +628,7 @@ export DALORADIUS_USERS_PORT=${DALORADIUS_USERS_PORT}
 export DALORADIUS_OPERATORS_PORT=${DALORADIUS_OPERATORS_PORT}
 
 # daloRADIUS package root directory
-export DALORADIUS_ROOT_DIRECTORY=${DALORADIUS_ROOT_DIRECTORY}
+export DALORADIUS_ROOT_DIRECTORY=${DALORADIUS_ROOT_DIR}
 
 # daloRADIUS administrator's email
 export DALORADIUS_SERVER_ADMIN=${DALORADIUS_SERVER_ADMIN}
@@ -509,7 +660,7 @@ EOF
 # Function to set up Apache site for operators
 apache_setup_operators_site() {
     echo -n "[+] Setting up Apache site for operators... "
-    
+
     cat <<EOF > /etc/apache2/sites-available/operators.conf
 <VirtualHost *:\${DALORADIUS_OPERATORS_PORT}>
   ServerAdmin \${DALORADIUS_SERVER_ADMIN}
@@ -595,24 +746,40 @@ apache_enable_restart() {
 
 # Function to load daloRADIUS SQL schema into MariaDB
 daloradius_load_sql_schema() {
-    DB_DIR="${DALORADIUS_ROOT_DIRECTORY}/contrib/db"
-    echo -n "[+] Loading daloRADIUS SQL schema into MariaDB... "
+    DB_DIR="${DALORADIUS_ROOT_DIR}/contrib/db"
+    echo -n "[+] Loading daloRADIUS SQL schemas into MariaDB... "
 
-    mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/fr3-mariadb-freeradius.sql" >/dev/null 2>&1 &
-    print_spinner $!
-    wait $!
-    if [ $? -ne 0 ]; then
+    if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/fr3-mariadb-freeradius.sql" >/dev/null 2>&1; then
         print_red "KO"
-        print_red "[!] Failed to load freeRADIUS SQL schema into MariaDB. Aborting." >&2
+        print_red "[!] Failed to load FreeRADIUS base schema into MariaDB. Aborting." >&2
         exit 1
     fi
 
-    mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius.sql" >/dev/null 2>&1 &
-    print_spinner $!
-    wait $!
-    if [ $? -ne 0 ]; then
+    if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius.sql" >/dev/null 2>&1; then
         print_red "KO"
-        print_red "[!] Failed to load daloRADIUS SQL schema into MariaDB. Aborting." >&2
+        print_red "[!] Failed to load daloRADIUS base schema into MariaDB. Aborting." >&2
+        exit 1
+    fi
+
+    if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/mariadb-daloradius-dictionaries.sql" >/dev/null 2>&1; then
+        print_red "KO"
+        print_red "[!] Failed to load daloRADIUS dictionaries into MariaDB. Aborting." >&2
+        exit 1
+    fi
+
+    for f in "${DB_DIR}"/migrations/*.sql; do
+        [ -e "$f" ] || continue
+
+        if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "$f" >/dev/null 2>&1; then
+            print_red "KO"
+            print_red "[!] Failed to load daloRADIUS migration schema ${f} into MariaDB. Aborting." >&2
+            exit 1
+        fi
+    done
+
+    if ! mariadb --defaults-extra-file="${MARIADB_CLIENT_FILENAME}" < "${DB_DIR}/update-performance-indexes.sql" >/dev/null 2>&1; then
+        print_red "KO"
+        print_red "[!] Failed to load daloRADIUS performance indexes into MariaDB. Aborting." >&2
         exit 1
     fi
 
@@ -646,6 +813,7 @@ system_finalize() {
 # Main function calling other functions in the correct order
 main() {
     system_ensure_root
+    system_check_service_namespace_support
     system_update
 
     mariadb_install
@@ -663,7 +831,9 @@ main() {
     freeradius_install
     freeradius_setup_sql_mod
     freeradius_setup_sqlcounter_mod
+    freeradius_setup_sql_session_tracking
     freeradius_setup_group_nas_restrictions
+    freeradius_ensure_default_site
     freeradius_enable_restart
 
     apache_disable_all_sites

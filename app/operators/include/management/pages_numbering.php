@@ -78,8 +78,8 @@ function setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1="", 
     if ($pageNum > 1) {
         $page = $pageNum - 1;
 
-        $href_prev   = sprintf($href_format, $page, $orderBy, $orderType, $request1, $request2, $request3);
-        $href_first  = sprintf($href_format, 1, $orderBy, $orderType, $request1, $request2, $request3);
+        $href_prev   = htmlspecialchars(sprintf($href_format, $page, $orderBy, $orderType, $request1, $request2, $request3), ENT_QUOTES, 'UTF-8', false);
+        $href_first  = htmlspecialchars(sprintf($href_format, 1, $orderBy, $orderType, $request1, $request2, $request3), ENT_QUOTES, 'UTF-8', false);
         
         $prev = sprintf($link_format, $href_prev, $labels['prev']);
         $first = sprintf($link_format, $href_first, $labels['first']);
@@ -92,8 +92,8 @@ function setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $request1="", 
     if ($pageNum < $maxPage) {
         $page = $pageNum + 1;
         
-        $href_next = sprintf($href_format, $page, $orderBy, $orderType, $request1, $request2, $request3);
-        $href_last = sprintf($href_format, $maxPage, $orderBy, $orderType, $request1, $request2, $request3);
+        $href_next = htmlspecialchars(sprintf($href_format, $page, $orderBy, $orderType, $request1, $request2, $request3), ENT_QUOTES, 'UTF-8', false);
+        $href_last = htmlspecialchars(sprintf($href_format, $maxPage, $orderBy, $orderType, $request1, $request2, $request3), ENT_QUOTES, 'UTF-8', false);
         
         $next = sprintf($link_format, $href_next, $labels['next']);
         $last = sprintf($link_format, $href_last, $labels['last']);
@@ -141,11 +141,11 @@ function get_link_href($partial_query_string, $pageNum="", $orderBy="", $orderTy
 
 // this is an utility function used for printing a "go to <page num.>" link in the function setupNumbering_str()
 function print_link($aPageNum, $pageNum, $orderBy, $orderType, $request1="", $request2="", $request3="") {
-    $link_format = '<li class="page-item"><a class="page-link" href="?page=%s&orderBy=%s&orderType=%s%s%s%s">%s</a></li>';
     $selected_link_format = '<li class="page-item active" aria-current="page"><span class="page-link">%s</span></li>';
-    
     if ($aPageNum != $pageNum) {
-        return sprintf($link_format, $aPageNum, $orderBy, $orderType, $request1, $request2, $request3, $aPageNum);
+        $href = htmlspecialchars(sprintf("?page=%s&orderBy=%s&orderType=%s%s%s%s", $aPageNum, $orderBy, $orderType, $request1, $request2, $request3), ENT_QUOTES, 'UTF-8', false);
+        $link_format = '<li class="page-item"><a class="page-link" href="%s">%s</a></li>';
+        return sprintf($link_format, $href, $aPageNum);
     }
     
     return sprintf($selected_link_format, $aPageNum);

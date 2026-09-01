@@ -27,4 +27,4 @@ if (strpos($_SERVER['PHP_SELF'], '/page-footer.php') !== false) {
     exit;
 }
 ?>
-<div style="margin: 15px auto; text-align: right"><?= t('all','copyright2') ?></div>
+<div class="app-footer-text"><?= t('all','copyright2') ?></div>

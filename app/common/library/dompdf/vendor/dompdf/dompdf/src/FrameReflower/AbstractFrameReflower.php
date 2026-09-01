@@ -113,7 +113,16 @@ abstract class AbstractFrameReflower
                     break;
                 }
             case "fixed":
-                $initial_cb = $frame->get_root()->get_first_child()->get_containing_block();
+                $root = $frame->get_root();
+                $parent = $frame->get_parent();
+                do {
+                    $parents_parent = $parent->get_parent();
+                    if ($parents_parent == $root) {
+                        break;
+                    }
+                    $parent = $parents_parent;
+                } while ($parent);
+                $initial_cb = $parent->get_containing_block();
                 $frame->set_containing_block($initial_cb["x"], $initial_cb["y"], $initial_cb["w"], $initial_cb["h"]);
                 break;
             default:
@@ -294,7 +303,7 @@ abstract class AbstractFrameReflower
     /**
      * @param Block|null $block
      */
-    abstract function reflow(Block $block = null);
+    abstract function reflow(?Block $block = null);
 
     /**
      * Resolve the `min-width` property.
@@ -420,11 +429,13 @@ abstract class AbstractFrameReflower
             }
 
             // Skip children with absolute position
-            if ($iter->valid() && !$iter->current()->is_absolute()) {
+            if ($iter->valid()) {
                 /** @var AbstractFrameDecorator */
                 $child = $iter->current();
                 $child->get_reflower()->_set_content();
-                list($low[], $high[]) = $child->get_min_max_width();
+                if (!$iter->current()->is_absolute()) {
+                    list($low[], $high[]) = $child->get_min_max_width();
+                }
             }
         }
 
@@ -489,14 +500,14 @@ abstract class AbstractFrameReflower
      *
      * @return string The resulting string
      */
-    protected function resolve_content(): string
+    protected function resolve_content(): ?string
     {
         $frame = $this->_frame;
         $style = $frame->get_style();
         $content = $style->content;
 
         if ($content === "normal" || $content === "none") {
-            return "";
+            return null;
         }
 
         $quotes = $style->quotes;
@@ -577,7 +588,7 @@ abstract class AbstractFrameReflower
         if ($frame->get_node()->nodeName === "dompdf_generated") {
             $content = $this->resolve_content();
 
-            if ($content !== "") {
+            if ($content !== null) {
                 $node = $frame->get_node()->ownerDocument->createTextNode($content);
 
                 $new_style = $style->get_stylesheet()->create_style();

@@ -33,13 +33,13 @@ $descriptors1[] = [ 'type' => 'link', 'label' => t('button','ServerStatus'), 'hr
 $descriptors1[] = [ 'type' => 'link', 'label' => t('button','ServicesStatus'), 'href' => 'rep-stat-services.php', 'icon' => 'server', ];
 
 $descriptors2 = [];
-$descriptors2[] = [ 'type' => 'link', 'label' => 'CRON Status', 'href' => 'config-crontab.php', 'icon' => 'calendar-date', ];
-$descriptors2[] = [ 'type' => 'link', 'label' => 'UPS Status', 'href' => 'rep-stat-ups.php', 'icon' => 'battery-charging', ];
-$descriptors2[] = [ 'type' => 'link', 'label' => 'RAID Status', 'href' => 'rep-stat-raid.php', 'icon' => 'hdd-stack-fill', ];
+$descriptors2[] = [ 'type' => 'link', 'label' => t('sidebar', 'CRONStatus'), 'href' => 'config-crontab.php', 'icon' => 'calendar-date', ];
+$descriptors2[] = [ 'type' => 'link', 'label' => t('sidebar', 'UPSStatus'), 'href' => 'rep-stat-ups.php', 'icon' => 'battery-charging', ];
+$descriptors2[] = [ 'type' => 'link', 'label' => t('sidebar', 'RAIDStatus'), 'href' => 'rep-stat-raid.php', 'icon' => 'hdd-stack-fill', ];
 
 $sections = [];
-$sections[] = [ 'title' => 'Status', 'descriptors' => $descriptors1 ];
-$sections[] = [ 'title' => 'Extended Peripherals', 'descriptors' => $descriptors2 ];
+$sections[] = [ 'title' => t('sidebar', 'Status'), 'descriptors' => $descriptors1 ];
+$sections[] = [ 'title' => t('sidebar', 'ExtendedPeripherals'), 'descriptors' => $descriptors2 ];
 
 // add sections to menu
-$menu = [ 'title' => 'Status', 'sections' => $sections, ];
+$menu = [ 'title' => t('sidebar', 'Status'), 'sections' => $sections, ];

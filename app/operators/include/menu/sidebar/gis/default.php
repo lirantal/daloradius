@@ -36,11 +36,11 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','EditMAP'), 'hr
 
 
 $sections = array();
-$sections[] = array( 'title' => 'GIS Mapping', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'GISMapping'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'GIS',
+                'title' => t('sidebar', 'GIS'),
                 'sections' => $sections,
              );

@@ -70,10 +70,10 @@ if (count($menu_datalist) > 0) {
 
 
 $sections = array();
-$sections[] = array( 'title' => 'Hotspots Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'HotspotsManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );

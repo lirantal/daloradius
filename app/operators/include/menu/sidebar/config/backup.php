@@ -35,11 +35,11 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','CreateBackups'
                          'icon' => 'tools', 'img' => array( 'src' => 'static/images/icons/configMaintenance.png' ), );
 
 $sections = array();
-$sections[] = array( 'title' => 'Backup Settings', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'BackupSettings'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Configuration',
+                'title' => t('sidebar', 'Configuration'),
                 'sections' => $sections,
              );

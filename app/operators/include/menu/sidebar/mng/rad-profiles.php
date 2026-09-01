@@ -54,7 +54,7 @@ if (count($menu_options) > 0) {
                             "selected_value" => ((isset($profile_name)) ? $profile_name : ""),
                             "options" => $menu_options,
                             "caption" => t('all','Profile'),
-                            "tooltipText" => "Please select a " . t('all','Profile'),
+                            "tooltipText" => sprintf(t('sidebar', 'PleaseSelectA'), t('all','Profile')),
                           );
 
     $descriptors1[] = array( 'type' => 'form', 'title' => t('button','EditProfile'), 'action' => 'mng-rad-profiles-edit.php', 'method' => 'GET',
@@ -68,10 +68,10 @@ if (count($menu_options) > 0) {
 }
 
 $sections = array();
-$sections[] = array( 'title' => 'Profiles Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'ProfilesManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );

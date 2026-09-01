@@ -15,47 +15,158 @@
 # Set to the URL of daloradius's heartbeat script location
 DALO_HEARTBEAT_ADDR="http://daloradius.com/heartbeat.php"
 
-# This is Auto Set NAS MAC to the MAC address of LAN connected openwrt node
+# This automatically sets the NAS MAC to the value configured in chilli.
 # MAC address format, according to how the NAS sends this information. For example: 00-aa-bb or 00:aa:bb
-# Extracting NAS MAC from uci chilli config.
-NAS_MAC=`uci get chilli.chilli1.radiusnasid |awk '/''/{print substr ($1,1)}'`
+NAS_MAC="$(uci -q get 'chilli.@chilli[0].radiusnasid')"
+[ -n "$NAS_MAC" ] || NAS_MAC="$(uci -q get chilli.chilli1.radiusnasid)"
 
 # Set to a unique, hard-to-figure-out key across all of your NASes.
 # This key is saved in daloRADIUS's configuration and so should also
 # be configured in daloRADIUS as well.
 SECRET_KEY="sillykey"
 
+# Optional interface overrides. Leave empty to discover the active OpenWrt
+# interfaces through ubus/UCI.
+WAN_DEV=""
+LAN_DEV=""
+WLAN_DEV=""
+
 # Do not edit past this point
 # ----------------------------------------------------------------------------
 # Configuration --------------------------------------------------------------
 # ----------------------------------------------------------------------------
 
-wan_iface=`uci get network.wan.device`
-wan_ip=`ifconfig eth0.2 | awk '/inet addr/{print substr ($2,6)}'`
-wan_mac=`ifconfig eth0.2 | awk '/HWaddr/{print substr ($5,0)}'`
-wan_gateway=`ifconfig eth0.2 | awk '/inet addr/{print substr ($2,6)}'`
-wan_proto=`uci get network.wan.proto`
-wifi_iface=`uci get wireless.default_radio0.device  | awk '{ gsub(/ /,""); print }'`
-wifi_ip=`uci get chilli.chilli1.uamlisten`
-wifi_mac=`ifconfig wlan0 | awk '/HWaddr/{print substr ($5,0)}'`
-wifi_ssid=`uci get wireless.default_radio0.ssid | awk '{ gsub(/ /,""); print }'`
-#wifi_key=`nvram get wl_wep_gen`
-wifi_channel=`uci get wireless.radio0.channel`
-lan_iface=`uci get network.device1.ports`
-lan_ip=`ifconfig tun0 | awk '/inet addr/{print substr ($2,6)}'`
-lan_mac=`ifconfig br-lan | awk '/HWaddr/{print substr ($5,1)}'`
-lan_proto=`uci get network.lan.proto`
+get_l3_device() {
+    ubus call "network.interface.$1" status 2>/dev/null | jsonfilter -e '@.l3_device' 2>/dev/null
+}
+
+get_wifi_section() {
+    wifi_section_fallback=""
+    wifi_section_active_fallback=""
+    wifi_section_lan_fallback=""
+
+    for wifi_section_candidate in $(
+        uci -q show wireless 2>/dev/null |
+            sed -n 's/^wireless\.\([^.=]*\)=wifi-iface$/\1/p'
+    )
+    do
+        wifi_section_disabled="$(uci -q get "wireless.$wifi_section_candidate.disabled")"
+        [ "$wifi_section_disabled" = "1" ] && continue
+
+        wifi_section_mode="$(uci -q get "wireless.$wifi_section_candidate.mode")"
+        [ -n "$wifi_section_mode" ] && [ "$wifi_section_mode" != "ap" ] && continue
+
+        wifi_radio="$(uci -q get "wireless.$wifi_section_candidate.device")"
+        [ "$(uci -q get "wireless.$wifi_radio.disabled")" = "1" ] && continue
+
+        [ -n "$wifi_section_fallback" ] || wifi_section_fallback="$wifi_section_candidate"
+        wifi_section_runtime_device="$(get_wifi_device "$wifi_section_candidate")"
+        wifi_section_network="$(uci -q get "wireless.$wifi_section_candidate.network")"
+        case " $wifi_section_network " in
+            *" lan "*)
+                if [ -n "$wifi_section_runtime_device" ]
+                then
+                    printf '%s' "$wifi_section_candidate"
+                    return
+                fi
+                [ -n "$wifi_section_lan_fallback" ] ||
+                    wifi_section_lan_fallback="$wifi_section_candidate"
+                ;;
+            *)
+                if [ -n "$wifi_section_runtime_device" ] &&
+                   [ -z "$wifi_section_active_fallback" ]
+                then
+                    wifi_section_active_fallback="$wifi_section_candidate"
+                fi
+                ;;
+        esac
+    done
+
+    if [ -n "$wifi_section_active_fallback" ]
+    then
+        printf '%s' "$wifi_section_active_fallback"
+    elif [ -n "$wifi_section_lan_fallback" ]
+    then
+        printf '%s' "$wifi_section_lan_fallback"
+    else
+        printf '%s' "$wifi_section_fallback"
+    fi
+}
+
+get_wifi_device() {
+    [ -n "$1" ] || return
+    ubus call network.wireless status 2>/dev/null |
+        jsonfilter -l 1 \
+            -e "@[@.up=true].interfaces[@.section=\"$1\"].ifname" \
+            2>/dev/null
+}
+
+get_ipv4() {
+    ip -4 addr show dev "$1" 2>/dev/null |
+        awk '/inet / { split($2, address, "/"); print address[1]; exit }'
+}
+
+get_mac() {
+    [ -r "/sys/class/net/$1/address" ] && tr -d '\n' < "/sys/class/net/$1/address"
+}
+
+get_rx_bytes() {
+    awk -v iface="$1:" '$1 == iface { print $2; exit }' /proc/net/dev
+}
+
+get_tx_bytes() {
+    awk -v iface="$1:" '$1 == iface { print $10; exit }' /proc/net/dev
+}
+
+urlencode() {
+    printf '%s' "$1" | LC_ALL=C od -An -tu1 |
+        awk '{
+            for (i = 1; i <= NF; i++) {
+                byte = $i
+                if ((byte >= 48 && byte <= 57) ||
+                    (byte >= 65 && byte <= 90) ||
+                    (byte >= 97 && byte <= 122) ||
+                    byte == 45 || byte == 46 || byte == 95 || byte == 126) {
+                    printf "%c", byte
+                } else {
+                    printf "%%%02X", byte
+                }
+            }
+        }'
+}
+
+wan_iface="${WAN_DEV:-$(get_l3_device wan)}"
+[ -n "$wan_iface" ] || wan_iface="$(uci -q get network.wan.device)"
+[ -n "$wan_iface" ] || wan_iface="$(uci -q get network.wan.ifname)"
+
+lan_iface="${LAN_DEV:-$(get_l3_device lan)}"
+[ -n "$lan_iface" ] || lan_iface="$(uci -q get network.lan.device)"
+[ -n "$lan_iface" ] || lan_iface="$(uci -q get network.lan.ifname)"
+
+wifi_section="$(get_wifi_section)"
+wifi_iface="${WLAN_DEV:-$(get_wifi_device "$wifi_section")}"
+[ -n "$wifi_iface" ] || wifi_iface="$(uci -q get "wireless.$wifi_section.ifname")"
+
+wan_ip="$(get_ipv4 "$wan_iface")"
+wan_mac="$(get_mac "$wan_iface")"
+wan_gateway="$(ip route show default dev "$wan_iface" 2>/dev/null | awk '/default/ { print $3; exit }')"
+wifi_ip="$(uci -q get 'chilli.@chilli[0].uamlisten')"
+[ -n "$wifi_ip" ] || wifi_ip="$(uci -q get chilli.chilli1.uamlisten)"
+wifi_mac="$(get_mac "$wifi_iface")"
+wifi_ssid="$(uci -q get "wireless.$wifi_section.ssid")"
+wifi_key=""
+wifi_radio="$(uci -q get "wireless.$wifi_section.device")"
+wifi_channel="$(uci -q get "wireless.$wifi_radio.channel")"
+lan_ip="$(get_ipv4 "$lan_iface")"
+lan_mac="$(get_mac "$lan_iface")"
 ip=$wan_ip
 mac=$lan_mac
-uptime=`cat /proc/uptime | awk '{print ($1)}'`
-memfree=`cat /proc/meminfo | awk '/MemFree/{print substr($2,$3)}'`
-wan_bdown=`ifconfig eth0.2 | awk '/RX bytes/{print substr($2,7)}'`
-wan_bup=`ifconfig eth0.2 | awk '/TX bytes/{print substr($6,7)}'`
-#bdown=`awk '/'"$wan_iface"'/{print substr($1,6)}'  /proc/net/dev` #in byte
-#bup=`awk '/'"$wan_iface"'/{print $9}'  /proc/net/dev`	#in bytes, need to turn to kilobytes
-#kbdown=$((bdown/1024))
-#kbup=$((bup/1024))
-firmware=`cat /proc/cpuinfo | awk '/machine/{print substr($5,1)}'`
+uptime="$(awk '{ print $1 }' /proc/uptime)"
+memfree="$(awk '/MemFree/ { print $2; exit }' /proc/meminfo)"
+wan_bdown="$(get_rx_bytes "$wan_iface")"
+wan_bup="$(get_tx_bytes "$wan_iface")"
+firmware="$(awk -F= '/^ID=/ { gsub(/\"/, "", $2); print $2; exit }' /etc/os-release)"
+firmware_revision="$(awk -F= '/^VERSION_ID=/ { gsub(/\"/, "", $2); print $2; exit }' /etc/os-release)"
 # Snippet to get CPU % --------------------------------------------------------------
 # adopted from Paul Colby (http://colby.id.au)
 PREV_TOTAL=0
@@ -66,15 +177,20 @@ x=5
 i=1
 while [ $i -le $x ]
 do
-  IDLE=`cat /proc/stat | grep '^cpu ' | awk '{print $5}'`       # get cpu idle time
-  TOTAL=`cat /proc/stat | grep '^cpu ' | awk '{print $1+$2+$3+$4+$5+$6+$7+$8+$9+$10+$11}'` #get total cpu time
+  IDLE=$(awk '/^cpu / { print $5; exit }' /proc/stat)       # get cpu idle time
+  TOTAL=$(awk '/^cpu / { print $1+$2+$3+$4+$5+$6+$7+$8+$9+$10+$11; exit }' /proc/stat) #get total cpu time
 
   # Calculate the CPU usage since we last checked.
-  let "DIFF_IDLE=$IDLE-$PREV_IDLE"
-  let "DIFF_TOTAL=$TOTAL-$PREV_TOTAL"
-  let "DIFF_USAGE=1000*($DIFF_TOTAL-$DIFF_IDLE)/$DIFF_TOTAL"
-  let "DIFF_USAGE_UNITS=$DIFF_USAGE/10"
-  let "DIFF_USAGE_DECIMAL=$DIFF_USAGE%10"
+  DIFF_IDLE=$((IDLE - PREV_IDLE))
+  DIFF_TOTAL=$((TOTAL - PREV_TOTAL))
+  if [ "$DIFF_TOTAL" -gt 0 ]
+  then
+    DIFF_USAGE=$((1000 * (DIFF_TOTAL - DIFF_IDLE) / DIFF_TOTAL))
+  else
+    DIFF_USAGE=0
+  fi
+  DIFF_USAGE_UNITS=$((DIFF_USAGE / 10))
+  DIFF_USAGE_DECIMAL=$((DIFF_USAGE % 10))
 #  echo -en "\rCPU: $DIFF_USAGE_UNITS.$DIFF_USAGE_DECIMAL%    \b\b\b\b"
 
 # No decemical  
@@ -90,7 +206,7 @@ do
 
   # Wait before checking again.
   sleep 1
-  i=$(( $i + 1 ))
+  i=$((i + 1))
 done
 cpu=$DIFF_USAGE_UNITS.$DIFF_USAGE_DECIMAL%
 # --------------------------------------------------------------------------------------
@@ -132,13 +248,47 @@ then
 fi
 
 
-wget -O /tmp/heartbeat.txt "$DALO_HEARTBEAT_ADDR?secret_key=$SECRET_KEY&nas_mac=$NAS_MAC&firmware=$firmware&firmware_revision=$firmware_revision&wan_iface=$wan_iface&wan_ip=$wan_ip&wan_mac=$wan_mac&wifi_mac=$wifi_mac&wan_gateway=$wan_gateway&wifi_iface=$wifi_iface&wifi_ip=$wifi_ip&wifi_mac=$wifi_mac&wifi_ssid=$wifi_ssid&wifi_key=$wifi_key&wifi_channel=$wifi_channel&lan_iface=$lan_iface&lan_ip=$lan_ip&lan_mac=$lan_mac&uptime=$uptime&memfree=$memfree&wan_bup=$wan_bup&wan_bdown=$wan_bdown&cpu=$cpu"
+heartbeat_query=""
+append_heartbeat_parameter() {
+    parameter="$1=$(urlencode "$2")"
+    if [ -n "$heartbeat_query" ]
+    then
+        heartbeat_query="$heartbeat_query&$parameter"
+    else
+        heartbeat_query="$parameter"
+    fi
+}
+
+append_heartbeat_parameter secret_key "$SECRET_KEY"
+append_heartbeat_parameter nas_mac "$NAS_MAC"
+append_heartbeat_parameter firmware "$firmware"
+append_heartbeat_parameter firmware_revision "$firmware_revision"
+append_heartbeat_parameter wan_iface "$wan_iface"
+append_heartbeat_parameter wan_ip "$wan_ip"
+append_heartbeat_parameter wan_mac "$wan_mac"
+append_heartbeat_parameter wan_gateway "$wan_gateway"
+append_heartbeat_parameter wifi_iface "$wifi_iface"
+append_heartbeat_parameter wifi_ip "$wifi_ip"
+append_heartbeat_parameter wifi_mac "$wifi_mac"
+append_heartbeat_parameter wifi_ssid "$wifi_ssid"
+append_heartbeat_parameter wifi_key "$wifi_key"
+append_heartbeat_parameter wifi_channel "$wifi_channel"
+append_heartbeat_parameter lan_iface "$lan_iface"
+append_heartbeat_parameter lan_ip "$lan_ip"
+append_heartbeat_parameter lan_mac "$lan_mac"
+append_heartbeat_parameter uptime "$uptime"
+append_heartbeat_parameter memfree "$memfree"
+append_heartbeat_parameter wan_bup "$wan_bup"
+append_heartbeat_parameter wan_bdown "$wan_bdown"
+append_heartbeat_parameter cpu "$cpu"
+
+wget -O /tmp/heartbeat.txt "$DALO_HEARTBEAT_ADDR?$heartbeat_query"
 
 
 if [ "$DEBUG_MODE" = "1" ]
 then
 	echo "-------------------------------------------------------"
-	echo "daloRADIUS server returned: \n"
+	printf "daloRADIUS server returned:\n\n"
 	echo "-------------------------------------------------------"
 	cat /tmp/heartbeat.txt
 	echo "-------------------------------------------------------"

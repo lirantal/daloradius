@@ -59,6 +59,10 @@ $l['all']['RecommendedHelper'] = "Recommended Helper";
 /********************************************************************************/
 
 $l['all']['CSVData'] = "CSV-formatted data";
+$l['all']['GeneratePassword'] = "Generate Password";
+$l['all']['GeneratedPasswords'] = "Generated passwords";
+$l['all']['Yes'] = "yes";
+$l['all']['No'] = "no";
 
 $l['all']['CPU'] = "CPU";
 
@@ -229,7 +233,6 @@ $l['all']['ActiveUsers'] = "Active Users";
 $l['all']['TotalBilled'] = "Total Billed";
 $l['all']['TotalPayed'] = "Total Paid";
 $l['all']['Balance'] = "Balance";
-$l['all']['CardBank'] = "Card Bank";
 $l['all']['Type'] = "Type";
 $l['all']['CardBank'] = "CardBank";
 $l['all']['MACAddress'] = "MAC Address";
@@ -352,7 +355,6 @@ $l['all']['BandwidthDown'] = "Bandwidth Down";
 
 $l['all']['BatchCost'] = "Batch Cost";
 
-$l['all']['PaymentDate'] = "Payment Date";
 $l['all']['PaymentStatus'] = "Payment Status";
 $l['all']['FirstName'] = "First name";
 $l['all']['LastName'] = "Last name";
@@ -461,6 +463,8 @@ $l['Tooltip']['EditPayType'] = "Edit Payment Type";
 $l['Tooltip']['RemovePayType'] = "Remove Payment Type";
 $l['Tooltip']['paymentTypeTooltip'] = "The payment type friendly name,<br/>to describe the purpose of the payment";
 $l['Tooltip']['paymentTypeNotesTooltip'] = "The payment type description, to describe<br/>the operation of the payment type";
+$l['Tooltip']['generatePasswordTooltip'] = "If set to 'yes', an 8-character random password is generated when the CSV password field is empty.";
+$l['Tooltip']['CSVDataGeneratePasswordHint'] = "Leave the password field empty to generate one when Generate Password is set to yes.";
 $l['Tooltip']['EditPayment'] = "Edit Payment";
 $l['Tooltip']['PaymentId'] = "The Payment Id";
 $l['Tooltip']['RemovePayment'] = "Remove Payment";
@@ -586,7 +590,7 @@ $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(descriptive n
 $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "If you specify group then only the single record that matches both the username and the group which you have specified will be removed. If you omit the group then all records for that particular user will be removed!";
 
 $l['Tooltip']['usernameTooltip'] = "Example: john_doe. The exact username the user will use to connect to the system.";
-$l['Tooltip']['passwordTypeTooltip'] = "Example: Cleartext-Password, MD5-Password, SHA1-Password. The password type used to authenticate the user in RADIUS.";
+$l['Tooltip']['passwordTypeTooltip'] = "Example: Cleartext-Password, MD5-Password, SHA1-Password, SHA2-Password. The password type used to authenticate the user in RADIUS.";
 $l['Tooltip']['passwordTooltip'] = "Example: P@ssw0rd!. The user's password. Note that some systems use case-sensitive passwords, so please take extra care.";
 $l['Tooltip']['groupTooltip'] = "Example: Premium_Users. The group to which the user will be added. By adding a user to a specific group, they become subject to that group's attributes.";
 $l['Tooltip']['macaddressTooltip'] = "Example: 00:AA:BB:CC:DD:EE. The MAC Address format should be the same as sent by the NAS. Usually, this is without any separating characters.";
@@ -968,7 +972,6 @@ $l['Intro']['configdashboard.php'] = "Dashbard Settings";
 $l['Intro']['paymenttypesmain.php'] = "Payment Types Page";
 $l['Intro']['paymenttypesdel.php'] = "Delete Payment Type entry";
 $l['Intro']['paymenttypesedit.php'] = "Edit Payment Type Details";
-$l['Intro']['paymenttypeslist.php'] = "Payment Types Table";
 $l['Intro']['paymenttypesnew.php'] = "New Payment Type entry";
 $l['Intro']['paymenttypeslist.php'] = "Payment Types Table";
 $l['Intro']['paymentslist.php'] = "Payments Table";
@@ -1087,7 +1090,6 @@ $l['Intro']['repstatus.php'] = "Status Page";
 $l['Intro']['reptopusers.php'] = "Top Users";
 $l['Intro']['repusername.php'] = "Users Listing";
 
-$l['Intro']['mngbatch.php'] = "Create batch users";
 $l['Intro']['mngbatchdel.php'] = "Delete batch sessions";
 
 $l['Intro']['mngdel.php'] = "Remove User";
@@ -1250,7 +1252,22 @@ $l['helpPage']['mngradattributesedit'] = "";
 $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
-$l['helpPage']['mngimportusers'] = "";
+$l['helpPage']['mngimportusers'] = <<<EOF
+<h1 class="fs-5">Import Users</h1>
+<p>Use this page to create multiple RADIUS users from CSV-formatted data. You can select the authentication type, assign the imported users to groups, and optionally associate them with a billing plan.</p>
+
+<h2 class="fs-6">Username and password import</h2>
+<p>For <strong>Based on username and password</strong>, each CSV row must contain at least these five fields:</p>
+<pre><code>username,password,email,firstname,lastname</code></pre>
+<p>Additional optional fields can be added after the first five fields, as described in the CSV Data field.</p>
+
+<h2 class="fs-6">Generate Password</h2>
+<p>Set <strong>Generate Password</strong> to <strong>yes</strong> to generate an 8-character random password when the password field in a CSV row is empty. If a password is already provided, it is preserved. When this option is set to <strong>no</strong>, rows with an empty password are rejected.</p>
+<p>To request a generated password, keep the second CSV field empty:</p>
+<pre><code>user001,,user001@example.com,John,Doe</code></pre>
+<p>After a successful import, use <strong>Download Generated Passwords CSV</strong> to retrieve the credentials generated during that import. Passwords supplied in the original CSV are not included. The download is available once and expires after five minutes.</p>
+<p>The generated value is stored using the selected Password Type. With a one-way hashed password type, the original cannot be recovered later from the stored RADIUS attribute. When portal login is disabled, the original is not copied to the user information record; when portal login is enabled, it is also stored as the portal login password.</p>
+EOF;
 
 $l['helpPage']['msgerrorpermissions'] = "Sorry, you do not have the necessary permissions to access this area.<br>Please contact the system administrator.";
 
@@ -1832,6 +1849,7 @@ EOF;
 
 
 
+$l['messages']['generatedPasswordsExportNotice'] = "Download the generated credentials now. This one-time CSV download expires after %d minutes and contains only passwords generated during this import.";
 $l['messages']['noCheckAttributesForUser'] = "This user has no check attributes associated with it";
 $l['messages']['noReplyAttributesForUser'] = "This user has no reply attributes associated with it";
 
@@ -1872,6 +1890,7 @@ EOF;
 
 $l['buttons']['savesettings'] = "Save Settings";
 $l['buttons']['apply'] = "Apply";
+$l['buttons']['downloadGeneratedPasswordsCSV'] = "Download Generated Passwords CSV";
 
 $l['menu']['Home'] = "Home";
 $l['menu']['Managment'] = "Management";
@@ -1882,6 +1901,91 @@ $l['menu']['Gis'] = "GIS";
 $l['menu']['Graphs'] = "Graphs";
 $l['menu']['Config'] = "Config";
 $l['menu']['Help'] = "Help";
+
+// sidebar menu titles, section headings, link labels and form captions
+// (see app/operators/include/menu/sidebar/)
+$l['sidebar']['Accounting'] = "Accounting";
+$l['sidebar']['AttributesManagement'] = "Attributes Management";
+$l['sidebar']['BackupSettings'] = "Backup Settings";
+$l['sidebar']['BatchManagement'] = "Batch Management";
+$l['sidebar']['BatchUsers'] = "Batch Users";
+$l['sidebar']['Billing'] = "Billing";
+$l['sidebar']['CRONStatus'] = "CRON Status";
+$l['sidebar']['Charts'] = "Charts";
+$l['sidebar']['Configuration'] = "Configuration";
+$l['sidebar']['CustomQuery'] = "Custom Query";
+$l['sidebar']['ExtendedCapabilities'] = "Extended Capabilities";
+$l['sidebar']['ExtendedPeripherals'] = "Extended Peripherals";
+$l['sidebar']['Filter'] = "Filter";
+$l['sidebar']['FilterRADIUSReply'] = "Filter records with the selected RADIUS Reply";
+$l['sidebar']['GIS'] = "GIS";
+$l['sidebar']['GISMapping'] = "GIS Mapping";
+$l['sidebar']['GlobalSettings'] = "Global Settings";
+$l['sidebar']['GroupCheckManagement'] = "Group Check Management";
+$l['sidebar']['GroupReplyManagement'] = "Group Reply Management";
+$l['sidebar']['Heartbeat'] = "Heartbeat";
+$l['sidebar']['Help'] = "Help";
+$l['sidebar']['Home'] = "Home";
+$l['sidebar']['HotspotsAccounting'] = "Hotspots Accounting";
+$l['sidebar']['HotspotsManagement'] = "Hotspots Management";
+$l['sidebar']['Huntgroup'] = "Huntgroup";
+$l['sidebar']['HuntgroupsManagement'] = "Huntgroups Management";
+$l['sidebar']['IPPoolsManagement'] = "IP-Pools Management";
+$l['sidebar']['InvoiceManagement'] = "Invoice Management";
+$l['sidebar']['InvoiceReport'] = "Invoice Report";
+$l['sidebar']['LinesCount'] = "Lines count";
+$l['sidebar']['List'] = "List";
+$l['sidebar']['LogFiles'] = "Log Files";
+$l['sidebar']['Logs'] = "Logs";
+$l['sidebar']['Mail'] = "Mail";
+$l['sidebar']['Maintenance'] = "Maintenance";
+$l['sidebar']['Management'] = "Management";
+$l['sidebar']['MessageSettings'] = "Message Settings";
+$l['sidebar']['NASManagement'] = "NAS Management";
+$l['sidebar']['OperatorsManagement'] = "Operators Management";
+$l['sidebar']['OrderResultsBy'] = "You can order the results by: %s";
+$l['sidebar']['OrderType'] = "Order Type";
+$l['sidebar']['OtherReports'] = "Other Reports";
+$l['sidebar']['PaymentsManagement'] = "Payments Management";
+$l['sidebar']['PaymentsTypesManagement'] = "Payments Types Management";
+$l['sidebar']['PlanAccounting'] = "Plan Accounting";
+$l['sidebar']['PlansManagement'] = "Plans Management";
+$l['sidebar']['PleaseInsertAValid'] = "Please insert a valid %s";
+$l['sidebar']['PleaseSelectA'] = "Please select a %s";
+$l['sidebar']['PleaseSelectOneOrMultiple'] = "Please select one or multiple %s";
+$l['sidebar']['PointOfSalesManagement'] = "Point of Sales Management";
+$l['sidebar']['ProfilesManagement'] = "Profiles Management";
+$l['sidebar']['ProxiesManagement'] = "Proxies Management";
+$l['sidebar']['RAIDStatus'] = "RAID Status";
+$l['sidebar']['RatesManagement'] = "Rates Management";
+$l['sidebar']['ReadMore'] = "Read More";
+$l['sidebar']['RealmsManagement'] = "Realms Management";
+$l['sidebar']['RecurringTasksSettings'] = "Recurring Tasks Settings";
+$l['sidebar']['ReportingSettings'] = "Reporting Settings";
+$l['sidebar']['Reports'] = "Reports";
+$l['sidebar']['ShowOnlySelectedLines'] = "Show only the selected number of lines";
+$l['sidebar']['Status'] = "Status";
+$l['sidebar']['Support'] = "Support";
+$l['sidebar']['TestEmail'] = "Test email";
+$l['sidebar']['TrackBillingHistory'] = "Track Billing History";
+$l['sidebar']['TrackMerchantTransactions'] = "Track Merchant Transactions";
+$l['sidebar']['TrackRates'] = "Track Rates";
+$l['sidebar']['TwoFactorAuthentication'] = "Two-factor authentication";
+$l['sidebar']['UPSStatus'] = "UPS Status";
+$l['sidebar']['UserCharts'] = "User Charts";
+$l['sidebar']['UserGroupManagement'] = "User-Group Management";
+$l['sidebar']['UserReports'] = "User Reports";
+$l['sidebar']['UsersAccounting'] = "Users Accounting";
+$l['sidebar']['UsersManagement'] = "Users Management";
+
+// operator dashboard strings (see app/operators/home-main.php)
+$l['dashboard']['CurrentlyOnline'] = "Currently online";
+$l['dashboard']['GoToHotspotsList'] = "Go to hotspots list";
+$l['dashboard']['GoToNASList'] = "Go to NAS list";
+$l['dashboard']['GoToUsersList'] = "Go to users list";
+$l['dashboard']['LastMonthTopUsers'] = "Last month top users";
+$l['dashboard']['OnlineSince'] = "Online since";
+$l['messages']['noDataToShow'] = "no data to show";
 
 $l['submenu']['General'] = "General";
 $l['submenu']['Reporting'] = "Reporting";

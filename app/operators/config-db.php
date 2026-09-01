@@ -21,14 +21,14 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -43,9 +43,12 @@
                                     'CONFIG_DB_TBL_RADUSERGROUP' => t('all','usergroup'),
                                     'CONFIG_DB_TBL_RADACCT' => t('all','radacct'),
                                     'CONFIG_DB_TBL_RADNAS' => t('all','nas'),
+                                    'CONFIG_DB_TBL_NASRELOAD' => 'nasreload',
                                     'CONFIG_DB_TBL_RADHG' => t('all','hunt'),
                                     'CONFIG_DB_TBL_RADPOSTAUTH' => t('all','radpostauth'),
                                     'CONFIG_DB_TBL_RADIPPOOL' => t('all','radippool'),
+                                    'CONFIG_DB_TBL_CUI' => 'cui',
+                                    'CONFIG_DB_TBL_WIMAX' => 'wimax',
                                     'CONFIG_DB_TBL_DALOUSERINFO' => t('all','userinfo'),
                                     'CONFIG_DB_TBL_DALODICTIONARY' => t('all','dictionary'),
                                     'CONFIG_DB_TBL_DALOREALMS' => t('all','realms'),
@@ -69,6 +72,7 @@
                                     'CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES' => t('all','operators_acl_files'),
                                     'CONFIG_DB_TBL_DALOHOTSPOTS' => t('all','hotspots'),
                                     'CONFIG_DB_TBL_DALONODE' => t('all','node'),
+                                    'CONFIG_DB_TBL_MESSAGES' => 'messages'
                                 );
 
     $generic_db_conf_params = array(
@@ -84,7 +88,7 @@
             // if the form has been submitted we validate and store the configuration
             if (array_key_exists('CONFIG_DB_ENGINE', $_POST) && isset($_POST['CONFIG_DB_ENGINE']) &&
                 in_array(strtolower($_POST['CONFIG_DB_ENGINE']), array_keys($valid_db_engines))) {
-                $configValues['CONFIG_DB_ENGINE'] = $_POST['CONFIG_DB_ENGINE'];
+                $configValues['CONFIG_DB_ENGINE'] = strtolower($_POST['CONFIG_DB_ENGINE']);
             }
 
             if (array_key_exists('CONFIG_DB_PORT', $_POST) && isset($_POST['CONFIG_DB_PORT']) &&
@@ -100,12 +104,12 @@
 
             // validate table name
             foreach ($db_tbl_param_label as $param => $label) {
-                if (array_key_exists($param, $_POST) && isset($_POST[$param]) && preg_match(DB_TABLE_NAME_REGEX, $_POST[$param]) !== false) {
+                if (array_key_exists($param, $_POST) && isset($_POST[$param]) && preg_match(DB_TABLE_NAME_REGEX, $_POST[$param]) === 1) {
                     $configValues[$param] = $_POST[$param];
                 }
             }
 
-            include("../common/includes/config_write.php");
+            include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_write.php' ]);
 
         } else {
             // csrf
@@ -123,7 +127,7 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     // set navbar stuff
     $navkeys = array( 'Settings', 'DatabaseTables' );
@@ -234,7 +238,5 @@
 
     close_form();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-
-?>

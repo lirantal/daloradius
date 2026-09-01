@@ -1,14 +1,27 @@
-# How to responsibly disclose security vulnerabilities
+# Security Policy
 
-daloRADIUS does not have a dedicated security contact apart from its GitHub repository and the maintainers and project contributors
-who can assist with vulnerability triage and fix.
+**Please do not report security vulnerabilities through public GitHub issues**.
 
-To report security issues, and to prevent disclosing security issues publicly, please create an issue about the problem with means to contact you. 
-We will reach out to you as soon as possible. Please refrain from publicly sharing information about the security issue to avoid putting users in
-harms and delay a public disclosure until a fix is rolled out by the daloRADIUS team.
+## Responsible disclosure security policy
 
-## Responsbile security disclosure progams
+A responsible disclosure policy helps protect users of the project from public
+disclosure of security vulnerabilities without a fix available. We achieve
+that by following the process where vulnerabilities are first triaged in a
+private manner, and are only publicly disclosed after a reasonable time period
+of the patch being available for users.
 
-As an alternative to a GitHub issue you can also report via the following programs:
-1. [Huntr.dev](https://huntr.dev/) platform for responsible secure disclosures
-2. [Snyk's](https://snyk.io/vulnerability-disclosure/) vulnerability disclosures program
+We kindly ask you to refrain from malicious acts that put our users, the
+project, or any of the project’s team members at risk.
+
+## Reporting a security issue
+
+We consider the security of the project a top priority.
+
+If you discover a security vulnerability, please use one of the following
+means of communications to report it to us:
+
+- If enabled, report the security issue via GitHub's private vulnerability reporting
+- As a secondary method, you may contact the maintainer via email
+
+We sincerely appreciate your efforts to responsibly disclose your findings
+with us.

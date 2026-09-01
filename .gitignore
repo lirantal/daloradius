@@ -3,10 +3,14 @@
 *.db
 invoice_preview.html
 .DS_Store
+.env
+.env.*
+!.env.example
 data/
 internal_data/
 
 var/log/*.log
 var/backup/*.sql
+var/backup/*.sql.gz
 app/common/includes/daloradius.conf.php
 app/common/library/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/HTML/*

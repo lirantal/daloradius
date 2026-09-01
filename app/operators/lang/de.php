@@ -352,7 +352,6 @@ $l['all']['BandwidthDown'] = "Downstream-Bandbreite";
 
 $l['all']['BatchCost'] = "Batch-Gebühr";
 
-$l['all']['PaymentDate'] = "Zahlungsdatum";
 $l['all']['PaymentStatus'] = "Zahlungsstatus";
 $l['all']['FirstName'] = "Vorname";
 $l['all']['LastName'] = "Nachname";
@@ -586,7 +585,7 @@ $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(beschreibende
 $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Wenn Sie eine Gruppe angeben, wird nur der einzelne Datensatz entfernt, der sowohl zum Benutzernamen als auch zur angegebenen Gruppe passt. Wenn Sie die Gruppe weglassen, werden alle Datensätze für diesen Benutzernamen entfernt!";
 
 $l['Tooltip']['usernameTooltip'] = "Beispiel: max_mustermann. Der genaue Benutzername, den der Benutzer zur Anmeldung im System verwendet.";
-$l['Tooltip']['passwordTypeTooltip'] = "Beispiel: Cleartext-Password, MD5-Password, SHA1-Password. Der Passworttyp, der zur Authentifizierung des Benutzers im RADIUS verwendet wird.";
+$l['Tooltip']['passwordTypeTooltip'] = "Beispiel: Cleartext-Password, MD5-Password, SHA1-Password, SHA2-Password. Der Passworttyp, der zur Authentifizierung des Benutzers im RADIUS verwendet wird.";
 $l['Tooltip']['passwordTooltip'] = "Beispiel: P@ssw0rt!. Das Passwort des Benutzers. Beachten Sie, dass manche Systeme zwischen Groß- und Kleinschreibung unterscheiden. Bitte achten Sie auf die genaue Eingabe.";
 $l['Tooltip']['groupTooltip'] = "Beispiel: Premium_Benutzer. Die Gruppe, der der Benutzer hinzugefügt wird. Durch das Hinzufügen zu einer bestimmten Gruppe erbt der Benutzer die Attribute dieser Gruppe.";
 $l['Tooltip']['macaddressTooltip'] = "Beispiel: 00:AA:BB:CC:DD:EE. Das MAC-Adressformat sollte dem Format entsprechen, das vom NAS gesendet wird. In der Regel ist das ohne Trennzeichen.";
@@ -1087,7 +1086,6 @@ $l['Intro']['repstatus.php'] = "Statusseite";
 $l['Intro']['reptopusers.php'] = "Top-Benutzer";
 $l['Intro']['repusername.php'] = "Benutzer auflisten";
 
-$l['Intro']['mngbatch.php'] = "Batch-Benutzer erstellen";
 $l['Intro']['mngbatchdel.php'] = "Batch-Sessions löschen";
 
 $l['Intro']['mngdel.php'] = "Benutzer entfernen";
@@ -1250,7 +1248,6 @@ $l['helpPage']['mngradattributesedit'] = "";
 $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 $l['helpPage']['mngradattributesimport'] = "";
-$l['helpPage']['mngimportusers'] = "";
 
 $l['helpPage']['msgerrorpermissions'] = "Leider haben Sie nicht die erforderlichen Berechtigungen, um auf diesen Bereich zuzugreifen. <br>Bitte kontaktieren Sie den System-Administrator.";
 

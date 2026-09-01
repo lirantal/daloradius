@@ -242,14 +242,25 @@ class PDFLib implements Canvas
         $this->_pdf->set_info("Date", date("Y-m-d"));
         date_default_timezone_set($tz);
 
+        $doc_options = "";
+
+        if ($options->isPdfAEnabled()) {
+            $doc_options = "pdfa=PDF/A-3b autoxmp";
+        }
+
         if (self::$IN_MEMORY) {
-            $this->_pdf->begin_document("", "");
+            $this->_pdf->begin_document("", $doc_options);
         } else {
             $tmp_dir = $options->getTempDir();
             $tmp_name = @tempnam($tmp_dir, "libdompdf_pdf_");
             @unlink($tmp_name);
             $this->_file = "$tmp_name.pdf";
-            $this->_pdf->begin_document($this->_file, "");
+            $this->_pdf->begin_document($this->_file, $doc_options);
+        }
+
+        if ($options->isPdfAEnabled()) {
+            $iccProfilePath = $options->getRootDir() . '/lib/res/sRGB2014.icc';
+            $this->_pdf->load_iccprofile($iccProfilePath, "usage=outputintent");
         }
 
         $this->_pdf->begin_page_ext($this->_width, $this->_height, "");
@@ -1067,17 +1078,16 @@ class PDFLib implements Canvas
             return $filename;
         }
  
-        $func_name = "imagecreatefrom$type";
 
         set_error_handler([Helpers::class, "record_warnings"]);
-
-        if (method_exists(Helpers::class, $func_name)) {
-            $func_name = [Helpers::class, $func_name];
-        } elseif (!function_exists($func_name)) {
-            throw new Exception("Function $func_name() not found.  Cannot convert $type image: $image_url.  Please install the image PHP extension.");
-        }
-
         try {
+            $func_name = "imagecreatefrom$type";
+            if (method_exists(Helpers::class, $func_name)) {
+                $func_name = [Helpers::class, $func_name];
+            } elseif (!function_exists($func_name)) {
+                throw new Exception("Function $func_name() not found.  Cannot convert $type image: $image_url.  Please install the image PHP extension.");
+            }
+
             $im = call_user_func($func_name, $image_url);
 
             if ($im) {
@@ -1089,7 +1099,9 @@ class PDFLib implements Canvas
                 $filename = "$tmp_name.png";
 
                 imagepng($im, $filename);
-                imagedestroy($im);
+                if (PHP_MAJOR_VERSION < 8) {
+                    imagedestroy($im);
+                }
             } else {
                 $filename = null;
             }
@@ -1256,7 +1268,7 @@ class PDFLib implements Canvas
         $delta = $word_spacing * $num_spaces;
 
         if ($letter_spacing) {
-            $num_chars = mb_strlen($text);
+            $num_chars = mb_strlen($text, "UTF-8");
             $delta += $num_chars * $letter_spacing;
         }
 
@@ -1398,7 +1410,6 @@ class PDFLib implements Canvas
             $size = filesize($this->_file);
         }
 
-        header("Cache-Control: private");
         header("Content-Type: application/pdf");
         header("Content-Length: " . $size);
 

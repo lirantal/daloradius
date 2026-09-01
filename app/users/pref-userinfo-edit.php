@@ -78,7 +78,7 @@
                                $dbSocket->escapeSimple($mobilephone), $dbSocket->escapeSimple($address),
                                $dbSocket->escapeSimple($city), $dbSocket->escapeSimple($state),
                                $dbSocket->escapeSimple($country), $dbSocket->escapeSimple($zip),
-                               $dbSocket->escapeSimple($username));
+                               $dbSocket->escapeSimple($login_user));
 
                 $res = $dbSocket->query($sql);
                 $logDebugSQL .= "$sql;\n";

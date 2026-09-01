@@ -92,10 +92,10 @@ if (count($menu_usernames) > 0) {
 }
 
 $sections = array();
-$sections[] = array( 'title' => 'Point of Sales Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'PointOfSalesManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Billing',
+                'title' => t('sidebar', 'Billing'),
                 'sections' => $sections,
              );

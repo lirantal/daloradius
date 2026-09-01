@@ -85,13 +85,6 @@ $input_descriptors1[] = array( 'name' => 'updateby', 'caption' => t('all','Updat
                                'type' => 'text', 'value' => ((isset($operator_updateby)) ? $operator_updateby : ""),
                              );
 
-
-$submit_descriptor = array(
-                                "type" => "submit",
-                                "name" => "submit",
-                                "value" => t('buttons','apply')
-                          );                                
-                            
 echo "<fieldset>"
    . "<h302>Operator Details</h302>"
    . "<ul>";
@@ -103,5 +96,4 @@ foreach ($input_descriptors1 as $input_descriptor) {
 echo "</ul>"
    . "</fieldset>";
 
-print_form_component($submit_descriptor);
 ?>

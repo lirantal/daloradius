@@ -52,6 +52,48 @@ define("DB_TABLE_NAME_REGEX", '/^[a-zA-Z0-9_]+$/');
 define("ALLOWED_RANDOM_CHARS_REGEX", DB_TABLE_NAME_REGEX);
 define("ALLOWED_ATTRIBUTE_CHARS_REGEX", '/^[a-zA-Z0-9-]+$/');
 
+if (!function_exists('normalize_custom_attributes')) {
+    /**
+     * Validate optional custom RADIUS attributes and drop malformed entries.
+     *
+     * Keeps only items shaped like `Attribute=Value`, rejects empty values,
+     * rejects `User-Name`, and allows only attribute names that match the
+     * shared whitelist regex.
+     *
+     * @param string $customAttributes Comma-separated `Attr=Value` pairs.
+     * @return string Normalized comma-separated list of valid pairs.
+     */
+    function normalize_custom_attributes($customAttributes) {
+        $customAttributes = trim((string)$customAttributes);
+        if ($customAttributes === "") {
+            return "";
+        }
+
+        $out = array();
+        foreach (explode(",", $customAttributes) as $pair) {
+            if (strpos($pair, "=") === false) {
+                continue;
+            }
+
+            list($attr, $value) = explode("=", $pair, 2);
+            $attr  = trim($attr);
+            $value = trim($value);
+
+            if ($attr === "" || $value === "" || $attr === 'User-Name') {
+                continue;
+            }
+
+            if (preg_match(ALLOWED_ATTRIBUTE_CHARS_REGEX, $attr) !== 1) {
+                continue;
+            }
+
+            $out[] = sprintf("%s=%s", $attr, $value);
+        }
+
+        return implode(", ", $out);
+    }
+}
+
 define("SENDER_NAME_REGEX", '/^[a-zA-Z0-9 -]+$/');
 define("SUBJECT_PREFIX_REGEX", '/^[a-zA-Z0-9 -\[\]]+$/');
 define("RECIPIENT_NAME_REGEX", '/^[a-zA-Z0-9 -]+$/');
@@ -77,6 +119,7 @@ $valid_passwordTypes = array(
                                 "NT-Password",
                                 "MD5-Password",
                                 "SHA1-Password",
+                                "SHA2-Password",
                                 "User-Password",
                                 "Crypt-Password",
                                 //~ "CHAP-Password"
@@ -105,16 +148,16 @@ $valid_recommendedHelpers = array(
                                     "kbitspersecond", "bitspersecond", "volumebytes", "mikrotikRateLimit",
                                  );
 
-$valid_attributeTypes = array(
-                                "string",
-                                "integer",
-                                "ipaddr",
-                                "date",
-                                "octets",
-                                "ipv6addr",
-                                "ifid",
-                                "abinary",
-                             );
+// Populate the datalist (UX): only types meant to be picked by hand
+$datalist_attributeTypes = array(
+    "string", "integer", "ipaddr", "ipv6addr", "ipv6prefix",
+    "date", "octets", "byte", "short", "signed", "ifid", "abinary",
+);
+
+// Validate on save (correctness): full set, including structural/exotic types
+$valid_attributeTypes = array_merge($datalist_attributeTypes, array(
+    "tlv", "combo-ip", "ipv4prefix", "integer64", "ether",
+));
 
 $valid_db_engines = array(
                             "mysql" => "MySQL",
@@ -348,7 +391,8 @@ $operators_valid_languages = array(
                                     "ro" => "Romanian",
                                     "ru" => "Russian",
                                     "tr" => "Turkish",
-                                    "zh" => "Chinese",
+                                    "zh" => "Chinese - Simplified",
+                                    "zh_tw" => "Chinese - Traditional",
                                   );
 // users allowed languages
 $users_valid_languages = array(
@@ -357,6 +401,7 @@ $users_valid_languages = array(
                                     "it" => "Italiano (Italian)",
                                     "ro" => "Română (Romanian)",
                                     "ru" => "Русский (Russian)",
+                                    "zh_tw" => "繁體中文 (Traditional Chinese)",
                                   );
 
 $valid_message_types = array(

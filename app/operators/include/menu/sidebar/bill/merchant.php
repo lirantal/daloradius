@@ -107,7 +107,7 @@ $components[] = array(
 
 $components[] = array(
                             "id" => 'random',
-                            "caption" => "Order Type",
+                            "caption" => t('sidebar', 'OrderType'),
                             "type" => "select",
                             "name" => "orderType",
                             "options" => array("asc" => "Ascending", "desc" => "Descending"),
@@ -119,10 +119,10 @@ $descriptors1[] = array( 'type' => 'form', 'title' => t('button','ProcessQuery')
                          'icon' => 'filter-circle-fill', 'form_components' => $components, );
 
 $sections = array();
-$sections[] = array( 'title' => 'Track Merchant Transactions', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'TrackMerchantTransactions'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Billing',
+                'title' => t('sidebar', 'Billing'),
                 'sections' => $sections,
              );

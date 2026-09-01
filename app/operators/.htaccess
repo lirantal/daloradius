@@ -31,7 +31,7 @@
 #
 #     AuthName "Authentication Base"
 #     AuthType Basic
-#     AuthUserFile ${DALORADIUS_ROOT_DIRECTORY}/.htpasswd
+#     AuthUserFile /etc/apache2/daloradius.htpasswd
 #     Require valid-user
 #
 

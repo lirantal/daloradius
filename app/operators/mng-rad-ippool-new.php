@@ -20,17 +20,16 @@
  *
  *********************************************************************************************************
  */
- 
-    include("library/checklogin.php");
+
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include_once("include/management/populate_selectbox.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -39,26 +38,26 @@
 
     // load valid ippools
     $valid_ippools = get_ippools();
-    
-    include('../common/includes/db_open.php');
+
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
+
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
+
             $pool_name = (array_key_exists('pool_name', $_POST) && !empty(str_replace("%", "", trim($_POST['pool_name']))))
                        ? str_replace("%", "", trim($_POST['pool_name'])) : "";
-                      
+
             $framedipaddress = (array_key_exists('framedipaddress', $_POST) && !empty(trim($_POST['framedipaddress'])) &&
                                 filter_var(trim($_POST['framedipaddress']), FILTER_VALIDATE_IP) !== false)
                              ? trim($_POST['framedipaddress']) : "";
-            
+
             if (empty($framedipaddress) || empty($pool_name)) {
                 // required
                 $failureMsg = sprintf("Empty/invalid %s and/or %s", t('all','PoolName'), t('all','IPAddress'));
                 $logAction .= "$failureMsg on page: ";
             } else {
-                
+
                 $sql = sprintf("SELECT COUNT(id)
                                   FROM %s
                                  WHERE framedipaddress=?", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
@@ -66,9 +65,9 @@
                 $values = array( $framedipaddress, );
                 $res = $dbSocket->execute($prep, $values);
                 $logDebugSQL .= "$sql;\n";
-                
+
                 $exists = $res->fetchrow()[0] > 0;
-                
+
                 if ($exists) {
                     // invalid
                     $failureMsg = sprintf("The chosen %s is already contained in a pool", t('all','IPAddress'));
@@ -80,13 +79,13 @@
                     $values = array( $pool_name, $framedipaddress );
                     $res = $dbSocket->execute($prep, $values);
                     $logDebugSQL .= "$sql;\n";
-                    
+
                     if (!DB::isError($res)) {
                         // retrieve item id
                         $sql = sprintf("SELECT CONCAT('ippool-', LAST_INSERT_ID()) FROM %s",
                                        $configValues['CONFIG_DB_TBL_RADIPPOOL']);
                         $item_id = $dbSocket->getOne($sql);
-                        
+
                         $successMsg = sprintf("Successfully added a new ippool item (item id: %s)", $item_id)
                                     . sprintf(' [<a href="mng-rad-ippool-edit.php?item=%s" title="Edit">Edit</a>]',
                                               urlencode($item_id));
@@ -96,9 +95,9 @@
                         $logAction .= "$failureMsg on page: ";
                     }
                 }
-                
+
             }
-        
+
         } else {
             // csrf
             $failureMsg = "CSRF token error";
@@ -106,21 +105,19 @@
         }
     }
 
-    include('../common/includes/db_close.php');
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
 
     // print HTML prologue
     $title = t('Intro','mngradippoolnew.php');
     $help = t('helpPage','mngradippoolnew');
-    
+
     print_html_prologue($title, $langCode);
 
-    
-
     print_title_and_help($title, $help);
-    
-    include_once('include/management/actionMessages.php');
-    
+
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+
     if (!isset($successMsg)) {
          // descriptors 0
         $input_descriptors0 = array();
@@ -132,7 +129,7 @@
                                         'value' => (isset($pool_name) ? $pool_name : ""),
                                         'required' => true
                                      );
-                                     
+
         $input_descriptors0[] = array(
                                         'name' => 'framedipaddress',
                                         'caption' => t('all','IPAddress'),
@@ -141,7 +138,7 @@
                                         'pattern' => trim(IP_REGEX, '/'),
                                         'required' => true
                                      );
-                                     
+
         // descriptors 1
         $input_descriptors1 = array();
 
@@ -181,7 +178,7 @@
 
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-    
+
 ?>

@@ -116,11 +116,11 @@ if (count($menu_ratenames) > 0) {
 }
 
 $sections = array();
-$sections[] = array( 'title' => 'Track Rates', 'descriptors' => $descriptors1 );
-$sections[] = array( 'title' => 'Rates Management', 'descriptors' => $descriptors2 );
+$sections[] = array( 'title' => t('sidebar', 'TrackRates'), 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'RatesManagement'), 'descriptors' => $descriptors2 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Billing',
+                'title' => t('sidebar', 'Billing'),
                 'sections' => $sections,
              );

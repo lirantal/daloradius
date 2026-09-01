@@ -51,13 +51,19 @@ function hashPasswordAttribute($attribute, $value) {
 
     switch ($attribute) {
         case "Crypt-Password":
-            return crypt($value, 'SALT_DALORADIUS');
+            // crypt() picks the algorithm from the salt prefix. A salt that does not
+            // start with $ selects traditional DES: 8-character truncation and, here,
+            // a salt shared by every user. Use SHA-512 crypt with a per-user salt.
+            return crypt($value, '$6$' . bin2hex(random_bytes(8)) . '$');
 
         case "MD5-Password":
             return strtoupper(md5($value));
 
         case "SHA1-Password":
             return sha1($value);
+
+        case "SHA2-Password":
+            return hash('sha256', $value);
 
         case "NT-Password":
             return strtoupper(bin2hex(mhash(MHASH_MD4, iconv('UTF-8', 'UTF-16LE', $value))));

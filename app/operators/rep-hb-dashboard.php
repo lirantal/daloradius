@@ -24,7 +24,7 @@
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    //include('library/check_operator_perm.php');
+    include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
     
     include_once("lang/main.php");
@@ -171,7 +171,7 @@
             $tooltip['content'] = sprintf($format, t('all','WanIface'), $row['wan_iface'])
                                 . sprintf($format, t('all','WanMAC'), $row['wan_mac'])
                                 . sprintf($format, t('all','WanIP'), $row['wan_ip'])
-                                . sprintf($format, t('all','WanGateway'), $row['wan_ip']);
+                                . sprintf($format, t('all','WanGateway'), $row['wan_gateway']);
                 
             $tooltip1 = get_tooltip_list_str($tooltip);
 

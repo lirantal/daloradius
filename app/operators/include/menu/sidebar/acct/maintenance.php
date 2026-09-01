@@ -35,11 +35,11 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','DeleteAccounti
                          'href' => 'acct-maintenance-delete.php', 'icon' => 'x-circle-fill', );
 
 $sections = array();
-$sections[] = array( 'title' => 'Maintenance', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'Maintenance'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Accounting',
+                'title' => t('sidebar', 'Accounting'),
                 'sections' => $sections,
              );

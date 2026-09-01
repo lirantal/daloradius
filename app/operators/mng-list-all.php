@@ -21,15 +21,14 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -37,9 +36,12 @@
     $logQuery = "performed query for all usernames on page: ";
     $logDebugSQL = "";
 
+    // init other useful variables
+    $is_smtp_enabled = strtolower($configValues['CONFIG_MAIL_ENABLED']) === 'yes';
+    $hide_secrets = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
+
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-
 
     // print HTML prologue
     $extra_js = array(
@@ -52,8 +54,6 @@
     $help = t('helpPage','mnglistall');
 
     print_html_prologue($title, $langCode, array(), $extra_js);
-
-    $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
 
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
@@ -69,10 +69,11 @@
                     "username" => t('all','Username'),
                  );
 
-    if (!$hiddenPassword) {
+    if (!$hide_secrets) {
         $cols["auth"] = t('all','Password');
     }
 
+    $cols["framedipaddress"] = t('all','FramedIPAddress');
     $cols["lastlogin"] = t('all','LastLoginTime');
     $cols[] = t('title','Groups');
 
@@ -94,8 +95,8 @@
     print_title_and_help($title, $help);
     echo '<div id="returnMessages"></div>';
 
-    include('../common/includes/db_open.php');
-    include('include/management/pages_common.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     // sql where is like: join_condition AND (nested_condition1)
 
@@ -119,7 +120,7 @@
     $sql_count = sprintf("SELECT COUNT(DISTINCT rc.username) AS count FROM %s %s", $_SESSION['reportTable'], $_SESSION['reportQuery']);
     $res_count = $dbSocket->query($sql_count);
     $logDebugSQL .= "$sql_count;\n";
-    
+
     $row_count = $res_count->fetchRow();
     $numrows = isset($row_count) ? intval($row_count[0]) : 0;
 
@@ -127,8 +128,9 @@
         /* START - Related to pages_numbering.php */
 
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        // must be included after opendb because it needs to read
+        // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
 
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
@@ -138,9 +140,11 @@
         // we execute and log the actual data query
         $sql = sprintf("SELECT ui.id AS id, rc.username AS username, rc.value AS auth, rc.attribute,
                                CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
+                               (SELECT MAX(value) FROM %s WHERE username = rc.username AND attribute = 'Framed-IP-Address') AS framedipaddress,
                                (SELECT MAX(acctstarttime) FROM %s WHERE username = rc.username) AS lastlogin
                           FROM %s %s
-                         GROUP BY rc.username", 
+                         GROUP BY rc.username",
+                         $configValues['CONFIG_DB_TBL_RADREPLY'],
                          $configValues['CONFIG_DB_TBL_RADACCT'],
                          $_SESSION['reportTable'], $_SESSION['reportQuery']);
 
@@ -180,6 +184,7 @@
                 'groups' => array(),
                 'type' => $type,
                 'id' => $row['id'],
+                'framedipaddress' => $row['framedipaddress'],
                 'lastlogin' => $row['lastlogin'],
             );
             // in the same pass we init the $usernamelist
@@ -216,6 +221,7 @@
 
         // we prepare the "controls bar" (aka the table prologue bar)
         $additional_controls = array();
+
         $additional_controls[] = array(
                                 'onclick' => "javascript:removeCheckbox('listall','mng-del.php')",
                                 'label' => 'Delete',
@@ -227,17 +233,22 @@
                                 'label' => 'Disable',
                                 'class' => 'btn-primary',
                               );
+
         $additional_controls[] = array(
                                 'onclick' => "enableCheckbox('listall','library/ajax/user_actions.php')",
                                 'label' => 'Enable',
                                 'class' => 'btn-secondary',
                               );
-// Add "Send Mail" button
-        $additional_controls[] = array(
-                                'onclick' => "mailCheckbox('listall','library/ajax/user_actions.php')",
-                                'label' => 'Send Mail',
-                                'class' => 'btn-primary',
-                                );
+
+        if ($is_smtp_enabled) {
+            // Add "Send Mail" button
+            $additional_controls[] = array(
+                                    'onclick' => "mailCheckbox('listall','library/ajax/user_actions.php')",
+                                    'label' => 'Send Mail',
+                                    'class' => 'btn-primary',
+                                    );
+        }
+
         $descriptors = array();
 
         $descriptors['start'] = array( 'common_controls' => 'username[]', 'additional_controls' => $additional_controls );
@@ -305,6 +316,8 @@
             $auth = htmlspecialchars($data['auth'], ENT_QUOTES, 'UTF-8');
 
             $fullname = htmlspecialchars($data['fullname'], ENT_QUOTES, 'UTF-8');
+            $framedipaddress = (!empty($data['framedipaddress']))
+                            ? htmlspecialchars($data['framedipaddress'], ENT_QUOTES, 'UTF-8') : "(n/a)";
             $lastlogin = (!empty($data['lastlogin']))
                        ? htmlspecialchars($data['lastlogin'], ENT_QUOTES, 'UTF-8') : "(n/a)";
             $grouplist = implode("<br>", $data['groups']);
@@ -312,34 +325,50 @@
             $ajax_id = "divContainerUserInfo_" . $count;
             $param = sprintf('username=%s', urlencode($username));
             $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
-            $tooltip = array(
+
+            // create username tooltip
+            $tooltip1 = array(
                                 'subject' => sprintf('%s%s<span class="badge bg-primary ms-1">%s</span>', $img, $badge, $username),
                                 'onclick' => $onclick,
                                 'ajax_id' => $ajax_id,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array(
+            $tooltip1['actions'][] = array(
                                             'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ),
                                             'label' => t('Tooltip','UserEdit'),
                                          );
-            $tooltip['actions'][] = array(
+            $tooltip1['actions'][] = array(
                                             'href' => sprintf('acct-username.php?username=%s', urlencode($username), ),
                                             'label' => t('all','Accounting'),
                                          );
 
-            // create tooltip
-            $tooltip = get_tooltip_list_str($tooltip);
+            $tooltip1 = get_tooltip_list_str($tooltip1);
+
+            // create Framed-IP-Address tooltip
+            if (preg_match(LOOSE_IP_REGEX, $framedipaddress, $m)) {
+                $tooltip2 = [
+                    'subject' => $framedipaddress,
+                    'actions' => array(),
+                ];
+                $tooltip2['actions'][] = [  'href' => sprintf('acct-ipaddress.php?ipaddress=%s', urlencode($framedipaddress), ),
+                                            'label' => t('button','IPAccounting'), ];
+
+                $tooltip2 = get_tooltip_list_str($tooltip2);
+            } else {
+                $tooltip2 = (!empty($framedipaddress)) ? $framedipaddress : "(n/a)";
+            }
 
             // create checkbox
             $d = array( 'name' => 'username[]', 'value' => $username, 'label' => $id );
             $checkbox = get_checkbox_str($d);
 
             // define table row
-            $table_row = array( $checkbox, $fullname, $tooltip );
-            if (!$hiddenPassword) {
+            $table_row = array( $checkbox, $fullname, $tooltip1 );
+            if (!$hide_secrets) {
                 $table_row[] = ($type == 'USER') ? $auth : "(n/a)";
             }
 
+            $table_row[] = $tooltip2;
             $table_row[] = $lastlogin;
             $table_row[] = $grouplist;
 
@@ -367,12 +396,9 @@
 
     } else {
         $failureMsg = "Nothing to display";
-        include_once("include/management/actionMessages.php");
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include('../common/includes/db_close.php');
-
-    include('include/config/logging.php');
-
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-?>

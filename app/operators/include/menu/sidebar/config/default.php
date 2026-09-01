@@ -39,17 +39,17 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','LoggingSetting
                          'icon' => 'tools', );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','InterfaceSettings'), 'href' => 'config-interface.php',
                          'icon' => 'tools', );
-$descriptors1[] = array( 'type' => 'link', 'label' => "Message Settings", 'href' => 'config-messages.php',
+$descriptors1[] = array( 'type' => 'link', 'label' => t('sidebar', 'MessageSettings'), 'href' => 'config-messages.php',
                          'icon' => 'chat-text', );
-$descriptors1[] = array( 'type' => 'link', 'label' => "Recurring Tasks Settings", 'href' => 'config-crontab.php',
+$descriptors1[] = array( 'type' => 'link', 'label' => t('sidebar', 'RecurringTasksSettings'), 'href' => 'config-crontab.php',
                          'icon' => 'stopwatch', );
 
 $sections = array();
-$sections[] = array( 'title' => 'Global Settings', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'GlobalSettings'), 'descriptors' => $descriptors1 );
 
 
 // add sections to menu
 $menu = array(
-                'title' => 'Configuration',
+                'title' => t('sidebar', 'Configuration'),
                 'sections' => $sections,
              );

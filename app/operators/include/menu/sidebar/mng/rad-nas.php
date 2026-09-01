@@ -56,7 +56,7 @@ if (count($menu_nasnames) > 0) {
                                                     'type' => 'traditional',
                                                     'options' => (($autocomplete) ? $menu_nasnames : array()),
                                                ),
-                            "tooltipText" => "Please insert a valid " . t('all','NasIPHost'),
+                            "tooltipText" => sprintf(t('sidebar', 'PleaseInsertAValid'), t('all','NasIPHost')),
                             "caption" => t('all','NasIPHost'),
                             "sidebar" => true,
                           );
@@ -69,10 +69,10 @@ if (count($menu_nasnames) > 0) {
 }
 
 $sections = array();
-$sections[] = array( 'title' => 'NAS Management', 'descriptors' => $descriptors1 );
+$sections[] = array( 'title' => t('sidebar', 'NASManagement'), 'descriptors' => $descriptors1 );
 
 // add sections to menu
 $menu = array(
-                'title' => 'Management',
+                'title' => t('sidebar', 'Management'),
                 'sections' => $sections,
              );
