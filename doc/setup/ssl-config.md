@@ -4,6 +4,8 @@ This guide walks you through the process of enabling HTTPS on a daloRADIUS insta
 
 daloRADIUS is a standard PHP web application — it does not include any built-in SSL/TLS configuration. HTTPS is configured entirely at the Apache level, the same way you would for any other web application.
 
+This guide covers only the web interface. For PEAP, EAP-TTLS, and EAP-TLS certificates used by the RADIUS service, see [Managing FreeRADIUS Certificates](freeradius-certificates.md).
+
 ## Prerequisites
 
 Before proceeding, ensure the following:
