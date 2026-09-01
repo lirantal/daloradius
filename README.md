@@ -193,7 +193,7 @@ For new installations, use the schemas found in `contrib/db/mariadb-daloradius*.
 * bootstrap icons - [https://icons.getbootstrap.com/](https://icons.getbootstrap.com/)
 * dompdf - [https://github.com/dompdf](https://github.com/dompdf)
 * htmlpurifier - [https://github.com/ezyang/htmlpurifier](https://github.com/ezyang/htmlpurifier)
-* jpgraph - [https://jpgraph.net/](https://jpgraph.net/)
+* Chart.js - [https://www.chartjs.org/](https://www.chartjs.org/)
 * phpmailer - [https://github.com/PHPMailer/PHPMailer](https://github.com/PHPMailer/PHPMailer)
 * php-svg-qrcode - [https://github.com/philronan/php-svg-qrcode](https://github.com/philronan/php-svg-qrcode)
 * totp-php - [https://github.com/remotemerge/totp-php](https://github.com/remotemerge/totp-php)

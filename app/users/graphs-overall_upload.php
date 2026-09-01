@@ -51,7 +51,7 @@
     $title = t('Intro','graphsoverallupload.php');
     $help = t('helpPage','graphsoverallupload');
 
-    print_html_prologue($title, $langCode);
+    print_html_prologue($title, $langCode, array(), array("static/js/chart.umd.min.js", "static/js/daloradius-charts.js"));
 
     print_title_and_help($title, $help);
 
@@ -70,7 +70,7 @@
     // tab 0
     open_tab($navkeys, 0, true);
 
-    $img_format = '<div class="my-3 text-center"><img src="%s" alt="%s"></div>';
+    $img_format = '<div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
     $src = sprintf("library/graphs/overall_users_data.php?category=upload&type=%s&size=%s", $type, $size);
     $alt = sprintf("traffic uploaded by user %s", $username_enc);
     printf($img_format, $src, $alt);
