@@ -1814,7 +1814,7 @@ $l['helpPage']['acctcustom'] = <<<EOF
 <h2 class="fs-6">排序欄位與排序方式</h2>
 <p>指定用於對結果進行排序的欄位，並選擇升序或降序排列。</p>
 EOF;
-$l['helpPage']['acctcustomquery'] = "";
+$l['helpPage']['acctcustomquery'] = $l['helpPage']['acctcustom'];
 $l['helpPage']['acctmaintenance'] = "
 <h200><b>清理過期工作階段</b></h200> -
     「過期工作階段」可能經常存在因為會影響NAS無法提供計費停止紀錄<<br/>
