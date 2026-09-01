@@ -33,7 +33,7 @@ function dalo_chart_overall_user_statistics($dbSocket, $radacct_table, $username
                 ? 'COUNT(AcctStartTime)'
                 : ($category === 'upload' ? 'SUM(AcctInputOctets)' : 'SUM(AcctOutputOctets)');
 
-            $session_filter = $category === 'login' ? '' : ' AND AcctStopTime>0';
+            $session_filter = ' AND AcctStopTime>0';
 
             if ($type === 'yearly') {
                 $sql = "SELECT YEAR(AcctStartTime), %s FROM %s WHERE username='%s'%s GROUP BY YEAR(AcctStartTime) ORDER BY YEAR(AcctStartTime) DESC LIMIT 36";

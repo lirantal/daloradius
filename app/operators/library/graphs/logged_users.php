@@ -9,7 +9,7 @@ $year = isset($_GET['year']) && intval($_GET['year']) > 1970 && intval($_GET['ye
 include('../../../common/includes/db_open.php');
 if ($day !== '') {
     $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
-    $sql = sprintf("SELECT DATE(acctstarttime) AS starting_day, HOUR(acctstarttime) AS starting_hour, HOUR(DATE_ADD(acctstoptime, INTERVAL 1 HOUR)) AS ending_hour, DATE(acctstoptime) AS ending_day FROM %s WHERE acctstarttime <= '%s' AND (acctstoptime >= '%s' OR (acctsessiontime = 0 AND acctinputoctets = 0 AND acctoutputoctets = 0))", $configValues['CONFIG_DB_TBL_RADACCT'], $date, $date);
+    $sql = sprintf("SELECT DATE(acctstarttime) AS starting_day, HOUR(acctstarttime) AS starting_hour, HOUR(DATE_ADD(acctstoptime, INTERVAL 1 HOUR)) AS ending_hour, DATE(DATE_ADD(acctstoptime, INTERVAL 1 HOUR)) AS ending_day FROM %s WHERE acctstarttime <= '%s' AND (acctstoptime >= '%s' OR (acctsessiontime = 0 AND acctinputoctets = 0 AND acctoutputoctets = 0))", $configValues['CONFIG_DB_TBL_RADACCT'], $date, $date);
     $res = $dbSocket->query($sql);
     $by_hour = array_fill(0, 24, 0);
     while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
