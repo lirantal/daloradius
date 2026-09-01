@@ -391,7 +391,8 @@ $operators_valid_languages = array(
                                     "ro" => "Romanian",
                                     "ru" => "Russian",
                                     "tr" => "Turkish",
-                                    "zh" => "Chinese",
+                                    "zh" => "Chinese - Simplified",
+                                    "zh_tw" => "Chinese - Traditional",
                                   );
 // users allowed languages
 $users_valid_languages = array(
@@ -400,6 +401,7 @@ $users_valid_languages = array(
                                     "it" => "Italiano (Italian)",
                                     "ro" => "Română (Romanian)",
                                     "ru" => "Русский (Russian)",
+                                    "zh_tw" => "繁體中文 (Traditional Chinese)",
                                   );
 
 $valid_message_types = array(
