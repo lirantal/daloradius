@@ -70,34 +70,24 @@ function getValuesList(sel, valuesSel, opSel, tableSel, attrTooltip, attrType, a
     var attributeName = selElem.value;
 
     var valuesElem = document.getElementById(valuesSel);
-    if (valuesElem) {
-        valuesElem.value = '';
-    }
-
     var opElem = document.getElementById(opSel);
-    if (opElem) {
-        opElem.options.length = 0;
+    var tableElem = document.getElementById(tableSel);
+    var typeElem = document.getElementById(attrType);
+    var tooltipElem = document.getElementById(attrTooltip);
+    var helperElem = document.getElementById(attrHelper);
+
+    if (!valuesElem || !opElem || !tableElem || !typeElem || !tooltipElem || !helperElem) {
+        return;
     }
 
-    var tableElem = document.getElementById(tableSel);
-    if (tableElem && tableElem.type == "select") {
+    valuesElem.value = '';
+    opElem.options.length = 0;
+    if (tableElem.type == "select") {
         tableElem.options.length = 0;
     }
-
-    var typeElem = document.getElementById(attrType);
-    if (typeElem) {
-        typeElem.value = '';
-    }
-
-    var tooltipElem = document.getElementById(attrTooltip);
-    if (tooltipElem) {
-        tooltipElem.value = '';
-    }
-
-    var helperElem = document.getElementById(attrHelper);
-    if (helperElem) {
-        helperElem.value = '';
-    }
+    typeElem.value = '';
+    tooltipElem.value = '';
+    helperElem.value = '';
 
     var num = dictCounter - 1;
 
@@ -124,9 +114,13 @@ function createValues(index, valuesSel, opSel, tableSel, attrTooltip, attrType, 
     var objValues = document.getElementById(valuesSel);
     var objOP = document.getElementById(opSel);
     var objTable = document.getElementById(tableSel);
+
+    if (!objHelper || !objTooltip || !objType || !objValues || !objOP || !objTable) {
+        return;
+    }
     
     // Executing the response from Ajax as Javascript code
-    eval(ajax[index].response);     
+    eval(ajax[index].response);
 }
 
 

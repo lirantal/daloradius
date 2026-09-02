@@ -22,9 +22,9 @@ function changeInteger(dstObj, action) {
     } else {
         if (val <= 0) {
             dstElem.value = 0;
-            return;
+        } else {
+            dstElem.value = val - 1;
         }
-        dstElem.value = val - 1;
     }
 
     if (typeof Event === 'function') {

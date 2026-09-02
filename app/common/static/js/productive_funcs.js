@@ -12,23 +12,36 @@ function randomAlphanumeric(dstObj, charsLength, chars) {
         return;
     }
 
-    const length = Number(charsLength) || 8;
+    const length = Number(charsLength);
+    // Web Crypto limits each getRandomValues() call to 65,536 bytes.
+    const maxLength = 65536 / Uint32Array.BYTES_PER_ELEMENT;
+    if (!Number.isSafeInteger(length) || length < 0 || length > maxLength) {
+        return;
+    }
+
     const allowedChars = (typeof chars === 'string' && chars.length > 0)
         ? chars
         : "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
     let randomChars = "";
 
-    if (typeof window !== 'undefined' && window.crypto && typeof window.crypto.getRandomValues === 'function') {
-        const randomValues = new Uint32Array(length);
+    // Never downgrade generated credentials to predictable Math.random() output.
+    if (length > 0 && (typeof window === 'undefined' || !window.crypto
+            || typeof window.crypto.getRandomValues !== 'function')) {
+        return;
+    }
+
+    const uint32Range = 0x100000000;
+    const unbiasedLimit = Math.floor(uint32Range / allowedChars.length) * allowedChars.length;
+
+    while (randomChars.length < length) {
+        const randomValues = new Uint32Array(length - randomChars.length);
         window.crypto.getRandomValues(randomValues);
-        for (let i = 0; i < length; i++) {
-            randomChars += allowedChars.charAt(randomValues[i] % allowedChars.length);
-        }
-    } else {
-        for (let i = 0; i < length; i++) {
-            const index = Math.floor(Math.random() * allowedChars.length);
-            randomChars += allowedChars.charAt(index);
+
+        for (let i = 0; i < randomValues.length && randomChars.length < length; i++) {
+            if (randomValues[i] < unbiasedLimit) {
+                randomChars += allowedChars.charAt(randomValues[i] % allowedChars.length);
+            }
         }
     }
 
