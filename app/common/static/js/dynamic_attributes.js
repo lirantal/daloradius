@@ -63,29 +63,43 @@ function createAttributes(index, attributesSel) {
 
 function getValuesList(sel, valuesSel, opSel, tableSel, attrTooltip, attrType, attrHelper) {
 
-    var attributeName = document.getElementById(sel).value;
+    var selElem = document.getElementById(sel);
+    if (!selElem) {
+        return;
+    }
+    var attributeName = selElem.value;
 
-    // clear input
-    document.getElementById(valuesSel).value = '';		 
-    
-    // clear select box
-    document.getElementById(opSel).options.length = 0;       
-
-    if (document.getElementById(tableSel).type == "select") {
-        // clear select box
-        document.getElementById(tableSel).options.length = 0;    
+    var valuesElem = document.getElementById(valuesSel);
+    if (valuesElem) {
+        valuesElem.value = '';
     }
 
-    // clear input
-    document.getElementById(attrType).value = '';       	 
-    
-    // clear input
-    document.getElementById(attrTooltip).value = '';         
+    var opElem = document.getElementById(opSel);
+    if (opElem) {
+        opElem.options.length = 0;
+    }
 
-    // clear input
-    document.getElementById(attrHelper).value = '';
+    var tableElem = document.getElementById(tableSel);
+    if (tableElem && tableElem.type == "select") {
+        tableElem.options.length = 0;
+    }
 
-    num = dictCounter - 1;
+    var typeElem = document.getElementById(attrType);
+    if (typeElem) {
+        typeElem.value = '';
+    }
+
+    var tooltipElem = document.getElementById(attrTooltip);
+    if (tooltipElem) {
+        tooltipElem.value = '';
+    }
+
+    var helperElem = document.getElementById(attrHelper);
+    if (helperElem) {
+        helperElem.value = '';
+    }
+
+    var num = dictCounter - 1;
 
     if(attributeName.length > 0) {
         var index = ajax.length;
