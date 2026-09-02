@@ -235,7 +235,7 @@ function toggleShowDiv(idName) {
     var divs = document.getElementsByTagName('div');
     for (var i = 0; i < divs.length; i++) {
         if (divs[i].id && divs[i].id.indexOf(idName) !== -1) {
-            divs[i].style.display = (divs[i].style.display === "none") ? "block" : "none";
+            divs[i].style.display = (divs[i].style.display === "block") ? "none" : "block";
         }
     }
 }
