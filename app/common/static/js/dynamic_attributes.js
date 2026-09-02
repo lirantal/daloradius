@@ -63,29 +63,33 @@ function createAttributes(index, attributesSel) {
 
 function getValuesList(sel, valuesSel, opSel, tableSel, attrTooltip, attrType, attrHelper) {
 
-    var attributeName = document.getElementById(sel).value;
+    var selElem = document.getElementById(sel);
+    if (!selElem) {
+        return;
+    }
+    var attributeName = selElem.value;
 
-    // clear input
-    document.getElementById(valuesSel).value = '';		 
-    
-    // clear select box
-    document.getElementById(opSel).options.length = 0;       
+    var valuesElem = document.getElementById(valuesSel);
+    var opElem = document.getElementById(opSel);
+    var tableElem = document.getElementById(tableSel);
+    var typeElem = document.getElementById(attrType);
+    var tooltipElem = document.getElementById(attrTooltip);
+    var helperElem = document.getElementById(attrHelper);
 
-    if (document.getElementById(tableSel).type == "select") {
-        // clear select box
-        document.getElementById(tableSel).options.length = 0;    
+    if (!valuesElem || !opElem || !tableElem || !typeElem || !tooltipElem || !helperElem) {
+        return;
     }
 
-    // clear input
-    document.getElementById(attrType).value = '';       	 
-    
-    // clear input
-    document.getElementById(attrTooltip).value = '';         
+    valuesElem.value = '';
+    opElem.options.length = 0;
+    if (tableElem.type == "select") {
+        tableElem.options.length = 0;
+    }
+    typeElem.value = '';
+    tooltipElem.value = '';
+    helperElem.value = '';
 
-    // clear input
-    document.getElementById(attrHelper).value = '';
-
-    num = dictCounter - 1;
+    var num = dictCounter - 1;
 
     if(attributeName.length > 0) {
         var index = ajax.length;
@@ -110,9 +114,13 @@ function createValues(index, valuesSel, opSel, tableSel, attrTooltip, attrType, 
     var objValues = document.getElementById(valuesSel);
     var objOP = document.getElementById(opSel);
     var objTable = document.getElementById(tableSel);
+
+    if (!objHelper || !objTooltip || !objType || !objValues || !objOP || !objTable) {
+        return;
+    }
     
     // Executing the response from Ajax as Javascript code
-    eval(ajax[index].response);     
+    eval(ajax[index].response);
 }
 
 

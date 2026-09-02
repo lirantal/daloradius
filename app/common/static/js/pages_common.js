@@ -6,18 +6,30 @@
  * dstObj        - the destination object text input
  * action        - increment or decrement
  ***********************************************************************/
-function changeInteger(dstObj,action) {
-
+function changeInteger(dstObj, action) {
     var dstElem = document.getElementById(dstObj);
-    var dstElemVal = dstElem.value;
-    if (action == 'increment') {
-        dstElem.value = parseInt(dstElemVal)+1;
-    } else {
-        if (dstElemVal < 0)
-            exit;
-        dstElem.value = parseInt(dstElemVal)-1;
+    if (!dstElem) {
+        return;
     }
 
+    var val = parseInt(dstElem.value, 10);
+    if (isNaN(val)) {
+        val = 0;
+    }
+
+    if (action === 'increment') {
+        dstElem.value = val + 1;
+    } else {
+        if (val <= 0) {
+            dstElem.value = 0;
+        } else {
+            dstElem.value = val - 1;
+        }
+    }
+
+    if (typeof Event === 'function') {
+        dstElem.dispatchEvent(new Event('change', { bubbles: true }));
+    }
 }
 
 
@@ -62,82 +74,88 @@ function toggleAttributeSelectbox() {
 
 
 function toggleRandomUsers() {
-
-    //disable field
-    document.batchuser.elements['startingIndex'].disabled=true;
-
-    // enable required fields
-    //document.batchuser.elements['length_pass'].disabled=false;
-    document.batchuser.elements['length_user'].disabled=false;
+    var form = document.forms['batchuser'];
+    if (form && form.elements['startingIndex']) {
+        form.elements['startingIndex'].disabled = true;
+    }
+    if (form && form.elements['length_user']) {
+        form.elements['length_user'].disabled = false;
+    }
 }
 
 
 function toggleIncrementUsers() {
-
-    //disable field
-    //document.batchuser.elements['length_pass'].disabled=true;
-    document.batchuser.elements['length_user'].disabled=true;
-
-    // enable required fields
-    document.batchuser.elements['startingIndex'].disabled=false;
+    var form = document.forms['batchuser'];
+    if (form && form.elements['length_user']) {
+        form.elements['length_user'].disabled = true;
+    }
+    if (form && form.elements['startingIndex']) {
+        form.elements['startingIndex'].disabled = false;
+    }
 }
 
 
 function toggleUserAuth() {
+    var form = document.forms['newuser'];
+    if (!form) {
+        return;
+    }
 
-    //disable the mac auth
-    document.newuser.elements['macaddress'].disabled=true;
-    document.newuser.elements['group_macaddress[]'].disabled=true;
+    var disableFields = ['macaddress', 'group_macaddress[]', 'pincode', 'group_pincode[]'];
+    for (var i = 0; i < disableFields.length; i++) {
+        if (form.elements[disableFields[i]]) {
+            form.elements[disableFields[i]].disabled = true;
+        }
+    }
 
-    // disable pincode auth
-    document.newuser.elements['pincode'].disabled=true;
-    document.newuser.elements['group_pincode[]'].disabled=true;
-
-    //enable the user auth
-    document.newuser.elements['username'].disabled=false;
-    document.newuser.elements['password'].disabled=false;
-    document.newuser.elements['passwordType'].disabled=false;
-    document.newuser.elements['groups[]'].disabled=false;
-    document.newuser.elements['usergroup'].disabled=false;
-
+    var enableFields = ['username', 'password', 'passwordType', 'groups[]', 'usergroup'];
+    for (var j = 0; j < enableFields.length; j++) {
+        if (form.elements[enableFields[j]]) {
+            form.elements[enableFields[j]].disabled = false;
+        }
+    }
 }
 
 function togglePinCode() {
+    var form = document.forms['newuser'];
+    if (!form) {
+        return;
+    }
 
-    // disable pincode auth
-    document.newuser.elements['pincode'].disabled=false;
-    document.newuser.elements['group_pincode[]'].disabled=false;
+    var enableFields = ['pincode', 'group_pincode[]'];
+    for (var i = 0; i < enableFields.length; i++) {
+        if (form.elements[enableFields[i]]) {
+            form.elements[enableFields[i]].disabled = false;
+        }
+    }
 
-    //disable the mac auth
-    document.newuser.elements['macaddress'].disabled=true;
-    document.newuser.elements['group_macaddress[]'].disabled=true;
-
-    // disable the user auth
-    document.newuser.elements['username'].disabled=true;
-    document.newuser.elements['password'].disabled=true;
-    document.newuser.elements['passwordType'].disabled=true;
-    document.newuser.elements['groups[]'].disabled=true;
-    document.newuser.elements['usergroup'].disabled=true;
-
+    var disableFields = ['macaddress', 'group_macaddress[]', 'username', 'password', 'passwordType', 'groups[]', 'usergroup'];
+    for (var j = 0; j < disableFields.length; j++) {
+        if (form.elements[disableFields[j]]) {
+            form.elements[disableFields[j]].disabled = true;
+        }
+    }
 }
 
 function toggleMacAuth(state) {
+    var form = document.forms['newuser'];
+    if (!form) {
+        return;
+    }
 
-    // enable the mac auth
-    document.newuser.elements['macaddress'].disabled=false;
-    document.newuser.elements['group_macaddress[]'].disabled=false;
+    var enableFields = ['macaddress', 'group_macaddress[]'];
+    for (var i = 0; i < enableFields.length; i++) {
+        if (form.elements[enableFields[i]]) {
+            form.elements[enableFields[i]].disabled = false;
+        }
+    }
 
-    // disable the user auth
-    document.newuser.elements['username'].disabled=true;
-    document.newuser.elements['password'].disabled=true;
-    document.newuser.elements['passwordType'].disabled=true;
-    document.newuser.elements['groups[]'].disabled=true;
-    document.newuser.elements['usergroup'].disabled=true;
-
-    // disable pincode auth
-    document.newuser.elements['pincode'].disabled=true;
-    document.newuser.elements['group_pincode[]'].disabled=true;
-
+    var disableFields = ['username', 'password', 'passwordType', 'groups[]', 'usergroup', 'pincode', 'group_pincode[]'];
+    for (var j = 0; j < disableFields.length; j++) {
+        if (form.elements[disableFields[j]]) {
+            form.elements[disableFields[j]].disabled = true;
+        }
+    }
 }
 
 
@@ -214,26 +232,10 @@ function setStringTextMulti(srcId,dstId1, dstId2) {
  *               (visible/hidden)
  ***********************************************************************/
 function toggleShowDiv(idName) {
-
     var divs = document.getElementsByTagName('div');
-    for(i=0;i<divs.length;i++) {
-        if (divs[i].id.match(idName)) {
-            if (document.getElementById) {                            // compatible with IE5 and NS6
-                if (divs[i].style.display=="block")
-                    divs[i].style.display="none";
-                else
-                     divs[i].style.display="block";
-            } else if (document.layers) {                            // compatible with Netscape 4
-                if (document.layers[divs[i]].display=='visible')
-                    document.layers[divs[i]].display = 'hidden';
-                else
-                    document.layers[divs[i]].display = 'visible';
-            } else {
-                if (document.all.hideShow.divs[i].visibility=='visible')        // compatible with IE4
-                    document.all.hideShow.divs[i].visibility = 'hidden';
-                else
-                    document.all.hideShow.divs[i].visibility = 'visible';
-            }
+    for (var i = 0; i < divs.length; i++) {
+        if (divs[i].id && divs[i].id.indexOf(idName) !== -1) {
+            divs[i].style.display = (divs[i].style.display === "block") ? "none" : "block";
         }
     }
 }
@@ -277,20 +279,24 @@ function small_window(user,pass,time) {
 
 
 /***********************************************************************
- * toggleShowDiv
- * user        - the username
- * pass        - the password
- * time        - the credit time that is left for the user
+ * SetChecked
+ * checks or unchecks checkboxes by name in a given form
+ *
+ * val         - true or false
+ * chkName     - the checkbox input name
+ * formname    - the form name
  ***********************************************************************/
 function SetChecked(val,chkName,formname) {
-        dml=document.forms[formname];
-    len = dml.elements.length;
-        var i=0;
-        for( i=0 ; i<len ; i++) {
-                if (dml.elements[i].name==chkName) {
-                dml.elements[i].checked=val;
-                }
+    var dml = document.forms[formname];
+    if (!dml) {
+        return;
+    }
+    var len = dml.elements.length;
+    for (var i = 0; i < len; i++) {
+        if (dml.elements[i].name == chkName) {
+            dml.elements[i].checked = val;
         }
+    }
 }
 
 

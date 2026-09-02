@@ -1,26 +1,54 @@
 /***********************************************************************
- * randomAlphanmeric
+ * randomAlphanumeric
  * creates random characters of alpha numeric chars
  *
  * dstObj               - the destination object to copy the data to
  * charsLength          - length of random characters
- * chars				- allowed chars
+ * chars                - allowed chars
  ***********************************************************************/
-function randomAlphanumeric(dstObj,charsLength,chars) {
+function randomAlphanumeric(dstObj, charsLength, chars) {
+    const dstElem = document.getElementById(dstObj);
+    if (!dstElem) {
+        return;
+    }
 
-	var dstElem = document.getElementById(dstObj);
+    const length = Number(charsLength);
+    // Web Crypto limits each getRandomValues() call to 65,536 bytes.
+    const maxLength = 65536 / Uint32Array.BYTES_PER_ELEMENT;
+    if (!Number.isSafeInteger(length) || length < 0 || length > maxLength) {
+        return;
+    }
 
-	var length = charsLength;
+    const allowedChars = (typeof chars === 'string' && chars.length > 0)
+        ? chars
+        : "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
-	if (!chars)
-		var chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
-	
-	var randomChars = "";
+    let randomChars = "";
 
-	for(x=0; x<length; x++) {
-		var i = Math.floor(Math.random() * chars.length);
-		randomChars += chars.charAt(i);
-	}
+    // Never downgrade generated credentials to predictable Math.random() output.
+    if (length > 0 && (typeof window === 'undefined' || !window.crypto
+            || typeof window.crypto.getRandomValues !== 'function')) {
+        return;
+    }
 
-	dstElem.value = randomChars;
+    const uint32Range = 0x100000000;
+    const unbiasedLimit = Math.floor(uint32Range / allowedChars.length) * allowedChars.length;
+
+    while (randomChars.length < length) {
+        const randomValues = new Uint32Array(length - randomChars.length);
+        window.crypto.getRandomValues(randomValues);
+
+        for (let i = 0; i < randomValues.length && randomChars.length < length; i++) {
+            if (randomValues[i] < unbiasedLimit) {
+                randomChars += allowedChars.charAt(randomValues[i] % allowedChars.length);
+            }
+        }
+    }
+
+    dstElem.value = randomChars;
+
+    if (typeof Event === 'function') {
+        dstElem.dispatchEvent(new Event('input', { bubbles: true }));
+        dstElem.dispatchEvent(new Event('change', { bubbles: true }));
+    }
 }
