@@ -24,7 +24,8 @@
  *********************************************************************************************************
  */
  
-include('../../library/checklogin.php');
+include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', '..', 'common', 'includes', 'config_read.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
 
 // reportFormat is either CSV or PDF
 $reportFormat = (array_key_exists('reportFormat', $_GET) && isset($_GET['reportFormat']) &&
@@ -76,7 +77,7 @@ function exportPDFFile($output) {
 	print $output;
 }
 
-include_once('../../../common/includes/db_open.php');
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
 // we init output
 $output = "";
@@ -440,7 +441,7 @@ switch ($reportType) {
 
 }
 
-include_once('../../../common/includes/db_close.php');
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
 // at this point, if $output is not empty we can export the file
 if (!empty($output)) {

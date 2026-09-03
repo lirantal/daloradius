@@ -27,7 +27,7 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/attributes.php') !== false
     exit;
 }
 
-include('../common/includes/db_open.php');
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
 $vendors = array( "" );
 $sql = sprintf("SELECT DISTINCT(Vendor) AS Vendor
@@ -59,7 +59,7 @@ if (function_exists('dalo_filter_cleartext_password_attributes')) {
     $attributes = dalo_filter_cleartext_password_attributes($attributes);
 }
 
-include('../common/includes/db_close.php');
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
 $_fieldset0_descriptor = array(
                                 "title" => t('title','Attributes'),

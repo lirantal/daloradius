@@ -21,16 +21,16 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include_once("include/management/functions.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -121,7 +121,7 @@
             $bi_changeuserbillinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
                                    ? '1' : '0';
 
-            include('../common/includes/db_open.php');
+            include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
             // check if username is already present in the radcheck table
             $userExists = user_exists($dbSocket, $username);
@@ -183,7 +183,7 @@
                          $i++;
                      }
 
-                    include("library/attributes.php");
+                    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
                     $skipList = array(
                                        "username", "password", "passwordType", "groups", "maxallsession", "expiration",
                                        "sessiontimeout", "idletimeout", "simultaneoususe", "framedipaddress",
@@ -283,7 +283,7 @@
 
             } // if ($userExists) {
 
-            include('../common/includes/db_close.php');
+            include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
         } else {
             // csrf
             $failureMsg = "CSRF token error";
@@ -311,7 +311,7 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     // set navbar stuff
     $navkeys = array( 'AccountInfo', 'UserInfo', 'BillingInfo' );
@@ -364,7 +364,7 @@
                                     "type" => "select"
                                 );
 
-    include_once('include/management/populate_selectbox.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
     $options = get_groups();
     array_unshift($options, '');
     $input_descriptors0[] = array(
@@ -490,7 +490,7 @@
                        . 'onclick="javascript:small_window(document.newuser.username.value, '
                        . 'document.newuser.password.value, document.newuser.maxallsession.value);" '
                        . 'class="button">';
-    include_once('include/management/userinfo.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userinfo.php' ]);
 
     close_tab($navkeys, 1);
 
@@ -498,7 +498,7 @@
     open_tab($navkeys, 2);
 
     $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
-    include_once('include/management/userbillinfo.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userbillinfo.php' ]);
 
     close_tab($navkeys, 2);
 
@@ -509,6 +509,6 @@
 
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
 ?>

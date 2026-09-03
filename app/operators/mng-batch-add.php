@@ -21,17 +21,17 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include_once("include/management/functions.php");
-    include_once("library/attributes.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -40,7 +40,7 @@
 
     $valid_passwordTypes = dalo_filter_password_types($valid_passwordTypes);
 
-    include('../common/includes/db_open.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     // init valid account type
     $valid_accountTypes = array(
@@ -62,11 +62,11 @@
     }
 
     // get valid groups and plan names
-    include_once('include/management/populate_selectbox.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
     $valid_groups = get_groups();
     $valid_planNames = get_plans();
 
-    include('include/management/pages_common.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
 
 
     function addUserBatchHistory($dbSocket) {
@@ -461,9 +461,9 @@
         }
     }
 
-    include('../common/includes/db_close.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     if (!empty($exportForm)) {
         echo $exportForm;
@@ -647,17 +647,17 @@
 
         // open 1-st tab
         open_tab($navkeys, 1);
-        include_once('include/management/userinfo.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userinfo.php' ]);
         close_tab($navkeys, 1);
 
         // open 2-nd tab
         open_tab($navkeys, 2);
-        include_once('include/management/userbillinfo.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userbillinfo.php' ]);
         close_tab($navkeys, 2);
 
         // open 3-rd tab
         open_tab($navkeys, 3);
-        include_once('include/management/attributes.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'attributes.php' ]);
         close_tab($navkeys, 3);
 
         // close tab wrapper
@@ -685,7 +685,7 @@
 
     }
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
 
     // extra javascript
     $inline_extra_js = <<<EOF

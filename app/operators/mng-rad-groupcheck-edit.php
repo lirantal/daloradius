@@ -21,15 +21,15 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -48,7 +48,7 @@
     $item_prefix = "groupcheck-";
     $item_table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
     
-    include('../common/includes/db_open.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
     
     // get valid attributes
     $valid_attributes = array();
@@ -195,7 +195,7 @@
         list( $groupname, $attribute, $op, $value ) = $res->fetchrow();
     }
     
-    include('../common/includes/db_close.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     
     // print HTML prologue
@@ -213,7 +213,7 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     
     if (!empty($internal_id)) {
         
@@ -299,7 +299,7 @@
     
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
     
 ?>

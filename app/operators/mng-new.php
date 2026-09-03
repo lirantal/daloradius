@@ -21,16 +21,16 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include_once("include/management/functions.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -133,7 +133,7 @@
             $bi_nextinvoicedue = (array_key_exists('bi_nextinvoicedue', $_POST) && isset($_POST['bi_nextinvoicedue'])) ? $_POST['bi_nextinvoicedue'] : "";
             $bi_billdue = (array_key_exists('bi_billdue', $_POST) && isset($_POST['bi_billdue'])) ? $_POST['bi_billdue'] : "";
 
-            include('../common/includes/db_open.php');
+            include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
             // we will have a $username_to_check, only
             // if required arguments have been supplied
@@ -215,7 +215,7 @@
                     // handleAttributes() - called later - will take care of it.
                     $_POST['injected_attribute'] = array( $attribute, $value, ':=', 'check' );
 
-                    include("library/attributes.php");
+                    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
 
                     $skipList = array( "authType", "username", "password", "passwordType", "groups",
                                        "macaddress", "pincode", "submit", "firstname", "lastname", "email",
@@ -326,7 +326,7 @@
                 }
             }
 
-            include('../common/includes/db_close.php');
+            include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
         } else {
             // csrf
             $failureMsg = "CSRF token error";
@@ -355,11 +355,11 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     if (!isset($successMsg)) {
 
-        include_once('include/management/populate_selectbox.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
 
         $input_descriptors0 = array();
 
@@ -518,18 +518,18 @@
 
         // open 1-th tab (shown)
         open_tab($navkeys, 1);
-        include_once('include/management/userinfo.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userinfo.php' ]);
         close_tab($navkeys, 1);
 
 
         // open 2-th tab (shown)
         open_tab($navkeys, 2);
-        include_once('include/management/userbillinfo.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userbillinfo.php' ]);
         close_tab($navkeys, 2);
 
         // open 3-th tab (shown)
         open_tab($navkeys, 3);
-        include_once('include/management/attributes.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'attributes.php' ]);
         close_tab($navkeys, 3);
 
         // close tab wrapper
@@ -558,7 +558,7 @@
 
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
 
     $inline_extra_js = '
 function switchAuthType() {

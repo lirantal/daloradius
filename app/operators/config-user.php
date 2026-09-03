@@ -21,15 +21,15 @@
  *********************************************************************************************************
  */
 
-    include ("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -82,7 +82,7 @@
                 $failureMsg = sprintf("Invalid input: [%s]", implode(", ", array_values($invalid_input)));
                 $logAction .= "$failureMsg on page: ";
             } else {
-                include("../common/includes/config_write.php");
+                include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'config_write.php' ]);
             }
 
         } else {
@@ -101,7 +101,7 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     $fieldset0_descriptor = array(
                                     "title" => t('title','Settings')
@@ -166,7 +166,7 @@
 
     close_form();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
 
     print_footer_and_html_epilogue();
 
