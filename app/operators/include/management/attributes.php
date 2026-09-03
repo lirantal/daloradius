@@ -55,6 +55,10 @@ if (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) && strtolower($configValu
 
 }
 
+if (function_exists('dalo_filter_cleartext_password_attributes')) {
+    $attributes = dalo_filter_cleartext_password_attributes($attributes);
+}
+
 include('../common/includes/db_close.php');
 
 $_fieldset0_descriptor = array(

@@ -31,6 +31,10 @@ include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'chec
 include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
 
+$cleartext_password_attributes = function_exists('dalo_cleartext_password_attributes')
+                                ? dalo_cleartext_password_attributes()
+                                : array("Cleartext-Password", "User-Password");
+
 /**
  * @brief Populates an HTML select element with options from table names.
  *
@@ -449,6 +453,9 @@ switch ($action) {
             
             while ($row = $res->fetchRow()) {
                 $attribute = htmlspecialchars(trim($row[0]), ENT_QUOTES, 'UTF-8');
+                if (!dalo_cleartext_password_allowed() && in_array($attribute, $cleartext_password_attributes, true)) {
+                    continue;
+                }
                 printf("objAttributes.add(new Option('%s', '%s'));\n", $attribute, $attribute);
             }
             

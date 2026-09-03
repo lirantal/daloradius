@@ -65,6 +65,10 @@
     while ($row = $res->fetchrow()) {
         $valid_attributes[] = $row[0];
     }
+
+    if (function_exists('dalo_filter_cleartext_password_attributes')) {
+        $valid_attributes = dalo_filter_cleartext_password_attributes($valid_attributes);
+    }
     
     // check if item is valid
     if (!empty($item)) {
