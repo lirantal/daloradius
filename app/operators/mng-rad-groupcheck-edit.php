@@ -48,7 +48,7 @@
     $item_prefix = "groupcheck-";
     $item_table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
     
-    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
     
     // get valid attributes
     $valid_attributes = array();
@@ -195,7 +195,7 @@
         list( $groupname, $attribute, $op, $value ) = $res->fetchrow();
     }
     
-    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     
     // print HTML prologue

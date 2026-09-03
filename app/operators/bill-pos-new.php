@@ -267,7 +267,7 @@
             $current_datetime = date('Y-m-d H:i:s');
             $currBy = $operator;
 
-            include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
             // check if username is already present in the radcheck table
             $userExists = user_exists($dbSocket, $username);
@@ -393,7 +393,7 @@
                 }
             }
 
-            include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
         } else {
             // csrf
