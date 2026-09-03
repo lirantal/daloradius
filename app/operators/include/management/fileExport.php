@@ -361,14 +361,15 @@ switch ($reportType) {
 		case "reportsBatchTotalUsers":
         
             $batch_id = intval($_SESSION['reportParams']['batch_id']);
+            $cleartext_password_attributes = array("Cleartext-Password", "User-Password");
 
-            // check if in this batch there are some Cleartext-Password attributes
+            // check if in this batch there are some cleartext password attributes
             $sql = sprintf("SELECT COUNT(ubi.username)
                               FROM %s AS ubi, %s AS rc
                              WHERE rc.username=ubi.username
                                AND ubi.batch_id=%d
                                AND rc.op=':='
-                               AND rc.attribute='Cleartext-Password'",
+                               AND rc.attribute IN ('Cleartext-Password', 'User-Password')",
                            $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
                            $configValues['CONFIG_DB_TBL_RADCHECK'], $batch_id);
 
@@ -408,7 +409,7 @@ switch ($reportType) {
                 
                 list($username, $attribute, $value) = $row;
                 
-                if ($attribute != "Cleartext-Password" || $attribute == "Auth-Type") {
+                if (!in_array($attribute, $cleartext_password_attributes, true)) {
                     $value = "(empty)";
                 }
                 
