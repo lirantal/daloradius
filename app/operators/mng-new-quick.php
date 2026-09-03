@@ -37,12 +37,7 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // if cleartext passwords are not allowed,
-    // we remove Cleartext-Password from the $valid_passwordTypes array
-    if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
-        strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) !== 'yes') {
-        $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
-    }
+    $valid_passwordTypes = dalo_filter_password_types($valid_passwordTypes);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {

@@ -41,7 +41,7 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
-            // validate allow Cleartext-Password attributes
+            // validate cleartext password attributes
             if (
                     array_key_exists('CONFIG_DB_PASSWORD_ENCRYPTION', $_POST) &&
                     !empty(trim($_POST['CONFIG_DB_PASSWORD_ENCRYPTION'])) &&
@@ -112,7 +112,7 @@
     $input_descriptors0[] = array(
                                     "type" => "select",
                                     "options" => array( "yes", "no" ),
-                                    "caption" => "Allow cleartext password in db",
+                                    "caption" => "Allow cleartext password attributes in db",
                                     "name" => 'CONFIG_DB_PASSWORD_ENCRYPTION',
                                     "selected_value" => $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'],
                                  );

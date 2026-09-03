@@ -38,12 +38,7 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // if cleartext passwords are not allowed,
-    // we remove Cleartext-Password from the $valid_passwordTypes array
-    if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
-        strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) !== 'yes') {
-        $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
-    }
+    $valid_passwordTypes = dalo_filter_password_types($valid_passwordTypes);
 
     $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
               ? trim(str_replace("%", "", $_POST['username'])) : "";

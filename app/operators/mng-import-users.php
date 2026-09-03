@@ -48,13 +48,8 @@
     $valid_groups = get_groups();
     $valid_planNames = get_plans();
 
-    // if cleartext passwords are not allowed, 
-    // we remove Cleartext-Password from the $valid_passwordTypes array
-    $cleartextPasswordAllowed = (!isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) ||
-        strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) === 'yes');
-    if (!$cleartextPasswordAllowed) {
-        $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
-    }
+    $cleartextPasswordAllowed = dalo_cleartext_password_allowed();
+    $valid_passwordTypes = dalo_filter_password_types($valid_passwordTypes);
 
     $generatepassword = 'no';
     $generatedPasswords = array();

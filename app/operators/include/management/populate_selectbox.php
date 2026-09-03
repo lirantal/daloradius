@@ -679,16 +679,31 @@ function populate_proxys($defaultOption = "Select Proxy",$elementName = "", $css
  */
 function populate_password_types($elementName = "", $cssClass = "form", $mode = "") {
 
+    $passwordTypes = array(
+        "Cleartext-Password",
+        "User-Password",
+        "Crypt-Password",
+        "MD5-Password",
+        "SHA1-Password",
+        "SHA2-Password",
+        "CHAP-Password",
+    );
+
+    if (function_exists('dalo_filter_password_types')) {
+        $passwordTypes = dalo_filter_password_types($passwordTypes);
+    } elseif (function_exists('dalo_cleartext_password_allowed') && !dalo_cleartext_password_allowed()) {
+        $passwordTypes = array_values(array_diff($passwordTypes, array("Cleartext-Password", "User-Password")));
+    }
+
     echo "<select $mode
             name='$elementName' class='$cssClass' tabindex=105 />
-            <option value='Cleartext-Password'>Cleartext-Password</option>
-            <option value='User-Password'>User-Password</option>
-            <option value='Crypt-Password'>Crypt-Password</option>
-            <option value='MD5-Password'>MD5-Password</option>
-            <option value='SHA1-Password'>SHA1-Password</option>
-            <option value='SHA2-Password'>SHA2-Password</option>
-            <option value='CHAP-Password'>CHAP-Password</option>
-            </select>";
+            ";
+
+    foreach ($passwordTypes as $passwordType) {
+        echo sprintf("<option value='%s'>%s</option>", $passwordType, $passwordType);
+    }
+
+    echo "</select>";
 }
 
 
