@@ -131,8 +131,6 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
 
     }
 
-
-
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     return true;
@@ -191,7 +189,7 @@ function userInvoicesStatus($user_id, $drawTable) {
 
         $button_descriptors0 = array();
         $button_descriptors0[] = array(
-                                            "label" => "New Invoice",
+                                            "label" => t('button','NewInvoice'),
                                             "onclick" => sprintf("javascript:window.location='bill-invoice-new.php?user_id=%d'", $user_id),
                                             "class" => "btn-success",
                                       );
@@ -216,7 +214,7 @@ function userInvoicesStatus($user_id, $drawTable) {
         $input_descriptors0[] = array(
                                         "type" =>"number",
                                         "name" => "total_invoices",
-                                        "caption" => "Total Invoices",
+                                        "caption" => t('all','TotalInvoices'),
                                         "disabled" => true,
                                         "value" => $totalInvoices,
                                      );
@@ -232,7 +230,7 @@ function userInvoicesStatus($user_id, $drawTable) {
         $input_descriptors0[] = array(
                                         "type" =>"number",
                                         "name" => "total_billed",
-                                        "caption" => "Total Billed",
+                                        "caption" => t('all','TotalBilled'),
                                         "disabled" => true,
                                         "value" => $totalBilled,
                                      );
@@ -248,7 +246,7 @@ function userInvoicesStatus($user_id, $drawTable) {
         $input_descriptors0[] = array(
                                         "type" =>"number",
                                         "name" => "balance",
-                                        "caption" => "Balance",
+                                        "caption" => t('all','Balance'),
                                         "disabled" => true,
                                         "value" => $totalPayed - $totalBilled,
                                      );
