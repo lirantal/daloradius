@@ -669,45 +669,12 @@ function populate_proxys($defaultOption = "Select Proxy",$elementName = "", $css
 
 }
 
-/*
- * populate_passwordTypes
- * creates a select box and populates it with all supported password types
- * 
- * $elementName   - the string used for the select element's name='' value
- * $cssClass      - the css/xhtml class name, default is form for displaying on content divs (not sidebar)
- *
- */
-function populate_password_types($elementName = "", $cssClass = "form", $mode = "") {
-
-    $passwordTypes = array(
-        "Cleartext-Password",
-        "User-Password",
-        "Crypt-Password",
-        "MD5-Password",
-        "SHA1-Password",
-        "SHA2-Password",
-        "CHAP-Password",
-    );
-
-    if (function_exists('dalo_filter_password_types')) {
-        $passwordTypes = dalo_filter_password_types($passwordTypes);
-    } elseif (function_exists('dalo_cleartext_password_allowed') && !dalo_cleartext_password_allowed()) {
-        $passwordTypes = array_values(array_diff($passwordTypes, array("Cleartext-Password", "User-Password")));
-    }
-
-    echo "<select $mode
-            name='$elementName' class='$cssClass' tabindex=105 />
-            ";
-
-    foreach ($passwordTypes as $passwordType) {
-        echo sprintf("<option value='%s'>%s</option>", $passwordType, $passwordType);
-    }
-
-    echo "</select>";
-}
-
-
-
+// populate_password_types() used to live here with its own hardcoded list of
+// password types. It had no callers left: the pages offering a password type
+// build their select box out of $valid_passwordTypes (see
+// common/includes/validation.php), narrowed down through
+// dalo_filter_password_types(). Keeping a second list around only invited the
+// two to drift apart, so it was dropped.
 
 
 

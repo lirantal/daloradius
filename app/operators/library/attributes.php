@@ -30,20 +30,9 @@ function is_group($user_or_group) {
     return strtolower(trim($user_or_group)) === 'group';
 }
 
-if (!function_exists('dalo_cleartext_password_attributes')) {
-    function dalo_cleartext_password_attributes() {
-        return array("Cleartext-Password", "User-Password");
-    }
-}
-
-if (!function_exists('dalo_cleartext_password_allowed')) {
-    function dalo_cleartext_password_allowed() {
-        global $configValues;
-
-        return !isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) ||
-               strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) === 'yes';
-    }
-}
+// dalo_cleartext_password_attributes() and dalo_cleartext_password_allowed()
+// live in common/includes/validation.php, which every caller of this file
+// includes beforehand.
 
 function is_passwordlike_attribute($attribute) {
     return preg_match("/-Password$/", $attribute) === 1;

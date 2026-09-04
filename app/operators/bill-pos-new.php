@@ -277,10 +277,12 @@
                 $logAction .= "Failed adding new user already existing in database [$username] on page: ";
             } else {
 
-                // username and password are required
-                if (empty($username) || empty($password)) {
-                    $failureMsg = "username or password are empty";
-                    $logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
+                // username, password and password type are required. an empty password type
+                // means the posted one is unknown or no longer permitted (e.g. a cleartext
+                // type submitted while CONFIG_DB_PASSWORD_ENCRYPTION is set to 'no')
+                if (empty($username) || empty($password) || empty($passwordType)) {
+                    $failureMsg = "username, password or password type are empty or invalid";
+                    $logAction .= "Failed adding (possible empty user/pass or invalid password type) new user [$username] on page: ";
                 } else {
 
                     // we "inject" the prepared password/auth attribute in the $_POST array.

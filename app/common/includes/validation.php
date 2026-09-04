@@ -149,6 +149,11 @@ $valid_authTypes = array(
                             "pincodeAuth" => "Based on PIN code"
                         );
 
+// complete list of password types. it is used as-is wherever a password type
+// identifies a RADIUS request attribute (e.g. the maintenance test-user flow),
+// which is unrelated to what gets stored in the database.
+// pages offering a password type to be *stored* must narrow this list down
+// through dalo_filter_password_types() first.
 $valid_passwordTypes = array(
                                 "Cleartext-Password",
                                 "NT-Password",
@@ -159,8 +164,6 @@ $valid_passwordTypes = array(
                                 "Crypt-Password",
                                 //~ "CHAP-Password"
                              );
-
-$valid_passwordTypes = dalo_filter_password_types($valid_passwordTypes);
 
 // https://wiki.freeradius.org/config/Operators
 $valid_ops = [

@@ -66,10 +66,8 @@
         $valid_attributes[] = $row[0];
     }
 
-    if (function_exists('dalo_filter_cleartext_password_attributes')) {
-        $valid_attributes = dalo_filter_cleartext_password_attributes($valid_attributes);
-    }
-    
+    $valid_attributes = dalo_filter_cleartext_password_attributes($valid_attributes);
+
     // check if item is valid
     if (!empty($item)) {
         $internal_id = intval(str_replace($item_prefix, "", $item));
@@ -121,6 +119,14 @@
                 
                 $attribute = (array_key_exists('attribute', $_POST) && !empty(str_replace("%", "", trim($_POST['attribute']))))
                            ? str_replace("%", "", trim($_POST['attribute'])) : "";
+
+                // the attribute field is free text, so the datalist alone does not keep a
+                // cleartext password attribute out of radgroupcheck: reject it here as well
+                if (!dalo_cleartext_password_allowed() &&
+                    in_array($attribute, dalo_cleartext_password_attributes(), true)) {
+                    $attribute = "";
+                }
+
                 if (!empty($attribute)) {
                     $sql_SET[] = sprintf("attribute='%s'", $dbSocket->escapeSimple($attribute));
                 } else {

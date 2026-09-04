@@ -55,9 +55,7 @@ if (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) && strtolower($configValu
 
 }
 
-if (function_exists('dalo_filter_cleartext_password_attributes')) {
-    $attributes = dalo_filter_cleartext_password_attributes($attributes);
-}
+$attributes = dalo_filter_cleartext_password_attributes($attributes);
 
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
