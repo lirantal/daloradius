@@ -176,7 +176,9 @@
 
         }
         
+        $usernames = array();
         while ($row0 = $res0->fetchRow()) {
+            $usernames[] = $row0[0];
             $row0len = count($row0);
         
             // escape row elements
@@ -189,11 +191,17 @@
                 'fullname' => (!empty(trim($fullname))) ? $fullname : "(n/d)",
                 'groups' => array()
             );
-            
-            $sql1 = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority ASC, groupname ASC",
-                            $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($this_username));
-            $res1 = $dbSocket->query($sql1);
-            
+        }
+
+        if (count($usernames) > 0) {
+            $placeholders = implode(', ', array_fill(0, count($usernames), '?'));
+            $sql1 = sprintf("SELECT username, groupname, priority FROM %s WHERE username IN (%s) "
+                          . "ORDER BY username ASC, priority ASC, groupname ASC",
+                            $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $placeholders);
+            $stmt = $dbSocket->prepare($sql1);
+            $res1 = $dbSocket->execute($stmt, $usernames);
+            $dbSocket->freePrepared($stmt);
+
             while ($row1 = $res1->fetchRow()) {
                 $row1len = count($row1);
         
@@ -202,7 +210,7 @@
                     $row1[$i] = htmlspecialchars($row1[$i], ENT_QUOTES, 'UTF-8');
                 }
             
-                list($this_groupname, $this_priority) = $row1;
+                list($this_username, $this_groupname, $this_priority) = $row1;
                 $records[$this_username]['groups'][] = array( 'groupname' => $this_groupname, 'priority' => $this_priority );
             }
         }
