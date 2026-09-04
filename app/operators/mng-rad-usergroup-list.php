@@ -85,8 +85,9 @@
                          $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $sql_filter);
     $numrows = intval($dbSocket->getOne($sql_count));
 
-    $sql0 = sprintf("SELECT DISTINCT(rug1.username), CONCAT(dui.firstname, ' ', dui.lastname) AS fullname
-                           FROM %s AS rug1 LEFT JOIN %s AS dui ON rug1.username=dui.username%s",
+    $sql0 = sprintf("SELECT rug1.username, MAX(CONCAT(dui.firstname, ' ', dui.lastname)) AS fullname
+                           FROM %s AS rug1 LEFT JOIN %s AS dui ON rug1.username=dui.username%s
+                          GROUP BY rug1.username",
                     $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
                     $sql_filter);
     
