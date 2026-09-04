@@ -21,104 +21,36 @@
  *********************************************************************************************************
  */
 
+require_once __DIR__ . '/json_info.php';
 include('../checklogin.php');
 $operator_perm_file = 'acct_hotspot_accounting';
 $operator_perm_deny_http_status = 403;
 include('../check_operator_perm.php');
 
+$value = dalo_info_parameter('hotspot');
+include('../../../common/includes/db_open.php');
+// The default PEAR callback prints HTML, which would corrupt the JSON response.
+$dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+include_once('../../include/management/pages_common.php');
 
-// username and divContainer are required
-if (array_key_exists('hotspot', $_GET) && isset($_GET['hotspot']) &&
-    array_key_exists('divContainer', $_GET) && isset($_GET['divContainer'])) {
-    
-    // divContainer id must begin with a letter ([A-Za-z]) and may be followed by any number of letters,
-    // digits ([0-9]), hyphens ("-"), underscores ("_").
-    if (!preg_match("/^[A-Za-z][A-Za-z0-9_-]+$/", $_GET['divContainer'])) {
-        exit;
-    }
-    
-    $divContainer = $_GET['divContainer'];
-    $hotspot = str_replace("%", "", trim($_GET['hotspot']));
-    
-    // at the moment we have only one action
-    $action = "";
-    if (isset($_GET['retHotspotGeneralStat'])) {
-        $action = 'retHotspotGeneralStat';
-    } else {
-        $action = 'retHotspotGeneralStat';
-    }
-
-    include('../../../common/includes/db_open.php');
-    include_once('../../include/management/pages_common.php');
-    
-    switch ($action) {
-        
-        default:
-        case 'retHotspotGeneralStat':
-            $sql = sprintf("SELECT COUNT(ra.radacctid) AS totalhits,
-                                   SUM(ra.AcctInputOctets) AS sumInputOctets,
-                                   SUM(ra.AcctOutputOctets) AS sumOutputOctets
-                              FROM %s AS ra JOIN %s AS hs ON ra.calledstationid=hs.mac
-                             WHERE hs.name='%s'
-                             GROUP BY hs.name",
-                           $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                           $dbSocket->escapeSimple($hotspot));
-                           
-            $res = $dbSocket->query($sql);
-            $row = $res->fetchRow();
-            
-            list( $totalhits, $upload, $download ) = $row;
-            
-            if (empty($totalhits)) {
-                $totalhits = "(n/a)";
-            } else {
-                $totalhits = intval($totalhits);
-                
-                if ($upload < 0) {
-                    $upload = 0;
-                }
-            }
-            
-            if (empty($upload)) {
-                $upload = "(n/a)";
-            } else {
-                $upload = intval($upload);
-                
-                if ($upload < 0) {
-                    $upload = 0;
-                }
-                
-                $upload = toxbyte($upload);
-            }
-        
-            if (empty($download)) {
-                $download = "(n/a)";
-            } else {
-                $download = intval($download);
-                
-                if ($download < 0) {
-                    $download = 0;
-                }
-                
-                $download = toxbyte($download);
-            }
-            
-            echo <<<EOF
-    var divContainer = document.getElementById('$divContainer');
-    divContainer.innerHTML = '<span style="font-weight: normal">Total Uploads:</span> $upload';
-    divContainer.innerHTML += '<br>';
-    divContainer.innerHTML += '<span style="font-weight: normal">Total Downloads:</span> $download';
-    divContainer.innerHTML += '<br>';
-    divContainer.innerHTML += '<span style="font-weight: normal">Total Hits:</span> $totalhits';
-
-EOF;
-            
-            break;
-        
-    }
-
-    include('../../../common/includes/db_close.php');
-
+$sql = sprintf("SELECT COUNT(ra.radacctid) AS totalhits,
+                       SUM(ra.AcctInputOctets) AS sumInputOctets,
+                       SUM(ra.AcctOutputOctets) AS sumOutputOctets
+                  FROM %s AS ra JOIN %s AS hs ON ra.calledstationid=hs.mac
+                 WHERE hs.name='%s'
+                 GROUP BY hs.name",
+               $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+               $dbSocket->escapeSimple($value));
+$res = $dbSocket->query($sql);
+if (DB::isError($res)) {
+    dalo_info_response(['error' => 'Unable to load hotspot information.'], 500);
 }
+$row = $res->fetchRow();
+$data = [
+    'upload' => dalo_info_bytes($row[1] ?? null),
+    'download' => dalo_info_bytes($row[2] ?? null),
+    'hits' => empty($row[0]) ? '(n/a)' : intval($row[0]),
+];
 
-?>
+include('../../../common/includes/db_close.php');
+dalo_info_response($data);

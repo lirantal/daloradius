@@ -21,86 +21,26 @@
  *********************************************************************************************************
  */
 
+require_once __DIR__ . '/json_info.php';
 include('../checklogin.php');
 $operator_perm_file = 'acct_username';
 $operator_perm_deny_http_status = 403;
 include('../check_operator_perm.php');
 
+$value = dalo_info_parameter('username');
+include('../../../common/includes/db_open.php');
+// The default PEAR callback prints HTML, which would corrupt the JSON response.
+$dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+include_once('../../include/management/pages_common.php');
 
-// username and divContainer are required
-if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
-    array_key_exists('divContainer', $_GET) && isset($_GET['divContainer'])) {
-    
-    // divContainer id must begin with a letter ([A-Za-z]) and may be followed by any number of letters,
-    // digits ([0-9]), hyphens ("-"), underscores ("_").
-    if (!preg_match("/^[A-Za-z][A-Za-z0-9_-]+$/", $_GET['divContainer'])) {
-        exit;
-    }
-    
-    $divContainer = $_GET['divContainer'];
-    
-    // user should exist
-    $username = str_replace("%", "", trim($_GET['username']));
-    
-    // at the moment we have only one action
-    $action = "";
-    if (isset($_GET['retBandwidthInfo'])) {
-        $action = 'retBandwidthInfo';
-    } else {
-        $action = 'retBandwidthInfo';
-    }
-    
-    include('../../../common/includes/db_open.php');
-    include_once('../../include/management/pages_common.php');
-    
-    switch ($action) {
-        
-        default:
-        case 'retBandwidthInfo':
-        
-            $sql = sprintf("SELECT SUM(AcctInputOctets) AS Upload, SUM(AcctOutputOctets) AS Download FROM %s WHERE username='%s'",
-                           $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
-            $res = $dbSocket->query($sql);
-            $row = $res->fetchRow();
-            
-            list( $upload, $download ) = $row;
-        
-            if (empty($upload)) {
-                $upload = "(n/a)";
-            } else {
-                $upload = intval($upload);
-                
-                if ($upload < 0) {
-                    $upload = 0;
-                }
-                
-                $upload = toxbyte($upload);
-            }
-        
-            if (empty($download)) {
-                $download = "(n/a)";
-            } else {
-                $download = intval($download);
-                
-                if ($download < 0) {
-                    $download = 0;
-                }
-                
-                $download = toxbyte($download);
-            }
-        
-            echo <<<EOF
-    var divContainer = document.getElementById('$divContainer');
-    divContainer.innerHTML = '<span style="font-weight: normal">Upload:</span> $upload';
-    divContainer.innerHTML += '<br>';
-    divContainer.innerHTML += '<span style="font-weight: normal">Download:</span> $download';
-EOF;
-        
-            break;
-    }
-    
-    include('../../../common/includes/db_close.php');
-
+$sql = sprintf("SELECT SUM(AcctInputOctets) AS Upload, SUM(AcctOutputOctets) AS Download FROM %s WHERE username='%s'",
+               $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($value));
+$res = $dbSocket->query($sql);
+if (DB::isError($res)) {
+    dalo_info_response(['error' => 'Unable to load user information.'], 500);
 }
+$row = $res->fetchRow();
+$data = ['upload' => dalo_info_bytes($row[0] ?? null), 'download' => dalo_info_bytes($row[1] ?? null)];
 
-?>
+include('../../../common/includes/db_close.php');
+dalo_info_response($data);
