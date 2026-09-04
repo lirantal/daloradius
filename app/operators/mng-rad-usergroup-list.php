@@ -76,15 +76,19 @@
     include('../common/includes/db_open.php');
     include('include/management/pages_common.php');
 
+    $sql_filter = "";
+    if (!empty($username)) {
+        $sql_filter = sprintf(" WHERE rug1.username LIKE '%%%s%%'", $dbSocket->escapeSimple($username));
+    }
+
+    $sql_count = sprintf("SELECT COUNT(DISTINCT(rug1.username)) FROM %s AS rug1%s",
+                         $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $sql_filter);
+    $numrows = intval($dbSocket->getOne($sql_count));
+
     $sql0 = sprintf("SELECT DISTINCT(rug1.username), CONCAT(dui.firstname, ' ', dui.lastname) AS fullname
-                           FROM %s AS rug1 LEFT JOIN %s AS dui ON rug1.username=dui.username",
-                         $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
-        if (!empty($username)) {
-            $sql0 .= sprintf(" WHERE rug1.username LIKE '%%%s%%'", $dbSocket->escapeSimple($username));
-        }
-    
-    $res = $dbSocket->query($sql0);
-    $numrows = $res->numRows();
+                           FROM %s AS rug1 LEFT JOIN %s AS dui ON rug1.username=dui.username%s",
+                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                    $sql_filter);
     
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
