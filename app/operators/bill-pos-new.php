@@ -21,29 +21,24 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
-    include_once("include/management/functions.php");
-    include('include/management/pages_common.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    // if cleartext passwords are not allowed,
-    // we remove Cleartext-Password from the $valid_passwordTypes array
-    if (isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) &&
-        strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) !== 'yes') {
-        $valid_passwordTypes = array_values(array_diff($valid_passwordTypes, array("Cleartext-Password")));
-    }
+    $valid_passwordTypes = dalo_filter_password_types($valid_passwordTypes);
 
     $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
               ? trim(str_replace("%", "", $_POST['username'])) : "";
@@ -272,7 +267,7 @@
             $current_datetime = date('Y-m-d H:i:s');
             $currBy = $operator;
 
-            include('../common/includes/db_open.php');
+            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
             // check if username is already present in the radcheck table
             $userExists = user_exists($dbSocket, $username);
@@ -282,17 +277,19 @@
                 $logAction .= "Failed adding new user already existing in database [$username] on page: ";
             } else {
 
-                // username and password are required
-                if (empty($username) || empty($password)) {
-                    $failureMsg = "username or password are empty";
-                    $logAction .= "Failed adding (possible empty user/pass) new user [$username] on page: ";
+                // username, password and password type are required. an empty password type
+                // means the posted one is unknown or no longer permitted (e.g. a cleartext
+                // type submitted while CONFIG_DB_PASSWORD_ENCRYPTION is set to 'no')
+                if (empty($username) || empty($password) || empty($passwordType)) {
+                    $failureMsg = "username, password or password type are empty or invalid";
+                    $logAction .= "Failed adding (possible empty user/pass or invalid password type) new user [$username] on page: ";
                 } else {
 
                     // we "inject" the prepared password/auth attribute in the $_POST array.
                     // handleAttributes() - called later - will take care of it.
                     $_POST['injected_attribute'] = array( $passwordType, $password, ':=', 'check' );
 
-                    include("library/attributes.php");
+                    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
 
                     $skipList = array(
                                         "username", "password", "passwordType", "profiles", "planName",
@@ -341,7 +338,7 @@
 
                     // create any invoices if required (meaning, if a plan was chosen)
                     if ($planName) {
-                        include_once("include/management/userBilling.php");
+                        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userBilling.php' ]);
 
                         // get plan information
                         $sql = "SELECT id, planCost, planSetupCost, planTax FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
@@ -398,7 +395,7 @@
                 }
             }
 
-            include('../common/includes/db_close.php');
+            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
         } else {
             // csrf
@@ -406,8 +403,6 @@
             $logAction .= "$failureMsg on page: ";
         }
     }
-
-    include_once('../common/includes/config_read.php');
 
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
                     ? 'password' : 'text';
@@ -430,11 +425,11 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     if (!isset($successMsg)) {
 
-        include_once('include/management/populate_selectbox.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
 
         // set navbar stuff
         $navkeys = array( 'AccountInfo', 'UserInfo', 'BillingInfo' );
@@ -522,7 +517,7 @@
         open_tab($navkeys, 1);
 
         //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
-        include_once('include/management/userinfo.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userinfo.php' ]);
 
         close_tab($navkeys, 1);
 
@@ -530,7 +525,7 @@
         open_tab($navkeys, 2);
 
         //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
-        include_once('include/management/userbillinfo.php');
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userbillinfo.php' ]);
 
         close_tab($navkeys, 2);
 
@@ -561,7 +556,7 @@
 
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
 
 ?>

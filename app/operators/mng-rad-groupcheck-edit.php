@@ -21,15 +21,15 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -48,7 +48,7 @@
     $item_prefix = "groupcheck-";
     $item_table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
     
-    include('../common/includes/db_open.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
     
     // get valid attributes
     $valid_attributes = array();
@@ -65,7 +65,9 @@
     while ($row = $res->fetchrow()) {
         $valid_attributes[] = $row[0];
     }
-    
+
+    $valid_attributes = dalo_filter_cleartext_password_attributes($valid_attributes);
+
     // check if item is valid
     if (!empty($item)) {
         $internal_id = intval(str_replace($item_prefix, "", $item));
@@ -117,6 +119,14 @@
                 
                 $attribute = (array_key_exists('attribute', $_POST) && !empty(str_replace("%", "", trim($_POST['attribute']))))
                            ? str_replace("%", "", trim($_POST['attribute'])) : "";
+
+                // the attribute field is free text, so the datalist alone does not keep a
+                // cleartext password attribute out of radgroupcheck: reject it here as well
+                if (!dalo_cleartext_password_allowed() &&
+                    in_array($attribute, dalo_cleartext_password_attributes(), true)) {
+                    $attribute = "";
+                }
+
                 if (!empty($attribute)) {
                     $sql_SET[] = sprintf("attribute='%s'", $dbSocket->escapeSimple($attribute));
                 } else {
@@ -191,7 +201,7 @@
         list( $groupname, $attribute, $op, $value ) = $res->fetchrow();
     }
     
-    include('../common/includes/db_close.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     
     // print HTML prologue
@@ -209,7 +219,7 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     
     if (!empty($internal_id)) {
         
@@ -295,7 +305,7 @@
     
     print_back_to_previous_page();
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
     
 ?>

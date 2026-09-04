@@ -94,6 +94,41 @@ if (!function_exists('normalize_custom_attributes')) {
     }
 }
 
+if (!function_exists('dalo_cleartext_password_attributes')) {
+    function dalo_cleartext_password_attributes() {
+        return array("Cleartext-Password", "User-Password");
+    }
+}
+
+if (!function_exists('dalo_cleartext_password_allowed')) {
+    function dalo_cleartext_password_allowed() {
+        global $configValues;
+
+        return !isset($configValues['CONFIG_DB_PASSWORD_ENCRYPTION']) ||
+               strtolower(trim($configValues['CONFIG_DB_PASSWORD_ENCRYPTION'])) === 'yes';
+    }
+}
+
+if (!function_exists('dalo_filter_cleartext_password_attributes')) {
+    function dalo_filter_cleartext_password_attributes($attributes) {
+        if (!is_array($attributes)) {
+            return array();
+        }
+
+        if (dalo_cleartext_password_allowed()) {
+            return array_values($attributes);
+        }
+
+        return array_values(array_diff($attributes, dalo_cleartext_password_attributes()));
+    }
+}
+
+if (!function_exists('dalo_filter_password_types')) {
+    function dalo_filter_password_types($passwordTypes) {
+        return dalo_filter_cleartext_password_attributes($passwordTypes);
+    }
+}
+
 define("SENDER_NAME_REGEX", '/^[a-zA-Z0-9 -]+$/');
 define("SUBJECT_PREFIX_REGEX", '/^[a-zA-Z0-9 -\[\]]+$/');
 define("RECIPIENT_NAME_REGEX", '/^[a-zA-Z0-9 -]+$/');
@@ -114,6 +149,11 @@ $valid_authTypes = array(
                             "pincodeAuth" => "Based on PIN code"
                         );
 
+// complete list of password types. it is used as-is wherever a password type
+// identifies a RADIUS request attribute (e.g. the maintenance test-user flow),
+// which is unrelated to what gets stored in the database.
+// pages offering a password type to be *stored* must narrow this list down
+// through dalo_filter_password_types() first.
 $valid_passwordTypes = array(
                                 "Cleartext-Password",
                                 "NT-Password",

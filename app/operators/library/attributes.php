@@ -30,6 +30,10 @@ function is_group($user_or_group) {
     return strtolower(trim($user_or_group)) === 'group';
 }
 
+// dalo_cleartext_password_attributes() and dalo_cleartext_password_allowed()
+// live in common/includes/validation.php, which every caller of this file
+// includes beforehand.
+
 function is_passwordlike_attribute($attribute) {
     return preg_match("/-Password$/", $attribute) === 1;
 }
@@ -206,6 +210,11 @@ function handleAttributes($dbSocket, $subject, $skipList, $insert_only=true, $us
         // we have to prepare the "value".
         // we distinguish between password and non-password attributes
         if (is_passwordlike_attribute($attribute)) {
+            if (!dalo_cleartext_password_allowed() &&
+                in_array($attribute, dalo_cleartext_password_attributes(), true)) {
+                continue;
+            }
+
             // before we proceed we need to understand if the password should be updated or skipped
 
             if (!$insert_only) {

@@ -24,7 +24,8 @@
  *********************************************************************************************************
  */
  
-include('../../library/checklogin.php');
+include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', '..', 'common', 'includes', 'config_read.php' ]);
+include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
 
 // reportFormat is either CSV or PDF
 $reportFormat = (array_key_exists('reportFormat', $_GET) && isset($_GET['reportFormat']) &&
@@ -76,7 +77,7 @@ function exportPDFFile($output) {
 	print $output;
 }
 
-include_once('../../../common/includes/db_open.php');
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
 // we init output
 $output = "";
@@ -361,14 +362,15 @@ switch ($reportType) {
 		case "reportsBatchTotalUsers":
         
             $batch_id = intval($_SESSION['reportParams']['batch_id']);
+            $cleartext_password_attributes = array("Cleartext-Password", "User-Password");
 
-            // check if in this batch there are some Cleartext-Password attributes
+            // check if in this batch there are some cleartext password attributes
             $sql = sprintf("SELECT COUNT(ubi.username)
                               FROM %s AS ubi, %s AS rc
                              WHERE rc.username=ubi.username
                                AND ubi.batch_id=%d
                                AND rc.op=':='
-                               AND rc.attribute='Cleartext-Password'",
+                               AND rc.attribute IN ('Cleartext-Password', 'User-Password')",
                            $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
                            $configValues['CONFIG_DB_TBL_RADCHECK'], $batch_id);
 
@@ -408,7 +410,7 @@ switch ($reportType) {
                 
                 list($username, $attribute, $value) = $row;
                 
-                if ($attribute != "Cleartext-Password" || $attribute == "Auth-Type") {
+                if (!in_array($attribute, $cleartext_password_attributes, true)) {
                     $value = "(empty)";
                 }
                 
@@ -439,7 +441,7 @@ switch ($reportType) {
 
 }
 
-include_once('../../../common/includes/db_close.php');
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
 // at this point, if $output is not empty we can export the file
 if (!empty($output)) {

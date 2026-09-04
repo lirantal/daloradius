@@ -31,6 +31,8 @@ include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'chec
 include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
 
+$cleartext_password_attributes = dalo_cleartext_password_attributes();
+
 /**
  * @brief Populates an HTML select element with options from table names.
  *
@@ -444,14 +446,25 @@ switch ($action) {
         
         $numrows = $res->numRows();
         
+        // a vendor may hold nothing but cleartext password attributes, which are all
+        // filtered out when CONFIG_DB_PASSWORD_ENCRYPTION is set to 'no'. count what
+        // actually gets offered, so the selector is not left enabled on the placeholder alone
+        $permitted_attributes = 0;
+
         if ($numrows > 0) {
             echo "objAttributes.add(new Option('Select Attribute...', ''));\n";
-            
+
             while ($row = $res->fetchRow()) {
                 $attribute = htmlspecialchars(trim($row[0]), ENT_QUOTES, 'UTF-8');
+                if (!dalo_cleartext_password_allowed() && in_array($attribute, $cleartext_password_attributes, true)) {
+                    continue;
+                }
                 printf("objAttributes.add(new Option('%s', '%s'));\n", $attribute, $attribute);
+                $permitted_attributes++;
             }
-            
+        }
+
+        if ($permitted_attributes > 0) {
             echo "objAttributes.disabled = false;\n";
         } else {
             echo "objAttributes.disabled = true;\n";
