@@ -79,8 +79,8 @@
 
     // print HTML prologue
     $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
+        "static/js/request.js",
+        "static/js/readonly_info.js",
     );
 
     $title = t('Intro','mngradippoollist.php');
@@ -241,7 +241,7 @@
                 $ajax_id = sprintf("divContainerUserInfo_%d", $count);
                 $param = sprintf("username=%s", urlencode($username));
                 $onclick = sprintf(
-                    "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','%s','%s')",
+                    "daloInfo.user('%s','%s')",
                     $ajax_id, $param
                 );
                 $tooltip4 = [
