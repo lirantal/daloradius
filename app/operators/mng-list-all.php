@@ -47,8 +47,6 @@
     $extra_js = array(
         "static/js/request.js",
         "static/js/readonly_info.js",
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
         "static/js/pages_common.js"
     );
 

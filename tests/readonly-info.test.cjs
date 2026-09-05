@@ -110,8 +110,7 @@ test('missing and detached targets are safe', async () => {
     assert.equal(nodes.a.textContent, 'Loading...');
 });
 
-test('all read-only page callers load the new scripts; mutation pages keep SACK', () => {
-    const keep = new Set(['bill-pos-list.php', 'mng-list-all.php', 'mng-search.php', 'rep-batch-details.php']);
+test('all read-only page callers load the new scripts without SACK', () => {
     let count = 0;
     for (const name of fs.readdirSync(path.join(root, 'app/operators'))) {
         if (!name.endsWith('.php')) continue;
@@ -121,8 +120,8 @@ test('all read-only page callers load the new scripts; mutation pages keep SACK'
         count++;
         assert.ok(source.includes('static/js/request.js'), name);
         assert.ok(source.includes('static/js/readonly_info.js'), name);
-        assert.equal(source.includes('static/js/ajax.js'), keep.has(name), name);
-        assert.equal(source.includes('static/js/ajaxGeneric.js'), keep.has(name), name);
+        assert.equal(source.includes('static/js/ajax.js'), false, name);
+        assert.equal(source.includes('static/js/ajaxGeneric.js'), false, name);
     }
     assert.equal(count, 18);
 });
