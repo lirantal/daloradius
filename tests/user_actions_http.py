@@ -25,7 +25,7 @@ IMAGE = os.environ.get('USER_ACTIONS_WEB_IMAGE', 'lirantal/daloradius')
 
 
 def run(*args, input=None, check=True):
-    result = subprocess.run(args, input=input, text=True, capture_output=True)
+    result = subprocess.run(args, input=input, text=True, capture_output=True, timeout=300)
     if check and result.returncode:
         raise RuntimeError(f'{args[0:3]} failed: {result.stderr}')
     return result.stdout.strip()
@@ -114,7 +114,7 @@ while ($client = stream_socket_accept($server, -1)) {
                 fwrite($client, "250 captured\\r\\n"); $data = false;
             } else { $message .= $line; }
         } elseif (str_starts_with($line, 'DATA')) {
-            fwrite($client, "354 send data\\r\\n"); $data = true;
+            fwrite($client, "354 send data\\r\\n"); $message = ''; $data = true;
         } elseif (str_starts_with($line, 'QUIT')) {
             fwrite($client, "221 bye\\r\\n"); break;
         } else { fwrite($client, "250 OK\\r\\n"); }
@@ -132,6 +132,8 @@ while ($client = stream_socket_accept($server, -1)) {
             url = 'http://' + address + '/library/ajax/user_actions.php'
             wait_for(lambda: urllib.request.urlopen('http://' + address + '/login.php'), 'PHP HTTP server')
             run('docker', 'exec', '-d', WEB, 'php', '/fixtures/smtp.php')
+            wait_for(lambda: run('docker', 'exec', WEB, 'php', '-r',
+                '$s=@fsockopen("127.0.0.1",2525); if (!$s) exit(1); fclose($s);'), 'SMTP capture')
             sessions = {}
             for operator in [9001, 9002]:
                 sid = secrets.token_hex(16)
@@ -231,6 +233,8 @@ while ($client = stream_socket_accept($server, -1)) {
 
             # Force failures at each sensitive step; JSON must never claim success after a partial mutation.
             for table, action in [('billing_history', 'refillSessionTime'), ('invoice', 'refillSessionTraffic'), ('invoice_items', 'refillSessionTime'), ('radusergroup', 'userDisable')]:
+                invoice_count = sql('SELECT COUNT(*) FROM invoice')
+                invoice_item_count = sql('SELECT COUNT(*) FROM invoice_items')
                 sql(f'RENAME TABLE {table} TO {table}_unavailable')
                 try:
                     status, result = request(action, ['alice'])
@@ -238,7 +242,10 @@ while ($client = stream_socket_accept($server, -1)) {
                     assert 'already have been applied' in result['message']
                 finally:
                     sql(f'RENAME TABLE {table}_unavailable TO {table}')
-            print('PASS: database failures at group/history/invoice/item stages return JSON without false success')
+                if table == 'invoice_items':
+                    assert sql('SELECT COUNT(*) FROM invoice') == invoice_count
+                    assert sql('SELECT COUNT(*) FROM invoice_items') == invoice_item_count
+            print('PASS: database failures return JSON; invoice-item failure rolls back its invoice')
             log_result = subprocess.run(['docker', 'logs', WEB], capture_output=True, text=True, check=True)
             logs = log_result.stdout + log_result.stderr
             assert 'PHP Fatal error' not in logs and 'PHP Warning' not in logs, logs[-2000:]

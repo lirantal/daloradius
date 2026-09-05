@@ -29,17 +29,6 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/attributes.php') !== false
 
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
-$vendors = array( "" );
-$sql = sprintf("SELECT DISTINCT(Vendor) AS Vendor
-                  FROM %s
-                 WHERE Vendor<>'' AND Vendor IS NOT NULL
-                 ORDER BY Vendor ASC",
-               $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
-$res = $dbSocket->query($sql);
-while ($row = $res->fetchRow()) {
-    $vendors[] = $row[0];
-}
-
 $attributes = array();
 if (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) && strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") {
     $sql = sprintf("SELECT DISTINCT(attribute)
@@ -106,13 +95,9 @@ echo <<<EOF
     <label for="dictVendors0" class="form-label mb-1">Vendor</label>
     
     <div class="input-group mb-3">
-        <select class="form-select" name="dictVendors0" id="dictVendors0" onchange="getAttributesList(this,'dictAttributesDatabase')">
+        <select class="form-select" name="dictVendors0" id="dictVendors0" onchange="getAttributesList(this,'dictAttributesDatabase')" disabled>
+            <option value=""></option>
 EOF;
-
-foreach ($vendors as $v) {
-    $v = htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-    printf('<option value="%s">%s</option>', $v, $v);
-}
 
 echo <<<EOF
         </select>
@@ -123,7 +108,9 @@ echo <<<EOF
             </button>
         </span>
         
-        <select class="form-select" id="dictAttributesDatabase" name="dictAttributesDatabase"></select>
+        <select class="form-select" id="dictAttributesDatabase" name="dictAttributesDatabase" disabled>
+            <option value="">Select Attribute...</option>
+        </select>
     </div>
 </div>
 
@@ -214,7 +201,10 @@ function switchAttrSpecMethod() {
     }
 }
 
-window.addEventListener("load", function() { switchAttrSpecMethod(); });
+window.addEventListener("load", function() {
+    switchAttrSpecMethod();
+    getVendorsList('dictVendors0');
+});
 
 </script>
 

@@ -403,6 +403,7 @@ function enableUser() {
     $extra_js = array(
         "static/js/productive_funcs.js",
         "static/js/pages_common.js",
+        "static/js/request.js",
         "static/js/dynamic_attributes.js",
     );
 

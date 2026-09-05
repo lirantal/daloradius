@@ -39,9 +39,10 @@ Accounting resets, billing-plan selection, history entries, refill costs, taxes
 and invoice creation retain their existing business rules. `userInvoiceAdd()`
 accepts an optional DB-error callback so its separate connection can use the
 existing `db_open.php` hook and return a JSON failure instead of printing HTML.
-Other callers retain their previous behavior. No transaction/rollback or billing
-rewrite is introduced: failures can occur after some changes are applied, and
-that uncertainty is reported rather than presented as success.
+Invoice and invoice-item inserts share a transaction, so an item or commit failure
+rolls back the whole invoice. Earlier accounting and billing-history operations use
+separate connections, so the endpoint still reports that some changes may have been
+applied rather than presenting an uncertain outcome as success.
 
 Mail content and recipient queries are preserved. The result aggregates successful
 and failed sends rather than reporting only the last recipient; no recipients is

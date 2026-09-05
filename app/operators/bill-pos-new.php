@@ -412,10 +412,7 @@
     $extra_css = array();
 
     $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
         "static/js/productive_funcs.js",
-        "static/js/dynamic_attributes.js",
     );
 
     $title = t('Intro','billposnew.php');

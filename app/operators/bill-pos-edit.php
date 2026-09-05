@@ -471,7 +471,6 @@ function refillSessionTraffic() {
 
     $extra_js = array(
         "static/js/productive_funcs.js",
-        "static/js/dynamic_attributes.js",
         "static/js/pages_common.js",
     );
 
