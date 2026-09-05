@@ -221,8 +221,8 @@ try {
                 // Prepare an empty array for email attachments, if any
                 $attachment = array();
 
-                // Send the email and capture the success status and message
-                list($success, $status) = send_email($configValues, $recipient_email_address, $recipient_name, $subject, $body, $attachment);
+                // Send the email and aggregate the outcome for all recipients.
+                list($success) = send_email($configValues, $recipient_email_address, $recipient_name, $subject, $body, $attachment);
 
                 $success ? $sent++ : $failed++;
             }

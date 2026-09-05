@@ -181,20 +181,20 @@ while ($client = stream_socket_accept($server, -1)) {
             for action in ['userEnable', 'userDisable', 'refillSessionTime', 'refillSessionTraffic', 'userMail']:
                 assert request(action, ['alice'], operator=9002)[0] == 403
                 assert request(action, ['alice'], csrf='invalid')[0] == 403
-            assert request('checkDisabled', ['alice'], method='GET', operator=9002)[0] == 403
+            assert request('checkDisabled', ['alice'], method='GET', operator=9002, csrf=None)[0] == 403
             assert request('userEnable', [])[0] == 400
             assert request('userEnable', None, extra=[('username[][]', 'alice')])[0] == 400
             assert sql('SELECT COUNT(*) FROM radusergroup WHERE username="alice"') == '1'
             print('PASS: method/action/input validation, CSRF and both ACL mappings; no unauthorized mutation')
 
-            assert request('checkDisabled', ['alice'], method='GET')[1]['disabled'] is True
+            assert request('checkDisabled', ['alice'], method='GET', csrf=None)[1]['disabled'] is True
             assert request('userDisable', ['alice'])[1]['success'] is False
             assert request('userEnable', ['alice'])[1]['success'] is True
-            assert request('checkDisabled', ['alice'], method='GET')[1]['disabled'] is False
+            assert request('checkDisabled', ['alice'], method='GET', csrf=None)[1]['disabled'] is False
             odd = "O'Reilly & + é 50%"
             assert request('userDisable', ['alice', 'bob', odd, odd])[1]['success'] is True
             assert sql('SELECT COUNT(*) FROM radusergroup') == '3'
-            assert request('checkDisabled', [odd], method='GET')[1]['disabled'] is True
+            assert request('checkDisabled', [odd], method='GET', csrf=None)[1]['disabled'] is True
             assert request('userDisable', [odd])[1]['success'] is False
             assert request('userEnable', ['alice', 'bob', odd])[1]['success'] is True
             assert sql('SELECT COUNT(*) FROM radusergroup') == '0'
