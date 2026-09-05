@@ -209,7 +209,7 @@ Therefore, the presented steps provide a general outline for enabling communicat
 To proceed with the installation of daloRADIUS, execute the following command which is required to install the Apache 2 web server and the necessary packages:
 ```bash
 apt --no-install-recommends install apache2 php libapache2-mod-php \
-                                    php-mysql php-zip php-mbstring php-common php-curl \
+                                    php-mysql php-mbstring php-common php-curl \
                                     php-gd php-db php-mail php-mail-mime \
                                     mariadb-client freeradius-utils rsyslog
 ```
