@@ -81,8 +81,6 @@
     
     // print HTML prologue
     $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js"
     );
     
     $title = t('Intro','billinvoicelist.php');
