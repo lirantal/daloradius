@@ -38,10 +38,11 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/userBilling.php') !== fals
  * $userId                    the userbillinfo user id or the username (autodetects)
  * $invoiceInfo            array holding the invoice information
  * $invoiceItems           array holding the invoice items information
+ * $db_error_handler       optional error callback for JSON callers (uses the existing DB hook)
  *
  *********************************************************************************************************
  */
-function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()) {
+function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array(), $db_error_handler = null) {
     global $configValues, $logDebugSQL;
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);

@@ -31,54 +31,63 @@ include_once('../../../common/includes/mail.php');
 // name of the group of disabled users
 $disabled_groupname = 'daloRADIUS-Disabled-Users';
 
-// username and divContainer are required
-if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
-    array_key_exists('divContainer', $_GET) && isset($_GET['divContainer'])) {
+// Keep errors JSON, including failures in ACL checks and billing helpers.
+function user_actions_response($success, $message, $status = 200, $level = null, $disabled = null) {
+    http_response_code($status);
+    header('Content-Type: application/json; charset=UTF-8');
+    header('Cache-Control: no-store');
+    echo json_encode([
+        'success' => $success,
+        'message' => $message,
+        'level' => $level ?? ($success ? 'success' : 'danger'),
+        'disabled' => $disabled,
+    ], JSON_INVALID_UTF8_SUBSTITUTE);
+    exit;
+}
 
-    // divContainer id must begin with a letter ([A-Za-z]) and may be followed by any number of letters,
-    // digits ([0-9]), hyphens ("-"), underscores ("_").
-    if (!preg_match('/^[A-Za-z][A-Za-z0-9_-]+$/', $_GET['divContainer'])) {
-        exit;
+$db_error_handler = function ($error) {
+    user_actions_response(false, 'The action could not be completed. Some changes may already have been applied; check the user and billing records before trying again.', 500);
+};
+
+$method = $_SERVER['REQUEST_METHOD'];
+if ($method !== 'GET' && $method !== 'POST') {
+    header('Allow: GET, POST');
+    user_actions_response(false, 'Method not allowed.', 405);
+}
+$input = ($method === 'POST') ? $_POST : $_GET;
+$action = $input['action'] ?? null;
+$actions = ['userEnable', 'userDisable', 'checkDisabled', 'refillSessionTime', 'refillSessionTraffic', 'userMail'];
+if (!is_string($action) || !in_array($action, $actions, true)) {
+    user_actions_response(false, 'Missing or unknown action.', 400);
+}
+if ($action !== 'checkDisabled') {
+    if ($method !== 'POST') {
+        header('Allow: POST');
+        user_actions_response(false, 'This action requires POST.', 405);
     }
-
-    $divContainer = $_GET['divContainer'];
-
-    // username could contain a list of usernames
-    $tmp_usernames = (!is_array($_GET['username'])) ? array( $_GET['username'] ) : $_GET['username'];
-
-    $usernames = array();
-
-    // we escape username(s)
-    foreach ($tmp_usernames as $tmp_username) {
-        $tmp_username = trim(str_replace("%", "", $tmp_username));
-
-        if (!empty($tmp_username) && !in_array($tmp_username, $usernames)) {
-            $usernames[] = $tmp_username;
-        }
+    $token = $_POST['csrf_token'] ?? null;
+    if (!is_string($token) || !isset($_SESSION['csrf_token']) || !dalo_check_csrf_token($token)) {
+        user_actions_response(false, 'Invalid CSRF token. Reload the page before trying again.', 403);
     }
+}
 
-    if (count($usernames) == 0) {
-        exit;
+$tmp_usernames = $input['username'] ?? [];
+$tmp_usernames = is_array($tmp_usernames) ? $tmp_usernames : [$tmp_usernames];
+$usernames = [];
+foreach ($tmp_usernames as $value) {
+    if (!is_string($value)) {
+        user_actions_response(false, 'Invalid username.', 400);
     }
-
-    // we can handle these actions
-    $action = "";
-    if (isset($_GET['userDisable'])) {
-        $action = 'userDisable';
-    } else if (isset($_GET['refillSessionTime'])) {
-        $action = 'refillSessionTime';
-    } else if (isset($_GET['refillSessionTraffic'])) {
-        $action = 'refillSessionTraffic';
-    } else if (isset($_GET['checkDisabled'])) {
-        $action = 'checkDisabled';
-    } else if (isset($_GET['userMail'])) {    // handle "Send Mail" button action
-        $action = 'userMail';
-    } else if (isset($_GET['checkDisabled'])){
-    } else {
-        // this represents the default action
-        $action = 'userEnable';
+    $value = trim($value);
+    if ($value !== '' && !in_array($value, $usernames, true)) {
+        $usernames[] = $value;
     }
+}
+if (!$usernames) {
+    user_actions_response(false, 'No users selected.', 400);
+}
 
+try {
     switch ($action) {
         case 'userDisable':
         case 'userEnable':
@@ -99,21 +108,17 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
     include('../../../common/includes/db_open.php');
     include_once('../../include/management/pages_common.php');
 
-    // further escape usernames for safe db queries
-    foreach ($usernames as $i => $username) {
-        $usernames[$i] = $dbSocket->escapeSimple($username);
-    }
-
-    // commonly used in the following lines of code
+    $raw_usernames = $usernames;
+    $usernames = array_map([$dbSocket, 'escapeSimple'], $raw_usernames);
     $username_list = "'" . implode("', '", $usernames) . "'";
-
-    // used in presentation
-    $username_list_enc = htmlspecialchars($username_list, ENT_QUOTES, 'UTF-8');
-    $label = (count($usernames) > 1 || count($usernames) == 0) ? "users" : "user";
+    $username_list_enc = implode(', ', $raw_usernames);
+    $label = count($usernames) > 1 ? 'users' : 'user';
+    $class = 'success';
+    $message = '';
+    $disabled = null;
 
     switch ($action) {
 
-        default:
         case 'userEnable':
             // delete from radusergroup
             $sql = sprintf("DELETE FROM %s WHERE username IN (%s) AND groupname='%s'",
@@ -122,10 +127,10 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             // return message
             if (DB::isError($res)) {
                 $class = "danger";
-                $message = sprintf('Failed to enable %s <strong>%s</strong>.', $label, $username_list_enc);
+                $message = sprintf('Failed to enable %s %s.', $label, $username_list_enc);
             } else {
                 $class = "success";
-                $message = sprintf('Enabled %s <strong>%s</strong>.', $label, $username_list_enc);
+                $message = sprintf('Enabled %s %s.', $label, $username_list_enc);
             }
             break;
 
@@ -144,8 +149,8 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             }
             // no need to disable already disabled users
             $to_disable = array();
-            foreach ($usernames as $username) {
-                if (in_array($username, $already_disabled)) {
+            foreach ($usernames as $i => $username) {
+                if (in_array($raw_usernames[$i], $already_disabled, true)) {
                     continue;
                 }
                 $to_disable[] = $username;
@@ -162,20 +167,19 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                 // actually execute the query for disabling users
                 $sql = $sql0 . implode(", ", $sql_pieces);
                 $res = $dbSocket->query($sql);
-                $to_disable_list = implode(", ", $to_disable);
-                $to_disable_list_enc = htmlspecialchars($to_disable_list, ENT_QUOTES, 'UTF-8');
+                $to_disable_list_enc = implode(', ', array_diff($raw_usernames, $already_disabled));
                 if (DB::isError($res)) {
                     $class = "danger";
-                    $message = sprintf('Failed to disable %s <strong>%s</strong>.', $label, $to_disable_list_enc);
+                    $message = sprintf('Failed to disable %s %s.', $label, $to_disable_list_enc);
                 } else {
                     $class = "success";
-                    $message = sprintf('Disabled %s <strong>%s</strong>.', $label, $to_disable_list_enc);
+                    $message = sprintf('Disabled %s %s.', $label, $to_disable_list_enc);
                 }
             } else {
-                $already_disabled_enc = htmlspecialchars(implode(", ", $already_disabled), ENT_QUOTES, 'UTF-8');
-                $already_disabled_label = ((count($to_disable) > 1 || count($to_disable) == 0)) ? "users" : "user";
+                $already_disabled_enc = implode(", ", $already_disabled);
+                $already_disabled_label = count($already_disabled) > 1 ? 'users' : 'user';
                 $class = "danger";
-                $message = sprintf('%s <strong>%s</strong> already disabled.', $already_disabled_label, $already_disabled_enc);
+                $message = sprintf('%s %s already disabled.', $already_disabled_label, $already_disabled_enc);
             }
             break;
 //============================
@@ -195,6 +199,8 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             // Execute the SQL query
             $res = $dbSocket->query($sql);
 
+            $sent = 0;
+            $failed = 0;
             // Iterate through the results
             while ($row = $res->fetchRow()) {
                 // Get the recipient's email address and username
@@ -215,17 +221,15 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                 // Prepare an empty array for email attachments, if any
                 $attachment = array();
 
-                // Send the email and capture the success status and message
-                list($success, $status) = send_email($configValues, $recipient_email_address, $recipient_name, $subject, $body, $attachment);
+                // Send the email and aggregate the outcome for all recipients.
+                list($success) = send_email($configValues, $recipient_email_address, $recipient_name, $subject, $body, $attachment);
 
-                // Determine the class and message based on whether the email was sent successfully
-                if ($success) {
-                    $class = "success"; // Class for successful email sending
-                    $message = $status; // Message indicating success status
-                } else {
-                    $class = "danger"; // Class for failed email sending
-                    $message = $status; // Message indicating failure status
-                }
+                $success ? $sent++ : $failed++;
+            }
+            $class = ($sent > 0 && $failed === 0) ? 'success' : 'danger';
+            $message = sprintf('Emails sent: %d. Failed: %d.', $sent, $failed);
+            if ($sent === 0 && $failed === 0) {
+                $message = 'No email recipients found.';
             }
             break; // End of the case
 //=======================
@@ -233,15 +237,16 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             $username = $usernames[0];
             $sql = sprintf("SELECT username FROM %s WHERE username='%s' AND groupname='%s'",
                            $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                           $dbSocket->escapeSimple($username), $disabled_groupname);
+                           $username, $disabled_groupname);
             $res = $dbSocket->query($sql);
             $numrows = $res->numRows();
-            if ($numrows > 0) {
+            $disabled = $numrows > 0;
+            if ($disabled) {
                 $class = "danger";
-                $message = sprintf('Please note that user <strong>%s</strong> is currently disabled.',
-                                   htmlspecialchars($username, ENT_QUOTES, 'UTF-8'))
-                         . '<br>'
-                         . sprintf('To enable this user, remove it from the <em>%s</em> profile.', $disabled_groupname);
+                $message = sprintf('Please note that user %s is currently disabled.',
+                                   $raw_usernames[0])
+                         . ' '
+                         . sprintf('To enable this user, remove it from the %s profile.', $disabled_groupname);
             }
             break;
 
@@ -312,7 +317,9 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                         $invoiceItems[0]['tax'] = floatval($row['planTimeRefillCost'] * $planTax);
                         $invoiceItems[0]['notes'] = 'refill user session time';
 
-                        userInvoiceAdd($id, $invoiceInfo, $invoiceItems);
+                        if (!userInvoiceAdd($id, $invoiceInfo, $invoiceItems, $db_error_handler)) {
+                            $db_error_handler(null);
+                        }
                     }
                 }
             }
@@ -320,10 +327,10 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             // return message
             if ($isErr) {
                 $class = "danger";
-                $message = sprintf('Cannot refill session time for %s <strong>%s</strong>', $label, $username_list_enc);
+                $message = sprintf('Cannot refill session time for %s %s', $label, $username_list_enc);
             } else {
                 $class = "success";
-                $message = sprintf('Session time for %s <strong>%s</strong> has been successfully refilled (and billed).',
+                $message = sprintf('Session time for %s %s has been successfully refilled (and billed).',
                                    $label, $username_list_enc);
             }
 
@@ -389,7 +396,9 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
                         $invoiceItems[0]['tax'] = floatval($row['planTrafficRefillCost'] * $planTax);
                         $invoiceItems[0]['notes'] = 'refill user session traffic';
 
-                        userInvoiceAdd($id, $invoiceInfo, $invoiceItems);
+                        if (!userInvoiceAdd($id, $invoiceInfo, $invoiceItems, $db_error_handler)) {
+                            $db_error_handler(null);
+                        }
 
                     }
                 }
@@ -398,10 +407,10 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
             // return message
             if ($isErr) {
                 $class = "danger";
-                $message = sprintf('Cannot refill session traffic for %s <strong>%s</strong>', $label, $username_list_enc);
+                $message = sprintf('Cannot refill session traffic for %s %s', $label, $username_list_enc);
             } else {
                 $class = "success";
-                $message = sprintf('Session traffic for %s <strong>%s</strong> has been successfully refilled (and billed).',
+                $message = sprintf('Session traffic for %s %s has been successfully refilled (and billed).',
                                    $label, $username_list_enc);
             }
 
@@ -411,9 +420,7 @@ if (array_key_exists('username', $_GET) && isset($_GET['username']) &&
 
     include('../../../common/includes/db_close.php');
 
-    // output message
-    if (isset($message) && isset($class)) {
-        $div = sprintf('<div class="alert alert-%s" role="alert">%s</div>', $class, $message);
-        printf("document.getElementById('%s').innerHTML = '%s';", $divContainer, $div);
-    }
+    user_actions_response($action === 'checkDisabled' || $class === 'success', $message, 200, $class, $disabled);
+} catch (Throwable $error) {
+    $db_error_handler($error);
 }

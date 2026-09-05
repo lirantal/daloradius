@@ -423,34 +423,38 @@
 
 
         // inline extra javascript
-        $inline_extra_js = sprintf("var strUsername = 'username=%s';\n", $username_enc);
+        $inline_extra_js = sprintf("var actionUsername = %s;\n", json_encode($username, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT));
 
         $inline_extra_js .= '
 function disableUser() {
+    if (userActionPending) return false;
     if (confirm("You are about to disable this user account\nDo you want to continue?"))  {
-        ajaxGeneric("library/ajax/user_actions.php", "userDisable=true", "returnMessages", strUsername);
+        userAction("userDisable", [actionUsername]);
         return true;
     }
 }
 
 function enableUser() {
+    if (userActionPending) return false;
     if (confirm("You are about to enable this user account\nDo you want to continue?"))  {
-        ajaxGeneric("library/ajax/user_actions.php", "userEnable=true", "returnMessages", strUsername);
+        userAction("userEnable", [actionUsername]);
         return true;
     }
 }
 
 function refillSessionTime() {
+    if (userActionPending) return false;
     if (confirm("You are about to refill session time for this user account\nDo you want to continue?\n\nSuch action will also bill the user if set so in the plant the user is associated with!"))  {
-        ajaxGeneric("library/ajax/user_actions.php", "refillSessionTime=true", "returnMessages", strUsername);
+        userAction("refillSessionTime", [actionUsername]);
         return true;
     }
 }
 
 
 function refillSessionTraffic() {
+    if (userActionPending) return false;
     if (confirm("You are about to refill session traffic for this user account\nDo you want to continue?\n\nSuch action will also bill the user if set so in the plant the user is associated with!"))  {
-        ajaxGeneric("library/ajax/user_actions.php", "refillSessionTraffic=true", "returnMessages", strUsername);
+        userAction("refillSessionTraffic", [actionUsername]);
         return true;
     }
 }
@@ -466,8 +470,6 @@ function refillSessionTraffic() {
     $extra_css = array();
 
     $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
         "static/js/productive_funcs.js",
         "static/js/dynamic_attributes.js",
         "static/js/pages_common.js",
@@ -700,7 +702,7 @@ EOF;
 
 window.onload = function() {
     setupAccordion();
-    ajaxGeneric("library/ajax/user_actions.php", "checkDisabled=true", "returnMessages", strUsername);
+    userAction("checkDisabled", [actionUsername]);
 };
 
 EOF;
