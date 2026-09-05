@@ -50,6 +50,13 @@ $configValues = [
     'CONFIG_DB_TBL_DALOHOTSPOTS' => 'hotspots',
     'CONFIG_DB_TBL_DALODICTIONARY' => 'dictionary',
 ];
+if (isset($_GET['connect_failure'])) {
+    $error = new Exception('Synthetic connection error');
+    if (isset($db_error_handler) && is_callable($db_error_handler)) {
+        call_user_func($db_error_handler, $error);
+    }
+    die('<b>Database connection error</b>');
+}
 $dbSocket = new FixtureDB();
 ''')
         (includes / 'fixture.php').write_text('''<?php
@@ -57,6 +64,7 @@ define('PEAR_ERROR_RETURN', 1);
 class DB { static function isError($value) { return $value instanceof Exception; } }
 class FixtureResult {
     function fetchRow() {
+        if (isset($_GET['fetch_failure'])) return new Exception('Synthetic fetch error');
         if (isset($_GET['empty'])) return null;
         return basename($_SERVER['SCRIPT_NAME']) === 'hotspot_info.php' ? [3, 1024, 2048] : [1024, 2048];
     }
@@ -64,20 +72,21 @@ class FixtureResult {
 class FixtureDB {
     private $returnErrors = false;
     function setErrorHandling($mode) { $this->returnErrors = $mode === PEAR_ERROR_RETURN; }
+    function disconnect() {}
     function escapeSimple($value) { return str_replace("'", "''", $value); }
     function query($sql) {
-        if (!str_starts_with($sql, 'SELECT ')) throw new Exception('Unexpected mutation');
+        if (strpos($sql, 'SELECT ') !== 0) throw new Exception('Unexpected mutation');
         if (isset($_GET['failure']) && !$this->returnErrors) echo '<div>Default PEAR error output</div>';
         return isset($_GET['failure']) ? new Exception('Synthetic DB error') : new FixtureResult();
     }
     function getOne($sql) {
-        if (str_contains($sql, 'operators_acl')) {
+        if (strpos($sql, 'operators_acl') !== false) {
             $expected = [
                 'user_info.php' => 'acct_username',
                 'hotspot_info.php' => 'acct_hotspot_accounting',
                 'vendor_attribute_info.php' => 'mng_rad_attributes_list',
             ][basename($_SERVER['SCRIPT_NAME'])];
-            if (!str_contains($sql, "file='$expected'")) throw new Exception('Wrong ACL');
+            if (strpos($sql, "file='$expected'") === false) throw new Exception('Wrong ACL');
             return $_SESSION['operator_id'] === 1 ? 1 : 0;
         }
         if (isset($_GET['failure'])) {
@@ -88,6 +97,41 @@ class FixtureDB {
     }
 }
 ''')
+        # Exercise the production db_open.php connection-failure path with a
+        # minimal PEAR DB double. The endpoint fixture above separately checks
+        # the resulting HTTP contract.
+        production_includes = base / 'production-includes'
+        production_includes.mkdir()
+        shutil.copyfile(ROOT / 'app/common/includes/db_open.php', production_includes / 'db_open.php')
+        shutil.copyfile(ROOT / 'app/operators/library/ajax/json_info.php', base / 'json_info.php')
+        (production_includes / 'config_read.php').write_text('''<?php
+$configValues = [
+    'CONFIG_DB_ENGINE' => 'mysql', 'CONFIG_DB_USER' => 'test', 'CONFIG_DB_PASS' => 'test',
+    'CONFIG_DB_HOST' => 'localhost', 'CONFIG_DB_PORT' => '3306', 'CONFIG_DB_NAME' => 'test',
+];
+''')
+        (production_includes / 'db_table_conventions.php').write_text('<?php\n')
+        (base / 'DB.php').write_text('''<?php
+define('PEAR_ERROR_CALLBACK', 16);
+class SyntheticConnectionError { function getMessage() { return 'synthetic'; } }
+class DB {
+    static function connect($dsn) { return new SyntheticConnectionError(); }
+    static function isError($value) { return $value instanceof SyntheticConnectionError; }
+}
+''')
+        runner = base / 'db_open_failure.php'
+        runner.write_text('''<?php
+$_SERVER['PHP_SELF'] = '/library/ajax/vendor_attribute_info.php';
+require __DIR__ . '/json_info.php';
+$dalo_info_database_error_message = 'Unable to load attribute information.';
+$db_error_handler = 'dalo_info_database_error';
+include __DIR__ . '/production-includes/db_open.php';
+''')
+        result = subprocess.run(PHP + ['-d', f'include_path={base}', str(runner)],
+                                check=True, capture_output=True, text=True)
+        assert json.loads(result.stdout) == {'error': 'Unable to load attribute information.'}, result.stdout
+        assert '<b>' not in result.stdout
+        checks += 1
         sessions = base / 'sessions'
         sessions.mkdir(mode=0o777)
         sessions.chmod(0o777)
@@ -151,6 +195,15 @@ class FixtureDB {
                         assert status == expected, (endpoint, expected, status, body)
                         if expected in [405, 500]: assert 'error' in json.loads(body)
                         if expected == 405: assert headers['Allow'] == 'GET'
+                        checks += 1
+                    status, headers, body = request(endpoint, query + '&connect_failure=1')
+                    assert status == 500, (endpoint, status, body)
+                    assert headers['Content-Type'] == 'application/json; charset=UTF-8'
+                    assert 'error' in json.loads(body) and '<b>' not in body, (endpoint, status, body)
+                    checks += 1
+                    if endpoint != 'vendor_attribute_info.php':
+                        status, _, body = request(endpoint, query + '&fetch_failure=1')
+                        assert status == 500 and 'error' in json.loads(body), (endpoint, status, body)
                         checks += 1
                     for invalid in ['', parameter + '[]=x', parameter + '=%20']:
                         status, _, body = request(endpoint, invalid)

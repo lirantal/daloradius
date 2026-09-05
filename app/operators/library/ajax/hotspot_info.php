@@ -23,6 +23,8 @@
 
 require_once __DIR__ . '/json_info.php';
 include('../checklogin.php');
+$dalo_info_database_error_message = 'Unable to load hotspot information.';
+$db_error_handler = 'dalo_info_database_error';
 $operator_perm_file = 'acct_hotspot_accounting';
 $operator_perm_deny_http_status = 403;
 include('../check_operator_perm.php');
@@ -46,6 +48,9 @@ if (DB::isError($res)) {
     dalo_info_response(['error' => 'Unable to load hotspot information.'], 500);
 }
 $row = $res->fetchRow();
+if (DB::isError($row)) {
+    dalo_info_response(['error' => 'Unable to load hotspot information.'], 500);
+}
 $data = [
     'upload' => dalo_info_bytes($row[1] ?? null),
     'download' => dalo_info_bytes($row[2] ?? null),

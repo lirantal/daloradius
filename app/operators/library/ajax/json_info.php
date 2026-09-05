@@ -10,6 +10,14 @@ function dalo_info_response($data, $status = 200) {
     exit;
 }
 
+function dalo_info_database_error($error) {
+    global $dalo_info_database_error_message;
+    $message = isset($dalo_info_database_error_message)
+             ? $dalo_info_database_error_message
+             : 'Unable to load information.';
+    dalo_info_response(['error' => $message], 500);
+}
+
 function dalo_info_parameter($name) {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         header('Allow: GET');

@@ -23,6 +23,8 @@
 
 require_once __DIR__ . '/json_info.php';
 include('../checklogin.php');
+$dalo_info_database_error_message = 'Unable to load attribute information.';
+$db_error_handler = 'dalo_info_database_error';
 $operator_perm_file = 'mng_rad_attributes_list';
 $operator_perm_deny_http_status = 403;
 include('../check_operator_perm.php');
