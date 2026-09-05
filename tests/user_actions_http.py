@@ -233,6 +233,8 @@ while ($client = stream_socket_accept($server, -1)) {
 
             # Force failures at each sensitive step; JSON must never claim success after a partial mutation.
             for table, action in [('billing_history', 'refillSessionTime'), ('invoice', 'refillSessionTraffic'), ('invoice_items', 'refillSessionTime'), ('radusergroup', 'userDisable')]:
+                invoice_count = sql('SELECT COUNT(*) FROM invoice')
+                invoice_item_count = sql('SELECT COUNT(*) FROM invoice_items')
                 sql(f'RENAME TABLE {table} TO {table}_unavailable')
                 try:
                     status, result = request(action, ['alice'])
@@ -240,7 +242,10 @@ while ($client = stream_socket_accept($server, -1)) {
                     assert 'already have been applied' in result['message']
                 finally:
                     sql(f'RENAME TABLE {table}_unavailable TO {table}')
-            print('PASS: database failures at group/history/invoice/item stages return JSON without false success')
+                if table == 'invoice_items':
+                    assert sql('SELECT COUNT(*) FROM invoice') == invoice_count
+                    assert sql('SELECT COUNT(*) FROM invoice_items') == invoice_item_count
+            print('PASS: database failures return JSON; invoice-item failure rolls back its invoice')
             log_result = subprocess.run(['docker', 'logs', WEB], capture_output=True, text=True, check=True)
             logs = log_result.stdout + log_result.stderr
             assert 'PHP Fatal error' not in logs and 'PHP Warning' not in logs, logs[-2000:]

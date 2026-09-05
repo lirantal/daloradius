@@ -48,8 +48,13 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
     $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
 
-    $fail = function() use (&$dbSocket) {
+    $transaction_started = false;
+    $fail = function() use (&$dbSocket, &$transaction_started) {
         if (isset($dbSocket) && is_object($dbSocket)) {
+            if ($transaction_started) {
+                $dbSocket->rollback();
+                $transaction_started = false;
+            }
             $dbSocket->disconnect();
         }
         return false;
@@ -98,6 +103,11 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
     $myinvoiceInfo['notes'] = 'provisioned new user from daloRADIUS platform';
     $invoiceInfo = array_merge($myinvoiceInfo, $invoiceInfo);
 
+    $res = $dbSocket->autoCommit(false);
+    if (DB::isError($res)) {
+        return $fail();
+    }
+    $transaction_started = true;
 
     $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'].
             " (id, user_id, date, status_id, type_id, notes, creationdate, creationby, updatedate, updateby) ".
@@ -151,7 +161,11 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
         }
     }
 
-
+    $res = $dbSocket->commit();
+    if (DB::isError($res)) {
+        return $fail();
+    }
+    $transaction_started = false;
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
