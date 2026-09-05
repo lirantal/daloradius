@@ -33,10 +33,15 @@ function setup(request) {
     const alerts = [];
     const document = {
         baseURI: 'http://localhost/operators/mng-new.php',
+        location: { pathname: '/operators/mng-new.php' },
         createElement: tag => new Element(tag === 'select' ? 'select-one' : tag),
         getElementById: id => elements[id] || null,
     };
-    const context = vm.createContext({ document, daloRequestJSON: request, alert: message => alerts.push(message) });
+    const checkedRequest = (path, params) => {
+        assert.equal(params.parentPage, 'mng-new');
+        return request(path, params);
+    };
+    const context = vm.createContext({ document, daloRequestJSON: checkedRequest, alert: message => alerts.push(message) });
     vm.runInContext(source, context);
     return { context, elements, alerts };
 }
@@ -66,9 +71,15 @@ function detail(attribute, helper = { type: 'none', options: [], initialValue: n
 
 test('latest vendor and attribute requests win independently', async () => {
     const pending = new Map();
+    const vendorPending = [];
     const { context, elements } = setup((path, params) => {
-        const key = params.vendorAttributes || 'vendors';
-        const item = deferred(); pending.set(key, item); return item.promise;
+        const item = deferred();
+        if (params.getVendorsList) {
+            vendorPending.push(item);
+        } else {
+            pending.set(params.vendorAttributes, item);
+        }
+        return item.promise;
     });
     const vendor = elements.vendor = new Element('select-one');
     const attributes = elements.attributes = new Element('select-one');
@@ -85,12 +96,11 @@ test('latest vendor and attribute requests win independently', async () => {
 
     const firstReload = context.getVendorsList('vendor');
     const secondReload = context.getVendorsList('vendor');
-    // Both reloads use the same map key, so resolve the current request and leave the stale one detached.
-    pending.get('vendors').resolve({ vendors: ['Current'] });
+    vendorPending[1].resolve({ vendors: ['Current'] });
     await secondReload;
+    vendorPending[0].resolve({ vendors: ['Old'] });
+    await firstReload;
     assert.deepEqual(vendor.options.map(option => option.value), ['', 'Current']);
-    vendor.isConnected = false;
-    assert.equal(await Promise.race([firstReload.then(() => true), Promise.resolve(false)]), false);
 });
 
 test('latest attribute wins per row, rows stay independent and removal is safe', async () => {
@@ -144,12 +154,54 @@ test('date, list, volume, rate and Mikrotik helper contracts render', async () =
     ];
     const { context, elements } = setup(async (path, params) => detail(params.getValuesForAttribute, helpers.shift()));
     detailElements(elements, 'A');
-    for (const attribute of ['datetime', 'date', 'list', 'volume', 'rate', 'mikrotik']) {
-        await context.loadAttributeDetails(attribute, 'valuesA', 'opA', 'tableA', 'tooltipA', 'typeA', 'helperA');
-        assert.equal(elements.opA.options[0].value, ':=');
-        assert.equal(elements.tableA.options[0].value, 'reply');
-    }
+
+    await context.loadAttributeDetails('datetime', 'valuesA', 'opA', 'tableA', 'tooltipA', 'typeA', 'helperA');
+    assert.equal(elements.valuesA.type, 'datetime-local');
+    assert.equal(elements.valuesA.value, '2026-09-05T12:30');
+
+    await context.loadAttributeDetails('date', 'valuesA', 'opA', 'tableA', 'tooltipA', 'typeA', 'helperA');
+    assert.equal(elements.valuesA.type, 'text');
+    assert.equal(elements.valuesA.value, 'Sat 5 Sep 2026 12:30:00 CEST');
+
+    await context.loadAttributeDetails('list', 'valuesA', 'opA', 'tableA', 'tooltipA', 'typeA', 'helperA');
+    assert.equal(elements.helperA.children[0].type, 'datalist');
+    assert.equal(elements.helperA.children[0].options[0].value, 'PPP');
+    assert.equal(elements.valuesA.attributes.list, elements.helperA.children[0].id);
+
+    await context.loadAttributeDetails('volume', 'valuesA', 'opA', 'tableA', 'tooltipA', 'typeA', 'helperA');
+    let select = elements.helperA.children[0];
+    assert.equal(select.type, 'select-one');
+    assert.deepEqual(select.options.map(option => option.value), ['10485760']);
+    select.value = '10485760';
+    select.onchange();
+    assert.equal(elements.valuesA.value, '10485760');
+
+    await context.loadAttributeDetails('rate', 'valuesA', 'opA', 'tableA', 'tooltipA', 'typeA', 'helperA');
+    select = elements.helperA.children[0];
+    assert.equal(select.type, 'select-one');
+    assert.deepEqual(select.options.map(option => option.value), ['32000']);
+
+    await context.loadAttributeDetails('mikrotik', 'valuesA', 'opA', 'tableA', 'tooltipA', 'typeA', 'helperA');
+    assert.equal(elements.helperA.children[0].type, 'datalist');
+    assert.equal(elements.helperA.children[0].options[0].value, '128k/128k');
+    assert.equal(elements.opA.options[0].value, ':=');
+    assert.equal(elements.tableA.options[0].value, 'reply');
     assert.equal(helpers.length, 0);
+});
+
+test('dynamic attribute pages use their own ACL mapping', () => {
+    const endpoint = fs.readFileSync(path.join(root, 'app/operators/library/ajax/attributes.php'), 'utf8');
+    const pages = fs.readdirSync(path.join(root, 'app/operators')).filter(name => {
+        if (!name.endsWith('.php')) return false;
+        return fs.readFileSync(path.join(root, 'app/operators', name), 'utf8').includes('static/js/dynamic_attributes.js');
+    });
+    assert.equal(pages.length, 7);
+    for (const page of pages) {
+        const parent = page.replace(/\.php$/, '');
+        const permission = parent.replaceAll('-', '_');
+        assert.ok(endpoint.includes(`'${parent}' => '${permission}'`), page);
+    }
+    assert.doesNotMatch(endpoint, /\$operator_perm_file\s*=\s*'mng_rad_attributes_list'/);
 });
 
 test('submitted PHP field grouping and all SACK assets are preserved/removed as required', () => {

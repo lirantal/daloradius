@@ -46,6 +46,14 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
     global $configValues, $logDebugSQL;
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+    $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+
+    $fail = function() use (&$dbSocket) {
+        if (isset($dbSocket) && is_object($dbSocket)) {
+            $dbSocket->disconnect();
+        }
+        return false;
+    };
 
     $user_id = false;
 
@@ -60,13 +68,20 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
         $res = $dbSocket->query($sql);
         $logDebugSQL .= "$sql;\n";
 
+        if (DB::isError($res)) {
+            return $fail();
+        }
+
         $row = $res->fetchRow();
+        if (DB::isError($row) || !is_array($row)) {
+            return $fail();
+        }
         $user_id = $row[0];
     }
 
     // if something is not right with the user id (set to null, false, whatever) we abort
     if (!$user_id) {
-        return false;
+        return $fail();
     }
 
     $currDate = date('Y-m-d H:i:s');
@@ -96,15 +111,18 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
     $logDebugSQL .= $sql . "\n";
 
     // if there hasn't been any errors with inserting the invoice record
-    if (!PEAR::isError($res)) {
+    if (DB::isError($res)) {
+        return $fail();
+    }
 
-        // get the added invoice id from the database
-        $invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" );
+    // get the added invoice id from the database
+    $invoice_id = $dbSocket->getOne( "SELECT LAST_INSERT_ID() FROM `".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']."`" );
 
-        if (!$invoice_id)
-            return false;
+    if (DB::isError($invoice_id) || !$invoice_id) {
+        return $fail();
+    }
 
-        foreach($invoiceItems as $invoiceItem) {
+    foreach($invoiceItems as $invoiceItem) {
             // set default information for the invoice items
             /*
             $myinvoiceItems['plan_id'] = '' ;
@@ -125,11 +143,12 @@ function userInvoiceAdd($userId, $invoiceInfo = array(), $invoiceItems = array()
                 $dbSocket->escapeSimple($invoiceItem['notes'])."', ".
                 " '$currDate', '$currBy', NULL, NULL)";
 
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= $sql . "\n";
+        $res = $dbSocket->query($sql);
+        $logDebugSQL .= $sql . "\n";
 
+        if (DB::isError($res)) {
+            return $fail();
         }
-
     }
 
 

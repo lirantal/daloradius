@@ -17,7 +17,20 @@ require_once __DIR__ . '/json_info.php';
 include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', '..', 'common', 'includes', 'config_read.php' ]);
 include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
 
-$operator_perm_file = 'mng_rad_attributes_list';
+$attribute_parent_permissions = [
+    'mng-new' => 'mng_new',
+    'mng-edit' => 'mng_edit',
+    'mng-batch-add' => 'mng_batch_add',
+    'mng-rad-profiles-new' => 'mng_rad_profiles_new',
+    'mng-rad-profiles-edit' => 'mng_rad_profiles_edit',
+    'mng-rad-groupcheck-new' => 'mng_rad_groupcheck_new',
+    'mng-rad-groupreply-new' => 'mng_rad_groupreply_new',
+];
+$parent_page = (isset($_GET['parentPage']) && is_string($_GET['parentPage'])) ? trim($_GET['parentPage']) : '';
+if (!isset($attribute_parent_permissions[$parent_page])) {
+    dalo_info_response([ 'error' => 'Missing or invalid parent page.' ], 400);
+}
+$operator_perm_file = $attribute_parent_permissions[$parent_page];
 $operator_perm_deny_http_status = 403;
 include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);

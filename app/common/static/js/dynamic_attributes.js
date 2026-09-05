@@ -3,6 +3,10 @@
 var dictCounter = 1;
 var daloAttributeRequestCounter = 0;
 
+function attributeParentPage() {
+    return document.location.pathname.split('/').pop().replace(/\.php$/, '');
+}
+
 function attributeRequestId(element) {
     var id = String(++daloAttributeRequestCounter);
     element.dataset.attributeRequestId = id;
@@ -58,7 +62,9 @@ async function getVendorsList(sel) {
     var requestId = attributeRequestId(vendors);
     vendors.disabled = true;
     try {
-        var data = await daloRequestJSON('library/ajax/attributes.php', { getVendorsList: 'yes' });
+        var data = await daloRequestJSON('library/ajax/attributes.php', {
+            getVendorsList: 'yes', parentPage: attributeParentPage()
+        });
         if (!attributeRequestIsCurrent(vendors, requestId)) return;
         vendors.replaceChildren();
         addOption(vendors, '', '');
@@ -84,7 +90,9 @@ async function getAttributesList(sel, attributesSel) {
     if (!vendorName) return;
 
     try {
-        var data = await daloRequestJSON('library/ajax/attributes.php', { vendorAttributes: vendorName });
+        var data = await daloRequestJSON('library/ajax/attributes.php', {
+            vendorAttributes: vendorName, parentPage: attributeParentPage()
+        });
         if (!attributeRequestIsCurrent(attributes, requestId) || sel.value !== vendorName) return;
         (data.attributes || []).forEach(function(attribute) { addOption(attributes, attribute, attribute); });
         attributes.disabled = data.attributes.length === 0;
@@ -142,7 +150,9 @@ async function loadAttributeDetails(attributeName, valuesSel, opSel, tableSel, a
     if (!attributeName) return;
 
     try {
-        var data = await daloRequestJSON('library/ajax/attributes.php', { getValuesForAttribute: attributeName });
+        var data = await daloRequestJSON('library/ajax/attributes.php', {
+            getValuesForAttribute: attributeName, parentPage: attributeParentPage()
+        });
         if (!attributeRequestIsCurrent(valuesElem, requestId)) return;
         populateRecommendedSelect(opElem, data.operators || [], data.recommendedOperator || '');
         if (tableElem.type === 'select-one') {
@@ -157,13 +167,6 @@ async function loadAttributeDetails(attributeName, valuesSel, opSel, tableSel, a
         if (!attributeRequestIsCurrent(valuesElem, requestId)) return;
         alert(error.message);
     }
-}
-
-function getValuesList(sel, valuesSel, opSel, tableSel, attrTooltip, attrType, attrHelper) {
-    var selected = document.getElementById(sel);
-    if (!selected) return;
-    var attributeName = selected.value;
-    return loadAttributeDetails(attributeName, valuesSel, opSel, tableSel, attrTooltip, attrType, attrHelper);
 }
 
 function parseAttribute(attrElement) {
