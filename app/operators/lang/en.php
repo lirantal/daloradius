@@ -29,6 +29,11 @@ if (strpos($_SERVER['PHP_SELF'], '/lang/en.php') !== false) {
     exit;
 }
 
+
+/* **********************************************************************************
+ * General strings
+ ***********************************************************************************/
+
 $l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
 $l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
 $l['all']['copyright1'] = 'RADIUS Management, Reporting, Accounting and Billing by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
@@ -45,9 +50,7 @@ $l['all']['CallingStationID'] = "CallingStationID";
 $l['all']['ExpiryTime'] = "Expiry Time";
 $l['all']['PoolKey'] = "Pool Key";
 
-/********************************************************************************/
-/* Vendor Attributes related translation                                        */
-/********************************************************************************/
+// Vendor Attributes related translation
 $l['all']['Dictionary'] = "Dictionary";
 $l['all']['VendorID'] = "Vendor ID";
 $l['all']['VendorName'] = "Vendor Name";
@@ -56,7 +59,6 @@ $l['all']['RecommendedOP'] = "Recommended OP";
 $l['all']['RecommendedTable'] = "Recommended Table";
 $l['all']['RecommendedTooltip'] = "Recommended Tooltip";
 $l['all']['RecommendedHelper'] = "Recommended Helper";
-/********************************************************************************/
 
 $l['all']['CSVData'] = "CSV-formatted data";
 $l['all']['GeneratePassword'] = "Generate Password";
@@ -66,16 +68,13 @@ $l['all']['No'] = "no";
 
 $l['all']['CPU'] = "CPU";
 
-/* radius related text */
+// radius related text
 $l['all']['RADIUSDictionaryPath'] = "RADIUS Dictionary Path";
-
 
 $l['all']['DashboardSecretKey'] = "Dashboard Secret Key";
 $l['all']['DashboardDebug'] = "Debug";
 $l['all']['DashboardDelaySoft'] = "Time in minutes to consider a 'soft' delay limit";
 $l['all']['DashboardDelayHard'] = "Time in minutes to consider a 'hard' delay limit";
-
-
 
 $l['all']['SendWelcomeNotification'] = "Send Welcome Notification";
 $l['all']['SMTPServerAddress'] = "SMTP Server Address";
@@ -93,7 +92,6 @@ $l['all']['Users'] = "Users";
 
 $l['all']['Compare'] = "Compare";
 $l['all']['Never'] = "Never";
-
 
 $l['all']['Section'] = "Section";
 $l['all']['Item'] = "Item";
@@ -133,7 +131,6 @@ $l['all']['DeadTime'] = "Dead Time";
 $l['all']['RetryDelay'] = "Retry Delay";
 $l['all']['RetryCount'] = "Retry Count";
 $l['all']['DefaultFallback'] = "Default Fallback";
-
 
 $l['all']['Firmware'] = "Firmware";
 $l['all']['NASMAC'] = "NAS MAC";
@@ -342,7 +339,6 @@ $l['all']['billingplans'] = "billing plans";
 $l['all']['billinghistory'] = "billing history";
 $l['all']['billinginfo'] = "billing user info";
 
-
 $l['all']['CreateIncrementingUsers'] = "Create Incrementing Users";
 $l['all']['CreateRandomUsers'] = "Create Random Users";
 $l['all']['StartingIndex'] = "Starting Index";
@@ -408,7 +404,6 @@ $l['all']['PaymentDate'] = "Date";
 $l['all']['PaymentType'] = "Payment Type";
 $l['all']['PaymentNotes'] = "Payment Notes";
 
-
 $l['all']['Quantity'] = "Quantity";
 $l['all']['ReceiverEmail'] = "Receiver Email";
 $l['all']['Business'] = "Business";
@@ -437,9 +432,15 @@ $l['all']['Calling Station ID'] = "Calling Station ID";
 $l['all']['Framed IP Address'] = "Framed IP Address";
 
 /* **********************************************************************************
- * Tooltips
- * Helper information such as tooltip text for mouseover events and popup tooltips
- ************************************************************************************/
+ * Login page text
+ ***********************************************************************************/
+
+$l['text']['LoginRequired'] = "Login Required";
+$l['text']['LoginPlease'] = "Login Please";
+
+/* **********************************************************************************
+ * Tooltips and form-field hints
+ ***********************************************************************************/
 
 $l['Tooltip']['batchNameTooltip'] = "Provide an identifier name for this batch creation";
 $l['Tooltip']['batchDescriptionTooltip'] = "Provide general description regarding this batch creation";
@@ -469,8 +470,6 @@ $l['Tooltip']['EditPayment'] = "Edit Payment";
 $l['Tooltip']['PaymentId'] = "The Payment Id";
 $l['Tooltip']['RemovePayment'] = "Remove Payment";
 $l['Tooltip']['paymentInvoiceTooltip'] = "The invoice related to this payment";
-
-
 
 $l['Tooltip']['Username'] = "Type in the username";
 $l['Tooltip']['BatchName'] = "Type in the batch name";
@@ -545,7 +544,6 @@ $l['Tooltip']['realmNostripTooltip'] = "Whether to strip or not the realm suffix
 $l['Tooltip']['realmHintsTooltip'] = "";
 $l['Tooltip']['realmNotrealmTooltip'] = "";
 
-
 $l['Tooltip']['vendorNameTooltip'] = "The name of the vendor (e.g. Cisco, Mikrotik, etc.).";
 $l['Tooltip']['typeTooltip'] = "The data type of this attribute (e.g. string, integer, date, ipaddr, etc.).";
 $l['Tooltip']['attributeTooltip'] = "The name of the attribute (e.g. Framed-IPAddress, Expiration, etc.).";
@@ -554,8 +552,6 @@ $l['Tooltip']['RecommendedOPTooltip'] = "The recommended operator for this attri
 $l['Tooltip']['RecommendedTableTooltip'] = "The recommended target table for this attribute (e.g. check or reply).";
 $l['Tooltip']['RecommendedTooltipTooltip'] = "The text to show as a tooltip when choosing this attribute (e.g. the IP address for the user, etc.).";
 $l['Tooltip']['RecommendedHelperTooltip'] = "The helper function which will be available when choosing this attribute.";
-
-
 
 $l['Tooltip']['AttributeEdit'] = "Edit Attribute";
 
@@ -607,17 +603,11 @@ $l['Tooltip']['reassignplanprofiles'] = "If toggled on, when applying user infor
                     the Profiles listed in the Profiles tab will be ignored and <br/>
                     profiles will be re-assigned based on the Plans profile association";
 
-/* ********************************************************************************** */
-
-
-
-
 /* **********************************************************************************
- * Links and Buttons
- ************************************************************************************/
+ * Links and buttons
+ ***********************************************************************************/
 
 $l['button']['DashboardSettings'] = "Dashboard Settings";
-
 
 $l['button']['GenerateReport'] = "Generate Report";
 
@@ -671,7 +661,6 @@ $l['button']['EditVendorAttribute'] = "Edit Vendor's Attribute";
 $l['button']['SearchVendorAttribute'] = "Search Attribute";
 $l['button']['RemoveVendorAttribute'] = "Remove Vendor's Attribute";
 $l['button']['ImportVendorDictionary'] = "Import Vendor Dictionary";
-
 
 $l['button']['BetweenDates'] = "Between Dates:";
 $l['button']['Where'] = "Where";
@@ -790,18 +779,19 @@ $l['button']['RemoveOperator'] = "Remove Operator";
 
 $l['button']['ProcessQuery'] = "Process Query";
 
+/* **********************************************************************************
+ * Form action buttons
+ ***********************************************************************************/
 
-
-/* ********************************************************************************** */
-
+$l['buttons']['savesettings'] = "Save Settings";
+$l['buttons']['apply'] = "Apply";
+$l['buttons']['downloadGeneratedPasswordsCSV'] = "Download Generated Passwords CSV";
 
 /* **********************************************************************************
- * Titles
- * The text related to all the title headers in captions,tables and tabbed layout text
- ************************************************************************************/
+ * Titles (fieldsets, tables, tabs)
+ ***********************************************************************************/
 
 $l['title']['ImportUsers'] = "Import Users";
-
 
 $l['title']['Dashboard'] = "Dashboard";
 $l['title']['DashboardAlerts'] = "Alerts";
@@ -814,7 +804,6 @@ $l['title']['Items'] = "Items";
 
 $l['title']['PayTypeInfo'] = "Payment Type Information";
 $l['title']['PaymentInfo'] = "Payment Information";
-
 
 $l['title']['RateInfo'] = "Rate Information";
 $l['title']['PlanInfo'] = "Plan Information";
@@ -880,12 +869,157 @@ $l['title']['AdvancedSettings'] = "Advanced Settings";
 $l['title']['Advanced'] = "Advanced";
 $l['title']['Optional'] = "Optional";
 
-/* ********************************************************************************** */
+/* **********************************************************************************
+ * Captions
+ ***********************************************************************************/
+
+$l['captions']['providebillratetodel'] = "Provide the rate entry type which you would like to remove";
+$l['captions']['detailsofnewrate'] = "You may fill below details for the new rate";
+$l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rate entry";
+
+/* **********************************************************************************
+ * Top navigation
+ ***********************************************************************************/
+
+$l['menu']['Home'] = "Home";
+$l['menu']['Managment'] = "Management";
+$l['menu']['Reports'] = "Reports";
+$l['menu']['Accounting'] = "Accounting";
+$l['menu']['Billing'] = "Billing";
+$l['menu']['Gis'] = "GIS";
+$l['menu']['Graphs'] = "Graphs";
+$l['menu']['Config'] = "Config";
+$l['menu']['Help'] = "Help";
+
+/* **********************************************************************************
+ * Sub navigation
+ ***********************************************************************************/
+
+$l['submenu']['General'] = "General";
+$l['submenu']['Reporting'] = "Reporting";
+$l['submenu']['Maintenance'] = "Maintenance";
+$l['submenu']['Operators'] = "Operators";
+$l['submenu']['Backup'] = "Backup";
+$l['submenu']['Logs'] = "Logs";
+$l['submenu']['Status'] = "Status";
+$l['submenu']['Batch Users'] = "Batch Users";
+$l['submenu']['Dashboard'] = "Dashboard";
+$l['submenu']['Users'] = "Users";
+$l['submenu']['Hotspots'] = "Hotspots";
+$l['submenu']['Nas'] = "Nas";
+$l['submenu']['User-Groups'] = "User-Groups";
+$l['submenu']['Profiles'] = "Profiles";
+$l['submenu']['HuntGroups'] = "HuntGroups";
+$l['submenu']['Attributes'] = "Attributes";
+$l['submenu']['Realm/Proxy'] = "Realm/Proxy";
+$l['submenu']['IP-Pool'] = "IP-Pool";
+$l['submenu']['POS'] = "POS";
+$l['submenu']['Plans'] = "Plans";
+$l['submenu']['Rates'] = "Rates";
+$l['submenu']['Merchant-Transactions'] = "Merchant-Transactions";
+$l['submenu']['Billing-History'] = "Billing-History";
+$l['submenu']['Invoices'] = "Invoices";
+$l['submenu']['Payments'] = "Payments";
+$l['submenu']['Custom'] = "Custom";
+$l['submenu']['Hotspot'] = "Hotspot";
+$l['submenu']['Mail'] = "Mail";
+
+/* **********************************************************************************
+ * Sidebar
+ ***********************************************************************************/
+
+// sidebar menu titles, section headings, link labels and form captions
+// (see app/operators/include/menu/sidebar/)
+$l['sidebar']['Accounting'] = "Accounting";
+$l['sidebar']['AttributesManagement'] = "Attributes Management";
+$l['sidebar']['BackupSettings'] = "Backup Settings";
+$l['sidebar']['BatchManagement'] = "Batch Management";
+$l['sidebar']['BatchUsers'] = "Batch Users";
+$l['sidebar']['Billing'] = "Billing";
+$l['sidebar']['CRONStatus'] = "CRON Status";
+$l['sidebar']['Charts'] = "Charts";
+$l['sidebar']['Configuration'] = "Configuration";
+$l['sidebar']['CustomQuery'] = "Custom Query";
+$l['sidebar']['ExtendedCapabilities'] = "Extended Capabilities";
+$l['sidebar']['ExtendedPeripherals'] = "Extended Peripherals";
+$l['sidebar']['Filter'] = "Filter";
+$l['sidebar']['FilterRADIUSReply'] = "Filter records with the selected RADIUS Reply";
+$l['sidebar']['GIS'] = "GIS";
+$l['sidebar']['GISMapping'] = "GIS Mapping";
+$l['sidebar']['GlobalSettings'] = "Global Settings";
+$l['sidebar']['GroupCheckManagement'] = "Group Check Management";
+$l['sidebar']['GroupReplyManagement'] = "Group Reply Management";
+$l['sidebar']['Heartbeat'] = "Heartbeat";
+$l['sidebar']['Help'] = "Help";
+$l['sidebar']['Home'] = "Home";
+$l['sidebar']['HotspotsAccounting'] = "Hotspots Accounting";
+$l['sidebar']['HotspotsManagement'] = "Hotspots Management";
+$l['sidebar']['Huntgroup'] = "Huntgroup";
+$l['sidebar']['HuntgroupsManagement'] = "Huntgroups Management";
+$l['sidebar']['IPPoolsManagement'] = "IP-Pools Management";
+$l['sidebar']['InvoiceManagement'] = "Invoice Management";
+$l['sidebar']['InvoiceReport'] = "Invoice Report";
+$l['sidebar']['LinesCount'] = "Lines count";
+$l['sidebar']['List'] = "List";
+$l['sidebar']['LogFiles'] = "Log Files";
+$l['sidebar']['Logs'] = "Logs";
+$l['sidebar']['Mail'] = "Mail";
+$l['sidebar']['Maintenance'] = "Maintenance";
+$l['sidebar']['Management'] = "Management";
+$l['sidebar']['MessageSettings'] = "Message Settings";
+$l['sidebar']['NASManagement'] = "NAS Management";
+$l['sidebar']['OperatorsManagement'] = "Operators Management";
+$l['sidebar']['OrderResultsBy'] = "You can order the results by: %s";
+$l['sidebar']['OrderType'] = "Order Type";
+$l['sidebar']['OtherReports'] = "Other Reports";
+$l['sidebar']['PaymentsManagement'] = "Payments Management";
+$l['sidebar']['PaymentsTypesManagement'] = "Payments Types Management";
+$l['sidebar']['PlanAccounting'] = "Plan Accounting";
+$l['sidebar']['PlansManagement'] = "Plans Management";
+$l['sidebar']['PleaseInsertAValid'] = "Please insert a valid %s";
+$l['sidebar']['PleaseSelectA'] = "Please select a %s";
+$l['sidebar']['PleaseSelectOneOrMultiple'] = "Please select one or multiple %s";
+$l['sidebar']['PointOfSalesManagement'] = "Point of Sales Management";
+$l['sidebar']['ProfilesManagement'] = "Profiles Management";
+$l['sidebar']['ProxiesManagement'] = "Proxies Management";
+$l['sidebar']['RAIDStatus'] = "RAID Status";
+$l['sidebar']['RatesManagement'] = "Rates Management";
+$l['sidebar']['ReadMore'] = "Read More";
+$l['sidebar']['RealmsManagement'] = "Realms Management";
+$l['sidebar']['RecurringTasksSettings'] = "Recurring Tasks Settings";
+$l['sidebar']['ReportingSettings'] = "Reporting Settings";
+$l['sidebar']['Reports'] = "Reports";
+$l['sidebar']['ShowOnlySelectedLines'] = "Show only the selected number of lines";
+$l['sidebar']['Status'] = "Status";
+$l['sidebar']['Support'] = "Support";
+$l['sidebar']['TestEmail'] = "Test email";
+$l['sidebar']['TrackBillingHistory'] = "Track Billing History";
+$l['sidebar']['TrackMerchantTransactions'] = "Track Merchant Transactions";
+$l['sidebar']['TrackRates'] = "Track Rates";
+$l['sidebar']['TwoFactorAuthentication'] = "Two-factor authentication";
+$l['sidebar']['UPSStatus'] = "UPS Status";
+$l['sidebar']['UserCharts'] = "User Charts";
+$l['sidebar']['UserGroupManagement'] = "User-Group Management";
+$l['sidebar']['UserReports'] = "User Reports";
+$l['sidebar']['UsersAccounting'] = "Users Accounting";
+$l['sidebar']['UsersManagement'] = "Users Management";
+
+/* **********************************************************************************
+ * Operator dashboard
+ ***********************************************************************************/
+
+// operator dashboard strings (see app/operators/home-main.php)
+$l['dashboard']['CurrentlyOnline'] = "Currently online";
+$l['dashboard']['GoToHotspotsList'] = "Go to hotspots list";
+$l['dashboard']['GoToNASList'] = "Go to NAS list";
+$l['dashboard']['GoToUsersList'] = "Go to users list";
+$l['dashboard']['LastMonthTopUsers'] = "Last month top users";
+$l['dashboard']['OnlineSince'] = "Online since";
 
 /* **********************************************************************************
  * Graphs
- * General graphing text
- ************************************************************************************/
+ ***********************************************************************************/
+
 $l['graphs']['Day'] = "Day";
 $l['graphs']['Month'] = "Month";
 $l['graphs']['Year'] = "Year";
@@ -902,25 +1036,9 @@ $l['graphs']['Oct'] = "October";
 $l['graphs']['Nov'] = "November";
 $l['graphs']['Dec'] = "December";
 
-
-/* ********************************************************************************** */
-
 /* **********************************************************************************
- * Text
- * General text information that is used through-out the pages
- ************************************************************************************/
-
-$l['text']['LoginRequired'] = "Login Required";
-$l['text']['LoginPlease'] = "Login Please";
-
-/* ********************************************************************************** */
-
-
-
-/* **********************************************************************************
- * Contact Info
- * Related to all contact info text, user info, hotspot owner contact information etc
- ************************************************************************************/
+ * Contact info
+ ***********************************************************************************/
 
 $l['ContactInfo']['FirstName'] = "First Name";
 $l['ContactInfo']['LastName'] = "Last Name";
@@ -963,11 +1081,54 @@ $l['ContactInfo']['CreditCardVerificationNumber'] = "Credit Card Verification Nu
 $l['ContactInfo']['CreditCardType'] = "Credit Card Type";
 $l['ContactInfo']['CreditCardExpiration'] = "Credit Card Expiration";
 
-/* ********************************************************************************** */
+/* **********************************************************************************
+ * Messages and alerts
+ ***********************************************************************************/
+
+$l['messages']['generatedPasswordsExportNotice'] = "Download the generated credentials now. This one-time CSV download expires after %d minutes and contains only passwords generated during this import.";
+$l['messages']['noCheckAttributesForUser'] = "This user has no check attributes associated with it";
+$l['messages']['noReplyAttributesForUser'] = "This user has no reply attributes associated with it";
+
+$l['messages']['noCheckAttributesForGroup'] = "This group has no check attributes associated with it";
+$l['messages']['noReplyAttributesForGroup'] = "This group has no reply attributes associated with it";
+
+$l['messages']['nogroupdefinedforuser'] = "This user has no Groups associated with it";
+$l['messages']['wouldyouliketocreategroup'] = "Would you like to create one?";
+
+$l['messages']['missingratetype'] = "error: missing rate type to delete";
+$l['messages']['missingtype'] = "error: missing type";
+$l['messages']['missingcardbank'] = "error: missing cardbank";
+$l['messages']['missingrate'] = "error: missing rate";
+$l['messages']['success'] = "success";
+$l['messages']['gisedit1'] = "Welcome, you are currently in Edit mode";
+$l['messages']['gisedit2'] = "Remove current marker from map and database?";
+$l['messages']['gisedit3'] = "Please enter name of HotSpot";
+$l['messages']['gisedit4'] = "Add current marker to database?";
+$l['messages']['gisedit5'] = "Please enter name of HotSpot";
+$l['messages']['gisedit6'] = "Please enter the MAC Address of the Hotspot";
+
+$l['messages']['gismain1'] = "Successfully updated GoogleMaps API Registration code";
+$l['messages']['gismain2'] = "error: could not open the file for writing:";
+$l['messages']['gismain3'] = "Check file permissions. The file should be writable by the webserver's user/group";
+$l['messages']['gisviewwelcome'] = "Welcome to Enginx Visual Maps";
+
+$l['messages']['loginerror'] = <<<EOF
+<h1 class="fs-5">Cannot log in.</h1>
+<p>This usually happens for one of these reasons:
+    <ul>
+        <li>wrong username and/or password;</li>
+        <li>an administrator is already logged-in<br>(only one instance is allowed);</li>
+        <li>there appears to be more than one 'administrator' user in the database.</li>
+    </ul>
+</p>
+EOF;
+$l['messages']['noDataToShow'] = "no data to show";
+
+/* **********************************************************************************
+ * Help-page headers
+ ***********************************************************************************/
 
 $l['Intro']['configdashboard.php'] = "Dashbard Settings";
-
-
 
 $l['Intro']['paymenttypesmain.php'] = "Payment Types Page";
 $l['Intro']['paymenttypesdel.php'] = "Delete Payment Type entry";
@@ -1005,7 +1166,6 @@ $l['Intro']['mngradattributessearch.php'] = "Search Attributes";
 $l['Intro']['mngradattributesdel.php'] = "Remove Vendor's Attributes";
 $l['Intro']['mngradattributesimport.php'] = "Import Vendor Dictionary";
 $l['Intro']['mngimportusers.php'] = "Import Users";
-
 
 $l['Intro']['acctactive.php'] = "Active Records Accounting";
 $l['Intro']['acctall.php'] = "All Users Accounting";
@@ -1177,19 +1337,11 @@ $l['Intro']['configoperatorslist.php'] = "Operators Listing";
 
 $l['Intro']['login.php'] = "Login";
 
-$l['captions']['providebillratetodel'] = "Provide the rate entry type which you would like to remove";
-$l['captions']['detailsofnewrate'] = "You may fill below details for the new rate";
-$l['captions']['filldetailsofnewrate'] = "Fill below the details for the new rate entry";
-
 /* **********************************************************************************
- * Help Pages Info
- * Each page has a header which is the Intro class, when clicking on the header
- * it will reveal/hide a helpPage div content which is a description of a specific
- * page, basically your expanded tool-tip.
- ************************************************************************************/
+ * Help-page content
+ ***********************************************************************************/
 
 $l['helpPage']['configdashboard'] = "Dashboard Settings";
-
 
 $l['helpPage']['repnewusers'] = "The following table lists new users created each month.";
 
@@ -1400,7 +1552,6 @@ update request {
 <p><i>What this does is perform a lookup in the radhuntgroup table using the IP address as a key to return the huntgroup name. It then adds an attribute/value pair to the request where the name of the attribute is Huntgroup-Name and its value is whatever was returned from the SQL query. If the query did not find anything, then the value is the empty string.</i></p>
 EOF;
 
-
 $l['helpPage']['mngradhuntdel'] = "To remove a huntgroup entry from the database you must provide the ip/host and port id of the huntgroup";
 $l['helpPage']['mngradhuntnew'] = "";
 $l['helpPage']['mngradhuntlist'] = "";
@@ -1411,7 +1562,6 @@ $l['helpPage']['mnghsdel'] = "To remove a hotspot from the database you must pro
 $l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br/>";
 $l['helpPage']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
 $l['helpPage']['mnghslist'] = "List of all hotspots in the database. You may use the quick links to edit or delete a hotspot from the database.";
-
 
 $l['helpPage']['configuser'] = <<<EOF
 <h2 class="fs-6">User Settings</h2>
@@ -1622,7 +1772,6 @@ $l['helpPage']['graphmain'] = '<h1 class="fs-5">Graphs</h1>'
                             . $l['helpPage']['graphsoverallupload'] . $l['helpPage']['graphsoveralllogins']
                             . $l['helpPage']['graphsalltimetrafficcompare'] . $l['helpPage']['graphsloggedusers'];
 
-
 $l['helpPage']['rephistory'] = "Lists all activity performed on management items and provides information on <br/>
 Creation Date, Creation By as well as Updated Date and Update By history fields";
 $l['helpPage']['replastconnect'] = "Lists all login attempts to the RADIUS server, both successful and failed logins";
@@ -1685,7 +1834,6 @@ $l['helpPage']['reptopusers'] = "Records for top users, those which are listed b
 $l['helpPage']['repusername'] = "Records found for user:";
 $l['helpPage']['reponline'] = "The following table lists users who are currently connected to the system. It is very much possible that there are stale connections, meaning that users got disconnected but the NAS didn't send or wasn't able to send a STOP accounting packet to the RADIUS server.";
 
-
 $l['helpPage']['mnglistall'] = "Listing users in database";
 $l['helpPage']['mngsearch'] = "Searching for user: ";
 $l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
@@ -1733,7 +1881,6 @@ $l['helpPage']['acctcustom_short'] = <<<EOF
 <p>Provides the most flexible custom query to run on the database. You can adjust the query settings in the left sidebar to your advantage.</p>
 EOF;
 
-
 $l['helpPage']['acctcustom'] = <<<EOF
 <h2 class="fs-6">Custom query</h2>
 <p>This feature allows for highly customizable queries on the database, empowering operators to tailor data retrieval precisely to their needs. You can adjust query settings in the left sidebar to optimize data extraction.</p>
@@ -1749,7 +1896,6 @@ EOF;
 
 $l['helpPage']['acctcustomquery'] = $l['helpPage']['acctcustom'];
 
-
 $l['helpPage']['acctplans'] = "";
 $l['helpPage']['acctmain'] = '<h1 class="fs-5">General Accounting</h1>'
                            . $l['helpPage']['acctusername'] . $l['helpPage']['acctdate']
@@ -1759,8 +1905,6 @@ $l['helpPage']['acctmain'] = '<h1 class="fs-5">General Accounting</h1>'
 <h1 class="fs-5">Hotspots</h1>
 <p>Provides information on different managed hotspots, comparison, and other useful information.</p>
 EOF;
-
-
 
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = "
@@ -1819,8 +1963,6 @@ $l['helpPage']['acctmaintenancecleanup'] = <<<EOF
 EOF;
 $l['helpPage']['acctmaintenancedelete'] = "";
 
-
-
 $l['helpPage']['giseditmap'] = <<<EOF
 <h1 class="fs-5">Edit Map Mode</h1>
 <p>This mode allows you to add or delete hotspots by clicking on the map or a hotspot icon respectively.</p>
@@ -1845,173 +1987,3 @@ $l['helpPage']['gismain'] = <<<EOF
 </ul>
 EOF;
 
-/* ********************************************************************************** */
-
-
-
-$l['messages']['generatedPasswordsExportNotice'] = "Download the generated credentials now. This one-time CSV download expires after %d minutes and contains only passwords generated during this import.";
-$l['messages']['noCheckAttributesForUser'] = "This user has no check attributes associated with it";
-$l['messages']['noReplyAttributesForUser'] = "This user has no reply attributes associated with it";
-
-$l['messages']['noCheckAttributesForGroup'] = "This group has no check attributes associated with it";
-$l['messages']['noReplyAttributesForGroup'] = "This group has no reply attributes associated with it";
-
-$l['messages']['nogroupdefinedforuser'] = "This user has no Groups associated with it";
-$l['messages']['wouldyouliketocreategroup'] = "Would you like to create one?";
-
-
-$l['messages']['missingratetype'] = "error: missing rate type to delete";
-$l['messages']['missingtype'] = "error: missing type";
-$l['messages']['missingcardbank'] = "error: missing cardbank";
-$l['messages']['missingrate'] = "error: missing rate";
-$l['messages']['success'] = "success";
-$l['messages']['gisedit1'] = "Welcome, you are currently in Edit mode";
-$l['messages']['gisedit2'] = "Remove current marker from map and database?";
-$l['messages']['gisedit3'] = "Please enter name of HotSpot";
-$l['messages']['gisedit4'] = "Add current marker to database?";
-$l['messages']['gisedit5'] = "Please enter name of HotSpot";
-$l['messages']['gisedit6'] = "Please enter the MAC Address of the Hotspot";
-
-$l['messages']['gismain1'] = "Successfully updated GoogleMaps API Registration code";
-$l['messages']['gismain2'] = "error: could not open the file for writing:";
-$l['messages']['gismain3'] = "Check file permissions. The file should be writable by the webserver's user/group";
-$l['messages']['gisviewwelcome'] = "Welcome to Enginx Visual Maps";
-
-$l['messages']['loginerror'] = <<<EOF
-<h1 class="fs-5">Cannot log in.</h1>
-<p>This usually happens for one of these reasons:
-    <ul>
-        <li>wrong username and/or password;</li>
-        <li>an administrator is already logged-in<br>(only one instance is allowed);</li>
-        <li>there appears to be more than one 'administrator' user in the database.</li>
-    </ul>
-</p>
-EOF;
-
-$l['buttons']['savesettings'] = "Save Settings";
-$l['buttons']['apply'] = "Apply";
-$l['buttons']['downloadGeneratedPasswordsCSV'] = "Download Generated Passwords CSV";
-
-$l['menu']['Home'] = "Home";
-$l['menu']['Managment'] = "Management";
-$l['menu']['Reports'] = "Reports";
-$l['menu']['Accounting'] = "Accounting";
-$l['menu']['Billing'] = "Billing";
-$l['menu']['Gis'] = "GIS";
-$l['menu']['Graphs'] = "Graphs";
-$l['menu']['Config'] = "Config";
-$l['menu']['Help'] = "Help";
-
-// sidebar menu titles, section headings, link labels and form captions
-// (see app/operators/include/menu/sidebar/)
-$l['sidebar']['Accounting'] = "Accounting";
-$l['sidebar']['AttributesManagement'] = "Attributes Management";
-$l['sidebar']['BackupSettings'] = "Backup Settings";
-$l['sidebar']['BatchManagement'] = "Batch Management";
-$l['sidebar']['BatchUsers'] = "Batch Users";
-$l['sidebar']['Billing'] = "Billing";
-$l['sidebar']['CRONStatus'] = "CRON Status";
-$l['sidebar']['Charts'] = "Charts";
-$l['sidebar']['Configuration'] = "Configuration";
-$l['sidebar']['CustomQuery'] = "Custom Query";
-$l['sidebar']['ExtendedCapabilities'] = "Extended Capabilities";
-$l['sidebar']['ExtendedPeripherals'] = "Extended Peripherals";
-$l['sidebar']['Filter'] = "Filter";
-$l['sidebar']['FilterRADIUSReply'] = "Filter records with the selected RADIUS Reply";
-$l['sidebar']['GIS'] = "GIS";
-$l['sidebar']['GISMapping'] = "GIS Mapping";
-$l['sidebar']['GlobalSettings'] = "Global Settings";
-$l['sidebar']['GroupCheckManagement'] = "Group Check Management";
-$l['sidebar']['GroupReplyManagement'] = "Group Reply Management";
-$l['sidebar']['Heartbeat'] = "Heartbeat";
-$l['sidebar']['Help'] = "Help";
-$l['sidebar']['Home'] = "Home";
-$l['sidebar']['HotspotsAccounting'] = "Hotspots Accounting";
-$l['sidebar']['HotspotsManagement'] = "Hotspots Management";
-$l['sidebar']['Huntgroup'] = "Huntgroup";
-$l['sidebar']['HuntgroupsManagement'] = "Huntgroups Management";
-$l['sidebar']['IPPoolsManagement'] = "IP-Pools Management";
-$l['sidebar']['InvoiceManagement'] = "Invoice Management";
-$l['sidebar']['InvoiceReport'] = "Invoice Report";
-$l['sidebar']['LinesCount'] = "Lines count";
-$l['sidebar']['List'] = "List";
-$l['sidebar']['LogFiles'] = "Log Files";
-$l['sidebar']['Logs'] = "Logs";
-$l['sidebar']['Mail'] = "Mail";
-$l['sidebar']['Maintenance'] = "Maintenance";
-$l['sidebar']['Management'] = "Management";
-$l['sidebar']['MessageSettings'] = "Message Settings";
-$l['sidebar']['NASManagement'] = "NAS Management";
-$l['sidebar']['OperatorsManagement'] = "Operators Management";
-$l['sidebar']['OrderResultsBy'] = "You can order the results by: %s";
-$l['sidebar']['OrderType'] = "Order Type";
-$l['sidebar']['OtherReports'] = "Other Reports";
-$l['sidebar']['PaymentsManagement'] = "Payments Management";
-$l['sidebar']['PaymentsTypesManagement'] = "Payments Types Management";
-$l['sidebar']['PlanAccounting'] = "Plan Accounting";
-$l['sidebar']['PlansManagement'] = "Plans Management";
-$l['sidebar']['PleaseInsertAValid'] = "Please insert a valid %s";
-$l['sidebar']['PleaseSelectA'] = "Please select a %s";
-$l['sidebar']['PleaseSelectOneOrMultiple'] = "Please select one or multiple %s";
-$l['sidebar']['PointOfSalesManagement'] = "Point of Sales Management";
-$l['sidebar']['ProfilesManagement'] = "Profiles Management";
-$l['sidebar']['ProxiesManagement'] = "Proxies Management";
-$l['sidebar']['RAIDStatus'] = "RAID Status";
-$l['sidebar']['RatesManagement'] = "Rates Management";
-$l['sidebar']['ReadMore'] = "Read More";
-$l['sidebar']['RealmsManagement'] = "Realms Management";
-$l['sidebar']['RecurringTasksSettings'] = "Recurring Tasks Settings";
-$l['sidebar']['ReportingSettings'] = "Reporting Settings";
-$l['sidebar']['Reports'] = "Reports";
-$l['sidebar']['ShowOnlySelectedLines'] = "Show only the selected number of lines";
-$l['sidebar']['Status'] = "Status";
-$l['sidebar']['Support'] = "Support";
-$l['sidebar']['TestEmail'] = "Test email";
-$l['sidebar']['TrackBillingHistory'] = "Track Billing History";
-$l['sidebar']['TrackMerchantTransactions'] = "Track Merchant Transactions";
-$l['sidebar']['TrackRates'] = "Track Rates";
-$l['sidebar']['TwoFactorAuthentication'] = "Two-factor authentication";
-$l['sidebar']['UPSStatus'] = "UPS Status";
-$l['sidebar']['UserCharts'] = "User Charts";
-$l['sidebar']['UserGroupManagement'] = "User-Group Management";
-$l['sidebar']['UserReports'] = "User Reports";
-$l['sidebar']['UsersAccounting'] = "Users Accounting";
-$l['sidebar']['UsersManagement'] = "Users Management";
-
-// operator dashboard strings (see app/operators/home-main.php)
-$l['dashboard']['CurrentlyOnline'] = "Currently online";
-$l['dashboard']['GoToHotspotsList'] = "Go to hotspots list";
-$l['dashboard']['GoToNASList'] = "Go to NAS list";
-$l['dashboard']['GoToUsersList'] = "Go to users list";
-$l['dashboard']['LastMonthTopUsers'] = "Last month top users";
-$l['dashboard']['OnlineSince'] = "Online since";
-$l['messages']['noDataToShow'] = "no data to show";
-
-$l['submenu']['General'] = "General";
-$l['submenu']['Reporting'] = "Reporting";
-$l['submenu']['Maintenance'] = "Maintenance";
-$l['submenu']['Operators'] = "Operators";
-$l['submenu']['Backup'] = "Backup";
-$l['submenu']['Logs'] = "Logs";
-$l['submenu']['Status'] = "Status";
-$l['submenu']['Batch Users'] = "Batch Users";
-$l['submenu']['Dashboard'] = "Dashboard";
-$l['submenu']['Users'] = "Users";
-$l['submenu']['Hotspots'] = "Hotspots";
-$l['submenu']['Nas'] = "Nas";
-$l['submenu']['User-Groups'] = "User-Groups";
-$l['submenu']['Profiles'] = "Profiles";
-$l['submenu']['HuntGroups'] = "HuntGroups";
-$l['submenu']['Attributes'] = "Attributes";
-$l['submenu']['Realm/Proxy'] = "Realm/Proxy";
-$l['submenu']['IP-Pool'] = "IP-Pool";
-$l['submenu']['POS'] = "POS";
-$l['submenu']['Plans'] = "Plans";
-$l['submenu']['Rates'] = "Rates";
-$l['submenu']['Merchant-Transactions'] = "Merchant-Transactions";
-$l['submenu']['Billing-History'] = "Billing-History";
-$l['submenu']['Invoices'] = "Invoices";
-$l['submenu']['Payments'] = "Payments";
-$l['submenu']['Custom'] = "Custom";
-$l['submenu']['Hotspot'] = "Hotspot";
-$l['submenu']['Mail'] = "Mail";
