@@ -266,13 +266,13 @@ $l['Tooltip']['realmNostripTooltip'] = "Se togliere o no il suffisso realm";
 $l['Tooltip']['realmHintsTooltip'] = "";
 $l['Tooltip']['realmNotrealmTooltip'] = "";
 
-$l['Tooltip']['vendorNameTooltip'] = "Esempio: Cisco<br/>" . "Il nome del Fornitore.";
-$l['Tooltip']['typeTooltip'] = "Esempio: string<br/>" . "Il tipo variabile attributi (string, integer, date, ipaddr).";
-$l['Tooltip']['attributeTooltip'] = "Esempio: Framed-IPAddress<br/>" . "Il nome esatto dell'attributo.";
+$l['Tooltip']['vendorNameTooltip'] = "Esempio: Cisco. Il nome del fornitore.";
+$l['Tooltip']['typeTooltip'] = "Esempio: string. Il tipo di dato dell'attributo (string, integer, date, ipaddr).";
+$l['Tooltip']['attributeTooltip'] = "Esempio: Framed-IPAddress. Il nome esatto dell'attributo.";
 
-$l['Tooltip']['RecommendedOPTooltip'] = "Esempio: :=<br/>" . "L'operatore consigliato per quest'attributo. (uno tra: :=, ==, !=, ecc.)";
-$l['Tooltip']['RecommendedTableTooltip'] = "Esempio: check<br/>" . "La tabella obiettivo consigliata. (uno tra: check, reply).";
-$l['Tooltip']['RecommendedTooltipTooltip'] = "Esempio: L'indirizzo IP per l'utente";
+$l['Tooltip']['RecommendedOPTooltip'] = "Esempio: :=. L'operatore consigliato per questo attributo (uno tra: :=, ==, !=, ecc.).";
+$l['Tooltip']['RecommendedTableTooltip'] = "Esempio: check. La tabella di destinazione consigliata (una tra: check, reply).";
+$l['Tooltip']['RecommendedTooltipTooltip'] = "Esempio: l'indirizzo IP dell'utente.";
 $l['Tooltip']['RecommendedHelperTooltip'] = "La funzione di aiuto che sarà disponibile quando si aggiungerà questo attributo";
 
 $l['Tooltip']['AttributeEdit'] = "Modifica Attributo";
@@ -300,67 +300,22 @@ $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(nome descritt
 
 $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se specifichi un gruppo allora verrà rimosso solo il singolo record che corrisponde contemporaneamente all'username e al gruppo. Se ometti il gruppo allora verranno rimossi tutti i record di questo utente.";
 
-$l['Tooltip']['usernameTooltip'] = <<<EOF
-Il nome utente esatto<br/>&nbsp;&nbsp;&nbsp;
-                    così come l'utente userà connettersi al sistema
-EOF;
-$l['Tooltip']['passwordTypeTooltip'] = "The password type used to authenticate the user in Radius.";
-$l['Tooltip']['passwordTooltip'] = <<<EOF
-Le password sono sensibili alle maiuscole<br/>&nbsp;&nbsp;&nbsp;
-                    in certi sistemi. Prestare attenzione
-EOF;
-$l['Tooltip']['groupTooltip'] = <<<EOF
-L'utente verrà aggiunto a questo gruppo.<br/>&nbsp;&nbsp;&nbsp;
-                    Assegnando un utente a un particolare gruppo<br/>&nbsp;&nbsp;&nbsp;
-                    l'utente diventa soggetto agli attributi del gruppo
-EOF;
-$l['Tooltip']['macaddressTooltip'] = <<<EOF
-Esempio: 00:aa:bb:cc:dd:ee<br/>&nbsp;&nbsp;&nbsp;
-                    Il formato dell'indirizzo MAC dovrebbe essere lo stesso <br/>&nbsp;&nbsp;&nbsp;
-                    come viene mandato dal NAS. La maggioranza delle volte è senza<br/>&nbsp;&nbsp;&nbsp;
-                    altri caratteri.
-EOF;
-$l['Tooltip']['pincodeTooltip'] = <<<EOF
-Esempio: khrivnxufi101<br/>&nbsp;&nbsp;&nbsp;
-                    Questo è il codice pin esattamente come verrà inserito dall'utente.<br/>&nbsp;&nbsp;&nbsp;
-                    Si possono usare caratteri alfanumerici, è sensibile alle maiuscole
-EOF;
-$l['Tooltip']['usernamePrefixTooltip'] = <<<EOF
-Esempio: TMP_ POP_ WIFI1_ <br/>&nbsp;&nbsp;&nbsp;
-                    Questo prefisso dell'username verrà aggiunto a<br/>&nbsp;&nbsp;&nbsp;
-                    l'username generato alla fine.
-EOF;
-$l['Tooltip']['instancesToCreateTooltip'] = <<<EOF
-Esempio: 100<br/>&nbsp;&nbsp;&nbsp;
-                    L'ammontare degli utenti random da creare<br/>&nbsp;&nbsp;&nbsp;
-                    con il profilo specificato.
-EOF;
-$l['Tooltip']['lengthOfUsernameTooltip'] = <<<EOF
-Esempio: 8<br/>&nbsp;&nbsp;&nbsp;
-                    La lunghezza dei caratteri del nome utente<br/>&nbsp;&nbsp;&nbsp;
-                    da creare. Si raccomandano 8-12 caratteri.
-EOF;
-$l['Tooltip']['lengthOfPasswordTooltip'] = <<<EOF
-Esempio: 8<br/>&nbsp;&nbsp;&nbsp;
-                    La lunghezza di caratteri delle password<br/>&nbsp;&nbsp;&nbsp;
-                    da creare. Si raccomandano 8-12 caratteri.
-EOF;
+$l['Tooltip']['usernameTooltip'] = "Il nome utente esatto, così come l'utente lo userà per connettersi al sistema.";
+$l['Tooltip']['passwordTypeTooltip'] = "Il tipo di password usato per autenticare l'utente in RADIUS.";
+$l['Tooltip']['passwordTooltip'] = "In alcuni sistemi le password sono sensibili alle maiuscole: prestare attenzione.";
+$l['Tooltip']['groupTooltip'] = "L'utente verrà aggiunto a questo gruppo. Assegnando un utente a un particolare gruppo, l'utente diventa soggetto agli attributi del gruppo.";
+$l['Tooltip']['macaddressTooltip'] = "Esempio: 00:aa:bb:cc:dd:ee. Il formato dell'indirizzo MAC dovrebbe essere lo stesso con cui viene inviato dal NAS. Nella maggior parte dei casi è senza altri caratteri.";
+$l['Tooltip']['pincodeTooltip'] = "Esempio: khrivnxufi101. Questo è il codice PIN esattamente come verrà inserito dall'utente. Si possono usare caratteri alfanumerici ed è sensibile alle maiuscole.";
+$l['Tooltip']['usernamePrefixTooltip'] = "Esempio: TMP_ POP_ WIFI1_. Questo prefisso verrà aggiunto all'inizio dell'username generato.";
+$l['Tooltip']['instancesToCreateTooltip'] = "Esempio: 100. Il numero di utenti casuali da creare con il profilo specificato.";
+$l['Tooltip']['lengthOfUsernameTooltip'] = "Esempio: 8. La lunghezza dell'username da creare. Valori consigliati: 8-12 caratteri.";
+$l['Tooltip']['lengthOfPasswordTooltip'] = "Esempio: 8. La lunghezza della password da creare. Valori consigliati: 8-12 caratteri.";
 
-$l['Tooltip']['hotspotNameTooltip'] = <<<EOF
-Esempio: Hotel Stratocaster<br/>&nbsp;&nbsp;&nbsp;
-                    un nome comprensibile dell'hotspot<br/>
-EOF;
+$l['Tooltip']['hotspotNameTooltip'] = "Esempio: Hotel Stratocaster. Un nome comprensibile dell'hotspot.";
 
-$l['Tooltip']['hotspotMacaddressTooltip'] = <<<EOF
-Esempio: 00aabbccddee<br/>&nbsp;&nbsp;&nbsp;
-                    L'indirizzo MAC del NAS<br/>
-EOF;
+$l['Tooltip']['hotspotMacaddressTooltip'] = "Esempio: 00aabbccddee. L'indirizzo MAC del NAS.";
 
-$l['Tooltip']['geocodeTooltip'] = <<<EOF
-Esempio: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
-                    Questo è il codice del luogo GoogleMaps utilizzato<br/>&nbsp;&nbsp;&nbsp;
-                    per segnalare l'HotSpot/NAS sulla mappa (guardare GIS).
-EOF;
+$l['Tooltip']['geocodeTooltip'] = "Esempio: -1.002,-2.201. È il codice del luogo GoogleMaps utilizzato per segnalare l'hotspot/NAS sulla mappa (vedi GIS).";
 
 /* **********************************************************************************
  * Links and buttons
@@ -839,10 +794,7 @@ $l['helpPage']['mngradattributesedit'] = "";
 $l['helpPage']['mngradattributessearch'] = "";
 $l['helpPage']['mngradattributesdel'] = "";
 
-$l['helpPage']['msgerrorpermissions'] = <<<EOF
-Non si hanno i permessi per accedere alla pagina. <br/>
-Consultare il proprio amministratore di sistema. <br/>
-EOF;
+$l['helpPage']['msgerrorpermissions'] = "Non si hanno i permessi per accedere a questa pagina.<br>Consultare il proprio amministratore di sistema.";
 
 $l['helpPage']['mngradusergroup'] = "";
 $l['helpPage']['mngradusergroupdel'] = "Per rimuovere un utente dal database si deve fornire il nome utente dell'account";
@@ -974,8 +926,8 @@ $l['helpPage']['mngradnasnew'] = "";
 $l['helpPage']['mngradnaslist'] = "";
 $l['helpPage']['mngradnasedit'] = "";
 
-$l['helpPage']['mnghsdel'] = "Per cancellare unn hotspot dal database si deve fornire il nome dell'hotspot<br/>";
-$l['helpPage']['mnghsedit'] = "Si possono modificare sotto i dettagli per l'hotspot<br/>";
+$l['helpPage']['mnghsdel'] = "Per cancellare unn hotspot dal database si deve fornire il nome dell'hotspot<br>";
+$l['helpPage']['mnghsedit'] = "Si possono modificare sotto i dettagli per l'hotspot<br>";
 $l['helpPage']['mnghsnew'] = "Si possono riempire sotto i dettagli per il nuovo hotspot aggiunto dal database";
 $l['helpPage']['mnghslist'] = "Lista di tutti gli hotspots nel database. Si possono utilizzare i links veloci per modificare o cancellare un hotspot dal database.";
 
@@ -1088,7 +1040,7 @@ $l['helpPage']['graphsoverallupload'] = "Disegna un grafico dei byte caricati (u
 $l['helpPage']['graphsoveralllogins'] = "Disegna un grafico dei tentativi di Login al server";
 
 $l['helpPage']['rephistory'] = <<<EOF
-Mostra tutte le attività eseguite sui campi gestione e fornisce informazioni su di loro<br/>
+Mostra tutte le attività eseguite sui campi gestione e fornisce informazioni su di loro<br>
 Data di Creazione, Creazione Da, Aggiornamento Data e Aggiornamento dei campi con lo storico
 EOF;
 $l['helpPage']['replastconnect'] = "Mostra tutti tentativi di login al server RADIUS, sia quelli avvenuti con successo sia quelli falliti";
@@ -1142,15 +1094,15 @@ EOF;
 
 $l['helpPage']['mnglistall'] = "Mostra utenti nel database";
 $l['helpPage']['mngsearch'] = "Cerca utente: ";
-$l['helpPage']['mngnew'] = "E' possibile riempire i dettagli di sotto per l'aggiunta di un nuovo utente al database<br/>";
-$l['helpPage']['mngedit'] = "Modifica dettagli utente sotto.<br/>";
-$l['helpPage']['mngdel'] = "Per cancellare una voce utente dal database si deve fornire l'utente dell'account<br/>";
+$l['helpPage']['mngnew'] = "E' possibile riempire i dettagli di sotto per l'aggiunta di un nuovo utente al database<br>";
+$l['helpPage']['mngedit'] = "Modifica dettagli utente sotto.<br>";
+$l['helpPage']['mngdel'] = "Per cancellare una voce utente dal database si deve fornire l'utente dell'account<br>";
 $l['helpPage']['mngbatch'] = <<<EOF
-E' possibile riempire sotto i dettagli per il nuovo utente aggiunto al database.<br/>
-Si noti che queste impostazioni si applicheranno a tutti gli utenti che si stanno creando.<br/>
+E' possibile riempire sotto i dettagli per il nuovo utente aggiunto al database.<br>
+Si noti che queste impostazioni si applicheranno a tutti gli utenti che si stanno creando.<br>
 EOF;
 $l['helpPage']['mngnewquick'] = <<<EOF
-Il seguente utente/scheda è di tipo prepagato.<br/>
+Il seguente utente/scheda è di tipo prepagato.<br>
 L'ammontare del tempo specificato in Time Credit (Credito di tempo) verrà usato come gli attributi radius Session-Timeout e Max-All-Session
 EOF;
 
@@ -1158,19 +1110,15 @@ EOF;
 $l['helpPage']['acctactive'] = <<<EOF
     Fornisce informazioni che potrebbero essere funzionali per tracciare utenti attivi o scaduti nel database
     in termini di utenti che hanno un attributo di Scadenza (Expiration) o un attributo di Massimo-numero-sessioni (Max-All-Session).
-<br/>
 EOF;
 $l['helpPage']['acctall'] = <<<EOF
     Fornisce informazioni complete sull'accounting per tutte le sessioni nel database.
-<br/>
 EOF;
 $l['helpPage']['acctdate'] = <<<EOF
     Fornisce informazioni complete per tutte le sessioni tra due date per un particolare utente.
-<br/>
 EOF;
 $l['helpPage']['acctipaddress'] = <<<EOF
     Fornisce informazioni complete per tutte le sessioni che sono state avviate da un particolare indirizzo IP.
-<br/>
 EOF;
 $l['helpPage']['acctmain'] = <<<EOF
 <h1 class="fs-5">Accounting Generale</h1>
@@ -1194,35 +1142,34 @@ $l['helpPage']['acctmain'] = <<<EOF
 EOF;
 $l['helpPage']['acctnasipaddress'] = <<<EOF
     Fornisce informazioni complete per tutte le sessioni che l'indirizzo NAS specifico ha gestito.
-<br/>
 EOF;
 $l['helpPage']['acctusername'] = <<<EOF
     Fornisce informazioni complete per tutte le sessioni nel database per un particolare utente.
-<br/>
 EOF;
 
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = <<<EOF
     Fornisce informazioni per tutte le sessioni che sono state avviate da uno specifico hotspot.
     Questa lista viene calcolata mostrando solo quei record che si trovano nella tabella radacct con il campo CalledStationId corrispondente all'indirizzo MAC nel database di gestione Hotspot.
-<br/>
 EOF;
 $l['helpPage']['accthotspotcompare'] = <<<EOF
-    Fornisce informazioni di base sull'accounting per confronto tra tutti gli hotspot attivi trovati nel database.
-    Informazioni di Accounting fornite: <br/><br/>
-    Nome Hotspot - Il nome dell'Hotspot<br/>
-    Utenti Unici - Utenti che hanno effettuato il login solamente attraverso questo hotspot<br/>
-    Hits Totali - Il totale dei login che sono stati eseguiti da questo hotspot (unici e non unici) <br/>
-    Tempo Medio - Il tempo medio che l'utente ha speso in questo hotspot <br/>
-    Tempo Totale - Il tempo speso da tutti gli utenti (cumulato) in questo hotspot<br/>
-
-<br/>
-    Fornisce un grafico dei differenti confronti che si possono fare<br/>
-    Grafici: <br/><br/>
-    Distribuzione di utenti Unici per hotspot<br/>
-    Distribuzione delle Hits per hotspot<br/>
-    Distribuzione del tempo di utilizzo per hotspot<br/>
-<br/>
+<h1 class="fs-5">Confronto Hotspot</h1>
+<h2 class="fs-6">Informazioni di base</h2>
+<p>Fornisce informazioni di base sull'accounting per il confronto tra tutti gli hotspot attivi presenti nel database. Le informazioni fornite sono:</p>
+<ul>
+<li>Nome Hotspot - il nome dell'hotspot</li>
+<li>Utenti Unici - utenti che hanno effettuato il login solo attraverso questo hotspot</li>
+<li>Hit Totali - il totale dei login effettuati da questo hotspot (unici e non unici)</li>
+<li>Tempo Medio - il tempo medio che l'utente ha trascorso in questo hotspot</li>
+<li>Tempo Totale - il tempo trascorso da tutti gli utenti (cumulato) in questo hotspot</li>
+</ul>
+<h2 class="fs-6">Grafici</h2>
+<p>Fornisce un grafico dei diversi confronti possibili:</p>
+<ul>
+<li>distribuzione degli utenti unici per hotspot</li>
+<li>distribuzione delle hit per hotspot</li>
+<li>distribuzione del tempo di utilizzo per hotspot</li>
+</ul>
 EOF;
 $l['helpPage']['accthotspot'] = <<<EOF
 <h2 class="fs-6">Accounting Hotspot</h2>

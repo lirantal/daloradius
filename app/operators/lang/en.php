@@ -462,8 +462,8 @@ $l['Tooltip']['taxTooltip'] = "";
 $l['Tooltip']['PayTypeName'] = "Type the Payment Type name";
 $l['Tooltip']['EditPayType'] = "Edit Payment Type";
 $l['Tooltip']['RemovePayType'] = "Remove Payment Type";
-$l['Tooltip']['paymentTypeTooltip'] = "The payment type friendly name,<br/>to describe the purpose of the payment";
-$l['Tooltip']['paymentTypeNotesTooltip'] = "The payment type description, to describe<br/>the operation of the payment type";
+$l['Tooltip']['paymentTypeTooltip'] = "The payment type friendly name,<br>to describe the purpose of the payment";
+$l['Tooltip']['paymentTypeNotesTooltip'] = "The payment type description, to describe<br>the operation of the payment type";
 $l['Tooltip']['generatePasswordTooltip'] = "If set to 'yes', an 8-character random password is generated when the CSV password field is empty.";
 $l['Tooltip']['CSVDataGeneratePasswordHint'] = "Leave the password field empty to generate one when Generate Password is set to yes.";
 $l['Tooltip']['EditPayment'] = "Edit Payment";
@@ -491,8 +491,8 @@ $l['Tooltip']['PlanName'] = "Type in the plan name";
 $l['Tooltip']['EditRate'] = "Edit Rate";
 $l['Tooltip']['RemoveRate'] = "Remove Rate";
 
-$l['Tooltip']['rateNameTooltip'] = "The rate friendly name,<br/>to describe the purpose of the rate";
-$l['Tooltip']['rateTypeTooltip'] = "The rate type, to describe<br/>the operation of the rate";
+$l['Tooltip']['rateNameTooltip'] = "The rate friendly name,<br>to describe the purpose of the rate";
+$l['Tooltip']['rateTypeTooltip'] = "The rate type, to describe<br>the operation of the rate";
 $l['Tooltip']['rateCostTooltip'] = "The rate cost amount";
 
 $l['Tooltip']['planNameTooltip'] = "The Plan's name. This is a friendly name describing the characeristics of the plan";
@@ -600,8 +600,8 @@ $l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00-aa-bb-cc-dd-ee. The MAC
 $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201. These are the geographic coordinates used to pinpoint the Hotspot/NAS location on the map (see GIS).";
 
 $l['Tooltip']['reassignplanprofiles'] = <<<EOF
-If toggled on, when applying user information <br/>
-                    the Profiles listed in the Profiles tab will be ignored and <br/>
+If toggled on, when applying user information<br>
+                    the Profiles listed in the Profiles tab will be ignored and<br>
                     profiles will be re-assigned based on the Plans profile association
 EOF;
 
@@ -1560,8 +1560,8 @@ $l['helpPage']['mngradhuntlist'] = "";
 $l['helpPage']['mngradhuntedit'] = "";
 
 // hotspots help pages
-$l['helpPage']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br/>";
-$l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br/>";
+$l['helpPage']['mnghsdel'] = "To remove a hotspot from the database you must provide the hotspot's name<br>";
+$l['helpPage']['mnghsedit'] = "You may edit below details for hotspot<br>";
 $l['helpPage']['mnghsnew'] = "You may fill below details for new hotspot addition to database";
 $l['helpPage']['mnghslist'] = "List of all hotspots in the database. You may use the quick links to edit or delete a hotspot from the database.";
 
@@ -1775,7 +1775,7 @@ $l['helpPage']['graphmain'] = '<h1 class="fs-5">Graphs</h1>'
                             . $l['helpPage']['graphsalltimetrafficcompare'] . $l['helpPage']['graphsloggedusers'];
 
 $l['helpPage']['rephistory'] = <<<EOF
-Lists all activity performed on management items and provides information on <br/>
+Lists all activity performed on management items and provides information on<br>
 Creation Date, Creation By as well as Updated Date and Update By history fields
 EOF;
 $l['helpPage']['replastconnect'] = "Lists all login attempts to the RADIUS server, both successful and failed logins";
@@ -1840,15 +1840,15 @@ $l['helpPage']['reponline'] = "The following table lists users who are currently
 
 $l['helpPage']['mnglistall'] = "Listing users in database";
 $l['helpPage']['mngsearch'] = "Searching for user: ";
-$l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
-$l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
-$l['helpPage']['mngdel'] = "To remove a user entry from the database you must provide the username of the account<br/>";
+$l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br>";
+$l['helpPage']['mngedit'] = "Edit the user details below.<br>";
+$l['helpPage']['mngdel'] = "To remove a user entry from the database you must provide the username of the account<br>";
 $l['helpPage']['mngbatch'] = <<<EOF
-You may fill below details for new user addition to database.<br/>
-Note that these settings will apply for all the users that you are creating.<br/>
+You may fill below details for new user addition to database.<br>
+Note that these settings will apply for all the users that you are creating.<br>
 EOF;
 $l['helpPage']['mngnewquick'] = <<<EOF
-The following user/card is of type prepaid.<br/>
+The following user/card is of type prepaid.<br>
 The amount of time specified in Time Credit will be used as the Session-Timeout and Max-All-Session
 radius attributes
 EOF;
@@ -1919,7 +1919,6 @@ $l['helpPage']['accthotspotaccounting'] = <<<EOF
     Provides full accounting information for all sessions which originated from this specific Hotspot.
     This list is computed by listing only those records in the radacct table with the CalledStationId
     field which match a Hotspot's MAC Address entry in the Hotspot's management database.
-<br/>
 EOF;
 $l['helpPage']['accthotspotcompare'] = <<<EOF
 <h1 class="fs-5">Hotspot Comparison</h1>
