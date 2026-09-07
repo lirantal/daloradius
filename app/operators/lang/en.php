@@ -1935,15 +1935,12 @@ This section provides graphical comparisons for the different hotspots. The foll
 </ul>
 </p>
 EOF;
-$l['helpPage']['accthotspot'] = "
-<h200><b>Hotspot Accounting</b></h200> -
-    Provides full accounting information for all sessions which originated from this specific Hotspot.
-<br/>
-<h200><b>Hotspot Comparison</b></h200> -
-    Provides basic accounting information for comparison between all the active hotspots found in the database.
-    Provides a graph plot of different comparisons made.
-<br/>
-";
+$l['helpPage']['accthotspot'] = <<<EOF
+<h1 class="fs-5">Hotspot Accounting</h1>
+<p>Provides full accounting information for all sessions which originated from this specific Hotspot.</p>
+<h1 class="fs-5">Hotspot Comparison</h1>
+<p>Provides basic accounting information for comparison between all the active hotspots found in the database. Provides a graph plot of different comparisons made.</p>
+EOF;
 
 $l['helpPage']['acctmaintenance'] = <<<EOF
 <h2 class="fs-6">Cleanup stale-sessions</h2> 

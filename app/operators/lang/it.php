@@ -826,82 +826,121 @@ $l['helpPage']['mngradusergrouplistuser'] = "";
 $l['helpPage']['mngradusergroupedit'] = "";
 
 $l['helpPage']['mngradprofiles'] = "
-<b>Gestione Profili</b> - Gestisce i Profili Utente componendo un insieme di Attributi Risposta e Attributi Verifica<br/>
-I Profili possono essere pensati come ta composizione di Gruppi Risposta e Gruppi Verifica. <br/>
-<h200><b>Mostra Profili</b></h200> - Mostra Profili <br/>
-<h200><b>Nuovo Profilo</b></h200> - Aggiungi un Profilo<br/>
-<h200><b>Modifica Profilo</b></h200> - Modifica un Profilo<br/>
-<h200><b>Cancella Profilo </b></h200> - Cancella un Profilo <br/>
+<h1 class=\"fs-5\">Gestione Profili</h1>
+<p>Gestisce i Profili Utente componendo un insieme di Attributi Risposta e Attributi Verifica</p>
+<p>I Profili possono essere pensati come ta composizione di Gruppi Risposta e Gruppi Verifica.</p>
+<h2 class=\"fs-6\">Mostra Profili</h2>
+<p>Mostra Profili</p>
+<h2 class=\"fs-6\">Nuovo Profilo</h2>
+<p>Aggiungi un Profilo</p>
+<h2 class=\"fs-6\">Modifica Profilo</h2>
+<p>Modifica un Profilo</p>
+<h2 class=\"fs-6\">Cancella Profilo</h2>
+<p>Cancella un Profilo</p>
 ";
 $l['helpPage']['mngradprofilesedit'] = "
-<h200><b>Modifica Profilo </b></h200> - Modifica un Profilo<br/>
+<h2 class=\"fs-6\">Modifica Profilo</h2>
+<p>Modifica un Profilo</p>
 ";
 $l['helpPage']['mngradprofilesdel'] = "
-<h200><b>Cancella Profilo </b></h200> - Cancella un Profilo <br/>
+<h2 class=\"fs-6\">Cancella Profilo</h2>
+<p>Cancella un Profilo</p>
 ";
 $l['helpPage']['mngradprofileslist'] = "
-<h200><b>Mostra Profili </b></h200> - Mostra Profili <br/>
+<h2 class=\"fs-6\">Mostra Profili</h2>
+<p>Mostra Profili</p>
 ";
 $l['helpPage']['mngradprofilesnew'] = "
-<h200><b>Nuovo Profilo </b></h200> - Aggiungi un Profilo <br/>
+<h2 class=\"fs-6\">Nuovo Profilo</h2>
+<p>Aggiungi un Profilo</p>
 ";
 
 $l['helpPage']['mngradgroups'] = "
-<b>Gestione Gruppi</b> - Gestisce mappature Gruppi Risposta e Gruppi Verifica (radgroupreply/radgroupcheck tables).<br/>
-<h200><b>Mostra Gruppi Risposta/Verifica</b></h200> - Mostra Mappe Gruppi Risposta/Verifica<br/>
-<h200><b>Cerca Gruppi Risposta/Verifica</b></h200> - Cerca Mappe Gruppi Risposta/Verifica (è possibile usare caratteri jolly) <br/>
-<h200><b>Nuovo Gruppo Risposta/Verifica</b></h200> - Aggiunge una Mappa Gruppo Risposta/Verifica<br/>
-<h200><b>Modifica Gruppo Risposta/Verifica</b></h200> - Modifica una Mappa di un Gruppo Risposta/Verifica<br/>
-<h200><b>Cancella Gruppo Risposta/Verifica</b></h200> - Cancella una Mappa di un Gruppo Risposta/Verifica<br/>
+<h1 class=\"fs-5\">Gestione Gruppi</h1>
+<p>Gestisce mappature Gruppi Risposta e Gruppi Verifica (radgroupreply/radgroupcheck tables).</p>
+<h2 class=\"fs-6\">Mostra Gruppi Risposta/Verifica</h2>
+<p>Mostra Mappe Gruppi Risposta/Verifica</p>
+<h2 class=\"fs-6\">Cerca Gruppi Risposta/Verifica</h2>
+<p>Cerca Mappe Gruppi Risposta/Verifica (è possibile usare caratteri jolly)</p>
+<h2 class=\"fs-6\">Nuovo Gruppo Risposta/Verifica</h2>
+<p>Aggiunge una Mappa Gruppo Risposta/Verifica</p>
+<h2 class=\"fs-6\">Modifica Gruppo Risposta/Verifica</h2>
+<p>Modifica una Mappa di un Gruppo Risposta/Verifica</p>
+<h2 class=\"fs-6\">Cancella Gruppo Risposta/Verifica</h2>
+<p>Cancella una Mappa di un Gruppo Risposta/Verifica</p>
 ";
 
 $l['helpPage']['mngradgroupchecknew'] = "
-<h200><b>Nuovo Gruppo Verifica</b></h200> - Aggiunge una Mappa Group-Check<br/>
+<h2 class=\"fs-6\">Nuovo Gruppo Verifica</h2>
+<p>Aggiunge una Mappa Group-Check</p>
 ";
 $l['helpPage']['mngradgroupcheckdel'] = "
-<h200><b>Cancella Group-Check</b></h200> - Cancella una Mappa Group-Check<br/>
+<h2 class=\"fs-6\">Cancella Group-Check</h2>
+<p>Cancella una Mappa Group-Check</p>
 ";
 
 $l['helpPage']['mngradgroupchecklist'] = "
-<h200><b>Mostra Group-Check</b></h200> - Mostra Mappe Group-Check<br/>
+<h2 class=\"fs-6\">Mostra Group-Check</h2>
+<p>Mostra Mappe Group-Check</p>
 ";
 $l['helpPage']['mngradgroupcheckedit'] = "
-<h200><b>Modifica Group-Check</b></h200> - Modifica una Mappe Group-Check<br/>
+<h2 class=\"fs-6\">Modifica Group-Check</h2>
+<p>Modifica una Mappe Group-Check</p>
 ";
 $l['helpPage']['mngradgroupchecksearch'] = "
-<h200><b>Cerca Group-Check</b></h200> - Cerca una Mappa Group-Check<br/>
-Per usare caratteri jolly si deve scrivere il carattere % o si può utilizzare il più comune *
-per ragioni di convenienza daloRADIUS lo tradurrà in %
+<h2 class=\"fs-6\">Cerca Group-Check</h2>
+<p>Cerca una Mappa Group-Check</p>
+<p>Per usare caratteri jolly si deve scrivere il carattere % o si può utilizzare il più comune * per ragioni di convenienza daloRADIUS lo tradurrà in %</p>
 ";
 
 $l['helpPage']['mngradgroupreplynew'] = "
-<h200><b>Nuovo Group Reply </b></h200> - Aggiungi una Mappa Group-Reply<br/>
+<h2 class=\"fs-6\">Nuovo Group Reply</h2>
+<p>Aggiungi una Mappa Group-Reply</p>
 ";
 $l['helpPage']['mngradgroupreplydel'] = "
-<h200><b>Cancella Group Reply </b></h200> - Cancella una Mappa Group Reply <br/>
+<h2 class=\"fs-6\">Cancella Group Reply</h2>
+<p>Cancella una Mappa Group Reply</p>
 ";
 $l['helpPage']['mngradgroupreplylist'] = "
-<h200><b>Mostra Group Reply </b></h200> - Mostra Mappa Group Reply <br/>
+<h2 class=\"fs-6\">Mostra Group Reply</h2>
+<p>Mostra Mappa Group Reply</p>
 ";
 $l['helpPage']['mngradgroupreplyedit'] = "
-<h200><b>Modifica Group Reply </b></h200> - Modifica una Mappa Group Reply<br/>
+<h2 class=\"fs-6\">Modifica Group Reply</h2>
+<p>Modifica una Mappa Group Reply</p>
 ";
 $l['helpPage']['mngradgroupreplysearch'] = "
-<h200><b>Cerca Group Reply </b></h200> - Cerca una Mappa Group Reply <br/>
-Per usare un carattere jolly è possibile scrivere il carattere % che è familiare in SQL o si può utilizzare il più comune *
-per ragioni di convenienza e daloRADIUS lo tradurrà in %
+<h2 class=\"fs-6\">Cerca Group Reply</h2>
+<p>Cerca una Mappa Group Reply</p>
+<p>Per usare un carattere jolly è possibile scrivere il carattere % che è familiare in SQL o si può utilizzare il più comune * per ragioni di convenienza e daloRADIUS lo tradurrà in %</p>
 ";
 
 $l['helpPage']['mngradippool'] = "
-<h200><b>Mostra Pool IP </b></h200> - Mostra i Pools IP Configurati e gli Indirizzi IP Assegnati<br/>
-<h200><b>Nuovo Pool IP </b></h200> - Aggiungi un nuovo indirizzo IP ad un Pool IP già configurato<br/>
-<h200><b>Modifica Pool IP </b></h200> - Modifica un indirizzo IP per un Pool IP già configurato<br/>
-<h200><b>Cancella Pool IP</b></h200> - Cancella un Indirizzo IP per un Pool IP già configurato<br/>
+<h2 class=\"fs-6\">Mostra Pool IP</h2>
+<p>Mostra i Pools IP Configurati e gli Indirizzi IP Assegnati</p>
+<h2 class=\"fs-6\">Nuovo Pool IP</h2>
+<p>Aggiungi un nuovo indirizzo IP ad un Pool IP già configurato</p>
+<h2 class=\"fs-6\">Modifica Pool IP</h2>
+<p>Modifica un indirizzo IP per un Pool IP già configurato</p>
+<h2 class=\"fs-6\">Cancella Pool IP</h2>
+<p>Cancella un Indirizzo IP per un Pool IP già configurato</p>
 ";
-$l['helpPage']['mngradippoollist'] = "<h200><b>Mostra IP Pool</b></h200> - Mostra un Pool IP Configurato e i suoi Indirizzi IP<br/>";
-$l['helpPage']['mngradippoolnew'] = "<h200><b>Nuovo Pool IP</b></h200> - Aggiungi un nuovo Indirizzo IP ad un Pool IP già configurato<br/>";
-$l['helpPage']['mngradippooledit'] = "<h200><b>Modifica Pool IP</b></h200> - Modifica un Indirizzo IP per un Pool IP già configurato<br/>";
-$l['helpPage']['mngradippooldel'] = "<h200><b>Cancella Pool IP</b></h200> - Cancella un Indirizzo IP per un Pool IP configurato<br/>";
+$l['helpPage']['mngradippoollist'] = "
+<h2 class=\"fs-6\">Mostra IP Pool</h2>
+<p>Mostra un Pool IP Configurato e i suoi Indirizzi IP</p>
+";
+$l['helpPage']['mngradippoolnew'] = "
+<h2 class=\"fs-6\">Nuovo Pool IP</h2>
+<p>Aggiungi un nuovo Indirizzo IP ad un Pool IP già configurato</p>
+";
+$l['helpPage']['mngradippooledit'] = "
+<h2 class=\"fs-6\">Modifica Pool IP</h2>
+<p>Modifica un Indirizzo IP per un Pool IP già configurato</p>
+";
+$l['helpPage']['mngradippooldel'] = "
+<h2 class=\"fs-6\">Cancella Pool IP</h2>
+<p>Cancella un Indirizzo IP per un Pool IP configurato</p>
+";
 
 $l['helpPage']['mngradnas'] = "";
 $l['helpPage']['mngradnasdel'] = "Per cancellare una voce nas ip/host dal database si deve fornire l'ip/host dell'account";
@@ -915,79 +954,85 @@ $l['helpPage']['mnghsnew'] = "Si possono riempire sotto i dettagli per il nuovo 
 $l['helpPage']['mnghslist'] = "Lista di tutti gli hotspots nel database. Si possono utilizzare i links veloci per modificare o cancellare un hotspot dal database.";
 
 $l['helpPage']['configdb'] = "
-<b>Impostazioni Database</b> - Configura il motore del database, le impostazioni di connessione, i nomi delle tabelle se quelle di
-default non vengono usate, e il tipo di criptazione delle passwords nel database.<br/>
-<h200><b>Impostazioni Globali</b></h200> - Motore Storage Database <br/>
-<h200><b>Impostazioni Tabelle</b></h200> - Se non usi lo schema di default di FreeRADIUS potresti voler cambiare i nomi
-delle tabelle<br/>
-<h200><b>Impostazioni Avanzate</b></h200> - Se intendi conservare le passwords degli utenti del database non in
-chiaro ma in modo criptato puoi scegliere tra MD5 o Crypt<br/>
+<h1 class=\"fs-5\">Impostazioni Database</h1>
+<p>Configura il motore del database, le impostazioni di connessione, i nomi delle tabelle se quelle di default non vengono usate, e il tipo di criptazione delle passwords nel database.</p>
+<h2 class=\"fs-6\">Impostazioni Globali</h2>
+<p>Motore Storage Database</p>
+<h2 class=\"fs-6\">Impostazioni Tabelle</h2>
+<p>Se non usi lo schema di default di FreeRADIUS potresti voler cambiare i nomi delle tabelle</p>
+<h2 class=\"fs-6\">Impostazioni Avanzate</h2>
+<p>Se intendi conservare le passwords degli utenti del database non in chiaro ma in modo criptato puoi scegliere tra MD5 o Crypt</p>
 ";
 $l['helpPage']['configlang'] = "
-<h200><b>Impostazioni Lingua</b></h200> - Configura la lingua dell'interfaccia.<br/>
+<h2 class=\"fs-6\">Impostazioni Lingua</h2>
+<p>Configura la lingua dell'interfaccia.</p>
 ";
 $l['helpPage']['configlogging'] = "
-<h200><b>Impostazioni Logging</b></h200> - Configura le regole di logging e le facilitazioni<br/>
-Assicurarsi che il nome del file che si specifica ha i permessi di scrittura del webserver<br/>";
+<h2 class=\"fs-6\">Impostazioni Logging</h2>
+<p>Configura le regole di logging e le facilitazioni</p>
+<p>Assicurarsi che il nome del file che si specifica ha i permessi di scrittura del webserver</p>
+";
 $l['helpPage']['configinterface'] = "
-<h200><b>Impostazioni Interfaccia</b></h200> - Configura l'impaginazine dell'interfaccia e il comportamento<br/>
+<h2 class=\"fs-6\">Impostazioni Interfaccia</h2>
+<p>Configura l'impaginazine dell'interfaccia e il comportamento</p>
 ";
 $l['helpPage']['configmain'] = "
-<b>Impostazioni Globali</b><br/>
-<h200><b>Impostazioni Database</b></h200> - Configura il motore del database, impostazioni di connessione, nomi di tabelle se quelle di default non sono usate,
-e il tipo di criptazione per le password nel database.<br/>
-<h200><b>Impostazioni Lingua</b></h200> - Configura il linguaggio dell'interfaccia.<br/>
-<h200><b>Impostazioni Logging</b></h200> - Configura le regole di logging e facilitazioni<br/>
-<h200><b>Impostazioni Interfaccia</b></h200> - Configura l'impaginazione e il comportamento dell'interfaccia<br/>
-
-<b>Configurazione Sotto-Categorie</b>
-<h200><b>Manutenzione </b></h200> - Manutenzione opzioni per il Test delle connessioni degli utenti o terminare le loro sessioni<br/>
-<h200><b>Operatori</b></h200> - Configura le Access Control List degli operatori (ACL)<br/>
+<h1 class=\"fs-5\">Impostazioni Globali</h1>
+<h2 class=\"fs-6\">Impostazioni Database</h2>
+<p>Configura il motore del database, impostazioni di connessione, nomi di tabelle se quelle di default non sono usate, e il tipo di criptazione per le password nel database.</p>
+<h2 class=\"fs-6\">Impostazioni Lingua</h2>
+<p>Configura il linguaggio dell'interfaccia.</p>
+<h2 class=\"fs-6\">Impostazioni Logging</h2>
+<p>Configura le regole di logging e facilitazioni</p>
+<h2 class=\"fs-6\">Impostazioni Interfaccia</h2>
+<p>Configura l'impaginazione e il comportamento dell'interfaccia</p>
+<h1 class=\"fs-5\">Configurazione Sotto-Categorie</h1>
+<h2 class=\"fs-6\">Manutenzione</h2>
+<p>Manutenzione opzioni per il Test delle connessioni degli utenti o terminare le loro sessioni</p>
+<h2 class=\"fs-6\">Operatori</h2>
+<p>Configura le Access Control List degli operatori (ACL)</p>
 ";
 $l['helpPage']['configbusiness'] = "
-<b>Informazioni Commerciali</b><br/>
-<h200><b>Contatti Commerciali</b></h200> - Imposta il le informazioni del contatto commerciale (proprietari, titolo, indirizzo, telefono, etc)<br/>
+<h1 class=\"fs-5\">Informazioni Commerciali</h1>
+<h2 class=\"fs-6\">Contatti Commerciali</h2>
+<p>Imposta il le informazioni del contatto commerciale (proprietari, titolo, indirizzo, telefono, etc)</p>
 ";
 $l['helpPage']['configbusinessinfo'] = "";
 $l['helpPage']['configmaint'] = "
-<b>Manutenzione</b><br/>
-<h200><b>Test Connettività Utente</b></h200> - Manda una Access-Request al Server RADIUS per verificare se i dati dell'utente sono corretti<br/>
-<h200><b>Disconnetti Utente</b></h200> - Manda un PoD (Packet of Disconnect) o un pacchetto CoA (Change of Authority) al NAS server
-per disconnettere un utente e terminare la sua sessione nel NAS dato.<br/>
+<h1 class=\"fs-5\">Manutenzione</h1>
+<h2 class=\"fs-6\">Test Connettività Utente</h2>
+<p>Manda una Access-Request al Server RADIUS per verificare se i dati dell'utente sono corretti</p>
+<h2 class=\"fs-6\">Disconnetti Utente</h2>
+<p>Manda un PoD (Packet of Disconnect) o un pacchetto CoA (Change of Authority) al NAS server per disconnettere un utente e terminare la sua sessione nel NAS dato.</p>
 ";
 $l['helpPage']['configmainttestuser'] = "
-<h200><b>Test Connettività Utente</b></h200> - Manda un Access-Request al server RADIUS per verificare se le credenziali di un utente sono valide.<br/>
-daloRADIUS usa l'utilità radclient per fare test e ritorna i risultati del comando dopo che ha finito. <br/>
-daloRADIUS conta sul fatto che il binario radclient sia disponibile nella variabile d'ambiente \$PATH, se così non è si devono effettuare delle modifiche al file library/extensions/maintenance_radclient.php.<br/><br/>
-
-Tenere presente che il test potrebbe impiegare un po' di tempo per finire (diversi secondi [10-20 secondi o più]) perché nel caso di errori radclient potrebbe ritrasmettere i pacchetti.
-
-Nella zona Avanzate è possibile regolare con precisione le opzioni per il test:<br/>
-Timeout - Aspetta 'timeout' secondi prima di riprovare (può essere un numero reale) <br/>
-Retries - Dopo il timeout, riprova a mandare il pacchetto 'Retries' volte. <br/>
-Count - Manda ogni pacchetto 'count' volte<br/>
-Requests -  Manda 'num' pacchetti da un file in parallelo<br/>
+<h1 class=\"fs-5\">Test Connettività Utente</h1>
+<p>Manda un Access-Request al server RADIUS per verificare se le credenziali di un utente sono valide.</p>
+<p>daloRADIUS usa l'utilità radclient per fare i test e ritorna i risultati del comando dopo che ha finito.</p>
+<p>daloRADIUS conta sul fatto che il binario radclient sia disponibile nella variabile d'ambiente <code>\$PATH</code>. Se così non è, si devono effettuare delle modifiche al file <code>library/extensions/maintenance_radclient.php</code>.</p>
+<p>Tenere presente che il test potrebbe impiegare un po' di tempo per finire (diversi secondi [10-20 secondi o più]) perché nel caso di errori radclient potrebbe ritrasmettere i pacchetti.</p>
+<p>Nella scheda Avanzate è possibile regolare con precisione le opzioni per il test:</p>
+<ul>
+<li>Timeout - Aspetta 'timeout' secondi prima di riprovare (può essere un numero reale)</li>
+<li>Retries - Dopo il timeout, riprova a mandare il pacchetto 'Retries' volte</li>
+<li>Count - Manda ogni pacchetto 'count' volte</li>
+<li>Requests - Manda 'num' pacchetti da un file in parallelo</li>
+</ul>
 ";
 $l['helpPage']['configmaintdisconnectuser'] = "
-<h200><b>Disconnetti Utente</b></h200> - Manda un PoD (Packet of Disconnect) o un pacchetto CoA (Change of Authority) al server NAS per disconnettere un utente e terminare la sessione di un dato NAS.<br/>
-Per terminare una sessione utente è richiesto che il NAS supporti il PoD o i tipi di pacchetti CoA, consultare il fornitore NAS o
-la documentazione. Inoltre, si richiede la conoscenza delle porte NAS per PoD o pacchetti CoA, i NAS più nuovi usano la porta 3799
-mentre gli altri sono configurati sulla porta 1700.
-
-daloRADIUS utilizza l'utilità radclient per effettuare test e ritorna i risultati del comando dopo che questo ha finito. <br/>
-daloRADIUS conta sul fatto che il binario radclient sia disponibile nella variabile \$PATH, se così non è, si devono
-effettuare correzioni al file library/extensions/maintenance_radclient.php.<br/><br/>
-
-Si tenga presente che potrebbe metterci un po' (10 - 20 secondi o più) perché nel caso di errori
-radclient ritrasmetterà i pacchetti.
-
-Nella finestra Avanzate è possibile regolare con precisione le opzioni per i test:<br/>
-Timeout - Aspetta 'timeout' secondi prima di riprovare (può essere un numero reale) <br/>
-Retries - Se timeout, tenta di rimandare il pacchetto 'retries' volte. <br/>
-Count - Manda ogni pacchetto 'count' volte <br/>
-Requests -  Manda 'num' pacchetti da un file in parallelo <br/>
-
-
+<h1 class=\"fs-5\">Disconnetti Utente</h1>
+<p>Manda un PoD (Packet of Disconnect) o un pacchetto CoA (Change of Authority) al server NAS per disconnettere un utente e terminare la sua sessione in un dato NAS.</p>
+<p>Per terminare una sessione utente è richiesto che il NAS supporti il PoD o i tipi di pacchetti CoA, consultare il fornitore NAS o la documentazione. Inoltre, si richiede la conoscenza delle porte NAS per PoD o pacchetti CoA: i NAS più nuovi usano la porta 3799 mentre gli altri sono configurati sulla porta 1700.</p>
+<p>daloRADIUS utilizza l'utilità radclient per effettuare i test e ritorna i risultati del comando dopo che questo ha finito.</p>
+<p>daloRADIUS conta sul fatto che il binario radclient sia disponibile nella variabile d'ambiente <code>\$PATH</code>. Se così non è, si devono effettuare delle correzioni al file <code>library/extensions/maintenance_radclient.php</code>.</p>
+<p>Si tenga presente che potrebbe metterci un po' (10-20 secondi o più) perché nel caso di errori radclient ritrasmetterà i pacchetti.</p>
+<p>Nella scheda Avanzate è possibile regolare con precisione le opzioni per il test:</p>
+<ul>
+<li>Timeout - Aspetta 'timeout' secondi prima di riprovare (può essere un numero reale)</li>
+<li>Retries - Se scade il timeout, riprova a mandare il pacchetto 'retries' volte</li>
+<li>Count - Manda ogni pacchetto 'count' volte</li>
+<li>Requests - Manda 'num' pacchetti da un file in parallelo</li>
+</ul>
 ";
 $l['helpPage']['configoperatorsdel'] = "Per cancellare un operatore dal database si deve fornire il suo username.";
 $l['helpPage']['configoperatorsedit'] = "Modifica i dettagli utente dell'operatore sotto";
@@ -998,16 +1043,17 @@ $l['helpPage']['configbackup'] = "Esegui Backup";
 $l['helpPage']['configbackupbackup'] = "Esegui Backup";
 
 $l['helpPage']['graphmain'] = "
-<b>Grafici</b><br/>
-<h200><b>Riassunto Login/Hits</b></h200> - Disegna un grafico dell'utilizzo per un utente specifico per un periodo dato.
-L'ammontare di logins (o 'hits' sul ) vengono mostrati in un grafico accompagnati da una lista.<br/>
-<h200><b>Riassunto Statistiche Download</b></h200> - Disegna un grafico con l'utilizzo di uno specifico utente per un dato periodo di tempo.
-L'ammontare dei dati scaricati dal client è il valore che viene calcolato. Il grafico è accompagnato da una lista<br/>
-<h200><b>Riassunto Statistiche Upload</b></h200> - Disegna un grafico con l'utilizzo di uno specifico utente per un dato periodo di tempo.
-L'ammontare di dati in Upload dal client è il valore che viene calcolato. Il grafico è accompagnato da una lista<br/>
-<br/>
-<h200><b>Logins/Hits All time</b></h200> - Disegna un grafico dei Login al server per un dato periodo di tempo.<br/>
-<h200><b>Confronto Traffico All time</b></h200> - Disegna un grafico delle statistiche di Download/Upload.
+<h1 class=\"fs-5\">Grafici</h1>
+<h2 class=\"fs-6\">Riassunto Login/Hits</h2>
+<p>Disegna un grafico dell'utilizzo per un utente specifico per un periodo dato. L'ammontare di logins (o 'hits' sul ) vengono mostrati in un grafico accompagnati da una lista.</p>
+<h2 class=\"fs-6\">Riassunto Statistiche Download</h2>
+<p>Disegna un grafico con l'utilizzo di uno specifico utente per un dato periodo di tempo. L'ammontare dei dati scaricati dal client è il valore che viene calcolato. Il grafico è accompagnato da una lista</p>
+<h2 class=\"fs-6\">Riassunto Statistiche Upload</h2>
+<p>Disegna un grafico con l'utilizzo di uno specifico utente per un dato periodo di tempo. L'ammontare di dati in Upload dal client è il valore che viene calcolato. Il grafico è accompagnato da una lista</p>
+<h2 class=\"fs-6\">Logins/Hits All time</h2>
+<p>Disegna un grafico dei Login al server per un dato periodo di tempo.</p>
+<h2 class=\"fs-6\">Confronto Traffico All time</h2>
+<p>Disegna un grafico delle statistiche di Download/Upload.</p>
 ";
 $l['helpPage']['graphsalltimelogins'] = "Statistiche All-Time dei Login al server basate su una distribuzione su dato un periodo di tempo";
 $l['helpPage']['graphsalltimetrafficcompare'] = "Statistiche All-Time di Traffico attraverso il server basate su una distribuzione su un dato periodo di tempo.";
@@ -1023,31 +1069,41 @@ $l['helpPage']['replogsdaloradius'] = "Controlla il file di log di daloRADIUS.";
 $l['helpPage']['replogsradius'] = "Controlla il file di log di FreeRADIUS.";
 $l['helpPage']['replogssystem'] = "Controlla il file di log del Sistema Operativo.";
 $l['helpPage']['replogs'] = "
-<b>Logs</b><br/>
-<h200><b>daloRADIUS Log</b></h200> - Controlla il file di log di daloRADIUS's.<br/>
-<h200><b>RADIUS Log</b></h200> - Controlla il file di log di FreeRADIUS - equivalente a /var/log/freeradius/radius.log o /usr/local/var/log/radius/radius.log.
-Potrebbero esserci altri possibili posti per i file di configurazione, se questo è il caso modificare le impostazioni.<br/>
-<h200><b>Log di Sistema</b></h200> - Controlla il file di log del Sistema Operativo - equivalente a /var/log/syslog or /var/log/message nella maggioranza delle piattaforme.
-Potrebbero esistere altri posti per i file di log, se questo è il caso modificare le impostazioni di configurazione.<br/>
-<h200><b>Log di Boot</b></h200> - Controlla il log del Boot del Sistema Operativo - equivalente a lanciare il comando dmesg.
+<h1 class=\"fs-5\">Logs</h1>
+<h2 class=\"fs-6\">daloRADIUS Log</h2>
+<p>Controlla il file di log di daloRADIUS.</p>
+<h2 class=\"fs-6\">RADIUS Log</h2>
+<p>Controlla il file di log di FreeRADIUS - equivalente a /var/log/freeradius/radius.log o /usr/local/var/log/radius/radius.log. Potrebbero esserci altri possibili posti per i file di configurazione, se questo è il caso modificare le impostazioni.</p>
+<h2 class=\"fs-6\">Log di Sistema</h2>
+<p>Controlla il file di log del Sistema Operativo - equivalente a /var/log/syslog or /var/log/message nella maggioranza delle piattaforme. Potrebbero esistere altri posti per i file di log, se questo è il caso modificare le impostazioni di configurazione.</p>
+<h2 class=\"fs-6\">Log di Boot</h2>
+<p>Controlla il log del Boot del Sistema Operativo - equivalente a lanciare il comando dmesg.</p>
 ";
 $l['helpPage']['repmain'] = "
-<b>Rapporti Generali</b><br/>
-<h200><b>Utenti Online</b></h200> - Fornisce una lista di tutti gli utenti che risultano
-online secondo la tabella di accounting del database. Il controllo che viene eseguito è per utenti dove non è stata impostata la voce di fine connessione (AcctStopTime). E' importante tenere presente che questi utenti potrebbero anche essere delle sessioni stantie (stale sessions)
-che succede quando il NASs per qualche ragione non riesce a mandare i pacchetti di accounting-stop, i quali comunicano la fine della sessione.<br/>
-<h200><b>Ultimi Tentativi di Connessione</b></h200> - Fornisce una lista di tutti i login con 'Access-Accept' (accesso accettato) e 'Access-Reject' (accesso rifiutato)
-per gli utenti. <br/> Questi sono presi dalla tabella postauth del database che si richiede di definire nel file di configurazione di FreeRADIUS.<br/>
-<h200><b>Top Utenti</b></h200> - Fornisce un lista della Top N Utenti per consumo di banda e tempo di connessione<br/><br/>
-<b>Rapporti Sotto-Categoria</b><br/>
-<h200><b>Logs</b></h200> - Fornisce accesso ai file di log di daloRADIUS, FreeRADIUS, di Sistema e di Boot<br/>
-<h200><b>Stato</b></h200> - Fornisce informazioni sullo stato del server e sullo stato dei componenti RADIUS";
+<h1 class=\"fs-5\">Rapporti Generali</h1>
+<h2 class=\"fs-6\">Utenti Online</h2>
+<p>Fornisce una lista di tutti gli utenti che risultano online secondo la tabella di accounting del database. Il controllo che viene eseguito è per utenti dove non è stata impostata la voce di fine connessione (AcctStopTime). E' importante tenere presente che questi utenti potrebbero anche essere delle sessioni stantie (stale sessions) che succede quando il NASs per qualche ragione non riesce a mandare i pacchetti di accounting-stop, i quali comunicano la fine della sessione.</p>
+<h2 class=\"fs-6\">Ultimi Tentativi di Connessione</h2>
+<p>Fornisce una lista di tutti i login con 'Access-Accept' (accesso accettato) e 'Access-Reject' (accesso rifiutato) per gli utenti.</p>
+<p>Questi sono presi dalla tabella postauth del database che si richiede di definire nel file di configurazione di FreeRADIUS.</p>
+<h2 class=\"fs-6\">Top Utenti</h2>
+<p>Fornisce un lista della Top N Utenti per consumo di banda e tempo di connessione</p>
+<h1 class=\"fs-5\">Rapporti Sotto-Categoria</h1>
+<h2 class=\"fs-6\">Logs</h2>
+<p>Fornisce accesso ai file di log di daloRADIUS, FreeRADIUS, di Sistema e di Boot</p>
+<h2 class=\"fs-6\">Stato</h2>
+<p>Fornisce informazioni sullo stato del server e sullo stato dei componenti RADIUS</p>
+";
 $l['helpPage']['repstatradius'] = "Fornisce informazioni generali sul server stesso: Utilizzo CPU, Processi, Uptime, utilizzo Memoria, etc...
 ";
 $l['helpPage']['repstatserver'] = "Fornisce informazioni generali sul daemon FreeRadius e il Database server MySQL";
-$l['helpPage']['repstatus'] = "<b>Stato</b><br/>
-<h200><b>Stato Server</b></h200> - Fornisce informazioni generali sul server stesso: Utilizzo CPU, Processi, Uptime, Utilizzo Memoria, etc...<br/>
-<h200><b>Stato RADIUS</b></h200> - Fornisce informazioni generali sul daemon FreeRADIUS e sul daemon del Database server MySQL";
+$l['helpPage']['repstatus'] = "
+<h1 class=\"fs-5\">Stato</h1>
+<h2 class=\"fs-6\">Stato Server</h2>
+<p>Fornisce informazioni generali sul server stesso: Utilizzo CPU, Processi, Uptime, Utilizzo Memoria, etc...</p>
+<h2 class=\"fs-6\">Stato RADIUS</h2>
+<p>Fornisce informazioni generali sul daemon FreeRADIUS e sul daemon del Database server MySQL</p>
+";
 $l['helpPage']['reptopusers'] = "Records per top utenti, che hanno guadagnato il più alto consumo di tempo di sessione o utilizzo di banda. Mostra utenti di categoria:";
 $l['helpPage']['repusername'] = "Records trovati per l'utente:";
 $l['helpPage']['reponline'] = "
@@ -1084,35 +1140,24 @@ $l['helpPage']['acctipaddress'] = "
 <br/>
 ";
 $l['helpPage']['acctmain'] = "
-<b>Accounting Generale</b><br/>
-<h200><b>Accounting Utente</b></h200> -
-    Fornisce informazioni complete per tutte le sessioni nel database per un particolare utente.
-<br/>
-<h200><b>Accounting IP</b></h200> -
-    Fornisce informazioni complete di accounting per tutte le sessioni che sono state avviate da un particolare indirizzo IP.
-<br/>
-<h200><b>Accounting NAS</b></h200> -
-    Fornisce informazioni complete per tutte le sessioni che uno specifico indirizzo NAS ha gestito.
-<br/>
-<h200><b>Accounting Date</b></h200> -
-    Fornisce informazioni complete di accounting per tutte le sessioni tra due date di un particolare utente.
-<br/>
-<h200><b>Tutti i Records di Accounting</b></h200> -
-    Fornisce informazioni complete per tutte le sessioni di accounting nel database.
-<br/>
-<h200><b>Records di Accounting Attivi</b></h200> -
-    Fornisce informazioni che potrebbero essere comode per tracciare utenti attivi o scaduti nel database
-    in termini di utenti che hanno un attributo di scadenza (Expiration) o un attributo Max-All-session.
-<br/>
-
-<br/>
-<b>Sottocategoria Accounting</b><br/>
-<h200><b>Personalizzazioni</b></h200> -
-    Fornisce la query personalizzata più flessibile che si possa lanciare nel database.
-<br/>
-<h200><b>Hotspots</b></h200> -
-    Fornisce informazioni sui differenti hotspot gestiti, confronti, e altre comode informazioni.
-<br/>
+<h1 class=\"fs-5\">Accounting Generale</h1>
+<h2 class=\"fs-6\">Accounting Utente</h2>
+<p>Fornisce informazioni complete per tutte le sessioni nel database per un particolare utente.</p>
+<h2 class=\"fs-6\">Accounting IP</h2>
+<p>Fornisce informazioni complete di accounting per tutte le sessioni che sono state avviate da un particolare indirizzo IP.</p>
+<h2 class=\"fs-6\">Accounting NAS</h2>
+<p>Fornisce informazioni complete per tutte le sessioni che uno specifico indirizzo NAS ha gestito.</p>
+<h2 class=\"fs-6\">Accounting Date</h2>
+<p>Fornisce informazioni complete di accounting per tutte le sessioni tra due date di un particolare utente.</p>
+<h2 class=\"fs-6\">Tutti i Records di Accounting</h2>
+<p>Fornisce informazioni complete per tutte le sessioni di accounting nel database.</p>
+<h2 class=\"fs-6\">Records di Accounting Attivi</h2>
+<p>Fornisce informazioni che potrebbero essere comode per tracciare utenti attivi o scaduti nel database in termini di utenti che hanno un attributo di scadenza (Expiration) o un attributo Max-All-session.</p>
+<h1 class=\"fs-5\">Sottocategoria Accounting</h1>
+<h2 class=\"fs-6\">Personalizzazioni</h2>
+<p>Fornisce la query personalizzata più flessibile che si possa lanciare nel database.</p>
+<h2 class=\"fs-6\">Hotspots</h2>
+<p>Fornisce informazioni sui differenti hotspot gestiti, confronti, e altre comode informazioni.</p>
 ";
 $l['helpPage']['acctnasipaddress'] = "
     Fornisce informazioni complete per tutte le sessioni che l'indirizzo NAS specifico ha gestito.
@@ -1147,75 +1192,55 @@ $l['helpPage']['accthotspotcompare'] = "
 <br/>
 ";
 $l['helpPage']['accthotspot'] = "
-<h200><b>Accounting Hotspot</b></h200> -
-    Fornisce informazioni complete per tutte le sessioni che sono state avviate da uno specifico Hotspot.
-<br/>
-<h200><b>Confronto Hotspot</b></h200> -
-    Fornisce informazioni di base sull'accounting per confronto tra gli hotspot attivi nel database.
-    Fornisce un grafico dei differenti confronti possibili.
-<br/>
+<h2 class=\"fs-6\">Accounting Hotspot</h2>
+<p>Fornisce informazioni complete per tutte le sessioni che sono state avviate da uno specifico Hotspot.</p>
+<h2 class=\"fs-6\">Confronto Hotspot</h2>
+<p>Fornisce informazioni di base sull'accounting per confronto tra gli hotspot attivi nel database. Fornisce un grafico dei differenti confronti possibili.</p>
 ";
 
 // accounting custom queries section
 $l['helpPage']['acctcustom'] = "
-<h200><b>Custom</b></h200> -
-    Fornisce la più flessibile query personalizzata da lanciare sul database.<br/>
-    E' possibile regolare la query modificando le impostazioni sulla barra a sinistra.<br/>
-<br/>
-    <b> Tra le Date </b> - Imposta la data di inizio e di fine.
-<br/>
-    <b> Dove </b> - Imposta il campo nel database che si desidera far corrispondere (come una chiave), scegliere se il valore
-    da far corrispondere deve essere Uguale (=) o deve Contenere parte del valore che si cerca (come una regex). Se si sceglie
-    di usare l'operatore Contiene non si devono aggiungere caratteri jolly della comune forma '*'
-    il valore che si inserisce verrà automaticamente cercato in questa forma: *value* (o in stile mysql: %valore%).
-<br/>
-    <b> Query Campi Accounting </b> - E' possibile scegliere quali campi si vogliono mostrare nella lista risultante.
-<br/>
-    <b> Ordina per </b> - Scegliere per quale campo si desidera ordinare i risultati e il loro tipo (Ascendente o Discendente)
-<br/>
+<h2 class=\"fs-6\">Custom</h2>
+<p>Fornisce la più flessibile query personalizzata da lanciare sul database.</p>
+<p>E' possibile regolare la query modificando le impostazioni sulla barra a sinistra.</p>
+<h2 class=\"fs-6\">Tra le Date</h2>
+<p>Imposta la data di inizio e di fine.</p>
+<h2 class=\"fs-6\">Dove</h2>
+<p>Imposta il campo nel database che si desidera far corrispondere (come una chiave), scegliere se il valore da far corrispondere deve essere Uguale (=) o deve Contenere parte del valore che si cerca (come una regex). Se si sceglie di usare l'operatore Contiene non si devono aggiungere caratteri jolly della comune forma '*' il valore che si inserisce verrà automaticamente cercato in questa forma: *value* (o in stile mysql: %valore%).</p>
+<h2 class=\"fs-6\">Query Campi Accounting</h2>
+<p>E' possibile scegliere quali campi si vogliono mostrare nella lista risultante.</p>
+<h2 class=\"fs-6\">Ordina per</h2>
+<p>Scegliere per quale campo si desidera ordinare i risultati e il loro tipo (Ascendente o Discendente)</p>
 ";
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
-<h200><b>Pulisci sessioni stantie (stale-sessions)</b></h200> -
-    Le sessioni stantie si formano quando il NAS non è capace di fornire un Accounting-STOP per la sessione utente <br/>
-    risultante in un record di sessione aperta che simula un utente connesso in un record utente (falso positivo).
-<br/>
-<h200><b>Cancella Record accounting</b></h200> -
-    Cancellazione di un Record di accounting nel database. Potrebbe non essere saggio farlo o permettere di farlo ad altri utenti eccetto l'amministratore o un gruppo controllato.
-<br/>
+<h2 class=\"fs-6\">Pulisci sessioni stantie (stale-sessions)</h2>
+<p>Le sessioni stantie si formano quando il NAS non è capace di fornire un Accounting-STOP per la sessione utente, risultante in un record di sessione aperta che simula un utente connesso in un record utente (falso positivo).</p>
+<h2 class=\"fs-6\">Cancella Record accounting</h2>
+<p>Cancellazione di un Record di accounting nel database. Potrebbe non essere saggio farlo o permettere di farlo ad altri utenti eccetto l'amministratore o un gruppo controllato.</p>
 ";
 $l['helpPage']['acctmaintenancecleanup'] = "";
 $l['helpPage']['acctmaintenancedelete'] = "";
 
 $l['helpPage']['giseditmap'] = "
-    Modifica Modalità Mappa - in questa modalità si può Aggiungere o Cancellare Hotspots semplicemente cliccando
-    su un luogo della mappa o cliccando su un hotspot (rispettivamente).<br/><br/>
-    <b> Aggiungere Hotspot </b> - Si deve semplicemente cliccare su un luogo vuoto della mappa, verrà chiesto di fornire
-    il nome dell'hotspot e il suo indirizzo MAC. Questi sono i due elementi cruciali per identificare l'hotspot nella tabella di accounting. Fare attenzione a fornire l'indirizzo MAC corretto!
-<br/><br/>
-    <b> Cancellare Hotspot </b> - Cliccare semplicemente su una icona di un hotspot e confermare la cancellazione dal database.
-<br/>
+<h1 class=\"fs-5\">Modifica Modalità Mappa</h1>
+<p>In questa modalità si possono aggiungere o cancellare hotspot semplicemente cliccando su un luogo della mappa o su un hotspot (rispettivamente).</p>
+<h2 class=\"fs-6\">Aggiungere Hotspot</h2>
+<p>Si deve semplicemente cliccare su un luogo vuoto della mappa: verrà chiesto di fornire il nome dell'hotspot e il suo indirizzo MAC. Questi sono i due elementi cruciali per identificare l'hotspot nella tabella di accounting. Fare attenzione a fornire l'indirizzo MAC corretto!</p>
+<h2 class=\"fs-6\">Cancellare Hotspot</h2>
+<p>Cliccare semplicemente sull'icona di un hotspot e confermare la cancellazione dal database.</p>
 ";
 $l['helpPage']['gisviewmap'] = "
-    Vedi Modalità Mappa - in questa modalità è possibile sfogliare gli Hotspot così come sono visualizzati come icone nelle mappe fornite dal servizio GoogleMap.<br/><br/>
-
-    <b> Cliccare su un Hotspot </b> - Fornirà maggiore dettaglio sull'hotspot.
-    Come le informazioni sui contatti per l'hotspot, e dettagli statistiche.
-<br/>
+<h1 class=\"fs-5\">Vedi Modalità Mappa</h1>
+<p>In questa modalità è possibile sfogliare gli hotspot così come sono visualizzati come icone nelle mappe fornite dal servizio GoogleMap.</p>
+<p>Cliccando su un hotspot vengono forniti maggiori dettagli su di esso, come le informazioni di contatto e altri dettagli rilevanti.</p>
 ";
 $l['helpPage']['gismain'] = "
-<b> Informazioni Generali</b>
-Le Mappature GIS forniscono mappature visuali del luogo dell'hotspot attraverso la mappa mondiale utilizzando la API di Google Maps. <br/>
-Nella pagina Gestione è possibile aggiungere nuove voci hotspot al database dove c'è anche un campo chiamato Geolocation, questo è un valore numerico che la API di Google Maps usa per segnare (pin-point) il luogo esatto di un hotspot nella mappa.<br/><br/>
-
-<h200><b>Vengono fornite 2 Modalità Operative:</b></h200>
-Una è la modalità <b>Vedi MAPPA</b> che abilita il 'surfing' attraverso la mappa mondiale
-e vede i luoghi degli hotspots nel database, un'altra è - <b>Modifica MAPPA</b> - che è la modalità
-che si può utilizzare per creare hotspot in modo visuale semplicemente con un click sinistro sulla mappa o cancellando
-hotspot esistenti sempre con un click sinistro su una bandierina di un hotspot esistente.<br/><br/>
-
-Un'altra importante questione è che ogni computer sul network richiede un codice di registrazione unico
-che può essere ottenuto dalla pagina API di Google Maps fornendo l'indirizzo completo della directory ospitata
-dall'applicazione daloRADIUS sul server. Una volta ottenuto il codice da Google, si deve incollarlo nel campo di Registrazione (Registration box) e cliccare il bottone 'Register code' per salvarlo.
-A questo punto dovresti essere in grado di utilizzare i servizi di Google Maps. <br/><br/>";
+<h1 class=\"fs-5\">Informazioni Generali</h1>
+<p>Le Mappature GIS forniscono mappature visuali del luogo dell'hotspot attraverso la mappa mondiale utilizzando la API di Google Maps.</p>
+<p>Nella pagina Gestione è possibile aggiungere nuove voci hotspot al database dove c'è anche un campo chiamato Geolocation, questo è un valore numerico che la API di Google Maps usa per segnare (pin-point) il luogo esatto di un hotspot nella mappa.</p>
+<h2 class=\"fs-6\">Vengono fornite 2 Modalità Operative:</h2>
+<p>Una è la modalità <b>Vedi MAPPA</b> che abilita il 'surfing' attraverso la mappa mondiale e vede i luoghi degli hotspots nel database, un'altra è - <b>Modifica MAPPA</b> - che è la modalità che si può utilizzare per creare hotspot in modo visuale semplicemente con un click sinistro sulla mappa o cancellando hotspot esistenti sempre con un click sinistro su una bandierina di un hotspot esistente.</p>
+<p>Un'altra importante questione è che ogni computer sul network richiede un codice di registrazione unico che può essere ottenuto dalla pagina API di Google Maps fornendo l'indirizzo completo della directory ospitata dall'applicazione daloRADIUS sul server. Una volta ottenuto il codice da Google, si deve incollarlo nel campo di Registrazione (Registration box) e cliccare il bottone 'Register code' per salvarlo. A questo punto dovresti essere in grado di utilizzare i servizi di Google Maps.</p>
+";
 
