@@ -53,10 +53,10 @@ $l['all']['PoolKey'] = "Chiave Pool";
 $l['all']['VendorID'] = "ID Venditore";
 $l['all']['VendorName'] = "Nome Venditore";
 $l['all']['VendorAttribute'] = "Attributo Venditore";
-$l['all']['RecommendedOP'] = "OP Raccomandato";
-$l['all']['RecommendedTable'] = "Tabella Raccomandata";
-$l['all']['RecommendedTooltip'] = "Consiglio Raccomandato";
-$l['all']['RecommendedHelper'] = "Helper Raccomandato";
+$l['all']['RecommendedOP'] = "OP Suggerito";
+$l['all']['RecommendedTable'] = "Tabella Suggerita";
+$l['all']['RecommendedTooltip'] = "Suggerimento";
+$l['all']['RecommendedHelper'] = "Helper Suggerito";
 
 $l['all']['Compare'] = "Confronta";
 
@@ -83,16 +83,16 @@ $l['all']['Hints'] = "Consigli";
 
 $l['all']['Proxy'] = "Proxy";
 $l['all']['ProxyName'] = "Nome Proxy";
-$l['all']['ProxySecret'] = "Secert Proxy";
+$l['all']['ProxySecret'] = "Secret Proxy";
 $l['all']['DeadTime'] = "Dead Time";
 $l['all']['RetryDelay'] = "Retry Delay";
 $l['all']['RetryCount'] = "Retry Count";
 $l['all']['DefaultFallback'] = "Default Fallback";
 
 $l['all']['NasID'] = "ID NAS";
-$l['all']['Nas'] = "NAS ";
+$l['all']['Nas'] = "NAS";
 $l['all']['NasIPHost'] = "NAS IP/Host";
-$l['all']['NasShortname'] = "Diminutivo NAS";
+$l['all']['NasShortname'] = "Nome breve";
 $l['all']['NasType'] = "Tipo NAS";
 $l['all']['NasPorts'] = "Porte NAS";
 $l['all']['NasSecret'] = "NAS Secret";
@@ -112,7 +112,7 @@ $l['all']['Groupname'] = "Nome Gruppo";
 $l['all']['GroupPriority'] = "Priorità Gruppo";
 $l['all']['CurrentGroupname'] = "Nome Gruppo Corrente";
 $l['all']['NewGroupname'] = "Nuovo Nome Gruppo";
-$l['all']['Priority'] = "Priorit&aacute;";
+$l['all']['Priority'] = "Priorità";
 $l['all']['Attribute'] = "Attributo";
 $l['all']['Operator'] = "Operatore";
 $l['all']['Value'] = "Valore";
@@ -129,30 +129,30 @@ $l['all']['Upload'] = "Upload";
 $l['all']['Download'] = "Download";
 $l['all']['Termination'] = "Termine";
 $l['all']['NASIPAddress'] = "Indirizzo IP NAS";
-$l['all']['NASShortName'] = "NAS Short Name";
+$l['all']['NASShortName'] = "Nome breve NAS";
 $l['all']['Action'] = "Azione";
 $l['all']['UniqueUsers'] = "Utenti Unici";
-$l['all']['TotalHits'] = "Total Hits";
+$l['all']['TotalHits'] = "Hit Totali";
 $l['all']['AverageTime'] = "Tempo medio";
 $l['all']['Records'] = "Registrazioni";
 $l['all']['Summary'] = "Riassunto";
 $l['all']['Statistics'] = "Statistiche";
-$l['all']['Credit'] = "Credit";
+$l['all']['Credit'] = "Credito";
 $l['all']['Used'] = "Usato";
 $l['all']['LeftTime'] = "Tempo Rimanente";
 $l['all']['LeftPercent'] = "% di tempo rimasto";
 $l['all']['TotalSessions'] = "Totale Sessioni";
-$l['all']['LastLoginTime'] = "Tempo Ultimo Login";
+$l['all']['LastLoginTime'] = "Data e ora ultimo accesso";
 $l['all']['TotalSessionTime'] = "Tempo totale di Sessione";
 $l['all']['Rate'] = "Rate";
 $l['all']['Billed'] = "Billed";
 $l['all']['TotalUsers'] = "Totale Utenti";
 $l['all']['TotalBilled'] = "Total Billed";
-$l['all']['Type'] = "Type";
+$l['all']['Type'] = "Tipo";
 $l['all']['CardBank'] = "CardBank";
 $l['all']['MACAddress'] = "Indirizzo MAC";
 $l['all']['Geocode'] = "Geocode";
-$l['all']['PINCode'] = "PIN Code";
+$l['all']['PINCode'] = "Codice PIN";
 $l['all']['CreationDate'] = "Data di Creazione";
 $l['all']['CreationBy'] = "Creato da";
 $l['all']['UpdateDate'] = "Data di Aggiornamento";
@@ -162,7 +162,7 @@ $l['all']['edit'] = "modifica";
 $l['all']['del'] = "cancella";
 $l['all']['groupslist'] = "lista gruppi";
 $l['all']['TestUser'] = "Test Utente";
-$l['all']['Accounting'] = "Contabilit&aacute;";
+$l['all']['Accounting'] = "Accounting";
 $l['all']['RADIUSReply'] = "Risposta RADIUS";
 
 $l['all']['Disconnect'] = "Disconnetti";
@@ -255,10 +255,10 @@ $l['Tooltip']['proxyRetryDelayTooltip'] = "Il tempo di attesa (in secondi) per u
 $l['Tooltip']['proxyRetryCountTooltip'] = "Numero di tentativi di invio prima di rinunciare, e mandare un messaggio di reject al NAS.";
 $l['Tooltip']['proxyDeadTimeTooltip'] = "Se l'home server non risponde a nessuna delle prove multiple, "
                                       . "allora FreeRADIUS smetterà di mandare richieste proxy, e lo marcherà come 'dead'.";
-$l['Tooltip']['proxyDefaultFallbackTooltip'] = "If all exact matching realms did not respond, we can try the";
+$l['Tooltip']['proxyDefaultFallbackTooltip'] = "Se nessun realm con corrispondenza esatta ha risposto, si può provare il";
 $l['Tooltip']['realmNameTooltip'] = "Nome Realm";
 $l['Tooltip']['realmTypeTooltip'] = "Imposta su radius per default";
-$l['Tooltip']['realmSecretTooltip'] = "Realm RADIUS shared secret";
+$l['Tooltip']['realmSecretTooltip'] = "Segreto condiviso RADIUS del realm";
 $l['Tooltip']['realmAuthhostTooltip'] = "Host autenticazione Realm";
 $l['Tooltip']['realmAccthostTooltip'] = "Accounting host Realm";
 $l['Tooltip']['realmLdflagTooltip'] = "Abilita per il load balancing. I valori abilitati sono 'fail_over' e 'round_robin'.";
@@ -296,9 +296,9 @@ $l['FormField']['mngradgroupcheck.php']['ToolTip']['Value'] = "Se specifichi un 
 
 $l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "Se specifichi un valore, solo il record singolo che corrisponde contemporaneamente al nome del gruppo e al valore che hai specificato verrà rimosso. Se ometti il valore allora tutti i record di questo Gruppo verranno rimossi!";
 
-$l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(nome decrittivo)";
+$l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(nome descrittivo)";
 
-$l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se specifichi un gruppo allora solo il singolo record che corrisponde contemporaneamente all'username e al grupppo verrà rimosso.Se ometti il ggruppo allora tutti i record di questo utente verranno rimossi.!";
+$l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se specifichi un gruppo allora verrà rimosso solo il singolo record che corrisponde contemporaneamente all'username e al gruppo. Se ometti il gruppo allora verranno rimossi tutti i record di questo utente.";
 
 $l['Tooltip']['usernameTooltip'] = "Il nome utente esatto<br/>&nbsp;&nbsp;&nbsp;
                     così come l'utente userà connettersi al sistema";
@@ -424,16 +424,16 @@ $l['button']['ActiveRecords'] = "Record Attivi";
 
 $l['button']['OnlineUsers'] = "Utenti Online";
 $l['button']['LastConnectionAttempts'] = "Ultimi Tentativi di Connessione";
-$l['button']['TopUser'] = "Top User";
-$l['button']['History'] = "History";
+$l['button']['TopUser'] = "Top Utenti";
+$l['button']['History'] = "Storico";
 
 $l['button']['ServerStatus'] = "Stato Server";
 $l['button']['ServicesStatus'] = "Stato Servizi";
 
-$l['button']['daloRADIUSLog'] = "daloRADIUS Log";
-$l['button']['RadiusLog'] = "Radius Log";
-$l['button']['SystemLog'] = "System Log";
-$l['button']['BootLog'] = "Boot Log";
+$l['button']['daloRADIUSLog'] = "Log daloRADIUS";
+$l['button']['RadiusLog'] = "Log RADIUS";
+$l['button']['SystemLog'] = "Log di Sistema";
+$l['button']['BootLog'] = "Log di Boot";
 
 $l['button']['UserLogins'] = "Login Utenti";
 $l['button']['UserDownloads'] = "Download Utenti";
@@ -450,7 +450,7 @@ $l['button']['LanguageSettings'] = "Impostazioni Lingua";
 $l['button']['LoggingSettings'] = "Impostazioni Logging";
 $l['button']['InterfaceSettings'] = "Impostazioni Interfaccia";
 
-$l['button']['TestUserConnectivity'] = "Test Connettivit&aacute;";
+$l['button']['TestUserConnectivity'] = "Test connettività";
 $l['button']['DisconnectUser'] = "Disconnetti Utente";
 
 $l['button']['ListOperators'] = "Mostra Operatori";
@@ -474,16 +474,16 @@ $l['buttons']['apply'] = "Applica";
 
 $l['title']['IPPoolInfo'] = "Info IP-Pool";
 
-$l['title']['BusinessInfo'] = "Business Info";
+$l['title']['BusinessInfo'] = "Info Commerciali";
 
 $l['title']['CleanupRecords'] = "Pulisci Records";
 $l['title']['DeleteRecords'] = "Cancella Records";
 
-$l['title']['RealmInfo'] = "Realm Info";
+$l['title']['RealmInfo'] = "Info Realm";
 
-$l['title']['ProxyInfo'] = "Proxy Info";
+$l['title']['ProxyInfo'] = "Info Proxy";
 
-$l['title']['VendorAttribute'] = "Vendor Attribute";
+$l['title']['VendorAttribute'] = "Attributo Venditore";
 
 $l['title']['AccountRemoval'] = "Cancellazione Account";
 $l['title']['AccountInfo'] = "Info account";
@@ -493,7 +493,7 @@ $l['title']['ProfileInfo'] = "Info Profilo";
 $l['title']['GroupInfo'] = "Info Gruppo";
 $l['title']['GroupAttributes'] = "Attributi Gruppo";
 
-$l['title']['NASInfo'] = "Info NAS ";
+$l['title']['NASInfo'] = "Info NAS";
 $l['title']['NASAdvanced'] = "NAS Avanzato";
 
 $l['title']['UserInfo'] = "Info Utente";
@@ -607,7 +607,7 @@ $l['messages']['noCheckAttributesForUser'] = "Non ci sono attributi di verifica 
 $l['messages']['noReplyAttributesForUser'] = "Non ci sono attributi di risposta (reply) associati con questo utente";
 
 $l['messages']['noCheckAttributesForGroup'] = "Non ci sono attributi di verifica (check) associati con questo gruppo";
-$l['messages']['noReplyAttributesForGroup'] = "Non ci sono attributi di risposta (reply) associati con questo gruppo ";
+$l['messages']['noReplyAttributesForGroup'] = "Non ci sono attributi di risposta (reply) associati con questo gruppo";
 
 $l['messages']['nogroupdefinedforuser'] = "Non ci sono gruppi associati con questo utente";
 $l['messages']['wouldyouliketocreategroup'] = "Si desidera crearne uno?";
@@ -625,7 +625,7 @@ $l['messages']['gisedit5'] = "Inserire il nome dell'Hotspot";
 $l['messages']['gisedit6'] = "Inserire l'indirizzo MAC dell'Hotspot";
 
 $l['messages']['gismain1'] = "Codice di registrazione GoogleMaps aggiornato correttamente";
-$l['messages']['gismain2'] = "errore: non si pu&oacute aprire il file in scrittura:";
+$l['messages']['gismain2'] = "errore: impossibile aprire il file in scrittura:";
 $l['messages']['gismain3'] = "Verificare i permessi sui file. Il file dovrebbe essere scrivibile dall'utente/gruppo del webserver";
 $l['messages']['gisviewwelcome'] = "Benvenuto nelle mappe visuali Enginx";
 
@@ -710,7 +710,7 @@ $l['Intro']['replogsdaloradius.php'] = "daloRADIUS Logfile";
 $l['Intro']['replogsboot.php'] = "Boot Logfile";
 
 $l['Intro']['rephsall.php'] = "Mostra Hotspot";
-$l['Intro']['repmain.php'] = "Reports Page";
+$l['Intro']['repmain.php'] = "Report";
 $l['Intro']['repstatus.php'] = "Stato Pagina";
 $l['Intro']['replogs.php'] = "Log Pagina";
 $l['Intro']['reptopusers.php'] = "Top Utenti";
@@ -958,11 +958,11 @@ per disconnettere un utente e terminare la sua sessione nel NAS dato.<br/>
 $l['helpPage']['configmainttestuser'] = "
 <h200><b>Test Connettività Utente</b></h200> - Manda un Access-Request al server RADIUS per verificare se le credenziali di un utente sono valide.<br/>
 daloRADIUS usa l'utilità radclient per fare test e ritorna i risultati del comando dopo che ha finito. <br/>
-daloRADIUS conta sul fatto che il binario radclient sia disponibile nella variabile d'ambiente \$PATH variable, se così non è si devono effettuare delle modifiche al file library/extensions/maintenance_radclient.php.<br/><br/>
+daloRADIUS conta sul fatto che il binario radclient sia disponibile nella variabile d'ambiente \$PATH, se così non è si devono effettuare delle modifiche al file library/extensions/maintenance_radclient.php.<br/><br/>
 
-Tenere presente che il test potrebbe impiegare un pò di tempo per finire (diversi secondi [10-20 secondi or più]) perchè nel caso di errori radclient potrebbe ritrasmettere i pacchetti.
+Tenere presente che il test potrebbe impiegare un po' di tempo per finire (diversi secondi [10-20 secondi o più]) perché nel caso di errori radclient potrebbe ritrasmettere i pacchetti.
 
-Nella zona Avanzate è possibile regolare con precisione le opsioni per il test:<br/>
+Nella zona Avanzate è possibile regolare con precisione le opzioni per il test:<br/>
 Timeout - Aspetta 'timeout' secondi prima di riprovare (può essere un numero reale) <br/>
 Retries - Dopo il timeout, riprova a mandare il pacchetto 'Retries' volte. <br/>
 Count - Manda ogni pacchetto 'count' volte<br/>
@@ -975,10 +975,10 @@ la documentazione. Inoltre, si richiede la conoscenza delle porte NAS per PoD o 
 mentre gli altri sono configurati sulla porta 1700.
 
 daloRADIUS utilizza l'utilità radclient per effettuare test e ritorna i risultati del comando dopo che questo ha finito. <br/>
-daloRADIUS conta sul fato che il binaario radclient sia disponibile nella variabile \$PATH, se così non è, si devono
+daloRADIUS conta sul fatto che il binario radclient sia disponibile nella variabile \$PATH, se così non è, si devono
 effettuare correzioni al file library/extensions/maintenance_radclient.php.<br/><br/>
 
-Si tenga presente che potrebbe metterci un pò (10 - 20 secondi o più) perchè nel caso di errori
+Si tenga presente che potrebbe metterci un po' (10 - 20 secondi o più) perché nel caso di errori
 radclient ritrasmetterà i pacchetti.
 
 Nella finestra Avanzate è possibile regolare con precisione le opzioni per i test:<br/>
@@ -1042,7 +1042,7 @@ per gli utenti. <br/> Questi sono presi dalla tabella postauth del database che 
 <b>Rapporti Sotto-Categoria</b><br/>
 <h200><b>Logs</b></h200> - Fornisce accesso ai file di log di daloRADIUS, FreeRADIUS, di Sistema e di Boot<br/>
 <h200><b>Stato</b></h200> - Fornisce informazioni sullo stato del server e sullo stato dei componenti RADIUS";
-$l['helpPage']['repstatradius'] = "Fornisce informazioni generali sul server stesso: Utilizzo CPU, Processi, Uptime, utilizzo Memora, etc...
+$l['helpPage']['repstatradius'] = "Fornisce informazioni generali sul server stesso: Utilizzo CPU, Processi, Uptime, utilizzo Memoria, etc...
 ";
 $l['helpPage']['repstatserver'] = "Fornisce informazioni generali sul daemon FreeRadius e il Database server MySQL";
 $l['helpPage']['repstatus'] = "<b>Stato</b><br/>
@@ -1095,7 +1095,7 @@ $l['helpPage']['acctmain'] = "
     Fornisce informazioni complete per tutte le sessioni che uno specifico indirizzo NAS ha gestito.
 <br/>
 <h200><b>Accounting Date</b></h200> -
-    Fornisce informazioni complete di accounting per tutte le sessioni tra due date di un paricolare utente.
+    Fornisce informazioni complete di accounting per tutte le sessioni tra due date di un particolare utente.
 <br/>
 <h200><b>Tutti i Records di Accounting</b></h200> -
     Fornisce informazioni complete per tutte le sessioni di accounting nel database.
@@ -1126,7 +1126,7 @@ $l['helpPage']['acctusername'] = "
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = "
     Fornisce informazioni per tutte le sessioni che sono state avviate da uno specifico hotspot.
-    Questa lista viene calcolata mostrando solo quei record che si trovano nella tabella radacct con il campo CalledStationId corrispondente all'indirizzo MAC nel databasee di gestione Hotspot.
+    Questa lista viene calcolata mostrando solo quei record che si trovano nella tabella radacct con il campo CalledStationId corrispondente all'indirizzo MAC nel database di gestione Hotspot.
 <br/>
 ";
 $l['helpPage']['accthotspotcompare'] = "
@@ -1177,7 +1177,7 @@ $l['helpPage']['acctcustom'] = "
 $l['helpPage']['acctcustomquery'] = "";
 $l['helpPage']['acctmaintenance'] = "
 <h200><b>Pulisci sessioni stantie (stale-sessions)</b></h200> -
-    Le sessioni stantie si formano quando il NAS non è capace di forntire un Accounting-STOP per la sessione utente <br/>
+    Le sessioni stantie si formano quando il NAS non è capace di fornire un Accounting-STOP per la sessione utente <br/>
     risultante in un record di sessione aperta che simula un utente connesso in un record utente (falso positivo).
 <br/>
 <h200><b>Cancella Record accounting</b></h200> -
