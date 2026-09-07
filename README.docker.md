@@ -10,10 +10,10 @@ The primary `Dockerfile` also supports a web-only container connected to MariaDB
 
 ## Full Compose stack
 
-Create an environment file from the template:
+Create a private environment file from the template:
 
 ```bash
-cp .env.example .env
+install -m 600 .env.example .env
 ```
 
 Edit `.env` and replace every `CHANGE_ME_...` value:
@@ -22,8 +22,21 @@ Edit `.env` and replace every `CHANGE_ME_...` value:
 MYSQL_PASSWORD=CHANGE_ME_RADIUS_DB_PASSWORD
 MYSQL_ROOT_PASSWORD=CHANGE_ME_ROOT_DB_PASSWORD
 DEFAULT_CLIENT_SECRET=CHANGE_ME_RADIUS_SHARED_SECRET
-DALORADIUS_STATUS_SECRET=CHANGE_ME_INTERNAL_STATUS_SECRET
 ```
+
+The Compose stack generates a random internal status secret on first start and
+persists it in the `status_secret` volume. To manage or rotate it explicitly,
+set a base64/hex value of at least 16 characters, for example:
+
+```bash
+openssl rand -hex 32
+```
+
+```dotenv
+DALORADIUS_STATUS_SECRET=PASTE_THE_GENERATED_VALUE_HERE
+```
+
+Placeholder values beginning with `CHANGE_ME_` are rejected.
 
 Optional values can be kept as-is for a local setup:
 
@@ -56,7 +69,7 @@ Check service state:
 docker compose ps
 ```
 
-The operators' **Reports → RADIUS Server Status** page checks the configured database connection for MariaDB and probes FreeRADIUS through a dedicated internal `Status-Server` listener on UDP port `18122`. The status listener uses a separate `DALORADIUS_STATUS_SECRET`, requires a RADIUS `Message-Authenticator`, is restricted to the Docker network, and is not published to the host. The regular NAS/client secret and port `1812` remain reserved for the operator **Test User Connectivity** feature; restrict that NAS entry to the Docker web network and never authorize `0.0.0.0/0`. SSHd is shown as not applicable in the web container.
+The operators' **Reports → RADIUS Server Status** page checks the configured database connection for MariaDB and probes FreeRADIUS through a dedicated internal `Status-Server` listener on UDP port `18122`. The status listener uses a separate secret file shared only by the RADIUS and web containers, requires a RADIUS `Message-Authenticator`, is restricted to the Docker network, and is not published to the host. The secret is passed to `radclient` through its `-S` file option rather than through process arguments. The regular NAS/client secret and port `1812` remain reserved for the operator **Test User Connectivity** feature; restrict that NAS entry to the Docker web network and never authorize `0.0.0.0/0`. SSHd is shown as not applicable in the web container.
 
 Access the web interfaces:
 
@@ -78,6 +91,14 @@ MariaDB data remains in `./data/mysql`, FreeRADIUS init state remains in `./data
 
 
 ## Database migrations for upgrades
+
+Existing Compose deployments do not need to add a status secret before
+upgrading: it is generated in the new `status_secret` volume. If the old
+`.env` already defines `DALORADIUS_STATUS_SECRET`, that value is imported into
+the volume. Remove it after the first successful start to keep the secret out
+of future container environments. To rotate it, set a new value and run
+`docker compose up -d --force-recreate radius radius-web`; after both services
+are healthy, remove the variable from `.env` again.
 
 Fresh Docker deployments initialize the database from the bundled schema. When upgrading an existing Docker deployment, check `contrib/db/migrations/` in the updated source tree and apply the relevant SQL migrations before using newly added features.
 
@@ -158,9 +179,10 @@ MYSQL_PASSWORD=CHANGE_ME_RADIUS_DB_PASSWORD
 DEFAULT_FREERADIUS_SERVER=radius.example.com
 DEFAULT_FREERADIUS_PORT=1812
 DEFAULT_CLIENT_SECRET=CHANGE_ME_RADIUS_SHARED_SECRET
+DALORADIUS_STATUS_MODE=network
 DALORADIUS_STATUS_SERVER=radius.example.com
 DALORADIUS_STATUS_PORT=18122
-DALORADIUS_STATUS_SECRET=CHANGE_ME_INTERNAL_STATUS_SECRET
+DALORADIUS_STATUS_SECRET_FILE=/run/secrets/daloradius_status_secret
 ```
 
 ```bash
@@ -172,10 +194,11 @@ Start the web container:
 ```bash
 docker run --name daloradius-web \
   --env-file ./daloradius-web.env \
+  -v ./daloradius_status_secret:/run/secrets/daloradius_status_secret:ro \
   -v daloradius-data:/data \
   -p 80:80 \
   -p 127.0.0.1:8000:8000 \
   -d daloradius-web
 ```
 
-`DEFAULT_CLIENT_SECRET` is used by the operators UI connectivity test on the regular authentication listener. `DALORADIUS_STATUS_SECRET` is a separate secret for the internal `Status-Server` listener and must be configured on the external FreeRADIUS server with `Message-Authenticator` enforcement; do not reuse the regular NAS secret. The external database must already contain the FreeRADIUS and daloRADIUS schemas; review `contrib/db/migrations/` when connecting a deployment created by an older release.
+Create `daloradius_status_secret` with mode `0600`; its base64/hex value must also be configured on the external FreeRADIUS server with `Message-Authenticator` enforcement. Do not reuse the regular NAS secret. `DEFAULT_CLIENT_SECRET` remains reserved for the operators UI connectivity test on the regular authentication listener. The external database must already contain the FreeRADIUS and daloRADIUS schemas; review `contrib/db/migrations/` when connecting a deployment created by an older release.

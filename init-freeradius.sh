@@ -14,12 +14,62 @@ DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-testing123}
 DALORADIUS_STATUS_CLIENT_NETWORK=${DALORADIUS_STATUS_CLIENT_NETWORK:-}
 DALORADIUS_STATUS_PORT=${DALORADIUS_STATUS_PORT:-18122}
 DALORADIUS_STATUS_SECRET=${DALORADIUS_STATUS_SECRET:-}
+DALORADIUS_STATUS_SECRET_FILE=${DALORADIUS_STATUS_SECRET_FILE:-}
 FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
 
-if [ "${#DALORADIUS_STATUS_SECRET}" -lt 16 ]; then
-	echo "DALORADIUS_STATUS_SECRET must be set and contain at least 16 characters."
-	exit 1
-fi
+function valid_status_secret {
+	local secret="$1"
+	[ "${#secret}" -ge 16 ] &&
+	[[ "$secret" != CHANGE_ME_* ]] &&
+	[[ "$secret" != *[!A-Za-z0-9_+=./-]* ]]
+}
+
+function write_status_secret_file {
+	local secret_file="$1"
+	local secret="$2"
+	local secret_tmp
+	local old_umask
+
+	mkdir -p "$(dirname "$secret_file")"
+	old_umask=$(umask)
+	umask 077
+	secret_tmp=$(mktemp "${secret_file}.tmp.XXXXXX")
+	printf '%s' "$secret" > "$secret_tmp"
+	chmod 0600 "$secret_tmp"
+	mv -f "$secret_tmp" "$secret_file"
+	umask "$old_umask"
+}
+
+function load_status_secret {
+	local secret_file="$DALORADIUS_STATUS_SECRET_FILE"
+
+	if [ -n "$DALORADIUS_STATUS_SECRET" ]; then
+		if ! valid_status_secret "$DALORADIUS_STATUS_SECRET"; then
+			echo "The daloRADIUS status secret must be a random base64/hex value of at least 16 characters."
+			exit 1
+		fi
+		if [ -n "$secret_file" ]; then
+			write_status_secret_file "$secret_file" "$DALORADIUS_STATUS_SECRET"
+		fi
+	elif [ -n "$secret_file" ] && test -r "$secret_file"; then
+		DALORADIUS_STATUS_SECRET=$(<"$secret_file")
+	elif [ -n "$secret_file" ]; then
+		DALORADIUS_STATUS_SECRET=$(dd if=/dev/urandom bs=32 count=1 2>/dev/null | base64)
+		write_status_secret_file "$secret_file" "$DALORADIUS_STATUS_SECRET"
+	else
+		DALORADIUS_STATUS_SECRET=$(dd if=/dev/urandom bs=32 count=1 2>/dev/null | base64)
+	fi
+
+	if ! valid_status_secret "$DALORADIUS_STATUS_SECRET"; then
+		echo "The daloRADIUS status secret must be a random base64/hex value of at least 16 characters."
+		exit 1
+	fi
+	if [ -n "$secret_file" ]; then
+		chmod 0600 "$secret_file"
+	fi
+}
+
+load_status_secret
 
 MYSQL_DEFAULTS_FILE=""
 
@@ -50,6 +100,22 @@ function escape_radius_config_value {
 	printf '%s' "$1" | sed -e 's/[\\&|]/\\&/g' -e 's/"/\\"/g'
 }
 
+function valid_ipv4_cidr {
+	local value="$1"
+	local address prefix octet
+
+	if ! [[ "$value" =~ ^((0|[1-9][0-9]{0,2})\.){3}(0|[1-9][0-9]{0,2})/(0|[1-9]|[12][0-9]|3[0-2])$ ]]; then
+		return 1
+	fi
+	address=${value%/*}
+	prefix=${value##*/}
+	IFS='.' read -r -a octets <<< "$address"
+	for octet in "${octets[@]}"; do
+		[ "$octet" -le 255 ] || return 1
+	done
+	[ "$prefix" -ge 1 ]
+}
+
 function configure_daloradius_status_server {
 	local template_path=/app/freeradius-status-daloradius.conf
 	local status_path="$RADIUS_PATH/sites-available/status-daloradius"
@@ -67,16 +133,17 @@ function configure_daloradius_status_server {
 	# Resolve the Docker network automatically. This is available before the
 	# web container starts, unlike the web container's DNS name.
 	if [ -z "$client_network" ]; then
-		container_ip_address=$(ifconfig eth0 | awk '/inet /{ print $2; exit }')
-		container_netmask=$(ifconfig eth0 | awk '/netmask/{ print $4; exit }')
-		client_network=$(ipcalc "$container_ip_address" "$container_netmask" | awk '/Network/{ print $2; exit }')
+		read -r container_ip_address container_netmask <<< "$(
+			ifconfig | awk '$1 == "inet" && $2 != "127.0.0.1" { print $2, $4; exit }'
+		)"
+		if [ -n "$container_ip_address" ] && [ -n "$container_netmask" ]; then
+			client_network=$(ipcalc "$container_ip_address" "$container_netmask" | awk '/Network/{ print $2; exit }')
+		fi
 	fi
-	case "$client_network" in
-		''|0.0.0.0|0.0.0.0/0|*/0|*[!0-9./]*)
-			echo "DALORADIUS_STATUS_CLIENT_NETWORK must be a restricted IPv4 network (not /0)."
-			exit 1
-			;;
-	esac
+	if ! valid_ipv4_cidr "$client_network"; then
+		echo "DALORADIUS_STATUS_CLIENT_NETWORK must be a valid restricted IPv4 CIDR (prefix /1 to /32)."
+		exit 1
+	fi
 	case "$DALORADIUS_STATUS_PORT" in
 		''|*[!0-9]*)
 			echo "DALORADIUS_STATUS_PORT must be numeric."
@@ -85,10 +152,6 @@ function configure_daloradius_status_server {
 	esac
 	if [ "$DALORADIUS_STATUS_PORT" -lt 1024 ] || [ "$DALORADIUS_STATUS_PORT" -gt 65535 ]; then
 		echo "DALORADIUS_STATUS_PORT must be between 1024 and 65535."
-		exit 1
-	fi
-	if [ -z "$client_network" ]; then
-		echo "Unable to determine the Docker network for the daloRADIUS status client."
 		exit 1
 	fi
 

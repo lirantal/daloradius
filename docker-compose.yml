@@ -48,13 +48,15 @@ services:
       - MYSQL_USER=radius
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
       - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env}
-      - DALORADIUS_STATUS_SECRET=${DALORADIUS_STATUS_SECRET:?Set DALORADIUS_STATUS_SECRET in .env}
+      - DALORADIUS_STATUS_SECRET=${DALORADIUS_STATUS_SECRET:-}
+      - DALORADIUS_STATUS_SECRET_FILE=/run/daloradius-status/secret
       - DALORADIUS_STATUS_CLIENT_NETWORK=${DALORADIUS_STATUS_CLIENT_NETWORK:-}
       - DALORADIUS_STATUS_PORT=${DALORADIUS_STATUS_PORT:-18122}
       - FREERADIUS_SQL_TLS=${FREERADIUS_SQL_TLS:-disabled}
     volumes:
       - ./data/freeradius:/data
       - radius_logs:/var/log/freeradius
+      - status_secret:/run/daloradius-status
     healthcheck:
       test: ["CMD-SHELL", "echo 'FreeRADIUS-Statistics-Type = 1' | radclient -q -r 1 -t 3 127.0.0.1:18121 status adminsecret >/dev/null"]
       interval: 10s
@@ -78,6 +80,7 @@ services:
         condition: service_healthy
       radius:
         condition: service_healthy
+        restart: true
     ports:
       - '80:80'
       - '${DALORADIUS_OPERATORS_BIND:-127.0.0.1:8000}:8000'
@@ -92,9 +95,10 @@ services:
       - DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:?Set DEFAULT_CLIENT_SECRET in .env}
       - DEFAULT_FREERADIUS_SERVER=radius
       - DEFAULT_FREERADIUS_PORT=${DEFAULT_FREERADIUS_PORT:-1812}
+      - DALORADIUS_STATUS_MODE=network
       - DALORADIUS_STATUS_SERVER=radius
       - DALORADIUS_STATUS_PORT=${DALORADIUS_STATUS_PORT:-18122}
-      - DALORADIUS_STATUS_SECRET=${DALORADIUS_STATUS_SECRET:?Set DALORADIUS_STATUS_SECRET in .env}
+      - DALORADIUS_STATUS_SECRET_FILE=/run/daloradius-status/secret
       - MAIL_SMTPADDR=${MAIL_SMTPADDR:-127.0.0.1}
       - MAIL_PORT=${MAIL_PORT:-25}
       - MAIL_FROM=${MAIL_FROM:-root@daloradius.example.com}
@@ -103,6 +107,8 @@ services:
     volumes:
       - ./data/daloradius:/data
       - radius_logs:/var/log/freeradius
+      - status_secret:/run/daloradius-status:ro
 
 volumes:
   radius_logs:
+  status_secret:

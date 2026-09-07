@@ -36,6 +36,14 @@ clearstatcache(true, $_configFile);
 unset($configValues);
 include($_configFile);
 
+// Docker and other managed deployments may provide generated status settings
+// in a separate override. Keeping it separate avoids rewriting or exposing a
+// legacy daloradius.conf.php that ends with a closing PHP tag.
+$_statusConfigFile = __DIR__ . '/daloradius.status.conf.php';
+if (is_file($_statusConfigFile)) {
+    include($_statusConfigFile);
+}
+
 // strip slashes (if any)
 foreach ($configValues as $_configOption => $_configElem) {
     if (!is_array($_configElem)) {

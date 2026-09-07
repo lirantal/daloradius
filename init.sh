@@ -5,6 +5,7 @@ set -euo pipefail
 
 DALORADIUS_PATH=/var/www/daloradius
 DALORADIUS_CONF_PATH=/var/www/daloradius/app/common/includes/daloradius.conf.php
+DALORADIUS_STATUS_CONF_PATH=/var/www/daloradius/app/common/includes/daloradius.status.conf.php
 
 MYSQL_HOST=${MYSQL_HOST:-localhost}
 MYSQL_PORT=${MYSQL_PORT:-3306}
@@ -19,7 +20,9 @@ DEFAULT_FREERADIUS_PORT=${DEFAULT_FREERADIUS_PORT:-}
 DEFAULT_CLIENT_SECRET=${DEFAULT_CLIENT_SECRET:-}
 DALORADIUS_STATUS_SERVER=${DALORADIUS_STATUS_SERVER:-radius}
 DALORADIUS_STATUS_PORT=${DALORADIUS_STATUS_PORT:-18122}
+DALORADIUS_STATUS_MODE=${DALORADIUS_STATUS_MODE:-auto}
 DALORADIUS_STATUS_SECRET=${DALORADIUS_STATUS_SECRET:-}
+DALORADIUS_STATUS_SECRET_FILE=${DALORADIUS_STATUS_SECRET_FILE:-}
 MAIL_SMTPADDR=${MAIL_SMTPADDR:-}
 MAIL_PORT=${MAIL_PORT:-}
 MAIL_FROM=${MAIL_FROM:-}
@@ -57,21 +60,94 @@ function php_escape {
 function php_config_set {
     local key="$1"
     local php_value
-    local sed_value
-    php_value=$(php_escape "$2")
-    sed_value=$(escape_sed_replacement "$php_value")
+    local replacement
+    local expected
 
-    if grep -Fq "\$configValues['$key']" "$DALORADIUS_CONF_PATH"; then
-        sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = '$sed_value';|" "$DALORADIUS_CONF_PATH"
-    else
-        printf "\$configValues['%s'] = '%s';\\n" "$key" "$php_value" >> "$DALORADIUS_CONF_PATH"
+    if ! grep -Eq "^[[:space:]]*\\\$configValues\\['${key}'\\][[:space:]]*=" "$DALORADIUS_CONF_PATH"; then
+        echo "Missing required configuration key: $key"
+        exit 1
+    fi
+
+    php_value=$(php_escape "$2")
+    replacement=$(escape_sed_replacement "$php_value")
+    sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = '$replacement';|" "$DALORADIUS_CONF_PATH"
+    expected="\$configValues['$key'] = '$php_value';"
+    if ! grep -Fq -- "$expected" "$DALORADIUS_CONF_PATH"; then
+        echo "Failed to update required configuration key: $key"
+        exit 1
     fi
 }
 
-function ensure_status_configuration {
-    php_config_set "CONFIG_STATUS_SERVER" "$DALORADIUS_STATUS_SERVER"
-    php_config_set "CONFIG_STATUS_PORT" "$DALORADIUS_STATUS_PORT"
-    php_config_set "CONFIG_STATUS_SECRET" "$DALORADIUS_STATUS_SECRET"
+function configure_status {
+    local secret="$DALORADIUS_STATUS_SECRET"
+    local runtime_secret_file=/run/daloradius-status-secret
+    local status_tmp
+    local mode
+    local server
+    local port
+    local secret_file_value=""
+    local old_umask
+
+    if [ -n "$DALORADIUS_STATUS_SECRET_FILE" ]; then
+        if ! test -r "$DALORADIUS_STATUS_SECRET_FILE"; then
+            echo "Status secret file is not readable: $DALORADIUS_STATUS_SECRET_FILE"
+            exit 1
+        fi
+        secret=$(<"$DALORADIUS_STATUS_SECRET_FILE")
+    fi
+
+    if [ -n "$secret" ]; then
+        if [ "${#secret}" -lt 16 ] || [[ "$secret" == CHANGE_ME_* ]] ||
+           [[ "$secret" == *[!A-Za-z0-9_+=./-]* ]]; then
+            echo "The daloRADIUS status secret must be a random base64/hex value of at least 16 characters."
+            exit 1
+        fi
+        old_umask=$(umask)
+        umask 077
+        printf '%s' "$secret" > "$runtime_secret_file"
+        umask "$old_umask"
+        chown root:www-data "$runtime_secret_file"
+        chmod 0640 "$runtime_secret_file"
+        secret_file_value="$runtime_secret_file"
+    else
+        rm -f "$runtime_secret_file"
+    fi
+
+    case "$DALORADIUS_STATUS_MODE" in
+        auto|local|network|disabled) ;;
+        *)
+            echo "DALORADIUS_STATUS_MODE must be auto, local, network, or disabled."
+            exit 1
+            ;;
+    esac
+    case "$DALORADIUS_STATUS_PORT" in
+        ''|*[!0-9]*)
+            echo "DALORADIUS_STATUS_PORT must be numeric."
+            exit 1
+            ;;
+    esac
+    if [ "$DALORADIUS_STATUS_PORT" -lt 1 ] || [ "$DALORADIUS_STATUS_PORT" -gt 65535 ]; then
+        echo "DALORADIUS_STATUS_PORT must be between 1 and 65535."
+        exit 1
+    fi
+
+    mode=$(php_escape "$DALORADIUS_STATUS_MODE")
+    server=$(php_escape "$DALORADIUS_STATUS_SERVER")
+    port=$(php_escape "$DALORADIUS_STATUS_PORT")
+    secret_file_value=$(php_escape "$secret_file_value")
+    status_tmp=$(mktemp "${DALORADIUS_STATUS_CONF_PATH}.XXXXXX")
+    chmod 0600 "$status_tmp"
+    {
+        printf '%s\n' '<?php'
+        printf "\$configValues['CONFIG_STATUS_MODE'] = '%s';\n" "$mode"
+        printf "\$configValues['CONFIG_STATUS_SERVER'] = '%s';\n" "$server"
+        printf "\$configValues['CONFIG_STATUS_PORT'] = '%s';\n" "$port"
+        printf "\$configValues['CONFIG_STATUS_SECRET'] = '';\n"
+        printf "\$configValues['CONFIG_STATUS_SECRET_FILE'] = '%s';\n" "$secret_file_value"
+    } > "$status_tmp"
+    php -l "$status_tmp" >/dev/null
+    chown www-data:www-data "$status_tmp"
+    mv -f "$status_tmp" "$DALORADIUS_STATUS_CONF_PATH"
 }
 
 function init_daloradius {
@@ -230,9 +306,10 @@ else
     date > "$INIT_LOCK"
 fi
 
-# Keep the dedicated service-status credentials synchronized on upgrades and
-# existing containers without rerunning the full application initialization.
-ensure_status_configuration
+# Keep generated service-status settings separate from the potentially custom
+# main PHP configuration. This is safe for upgrades even when that file ends
+# with a closing PHP tag.
+configure_status
 
 wait_for_mysql
 
