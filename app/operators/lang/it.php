@@ -28,6 +28,11 @@ if (strpos($_SERVER['PHP_SELF'], '/lang/it.php') !== false) {
     exit;
 }
 
+
+/* **********************************************************************************
+ * General strings
+ ***********************************************************************************/
+
 $l['all']['daloRADIUS'] = sprintf("daloRADIUS %s", $configValues['DALORADIUS_VERSION']);
 $l['all']['daloRADIUSVersion'] = sprintf("version %s ", $configValues['DALORADIUS_VERSION']);
 $l['all']['copyright1'] = 'Rapporti, Fatturazione e Gestione RADIUS by <a target="_blank" href="https://github.com/lirantal/daloradius">Liran Tal</a>';
@@ -44,9 +49,7 @@ $l['all']['CallingStationID'] = "IDStazioneChiamata";
 $l['all']['ExpiryTime'] = "Tempo di scadenza";
 $l['all']['PoolKey'] = "Chiave Pool";
 
-/********************************************************************************/
-/* Vendor Attributes related translation                                        */
-/********************************************************************************/
+// Vendor Attributes related translation
 $l['all']['VendorID'] = "ID Venditore";
 $l['all']['VendorName'] = "Nome Venditore";
 $l['all']['VendorAttribute'] = "Attributo Venditore";
@@ -54,7 +57,6 @@ $l['all']['RecommendedOP'] = "OP Raccomandato";
 $l['all']['RecommendedTable'] = "Tabella Raccomandata";
 $l['all']['RecommendedTooltip'] = "Consiglio Raccomandato";
 $l['all']['RecommendedHelper'] = "Helper Raccomandato";
-/********************************************************************************/
 
 $l['all']['Compare'] = "Confronta";
 
@@ -225,11 +227,16 @@ $l['all']['BusinessContactPerson'] = "Contatto Lavoro";
 
 $l['all']['DBPasswordEncryption'] = "Tipo di criptazione Password DB";
 
+/* **********************************************************************************
+ * Login page text
+ ***********************************************************************************/
+
+$l['text']['LoginRequired'] = "Effettuare il login";
+$l['text']['LoginPlease'] = "Login";
 
 /* **********************************************************************************
- * Tooltips
- * Helper information such as tooltip text for mouseover events and popup tooltips
- ************************************************************************************/
+ * Tooltips and form-field hints
+ ***********************************************************************************/
 
 $l['Tooltip']['EditIPPool'] = "Modifica IP-Pool";
 $l['Tooltip']['RemoveIPPool'] = "Cancella IP-Pool";
@@ -259,7 +266,6 @@ $l['Tooltip']['realmNostripTooltip'] = "Se togliere o no il suffisso realm";
 $l['Tooltip']['realmHintsTooltip'] = "";
 $l['Tooltip']['realmNotrealmTooltip'] = "";
 
-
 $l['Tooltip']['vendorNameTooltip'] = "Esempio: Cisco<br/>" . "Il nome del Fornitore.";
 $l['Tooltip']['typeTooltip'] = "Esempio: string<br/>" . "Il tipo variabile attributi (string, integer, date, ipaddr).";
 $l['Tooltip']['attributeTooltip'] = "Esempio: Framed-IPAddress<br/>" . "Il nome esatto dell'attributo.";
@@ -269,10 +275,7 @@ $l['Tooltip']['RecommendedTableTooltip'] = "Esempio: check<br/>" . "La tabella o
 $l['Tooltip']['RecommendedTooltipTooltip'] = "Esempio: L'indirizzo IP per l'utente";
 $l['Tooltip']['RecommendedHelperTooltip'] = "La funzione di aiuto che sarà disponibile quando si aggiungerà questo attributo";
 
-
-
 $l['Tooltip']['AttributeEdit'] = "Modifica Attributo";
-
 
 $l['Tooltip']['UserEdit'] = "Modifica Utente";
 $l['Tooltip']['HotspotEdit'] = "Modifica Hotspot";
@@ -296,7 +299,6 @@ $l['FormField']['mngradgroupreplydel.php']['ToolTip']['Value'] = "Se specifichi 
 $l['FormField']['mngradnasnew.php']['ToolTip']['NasShortname'] = "(nome decrittivo)";
 
 $l['FormField']['mngradusergroupdel.php']['ToolTip']['Groupname'] = "Se specifichi un gruppo allora solo il singolo record che corrisponde contemporaneamente all'username e al grupppo verrà rimosso.Se ometti il ggruppo allora tutti i record di questo utente verranno rimossi.!";
-
 
 $l['Tooltip']['usernameTooltip'] = "Il nome utente esatto<br/>&nbsp;&nbsp;&nbsp;
                     così come l'utente userà connettersi al sistema";
@@ -326,7 +328,6 @@ $l['Tooltip']['lengthOfPasswordTooltip'] = "Esempio: 8<br/>&nbsp;&nbsp;&nbsp;
                     La lunghezza di caratteri delle password<br/>&nbsp;&nbsp;&nbsp;
                     da creare. Si raccomandano 8-12 caratteri.";
 
-
 $l['Tooltip']['hotspotNameTooltip'] = "Esempio: Hotel Stratocaster<br/>&nbsp;&nbsp;&nbsp;
                     un nome comprensibile dell'hotspot<br/>";
 
@@ -337,15 +338,10 @@ $l['Tooltip']['geocodeTooltip'] = "Esempio: -1.002,-2.201<br/>&nbsp;&nbsp;&nbsp;
                     Questo è il codice del luogo GoogleMaps utilizzato<br/>&nbsp;&nbsp;&nbsp;
                     per segnalare l'HotSpot/NAS sulla mappa (guardare GIS).";
 
-
-/* ********************************************************************************** */
-
-
-
-
 /* **********************************************************************************
- * Links and Buttons
- ************************************************************************************/
+ * Links and buttons
+ ***********************************************************************************/
+
 $l['button']['ClearSessions'] = "Pulisci Sessioni";
 
 $l['button']['ListRealms'] = "Mostra Realms";
@@ -363,7 +359,6 @@ $l['button']['NewVendorAttribute'] = "Nuovo Attributo Fornitore";
 $l['button']['EditVendorAttribute'] = "Modifica Attributo Fornitore";
 $l['button']['SearchVendorAttribute'] = "Cerca Attributo";
 $l['button']['RemoveVendorAttribute'] = "Cancella Attributo Fornitore";
-
 
 $l['button']['BetweenDates'] = "Tra le Date:";
 $l['button']['Where'] = "Dove";
@@ -464,16 +459,18 @@ $l['button']['EditOperator'] = "Modifica Operatore";
 $l['button']['RemoveOperator'] = "Cancella Operatore";
 
 $l['button']['ProcessQuery'] = "Elabora Query";
-
-
-
-/* ********************************************************************************** */
-
+$l['button']['BusinessInformation'] = "Informazioni Commerciali";
 
 /* **********************************************************************************
- * Titles
- * The text related to all the title headers in captions,tables and tabbed layout text
- ************************************************************************************/
+ * Form action buttons
+ ***********************************************************************************/
+
+$l['buttons']['savesettings'] = "Salva Impostazioni";
+$l['buttons']['apply'] = "Applica";
+
+/* **********************************************************************************
+ * Titles (fieldsets, tables, tabs)
+ ***********************************************************************************/
 
 $l['title']['IPPoolInfo'] = "Info IP-Pool";
 
@@ -521,25 +518,63 @@ $l['title']['AdvancedSettings'] = "Impostazioni Avanzate";
 $l['title']['Advanced'] = "Avanzate";
 $l['title']['Optional'] = "Opzionale";
 
-/* ********************************************************************************** */
+/* **********************************************************************************
+ * Captions
+ ***********************************************************************************/
 
+$l['captions']['providebillratetodel'] = "Fornisce il tipo di tariffa che potresti voler rimuovere";
+$l['captions']['detailsofnewrate'] = "E' possibile riempire di sotto i dettagli per la nuova tariffa";
+$l['captions']['filldetailsofnewrate'] = "Riempire sotto i dettagli per la nuova tariffa";
 
 /* **********************************************************************************
- * Text
- * General text information that is used through-out the pages
- ************************************************************************************/
+ * Top navigation
+ ***********************************************************************************/
 
-$l['text']['LoginRequired'] = "Effettuare il login";
-$l['text']['LoginPlease'] = "Login";
-
-/* ********************************************************************************** */
-
-
+$l['menu']['Home'] = "Home";
+$l['menu']['Managment'] = "Gestione";
+$l['menu']['Reports'] = "Rapporti";
+$l['menu']['Accounting'] = "Contabilità";
+$l['menu']['Billing'] = "Fatture";
+$l['menu']['Gis'] = "GIS";
+$l['menu']['Graphs'] = "Grafici";
+$l['menu']['Config'] = "Config";
+$l['menu']['Help'] = "Aiuto";
 
 /* **********************************************************************************
- * Contact Info
- * Related to all contact info text, user info, hotspot owner contact information etc
- ************************************************************************************/
+ * Sub navigation
+ ***********************************************************************************/
+
+$l['submenu']['General'] = "Generale";
+$l['submenu']['Reporting'] = "Reporting";
+$l['submenu']['Maintenance'] = "Maintenance";
+$l['submenu']['Operators'] = "Operatori";
+$l['submenu']['Backup'] = "Backup";
+$l['submenu']['Logs'] = "Logs";
+$l['submenu']['Status'] = "Status";
+$l['submenu']['Batch Users'] = "Batch Users";
+$l['submenu']['Dashboard'] = "Dashboard";
+$l['submenu']['Users'] = "Utenti";
+$l['submenu']['Hotspots'] = "Hotspots";
+$l['submenu']['Nas'] = "Nas";
+$l['submenu']['User-Groups'] = "User-Groups";
+$l['submenu']['Profiles'] = "Profili";
+$l['submenu']['HuntGroups'] = "HuntGroups";
+$l['submenu']['Attributes'] = "Attributi";
+$l['submenu']['Realm/Proxy'] = "Realm/Proxy";
+$l['submenu']['IP-Pool'] = "IP-Pool";
+$l['submenu']['POS'] = "POS";
+$l['submenu']['Plans'] = "Piani";
+$l['submenu']['Rates'] = "Rates";
+$l['submenu']['Merchant-Transactions'] = "Merchant-Transactions";
+$l['submenu']['Billing-History'] = "Billing-History";
+$l['submenu']['Invoices'] = "Invoices";
+$l['submenu']['Payments'] = "Payments";
+$l['submenu']['Custom'] = "Custom";
+$l['submenu']['Hotspot'] = "Hotspot";
+
+/* **********************************************************************************
+ * Contact info
+ ***********************************************************************************/
 
 $l['ContactInfo']['FirstName'] = "Nome";
 $l['ContactInfo']['LastName'] = "Cognome";
@@ -564,9 +599,50 @@ $l['ContactInfo']['CompanyPhone'] = "Telefono Azienda";
 $l['ContactInfo']['CompanyEmail'] = "Email Azienda";
 $l['ContactInfo']['CompanyContact'] = "Contatto Azienda";
 
-/* ********************************************************************************** */
+/* **********************************************************************************
+ * Messages and alerts
+ ***********************************************************************************/
 
+$l['messages']['noCheckAttributesForUser'] = "Non ci sono attributi di verifica (check) associati con questo utente";
+$l['messages']['noReplyAttributesForUser'] = "Non ci sono attributi di risposta (reply) associati con questo utente";
 
+$l['messages']['noCheckAttributesForGroup'] = "Non ci sono attributi di verifica (check) associati con questo gruppo";
+$l['messages']['noReplyAttributesForGroup'] = "Non ci sono attributi di risposta (reply) associati con questo gruppo ";
+
+$l['messages']['nogroupdefinedforuser'] = "Non ci sono gruppi associati con questo utente";
+$l['messages']['wouldyouliketocreategroup'] = "Si desidera crearne uno?";
+
+$l['messages']['missingratetype'] = "errore: tipo tariffa da cancellare non trovato";
+$l['messages']['missingtype'] = "errore: tipo non trovato";
+$l['messages']['missingcardbank'] = "errore: cardbank non trovata";
+$l['messages']['missingrate'] = "errore: tariffa non trovata";
+$l['messages']['success'] = "successo";
+$l['messages']['gisedit1'] = "Benvenuto, sei in modalità di Modifica";
+$l['messages']['gisedit2'] = "Cancellare il marcatore corrente dalla mappa del database?";
+$l['messages']['gisedit3'] = "Inserire il nome dell'HotSpot";
+$l['messages']['gisedit4'] = "Aggiungere il marcatore corrente al database?";
+$l['messages']['gisedit5'] = "Inserire il nome dell'Hotspot";
+$l['messages']['gisedit6'] = "Inserire l'indirizzo MAC dell'Hotspot";
+
+$l['messages']['gismain1'] = "Codice di registrazione GoogleMaps aggiornato correttamente";
+$l['messages']['gismain2'] = "errore: non si pu&oacute aprire il file in scrittura:";
+$l['messages']['gismain3'] = "Verificare i permessi sui file. Il file dovrebbe essere scrivibile dall'utente/gruppo del webserver";
+$l['messages']['gisviewwelcome'] = "Benvenuto nelle mappe visuali Enginx";
+
+$l['messages']['loginerror'] = <<<EOF
+<h5>Impossibile accedere.</h5>
+<p>Di solito questo accade per uno dei seguenti motivi:
+    <ul>
+        <li>username e/o password errati;</li>
+        <li>un amministratore è già loggato<br>(è consentita solo un'istanza per volta);</li>
+        <li>sembra che ci sia più di un utente 'administrator' nel database.</li>
+    </ul>
+</p>
+EOF;
+
+/* **********************************************************************************
+ * Help-page headers
+ ***********************************************************************************/
 
 $l['Intro']['msgerrorpermissions.php'] = "Errore";
 
@@ -588,7 +664,6 @@ $l['Intro']['mngradattributesnew.php'] = "Nuovo Attributo Fornitore";
 $l['Intro']['mngradattributesedit.php'] = "Modifica Attributi Fornitore";
 $l['Intro']['mngradattributessearch.php'] = "Cerca Attributi";
 $l['Intro']['mngradattributesdel.php'] = "Cancella Attributi Fornitore";
-
 
 $l['Intro']['acctactive.php'] = "Accounting Record Attivi";
 $l['Intro']['acctall.php'] = "Accounting di Tutti gli Utenti";
@@ -706,7 +781,6 @@ $l['Intro']['configbusinessinfo.php'] = "Informazioni Commerciali";
 $l['Intro']['configbackup.php'] = "Backup";
 $l['Intro']['configbackupbackup.php'] = "Backup";
 $l['Intro']['configmaintdisconnectuser.php'] = "Disconnetti Utente";
-$l['button']['BusinessInformation'] = "Informazioni Commerciali";
 
 $l['Intro']['configoperators.php'] = "Configurazione Operatori";
 $l['Intro']['configoperatorsdel.php'] = "Cancella Operatore";
@@ -716,17 +790,9 @@ $l['Intro']['configoperatorslist.php'] = "Mostra Operatori";
 
 $l['Intro']['login.php'] = "Login";
 
-$l['captions']['providebillratetodel'] = "Fornisce il tipo di tariffa che potresti voler rimuovere";
-$l['captions']['detailsofnewrate'] = "E' possibile riempire di sotto i dettagli per la nuova tariffa";
-$l['captions']['filldetailsofnewrate'] = "Riempire sotto i dettagli per la nuova tariffa";
-
 /* **********************************************************************************
- * Help Pages Info
- * Each page has a header which is the Intro class, when clicking on the header
- * it will reveal/hide a helpPage div content which is a description of a specific
- * page, basically your expanded tool-tip.
- ************************************************************************************/
-
+ * Help-page content
+ ***********************************************************************************/
 
 $l['helpPage']['login'] = "";
 
@@ -759,7 +825,6 @@ $l['helpPage']['mngradusergrouplist'] = "";
 $l['helpPage']['mngradusergrouplistuser'] = "";
 $l['helpPage']['mngradusergroupedit'] = "";
 
-
 $l['helpPage']['mngradprofiles'] = "
 <b>Gestione Profili</b> - Gestisce i Profili Utente componendo un insieme di Attributi Risposta e Attributi Verifica<br/>
 I Profili possono essere pensati come ta composizione di Gruppi Risposta e Gruppi Verifica. <br/>
@@ -789,7 +854,6 @@ $l['helpPage']['mngradgroups'] = "
 <h200><b>Modifica Gruppo Risposta/Verifica</b></h200> - Modifica una Mappa di un Gruppo Risposta/Verifica<br/>
 <h200><b>Cancella Gruppo Risposta/Verifica</b></h200> - Cancella una Mappa di un Gruppo Risposta/Verifica<br/>
 ";
-
 
 $l['helpPage']['mngradgroupchecknew'] = "
 <h200><b>Nuovo Gruppo Verifica</b></h200> - Aggiunge una Mappa Group-Check<br/>
@@ -828,7 +892,6 @@ Per usare un carattere jolly è possibile scrivere il carattere % che è familia
 per ragioni di convenienza e daloRADIUS lo tradurrà in %
 ";
 
-
 $l['helpPage']['mngradippool'] = "
 <h200><b>Mostra Pool IP </b></h200> - Mostra i Pools IP Configurati e gli Indirizzi IP Assegnati<br/>
 <h200><b>Nuovo Pool IP </b></h200> - Aggiungi un nuovo indirizzo IP ad un Pool IP già configurato<br/>
@@ -840,14 +903,11 @@ $l['helpPage']['mngradippoolnew'] = "<h200><b>Nuovo Pool IP</b></h200> - Aggiung
 $l['helpPage']['mngradippooledit'] = "<h200><b>Modifica Pool IP</b></h200> - Modifica un Indirizzo IP per un Pool IP già configurato<br/>";
 $l['helpPage']['mngradippooldel'] = "<h200><b>Cancella Pool IP</b></h200> - Cancella un Indirizzo IP per un Pool IP configurato<br/>";
 
-
 $l['helpPage']['mngradnas'] = "";
 $l['helpPage']['mngradnasdel'] = "Per cancellare una voce nas ip/host dal database si deve fornire l'ip/host dell'account";
 $l['helpPage']['mngradnasnew'] = "";
 $l['helpPage']['mngradnaslist'] = "";
 $l['helpPage']['mngradnasedit'] = "";
-
-
 
 $l['helpPage']['mnghsdel'] = "Per cancellare unn hotspot dal database si deve fornire il nome dell'hotspot<br/>";
 $l['helpPage']['mnghsedit'] = "Si possono modificare sotto i dettagli per l'hotspot<br/>";
@@ -937,7 +997,6 @@ $l['helpPage']['configoperators'] = "Configurazione Operatori";
 $l['helpPage']['configbackup'] = "Esegui Backup";
 $l['helpPage']['configbackupbackup'] = "Esegui Backup";
 
-
 $l['helpPage']['graphmain'] = "
 <b>Grafici</b><br/>
 <h200><b>Riassunto Login/Hits</b></h200> - Disegna un grafico dell'utilizzo per un utente specifico per un periodo dato.
@@ -995,7 +1054,6 @@ $l['helpPage']['reponline'] = "
 La seguente tabella mostra gli utenti che sono connessi in questo momento al sistema. E' possibile che ci siano connessioni stantie (stale connections),
 che vuol dire che gli utenti si sono disconnessi ma il NAS non ha mandato o non è stato in grado di mandare un pacchetto di disconnessione (STOP accounting packet) al server RADIUS.
 ";
-
 
 $l['helpPage']['mnglistall'] = "Mostra utenti nel database";
 $l['helpPage']['mngsearch'] = "Cerca utente: ";
@@ -1064,6 +1122,7 @@ $l['helpPage']['acctusername'] = "
     Fornisce informazioni complete per tutte le sessioni nel database per un particolare utente.
 <br/>
 ";
+
 // accounting hotspot section
 $l['helpPage']['accthotspotaccounting'] = "
     Fornisce informazioni per tutte le sessioni che sono state avviate da uno specifico hotspot.
@@ -1096,6 +1155,7 @@ $l['helpPage']['accthotspot'] = "
     Fornisce un grafico dei differenti confronti possibili.
 <br/>
 ";
+
 // accounting custom queries section
 $l['helpPage']['acctcustom'] = "
 <h200><b>Custom</b></h200> -
@@ -1126,8 +1186,6 @@ $l['helpPage']['acctmaintenance'] = "
 ";
 $l['helpPage']['acctmaintenancecleanup'] = "";
 $l['helpPage']['acctmaintenancedelete'] = "";
-
-
 
 $l['helpPage']['giseditmap'] = "
     Modifica Modalità Mappa - in questa modalità si può Aggiungere o Cancellare Hotspots semplicemente cliccando
@@ -1161,87 +1219,3 @@ che può essere ottenuto dalla pagina API di Google Maps fornendo l'indirizzo co
 dall'applicazione daloRADIUS sul server. Una volta ottenuto il codice da Google, si deve incollarlo nel campo di Registrazione (Registration box) e cliccare il bottone 'Register code' per salvarlo.
 A questo punto dovresti essere in grado di utilizzare i servizi di Google Maps. <br/><br/>";
 
-/* ********************************************************************************** */
-
-
-
-$l['messages']['noCheckAttributesForUser'] = "Non ci sono attributi di verifica (check) associati con questo utente";
-$l['messages']['noReplyAttributesForUser'] = "Non ci sono attributi di risposta (reply) associati con questo utente";
-
-$l['messages']['noCheckAttributesForGroup'] = "Non ci sono attributi di verifica (check) associati con questo gruppo";
-$l['messages']['noReplyAttributesForGroup'] = "Non ci sono attributi di risposta (reply) associati con questo gruppo ";
-
-$l['messages']['nogroupdefinedforuser'] = "Non ci sono gruppi associati con questo utente";
-$l['messages']['wouldyouliketocreategroup'] = "Si desidera crearne uno?";
-
-
-$l['messages']['missingratetype'] = "errore: tipo tariffa da cancellare non trovato";
-$l['messages']['missingtype'] = "errore: tipo non trovato";
-$l['messages']['missingcardbank'] = "errore: cardbank non trovata";
-$l['messages']['missingrate'] = "errore: tariffa non trovata";
-$l['messages']['success'] = "successo";
-$l['messages']['gisedit1'] = "Benvenuto, sei in modalità di Modifica";
-$l['messages']['gisedit2'] = "Cancellare il marcatore corrente dalla mappa del database?";
-$l['messages']['gisedit3'] = "Inserire il nome dell'HotSpot";
-$l['messages']['gisedit4'] = "Aggiungere il marcatore corrente al database?";
-$l['messages']['gisedit5'] = "Inserire il nome dell'Hotspot";
-$l['messages']['gisedit6'] = "Inserire l'indirizzo MAC dell'Hotspot";
-
-$l['messages']['gismain1'] = "Codice di registrazione GoogleMaps aggiornato correttamente";
-$l['messages']['gismain2'] = "errore: non si pu&oacute aprire il file in scrittura:";
-$l['messages']['gismain3'] = "Verificare i permessi sui file. Il file dovrebbe essere scrivibile dall'utente/gruppo del webserver";
-$l['messages']['gisviewwelcome'] = "Benvenuto nelle mappe visuali Enginx";
-
-$l['messages']['loginerror'] = <<<EOF
-<h5>Impossibile accedere.</h5>
-<p>Di solito questo accade per uno dei seguenti motivi:
-    <ul>
-        <li>username e/o password errati;</li>
-        <li>un amministratore è già loggato<br>(è consentita solo un'istanza per volta);</li>
-        <li>sembra che ci sia più di un utente 'administrator' nel database.</li>
-    </ul>
-</p>
-EOF;
-
-$l['buttons']['savesettings'] = "Salva Impostazioni";
-$l['buttons']['apply'] = "Applica";
-
-$l['menu']['Home'] = "Home";
-$l['menu']['Managment'] = "Gestione";
-$l['menu']['Reports'] = "Rapporti";
-$l['menu']['Accounting'] = "Contabilità";
-$l['menu']['Billing'] = "Fatture";
-$l['menu']['Gis'] = "GIS";
-$l['menu']['Graphs'] = "Grafici";
-$l['menu']['Config'] = "Config";
-$l['menu']['Help'] = "Aiuto";
-
-$l['submenu']['General'] = "Generale";
-$l['submenu']['Reporting'] = "Reporting";
-$l['submenu']['Maintenance'] = "Maintenance";
-$l['submenu']['Operators'] = "Operatori";
-$l['submenu']['Backup'] = "Backup";
-$l['submenu']['Logs'] = "Logs";
-$l['submenu']['Status'] = "Status";
-$l['submenu']['Batch Users'] = "Batch Users";
-$l['submenu']['Dashboard'] = "Dashboard";
-$l['submenu']['Users'] = "Utenti";
-$l['submenu']['Hotspots'] = "Hotspots";
-$l['submenu']['Nas'] = "Nas";
-$l['submenu']['User-Groups'] = "User-Groups";
-$l['submenu']['Profiles'] = "Profili";
-$l['submenu']['HuntGroups'] = "HuntGroups";
-$l['submenu']['Attributes'] = "Attributi";
-$l['submenu']['Realm/Proxy'] = "Realm/Proxy";
-$l['submenu']['IP-Pool'] = "IP-Pool";
-$l['submenu']['POS'] = "POS";
-$l['submenu']['Plans'] = "Piani";
-$l['submenu']['Rates'] = "Rates";
-$l['submenu']['Merchant-Transactions'] = "Merchant-Transactions";
-$l['submenu']['Billing-History'] = "Billing-History";
-$l['submenu']['Invoices'] = "Invoices";
-$l['submenu']['Payments'] = "Payments";
-$l['submenu']['Custom'] = "Custom";
-$l['submenu']['Hotspot'] = "Hotspot";
-
-?>
