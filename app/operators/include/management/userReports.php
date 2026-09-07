@@ -384,9 +384,9 @@ function userPlanInformation($username, $drawTable) {
     $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
 
     $data2 = array(
-                    "planName" => array( "Label" => "Plan Name", "Value" => "(n/a)", ),
-                    "planRecurringPeriod" => array( "Label" => "Plan Recurring Period", "Value" => "(n/a)", ),
-                    "planTimeType" => array( "Label" => "Plan Time Type", "Value" => "(n/a)", ),
+                    "planName" => array( "Label" => t('all','PlanName'), "Value" => "(n/a)", ),
+                    "planRecurringPeriod" => array( "Label" => t('all','PlanRecurringPeriod'), "Value" => "(n/a)", ),
+                    "planTimeType" => array( "Label" => t('all','PlanTimeType'), "Value" => "(n/a)", ),
                     "planBandwidthDown" => array( "Label" => "Plan Bandwidth Download", "Value" => "(n/a)", ),
                     "planBandwidthUp" => array( "Label" => "Plan Bandwidth Upload", "Value" => "(n/a)", ),
                  );
@@ -421,7 +421,7 @@ function userPlanInformation($username, $drawTable) {
     $trafficUpDiff = ($planTrafficUp != 0) ? ($planTrafficUp - $totalTrafficUp) : 0;
 
 
-    $table_header = array( "Item", "Allowed by plan", "Used", "Remainning", );
+    $table_header = array( t('all','Item'), "Allowed by plan", t('all','Used'), "Remainning", );
 
     $table_body = array(
                             array( "Session Time", time2str($planTimeBank), time2str($totalTimeUsed), time2str($timeDiff), ),
