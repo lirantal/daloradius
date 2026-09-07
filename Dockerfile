@@ -40,7 +40,6 @@ RUN apt-get update \
   php-mbstring \
   php-db \
   php-mysql \
-  php-zip \
   mariadb-client \
   && rm -rf /var/lib/apt/lists/*
 

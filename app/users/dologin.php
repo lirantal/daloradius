@@ -68,6 +68,7 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dal
 
     // we only accept ONE AND ONLY ONE RECORD as result
     if ($numrows === 1) {
+        session_regenerate_id(true);
         $_SESSION['logged_in'] = true;
         $_SESSION['login_user'] = $login_user;
     }

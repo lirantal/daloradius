@@ -204,9 +204,6 @@
     $extra_css = array();
     
     $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/dynamic_attributes.js",
-        "static/js/ajaxGeneric.js",
     );
 
     $title = t('Intro','billplansedit.php');

@@ -87,8 +87,8 @@
     $extra_js = array(
         "static/js/chart.umd.min.js",
         "static/js/daloradius-charts.js",
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
+        "static/js/request.js",
+        "static/js/readonly_info.js",
     );
 
     $title = t('Intro','reponline.php');
@@ -268,7 +268,7 @@
 
             $ajax_id = "divContainerUserInfo_" . $count;
             $param = sprintf('username=%s', urlencode($this_username));
-            $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
+            $onclick = "daloInfo.user('$ajax_id','$param')";
             $tooltip2 = array(
                                 'subject' => $this_username,
                                 'onclick' => $onclick,

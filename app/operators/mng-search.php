@@ -61,8 +61,8 @@
 
     // print HTML prologue
     $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
+        "static/js/request.js",
+        "static/js/readonly_info.js",
         "static/js/pages_common.js"
     );
 
@@ -370,7 +370,7 @@
 
             $ajax_id = "divContainerUserInfo_" . $count;
             $param = sprintf('username=%s', urlencode($username));
-            $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
+            $onclick = "daloInfo.user('$ajax_id','$param')";
 
             // create username tooltip
             $tooltip1 = array(

@@ -65,8 +65,8 @@
 
     // print HTML prologue
     $extra_js = array(
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js"
+        "static/js/request.js",
+        "static/js/readonly_info.js"
     );
     
     $title = t('Intro','mngradattributeslist.php');
@@ -163,7 +163,7 @@
             // define tooltip
             $ajax_id = "divContainerAttributeInfo_" . $count;
             $param = sprintf('attribute=%s', urlencode($this_attribute));
-            $onclick = "ajaxGeneric('library/ajax/vendor_attribute_info.php','retAttributeInfo','$ajax_id','$param')";
+            $onclick = "daloInfo.attribute('$ajax_id','$param')";
             $tooltip = array(
                                 'subject' => $this_id,
                                 'onclick' => $onclick,

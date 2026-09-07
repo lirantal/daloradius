@@ -59,10 +59,16 @@ if (strpos($_SERVER['PHP_SELF'], '/common/includes/db_open.php') !== false) {
     $dbSocket = DB::connect($dbConnectString);
 
     if (DB::isError($dbSocket)) {
+        if (isset($db_error_handler) && is_callable($db_error_handler)) {
+            call_user_func($db_error_handler, $dbSocket);
+        }
         die(sprintf("<b>Database connection error</b><br/><b>Error Message</b>: %s<br/>", $dbSocket->getMessage()));
     }
 
     include_once(dirname(__FILE__) . '/db_error_handler.php');      // we declare the errorHandler() function in errorHandling.php
 
-    $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');   // setting errorHandler function for the dbSocket obj
+    $error_handler = (isset($db_error_handler) && is_callable($db_error_handler))
+                   ? $db_error_handler
+                   : 'errorHandler';
+    $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, $error_handler);   // setting errorHandler function for the dbSocket obj
     $dbSocket->query("SET SESSION sql_mode = '';");

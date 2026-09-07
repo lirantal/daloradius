@@ -347,39 +347,8 @@ function removeCheckbox(formName,pageDst) {
  * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
-function disableCheckbox(formName,pageDst) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
-    var values = "";
-
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox' && e.checked) {
-            values += "username[]=" + e.value + "&";
-                    ++count;
-        }
-        }
-
-    var strUsernames = values.substr(0,values.length-1);
-
-
-    // if no items were checked there's no reason to submit the form
-    if (count == 0) {
-        alert("No items selected");
-        return;
-    }
-
-
-        if (confirm("You are about to disable " + count + " users\nDo you want to continue?"))  {
-
-        ajaxGeneric("library/ajax/user_actions.php","userDisable","returnMessages",strUsernames);
-
-        return true;
-
-        }
-
-        return false;
+function disableCheckbox(formName, pageDst) {
+    return userActionSelection(formName, "userDisable", "disable");
 }
 
 
@@ -391,32 +360,8 @@ function disableCheckbox(formName,pageDst) {
  * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
-function mailCheckbox(formName,pageDst) {
-
-    var count = 0;
-    var form = document.getElementsByTagName('input');
-    var values = "";
-
-    for (var i=0; i < form.length; ++i) {
-        var e = form[i];
-        if (e.type == 'checkbox' && e.checked) {
-            values += "username[]=" + e.value + "&";
-            ++count;
-        }
-    }
-
-    var strUsernames = values.substr(0,values.length-1);
-
-    // if no items were checked there's no reason to submit the form
-    if (count == 0) {
-        alert("No items selected");
-        return;
-    }
-    if (confirm("You are about to send " + count + " messages\nDo you want to continue?"))  {
-        ajaxGeneric("library/ajax/user_actions.php","userMail","returnMessages",strUsernames);
-        return true;
-    }
-    return false;
+function mailCheckbox(formName, pageDst) {
+    return userActionSelection(formName, "userMail", "send email to");
 }
 
 
@@ -430,39 +375,8 @@ function mailCheckbox(formName,pageDst) {
  * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
-function enableCheckbox(formName,pageDst) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
-    var values = "";
-
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox' && e.checked) {
-            values += "username[]=" + e.value + "&";
-                    ++count;
-        }
-        }
-
-    var strUsernames = values.substr(0,values.length-1);
-
-
-    // if no items were checked there's no reason to submit the form
-    if (count == 0) {
-        alert("No items selected");
-        return;
-    }
-
-
-        if (confirm("You are about to enable " + count + " users\nDo you want to continue?"))  {
-
-        ajaxGeneric("library/ajax/user_actions.php","userEnable","returnMessages",strUsernames);
-
-        return true;
-
-        }
-
-        return false;
+function enableCheckbox(formName, pageDst) {
+    return userActionSelection(formName, "userEnable", "enable");
 }
 
 
@@ -511,39 +425,8 @@ function genericCounter(str) {
  * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
-function refillSessionTimeCheckbox(formName,pageDst) {
-
-        var count = 0;
-        var form = document.getElementsByTagName('input');
-    var values = "";
-
-        for (var i=0; i < form.length; ++i) {
-                var e = form[i];
-                if (e.type == 'checkbox' && e.checked) {
-            values += "username[]=" + e.value + "&";
-                    ++count;
-        }
-        }
-
-    var strUsernames = values.substr(0,values.length-1);
-
-
-    // if no items were checked there's no reason to submit the form
-    if (count == 0) {
-        alert("No items selected");
-        return;
-    }
-
-
-        if (confirm("You are about to refill session time for a total of " + count + " users\nDo you want to continue?\n\nSuch action will also bill the user!"))  {
-
-        ajaxGeneric("library/ajax/user_actions.php","refillSessionTime","returnMessages",strUsernames);
-
-        return true;
-
-        }
-
-        return false;
+function refillSessionTimeCheckbox(formName, pageDst) {
+    return userActionSelection(formName, "refillSessionTime", "refill session time for");
 }
 
 
@@ -563,37 +446,8 @@ function refillSessionTimeCheckbox(formName,pageDst) {
  * pageDst    - the page destination to be submitted
  *
  ***********************************************************************/
-function refillSessionTrafficCheckbox(formName,pageDst) {
-    var count = 0;
-    var form = document.getElementsByTagName('input');
-    var values = "";
-
-    for (var i=0; i < form.length; ++i) {
-        var e = form[i];
-        if (e.type == 'checkbox' && e.checked) {
-            values += "username[]=" + e.value + "&";
-            ++count;
-        }
-    }
-
-    var strUsernames = values.substr(0,values.length-1);
-
-    // if no items were checked there's no reason to submit the form
-    if (count == 0) {
-        alert("No items selected");
-        return;
-    }
-
-    var message = "You are about to refill session traffic fora total of " + count + " users\n"
-                + "Do you want to continue?\n\n"
-                + "Such action will also bill the user!";
-
-    if (confirm(message))  {
-        ajaxGeneric("library/ajax/user_actions.php", "refillSessionTraffic", "returnMessages", strUsernames);
-        return true;
-    }
-
-    return false;
+function refillSessionTrafficCheckbox(formName, pageDst) {
+    return userActionSelection(formName, "refillSessionTraffic", "refill session traffic for");
 }
 
 
@@ -648,4 +502,101 @@ function setupAccordion() {
             panel.style.display = (display) ? "none" : "block";
         });
     }
+}
+
+// A single in-flight action per page prevents duplicate mutations, including
+// activation while the initial disabled-state check is still running.
+var userActionPending = false;
+
+async function userAction(action, usernames, form = null) {
+    const target = document.getElementById('returnMessages');
+    if (!target || userActionPending) return false;
+    const render = (message, level) => {
+        target.replaceChildren();
+        if (!message) return;
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-' + level;
+        alert.setAttribute('role', 'alert');
+        alert.textContent = message;
+        target.appendChild(alert);
+    };
+    if (!usernames.length) {
+        render('No users selected.', 'danger');
+        return false;
+    }
+    const readOnly = action === 'checkDisabled';
+    const parameters = new URLSearchParams({ action });
+    usernames.forEach(username => parameters.append('username[]', username));
+    if (!readOnly) {
+        const token = (form || document).querySelector('input[name="csrf_token"]');
+        if (!token || !token.value) {
+            render('Missing CSRF token. Reload the page before trying again.', 'danger');
+            return false;
+        }
+        parameters.set('csrf_token', token.value);
+    }
+    userActionPending = true;
+    // Include toolbar buttons outside the selection form; preserve disabled state.
+    const buttons = [...document.querySelectorAll('[onclick]')].filter(button =>
+        /(?:disableUser|enableUser|refillSession(?:Time|Traffic)(?:Checkbox)?|disableCheckbox|enableCheckbox|mailCheckbox)\(/.test(button.getAttribute('onclick'))
+    );
+    const states = buttons.map(button => [button, button.disabled]);
+    states.forEach(([button]) => { button.disabled = true; });
+    target.setAttribute('aria-busy', 'true');
+    render('Processing...', 'info');
+    const uncertain = 'The result could not be confirmed. Check the user and billing records before trying again; the action has not been retried.';
+    try {
+        const url = new URL('library/ajax/user_actions.php', document.baseURI);
+        const options = {
+            method: readOnly ? 'GET' : 'POST',
+            credentials: 'same-origin',
+            headers: { Accept: 'application/json' },
+            cache: 'no-store'
+        };
+        if (readOnly) url.search = parameters.toString();
+        else options.body = parameters;
+        // Deliberately no retry, timeout or cancellation of mutations.
+        const response = await fetch(url, options);
+        if (response.redirected || response.status === 401) {
+            throw new Error('Your session has expired. Please sign in again.');
+        }
+        if (response.status === 403) {
+            throw new Error('Permission denied or invalid CSRF token. Reload the page and check your permissions.');
+        }
+        if (!(response.headers.get('Content-Type') || '').toLowerCase().startsWith('application/json')) {
+            throw new Error(uncertain);
+        }
+        const result = await response.json();
+        if (!result || typeof result.success !== 'boolean' || typeof result.message !== 'string'
+                || !['success', 'danger', 'warning', 'info'].includes(result.level)) {
+            throw new Error(uncertain);
+        }
+        render(result.message, response.ok && result.success ? result.level : 'danger');
+        return response.ok && result.success;
+    } catch (error) {
+        render(error.message === uncertain || /^(Your session|Permission denied)/.test(error.message)
+            ? error.message : uncertain, 'danger');
+        return false;
+    } finally {
+        userActionPending = false;
+        states.forEach(([button, disabled]) => { button.disabled = disabled; });
+        target.removeAttribute('aria-busy');
+    }
+}
+
+function userActionSelection(formName, action, verb) {
+    if (userActionPending) return false;
+    const form = document.forms[formName];
+    if (!form) return false;
+    const usernames = [...form.querySelectorAll('input[type="checkbox"][name="username[]"]:checked')]
+        .map(input => input.value);
+    if (!usernames.length) {
+        alert('No items selected');
+        return false;
+    }
+    const billing = action.startsWith('refill') ? '\n\nSuch action will also bill the user!' : '';
+    if (confirm(`You are about to ${verb} ${usernames.length} users\nDo you want to continue?${billing}`)) {
+        userAction(action, usernames, form);
+    }
+    return false;
 }

@@ -72,8 +72,8 @@
     // print HTML prologue
     $extra_js = array(
         "static/js/pages_common.js",
-        "static/js/ajax.js",
-        "static/js/ajaxGeneric.js",
+        "static/js/request.js",
+        "static/js/readonly_info.js",
     );
     
     $title = t('Intro','acctusername.php');
@@ -176,7 +176,7 @@
                 if (hotspots_exists($dbSocket, $hotspot)) {
                     $ajax_id = "divContainerHotspotInfo_" . $count;
                     $param = sprintf('hotspot=%s', urlencode($hotspot));
-                    $onclick = "ajaxGeneric('library/ajax/hotspot_info.php','retHotspotGeneralStat','$ajax_id','$param')";
+                    $onclick = "daloInfo.hotspot('$ajax_id','$param')";
     
                     $tooltip1 = [
                                     'subject' => $hotspot,
@@ -197,7 +197,7 @@
                 if (user_exists($dbSocket, $username)) {
                     $ajax_id = "divContainerUserInfo_" . $count;
                     $param = sprintf('username=%s', urlencode($username));
-                    $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
+                    $onclick = "daloInfo.user('$ajax_id','$param')";
                 
                     $tooltip2 = [
                                     'subject' => $username,

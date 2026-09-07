@@ -54,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         include('../common/includes/db_close.php');
 
         if ($authenticated) {
+            session_regenerate_id(true);
             $_SESSION['daloradius_logged_in'] = true;
             $_SESSION['operator_user'] = $_SESSION['operator_2fa_user'];
             $_SESSION['operator_id'] = intval($_SESSION['operator_2fa_id']);

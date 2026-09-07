@@ -71,6 +71,7 @@ if (isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']) &
         $totp_secret = (array_key_exists('totp_secret', $row) && !empty($row['totp_secret'])) ? $row['totp_secret'] : '';
 
         if ($verified || $legacy_verified) {
+            session_regenerate_id(true);
             $operator_id = intval($row['id']);
 
             if ($legacy_verified || password_needs_rehash($stored_password, PASSWORD_DEFAULT)) {

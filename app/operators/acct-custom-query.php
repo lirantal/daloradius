@@ -97,7 +97,7 @@
     $accounting_custom_value = $where_value_enc;
 
     // print HTML prologue
-    $extra_js = [ "static/js/ajax.js", "static/js/ajaxGeneric.js", ];
+    $extra_js = [ "static/js/request.js", "static/js/readonly_info.js", ];
 
     $title = t('Intro','acctcustomquery.php');
     $help = t('helpPage','acctcustomquery');
@@ -225,7 +225,7 @@
                         if (!empty($row[$field])) {
                             $ajax_id = "divContainerUserInfo_" . $count;
                             $param = sprintf('username=%s', urlencode($row[$field]));
-                            $onclick = "ajaxGeneric('library/ajax/user_info.php','retBandwidthInfo','$ajax_id','$param')";
+                            $onclick = "daloInfo.user('$ajax_id','$param')";
 
                             $value = [
                                         'subject' => $row[$field],
