@@ -599,9 +599,11 @@ $l['Tooltip']['hotspotNameTooltip'] = "Example: Hotel Stratocaster. A user-frien
 $l['Tooltip']['hotspotMacaddressTooltip'] = "Example: 00-aa-bb-cc-dd-ee. The MAC address of the NAS.";
 $l['Tooltip']['geocodeTooltip'] = "Example: -1.002,-2.201. These are the geographic coordinates used to pinpoint the Hotspot/NAS location on the map (see GIS).";
 
-$l['Tooltip']['reassignplanprofiles'] = "If toggled on, when applying user information <br/>
+$l['Tooltip']['reassignplanprofiles'] = <<<EOF
+If toggled on, when applying user information <br/>
                     the Profiles listed in the Profiles tab will be ignored and <br/>
-                    profiles will be re-assigned based on the Plans profile association";
+                    profiles will be re-assigned based on the Plans profile association
+EOF;
 
 /* **********************************************************************************
  * Links and buttons
@@ -1772,8 +1774,10 @@ $l['helpPage']['graphmain'] = '<h1 class="fs-5">Graphs</h1>'
                             . $l['helpPage']['graphsoverallupload'] . $l['helpPage']['graphsoveralllogins']
                             . $l['helpPage']['graphsalltimetrafficcompare'] . $l['helpPage']['graphsloggedusers'];
 
-$l['helpPage']['rephistory'] = "Lists all activity performed on management items and provides information on <br/>
-Creation Date, Creation By as well as Updated Date and Update By history fields";
+$l['helpPage']['rephistory'] = <<<EOF
+Lists all activity performed on management items and provides information on <br/>
+Creation Date, Creation By as well as Updated Date and Update By history fields
+EOF;
 $l['helpPage']['replastconnect'] = "Lists all login attempts to the RADIUS server, both successful and failed logins";
 $l['helpPage']['replogsboot'] = <<<EOF
 The <strong>{$l['Intro']['replogsboot.php']}</strong> allows you to monitor the operating system boot log, which is equivalent to running the <kbd>dmesg</kbd> command.
@@ -1839,11 +1843,15 @@ $l['helpPage']['mngsearch'] = "Searching for user: ";
 $l['helpPage']['mngnew'] = "You may fill below details for new user addition to database<br/>";
 $l['helpPage']['mngedit'] = "Edit the user details below.<br/>";
 $l['helpPage']['mngdel'] = "To remove a user entry from the database you must provide the username of the account<br/>";
-$l['helpPage']['mngbatch'] = "You may fill below details for new user addition to database.<br/>
-Note that these settings will apply for all the users that you are creating.<br/>";
-$l['helpPage']['mngnewquick'] = "The following user/card is of type prepaid.<br/>
+$l['helpPage']['mngbatch'] = <<<EOF
+You may fill below details for new user addition to database.<br/>
+Note that these settings will apply for all the users that you are creating.<br/>
+EOF;
+$l['helpPage']['mngnewquick'] = <<<EOF
+The following user/card is of type prepaid.<br/>
 The amount of time specified in Time Credit will be used as the Session-Timeout and Max-All-Session
-radius attributes";
+radius attributes
+EOF;
 
 // accounting section
 $l['helpPage']['acctusername'] = <<<EOF
@@ -1907,12 +1915,12 @@ $l['helpPage']['acctmain'] = '<h1 class="fs-5">General Accounting</h1>'
 EOF;
 
 // accounting hotspot section
-$l['helpPage']['accthotspotaccounting'] = "
+$l['helpPage']['accthotspotaccounting'] = <<<EOF
     Provides full accounting information for all sessions which originated from this specific Hotspot.
     This list is computed by listing only those records in the radacct table with the CalledStationId
     field which match a Hotspot's MAC Address entry in the Hotspot's management database.
 <br/>
-";
+EOF;
 $l['helpPage']['accthotspotcompare'] = <<<EOF
 <h1 class="fs-5">Hotspot Comparison</h1>
 <h2 class="fs-6">Basic Information</h2>
