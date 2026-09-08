@@ -229,7 +229,6 @@
 
                     // adding billing info
                     $params = array(
-                                        //~ "planName" => $planName,
                                         "contactperson" => $bi_contactperson,
                                         "company" => $bi_company,
                                         "email" => $bi_email,
@@ -258,9 +257,6 @@
                                         "notes" => $bi_notes,
                                         "changeuserbillinfo" => $bi_changeuserbillinfo,
 
-                                        //~ "billstatus" => $bi_billstatus,
-                                        //~ "lastbill" => $bi_lastbill,
-                                        //~ "nextbill" => $bi_nextbill,
                                         "billdue" => $bi_billdue,
                                         "nextinvoicedue" => $bi_nextinvoicedue,
 

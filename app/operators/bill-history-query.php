@@ -58,16 +58,6 @@
                   in_array(strtolower($_GET['orderType']), array("asc", "desc")))
                ? strtolower($_GET['orderType']) : "asc";
 
-    //~ $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  //~ preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
-                  //~ checkdate($m[2], $m[3], $m[1]))
-               //~ ? $_GET['startdate'] : "";
-
-    //~ $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                //~ preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
-                //~ checkdate($m[2], $m[3], $m[1]))
-             //~ ? $_GET['enddate'] : "";
-
     $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
@@ -101,16 +91,6 @@
     foreach ($sqlfields as $sqlfield) {
         $partial_query_string_pieces[] = sprintf("sqlfields[]=%s", $sqlfield);
     }
-
-    //~ if (!empty($startdate)) {
-        //~ $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
-        //~ $partial_query_string_pieces[] = sprintf("startdate=%s", $startdate);
-    //~ }
-
-    //~ if (!empty($startdate)) {
-        //~ $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
-        //~ $partial_query_string_pieces[] = sprintf("enddate=%s", $enddate);
-    //~ }
 
     if (!empty($username)) {
         $sql_WHERE[] = sprintf("username LIKE '%%%s%%'", $dbSocket->escapeSimple($username));

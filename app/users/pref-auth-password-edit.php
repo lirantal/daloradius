@@ -65,8 +65,7 @@
                 return strtoupper(bin2hex(mhash(MHASH_MD4, iconv('UTF-8', 'UTF-16LE', $value))));
 
             default:
-            // TODO
-            //~ case "CHAP-Password":
+            // TODO: Add support for CHAP-Password.
             case "User-Password":
             case "Cleartext-Password":
                 return $value;

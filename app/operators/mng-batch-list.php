@@ -165,9 +165,9 @@
         $count = 0;
         while($row = $res->fetchRow()) {
 
-            //~ bh.id AS bid, bh.batch_name, bh.batch_description, bh.batch_status, COUNT(DISTINCT(ubi.id)) AS total_users,
-            //~ ubi.planname, bp.plancost, bp.plancurrency, hs.name AS HotspotName, bh.creationdate, bh.creationby,
-            //~ bh.updatedate, bh.updateby
+            // bh.id AS bid, bh.batch_name, bh.batch_description, bh.batch_status, COUNT(DISTINCT(ubi.id)) AS total_users,
+            // ubi.planname, bp.plancost, bp.plancurrency, hs.name AS HotspotName, bh.creationdate, bh.creationby,
+            // bh.updatedate, bh.updateby
             $rowlen = count($row);
 
             // escape row elements
