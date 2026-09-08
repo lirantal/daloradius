@@ -33,7 +33,6 @@ $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
 
 global $username, $invoice_status_id, $user_id, $startdate, $enddate;
 
-$date_default = date_range_default('previous_month');
 
 include('../common/includes/db_open.php');
 
@@ -134,7 +133,7 @@ $components[] = array(
                         "id" => 'random',
                         "name" => "startdate",
                         "type" => "date",
-                        "value" => ((!empty($startdate)) ? $startdate : $date_default['start']),
+                        "value" => ((!empty($startdate)) ? $startdate : ""),
                         "caption" => t('all','StartingDate'),
                         "tooltipText" => t('Tooltip','Date'),
                         "sidebar" => true
@@ -144,7 +143,7 @@ $components[] = array(
                         "id" => 'random',
                         "name" => "enddate",
                         "type" => "date",
-                        "value" => ((!empty($enddate)) ? $enddate : $date_default['end']),
+                        "value" => ((!empty($enddate)) ? $enddate : ""),
                         "caption" => t('all','EndingDate'),
                         "tooltipText" => t('Tooltip','Date'),
                         "sidebar" => true

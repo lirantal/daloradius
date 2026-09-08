@@ -115,12 +115,13 @@
     }
     
     if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("payment_date > '%s'", $dbSocket->escapeSimple($startdate));
+        $sql_WHERE[] = sprintf("payment_date >= '%s'", $dbSocket->escapeSimple($startdate));
         $partial_query_string_pieces[] = sprintf("startdate=%s", $startdate);
     }
-    
-    if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("payment_date < '%s'", $dbSocket->escapeSimple($enddate));
+
+    if (!empty($enddate)) {
+        // inclusive end date: match the whole $enddate day
+        $sql_WHERE[] = sprintf("payment_date < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
         $partial_query_string_pieces[] = sprintf("enddate=%s", $enddate);
     }
     

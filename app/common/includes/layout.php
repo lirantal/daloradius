@@ -505,7 +505,11 @@ function print_additional_controls($descriptors) {
 // returns the descriptor array for the "CSV Export" control used across listing
 // pages (fed to print_table_prologue()'s 'end' / 'start.additional_controls').
 // $extra_query is appended to the fileExport.php query string (no leading '&').
-function get_csv_export_control($extra_query = "", $label = "CSV Export") {
+function get_csv_export_control($extra_query = "", $label = null) {
+    if ($label === null) {
+        $label = t('button', 'CSVExport');
+    }
+
     $href = "include/management/fileExport.php?reportFormat=csv";
 
     $extra_query = ltrim(trim($extra_query), "&");

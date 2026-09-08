@@ -36,7 +36,6 @@ global $startdate, $enddate, $valid_vendorTypes, $billing_paypal_vendor_type, $b
        $valid_paymentStatus, $bill_merchant_transactions_options_all, $bill_merchant_transactions_options_default,
        $sqlfields, $orderBy, $orderType;
 
-$date_default = date_range_default('previous_month');
 
 $components = array();
 
@@ -44,7 +43,7 @@ $components[] = array(
                             "id" => 'random',
                             "name" => "startdate",
                             "type" => "date",
-                            "value" => ((!empty($startdate)) ? $startdate : $date_default['start']),
+                            "value" => ((!empty($startdate)) ? $startdate : ""),
                             "caption" => t('all','StartingDate'),
                             "tooltipText" => t('Tooltip','Date'),
                             "sidebar" => true
@@ -54,7 +53,7 @@ $components[] = array(
                             "id" => 'random',
                             "name" => "enddate",
                             "type" => "date",
-                            "value" => ((!empty($enddate)) ? $enddate : $date_default['end']),
+                            "value" => ((!empty($enddate)) ? $enddate : ""),
                             "caption" => t('all','EndingDate'),
                             "tooltipText" => t('Tooltip','Date'),
                             "sidebar" => true

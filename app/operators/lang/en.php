@@ -628,6 +628,7 @@ $l['button']['RemovePayment'] = "Remove Payment";
 $l['button']['NewUsers'] = "New Users";
 
 $l['button']['ClearSessions'] = "Clear Sessions";
+$l['button']['CSVExport'] = "CSV Export";
 $l['button']['Dashboard'] = "Dashboard";
 $l['button']['MailSettings'] = "Mail Settings";
 

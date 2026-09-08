@@ -98,7 +98,8 @@
 
     $sql_WHERE_pieces = array();
     if (!empty($enddate)) {
-        $sql_WHERE_pieces[] = sprintf("CreationDate <= '%s'", $dbSocket->escapeSimple($enddate));
+        // inclusive end date: match the whole $enddate day
+        $sql_WHERE_pieces[] = sprintf("CreationDate < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
     }
 
     if (!empty($startdate)) {

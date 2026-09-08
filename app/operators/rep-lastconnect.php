@@ -135,9 +135,10 @@
         $sql_WHERE[] = sprintf("pa.%s LIKE '%%%s%%'", $tableSetting['postauth']['user'],
                                                     $dbSocket->escapeSimple($username));
     }
-    $sql_WHERE[] = sprintf("pa.%s BETWEEN '%s' AND '%s'", $tableSetting['postauth']['date'],
-                                                          $dbSocket->escapeSimple($startdate),
-                                                          $dbSocket->escapeSimple($enddate));
+    // inclusive end date: match the whole $enddate day
+    $sql_WHERE[] = sprintf("pa.%s >= '%s' AND pa.%s < ('%s' + INTERVAL 1 DAY)",
+                           $tableSetting['postauth']['date'], $dbSocket->escapeSimple($startdate),
+                           $tableSetting['postauth']['date'], $dbSocket->escapeSimple($enddate));
     if ($radiusReply != "Any") {
         $sql_WHERE[] = sprintf("pa.reply='%s'", $dbSocket->escapeSimple($radiusReply));
     }
@@ -239,7 +240,7 @@
 
             list($fullname, $user, $pass, $reply, $datetime) = $row;
 
-            $fullname = (!empty($fullname) ? $fullname : t('all','NotDefined'));
+            $fullname = (!empty($fullname) ? $fullname : t('all','NotAvailable'));
             $reply = sprintf('<span class="text-%s">%s</span>',
                              (($reply == "Access-Reject") ? "danger" : "success"), $reply);
 

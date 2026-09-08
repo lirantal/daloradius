@@ -100,12 +100,13 @@
     $partial_query_params = array();
 
     if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
+        $sql_WHERE[] = sprintf("AcctStartTime >= '%s'", $dbSocket->escapeSimple($startdate));
         $partial_query_params[] = sprintf("startdate=%s", $startdate);
     }
 
     if (!empty($enddate)) {
-        $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
+        // inclusive end date: match the whole $enddate day
+        $sql_WHERE[] = sprintf("AcctStartTime < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
         $partial_query_params[] = sprintf("enddate=%s", $enddate);
     }
 

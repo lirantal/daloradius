@@ -57,14 +57,13 @@ $orderBy_options = array(
                             "Upload" => t('all','Upload'),
                         );
 
-$date_default = date_range_default('year_to_date');
 
 $date_select_components = array();
 $date_select_components[] = array(
                                         "id" => 'random',
                                         "name" => "startdate",
                                         "type" => "date",
-                                        "value" => ((!empty($startdate)) ? $startdate : $date_default['start']),
+                                        "value" => ((!empty($startdate)) ? $startdate : ""),
                                         "caption" => t('all','StartingDate'),
                                         "tooltipText" => t('Tooltip','Date'),
                                  );
@@ -73,7 +72,7 @@ $date_select_components[] = array(
                                         "id" => 'random',
                                         "name" => "enddate",
                                         "type" => "date",
-                                        "value" => ((!empty($enddate)) ? $enddate : $date_default['end']),
+                                        "value" => ((!empty($enddate)) ? $enddate : ""),
                                         "caption" => t('all','EndingDate'),
                                         "tooltipText" => t('Tooltip','Date'),
                                  );

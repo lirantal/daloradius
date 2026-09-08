@@ -249,10 +249,10 @@ switch ($reportType) {
             
             // pa & ui are aliases for the joined tables
             $cols = array(
+                            "Username" => sprintf("pa.%s AS username", $tableSetting['postauth']['user']),
                             "Fullname" => "IF(STRCMP(CONCAT(ui.firstname, ' ', ui.lastname), ' ') = 0, "
                                             . "'(n/a)', "
                                             . "CONCAT(ui.firstname, ' ', ui.lastname))",
-                            "Username" => sprintf("pa.%s AS username", $tableSetting['postauth']['user']),
                             "Start Time" => sprintf("pa.%s", $tableSetting['postauth']['date']),
                             "RADIUS Reply" => "pa.reply",
                          );
