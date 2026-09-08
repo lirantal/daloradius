@@ -1084,7 +1084,6 @@ $l['Intro']['rephsall.php'] = "Hotspots auflisten";
 $l['Intro']['repmain.php'] = "Berichteseite";
 $l['Intro']['repstatus.php'] = "Statusseite";
 $l['Intro']['reptopusers.php'] = "Top-Benutzer";
-$l['Intro']['repusername.php'] = "Benutzer auflisten";
 
 $l['Intro']['mngbatchdel.php'] = "Batch-Sessions löschen";
 
@@ -1658,7 +1657,6 @@ $l['helpPage']['repstatus'] = <<<EOF
 <p>Zeigt allgemeine Informationen über den FreeRADIUS-Daemon und den MySQL-Datenbankserver an.</p>
 EOF;
 $l['helpPage']['reptopusers'] = "Datensätze der Top-Benutzer, die unten aufgelistet sind, haben den höchsten Verbrauch an Session-Zeit oder Bandbreitennutzung. Auflistung der Benutzer der Kategorie: ";
-$l['helpPage']['repusername'] = "Gefundene Datensätze für Benutzer:";
 $l['helpPage']['reponline'] = "Die folgende Tabelle listet Benutzer auf, die derzeit mit dem System verbunden sind. Es ist durchaus möglich, dass es Stale-Sessions gibt, was bedeutet, dass Benutzer getrennt wurden, der NAS jedoch kein STOP-Accounting-Paket an den RADIUS-Server gesendet hat oder senden konnte.";
 
 

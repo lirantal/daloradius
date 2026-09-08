@@ -1259,7 +1259,6 @@ $l['Intro']['rephsall.php'] = "Mostra Hotspot";
 $l['Intro']['repmain.php'] = "Report";
 $l['Intro']['repstatus.php'] = "Stato Pagina";
 $l['Intro']['reptopusers.php'] = "Top Utenti";
-$l['Intro']['repusername.php'] = "Lista Utenti";
 
 $l['Intro']['mngbatchdel.php'] = "Cancella sessioni batch";
 
@@ -1920,7 +1919,6 @@ $l['helpPage']['repstatus'] = <<<EOF
 <p>Fornisce informazioni generali sul daemon FreeRADIUS e sul daemon del Database server MySQL</p>
 EOF;
 $l['helpPage']['reptopusers'] = "Records per top utenti, che hanno guadagnato il più alto consumo di tempo di sessione o utilizzo di banda. Mostra utenti di categoria:";
-$l['helpPage']['repusername'] = "Records trovati per l'utente:";
 $l['helpPage']['reponline'] = <<<EOF
 La seguente tabella mostra gli utenti che sono connessi in questo momento al sistema. E' possibile che ci siano connessioni stantie (stale connections),
 che vuol dire che gli utenti si sono disconnessi ma il NAS non ha mandato o non è stato in grado di mandare un pacchetto di disconnessione (STOP accounting packet) al server RADIUS.

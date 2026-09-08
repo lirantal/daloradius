@@ -1253,7 +1253,6 @@ $l['Intro']['rephsall.php'] = "Hotspots Listing";
 $l['Intro']['repmain.php'] = "Reports Page";
 $l['Intro']['repstatus.php'] = "Status Page";
 $l['Intro']['reptopusers.php'] = "Top Users";
-$l['Intro']['repusername.php'] = "Users Listing";
 
 $l['Intro']['mngbatchdel.php'] = "Delete batch sessions";
 
@@ -1838,7 +1837,6 @@ $l['helpPage']['repstatus'] = <<<EOF
 <p>Displays general information about the FreeRADIUS daemon and the MySQL database server.</p>
 EOF;
 $l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session time or bandwidth usage. Listing users of category: ";
-$l['helpPage']['repusername'] = "Records found for user:";
 $l['helpPage']['reponline'] = "The following table lists users who are currently connected to the system. It is very much possible that there are stale connections, meaning that users got disconnected but the NAS didn't send or wasn't able to send a STOP accounting packet to the RADIUS server.";
 
 $l['helpPage']['mnglistall'] = "Listing users in database";

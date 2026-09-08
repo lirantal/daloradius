@@ -1246,7 +1246,6 @@ $l['Intro']['rephsall.php'] = "ホットスポット一覧";
 $l['Intro']['repmain.php'] = "レポートページ";
 $l['Intro']['repstatus.php'] = "状態ページ";
 $l['Intro']['reptopusers.php'] = "トップユーザ";
-$l['Intro']['repusername.php'] = "ユーザ一覧";
 
 $l['Intro']['mngbatchdel.php'] = "バッチセッション削除";
 
@@ -1773,7 +1772,6 @@ $l['helpPage']['repstatus'] = "<b>状態</b><br/>
 
 $l['helpPage']['reptopusers'] = "以下のリストはセッション時間と帯域を最も多く消費しているトップユーザです。ユーザのカテゴリを一覧表示します。並べ替え：";
 
-$l['helpPage']['repusername'] = "見つかったユーザのレコード:";
 
 $l['helpPage']['reponline'] = "
 以下の表はユーザシステムに接続しているユーザの一覧を表示します。
