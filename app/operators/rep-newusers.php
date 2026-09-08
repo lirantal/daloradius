@@ -22,15 +22,14 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include_once('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // we validate starting and ending dates
     $date_default = date_range_default('year_to_date');
@@ -60,11 +59,10 @@
     // print HTML prologue
     $title = t('Intro','repnewusers.php');
     $help = t('helpPage','repnewusers');
-    
+
     print_html_prologue($title, $langCode, array(), array("static/js/chart.umd.min.js", "static/js/daloradius-charts.js"));
-    
-    
-    
+
+
     // the array $cols has multiple purposes:
     // - its keys (when non-numerical) can be used
     //   - for validating user input
@@ -76,7 +74,7 @@
                  );
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
-                 
+
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
 
@@ -95,14 +93,14 @@
 
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
-    include('include/management/pages_common.php');
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+
     $sql_WHERE_pieces = array();
     if (!empty($enddate)) {
         $sql_WHERE_pieces[] = sprintf("CreationDate <= '%s'", $dbSocket->escapeSimple($enddate));
     }
-    
+
     if (!empty($startdate)) {
         $sql_WHERE_pieces[] = sprintf("CreationDate >= '%s'", $dbSocket->escapeSimple($startdate));
     }
@@ -114,29 +112,30 @@
     $sql = sprintf("SELECT CONCAT(MONTHNAME(CreationDate), ' ', YEAR(CreationDate)) AS period, COUNT(*) As users,
                            CAST(CONCAT(YEAR(CreationDate), '-', MONTH(CreationDate), '-01') AS DATE) AS month
                       FROM %s", $configValues['CONFIG_DB_TBL_DALOUSERINFO'])
-         . $sql_WHERE . " GROUP BY month";                                                
+         . $sql_WHERE . " GROUP BY month";
     $res = $dbSocket->query($sql);
     $numrows = $res->numRows();
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
-        
+
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
+        // must be included after opendb because it needs to read
+        // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
+
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
+
         /* END */
-                     
+
         // we execute and log the actual query
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $logDebugSQL = "$sql;\n";
         $res = $dbSocket->query($sql);
-        
+
         $per_page_numrows = $res->numRows();
-        
+
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
         $partial_query_params = array();
@@ -146,22 +145,22 @@
         if (!empty($enddate)) {
             $partial_query_params[] = sprintf("enddate=%s", $enddate);
         }
-        
+
         $partial_query_string = ((count($partial_query_params) > 0) ? "&" . implode("&", $partial_query_params)  : "");
-        
-        
+
+
         // set navbar stuff
         $navkeys = array( array( 'stats', t('all','Statistics') ), array( 'graphs', t('menu','Graphs') ), );
 
         // print navbar controls
         print_tab_header($navkeys);
-        
+
         // open tab wrapper
         open_tab_wrapper();
-        
+
         // tab 0
         open_tab($navkeys, 0, true);
-        
+
         $descriptors = array();
         $params = array(
                             'num_rows' => $numrows,
@@ -182,24 +181,24 @@
 
         // closes table header, opens table body
         print_table_middle();
-        
+
         // table content
         $count = 0;
         while ($row = $res->fetchRow()) {
-            
+
             // last field is used only for ordering purpose
             $rowlen = count($row) - 1;
-            
+
             // print table row
             printf('<tr id="row-%d">', $count);
-            
+
             for ($i = 0; $i < $rowlen; $i++) {
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
                 printf("<td>%s</td>", $row[$i]);
             }
-            
+
             echo '</tr>';
-            
+
             $count++;
         }
 
@@ -221,29 +220,27 @@
         printLinks($links, $drawNumberLinks);
 
         close_tab($navkeys, 0);
-        
+
         $img_format = '<div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
-        
+
         // tab 1
         open_tab($navkeys, 1);
-        
+
         $src = sprintf("library/graphs/new_users.php?startdate=%s&enddate=%s", $startdate, $enddate);
         $alt = "monthly number of new users";
         printf($img_format, $src, $alt);
-        
+
         close_tab($navkeys, 1);
-        
+
         // close tab wrapper
         close_tab_wrapper();
-        
+
     } else {
         $failureMsg = "Nothing to display";
-        include_once("include/management/actionMessages.php");
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
-    
-    include('../common/includes/db_close.php');
 
-    include('include/config/logging.php');
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-?>

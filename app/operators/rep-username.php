@@ -21,21 +21,20 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include_once('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // validate this parameter before including menu
     $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
+
     $cols = array(
                     'id' => t('all','ID'),
                     'username' => t('all','Username'),
@@ -57,7 +56,7 @@
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array("asc", "desc")))
                ? strtolower($_GET['orderType']) : "asc";
-    
+
     $log = "visited page: ";
     $logQuery = "performed query for ";
     if (!empty($username)) {
@@ -67,47 +66,47 @@
     }
     $logQuery .= "on page: ";
 
-    
+
     // print HTML prologue
     $title = t('Intro','repusername.php');
     $help = t('helpPage','repusername') . " " . $username_enc;
-    
+
     print_html_prologue($title, $langCode);
 
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
-    include('include/management/pages_common.php');
-    
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+
     $arr = array();
 
-    $sql = sprintf("SELECT id, username, attribute, op, value FROM %s WHERE username='%s' ORDER BY %s %s", 
+    $sql = sprintf("SELECT id, username, attribute, op, value FROM %s WHERE username='%s' ORDER BY %s %s",
                    $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($username), $orderBy, $orderType);
-    $arr[] = array( 
+    $arr[] = array(
                     'sql' => $sql,
                     'caption' => t('captions','radcheckrecords')
                   );
-    
-    $sql = sprintf("SELECT id, username, attribute, op, value FROM %s WHERE username='%s' ORDER BY %s %s", 
+
+    $sql = sprintf("SELECT id, username, attribute, op, value FROM %s WHERE username='%s' ORDER BY %s %s",
                    $configValues['CONFIG_DB_TBL_RADREPLY'], $dbSocket->escapeSimple($username), $orderBy, $orderType);
-    $arr[] = array( 
+    $arr[] = array(
                     'sql' => $sql,
                     'caption' => t('captions','radreplyrecords')
                   );
-    
+
     $total_numrows = 0;
     foreach ($arr as $item) {
         $res = $dbSocket->query($item['sql']);
         $logDebugSQL .= $item['sql'] . ";\n";
-        
+
         $numrows = $res->numRows();
-        
+
         if ($numrows > 0) {
             printf('<h4 style="margin-top: 10px">%s</h4>', $item['caption']);
-            
+
             // print table top
             print_table_top();
-            
+
             // second line of table header
             printTableHead($cols, $orderBy, $orderType);
 
@@ -118,12 +117,12 @@
 
             while ($row = $res->fetchRow()) {
                 $rowlen = count($row);
-                
+
                 echo "<tr>";
                 for ($i = 0; $i < $rowlen; $i++) {
                     printf("<td>%s</td>", htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8'));
                 }
-                
+
                 $this_username = htmlspecialchars($row[1], ENT_QUOTES, 'UTF-8');
                 echo '<td>';
                 $formId = $this_username . "-form-del";
@@ -131,9 +130,9 @@
                 printf('<input type="hidden" name="username[]" value="%s">', $this_username);
                 printf('<input type="hidden" name="csrf_token" value="%s">', $csrf_token);
                 echo '</form>';
-                
+
                 $onclick = sprintf("document.getElementById('%s').submit()", $formId);
-                printf('<a href="mng-edit.php?username=%s">%s</a>&nbsp;<a href="#" onclick="%s">%s</a>',
+                printf('<a class="me-1" href="mng-edit.php?username=%s">%s</a><a href="#" onclick="%s">%s</a>',
                        urlencode($this_username), t('all','edit'), $onclick, t('all','del'));
                 echo '</td>';
                 echo "</tr>";
@@ -141,18 +140,16 @@
 
             print_table_bottom();
         }
-        
+
         $total_numrows += $numrows;
     }
-    
-    include('../common/includes/db_close.php');
+
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     if ($total_numrows == 0) {
         $failureMsg = "Nothing to display";
-        include_once("include/management/actionMessages.php");
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-
-?>
