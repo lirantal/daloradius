@@ -162,7 +162,7 @@ $valid_passwordTypes = array(
                                 "SHA2-Password",
                                 "User-Password",
                                 "Crypt-Password",
-                                //~ "CHAP-Password"
+                                // CHAP-Password is intentionally unsupported.
                              );
 
 // https://wiki.freeradius.org/config/Operators

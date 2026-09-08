@@ -151,14 +151,14 @@ function print_link($aPageNum, $pageNum, $orderBy, $orderType, $request1="", $re
     return sprintf($selected_link_format, $aPageNum);
 }
 
-//~ $params = array(
-                    //~ 'num_rows' => $numrows,
-                    //~ 'rows_per_page' => $rowsPerPage,
-                    //~ 'page_num' => $pageNum,
-                    //~ 'order_by' => $orderBy,
-                    //~ 'order_type' => $orderType,
-                    //~ 'partial_query_string' => $partial_query_string
-                //~ );
+// $params = array(
+                    // 'num_rows' => $numrows,
+                    // 'rows_per_page' => $rowsPerPage,
+                    // 'page_num' => $pageNum,
+                    // 'order_by' => $orderBy,
+                    // 'order_type' => $orderType,
+                    // 'partial_query_string' => $partial_query_string
+                // );
 function print_page_numbering($params) {
     
     $partial_query_string = (isset($params['partial_query_string'])) ? $params['partial_query_string'] : "";

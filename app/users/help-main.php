@@ -32,12 +32,6 @@
     $message = get_message($dbSocket, "support")["content"];
     include('../common/includes/db_close.php');
     
-    //~ if (!empty($message)) {
-        //~ $help = $message;
-    //~ } else {
-        //~ $help = t('helpPage','loginUsersPortal');
-    //~ }
-
     // print HTML prologue
     $title = "Help";
     print_html_prologue($title, $langCode);

@@ -106,7 +106,7 @@
                             header(sprintf("Content-Disposition: attachment; filename=%s; size=%d", $baseFile, $fileLen));
                             print $fileContents;
 
-                            exit; //~ break;
+                            exit;
                         }
 
                         $failureMsg = sprintf("Cannot %s backup file %s (file is empty)", $backupAction, $baseFile);

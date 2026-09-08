@@ -235,9 +235,6 @@
                 $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
             }
 
-            //~ username, framedipaddress, callingstationid, starttime, sessiontime, nasipaddress,
-            //~ calledstationid, sessionid, upload, download, hotspot, nasshortname, firstname, lastname
-
             list(
                     $this_username, $this_framedipaddress, $this_callingstationid, $this_starttime, $this_sessiontime,
                     $this_nasipaddress, $this_calledstationid, $this_sessionid, $this_upload, $this_download,

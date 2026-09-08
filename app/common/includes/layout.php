@@ -728,26 +728,26 @@ function print_table_row($table_row) {
  */
 
 // this function can be used for printing an input field
-//~ sample $input_descriptor:
-//~ $input_descriptor = array(
-                            //~ "id" => "username",
-                            //~ "name" => "username", (required)
-                            //~ "caption" => t('all','Username'),
-                            //~ "type" => "text|password|number", (required)
-                            //~ "tabindex" => 100,
-                            //~ "value" => "",
-                            //~ "random" => true,
-                            //~ "tooltipText" => t('Tooltip','usernameTooltip'),
-                            //~ "pattern" => "[a-zA-Z0-9_]+",
-                            //~ "disabled" => true,
+// sample $input_descriptor:
+// $input_descriptor = array(
+                            // "id" => "username",
+                            // "name" => "username", (required)
+                            // "caption" => t('all','Username'),
+                            // "type" => "text|password|number", (required)
+                            // "tabindex" => 100,
+                            // "value" => "",
+                            // "random" => true,
+                            // "tooltipText" => t('Tooltip','usernameTooltip'),
+                            // "pattern" => "[a-zA-Z0-9_]+",
+                            // "disabled" => true,
 
-                            //~ "min" => 1|2018-10-30, (type=number|date specific)
-                            //~ "max" => 10|2022-01-29, (type=number|date specific)
-                            //~ "step" => 1, (type=number specific)
+                            // "min" => 1|2018-10-30, (type=number|date specific)
+                            // "max" => 10|2022-01-29, (type=number|date specific)
+                            // "step" => 1, (type=number specific)
 
-                            //~ "onclick" => "javascript:..."
-                            //~ "checked" => true (type=checkbox specific)
-                         //~ );
+                            // "onclick" => "javascript:..."
+                            // "checked" => true (type=checkbox specific)
+                         // );
 
 
 function print_input_field($input_descriptor) {
@@ -989,12 +989,12 @@ EOF;
 }
 
 
-//~ $input_descriptor = array(
-                            //~ "id" => "sessiontimeout",
-                            //~ "name" => "sessiontimeout", (required)
-                            //~ "caption" => t('all','SessionTimeout'),
-                            //~ "type" => "number",
-                            //~ "options" => array( "value" => "label" )
+// $input_descriptor = array(
+                            // "id" => "sessiontimeout",
+                            // "name" => "sessiontimeout", (required)
+                            // "caption" => t('all','SessionTimeout'),
+                            // "type" => "number",
+                            // "options" => array( "value" => "label" )
 function print_calculated_select($select_descriptor) {
 
     if (!array_key_exists('id', $select_descriptor) || empty($select_descriptor['id'])) {
@@ -1025,18 +1025,17 @@ function print_calculated_select($select_descriptor) {
 
     echo '</select>';
     echo '</div>';
-    //~ echo '</li>' . "\n";
 }
 
 
 // this function can be used for printing a textarea field
-//~ $textarea_descriptor = array(
-                            //~ "id" => "notes",
-                            //~ "name" => "notes", (required)
-                            //~ "caption" => t('ContactInfo','Notes'),
-                            //~ tabindex => 100,
-                            //~ "content" => xxx,
-                            //~ "onchange" => ""
+// $textarea_descriptor = array(
+                            // "id" => "notes",
+                            // "name" => "notes", (required)
+                            // "caption" => t('ContactInfo','Notes'),
+                            // tabindex => 100,
+                            // "content" => xxx,
+                            // "onchange" => ""
 function print_textarea($textarea_descriptor) {
 
     if (!array_key_exists('id', $textarea_descriptor) || empty($textarea_descriptor['id'])) {
@@ -1068,8 +1067,8 @@ function print_textarea($textarea_descriptor) {
 
 
 // this function can be used for printing a select field
-//~ descriptor array( "type" => "select", "id" => ..., "name" => ..., "options" => array( "value" => "caption", ..)
-//~ "selected_value" => "value", "caption" => ..., "integer_value" => true
+// descriptor array( "type" => "select", "id" => ..., "name" => ..., "options" => array( "value" => "caption", ..)
+// "selected_value" => "value", "caption" => ..., "integer_value" => true
 function print_select($select_descriptor) {
     if (!array_key_exists('id', $select_descriptor) || empty($select_descriptor['id'])) {
         $select_descriptor['id'] = $select_descriptor['name'];
@@ -1176,8 +1175,8 @@ EOF;
     }
 }
 
-//~ $descriptor = array( 'onclick' => $onclick, 'attribute' => $row[0], 'select_name' => $name, 'selected_option' => $row[1],
-                        //~ 'id__attribute' => $id_attribute, 'type' => $type, 'value' => $row[2], 'name' => $name, 'attr_type' => $row[3], 'attr_desc' => $row[4]);
+// $descriptor = array( 'onclick' => $onclick, 'attribute' => $row[0], 'select_name' => $name, 'selected_option' => $row[1],
+                        // 'id__attribute' => $id_attribute, 'type' => $type, 'value' => $row[2], 'name' => $name, 'attr_type' => $row[3], 'attr_desc' => $row[4]);
 function print_edit_attribute($descriptor) {
     global $valid_ops;
 
@@ -1238,7 +1237,6 @@ function print_button($descriptor) {
 
     $class = (isset($descriptor['class'])) ? trim($descriptor['class']) : "btn-primary";
     $type = (isset($descriptor['type'])) ? strtolower(trim($descriptor['type'])) : "button";
-    //~ $icon = (isset($descriptor['icon'])) ? trim($descriptor['icon']) : "save-fill";
 
     echo '<div class="my-3';
 

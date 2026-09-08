@@ -57,13 +57,11 @@
                 $navkeys = array();
                 foreach($mdstat as $mddevice) {
                     $key = sprintf("%s-tab", $mddevice);
-                    //~ $navbuttons[$key] = $mddevice;
                     $navkeys[] = array( $mddevice, $mddevice );
                 }
 
                 // print navbar controls
                 print_tab_header($navkeys);
-                //~ print_tab_navbuttons($navbuttons);
 
                 // open tab wrapper
                 open_tab_wrapper();

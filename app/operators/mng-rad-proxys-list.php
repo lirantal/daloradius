@@ -91,8 +91,6 @@
 
         /* END */
 
-        //~ id, proxyname, retry_delay, retry_count, dead_time, default_fallback, creationdate, creationby, updatedate, updateby,
-
         // we execute and log the actual query
         $sql = sprintf("SELECT id, proxyname, creationdate, creationby, updatedate, updateby
                           FROM %s", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
