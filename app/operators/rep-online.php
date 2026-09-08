@@ -189,7 +189,16 @@
 
         $descriptors = array();
 
-        $descriptors['start'] = array( 'common_controls' => 'clearSessionsUsers[]' );
+        $descriptors['start'] = array(
+                                        'common_controls' => 'clearSessionsUsers[]',
+                                        'additional_controls' => array(
+                                            array(
+                                                'onclick' => "removeCheckbox('listall','$action')",
+                                                'label' => t('button','ClearSessions'),
+                                                'class' => 'btn-danger',
+                                            ),
+                                        ),
+                                     );
 
         $params = array(
                             'num_rows' => $numrows,
