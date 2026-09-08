@@ -869,7 +869,6 @@ $l['Intro']['repmain.php'] = "Rapoarte Page";
 $l['Intro']['repstatus.php'] = "Status Page";
 $l['Intro']['replogs.php'] = "Rapoarte Page";
 $l['Intro']['reptopusers.php'] = "Top Utilizatori";
-$l['Intro']['repusername.php'] = "Utilizatorii Listing";
 
 $l['Intro']['mngbatch.php'] = "Create lot utilizatori";
 $l['Intro']['mngdel.php'] = "?terge utilizator";
@@ -1221,7 +1220,6 @@ $l['helpPage']['repstatus'] = "<b> Stare </ b> <br/>
 <h200> <b> RADIUS Stare </ b> </ h200> - Ofer? informa?ii generale despre FreeRADIUS daemon ?i baze de date MySQL server ";
 $l['helpPage']['reptopusers'] = "Inregistreaza top pentru utilizatori, cei care sunt enumerate mai jos au c??tigat cel mai mare consum de sesiune
 timp sau de utilizare a l??imii de band?. Afi?area utilizatorilor din categoria: ";
-$l['helpPage']['repusername'] = "Recorduri g?sit de utilizator:";
 $l['helpPage']['reponline'] = "
 Urm?torul tabel afi?eaz? utilizatorii care ?n prezent sunt conectate la
 sistem. Este foarte posibil ca acolo sunt surmenat de conexiuni,

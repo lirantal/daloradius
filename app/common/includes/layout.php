@@ -33,6 +33,41 @@ function fix_placeholder_text($text) {
     return trim($text);
 }
 
+// Default [start, end] date range (Y-m-d) for report / accounting pages.
+// Both the page (when the startdate/enddate parameters are missing) and its
+// sidebar form read the range through this helper, so the pre-filled form and
+// the actual query always agree. Each page picks the strategy that fits it.
+// strategy: current_month | month_to_date | year_to_date | previous_month |
+//           last_7_days | last_30_days | all_time
+function date_range_default($strategy = 'current_month') {
+    $now = time();
+
+    switch ($strategy) {
+        case 'all_time':
+            return array('start' => '', 'end' => '');
+
+        case 'month_to_date':
+            return array('start' => date('Y-m-01', $now), 'end' => date('Y-m-d', $now));
+
+        case 'year_to_date':
+            return array('start' => date('Y-01-01', $now), 'end' => date('Y-m-d', $now));
+
+        case 'previous_month':
+            $prev = mktime(0, 0, 0, intval(date('n', $now)) - 1, 1, intval(date('Y', $now)));
+            return array('start' => date('Y-m-01', $prev), 'end' => date('Y-m-t', $prev));
+
+        case 'last_7_days':
+            return array('start' => date('Y-m-d', strtotime('-6 days', $now)), 'end' => date('Y-m-d', $now));
+
+        case 'last_30_days':
+            return array('start' => date('Y-m-d', strtotime('-29 days', $now)), 'end' => date('Y-m-d', $now));
+
+        case 'current_month':
+        default:
+            return array('start' => date('Y-m-01', $now), 'end' => date('Y-m-t', $now));
+    }
+}
+
 const DEFAULT_COMMON_PROLOGUE_CSS = array(
     "static/css/bootstrap.min.css",
     "static/css/icons/bootstrap-icons.min.css",
@@ -389,6 +424,40 @@ function print_tooltip_list($descriptor) {
     echo get_tooltip_list_str($descriptor);
 }
 
+
+// builds a dropdown tooltip for a NAS: the shortname is shown as subject,
+// the NAS IP address in the body, plus links to its accounting and edit pages.
+// falls back to the IP address (or a "not defined" placeholder) when the
+// shortname is missing, and to a plain string when there is no IP address.
+// $shortname and $ipaddress are expected to be already HTML-escaped.
+function get_nas_tooltip_str($shortname, $ipaddress) {
+    $shortname = trim($shortname);
+    $ipaddress = trim($ipaddress);
+
+    if ($ipaddress === "") {
+        return ($shortname !== "") ? $shortname : t('all','NotDefined');
+    }
+
+    $has_shortname = ($shortname !== "");
+
+    $descriptor = array(
+        'subject' => ($has_shortname) ? $shortname : $ipaddress,
+        'actions' => array(
+            array( 'href'  => sprintf('acct-nasipaddress.php?nasipaddress=%s', urlencode($ipaddress)),
+                   'label' => t('button','NASIPAccounting') ),
+            array( 'href'  => sprintf('mng-rad-nas-edit.php?nasname=%s', urlencode($ipaddress)),
+                   'label' => t('button','EditNAS') ),
+        ),
+    );
+
+    // the NAS IP line is redundant when the subject already is the IP address
+    if ($has_shortname) {
+        $descriptor['content'] = t('all','NASIPAddress') . ": " . $ipaddress;
+    }
+
+    return get_tooltip_list_str($descriptor);
+}
+
 // this functions can be used for printing controls that are in common for most of the listing tables
 // i.e. select all and select none. This sould not be used alone but, it is called by the print_table_prologue() func.
 function print_common_controls($name) {
@@ -421,8 +490,39 @@ EOF;
 function print_additional_controls($descriptors) {
     foreach ($descriptors as $d) {
         $class = (isset($d['class'])) ? $d['class'] : "btn-primary";
-        printf('<button class="btn btn-sm %s ms-1" type="button" onclick="%s">%s</button>', $class, $d['onclick'], $d['label']);
+
+        $label = (isset($d['label'])) ? $d['label'] : "";
+
+        if (isset($d['icon'])) {
+            $label = sprintf('<i class="bi bi-%s me-1"></i>', trim($d['icon'])) . $label;
+        }
+
+        printf('<button class="btn btn-sm %s ms-1" type="button" onclick="%s">%s</button>', $class, $d['onclick'], $label);
     }
+}
+
+
+// returns the descriptor array for the "CSV Export" control used across listing
+// pages (fed to print_table_prologue()'s 'end' / 'start.additional_controls').
+// $extra_query is appended to the fileExport.php query string (no leading '&').
+function get_csv_export_control($extra_query = "", $label = null) {
+    if ($label === null) {
+        $label = t('button', 'CSVExport');
+    }
+
+    $href = "include/management/fileExport.php?reportFormat=csv";
+
+    $extra_query = ltrim(trim($extra_query), "&");
+    if ($extra_query !== "") {
+        $href .= "&" . $extra_query;
+    }
+
+    return array(
+        'onclick' => sprintf("location.href='%s'", $href),
+        'label'   => $label,
+        'class'   => 'btn-light',
+        'icon'    => 'filetype-csv',
+    );
 }
 
 
@@ -462,7 +562,7 @@ function print_table_prologue($descriptors) {
 
     echo '<div class="col-12 col-lg-4 d-flex justify-content-start align-items-center flex-wrap gap-1">';
     if (isset($descriptors['start']) && is_array($descriptors['start'])) {
-        
+
         $start = $descriptors['start'];
 
         if (isset($start['common_controls'])) {
@@ -472,7 +572,7 @@ function print_table_prologue($descriptors) {
         if (isset($start['additional_controls']) && is_array($start['additional_controls'])) {
             print_additional_controls($start['additional_controls']);
         }
-        
+
     }
     echo '</div>';
 
@@ -536,7 +636,7 @@ function print_table_top($descriptor=array()) {
         // Add the specified class to the $class variable
         $class .= " " . $descriptor['class'];
     }
-    
+
     // Remove duplicate classes if any
     $class = implode(" ", array_unique(explode(" ", $class)));
 
@@ -952,7 +1052,7 @@ function print_textarea($textarea_descriptor) {
     if (array_key_exists('oninput', $textarea_descriptor)) {
         printf(' oninput="%s"', $textarea_descriptor['oninput']);
     }
-    
+
     if (array_key_exists('tabindex', $textarea_descriptor)) {
         printf(' tabindex="%s"', $textarea_descriptor['tabindex']);
     }

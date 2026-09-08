@@ -450,11 +450,12 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
     $sql_WHERE = array();
 
     if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("payment_date > '%s'", $dbSocket->escapeSimple($startdate));
+        $sql_WHERE[] = sprintf("payment_date >= '%s'", $dbSocket->escapeSimple($startdate));
     }
 
-    if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("payment_date < '%s'", $dbSocket->escapeSimple($enddate));
+    if (!empty($enddate)) {
+        // inclusive end date: match the whole $enddate day
+        $sql_WHERE[] = sprintf("payment_date < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
     }
 
     if (!empty($payer_email)) {

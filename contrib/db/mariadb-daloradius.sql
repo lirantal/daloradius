@@ -618,8 +618,7 @@ INSERT INTO `operators_acl_files` (`file`, `category`, `section`) VALUES
 ('rep_stat_server', 'Reporting', 'Status'),
 ('rep_stat_services', 'Reporting', 'Status'),
 ('rep_stat_ups', 'Reporting', 'Status'),
-('rep_topusers', 'Reporting', 'Core'),
-('rep_username', 'Reporting', 'Core');
+('rep_topusers', 'Reporting', 'Core');
 
 /*!40000 ALTER TABLE `operators_acl_files` ENABLE KEYS */;
 UNLOCK TABLES;

@@ -58,15 +58,17 @@
                   in_array(strtolower($_GET['orderType']), array("asc", "desc")))
                ? strtolower($_GET['orderType']) : "asc";
     
+    $date_default = date_range_default('previous_month');
+
     $startdate = (array_key_exists('startdate', $_GET) && !empty($_GET['startdate']) &&
                   preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : "";
+               ? $_GET['startdate'] : $date_default['start'];
 
     $enddate = (array_key_exists('enddate', $_GET) && !empty($_GET['enddate']) &&
                 preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : "";
+             ? $_GET['enddate'] : $date_default['end'];
              
     $vendor_type = (array_key_exists('vendor_type', $_GET) && isset($_GET['vendor_type']) &&
                     in_array($_GET['vendor_type'], array_slice($valid_vendorTypes, 1))) // avoid inserting "Any" in the SQL query
@@ -113,12 +115,13 @@
     }
     
     if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("payment_date > '%s'", $dbSocket->escapeSimple($startdate));
+        $sql_WHERE[] = sprintf("payment_date >= '%s'", $dbSocket->escapeSimple($startdate));
         $partial_query_string_pieces[] = sprintf("startdate=%s", $startdate);
     }
-    
-    if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("payment_date < '%s'", $dbSocket->escapeSimple($enddate));
+
+    if (!empty($enddate)) {
+        // inclusive end date: match the whole $enddate day
+        $sql_WHERE[] = sprintf("payment_date < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
         $partial_query_string_pieces[] = sprintf("enddate=%s", $enddate);
     }
     

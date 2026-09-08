@@ -162,7 +162,7 @@ $l['all']['HgIPHost'] = "HG IP/Host";
 $l['all']['HgGroupName'] = "HG GroupName";
 $l['all']['HgPortId'] = "HG Port Id";
 $l['all']['NasID'] = "NAS ID";
-$l['all']['Nas'] = "NAS ";
+$l['all']['Nas'] = "NAS";
 $l['all']['NasIPHost'] = "NAS IP/Host";
 $l['all']['NasShortname'] = "NAS Shortname";
 $l['all']['NasType'] = "NAS Type";
@@ -431,6 +431,9 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
 $l['all']['Calling Station ID'] = "Calling Station ID";
 $l['all']['Framed IP Address'] = "Framed IP Address";
 
+$l['all']['NotDefined'] = '<abbr title="not defined">(n/d)</abbr>';
+$l['all']['NotAvailable'] = '<abbr title="not available">(n/a)</abbr>';
+
 /* **********************************************************************************
  * Login page text
  ***********************************************************************************/
@@ -625,6 +628,7 @@ $l['button']['RemovePayment'] = "Remove Payment";
 $l['button']['NewUsers'] = "New Users";
 
 $l['button']['ClearSessions'] = "Clear Sessions";
+$l['button']['CSVExport'] = "CSV Export";
 $l['button']['Dashboard'] = "Dashboard";
 $l['button']['MailSettings'] = "Mail Settings";
 
@@ -1250,7 +1254,6 @@ $l['Intro']['rephsall.php'] = "Hotspots Listing";
 $l['Intro']['repmain.php'] = "Reports Page";
 $l['Intro']['repstatus.php'] = "Status Page";
 $l['Intro']['reptopusers.php'] = "Top Users";
-$l['Intro']['repusername.php'] = "Users Listing";
 
 $l['Intro']['mngbatchdel.php'] = "Delete batch sessions";
 
@@ -1835,7 +1838,6 @@ $l['helpPage']['repstatus'] = <<<EOF
 <p>Displays general information about the FreeRADIUS daemon and the MySQL database server.</p>
 EOF;
 $l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session time or bandwidth usage. Listing users of category: ";
-$l['helpPage']['repusername'] = "Records found for user:";
 $l['helpPage']['reponline'] = "The following table lists users who are currently connected to the system. It is very much possible that there are stale connections, meaning that users got disconnected but the NAS didn't send or wasn't able to send a STOP accounting packet to the RADIUS server.";
 
 $l['helpPage']['mnglistall'] = "Listing users in database";

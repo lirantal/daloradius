@@ -155,14 +155,14 @@ $l['all']['CheckinTime'] = "Ultimo check-in";
 $l['all']['FramedIPAddress'] = "Framed-IP-Address";
 $l['all']['SimultaneousUse'] = "Simultaneous-Use";
 $l['all']['HgID'] = "ID HG";
-$l['all']['Hg'] = "HG ";
+$l['all']['Hg'] = "HG";
 $l['all']['HgIPHost'] = "HG IP/Host";
 $l['all']['HgGroupName'] = "HG Groupname";
 $l['all']['HgPortId'] = "HG Port Id";
 $l['all']['NasID'] = "ID NAS";
 $l['all']['Nas'] = "NAS";
 $l['all']['NasIPHost'] = "NAS IP/Host";
-$l['all']['NasShortname'] = "Nome breve";
+$l['all']['NasShortname'] = "NAS Nome breve";
 $l['all']['NasType'] = "Tipo NAS";
 $l['all']['NasPorts'] = "Porte NAS";
 $l['all']['NasSecret'] = "NAS Secret";
@@ -170,8 +170,8 @@ $l['all']['NasVirtualServer'] = "NAS Virtual Server";
 $l['all']['NasCommunity'] = "NAS Community";
 $l['all']['NasDescription'] = "Descrizione NAS";
 $l['all']['PacketType'] = "Tipo Pacchetto";
-$l['all']['HotSpot'] = "HotSpot";
-$l['all']['HotSpots'] = "HotSpots";
+$l['all']['HotSpot'] = "Hotspot";
+$l['all']['HotSpots'] = "Hotspots";
 $l['all']['HotSpotName'] = "Nome Hotspot";
 $l['all']['Name'] = "Nome";
 $l['all']['Username'] = "Nome Utente";
@@ -426,8 +426,11 @@ $l['all']['BusinessEmail'] = "Email Lavoro";
 $l['all']['BusinessContactPerson'] = "Contatto Lavoro";
 $l['all']['DBPasswordEncryption'] = "Tipo di criptazione Password DB";
 
-$l['all']['Calling Station ID'] = "Calling Station ID";
+$l['all']['Calling Station ID'] = "ID Stazione Chiamante";
 $l['all']['Framed IP Address'] = "Framed IP Address";
+
+$l['all']['NotDefined'] = '<abbr title="non specificato">(n/s)</abbr>';
+$l['all']['NotAvailable'] = '<abbr title="non disponibile">(n/d)</abbr>';
 
 $l['all']['Rate'] = "Rate";
 
@@ -627,6 +630,7 @@ $l['button']['RemovePayment'] = "Cancella Pagamento";
 $l['button']['NewUsers'] = "Nuovi Utenti";
 
 $l['button']['ClearSessions'] = "Pulisci Sessioni";
+$l['button']['CSVExport'] = "Esporta CSV";
 $l['button']['Dashboard'] = "Dashboard";
 $l['button']['MailSettings'] = "Impostazioni Mail";
 
@@ -1110,7 +1114,7 @@ $l['messages']['missingrate'] = "errore: tariffa non trovata";
 $l['messages']['success'] = "successo";
 $l['messages']['gisedit1'] = "Benvenuto, sei in modalità di Modifica";
 $l['messages']['gisedit2'] = "Cancellare il marcatore corrente dalla mappa del database?";
-$l['messages']['gisedit3'] = "Inserire il nome dell'HotSpot";
+$l['messages']['gisedit3'] = "Inserire il nome dell'Hotspot";
 $l['messages']['gisedit4'] = "Aggiungere il marcatore corrente al database?";
 $l['messages']['gisedit5'] = "Inserire il nome dell'Hotspot";
 $l['messages']['gisedit6'] = "Inserire l'indirizzo MAC dell'Hotspot";
@@ -1256,7 +1260,6 @@ $l['Intro']['rephsall.php'] = "Mostra Hotspot";
 $l['Intro']['repmain.php'] = "Report";
 $l['Intro']['repstatus.php'] = "Stato Pagina";
 $l['Intro']['reptopusers.php'] = "Top Utenti";
-$l['Intro']['repusername.php'] = "Lista Utenti";
 
 $l['Intro']['mngbatchdel.php'] = "Cancella sessioni batch";
 
@@ -1917,7 +1920,6 @@ $l['helpPage']['repstatus'] = <<<EOF
 <p>Fornisce informazioni generali sul daemon FreeRADIUS e sul daemon del Database server MySQL</p>
 EOF;
 $l['helpPage']['reptopusers'] = "Records per top utenti, che hanno guadagnato il più alto consumo di tempo di sessione o utilizzo di banda. Mostra utenti di categoria:";
-$l['helpPage']['repusername'] = "Records trovati per l'utente:";
 $l['helpPage']['reponline'] = <<<EOF
 La seguente tabella mostra gli utenti che sono connessi in questo momento al sistema. E' possibile che ci siano connessioni stantie (stale connections),
 che vuol dire che gli utenti si sono disconnessi ma il NAS non ha mandato o non è stato in grado di mandare un pacchetto di disconnessione (STOP accounting packet) al server RADIUS.

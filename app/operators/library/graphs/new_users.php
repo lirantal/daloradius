@@ -17,7 +17,8 @@ if ($startdate !== '') {
     $where[] = "CreationDate >= '" . $dbSocket->escapeSimple($startdate) . "'";
 }
 if ($enddate !== '') {
-    $where[] = "CreationDate <= '" . $dbSocket->escapeSimple($enddate) . "'";
+    // inclusive end date: match the whole $enddate day
+    $where[] = "CreationDate < ('" . $dbSocket->escapeSimple($enddate) . "' + INTERVAL 1 DAY)";
 }
 $sql = sprintf("SELECT COUNT(*), CONCAT(YEAR(CreationDate), ' ', LEFT(MONTHNAME(CreationDate), 3)) FROM %s", $configValues['CONFIG_DB_TBL_DALOUSERINFO'])
     . (count($where) ? ' WHERE ' . implode(' AND ', $where) : '')
