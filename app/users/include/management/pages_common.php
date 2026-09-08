@@ -31,6 +31,26 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/pages_common.php') !== fal
     exit;
 }
 
+/* returns a random alpha-numeric string of length $length */
+function createPassword($length, $chars) {
+    if ($length <= 0) {
+        return '';
+    }
+
+    if (!$chars) {
+        $chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    }
+
+    $charsLength = strlen($chars);
+    $pass = '';
+
+    for ($i = 0; $i < $length; $i++) {
+        $pass .= substr($chars, random_int(0, $charsLength - 1), 1);
+    }
+
+    return $pass;
+}
+
 /* convert byte to to size */
 function toxbyte($size) {
     $magnitudes = array(
