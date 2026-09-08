@@ -75,8 +75,8 @@
     //   - for table ordering purpose
     // - its value can be used for table headings presentation
     $cols = array(
-                   "fullname" => t('all','Name'),
                    $tableSetting['postauth']['user'] => t('all','Username'),
+                   "fullname" => t('all','Name'),
                  );
 
     if (!$hiddenPassword) {
@@ -242,11 +242,11 @@
 
             list($fullname, $user, $pass, $reply, $datetime) = $row;
 
-            $fullname = (!empty($fullname) ? $fullname : "(n/a)");
+            $fullname = (!empty($fullname) ? $fullname : t('all','NotDefined'));
             $reply = sprintf('<span class="text-%s">%s</span>',
                              (($reply == "Access-Reject") ? "danger" : "success"), $reply);
 
-            $table_row = array( $fullname, $user );
+            $table_row = array( $user, $fullname );
             if (!$hiddenPassword) {
                 $table_row[] = $pass;
             }

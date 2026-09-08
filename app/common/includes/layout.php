@@ -389,6 +389,40 @@ function print_tooltip_list($descriptor) {
     echo get_tooltip_list_str($descriptor);
 }
 
+
+// builds a dropdown tooltip for a NAS: the shortname is shown as subject,
+// the NAS IP address in the body, plus links to its accounting and edit pages.
+// falls back to the IP address (or a "not defined" placeholder) when the
+// shortname is missing, and to a plain string when there is no IP address.
+// $shortname and $ipaddress are expected to be already HTML-escaped.
+function get_nas_tooltip_str($shortname, $ipaddress) {
+    $shortname = trim($shortname);
+    $ipaddress = trim($ipaddress);
+
+    if ($ipaddress === "") {
+        return ($shortname !== "") ? $shortname : t('all','NotDefined');
+    }
+
+    $has_shortname = ($shortname !== "");
+
+    $descriptor = array(
+        'subject' => ($has_shortname) ? $shortname : $ipaddress,
+        'actions' => array(
+            array( 'href'  => sprintf('acct-nasipaddress.php?nasipaddress=%s', urlencode($ipaddress)),
+                   'label' => t('button','NASIPAccounting') ),
+            array( 'href'  => sprintf('mng-rad-nas-edit.php?nasname=%s', urlencode($ipaddress)),
+                   'label' => t('button','EditNAS') ),
+        ),
+    );
+
+    // the NAS IP line is redundant when the subject already is the IP address
+    if ($has_shortname) {
+        $descriptor['content'] = t('all','NASIPAddress') . ": " . $ipaddress;
+    }
+
+    return get_tooltip_list_str($descriptor);
+}
+
 // this functions can be used for printing controls that are in common for most of the listing tables
 // i.e. select all and select none. This sould not be used alone but, it is called by the print_table_prologue() func.
 function print_common_controls($name) {

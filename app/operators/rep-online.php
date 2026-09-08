@@ -47,10 +47,10 @@
                    t('all','Name'),
                    'framedipaddress' => t('all','Framed IP Address'),
                    'calledstationid' => t('all','Calling Station ID'),
+                   'nasshortname' => t('all','Nas'),
+                   'hotspot' => t('all','HotSpot'),
                    'acctstarttime' => t('all','StartTime'),
                    'acctsessiontime' => t('all','TotalTime'),
-                   'hotspot' => t('all','HotSpot'),
-                   'nasshortname' =>  t('all','Nas'),
                    t('all','TotalTraffic')
                  );
     $colspan = count($cols);
@@ -244,6 +244,7 @@
             $this_name = (!empty((trim($this_firstname) . trim($this_lastname)))) ? $this_firstname . "<br>" . $this_lastname : t('all','NotDefined');
 
             $this_nasid = intval($this_nasid);
+            $nas_tooltip = get_nas_tooltip_str($this_nasshortname, $this_nasipaddress);
 
             $tooltip1 = t('all','NotDefined');
             $tmp = $this_upload + $this_download;
@@ -292,7 +293,7 @@
             // define table row
             $table_row = array(
                                 $checkbox, $tooltip2, $this_name, $this_framedipaddress, $this_callingstationid,
-                                $this_starttime, $this_sessiontime, $this_hotspot, $this_nasshortname, $tooltip1
+                                $nas_tooltip, $this_hotspot, $this_starttime, $this_sessiontime, $tooltip1
                               );
 
             // print table row
