@@ -467,6 +467,26 @@ function print_additional_controls($descriptors) {
 }
 
 
+// returns the descriptor array for the "CSV Export" control used across listing
+// pages (fed to print_table_prologue()'s 'end' / 'start.additional_controls').
+// $extra_query is appended to the fileExport.php query string (no leading '&').
+function get_csv_export_control($extra_query = "", $label = "CSV Export") {
+    $href = "include/management/fileExport.php?reportFormat=csv";
+
+    $extra_query = ltrim(trim($extra_query), "&");
+    if ($extra_query !== "") {
+        $href .= "&" . $extra_query;
+    }
+
+    return array(
+        'onclick' => sprintf("location.href='%s'", $href),
+        'label'   => $label,
+        'class'   => 'btn-light',
+        'icon'    => 'filetype-csv',
+    );
+}
+
+
 function get_checkbox_str($descriptor) {
     $result = "";
 

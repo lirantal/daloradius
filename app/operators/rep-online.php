@@ -212,11 +212,7 @@
 
 
         $descriptors['end'] = array();
-        $descriptors['end'][] = array(
-                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
-                                        'label' => 'CSV Export',
-                                        'class' => 'btn-light',
-                                     );
+        $descriptors['end'][] = get_csv_export_control();
         print_table_prologue($descriptors);
 
         $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
