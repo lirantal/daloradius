@@ -36,15 +36,17 @@
               ? str_replace("%", "", trim($_GET['username'])) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
+    $date_default = date_range_default('current_month');
+
     $startdate = (array_key_exists('startdate', $_GET) && !empty(trim($_GET['startdate'])) &&
                   preg_match(DATE_REGEX, trim($_GET['startdate']), $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
-               ? trim($_GET['startdate']) : "";
+               ? trim($_GET['startdate']) : $date_default['start'];
 
     $enddate = (array_key_exists('enddate', $_GET) && !empty(trim($_GET['enddate'])) &&
                 preg_match(DATE_REGEX, trim($_GET['enddate']), $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
-             ? trim($_GET['enddate']) : "";
+             ? trim($_GET['enddate']) : $date_default['end'];
 
     $cols = array(
                 "radacctid" => t('all','ID'),

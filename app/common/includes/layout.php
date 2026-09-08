@@ -33,6 +33,41 @@ function fix_placeholder_text($text) {
     return trim($text);
 }
 
+// Default [start, end] date range (Y-m-d) for report / accounting pages.
+// Both the page (when the startdate/enddate parameters are missing) and its
+// sidebar form read the range through this helper, so the pre-filled form and
+// the actual query always agree. Each page picks the strategy that fits it.
+// strategy: current_month | month_to_date | year_to_date | previous_month |
+//           last_7_days | last_30_days | all_time
+function date_range_default($strategy = 'current_month') {
+    $now = time();
+
+    switch ($strategy) {
+        case 'all_time':
+            return array('start' => '', 'end' => '');
+
+        case 'month_to_date':
+            return array('start' => date('Y-m-01', $now), 'end' => date('Y-m-d', $now));
+
+        case 'year_to_date':
+            return array('start' => date('Y-01-01', $now), 'end' => date('Y-m-d', $now));
+
+        case 'previous_month':
+            $prev = mktime(0, 0, 0, intval(date('n', $now)) - 1, 1, intval(date('Y', $now)));
+            return array('start' => date('Y-m-01', $prev), 'end' => date('Y-m-t', $prev));
+
+        case 'last_7_days':
+            return array('start' => date('Y-m-d', strtotime('-6 days', $now)), 'end' => date('Y-m-d', $now));
+
+        case 'last_30_days':
+            return array('start' => date('Y-m-d', strtotime('-29 days', $now)), 'end' => date('Y-m-d', $now));
+
+        case 'current_month':
+        default:
+            return array('start' => date('Y-m-01', $now), 'end' => date('Y-m-t', $now));
+    }
+}
+
 const DEFAULT_COMMON_PROLOGUE_CSS = array(
     "static/css/bootstrap.min.css",
     "static/css/icons/bootstrap-icons.min.css",

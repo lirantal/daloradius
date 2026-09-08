@@ -44,15 +44,17 @@
     $planname_enc = (!empty($planname)) ? htmlspecialchars($planname, ENT_QUOTES, 'UTF-8') : "";
     
 	// we validate starting and ending dates
+    $date_default = date_range_default('month_to_date');
+
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
                   preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : "";
+               ? $_GET['startdate'] : $date_default['start'];
 
     $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
                 preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : "";
+             ? $_GET['enddate'] : $date_default['end'];
 
     $cols = array(
                     "username" => t('all','Username'),

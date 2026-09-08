@@ -52,17 +52,19 @@ $username_input = array(
                        );
 
 $orderBy_options = array(
-                            "Time" => "Time",
-                            "Download" => "Download (bytes)",
-                            "Upload" => "Upload (bytes)",
+                            "Time" => t('all','TotalTime'),
+                            "Download" => t('all','Download'),
+                            "Upload" => t('all','Upload'),
                         );
+
+$date_default = date_range_default('year_to_date');
 
 $date_select_components = array();
 $date_select_components[] = array(
                                         "id" => 'random',
                                         "name" => "startdate",
                                         "type" => "date",
-                                        "value" => ((isset($startdate)) ? $startdate : date("Y-01-01")),
+                                        "value" => ((!empty($startdate)) ? $startdate : $date_default['start']),
                                         "caption" => t('all','StartingDate'),
                                         "tooltipText" => t('Tooltip','Date'),
                                  );
@@ -71,7 +73,7 @@ $date_select_components[] = array(
                                         "id" => 'random',
                                         "name" => "enddate",
                                         "type" => "date",
-                                        "value" => ((isset($enddate)) ? $enddate : date("Y-01-01", mktime(0, 0, 0, date('n') + 1, 1, date('Y')))),
+                                        "value" => ((!empty($enddate)) ? $enddate : $date_default['end']),
                                         "caption" => t('all','EndingDate'),
                                         "tooltipText" => t('Tooltip','Date'),
                                  );
@@ -135,7 +137,7 @@ $components[] = array(
                             "type" => "select",
                             "selected_value" => ((isset($orderBy)) ? $orderBy : array_keys($orderBy_options)[0]),
                             "options" => $orderBy_options,
-                            "tooltipText" => sprintf(t('sidebar', 'OrderResultsBy'), implode(" or ", array_keys($orderBy_options))),
+                            "tooltipText" => sprintf(t('sidebar', 'OrderResultsBy'), implode(" or ", array_values($orderBy_options))),
                           );
 
 

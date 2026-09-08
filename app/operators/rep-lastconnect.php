@@ -47,15 +47,17 @@
     }
 
     // in other cases we just check that syntax is ok
+    $date_default = date_range_default('last_7_days');
+
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
                   preg_match(DATE_REGEX, $_GET['startdate'], $m) === 1 &&
                   checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : date("Y-m-01");
+               ? $_GET['startdate'] : $date_default['start'];
 
     $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
                 preg_match(DATE_REGEX, $_GET['enddate'], $m) === 1 &&
                 checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : date("Y-m-01", mktime(0, 0, 0, date('n') + 1, 1, date('Y')));
+             ? $_GET['enddate'] : $date_default['end'];
 
     $radiusReply = (array_key_exists('radiusReply', $_GET) && !empty(trim($_GET['radiusReply'])) &&
                     in_array(trim($_GET['radiusReply']), $valid_radiusReplys))
