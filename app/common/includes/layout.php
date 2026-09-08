@@ -455,7 +455,14 @@ EOF;
 function print_additional_controls($descriptors) {
     foreach ($descriptors as $d) {
         $class = (isset($d['class'])) ? $d['class'] : "btn-primary";
-        printf('<button class="btn btn-sm %s ms-1" type="button" onclick="%s">%s</button>', $class, $d['onclick'], $d['label']);
+
+        $label = (isset($d['label'])) ? $d['label'] : "";
+
+        if (isset($d['icon'])) {
+            $label = sprintf('<i class="bi bi-%s me-1"></i>', trim($d['icon'])) . $label;
+        }
+
+        printf('<button class="btn btn-sm %s ms-1" type="button" onclick="%s">%s</button>', $class, $d['onclick'], $label);
     }
 }
 
@@ -496,7 +503,7 @@ function print_table_prologue($descriptors) {
 
     echo '<div class="col-12 col-lg-4 d-flex justify-content-start align-items-center flex-wrap gap-1">';
     if (isset($descriptors['start']) && is_array($descriptors['start'])) {
-        
+
         $start = $descriptors['start'];
 
         if (isset($start['common_controls'])) {
@@ -506,7 +513,7 @@ function print_table_prologue($descriptors) {
         if (isset($start['additional_controls']) && is_array($start['additional_controls'])) {
             print_additional_controls($start['additional_controls']);
         }
-        
+
     }
     echo '</div>';
 
@@ -570,7 +577,7 @@ function print_table_top($descriptor=array()) {
         // Add the specified class to the $class variable
         $class .= " " . $descriptor['class'];
     }
-    
+
     // Remove duplicate classes if any
     $class = implode(" ", array_unique(explode(" ", $class)));
 
@@ -986,7 +993,7 @@ function print_textarea($textarea_descriptor) {
     if (array_key_exists('oninput', $textarea_descriptor)) {
         printf(' oninput="%s"', $textarea_descriptor['oninput']);
     }
-    
+
     if (array_key_exists('tabindex', $textarea_descriptor)) {
         printf(' tabindex="%s"', $textarea_descriptor['tabindex']);
     }
