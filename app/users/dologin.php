@@ -45,7 +45,7 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dal
         $selectedLanguage = 'en';
     }
     
-    //~ 31536000 = 365 * 24 * 60 * 60 
+    // 31536000 = 365 * 24 * 60 * 60
     setcookie('daloradius_language', $selectedLanguage, time() + 31536000);
 
     $login_user = $_POST['login_user'];

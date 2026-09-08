@@ -225,7 +225,7 @@ function userInvoicesStatus($user_id, $drawTable) {
 
         $button_descriptors0 = array();
         $button_descriptors0[] = array(
-                                            "label" => "New Invoice",
+                                            "label" => t('button','NewInvoice'),
                                             "onclick" => sprintf("javascript:window.location='bill-invoice-new.php?user_id=%d'", $user_id),
                                             "class" => "btn-success",
                                       );
@@ -250,7 +250,7 @@ function userInvoicesStatus($user_id, $drawTable) {
         $input_descriptors0[] = array(
                                         "type" =>"number",
                                         "name" => "total_invoices",
-                                        "caption" => "Total Invoices",
+                                        "caption" => t('all','TotalInvoices'),
                                         "disabled" => true,
                                         "value" => $totalInvoices,
                                      );
@@ -266,7 +266,7 @@ function userInvoicesStatus($user_id, $drawTable) {
         $input_descriptors0[] = array(
                                         "type" =>"number",
                                         "name" => "total_billed",
-                                        "caption" => "Total Billed",
+                                        "caption" => t('all','TotalBilled'),
                                         "disabled" => true,
                                         "value" => $totalBilled,
                                      );
@@ -282,7 +282,7 @@ function userInvoicesStatus($user_id, $drawTable) {
         $input_descriptors0[] = array(
                                         "type" =>"number",
                                         "name" => "balance",
-                                        "caption" => "Balance",
+                                        "caption" => t('all','Balance'),
                                         "disabled" => true,
                                         "value" => $totalPayed - $totalBilled,
                                      );
@@ -450,11 +450,12 @@ function userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_a
     $sql_WHERE = array();
 
     if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("payment_date > '%s'", $dbSocket->escapeSimple($startdate));
+        $sql_WHERE[] = sprintf("payment_date >= '%s'", $dbSocket->escapeSimple($startdate));
     }
 
-    if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("payment_date < '%s'", $dbSocket->escapeSimple($enddate));
+    if (!empty($enddate)) {
+        // inclusive end date: match the whole $enddate day
+        $sql_WHERE[] = sprintf("payment_date < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
     }
 
     if (!empty($payer_email)) {

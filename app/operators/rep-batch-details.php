@@ -157,11 +157,7 @@
                                         'label' => 'Email Invoice to Business/Hotspot',
                                         'class' => 'btn-light',
                                       );
-        $additional_controls[] = array(
-                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv&reportType=reportsBatchTotalUsers'",
-                                        'label' => 'CSV Export',
-                                        'class' => 'btn-light',
-                                     );
+        $additional_controls[] = get_csv_export_control('reportType=reportsBatchTotalUsers');
 
         $descriptors = array( 'end' => $additional_controls );
 
@@ -373,11 +369,7 @@
             $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
             
             $descriptors['end'] = array();
-            $descriptors['end'][] = array(
-                                            'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
-                                            'label' => 'Active Users CSV Export',
-                                            'class' => 'btn-light',
-                                         );
+            $descriptors['end'][] = get_csv_export_control('', 'Active Users CSV Export');
 
             print_table_prologue($descriptors);
 

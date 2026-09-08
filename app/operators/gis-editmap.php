@@ -21,15 +21,15 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -40,10 +40,10 @@
         dalo_check_csrf_token($_POST['csrf_token'])) {
 
         $type = (array_key_exists('type', $_POST) && isset($_POST['type']) &&
-                 in_array(strtolower($_POST['type']), array("del", "add")))
-              ? strtolower($_POST['type']) : "";
+                 in_array(strtolower(trim($_POST['type'])), array("del", "add")))
+              ? strtolower(trim($_POST['type'])) : "";
 
-        include('../common/includes/db_open.php');
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
         if ($type == "add") {
             $hotspot_name = (array_key_exists('hotspotname', $_POST) && !empty(trim($_POST['hotspotname'])))
@@ -76,8 +76,10 @@
                 $res = $dbSocket->execute($stmt, $data);
                 $logDebugSQL .= "$sql;\n";
 
-                $successMsg = sprintf("Added new geolocation information for hotspot <strong>%s</strong>. "
-                                    . '<a href="mng-hs-edit.php?name=%s" title="Edit">Edit</a>', $hotspot_name_enc, urlencode($hotspot_name_enc));
+                $successMsg = sprintf("Added new geolocation information for hotspot <strong>%s</strong>. " .
+                                      '<a href="mng-hs-edit.php?name=%s" title="%s">%s</a>',
+                                      $hotspot_name_enc, urlencode($hotspot_name_enc),
+                                      t('button','EditHotspot'), t('button','EditHotspot'));
             }
         }
 
@@ -106,7 +108,7 @@
             }
         }
 
-        include('../common/includes/db_close.php');
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     }
 
@@ -115,16 +117,16 @@
     $title = t('Intro','giseditmap.php');
     $help = t('helpPage','giseditmap');
 
-    $extra_css = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.css");
+    $extra_css = array("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
 
     // loaded at the bottom of the page
-    $extra_js = array("https://unpkg.com/leaflet@1.9.3/dist/leaflet.js");
+    $extra_js = array("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js");
 
     print_html_prologue($title, $langCode, $extra_css);
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
     // print map div
     echo '<div id="map" style="width: 800px; height: 600px; margin: 20px auto"></div>' . "\n";
@@ -186,15 +188,61 @@
     $message5 = t('messages','gisedit5');
     $message6 = t('messages','gisedit6');
 
+    // retrieve markers (to add via js)
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+
+    $sql = sprintf("SELECT id, name, mac, geocode
+                      FROM %s
+                     WHERE (geocode <> '' AND geocode IS NOT NULL)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+    $res = $dbSocket->query($sql);
+    $logDebugSQL .= "$sql;\n";
+
+    $markers_js = "";
+    $first_lat = null;
+    $first_lng = null;
+    $marker_count = 0;
+
+    // flags that make a PHP value safe to embed as a literal inside an inline <script> block
+    $json_flags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
+
+    while ($row = $res->fetchRow()) {
+        list($id, $name, $mac, $geocode) = $row;
+
+        // geocode is stored as "lat,lng"; skip anything that doesn't parse cleanly
+        if (!preg_match('/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/', (string) $geocode, $coords)) {
+            continue;
+        }
+        $lat = (float) $coords[1];
+        $lng = (float) $coords[2];
+
+        if ($marker_count === 0) {
+            $first_lat = $lat;
+            $first_lng = $lng;
+        }
+        $marker_count++;
+
+        // HTML-escape for display, then JSON-encode for the surrounding JavaScript context
+        $name_js = json_encode(htmlspecialchars((string) $name, ENT_QUOTES, 'UTF-8'), $json_flags);
+
+        $markers_js .= sprintf("L.marker(%s, {id: %d, title: %s}).addTo(group).bindTooltip(%s).on('click', remove);\n",
+                               json_encode(array($lat, $lng)), (int) $id, $name_js, $name_js);
+    }
+
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
+    // center on the first available hotspot coordinate, otherwise fall back to a
+    // default view (Area della Ricerca CNR di Pisa, San Cataldo)
+    $map_center = ($marker_count > 0) ? json_encode(array($first_lat, $first_lng)) : "[43.71805, 10.42284]";
+
     $inline_extra_js = <<<EOF
 window.onload = function() {
-    var map = L.map('map').setView([51.505, -0.09], 13);
+    var map = L.map('map').setView({$map_center}, 16);
     var group = L.featureGroup().addTo(map);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 20
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abc',
+        maxZoom: 19
     }).addTo(map);
 
     map.on('click', function(e){
@@ -231,37 +279,13 @@ window.onload = function() {
 
 EOF;
 
-    // retrieve markers (to add via js)
-    include('../common/includes/db_open.php');
+    $inline_extra_js .= $markers_js;
 
-    $sql = sprintf("SELECT id, name, mac, geocode
-                      FROM %s
-                     WHERE (geocode <> '' AND geocode IS NOT NULL)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    while ($row = $res->fetchRow()) {
-        $rowlen = count($row);
-
-        for ($i = 0; $i < $rowlen; $i++) {
-            $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
-        }
-
-        list($id, $name, $mac, $geocode) = $row;
-
-        $inline_extra_js .= sprintf("L.marker([%s], {id: %s, title: '%s'}).addTo(group).bindTooltip('%s').on('click', remove);\n",
-                                    $geocode, $id, $name, $name);
+    // when more than one hotspot is mapped, zoom to fit them all
+    if ($marker_count > 1) {
+        $inline_extra_js .= "\n    map.fitBounds(group.getBounds());\n";
     }
+    $inline_extra_js .= "}\n";
 
-    include('../common/includes/db_close.php');
-
-    $inline_extra_js .= <<<EOF
-
-    map.fitBounds(group.getBounds());
-}
-
-EOF;
-
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue($inline_extra_js, $extra_js);
-?>

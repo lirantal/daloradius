@@ -90,9 +90,8 @@
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'datediff.php' ]);
 
-    $currdate = date("j M Y");
+    $currdate = new DateTime('today');
     
     //orig: used as maethod to get total rows - this is required for the pages_numbering.php page
     $sql = sprintf("SELECT DISTINCT(ra.username) AS username, rc.attribute AS attribute, rc.value AS maxtimeexpiration,
@@ -151,7 +150,9 @@
             list($username, $attribute, $maxtimeexpiration, $usedtime) = $row;
             
             if ($attribute == "Expiration") {
-                $datediff = datediff('d', $maxtimeexpiration, $currdate, false);
+                $expirationTimestamp = strtotime($maxtimeexpiration);
+                $expirationDate = (new DateTime())->setTimestamp($expirationTimestamp === false ? 0 : $expirationTimestamp);
+                $datediff = (int)$expirationDate->diff($currdate)->format('%r%a');
                 if ($datediff > 0) {
                     $status = '<span class="badge text-bg-danger">Expired</span>';
                     $usage = sprintf('<span class="badge text-bg-secondary">%s day(s)</span> since expiration', $datediff);

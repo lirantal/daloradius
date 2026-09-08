@@ -38,10 +38,10 @@ if (strpos($_SERVER['PHP_SELF'], '/lang/main.php') !== false) {
 //    the default language.
 
 // Load configuration
-include_once(__DIR__ . '/../../common/includes/config_read.php');
+include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', 'common', 'includes', 'config_read.php' ]);
 
 // Declare global array with language keys
-global $l;
+global $l, $lDefault;
 
 $l = array();
 
@@ -51,6 +51,10 @@ $langDefault = 'en';
 $langFile = __DIR__ . '/' . $langDefault . '.php';
 
 require_once($langFile);
+
+// Keep a pristine copy of the default language so t() can fall back to it
+// whenever the configured language is missing a key.
+$lDefault = $l;
 
 // Try to load language according to configuration
 $langConf = $configValues['CONFIG_LANG'];
@@ -70,29 +74,60 @@ $langCode = str_replace("_", "-", pathinfo($langFile, PATHINFO_FILENAME));
 
 // Translation function
 function t($a, $b = null, $c = null, $d = null) {
-    global $l;
+    global $l, $lDefault;
 
     // added a static null at the end of the $arr
     $arr = array( $a, $b, $c, $d, null );
 
-    // dictionary will be modified by the for loop
-    $t = $l;
+    // best value found so far: an empty string coming from the configured
+    // language, that English might still be able to fill in
+    $result = null;
 
-    // count($arr) - 1 == 4
-    for ($i = 0; $i < 4; $i++) {
+    // look the key up in the configured language first, then fall back to the
+    // default language (English) before giving up
+    foreach (array($l, $lDefault) as $dictionary) {
 
-        $current = $arr[$i];
-        $next = $arr[$i+1];
+        // dictionary will be modified by the for loop
+        $t = $dictionary;
+
+        // count($arr) - 1 == 4
+        for ($i = 0; $i < 4; $i++) {
+
+            $current = $arr[$i];
+            $next = $arr[$i+1];
 
 
-        if ($next == null && isset($t[$current])) {
-            return $t[$current];
+            if ($next == null) {
+
+                if (isset($t[$current]) && is_string($t[$current])) {
+
+                    // a non-empty translation is always good enough
+                    if ($t[$current] !== '') {
+                        return $t[$current];
+                    }
+
+                    // an empty one is kept only as a last resort, so that a
+                    // non-empty English value can still take precedence
+                    if ($result === null) {
+                        $result = $t[$current];
+                    }
+                }
+
+                break;
+            }
+
+            // stop descending as soon as the path breaks, so the next
+            // dictionary gets a chance
+            if (!isset($t[$current]) || !is_array($t[$current])) {
+                break;
+            }
+
+            $t = $t[$current];
         }
-
-        $t = $t[$current];
     }
 
-    return "Lang Error!";
+    // reached only when nothing better than an empty string was found
+    return ($result === null) ? "Lang Error!" : $result;
 }
 
 ?>

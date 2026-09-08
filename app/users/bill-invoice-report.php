@@ -166,11 +166,7 @@
 
 
         $descriptors['end'] = array();
-        $descriptors['end'][] = array(
-                                        'onclick' => "window.location.assign('include/management/fileExport.php')",
-                                        'label' => 'CSV Export',
-                                        'class' => 'btn-light',
-                                     );
+        $descriptors['end'][] = get_csv_export_control();
         print_table_prologue($descriptors);
 
         // print table top

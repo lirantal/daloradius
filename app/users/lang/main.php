@@ -32,7 +32,7 @@ if (array_key_exists($cookieName, $_COOKIE) && !empty(trim($_COOKIE[$cookieName]
     $selectedLanguage = $_COOKIE[$cookieName];
 } else {
     $selectedLanguage = 'en';
-    //~ 31536000 = 365 * 24 * 60 * 60 
+    // 31536000 = 365 * 24 * 60 * 60
     setcookie($cookieName, $selectedLanguage, time() + 31536000);
 }
 

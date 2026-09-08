@@ -849,7 +849,6 @@ $l['Intro']['repmain.php'] = "Pagina de relatório";
 $l['Intro']['repstatus.php'] = "Pagina de Status";
 $l['Intro']['replogs.php'] = "Pagina de logs";
 $l['Intro']['reptopusers.php'] = "Usuários mas ativos";
-$l['Intro']['repusername.php'] = "Listando usuários";
 
 $l['Intro']['mngbatch.php'] = "Criar usuarios em lotes";
 $l['Intro']['mngdel.php'] = "Remover Usuário";
@@ -1233,7 +1232,6 @@ $l['helpPage']['repstatus'] = "<b>Status</b><br/>
 <h200><b>RADIUS Status</b></h200> - Providencia informação  FreeRADIUS daemon and MySQL Database server";
 $l['helpPage']['reptopusers'] = "Registro dos usuarios  mais ativos , aqueles listados abaixo ganharam o maior consumo de sessões
 uso de tempo ou largura de banda. Listando usuários da categoria: ";
-$l['helpPage']['repusername'] = "Registro encontrado para usuario:";
 $l['helpPage']['reponline'] = "
 A tabela a seguir lista os usuários que estão conectados no momento
 o sistema. É muito possível que haja conexões obsoletas,

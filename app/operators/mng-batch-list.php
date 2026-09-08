@@ -147,11 +147,7 @@
         $descriptors['start'] = array( 'common_controls' => 'batch_id[]', 'additional_controls' => $additional_controls );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
         $descriptors['end'] = array();
-        $descriptors['end'][] = array(
-                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
-                                        'label' => 'CSV Export',
-                                        'class' => 'btn-light',
-                                     );
+        $descriptors['end'][] = get_csv_export_control();
         print_table_prologue($descriptors);
         
         $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
@@ -169,9 +165,9 @@
         $count = 0;
         while($row = $res->fetchRow()) {
 
-            //~ bh.id AS bid, bh.batch_name, bh.batch_description, bh.batch_status, COUNT(DISTINCT(ubi.id)) AS total_users,
-            //~ ubi.planname, bp.plancost, bp.plancurrency, hs.name AS HotspotName, bh.creationdate, bh.creationby,
-            //~ bh.updatedate, bh.updateby
+            // bh.id AS bid, bh.batch_name, bh.batch_description, bh.batch_status, COUNT(DISTINCT(ubi.id)) AS total_users,
+            // ubi.planname, bp.plancost, bp.plancurrency, hs.name AS HotspotName, bh.creationdate, bh.creationby,
+            // bh.updatedate, bh.updateby
             $rowlen = count($row);
 
             // escape row elements

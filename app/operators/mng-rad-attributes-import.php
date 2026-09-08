@@ -79,21 +79,21 @@
                     $arr = preg_split($split_regex, trim($line));
                     $arrlen = count($arr);
                     
-                    //~ we need at least two elements
-                    //~ minimum arrlen == 2
-                    //~ maximum unknown (because we could have comments)
+                    // we need at least two elements
+                    // minimum arrlen == 2
+                    // maximum unknown (because we could have comments)
                     if ($arrlen < 2) {
                         continue;
                     }
                     
                     if ($detectVendor && $arr[0] === "VENDOR") {
-                        //~ VENDOR       TestVendor1    1    # this could be a comment
+                        // VENDOR       TestVendor1    1    # this could be a comment
                         $this_vendor = $arr[1];
                         continue;
                     }
                     
                     if ($arr[0] === "ATTRIBUTE") {
-                        //~ example: ATTRIBUTE    TestAttr2      2    string    # this could be a comment
+                        // example: ATTRIBUTE    TestAttr2      2    string    # this could be a comment
                         $attr = $arr[1];
                         $type = ($arrlen >= 4) ? $arr[3] : null;
                             

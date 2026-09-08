@@ -853,7 +853,6 @@ $l['Intro']['repmain.php'] = "Jelentések oldal";
 $l['Intro']['repstatus.php'] = "Statusz oldal";
 $l['Intro']['replogs.php'] = "Naplózás oldal";
 $l['Intro']['reptopusers.php'] = "Csúcs felhasználók";
-$l['Intro']['repusername.php'] = "Felhasználók listája";
 
 $l['Intro']['mngbatch.php'] = "Több felhasználó hozzáadása";
 $l['Intro']['mngdel.php'] = "Felhasználó eltávolítása";
@@ -1235,7 +1234,6 @@ $l['helpPage']['repstatus'] = "<b>Status</b><br/>
 <h200><b>RADIUS Status</b></h200> - Provides general information about the FreeRADIUS daemon and MySQL Database server";
 $l['helpPage']['reptopusers'] = "Records for top users, those which are listed below have gained the highest consumption of session
 time or bandwidth usage. Listing users of category: ";
-$l['helpPage']['repusername'] = "Records found for user:";
 $l['helpPage']['reponline'] = "
 The following table lists users who are currently connected to
 the system. It is very much possible that there are stale connections,

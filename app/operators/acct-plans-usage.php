@@ -44,15 +44,17 @@
     $planname_enc = (!empty($planname)) ? htmlspecialchars($planname, ENT_QUOTES, 'UTF-8') : "";
     
 	// we validate starting and ending dates
+    $date_default = date_range_default('month_to_date');
+
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
                   preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
                   checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : "";
+               ? $_GET['startdate'] : $date_default['start'];
 
     $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
                 preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
                 checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : "";
+             ? $_GET['enddate'] : $date_default['end'];
 
     $cols = array(
                     "username" => t('all','Username'),
@@ -135,12 +137,13 @@
     }
     
     if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("ra.AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
+        $sql_WHERE[] = sprintf("ra.AcctStartTime >= '%s'", $dbSocket->escapeSimple($startdate));
         $partial_query_params[] = sprintf("startdate=%s", $startdate);
     }
 
     if (!empty($enddate)) {
-        $sql_WHERE[] = sprintf("ra.AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
+        // inclusive end date: match the whole $enddate day
+        $sql_WHERE[] = sprintf("ra.AcctStartTime < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
         $partial_query_params[] = sprintf("enddate=%s", $enddate);
     }
 
@@ -194,11 +197,7 @@
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
         $descriptors['end'] = array();
-        $descriptors['end'][] = array(
-                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
-                                        'label' => 'CSV Export',
-                                        'class' => 'btn-light',
-                                     );
+        $descriptors['end'][] = get_csv_export_control();
         print_table_prologue($descriptors);
 
         // print table top

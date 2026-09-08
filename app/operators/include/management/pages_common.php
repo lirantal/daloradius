@@ -94,12 +94,6 @@ function toxbyte($size) {
     return "$size B";
 }
 
-// set of functions to ease the usage of escaping " chars in echo or print functions
-// thanks to php.net
-function qq($text) {return str_replace('`','"',$text); }
-function printq($text) { print qq($text); }
-function printqn($text) { print qq($text)."\n"; }
-
 // function taken from dialup_admin
 function time2str($time, $abbreviate = false) {
     // Check if $time is a valid number
@@ -422,10 +416,6 @@ function printTableHead($cols, $orderBy="", $orderType="asc", $partial_query_str
             $href_format = '?orderBy=%s&orderType=%s' . $partial_query_string_safe; 
             $href_asc = htmlspecialchars(sprintf($href_format, $param, 'asc'), ENT_QUOTES, 'UTF-8', false);
             $href_desc = htmlspecialchars(sprintf($href_format, $param, 'desc'), ENT_QUOTES, 'UTF-8', false);
-
-            //~ $img_format = '<img src="%s" alt="%s">';
-            //~ $img_asc = sprintf($img_format, 'static/images/icons/arrow_up.png', '^');
-            //~ $img_desc = sprintf($img_format, 'static/images/icons/arrow_down.png', 'v');
 
             $img_format = '<i class="bi bi-%s ms-1 text-dark"></i>';
             $img_asc = sprintf($img_format, 'sort-alpha-up');

@@ -69,8 +69,6 @@
             
     } else /*if ($destination == "preview")*/ {
         print $document;
-        //~ $result = file_put_contents(dirname(__FILE__).'/../../notifications/templates/invoice_preview.html', $htmlDocument);
-        //~ header('Location: ../../notifications/templates/invoice_preview.html');
     }
     
     

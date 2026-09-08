@@ -259,7 +259,6 @@
                        . '</table>';
                 } else {
                     $failureMsg = "this invoice has no items";
-                    //~ $logAction .= "invalid or empty invoice id on page: ";
                 }
 
                 close_fieldset();
@@ -272,7 +271,6 @@
             } else {
                 // no details to show
                 $failureMsg = "this invoice has no details";
-                //~ $logAction .= "invalid or empty invoice id on page: ";
             }
 
 

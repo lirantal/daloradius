@@ -1138,7 +1138,6 @@ $l['Intro']['rephsall.php'] = "熱點清單";
 $l['Intro']['repmain.php'] = "報表頁面";
 $l['Intro']['repstatus.php'] = "狀態頁面";
 $l['Intro']['reptopusers.php'] = "使用者使用詳情";
-$l['Intro']['repusername.php'] = "使用者清單";
 
 $l['Intro']['mngbatchdel.php'] = "刪除批次工作階段";
 
@@ -1690,7 +1689,6 @@ $l['helpPage']['repstatus'] = "<b>狀態</b><br/>
 $l['helpPage']['reptopusers'] = <<<EOF
 <p>以下列出的使用者獲得了最高的工作階段時間或頻寬使用量的最高使用者記錄。列出此類使用者：</p>
 EOF;
-$l['helpPage']['repusername'] = "記錄發現的使用者:";
 $l['helpPage']['reponline'] = "
 下表顯示了目前連線使用者
 系統。非常有可能,有陳舊的連線,

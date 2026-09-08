@@ -31,6 +31,7 @@ include_once("../common/includes/validation.php");
 
 global $username, $startdate, $enddate, $ipaddress, $nasipaddress;
 
+
 include_once("include/management/populate_selectbox.php");
 $menu_usernames = get_users('CONFIG_DB_TBL_RADACCT');
 $show = count($menu_usernames) > 0;
@@ -73,7 +74,7 @@ if ($show) {
                             "id" => 'random',
                             "name" => "startdate",
                             "type" => "date",
-                            "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                            "value" => ((!empty($startdate)) ? $startdate : ""),
                             "caption" => t('all','StartingDate'),
                             "tooltipText" => t('Tooltip','Date'),
                          );
@@ -82,7 +83,7 @@ if ($show) {
                             "id" => 'random',
                             "name" => "enddate",
                             "type" => "date",
-                            "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                            "value" => ((!empty($enddate)) ? $enddate : ""),
                             "caption" => t('all','EndingDate'),
                             "tooltipText" => t('Tooltip','Date'),
                          );

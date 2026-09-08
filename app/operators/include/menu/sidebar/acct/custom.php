@@ -35,13 +35,14 @@ $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
 global $startdate, $enddate, $acct_custom_query_options_all, $where_field, $operator, $accounting_custom_value,
        $acct_custom_query_options_default, $acct_custom_query_options_all, $sqlfields, $orderBy, $orderType;
 
+
 $components = array();
 
 $components[] = array(
                         "id" => 'random',
                         "name" => "startdate",
                         "type" => "date",
-                        "value" => ((isset($startdate)) ? $startdate : date("Y-m-01")),
+                        "value" => ((!empty($startdate)) ? $startdate : ""),
                         "caption" => t('all','StartingDate'),
                         "tooltipText" => t('Tooltip','Date'),
                         "sidebar" => true
@@ -51,7 +52,7 @@ $components[] = array(
                         "id" => 'random',
                         "name" => "enddate",
                         "type" => "date",
-                        "value" => ((isset($enddate)) ? $enddate : date("Y-m-t")),
+                        "value" => ((!empty($enddate)) ? $enddate : ""),
                         "caption" => t('all','EndingDate'),
                         "tooltipText" => t('Tooltip','Date'),
                         "sidebar" => true

@@ -91,8 +91,6 @@
         
         /* END */
         
-        //~ id, realmname, type, authhost, accthost, secret, ldflag, nostrip, hints, notrealm, creationdate, creationby, updatedate, updateby
-        
         // we execute and log the actual query
         $sql = sprintf("SELECT realmname, creationdate, creationby, updatedate, updateby
                           FROM %s", $configValues['CONFIG_DB_TBL_DALOREALMS']);

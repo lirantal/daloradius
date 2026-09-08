@@ -21,15 +21,14 @@
  *********************************************************************************************************
  */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
-    include_once('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
-
-    include_once("lang/main.php");
-    include_once("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // setting table-related parameters first
     switch($configValues['FREERADIUS_VERSION']) {
@@ -47,15 +46,17 @@
     }
 
     // in other cases we just check that syntax is ok
+    $date_default = date_range_default('last_7_days');
+
     $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
                   preg_match(DATE_REGEX, $_GET['startdate'], $m) === 1 &&
                   checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : date("Y-m-01");
+               ? $_GET['startdate'] : $date_default['start'];
 
     $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
                 preg_match(DATE_REGEX, $_GET['enddate'], $m) === 1 &&
                 checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : date("Y-m-01", mktime(0, 0, 0, date('n') + 1, 1, date('Y')));
+             ? $_GET['enddate'] : $date_default['end'];
 
     $radiusReply = (array_key_exists('radiusReply', $_GET) && !empty(trim($_GET['radiusReply'])) &&
                     in_array(trim($_GET['radiusReply']), $valid_radiusReplys))
@@ -75,8 +76,8 @@
     //   - for table ordering purpose
     // - its value can be used for table headings presentation
     $cols = array(
-                   "fullname" => t('all','Name'),
                    $tableSetting['postauth']['user'] => t('all','Username'),
+                   "fullname" => t('all','Name'),
                  );
 
     if (!$hiddenPassword) {
@@ -123,9 +124,8 @@
 
     print_title_and_help($title, $help);
 
-
-    include('include/management/pages_common.php');
-    include('../common/includes/db_open.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     // pa is a placeholder in the SQL statements below
     // except for $username, which has been only partially escaped,
@@ -135,9 +135,10 @@
         $sql_WHERE[] = sprintf("pa.%s LIKE '%%%s%%'", $tableSetting['postauth']['user'],
                                                     $dbSocket->escapeSimple($username));
     }
-    $sql_WHERE[] = sprintf("pa.%s BETWEEN '%s' AND '%s'", $tableSetting['postauth']['date'],
-                                                          $dbSocket->escapeSimple($startdate),
-                                                          $dbSocket->escapeSimple($enddate));
+    // inclusive end date: match the whole $enddate day
+    $sql_WHERE[] = sprintf("pa.%s >= '%s' AND pa.%s < ('%s' + INTERVAL 1 DAY)",
+                           $tableSetting['postauth']['date'], $dbSocket->escapeSimple($startdate),
+                           $tableSetting['postauth']['date'], $dbSocket->escapeSimple($enddate));
     if ($radiusReply != "Any") {
         $sql_WHERE[] = sprintf("pa.reply='%s'", $dbSocket->escapeSimple($radiusReply));
     }
@@ -163,8 +164,9 @@
         /* START - Related to pages_numbering.php */
 
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        // must be included after opendb because it needs to read
+        // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
 
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
@@ -209,11 +211,7 @@
 
 
         $descriptors['end'] = array();
-        $descriptors['end'][] = array(
-                                        'onclick' => "location.href='include/management/fileExport.php?reportFormat=csv'",
-                                        'label' => 'CSV Export',
-                                        'class' => 'btn-light',
-                                     );
+        $descriptors['end'][] = get_csv_export_control();
         print_table_prologue($descriptors);
 
         // print table top
@@ -242,11 +240,11 @@
 
             list($fullname, $user, $pass, $reply, $datetime) = $row;
 
-            $fullname = (!empty($fullname) ? $fullname : "(n/a)");
+            $fullname = (!empty($fullname) ? $fullname : t('all','NotAvailable'));
             $reply = sprintf('<span class="text-%s">%s</span>',
                              (($reply == "Access-Reject") ? "danger" : "success"), $reply);
 
-            $table_row = array( $fullname, $user );
+            $table_row = array( $user, $fullname );
             if (!$hiddenPassword) {
                 $table_row[] = $pass;
             }
@@ -280,11 +278,10 @@
 
     } else {
         $failureMsg = "Nothing to display";
-        include_once("include/management/actionMessages.php");
+         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include('../common/includes/db_close.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
-    include('include/config/logging.php');
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
-?>

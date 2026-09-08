@@ -513,7 +513,6 @@
         // open 1-st tab
         open_tab($navkeys, 1);
 
-        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
         include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userinfo.php' ]);
 
         close_tab($navkeys, 1);
@@ -521,7 +520,6 @@
         // open 2-nd tab
         open_tab($navkeys, 2);
 
-        //~ $customApplyButton = sprintf('<input type="submit" name="submit" value="%s" class="button">', t('buttons','apply'));
         include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'userbillinfo.php' ]);
 
         close_tab($navkeys, 2);

@@ -1135,7 +1135,6 @@ $l['Intro']['rephsall.php'] = "热点列表";
 $l['Intro']['repmain.php'] = "报告页面";
 $l['Intro']['repstatus.php'] = "状态页面";
 $l['Intro']['reptopusers.php'] = "用户使用详情";
-$l['Intro']['repusername.php'] = "用户列表";
 
 $l['Intro']['mngbatchdel.php'] = "删除批量会话";
 
@@ -1584,7 +1583,6 @@ $l['helpPage']['repstatus'] = "<b>状态</b><br/>
 <h200><b>RADIUS 状态</b></h200> - 提供关于FreeRADIUS守护进程的一般信息和MySQL数据库服务器";
 $l['helpPage']['reptopusers'] = "下面显示记录为高级用户,那些获得了最高消费的会话
 时间和带宽使用情况。清单的用户类别: ";
-$l['helpPage']['repusername'] = "记录发现的用户:";
 $l['helpPage']['reponline'] = "
 下表显示了当前连接用户
 系统。非常有可能,有陈旧的连接,
