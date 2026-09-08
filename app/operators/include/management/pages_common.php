@@ -33,19 +33,19 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/pages_common.php') !== fal
 
 /* returns a random alpha-numeric string of length $length */
 function createPassword($length, $chars) {
+    if ($length <= 0) {
+        return '';
+    }
+
     if (!$chars) {
         $chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
     }
 
-    srand((double)microtime()*1000000);
-    $i = 0;
+    $charsLength = strlen($chars);
     $pass = '';
 
-    while ($i <= ($length - 1)) {
-        $num = rand() % (strlen($chars));
-        $tmp = substr($chars, $num, 1);
-        $pass = $pass . $tmp;
-        $i++;
+    for ($i = 0; $i < $length; $i++) {
+        $pass .= substr($chars, random_int(0, $charsLength - 1), 1);
     }
 
     return $pass;
