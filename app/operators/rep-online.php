@@ -45,26 +45,26 @@
                    'selected',
                    'username' => t('all','Username'),
                    t('all','Name'),
-                   'framedipaddress' => t('all','Framed IP Address',),
-                   'calledstationid' => t('all','Calling Station ID',),
+                   'framedipaddress' => t('all','Framed IP Address'),
+                   'calledstationid' => t('all','Calling Station ID'),
                    'acctstarttime' => t('all','StartTime'),
                    'acctsessiontime' => t('all','TotalTime'),
                    'hotspot' => t('all','HotSpot'),
-                   'nasshortname' =>  t('all','NasShortname'),
+                   'nasshortname' =>  t('all','Nas'),
                    t('all','TotalTraffic')
                  );
     $colspan = count($cols);
-    $half_colspan = intval($colspan / 2);
 
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
+    $param_col_keys = array_keys($param_cols);
 
     // validating user passed parameters
 
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
-             ? $_GET['orderBy'] : array_keys($param_cols)[0];
+                in_array($_GET['orderBy'], $param_col_keys))
+             ? $_GET['orderBy'] : $param_col_keys[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
@@ -130,32 +130,33 @@
     $_SESSION['reportQuery'] = $sql_WHERE;
     $_SESSION['reportType'] = "reportsOnlineUsers";
 
-    //orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-    $sql = "SELECT ra.username AS username,
-                   ra.framedipaddress AS framedipaddress,
-                   ra.callingstationid AS callingstationid,
-                   ra.acctstarttime AS starttime,
-                   ra.acctsessiontime AS sessiontime,
-                   ra.nasipaddress AS nasipaddress,
-                   ra.calledstationid AS calledstationid,
-                   ra.acctsessionid AS sessionid,
-                   ra.acctinputoctets AS upload,
-                   ra.acctoutputoctets AS download,
-                   hs.name AS hotspot,
-                   rn.shortname AS nasshortname,
-                   rn.id AS nasid,
-                   ui.firstname AS firstname,
-                   ui.lastname AS lastname
-              FROM %s AS ra LEFT JOIN %s AS hs ON hs.mac=ra.calledstationid
-                            LEFT JOIN %s AS rn ON rn.nasname=ra.nasipaddress
-                            LEFT JOIN %s AS ui ON ra.username=ui.username";
+    $sql_SELECT = "SELECT ra.username AS username,
+                          ra.framedipaddress AS framedipaddress,
+                          ra.callingstationid AS callingstationid,
+                          ra.acctstarttime AS starttime,
+                          ra.acctsessiontime AS sessiontime,
+                          ra.nasipaddress AS nasipaddress,
+                          ra.calledstationid AS calledstationid,
+                          ra.acctsessionid AS sessionid,
+                          ra.acctinputoctets AS upload,
+                          ra.acctoutputoctets AS download,
+                          hs.name AS hotspot,
+                          rn.shortname AS nasshortname,
+                          rn.id AS nasid,
+                          ui.firstname AS firstname,
+                          ui.lastname AS lastname ";
 
-    $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'],
-                         $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                         $configValues['CONFIG_DB_TBL_RADNAS'],
-                         $configValues['CONFIG_DB_TBL_DALOUSERINFO']) . $sql_WHERE;
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+    $sql_FROM = sprintf(" FROM %s AS ra LEFT JOIN %s AS hs ON hs.mac=ra.calledstationid
+                                        LEFT JOIN %s AS rn ON rn.nasname=ra.nasipaddress
+                                        LEFT JOIN %s AS ui ON ra.username=ui.username ",
+                        $configValues['CONFIG_DB_TBL_RADACCT'],
+                        $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
+                        $configValues['CONFIG_DB_TBL_RADNAS'],
+                        $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+
+    // total rows for pages_numbering.php: count only, without transferring the whole result set
+    $res = $dbSocket->query("SELECT COUNT(*)" . $sql_FROM . $sql_WHERE);
+    $numrows = intval($res->fetchRow()[0]);
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
@@ -171,7 +172,8 @@
         /* END */
 
         // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
+        $sql = $sql_SELECT . $sql_FROM . $sql_WHERE
+             . sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
         $logDebugSQL = "$sql;\n";
 
@@ -222,11 +224,10 @@
         // table content
         $count = 0;
         while ($row = $res->fetchRow()) {
-            $rowlen = count($row);
 
             // escape row elements
-            for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+            foreach ($row as $i => $value) {
+                $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
             }
 
             //~ username, framedipaddress, callingstationid, starttime, sessiontime, nasipaddress,
@@ -238,13 +239,13 @@
                     $this_hotspot, $this_nasshortname, $this_nasid, $this_firstname, $this_lastname
                 ) = $row;
 
-            // validation
             $this_sessiontime = time2str($this_sessiontime);
-            $this_hotspot = (!empty($this_hotspot)) ? $this_hotspot : "(n/d)";
-            $this_name = $this_firstname . "<br>" . $this_lastname;
+            $this_hotspot = (!empty($this_hotspot)) ? $this_hotspot : t('all','NotDefined');
+            $this_name = (!empty((trim($this_firstname) . trim($this_lastname)))) ? $this_firstname . "<br>" . $this_lastname : t('all','NotDefined');
+
             $this_nasid = intval($this_nasid);
 
-            $tooltip1 = "(n/d)";
+            $tooltip1 = t('all','NotDefined');
             $tmp = $this_upload + $this_download;
             if ($tmp > 0) {
                 $this_upload = toxbyte($this_upload);
@@ -327,7 +328,7 @@
 
     $img_format = '<div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
     open_tab($navkeys, 1);
-    printf($img_format, "library/graphs/online_users.php", "Online users");
+    printf($img_format, "library/graphs/online_users.php", t('button', 'OnlineUsers'));
     close_tab($navkeys, 1);
 
     open_tab($navkeys, 2);

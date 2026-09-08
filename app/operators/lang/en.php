@@ -162,7 +162,7 @@ $l['all']['HgIPHost'] = "HG IP/Host";
 $l['all']['HgGroupName'] = "HG GroupName";
 $l['all']['HgPortId'] = "HG Port Id";
 $l['all']['NasID'] = "NAS ID";
-$l['all']['Nas'] = "NAS ";
+$l['all']['Nas'] = "NAS";
 $l['all']['NasIPHost'] = "NAS IP/Host";
 $l['all']['NasShortname'] = "NAS Shortname";
 $l['all']['NasType'] = "NAS Type";
@@ -430,6 +430,9 @@ $l['all']['DBPasswordEncryption'] = "DB Password Encryption Type";
 
 $l['all']['Calling Station ID'] = "Calling Station ID";
 $l['all']['Framed IP Address'] = "Framed IP Address";
+
+$l['all']['NotDefined'] = '<abbr title="not defined">(n/d)</abbr>';
+$l['all']['NotAvailable'] = '<abbr title="not available">(n/a)</abbr>';
 
 /* **********************************************************************************
  * Login page text
