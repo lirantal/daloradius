@@ -61,43 +61,58 @@
     $logDebugSQL .= "$sql;\n";
 
     $markers_js = "";
-    $first_geocode = "";
+    $first_lat = null;
+    $first_lng = null;
     $marker_count = 0;
 
+    // flags that make a PHP value safe to embed as a literal inside an inline <script> block
+    $json_flags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
+
     while ($row = $res->fetchRow()) {
-        $rowlen = count($row);
-
-        for ($i = 0; $i < $rowlen; $i++) {
-            $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
-        }
-
         list($id, $name, $mac, $geocode) = $row;
 
+        // geocode is stored as "lat,lng"; skip anything that doesn't parse cleanly
+        if (!preg_match('/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/', (string) $geocode, $coords)) {
+            continue;
+        }
+        $lat = (float) $coords[1];
+        $lng = (float) $coords[2];
+
         if ($marker_count === 0) {
-            $first_geocode = $geocode;
+            $first_lat = $lat;
+            $first_lng = $lng;
         }
         $marker_count++;
 
-        $popup = sprintf('<strong>Hotspot Name</strong>: %s<br>'
-                       . '<strong>MAC Addr</strong>: %s<br>'
-                       . '<strong>Geocode</strong>: %s<br>'
-                       . '<a href=acct-hotspot-compare.php>%s</a>'
-                       . '<br>'
-                       . '<a href="acct-hotspot-accounting.php?hotspot[]=%s">%s</a>',
-                         $name, $mac, $geocode, t('Intro','accthotspotcompare.php'), $name, t('Intro','accthotspot.php'));
-
+        $name_html = htmlspecialchars((string) $name, ENT_QUOTES, 'UTF-8');
+        $mac_html  = htmlspecialchars((string) $mac, ENT_QUOTES, 'UTF-8');
+        $geo_html  = htmlspecialchars((string) $geocode, ENT_QUOTES, 'UTF-8');
 
         // Now, create a simple popup.
         // The original program provided a tabbed popup.
-        $markers_js .= sprintf("L.marker([%s]).addTo(group).bindTooltip('%s').bindPopup('%s');",
-                               $geocode, $name, $popup);
+        $popup = sprintf('<strong>Hotspot Name</strong>: %s<br>'
+                       . '<strong>MAC Addr</strong>: %s<br>'
+                       . '<strong>Geocode</strong>: %s<br>'
+                       . '<a href="acct-hotspot-compare.php">%s</a>'
+                       . '<br>'
+                       . '<a href="acct-hotspot-accounting.php?hotspot[]=%s">%s</a>',
+                         $name_html, $mac_html, $geo_html,
+                         htmlspecialchars(t('Intro','accthotspotcompare.php'), ENT_QUOTES, 'UTF-8'),
+                         urlencode((string) $name),
+                         htmlspecialchars(t('Intro','accthotspot.php'), ENT_QUOTES, 'UTF-8'));
+
+        // HTML-escaped for display, then JSON-encoded for the surrounding JavaScript context
+        $markers_js .= sprintf("L.marker(%s).addTo(group).bindTooltip(%s).bindPopup(%s);\n",
+                               json_encode(array($lat, $lng)),
+                               json_encode($name_html, $json_flags),
+                               json_encode($popup, $json_flags));
     }
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
-    // center on the first available hotspot coordinate, otherwise fall back to a default view
-    $default_geocode = "[43.71805, 10.42284]";
-    $map_center = ($marker_count > 0) ? "[{$first_geocode}]" : $default_geocode;
+    // center on the first available hotspot coordinate, otherwise fall back to a
+    // default view (Area della Ricerca CNR di Pisa, San Cataldo)
+    $map_center = ($marker_count > 0) ? json_encode(array($first_lat, $first_lng)) : "[43.71805, 10.42284]";
 
     $inline_extra_js = <<<EOF
 window.onload = function() {
