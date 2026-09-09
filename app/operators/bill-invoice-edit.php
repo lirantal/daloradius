@@ -486,7 +486,8 @@ EOF;
 EOF;
 
         foreach ($button_descriptors1 as $desc) {
-            printf('<li><button class="dropdown-item" name="%s" onclick="%s">%s</button></li>', $desc['name'], $desc['onclick'], $desc['value']);
+            printf('<li><button type="button" class="dropdown-item" name="%s" onclick="%s">%s</button></li>',
+                   $desc['name'], $desc['onclick'], $desc['value']);
         }
 
 
