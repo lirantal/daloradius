@@ -3,47 +3,32 @@
 <head>
 <meta charset="utf-8">
 <title>Invoice</title>
-<style>
-    body { font-family: "DejaVu Sans", Helvetica, Arial, sans-serif; font-size: 12px; color: #222; margin: 0; padding: 24px; }
-    h1 { font-size: 18px; margin: 0 0 8px; }
-    .muted { color: #666; }
-    .section-title { font-weight: bold; margin: 16px 0 4px; }
-    table.header { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-    table.header td { vertical-align: top; }
-    table.header td.brand { text-align: right; }
-    table.header img { max-height: 64px; }
-    hr { border: 0; border-top: 1px solid #bbb; margin: 16px 0; }
-    table.grid { width: 100%; border-collapse: collapse; margin: 4px 0 12px; }
-    table.grid th, table.grid td { border: 1px solid #bbb; padding: 6px 8px; text-align: left; font-size: 11px; }
-    table.grid th { background: #ECE5B6; }
-</style>
+####__STYLE__####
 </head>
 <body>
 
-<table class="header">
+<table class="doc-header">
     <tr>
-        <td>
-            <strong>Customer</strong><br>
-            ####__CUSTOMER_NAME__####<br>
-            ####__CUSTOMER_ADDRESS__####<br><br>
-            <strong>Phone:</strong> ####__CUSTOMER_PHONE__####<br>
-            <strong>Email:</strong> ####__CUSTOMER_EMAIL__####
-        </td>
-        <td class="brand">
-            <img src="company-logo.jpg" alt=""><br>
-            <span class="muted">Created on ####__INVOICE_CREATION_DATE__####</span>
-        </td>
+        <td class="title">Invoice</td>
+        <td class="logo"><img src="company-logo.jpg" alt=""></td>
     </tr>
 </table>
+<div class="meta">Issued on ####__INVOICE_CREATION_DATE__####</div>
 
-<hr>
+<h1 class="section">Bill to</h1>
+<div class="panel">
+    <table class="kv">
+        <tr><td class="k">Name</td><td>####__CUSTOMER_NAME__####</td></tr>
+        <tr><td class="k">Address</td><td>####__CUSTOMER_ADDRESS__####</td></tr>
+        <tr><td class="k">Phone</td><td>####__CUSTOMER_PHONE__####</td></tr>
+        <tr><td class="k">Email</td><td>####__CUSTOMER_EMAIL__####</td></tr>
+    </table>
+</div>
 
-<h1>Invoice</h1>
-
-<div class="section-title">Details</div>
+<h1 class="section">Summary</h1>
 ####__INVOICE_DETAILS__####
 
-<div class="section-title">Items</div>
+<h1 class="section">Items</h1>
 ####__INVOICE_ITEMS__####
 
 </body>

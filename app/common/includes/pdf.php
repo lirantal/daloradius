@@ -47,13 +47,20 @@ include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_LIBRARY'], 'dompdf'
 function create_pdf($html_content, $base_path = null, $orientation = 'portrait') {
     // instantiate and use the dompdf class
     $dompdf = new Dompdf\Dompdf();
+    $options = $dompdf->getOptions();
+
+    // keep the runtime font cache out of the bundled dompdf directory
+    $font_cache = implode(DIRECTORY_SEPARATOR, [ sys_get_temp_dir(), 'daloradius-dompdf-fonts' ]);
+    if (@is_dir($font_cache) || @mkdir($font_cache, 0770, true)) {
+        $options->setFontCache($font_cache);
+    }
 
     if (is_string($base_path) && ($base_path = realpath($base_path)) !== false && is_dir($base_path)) {
-        $options = $dompdf->getOptions();
         $options->setChroot(array_merge($options->getChroot(), array($base_path)));
-        $dompdf->setOptions($options);
         $dompdf->setBasePath($base_path . DIRECTORY_SEPARATOR);
     }
+
+    $dompdf->setOptions($options);
 
     $dompdf->loadHtml($html_content);
 

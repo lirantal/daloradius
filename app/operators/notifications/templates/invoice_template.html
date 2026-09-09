@@ -3,96 +3,60 @@
 <head>
 <meta charset="utf-8">
 <title>Invoice [InvoiceNumber]</title>
-<style>
-    body { font-family: "DejaVu Sans", Helvetica, Arial, sans-serif; font-size: 12px; color: #222; margin: 0; padding: 24px; }
-    h1 { font-size: 26px; margin: 0; letter-spacing: 2px; }
-    .muted { color: #666; }
-    hr { border: 0; border-top: 1px solid #000; margin: 14px 0; }
-    table.header { width: 100%; border-collapse: collapse; }
-    table.header td { vertical-align: top; }
-    table.header td.right { text-align: right; }
-    table.header img { max-height: 64px; }
-    table.meta { width: 100%; border-collapse: collapse; margin: 8px 0 16px; }
-    table.meta td { vertical-align: top; padding: 1px 0; }
-    table.meta td.label { text-align: right; padding-right: 10px; white-space: nowrap; font-weight: bold; }
-    table.items { width: 100%; border-collapse: collapse; margin: 8px 0; }
-    table.items th, table.items td { border-bottom: 1px solid #ccc; padding: 6px 8px; text-align: left; font-size: 11px; }
-    table.items th { background: #ECE5B6; border-bottom: 1px solid #999; }
-    table.items td.num, table.items th.num { text-align: right; white-space: nowrap; }
-    table.totals { width: 40%; border-collapse: collapse; margin-left: 60%; }
-    table.totals td { padding: 3px 8px; text-align: right; }
-    table.totals td.label { font-weight: bold; }
-    table.totals tr.grand td { border-top: 2px solid #000; font-size: 14px; font-weight: bold; }
-    .details td.label { font-weight: bold; padding-right: 12px; }
-    .footer { margin-top: 24px; text-align: center; font-size: 10px; }
-</style>
+####__STYLE__####
 </head>
 <body>
 
-<table class="header">
+<table class="doc-header">
     <tr>
-        <td><img src="company-logo.jpg" alt=""></td>
-        <td class="right muted">
-            Please configure your company details in the invoice template.
-        </td>
+        <td class="title">Invoice</td>
+        <td class="logo"><img src="company-logo.jpg" alt=""></td>
     </tr>
 </table>
+<div class="meta">
+    Invoice #[InvoiceNumber] &nbsp;&bull;&nbsp; [InvoiceDate] &nbsp;&bull;&nbsp; [InvoiceStatus]
+</div>
 
-<hr>
+<h1 class="section">Bill to</h1>
+<div class="panel">
+    <table class="kv">
+        <tr><td class="k">Customer</td><td>[CustomerName] &nbsp;<span style="color:#9a9a9a">#[CustomerId]</span></td></tr>
+        <tr><td class="k">Contact</td><td>[CustomerContact]</td></tr>
+        <tr><td class="k">Address</td><td>[CustomerAddress]<br>[CustomerAddress2]</td></tr>
+        <tr><td class="k">Phone</td><td>[CustomerPhone]</td></tr>
+        <tr><td class="k">Email</td><td>[CustomerEmail]</td></tr>
+    </table>
+</div>
 
-<table class="meta">
-    <tr>
-        <td><h1>INVOICE</h1></td>
-        <td class="label">Invoice #:</td>
-        <td>[InvoiceNumber]</td>
-    </tr>
-    <tr>
-        <td rowspan="5">
-            <br>
-            <strong>[CustomerName]</strong> <span class="muted">(customer #[CustomerId])</span><br>
-            [CustomerContact]<br>
-            [CustomerAddress]<br>
-            [CustomerAddress2]<br>
-            Tel: [CustomerPhone]<br>
-            Email: [CustomerEmail]
-        </td>
-        <td class="label">Date:</td>
-        <td>[InvoiceDate]</td>
-    </tr>
-    <tr><td class="label">Status:</td><td>[InvoiceStatus]</td></tr>
-</table>
-
-<table class="items">
-    <tr>
-        <th>Item #</th>
-        <th>Plan</th>
-        <th>Notes</th>
-        <th class="num">Amount</th>
-        <th class="num">Tax</th>
-        <th class="num">Total</th>
-    </tr>
-
-    [InvoiceItems]
-
+<h1 class="section">Items</h1>
+<table class="grid">
+    <thead>
+        <tr>
+            <th class="num">#</th>
+            <th>Plan</th>
+            <th>Notes</th>
+            <th class="num">Amount</th>
+            <th class="num">Tax</th>
+            <th class="num">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        [InvoiceItems]
+    </tbody>
 </table>
 
 <table class="totals">
-    <tr><td class="label">Subtotal</td><td>[InvoiceTotalAmount] &euro;</td></tr>
-    <tr><td class="label">Tax</td><td>[InvoiceTotalTax] &euro;</td></tr>
-    <tr class="grand"><td class="label">Total</td><td>[InvoiceTotalBilled] &euro;</td></tr>
-    <tr><td class="label">Paid</td><td>[InvoicePaid] &euro;</td></tr>
-    <tr><td class="label">Due</td><td>[InvoiceDue] &euro;</td></tr>
+    <tr><td class="k">Subtotal</td><td>[InvoiceTotalAmount] &euro;</td></tr>
+    <tr><td class="k">Tax</td><td>[InvoiceTotalTax] &euro;</td></tr>
+    <tr class="grand"><td class="k">Total</td><td>[InvoiceTotalBilled] &euro;</td></tr>
+    <tr><td class="k">Paid</td><td>[InvoicePaid] &euro;</td></tr>
+    <tr><td class="k">Due</td><td>[InvoiceDue] &euro;</td></tr>
 </table>
 
-<hr>
+<h1 class="section">Notes</h1>
+<p>[InvoiceNotes]</p>
 
-<table class="details">
-    <tr><td class="label">Notes</td><td>[InvoiceNotes]</td></tr>
-</table>
-
-<div class="footer">
-    Thank you for your business.
-</div>
+<div class="footer">Thank you for your business.</div>
 
 </body>
 </html>

@@ -3,50 +3,39 @@
 <head>
 <meta charset="utf-8">
 <title>Welcome notification</title>
-<style>
-    body { font-family: "DejaVu Sans", Helvetica, Arial, sans-serif; font-size: 12px; color: #222; margin: 0; padding: 24px; }
-    h1 { font-size: 18px; margin: 0 0 8px; }
-    p { margin: 0 0 8px; }
-    .muted { color: #666; }
-    table.header { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-    table.header td { vertical-align: top; }
-    table.header td.brand { text-align: right; }
-    table.header img { max-height: 64px; }
-    hr { border: 0; border-top: 1px solid #bbb; margin: 16px 0; }
-</style>
+####__STYLE__####
 </head>
 <body>
 
-<table class="header">
+<table class="doc-header">
     <tr>
-        <td>
-            <strong>Customer</strong><br>
-            ####__CUSTOMER_NAME__####<br>
-            ####__CUSTOMER_ADDRESS__####<br><br>
-            <strong>Phone:</strong> ####__CUSTOMER_PHONE__####<br>
-            <strong>Email:</strong> ####__CUSTOMER_EMAIL__####
-        </td>
-        <td class="brand">
-            <img src="company-logo.jpg" alt=""><br>
-            <span class="muted">Created on ####__INVOICE_CREATION_DATE__####</span>
-        </td>
+        <td class="title">Welcome</td>
+        <td class="logo"><img src="company-logo.jpg" alt=""></td>
     </tr>
 </table>
+<div class="meta">Issued on ####__INVOICE_CREATION_DATE__####</div>
 
-<hr>
+<h1 class="section">Account holder</h1>
+<div class="panel">
+    <table class="kv">
+        <tr><td class="k">Name</td><td>####__CUSTOMER_NAME__####</td></tr>
+        <tr><td class="k">Address</td><td>####__CUSTOMER_ADDRESS__####</td></tr>
+        <tr><td class="k">Phone</td><td>####__CUSTOMER_PHONE__####</td></tr>
+        <tr><td class="k">Email</td><td>####__CUSTOMER_EMAIL__####</td></tr>
+    </table>
+</div>
 
-<h1>Welcome</h1>
-<p>Dear customer,</p>
-<p>welcome to our Hotspot service. We hope you enjoy it and wish you happy surfing.</p>
-<p>If you have any question, please get in touch with us.</p>
+<h1 class="section">Welcome aboard</h1>
+<p class="lede">Dear customer,</p>
+<p>welcome to our Hotspot service. Your account is ready to use &mdash; we hope you enjoy it
+and wish you happy surfing.</p>
+<p>If you have any question, just get in touch with us.</p>
 
-<hr>
-
-<p class="muted">
+<div class="footer">
     This communication is for the exclusive use of the addressee and may contain confidential
     information. If you are not the intended recipient, any use, copying, disclosure or
     distribution is strictly prohibited.
-</p>
+</div>
 
 </body>
 </html>

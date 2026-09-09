@@ -34,6 +34,7 @@ check('existing template loads', is_string(notification_load_template($templates
 $welcome = notification_fill(
     notification_load_template($templates . '/user-welcome.html'),
     array(
+        '####__STYLE__####'                 => notification_stylesheet(),
         '####__INVOICE_CREATION_DATE__####' => '2026-09-09',
         '####__CUSTOMER_NAME__####'         => 'Mario Rossi',
         '####__CUSTOMER_ADDRESS__####'      => 'Via Roma 1',
@@ -48,6 +49,7 @@ check('welcome: value substituted', strpos($welcome, 'Mario Rossi') !== false);
 $batch = notification_fill(
     notification_load_template($templates . '/batch-details.html'),
     array(
+        '####__STYLE__####'                 => notification_stylesheet(),
         '####__INVOICE_CREATION_DATE__####' => '2026-09-09',
         '####__BUSINESS_NAME__####'         => 'ACME',
         '####__BUSINESS_OWNER_NAME__####'   => 'Jane',
@@ -62,6 +64,7 @@ $batch = notification_fill(
 );
 check('batch: no #### markers left', strpos($batch, '####') === false);
 check('batch: __BUSINESS_WEB__ resolved', strpos($batch, 'https://acme.example') !== false);
+check('shared stylesheet is injected', strpos($welcome, 'table.grid thead th') !== false);
 
 // invoice: bracket tokens + repeated item template
 $item = notification_fill(
@@ -78,6 +81,7 @@ $item = notification_fill(
 $invoice = notification_fill(
     notification_load_template($templates . '/invoice_template.html'),
     array(
+        '####__STYLE__####' => notification_stylesheet(),
         '[CustomerId]' => '5', '[CustomerName]' => 'ACME', '[CustomerContact]' => 'Jane',
         '[CustomerAddress]' => 'Road 1', '[CustomerAddress2]' => 'Town',
         '[CustomerPhone]' => '1', '[CustomerEmail]' => 'a@b.c',

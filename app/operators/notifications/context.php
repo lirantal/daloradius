@@ -128,6 +128,7 @@ function notification_build_user_welcome($configValues, $dbSocket, array $params
     }
 
     $html = notification_fill($html, array(
+        '####__STYLE__####'                 => notification_stylesheet(),
         '####__INVOICE_CREATION_DATE__####' => notification_escape(date('Y-m-d')),
         '####__CUSTOMER_NAME__####'         => notification_escape($name),
         '####__CUSTOMER_ADDRESS__####'      => notification_escape($address !== '' ? $address : '(n/a)'),
@@ -253,6 +254,7 @@ function notification_build_batch_details($configValues, $dbSocket, array $param
     }
 
     $html = notification_fill($html, array(
+        '####__STYLE__####'                 => notification_stylesheet(),
         '####__INVOICE_CREATION_DATE__####' => notification_escape(date('Y-m-d')),
         '####__BUSINESS_NAME__####'         => notification_escape($business['name']),
         '####__BUSINESS_OWNER_NAME__####'   => notification_escape($business['owner']),
@@ -438,6 +440,7 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
     $address2 = trim(implode(' ', array_filter(array($get('zip'), $get('city'), $get('state'), $get('country')))));
 
     $replacements = array(
+        '####__STYLE__####'                 => notification_stylesheet(),
         // legacy tokens
         '####__INVOICE_CREATION_DATE__####' => notification_escape(date('Y-m-d')),
         '####__CUSTOMER_NAME__####'         => notification_escape($get('contactperson')),
