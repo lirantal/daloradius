@@ -15,7 +15,11 @@
  *
  *********************************************************************************************************
  *
- * Authors:    Filippo Lauria <filippo.lauria@iit.cnr.it>
+ * Description:    Single entry point for the operator PDF notifications. It takes a
+ *                 notification "type" plus an "action" (preview | download | email)
+ *                 and streams / mails the resulting PDF.
+ *
+ * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
@@ -26,419 +30,99 @@ $operator = $_SESSION['operator_user'];
 
 include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
 
-// Retrieve redirect target
-$redirect = ($_SESSION['PREV_LIST_PAGE'] ?? "") ? trim($_SESSION['PREV_LIST_PAGE']) : "../../index.php";
+$redirect = (!empty(trim($_SESSION['PREV_LIST_PAGE'] ?? "")))
+          ? trim($_SESSION['PREV_LIST_PAGE']) : "../../index.php";
 
-// Check if there is a notification array in the session variable
-if (!isset($_SESSION['notification']) || !is_array($_SESSION['notification'])) {
+// supported notification types mapped to the ACL entry that guards them
+$notification_types = array(
+    'user-welcome' => 'mng_new',
+);
+
+$session_params = (isset($_SESSION['notification']) && is_array($_SESSION['notification']))
+                ? $_SESSION['notification'] : array();
+
+// the type may come from the query string or from the session payload
+$type = (string) ($_GET['type'] ?? ($session_params['type'] ?? ''));
+if (!array_key_exists($type, $notification_types)) {
     header("Location: $redirect");
     exit;
 }
 
-// Params contain the notification parameters
-$params = $_SESSION['notification'];
-
-// Validate notification type
-$allowed_types = ["user-welcome", "user-invoice", "batch-details"];
-if (!isset($params['type']) || !in_array($params['type'], $allowed_types)) {
-    header("Location: $redirect");
-    exit;
+// preview streams an inline PDF, download forces an attachment, email mails it
+$allowed_actions = array('preview', 'download', 'email');
+$action = strtolower((string) ($_GET['action'] ?? $_GET['destination'] ?? 'preview'));
+if (!in_array($action, $allowed_actions, true)) {
+    $action = 'preview';
 }
 
-$type = $params['type'];
+// this helper endpoint reuses the permission of the page that owns the feature
+$operator_perm_file = $notification_types[$type];
+$operator_perm_deny_http_status = 403;
+include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 
-// Setup template path
-$template = implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_NOTIFICATIONS_TEMPLATES'], sprintf("%s.html", $type) ]);
-if (!file_exists($template)) {
-    header("Location: $redirect");
-    exit;
-}
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_NOTIFICATIONS'], 'render.php' ]);
+include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_NOTIFICATIONS'], 'context.php' ]);
 
-// Validate notification action
-$allowed_actions = ["preview", "download", "email"];
-$action = (isset($_GET['action']) && in_array($_GET['action'], $allowed_actions)) ? $_GET['action'] : "preview";
-
-
-function get_batch_details_context($configValues, $dbSocket, $batch_name) {
-    $context = array();
-
-    if ($batch_name == NULL || empty(trim($batch_name))) {
-        return $context;
-    }
-
-    $tableTags = 'style="width: 580px"';
-    $tableTrTags = 'style="background-color: #ECE5B6"';
-
-    $ths = array(
-                    t('all','BatchName'),
-                    t('all','HotSpot'),
-                    t('all','BatchStatus'),
-                    t('all','TotalUsers'),
-                    t('all','ActiveUsers'),
-                    t('all','PlanName'),
-                    t('all','PlanCost'),
-                    t('all','BatchCost'),
-                    t('all','CreationDate'),
-                    t('all','CreationBy'),
-                );
-
-    // start filling in batch details
-    $batch_details = "<table $tableTags><tr $tableTrTags>";
-
-    foreach ($ths as $th) {
-        $batch_details .= sprintf("<th>%s</th>", $th);
-    }
-
-    $batch_details .= "</tr>";
-
-    $sql = sprintf("SELECT dbh.id AS batch_id, dbh.batch_name, dbh.batch_description, dbh.batch_status,
-                           COUNT(DISTINCT(ubi.id)) AS total_users, COUNT(DISTINCT(ra.username)) AS active_users,
-                           ubi.planname, dbp.plancost, dbp.plancurrency, dhs.name AS hotspot_name,
-                           dbh.creationdate, dbh.creationby, dbh.updatedate, dbh.updateby
-                      FROM %s AS dbh LEFT JOIN %s AS ubi ON dbh.id=ubi.batch_id
-                                    LEFT JOIN %s AS dbp ON dbp.planname=ubi.planname
-                                    LEFT JOIN %s AS dhs ON dbh.hotspot_id=dhs.id
-                                    LEFT JOIN %s AS ra ON ra.username=ubi.username
-                     WHERE dbh.batch_name='%s'
-                     GROUP BY dbh.batch_name", $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
-                                               $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                                               $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
-                                               $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                                               $configValues['CONFIG_DB_TBL_RADACCT'],
-                                               $dbSocket->escapeSimple($batch_name));
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
-
-    if ($numrows <= 0) {
-        return $context;
-    }
-
-    $active_users_per = 0;
-    $total_users = 0;
-    $active_users = 0;
-    $batch_cost = 0;
-
-    $hotspot_name = "";
-    $batch_id = "";
-    $plan_name = "";
-
-    while($row = $res->fetchRow()) {
-
-        foreach ($row as $i => $value) {
-            $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-        }
-
-        list(
-                $batch_id, $batch_name, $batch_description, $batch_status, $total_users, $active_users, $plan_name,
-                $plancost, $plancurrency, $hotspot_name, $creationdate, $creationby, $updatedate, $updateby
-            ) = $row;
-
-
-        $batch_cost = (intval($active_users) * intval($plancost));
-
-        $tds = array(
-                        $batch_name,
-                        $hotspot_name,
-                        $batch_status,
-                        $total_users,
-                        $active_users,
-                        $plan_name,
-                        $plancost,
-                        $batch_cost,
-                        $creationdate,
-                        $creationby
-                    );
-
-        $batch_details .= "<tr>";
-        foreach ($tds as $td) {
-            $batch_details .= sprintf("<td>%s</td>", $td);
-        }
-        $batch_details .= "</tr>";
-
-    }
-
-    $batch_details .= "</table>";
-
-    $context['__BATCH_DETAILS__'] = $batch_details;
-
-    // filling in plan info
-    if (!empty($plan_name)) {
-
-        $sql = sprintf("SELECT planId, planName, planRecurringPeriod, planCost, planSetupCost, planTax, planCurrency
-                          FROM %s WHERE planName='%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
-                                                        $dbSocket->escapeSimple($plan_name));
-        $res = $dbSocket->query($sql);
-        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-        echo $sql;
-        echo $row;
-        exit;
-
-        $service_plan_info = "<table $tableTags>";
-
-        foreach ($row as $rowName => $rowValue) {
-            $rowName = htmlspecialchars($rowName, ENT_QUOTES, 'UTF-8');
-            $rowValue = htmlspecialchars($rowValue, ENT_QUOTES, 'UTF-8');
-
-            $service_plan_info .= "<tr $tableTrTags>"
-                                . sprintf("<th>%s</th>", $rowName)
-                                . sprintf("<td>%s</td>", $rowValue)
-                                . "</tr>";
-        }
-
-        $service_plan_info .= "</table>";
-        $context['__SERVICE_PLAN_INFO__'] = $service_plan_info;
-    }
-
-    // filling in business info
-    if (!empty($hotspot_name)) {
-        $sql = sprintf("SELECT id, name, owner, address, companyphone, companyemail, companywebsite
-                          FROM %s WHERE name='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                                                    $dbSocket->escapeSimple($hotspot_name));
-        $res = $dbSocket->query($sql);
-        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-        $context['__BUSINESS_NAME__'] = $row['name'];
-        $context['__BUSINESS_OWNER_NAME__'] = $row['owner'];
-        $context['__BUSINESS_ADDRESS__'] = $row['address'];
-        $context['__BUSINESS_PHONE__'] = $row['companyphone'];
-        $context['__BUSINESS_EMAIL__'] = $row['companyemail'];
-        $context['__BUSINESS_WEBSITE__'] = $row['companywebsite'];
-    }
-
-    // active users details
-    $sql = sprintf("SELECT ubi.id, ubi.username, ra.acctstarttime, dbh.batch_name
-                      FROM %s AS ubi, %s AS ra, %s AS dbh
-                     WHERE ubi.batch_id=dbh.id
-                       AND ubi.batch_id='%s'
-                       AND ubi.username=ra.username
-                     GROUP BY ubi.username
-                     ORDER BY id, ra.radacctid ASC", $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                                                     $configValues['CONFIG_DB_TBL_RADACCT'],
-                                                     $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
-                                                     $dbSocket->escapeSimple($batch_id));
-    $res = $dbSocket->query($sql);
-
-    $ths = array(
-                    t('all','BatchName'),
-                    t('all','Username'),
-                    t('all','StartTime'),
-                );
-
-    $batch_active_users = "<table $tableTags><tr $tableTrTags>";
-    foreach ($ths as $th) {
-        $batch_active_users .= sprintf("<th>%s</th>", $th);
-    }
-    $batch_active_users .= "</tr>";
-
-    $active_users_per = 0;
-    $total_users = 0;
-    $active_users = 0;
-    $batch_cost = 0;
-    while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-        foreach ($row as $i => $value) {
-            $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-        }
-
-        list($id, $username, $acctstarttime, $batch_name) = $row;
-
-        $tds = array( $username, $acctstarttime, $batch_name );
-
-        $batch_active_users .= "<tr>";
-        foreach ($tds as $td) {
-            $batch_active_users .= sprintf("<td>%s</td>", $td);
-        }
-        $batch_active_users .= "</tr>";
-    }
-
-    $batch_active_users .= "</table>";
-    $context['__BATCH_ACTIVE_USERS__'] = $batch_active_users;
-
-    return $context;
-}
-
-function get_user_email_details($configValues, $dbSocket, $username) {
-    $sql = sprintf("SELECT firstname, lastname, email FROM %s WHERE username='%s'",
-                   $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($username));
-
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
-
-    if ($numrows <= 0) {
-        return [];
-    }
-
-    list($ui_firstname, $ui_lastname, $ui_email) = $res->fetchRow();
-    return [ 'firstname' => $ui_firstname, 'lastname' => $ui_lastname, 'email' => $ui_email];
-    
-}
-
-function get_user_welcome_context($configValues, $dbSocket, $username) {
-    $context = array();
-
-    // Get user info
-    $sql = sprintf("SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, `address`, city,
-                           `state`, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate,
-                           creationby, updatedate, updateby
-                      FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                                                    $dbSocket->escapeSimple($username));
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
-
-    if ($numrows <= 0) {
-        return $context;
-    }
-
-    // Fetch user info
-    list($ui_firstname, $ui_lastname, $ui_email, $ui_department, $ui_company, $ui_workphone, $ui_homephone,
-        $ui_mobilephone, $ui_address, $ui_city, $ui_state, $ui_country, $ui_zip, $ui_notes, $ui_changeuserinfo,
-        $ui_PortalLoginPassword, $ui_enableUserPortalLogin, $ui_creationdate, $ui_creationby, $ui_updatedate,
-        $ui_updateby) = $res->fetchRow();
-
-    // Get billing info
-    $sql = sprintf("SELECT id, planName, contactperson, company, email, phone, address, city, state, country, zip, paymentmethod,
-                           cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp,
-                           notes, changeuserbillinfo, `lead`, coupon, ordertaker, billstatus, lastbill, nextbill,
-                           nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, creationdate, creationby,
-                           updatedate, updateby
-                      FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                                                    $dbSocket->escapeSimple($username));
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
-
-    if ($numrows <= 0) {
-        return $context;
-    }
-
-    // Fetch billing info
-    list($user_id, $bi_planname, $bi_contactperson, $bi_company, $bi_email, $bi_phone, $bi_address, $bi_city,
-        $bi_state, $bi_country, $bi_zip, $bi_paymentmethod, $bi_cash, $bi_creditcardname, $bi_creditcardnumber,
-        $bi_creditcardverification, $bi_creditcardtype, $bi_creditcardexp, $bi_notes, $bi_changeuserbillinfo,
-        $bi_lead, $bi_coupon, $bi_ordertaker, $bi_billstatus, $bi_lastbill, $bi_nextbill, $bi_nextinvoicedue,
-        $bi_billdue, $bi_postalinvoice, $bi_faxinvoice, $bi_emailinvoice, $bi_creationdate, $bi_creationby,
-        $bi_updatedate, $bi_updateby) = $res->fetchRow();
-
-    // Initialize email
-    $invoice_email = trim($ui_email) ?? trim($bi_emailinvoice) ?? trim($bi_email) ?? "";
-
-    // Initialize phone
-    $invoice_phone = trim($ui_mobilephone) ?? trim($ui_workphone) ?? trim($ui_homephone) ?? trim($bi_phone) ?? "(n/a)";
-
-    // Initialize address
-    $invoice_address = $ui_address ?? "";
-    $invoice_address .= isset($ui_city) ? ", $ui_city" : "";
-    $invoice_address .= isset($ui_state) ? "<br>$ui_state" : "";
-    $invoice_address .= isset($ui_zip) ? " $ui_zip" : "";
-    $invoice_address = $invoice_address ?: "(n/a)";
-
-    // Update the context
-    $context = array(
-                        '__INVOICE_CREATION_DATE__' => date("Y-m-d"),
-                        '__CUSTOMER_NAME__'         => sprintf("%s %s", $ui_firstname, $ui_lastname),
-                        '__CUSTOMER_ADDRESS__'      => $invoice_address,
-                        '__CUSTOMER_PHONE__'        => $invoice_phone,
-                        '__CUSTOMER_EMAIL__'        => $invoice_email,
-                        '__PLAN__'                  => $bi_planname,
-                    );
-
-    return $context;
-}
-
-function get_pdf($template, $context) {
-    // Get template contents
-    $template_contents = file_get_contents($template);
-
-    // Fill template contents with correct values
-    foreach ($context as $key => $value) {
-        $template_contents = str_replace($key, $value, $template_contents);
-    }
-
-    // Fix for DOMPDF error: https://stackoverflow.com/questions/37521775/dompdf-error-no-block-level-parent-found-not-good
-    $html = str_replace("\n", "", $template_contents);
-
-    return create_pdf($html);
-}
-
-// Create a context to pass to our PDF creator
-$context = array();
+// query-string parameters win over the session payload
+$params = array_merge($session_params, $_GET);
 
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-switch ($type) {
-    case "user-welcome":
-        $username = ($params['username'] ?? "") ? str_replace('%', '', $params['username']) : "";
-        if (empty($username)) {
-            header("Location: $redirect");
-            exit;
-        }
-
-        $filename = sprintf('%s-%s-%s.pdf', date("Ymd"), $username, $type);
-        $context = get_user_welcome_context($configValues, $dbSocket, $username);
-        $subject = "Welcome notification";
-        $body = "Please check the attached pdf containing your welcome notification!";
-        list($firstname, $lastname, $recipient_email_address) = get_user_email_details($configValues, $dbSocket, $username);
-        $recipient_name = "$firstname $lastname";
-        break;
-
-    case "batch-details":
-        $batch_name = ($params['batch_name'] ?? "") ? str_replace('%', '', $params['batch_name']) : "";
-        if (empty($batch_name)) {
-            header("Location: $redirect");
-            exit;
-        }
-
-        $filename = sprintf('%s-%s-%s.pdf', date("Ymd"), $batch_name, $type);
-        $context = get_batch_details_context($configValues, $dbSocket, $batch_name);
-        $subject = "Batch details";
-        $body = sprintf("Please check the attached pdf containing batch %s's details!", $batch_name);
-        $recipient_email_address = "";
-        $recipient_name = "";
-        break;
-}
-
+$notification = notification_build($type, $configValues, $dbSocket, $params);
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
+if (!is_array($notification) || empty($notification['html'])) {
+    header("Location: $redirect");
+    exit;
+}
 
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'pdf.php' ]);
 
-$pdf_contents = get_pdf($template, $context);
-$size = strlen($pdf_contents);
+$pdf = create_pdf($notification['html'], $configValues['OPERATORS_NOTIFICATIONS_TEMPLATES'], 'portrait');
+$filename = $notification['filename'] ?? sprintf('daloradius-%s-%s.pdf', $type, date('Ymd'));
+
+$back_link = sprintf(' <a href="%s">Go back</a>.', notification_escape($redirect));
 
 switch ($action) {
 
-    case "preview":
-    case "download":
-        header("Content-type: application/pdf");
-        header(sprintf("Content-Disposition: attachment; filename=%s; size=%d", $filename, $size));
-        print $pdf_contents;
+    case 'download':
+        header('Content-Type: application/pdf');
+        header(sprintf('Content-Disposition: attachment; filename="%s"; size=%d', $filename, strlen($pdf)));
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('X-Content-Type-Options: nosniff');
+        print $pdf;
         break;
 
-    case "email":
-        if (strtolower($configValues['CONFIG_MAIL_ENABLED']) != "yes") {
-            header("Location: $redirect");
+    case 'email':
+        if (strtolower($configValues['CONFIG_MAIL_ENABLED'] ?? 'no') !== 'yes') {
+            print 'E-mail delivery is disabled in the configuration.' . $back_link;
+            break;
+        }
+
+        if (empty($notification['recipient_email'])) {
+            print 'No recipient e-mail address is available for this notification.' . $back_link;
             break;
         }
 
         include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'mail.php' ]);
-        
-        $subject = 'Test Email';
-        $body = 'This is a test email. If you received this, your SMTP mailer is working fine.';
 
-        $attachment = [
-            'content' => $pdf_contents,
-            'filename' => $filename,
-        ];
+        list($success, $message) = send_email(
+            $configValues,
+            $notification['recipient_email'],
+            $notification['recipient_name'] ?? '',
+            $notification['subject'] ?? 'daloRADIUS notification',
+            $notification['body'] ?? '',
+            array('content' => $pdf, 'filename' => $filename, 'type' => 'application/pdf')
+        );
 
-        // Call the send_email function
-        list($success, $message) = send_email($configValues, $recipient_email_address, $recipient_name, $subject, $body, $attachment);
+        printf('%s%s', notification_escape($message), $back_link);
+        break;
 
-        // Check the result
-        if ($success) {
-            $successMsg = $message;
-        } else {
-            $failureMsg = $message;
-        }
-
-        printf('%s<br><a href="%s">Go back</a>.', $message, $redirect);
-
+    case 'preview':
+    default:
+        header('Content-Type: application/pdf');
+        header(sprintf('Content-Disposition: inline; filename="%s"', $filename));
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('X-Content-Type-Options: nosniff');
+        print $pdf;
         break;
 }

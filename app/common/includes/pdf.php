@@ -32,13 +32,33 @@ include_once 'config_read.php';
 include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_LIBRARY'], 'dompdf', 'vendor', 'autoload.php' ]);
 
 
-function create_pdf($html_content) {
+/**
+ * Render an HTML string to a PDF document (binary string).
+ *
+ * @param string      $html_content HTML markup to render.
+ * @param string|null $base_path    Directory used to resolve relative asset
+ *                                  references (e.g. <img src="logo.jpg">) in the
+ *                                  markup. It is also added to dompdf's chroot so
+ *                                  those local files are allowed to load.
+ * @param string      $orientation  'portrait' (default) or 'landscape'.
+ *
+ * @return string
+ */
+function create_pdf($html_content, $base_path = null, $orientation = 'portrait') {
     // instantiate and use the dompdf class
     $dompdf = new Dompdf\Dompdf();
+
+    if (is_string($base_path) && ($base_path = realpath($base_path)) !== false && is_dir($base_path)) {
+        $options = $dompdf->getOptions();
+        $options->setChroot(array_merge($options->getChroot(), array($base_path)));
+        $dompdf->setOptions($options);
+        $dompdf->setBasePath($base_path . DIRECTORY_SEPARATOR);
+    }
+
     $dompdf->loadHtml($html_content);
 
-    // (Optional) Setup the paper size and orientation
-    $dompdf->setPaper('A4', 'landscape');
+    // Setup the paper size and orientation
+    $dompdf->setPaper('A4', ($orientation === 'landscape') ? 'landscape' : 'portrait');
 
     // Render the HTML as PDF
     $dompdf->render();
