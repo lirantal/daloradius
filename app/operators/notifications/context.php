@@ -432,17 +432,18 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
     }
     $items_table .= '</tbody></table>';
 
-    // plain <tr> rows matching the rich template's item columns (#, Plan, Notes,
-    // Amount, Tax, Total) - used when no per-item template is configured
+    // plain <tr> rows matching the shipped per-item template (invoice_item_template.html):
+    // same columns (#, Plan, Notes, Amount, Tax, Total) and the same currency markup,
+    // used when no per-item template is configured
     $item_rows = '';
     foreach ($items as $item) {
         $item_rows .= '<tr>'
                     . '<td class="num">' . notification_escape($item['number']) . '</td>'
                     . '<td>' . notification_escape($item['plan']) . '</td>'
                     . '<td>' . notification_escape($item['notes']) . '</td>'
-                    . '<td class="num">' . notification_escape($item['amount']) . '</td>'
-                    . '<td class="num">' . notification_escape($item['tax_amount']) . '</td>'
-                    . '<td class="num">' . notification_escape($item['total_amount']) . '</td>'
+                    . '<td class="num">' . notification_escape($item['amount']) . ' &euro;</td>'
+                    . '<td class="num">' . notification_escape($item['tax_amount']) . ' &euro;</td>'
+                    . '<td class="num">' . notification_escape($item['total_amount']) . ' &euro;</td>'
                     . '</tr>';
     }
 

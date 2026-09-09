@@ -674,6 +674,7 @@ apache_setup_operators_site() {
 
   # server-side only: PDF notification templates and helpers, never fetched directly
   <Directory \${DALORADIUS_ROOT_DIRECTORY}/app/operators/notifications>
+    AllowOverride None
     Require all denied
   </Directory>
 
@@ -717,6 +718,7 @@ apache_setup_users_site() {
 
   # server-side only: PDF notification templates and helpers, never fetched directly
   <Directory \${DALORADIUS_ROOT_DIRECTORY}/app/users/notifications>
+    AllowOverride None
     Require all denied
   </Directory>
 

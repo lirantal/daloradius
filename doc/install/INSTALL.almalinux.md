@@ -244,6 +244,7 @@ Listen 8000
 
   # server-side only: PDF notification templates and helpers, never fetched directly
   <Directory /var/www/daloradius/app/operators/notifications>
+    AllowOverride None
     Require all denied
   </Directory>
 
@@ -267,6 +268,7 @@ Listen 8000
 
   # server-side only: PDF notification templates and helpers, never fetched directly
   <Directory /var/www/daloradius/app/users/notifications>
+    AllowOverride None
     Require all denied
   </Directory>
 

@@ -103,6 +103,7 @@ Edit each virtual host to enable SSL and point to your certificate files.
 
   # server-side only: PDF notification templates and helpers, never fetched directly
   <Directory ${DALORADIUS_ROOT_DIRECTORY}/app/operators/notifications>
+    AllowOverride None
     Require all denied
   </Directory>
 
@@ -135,6 +136,7 @@ Edit each virtual host to enable SSL and point to your certificate files.
 
   # server-side only: PDF notification templates and helpers, never fetched directly
   <Directory ${DALORADIUS_ROOT_DIRECTORY}/app/users/notifications>
+    AllowOverride None
     Require all denied
   </Directory>
 
