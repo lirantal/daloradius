@@ -79,8 +79,8 @@
     // Define the email subject
     $subject = "daloRADIUS user traffic monitor";
 
-    // Include the notifications file
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'notifications.php' ]);
+    // Include the mailer helper
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'mail.php' ]);
 
     // Check if there are users who have exceeded the hard traffic limit
     if ($numrows1 > 0) {
