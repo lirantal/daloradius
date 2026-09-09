@@ -372,25 +372,8 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
     $balance = floatval($invoice['totalpayed']) - floatval($invoice['totalbilled']);
     $due = -$balance; // amount still owed = billed - paid
 
-    // legacy "####__X__####" detail block
-    $details = array(
-        array(t('all', 'ClientName'),   $get('contactperson')),
-        array(t('all', 'Invoice'),      $invoice_id),
-        array(t('all', 'Date'),         $get('date')),
-        array(t('all', 'TotalBilled'),  notification_money($invoice['totalbilled'])),
-        array(t('all', 'TotalPayed'),   notification_money($invoice['totalpayed'])),
-        array(t('all', 'Balance'),      notification_money($balance)),
-        array(t('all', 'Status'),       $get('status')),
-        array(t('ContactInfo', 'Notes'), $get('notes')),
-    );
-    $invoice_details = '';
-    foreach ($details as $detail) {
-        $invoice_details .= sprintf('<b>%s</b>: %s<br>',
-                                    notification_escape($detail[0]), notification_escape($detail[1]));
-    }
-
-    // invoice line items
-    $sql = sprintf("SELECT i.amount, i.tax_amount, i.notes, p.planName
+    // invoice line items - the currency comes from the billing plan behind each item
+    $sql = sprintf("SELECT i.amount, i.tax_amount, i.notes, p.planName, p.planCurrency
                       FROM %s AS i LEFT JOIN %s AS p ON i.plan_id = p.id
                      WHERE i.invoice_id = %d ORDER BY i.id ASC",
                    $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
@@ -400,22 +383,50 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
     $items = array();
     $total_amount = 0.0;
     $total_tax = 0.0;
+    $currency = '';
     $number = 1;
     if (!DB::isError($res)) {
         while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
             $amount = floatval($row['amount']);
             $tax = floatval($row['tax_amount']);
+            if ($currency === '' && !empty($row['planCurrency'])) {
+                $currency = strtoupper(trim((string) $row['planCurrency']));
+            }
             $items[] = array(
-                'number'      => sprintf('%02d', $number++),
-                'plan'        => (string) $row['planName'],
-                'notes'       => (string) $row['notes'],
-                'amount'      => notification_money($amount),
-                'tax_amount'  => notification_money($tax),
-                'total_amount' => notification_money($amount + $tax),
+                'number' => sprintf('%02d', $number++),
+                'plan'   => (string) $row['planName'],
+                'notes'  => (string) $row['notes'],
+                'amount' => $amount,
+                'tax'    => $tax,
+                'total'  => $amount + $tax,
             );
             $total_amount += $amount;
             $total_tax += $tax;
         }
+    }
+
+    // format a monetary value, appending the plan currency code when there is one
+    // (e.g. "12.20 EUR"), otherwise just the bare number
+    $money = function ($value) use ($currency) {
+        $formatted = notification_money($value);
+        return ($currency !== '') ? $formatted . ' ' . $currency : $formatted;
+    };
+
+    // legacy "####__X__####" detail block
+    $details = array(
+        array(t('all', 'ClientName'),   $get('contactperson')),
+        array(t('all', 'Invoice'),      $invoice_id),
+        array(t('all', 'Date'),         $get('date')),
+        array(t('all', 'TotalBilled'),  $money($invoice['totalbilled'])),
+        array(t('all', 'TotalPayed'),   $money($invoice['totalpayed'])),
+        array(t('all', 'Balance'),      $money($balance)),
+        array(t('all', 'Status'),       $get('status')),
+        array(t('ContactInfo', 'Notes'), $get('notes')),
+    );
+    $invoice_details = '';
+    foreach ($details as $detail) {
+        $invoice_details .= sprintf('<b>%s</b>: %s<br>',
+                                    notification_escape($detail[0]), notification_escape($detail[1]));
     }
 
     $items_table = '<table class="grid"><thead><tr>'
@@ -426,24 +437,24 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
                  . '</tr></thead><tbody>';
     foreach ($items as $item) {
         $items_table .= '<tr><td>' . notification_escape($item['plan']) . '</td>'
-                      . '<td>' . notification_escape($item['tax_amount']) . '</td>'
-                      . '<td>' . notification_escape($item['amount']) . '</td>'
+                      . '<td>' . notification_escape($money($item['tax'])) . '</td>'
+                      . '<td>' . notification_escape($money($item['amount'])) . '</td>'
                       . '<td>' . notification_escape($item['notes']) . '</td></tr>';
     }
     $items_table .= '</tbody></table>';
 
     // plain <tr> rows matching the shipped per-item template (invoice_item_template.html):
-    // same columns (#, Plan, Notes, Amount, Tax, Total) and the same currency markup,
-    // used when no per-item template is configured
+    // same columns (#, Plan, Notes, Amount, Tax, Total), used when no per-item
+    // template is configured
     $item_rows = '';
     foreach ($items as $item) {
         $item_rows .= '<tr>'
                     . '<td class="num">' . notification_escape($item['number']) . '</td>'
                     . '<td>' . notification_escape($item['plan']) . '</td>'
                     . '<td>' . notification_escape($item['notes']) . '</td>'
-                    . '<td class="num">' . notification_escape($item['amount']) . ' &euro;</td>'
-                    . '<td class="num">' . notification_escape($item['tax_amount']) . ' &euro;</td>'
-                    . '<td class="num">' . notification_escape($item['total_amount']) . ' &euro;</td>'
+                    . '<td class="num">' . notification_escape($money($item['amount'])) . '</td>'
+                    . '<td class="num">' . notification_escape($money($item['tax'])) . '</td>'
+                    . '<td class="num">' . notification_escape($money($item['total'])) . '</td>'
                     . '</tr>';
     }
 
@@ -477,12 +488,12 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
         '[InvoiceNumber]'     => notification_escape($invoice_id),
         '[InvoiceDate]'       => notification_escape($get('date') !== '' ? date('Y-m-d', strtotime($get('date'))) : ''),
         '[InvoiceStatus]'     => notification_escape(strtoupper($get('status'))),
-        '[InvoiceTotalBilled]' => notification_escape(notification_money($invoice['totalbilled'])),
-        '[InvoicePaid]'       => notification_escape(notification_money($invoice['totalpayed'])),
-        '[InvoiceDue]'        => notification_escape(notification_money($due)),
+        '[InvoiceTotalBilled]' => notification_escape($money($invoice['totalbilled'])),
+        '[InvoicePaid]'       => notification_escape($money($invoice['totalpayed'])),
+        '[InvoiceDue]'        => notification_escape($money($due)),
         '[InvoiceNotes]'      => notification_escape($get('notes')),
-        '[InvoiceTotalAmount]' => notification_escape(notification_money($total_amount)),
-        '[InvoiceTotalTax]'   => notification_escape(notification_money($total_tax)),
+        '[InvoiceTotalAmount]' => notification_escape($money($total_amount)),
+        '[InvoiceTotalTax]'   => notification_escape($money($total_tax)),
     );
 
     // repeat the per-item template for [InvoiceItems]; fall back to plain rows
@@ -497,9 +508,9 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
                     '[InvoiceItemNumber]'      => notification_escape($item['number']),
                     '[InvoiceItemPlan]'        => notification_escape($item['plan']),
                     '[InvoiceItemNotes]'       => notification_escape($item['notes']),
-                    '[InvoiceItemAmount]'      => notification_escape($item['amount']),
-                    '[InvoiceItemTaxAmount]'   => notification_escape($item['tax_amount']),
-                    '[InvoiceItemTotalAmount]' => notification_escape($item['total_amount']),
+                    '[InvoiceItemAmount]'      => notification_escape($money($item['amount'])),
+                    '[InvoiceItemTaxAmount]'   => notification_escape($money($item['tax'])),
+                    '[InvoiceItemTotalAmount]' => notification_escape($money($item['total'])),
                 ));
             }
             $replacements['[InvoiceItems]'] = $rendered_items;
