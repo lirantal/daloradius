@@ -147,14 +147,21 @@
         $logDebugSQL .= "$sql;\n";
 
         $additional_controls = array();
+        $notification_url = sprintf("include/common/notifications.php?type=batch-details&batch_name=%s",
+                                    urlencode($batch_name));
         $additional_controls[] = array(
-                                        'onclick' => sprintf("window.open('include/common/notificationsBatchDetails.php?batch_name=%s&destination=download')", urlencode($batch_name_enc)),
-                                        'label' => 'Download Invoice',
+                                        'onclick' => sprintf("window.open('%s&action=preview')", $notification_url),
+                                        'label' => 'Preview PDF',
                                         'class' => 'btn-light',
                                       );
         $additional_controls[] = array(
-                                        'onclick' => sprintf("location.href='include/common/notificationsBatchDetails.php?batch_name=%s&destination=email'", urlencode($batch_name_enc)),
-                                        'label' => 'Email Invoice to Business/Hotspot',
+                                        'onclick' => sprintf("window.open('%s&action=download')", $notification_url),
+                                        'label' => 'Download PDF',
+                                        'class' => 'btn-light',
+                                      );
+        $additional_controls[] = array(
+                                        'onclick' => sprintf("location.href='%s&action=email'", $notification_url),
+                                        'label' => 'Email PDF to Business/Hotspot',
                                         'class' => 'btn-light',
                                       );
         $additional_controls[] = get_csv_export_control('reportType=reportsBatchTotalUsers');
