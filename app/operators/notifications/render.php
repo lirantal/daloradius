@@ -47,7 +47,9 @@ function notification_load_template($path) {
  * Replace a map of literal tokens inside an HTML string.
  *
  * Keys are matched verbatim, so callers pass the exact token as it appears in the
- * template (e.g. "####__CUSTOMER_NAME__####" or "[InvoiceNumber]").
+ * template (e.g. "####__CUSTOMER_NAME__####" or "[InvoiceNumber]"). The
+ * replacement is single-pass (strtr): a value that happens to contain another
+ * token is left alone rather than being rewritten by a later pass.
  *
  * @param string $html
  * @param array  $replacements token => value
@@ -59,7 +61,7 @@ function notification_fill($html, array $replacements) {
         return $html;
     }
 
-    return str_replace(array_keys($replacements), array_values($replacements), $html);
+    return strtr($html, $replacements);
 }
 
 /**

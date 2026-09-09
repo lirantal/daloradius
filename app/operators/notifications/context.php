@@ -367,8 +367,10 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
         return isset($invoice[$key]) ? trim((string) $invoice[$key]) : '';
     };
 
-    $customer_email = $get('email') !== '' ? $get('email') : $get('emailinvoice');
+    // 'emailinvoice' is a yes/no flag column, not an address - never use it as a recipient
+    $customer_email = $get('email');
     $balance = floatval($invoice['totalpayed']) - floatval($invoice['totalbilled']);
+    $due = -$balance; // amount still owed = billed - paid
 
     // legacy "####__X__####" detail block
     $details = array(
@@ -430,6 +432,20 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
     }
     $items_table .= '</tbody></table>';
 
+    // plain <tr> rows matching the rich template's item columns (#, Plan, Notes,
+    // Amount, Tax, Total) - used when no per-item template is configured
+    $item_rows = '';
+    foreach ($items as $item) {
+        $item_rows .= '<tr>'
+                    . '<td class="num">' . notification_escape($item['number']) . '</td>'
+                    . '<td>' . notification_escape($item['plan']) . '</td>'
+                    . '<td>' . notification_escape($item['notes']) . '</td>'
+                    . '<td class="num">' . notification_escape($item['amount']) . '</td>'
+                    . '<td class="num">' . notification_escape($item['tax_amount']) . '</td>'
+                    . '<td class="num">' . notification_escape($item['total_amount']) . '</td>'
+                    . '</tr>';
+    }
+
     list($template_path, $item_template_path) = notification_invoice_templates($configValues);
     $html = notification_load_template($template_path);
     if ($html === false) {
@@ -462,17 +478,19 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
         '[InvoiceStatus]'     => notification_escape(strtoupper($get('status'))),
         '[InvoiceTotalBilled]' => notification_escape(notification_money($invoice['totalbilled'])),
         '[InvoicePaid]'       => notification_escape(notification_money($invoice['totalpayed'])),
-        '[InvoiceDue]'        => notification_escape(notification_money($balance)),
+        '[InvoiceDue]'        => notification_escape(notification_money($due)),
         '[InvoiceNotes]'      => notification_escape($get('notes')),
         '[InvoiceTotalAmount]' => notification_escape(notification_money($total_amount)),
         '[InvoiceTotalTax]'   => notification_escape(notification_money($total_tax)),
     );
 
-    // repeat the per-item template for [InvoiceItems]
+    // repeat the per-item template for [InvoiceItems]; fall back to plain rows
+    // when no per-item template is configured
+    $replacements['[InvoiceItems]'] = $item_rows;
     if ($item_template_path !== null) {
         $item_html = notification_load_template($item_template_path);
-        $rendered_items = '';
         if ($item_html !== false) {
+            $rendered_items = '';
             foreach ($items as $item) {
                 $rendered_items .= notification_fill($item_html, array(
                     '[InvoiceItemNumber]'      => notification_escape($item['number']),
@@ -483,8 +501,8 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
                     '[InvoiceItemTotalAmount]' => notification_escape($item['total_amount']),
                 ));
             }
+            $replacements['[InvoiceItems]'] = $rendered_items;
         }
-        $replacements['[InvoiceItems]'] = $rendered_items;
     }
 
     $html = notification_fill($html, $replacements);

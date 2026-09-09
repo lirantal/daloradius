@@ -92,9 +92,13 @@ $invoice = notification_fill(
     )
 );
 check('invoice: no [Token] placeholders left',
-      preg_match('/\[(Customer|Invoice)[A-Za-z]*\]/', $invoice) === 0);
+      preg_match('/\[(Customer|Invoice)[A-Za-z0-9]*\]/', $invoice) === 0);
 check('invoice: item row rendered', substr_count($invoice, 'Gold') === 1);
 check('invoice: decimals preserved', strpos($invoice, '12.20') !== false);
+
+// single-pass: a value that contains another token must not be re-substituted
+$onepass = notification_fill('[A] [B]', array('[A]' => '[B]', '[B]' => 'x'));
+check('notification_fill is single-pass', $onepass === '[B] x');
 
 printf("\n%s\n", $failures === 0 ? 'ALL PASSED' : sprintf('%d FAILURE(S)', $failures));
 exit($failures === 0 ? 0 : 1);
