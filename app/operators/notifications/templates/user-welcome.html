@@ -1,108 +1,52 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Invoice</title>
-<style type="text/css">
-<!--
-body {
-  font-family:Tahoma;
-}
-
-
-#page {
-  width:980px;
-  padding:15px;
-
-}
-
-
-table {
-  border-width:1px;
-  width:100%;
-}
-
-td {
-  padding:5px;
-}
-
-tr.odd {
-  background:#e1ffe1;
-}
--->
+<meta charset="utf-8">
+<title>Welcome notification</title>
+<style>
+    body { font-family: "DejaVu Sans", Helvetica, Arial, sans-serif; font-size: 12px; color: #222; margin: 0; padding: 24px; }
+    h1 { font-size: 18px; margin: 0 0 8px; }
+    p { margin: 0 0 8px; }
+    .muted { color: #666; }
+    table.header { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+    table.header td { vertical-align: top; }
+    table.header td.brand { text-align: right; }
+    table.header img { max-height: 64px; }
+    hr { border: 0; border-top: 1px solid #bbb; margin: 16px 0; }
 </style>
 </head>
 <body>
 
-<div id="page">
-
-<table width='900px';>
-	<tr>
-	
-		<td width='450px'>
-			<p>
-			  <b>Customer Name and Contact</b><br/>
-			  ####__CUSTOMER_NAME__####<br/>
-			  ####__CUSTOMER_ADDRESS__####<br/><br/>
-			  
-			  <b>Phone:</b> ####__CUSTOMER_PHONE__####<br/>
-			  <b>Email:</b> ####__CUSTOMER_EMAIL__####<br/>
-			<hr>
-	    </td>
-	
-	
-		<td>
-			<a href="http://www.daloradius.com/"><img src="company-logo.jpg" border='0'/></a>
-		
-
-				<p>Enginx<br/>
-				<a href="mailto:team@enginx.com">team@enginx.com</a>
-				</p>
-					Created on ####__INVOICE_CREATION_DATE__####
-				<p>
-				
-				</p>
-		</td>
-	</tr>
+<table class="header">
+    <tr>
+        <td>
+            <strong>Customer</strong><br>
+            ####__CUSTOMER_NAME__####<br>
+            ####__CUSTOMER_ADDRESS__####<br><br>
+            <strong>Phone:</strong> ####__CUSTOMER_PHONE__####<br>
+            <strong>Email:</strong> ####__CUSTOMER_EMAIL__####
+        </td>
+        <td class="brand">
+            <img src="company-logo.jpg" alt=""><br>
+            <span class="muted">Created on ####__INVOICE_CREATION_DATE__####</span>
+        </td>
+    </tr>
 </table>
 
-  <div id="content">
+<hr>
 
-    
-    
-    <div class="header">
-	    <br/>
-    	<p>
-    	<b>Welcome Notification</b>
-    	<br/><br/>
-    	
-    	Dear customer, <br/><br/>
-    	
-    	Welcome to our Hotspot service.<br/>
-    	We hope you enjoy and wishing you happy surfing<br/>
-    	
-    	</p>
-    </div>
+<h1>Welcome</h1>
+<p>Dear customer,</p>
+<p>welcome to our Hotspot service. We hope you enjoy it and wish you happy surfing.</p>
+<p>If you have any question, please get in touch with us.</p>
 
-	
-	<br/><br/><br/>
-	<br/><br/><br/>
+<hr>
 
-    <hr>
-    <p>
-      Thank you for your order!<br/>
-      If you have any questions, please feel free to contact us at <a href="mailto:team@enginx.com">team@enginx.com</a>.
-    </p>
-    <hr>
-    <br/><br/>
-    <p>
-      <small>This communication is for the exclusive use of the addressee and may contain proprietary, confidential or privileged information.<br/>
-			If you are not the intended recipient any use, copying, disclosure, dissemination or distribution is strictly prohibited.
-      <br /><br />
-      &copy; Enginx (C) All Rights Reserved
-      </small>
-    </p>
-  </div><!--end content-->
-</div><!--end page-->
+<p class="muted">
+    This communication is for the exclusive use of the addressee and may contain confidential
+    information. If you are not the intended recipient, any use, copying, disclosure or
+    distribution is strictly prohibited.
+</p>
+
 </body>
-
 </html>

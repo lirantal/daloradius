@@ -1,296 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Invoice [InvoiceNumber]</title>
+<style>
+    body { font-family: "DejaVu Sans", Helvetica, Arial, sans-serif; font-size: 12px; color: #222; margin: 0; padding: 24px; }
+    h1 { font-size: 26px; margin: 0; letter-spacing: 2px; }
+    .muted { color: #666; }
+    hr { border: 0; border-top: 1px solid #000; margin: 14px 0; }
+    table.header { width: 100%; border-collapse: collapse; }
+    table.header td { vertical-align: top; }
+    table.header td.right { text-align: right; }
+    table.header img { max-height: 64px; }
+    table.meta { width: 100%; border-collapse: collapse; margin: 8px 0 16px; }
+    table.meta td { vertical-align: top; padding: 1px 0; }
+    table.meta td.label { text-align: right; padding-right: 10px; white-space: nowrap; font-weight: bold; }
+    table.items { width: 100%; border-collapse: collapse; margin: 8px 0; }
+    table.items th, table.items td { border-bottom: 1px solid #ccc; padding: 6px 8px; text-align: left; font-size: 11px; }
+    table.items th { background: #ECE5B6; border-bottom: 1px solid #999; }
+    table.items td.num, table.items th.num { text-align: right; white-space: nowrap; }
+    table.totals { width: 40%; border-collapse: collapse; margin-left: 60%; }
+    table.totals td { padding: 3px 8px; text-align: right; }
+    table.totals td.label { font-weight: bold; }
+    table.totals tr.grand td { border-top: 2px solid #000; font-size: 14px; font-weight: bold; }
+    .details td.label { font-weight: bold; padding-right: 12px; }
+    .footer { margin-top: 24px; text-align: center; font-size: 10px; }
+</style>
+</head>
+<body>
 
-	<head>
-		<title>Invoice</title>
-		
-		<style type="text/css">
-			body {
-				font-family: sans-serif;
-				font-size: 1em;
-				padding-left: 10%;
-				padding-right: 10%;
-			}
-			table {
-				width: 100%;
-			}
-			td.company-logo {
-				vertical-align: top;
-			}
-			td.company-address {
-				text-align: right;
-				vertical-align: top;
-			}
-			td.invoice-title {
-				vertical-align: top;
-				font-size: 3em;
-				font-weight: bold;
-			}
-			td.invoice-fields {
-				text-align: right;
-				vertical-align: top;
-			}
-			td.invoice-values {
-				vertical-align: top;
-				padding-left: 1em;
-			}
-			tr.invoice-item-fields {
-				background-color: lightgray;
-			}
-			td.invoice-item-number-field, .invoice-item-plan-field, .invoice-item-notes-field,
-			  .invoice-item-amount-field, .invoice-item-tax-field, .invoice-item-total-field {
-				font-weight: bold;
-				padding-top: 0.5em;
-				padding-bottom: 0.5em;
-			}
-			td.invoice-item-number-field, .invoice-item-plan-field, .invoice-item-notes-field {
-				padding-left: 0.5em;
-			}
-			td.invoice-item-amount-field, .invoice-item-tax-field, .invoice-item-total-field {
-				text-align: center;
-				width: 15%;
-			}
-			td.invoice-item-number, .invoice-item-plan, .invoice-item-notes {
-				padding-top: 0.5em;
-				padding-bottom: 0.5em;
-				padding-left: 0.5em;
-			}
-			td.invoice-item-amount, .invoice-item-tax, .invoice-item-total {
-				text-align: right;
-				padding-top: 0.5em;
-				padding-bottom: 0.5em;
-				padding-right: 0.5em;
-			}
-			td.invoice-item-total-amount, .invoice-item-total-tax, .invoice-item-grand-total {
-				text-align: right;
-				font-weight: bold;
-				padding-top: 0.5em;
-				padding-bottom: 0.5em;
-				padding-right: 0.5em;
-			}
-			td.invoice-grand-total {
-				text-align: right;
-				font-size: 2em;
-				font-weight: bold;
-			}
-			td.invoice-details-title {
-			}
-			td.invoice-details-field {
-			}
-			td.invoice-details {
-			}
-			td.invoice-details-amount {
-				text-align: right;
-			}
-			td.invoice-details-rest {
-				width: 70%;
-			}
-			td.invoice-footer {
-				text-align: center;
-				font-size: 0.75em;
-			}
-			hr.separator {
-				border: 0px;
-				border-style: solid;
-				color: black;
-				background-color: black;
-				height: 1px;
-			}
-		</style>
-	</head>
-	
-	<body>
-	
-		<table>
-			<tr>
-				<td class="company-logo">
-					<img src="company-logo.jpg">
-				</td>
-				<td class="company-address">
-					<strong>Daloradius Inc.</strong><br>
-					Software St., 32<br>
-					City, Zip 1024 State - Country<br>
-					123 456 789 &phone;<br>
-					info@daloradius.inc &#9993;<br>
-					http://www.daloradius.inc &#127760;
-				</td>
-			</tr>
-		</table>
-		
-		<br>
-		<hr class="separator">
-		<br>
-		
-		<table>
-			<tr>
-				<td class="invoice-title">
-					INVOICE
-				</td>
-				<td class="invoice-fields">
-					<strong>Invoice #</strong>:<br>
-					<strong>Date</strong>:<br>
-					<strong>Customer</strong>:
-				</td>
-				<td class="invoice-values">
-					[InvoiceNumber]<br>
-					[InvoiceDate]<br>
-					[CustomerName] &nbsp; [# [CustomerId]]<br>
-					[CustomerAddress]<br>
-					[CustomerAddress2]<br>
-					&phone; [CustomerPhone]<br>
-					&#9993; [CustomerEmail]<br>
-					&#128100; [CustomerContact]
-				</td>
-			</tr>
-		</table>
-		
-		<br>
-		
-		<table>
-			<tr class="invoice-item-fields">
-				<td class="invoice-item-number-field">
-					Item #
-				</td>
-				<td class="invoice-item-plan-field">
-					Plan
-				</td>
-				<td class="invoice-item-notes-field">
-					Notes
-				</td>
-				<td class="invoice-item-amount-field">
-					Amount
-				</td>
-				<td class="invoice-item-tax-field">
-					Tax
-				</td>
-				<td class="invoice-item-total-field">
-					Total
-				</td>
-			</tr>
-			
-			[InvoiceItems]
-			
-			<tr>
-				<td class="invoice-item-total-amount" colspan="4">
-					[InvoiceTotalAmount] &euro;
-				</td>
-				<td class="invoice-item-total-tax">
-					[InvoiceTotalTax] &euro;
-				</td>
-				<td class="invoice-item-grand-total">
-					[InvoiceTotalBilled] &euro;
-				</td>
-			</tr>
+<table class="header">
+    <tr>
+        <td><img src="company-logo.jpg" alt=""></td>
+        <td class="right muted">
+            Please configure your company details in the invoice template.
+        </td>
+    </tr>
+</table>
 
-		</table>
-		
-		<hr class="separator">
-		<br>
-		
-		<table>
-			<tr>
-				<td class="invoice-grand-total">
-					Total Invoice [InvoiceTotalBilled] &euro;
-				</td>
-			</tr>
-		</table>
-		
-		<br>
-		<br>
-		
-		<table>
-			<tr>
-				<td class="invoice-details-title" colspan="3">
-					<strong>Invoice details:</strong><br>
-				</td>
-			</tr>
-			<tr>
-				<td class="invoice-details-field">
-					Status:
-				</td>
-				<td class="invoice-details">
-					[InvoiceStatus]
-				</td>
-				<td class="invoice-details-rest">
-					&nbsp;
-				</td>
-			</tr>
-			<tr>
-				<td class="invoice-details-field">
-					Total billed:
-				</td>
-				<td class="invoice-details-amount">
-					[InvoiceTotalBilled] &euro;
-				</td>
-				<td class="invoice-details-rest">
-					&nbsp;
-				</td>
-			</tr>
-			<tr>
-				<td class="invoice-details-field">
-					Total paid:
-				</td>
-				<td class="invoice-details-amount">
-					[InvoicePaid] &euro;
-				</td>
-				<td class="invoice-details-rest">
-					&nbsp;
-				</td>
-			</tr>
-			<tr>
-				<td class="invoice-details-field">
-					Total due:
-				</td>
-				<td class="invoice-details-amount">
-					[InvoiceDue] &euro;
-				</td>
-				<td class="invoice-details-rest">
-					&nbsp;
-				</td>
-			</tr>
-		</table>
-		
-		<br>
-		
-		<table>
-			<tr>
-				<td class="invoice-details-title">
-					<strong>Please, make a payment to:</strong><br>
-				</td>
-			</tr>
-			<tr>
-				<td class="invoice-details">
-					Bank of Money<br>
-					IBAN 000 0102 0304 0506 0708
-				</td>
-			</tr>
-		</table>
-		
-		<br>
-		
-		<table>
-			<tr>
-				<td class="invoice-details-title">
-					<strong>Notes:</strong><br>
-				</td>
-			</tr>
-			<tr>
-				<td class="invoice-details">
-					[InvoiceNotes]
-				</td>
-			</tr>
-		</table>
-		
-		<br>
-		<hr class="separator">
+<hr>
 
-		<table>
-			<tr>
-				<td class="invoice-footer">
-					Daloradius Inc., a company registered with the # 12345678.
-				</td>
-			</tr>
-		</table>
-		
-	</body>
+<table class="meta">
+    <tr>
+        <td><h1>INVOICE</h1></td>
+        <td class="label">Invoice #:</td>
+        <td>[InvoiceNumber]</td>
+    </tr>
+    <tr>
+        <td rowspan="5">
+            <br>
+            <strong>[CustomerName]</strong> <span class="muted">(customer #[CustomerId])</span><br>
+            [CustomerContact]<br>
+            [CustomerAddress]<br>
+            [CustomerAddress2]<br>
+            Tel: [CustomerPhone]<br>
+            Email: [CustomerEmail]
+        </td>
+        <td class="label">Date:</td>
+        <td>[InvoiceDate]</td>
+    </tr>
+    <tr><td class="label">Status:</td><td>[InvoiceStatus]</td></tr>
+</table>
+
+<table class="items">
+    <tr>
+        <th>Item #</th>
+        <th>Plan</th>
+        <th>Notes</th>
+        <th class="num">Amount</th>
+        <th class="num">Tax</th>
+        <th class="num">Total</th>
+    </tr>
+
+    [InvoiceItems]
+
+</table>
+
+<table class="totals">
+    <tr><td class="label">Subtotal</td><td>[InvoiceTotalAmount] &euro;</td></tr>
+    <tr><td class="label">Tax</td><td>[InvoiceTotalTax] &euro;</td></tr>
+    <tr class="grand"><td class="label">Total</td><td>[InvoiceTotalBilled] &euro;</td></tr>
+    <tr><td class="label">Paid</td><td>[InvoicePaid] &euro;</td></tr>
+    <tr><td class="label">Due</td><td>[InvoiceDue] &euro;</td></tr>
+</table>
+
+<hr>
+
+<table class="details">
+    <tr><td class="label">Notes</td><td>[InvoiceNotes]</td></tr>
+</table>
+
+<div class="footer">
+    Thank you for your business.
+</div>
+
+</body>
 </html>
