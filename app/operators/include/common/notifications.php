@@ -36,6 +36,7 @@ $redirect = (!empty(trim($_SESSION['PREV_LIST_PAGE'] ?? "")))
 // supported notification types mapped to the ACL entry that guards them
 $notification_types = array(
     'user-welcome'  => 'mng_new',
+    'user-invoice'  => 'bill_invoice_edit',
     'batch-details' => 'rep_batch_details',
 );
 
