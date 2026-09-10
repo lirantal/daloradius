@@ -270,6 +270,12 @@ cat <<EOF > /etc/apache2/sites-available/operators.conf
     Require all granted
   </Directory>
 
+  # server-side only: PDF notification templates and helpers, never fetched directly
+  <Directory \${DALORADIUS_ROOT_DIRECTORY}/app/operators/notifications>
+    AllowOverride None
+    Require all denied
+  </Directory>
+
   <Directory \${DALORADIUS_ROOT_DIRECTORY}>
     Require all denied
   </Directory>
@@ -291,6 +297,12 @@ cat <<EOF > /etc/apache2/sites-available/users.conf
     Options -Indexes +FollowSymLinks
     AllowOverride None
     Require all granted
+  </Directory>
+
+  # server-side only: PDF notification templates and helpers, never fetched directly
+  <Directory \${DALORADIUS_ROOT_DIRECTORY}/app/users/notifications>
+    AllowOverride None
+    Require all denied
   </Directory>
 
   <Directory \${DALORADIUS_ROOT_DIRECTORY}>

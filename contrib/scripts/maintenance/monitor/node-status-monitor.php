@@ -74,7 +74,7 @@ EOF;
 
         $subject = "daloRADIUS node status monitor";
 
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'notifications.php' ]);
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'mail.php' ]);
         list($success, $message) = send_email($configValues, $configValues['CONFIG_NODE_STATUS_MONITOR_EMAIL_TO'],
                                               'daloRADIUS sysadmin', $subject, $body);
         printf("%s: %s", (($success) ? "SUCCESS" : "FAILURE"), $message);

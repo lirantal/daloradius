@@ -76,8 +76,13 @@ function send_email($config_values, $recipient_email_address, $recipient_name, $
         $mail->CharSet = $config_values['CONFIG_MAIL_CHARSET'];
 
         if (is_array($attachment) && array_key_exists('content', $attachment) && array_key_exists('filename', $attachment) ) {
+            $mime_type = (!empty($attachment['type'])) ? $attachment['type'] : '';
+            if ($mime_type === '') {
+                $mime_type = (strtolower(pathinfo($attachment['filename'], PATHINFO_EXTENSION)) === 'pdf')
+                           ? 'application/pdf' : 'application/octet-stream';
+            }
             $mail->addStringAttachment($attachment['content'], $attachment['filename'],
-                                       PHPMailer\PHPMailer\PHPMailer::ENCODING_BASE64, 'text/plain', 'attachment');
+                                       PHPMailer\PHPMailer\PHPMailer::ENCODING_BASE64, $mime_type, 'attachment');
         }
 
         // Send the email

@@ -452,7 +452,7 @@ EOF;
             print_form_component($input_descriptor);
         }
         
-        $onclick = "window.location.href='include/common/notificationsUserInvoice.php?destination=%s&invoice_id=%d'";
+        $onclick = "window.location.href='include/common/notifications.php?type=user-invoice&action=%s&invoice_id=%d'";
         $button_descriptors1 = array();
         $button_descriptors1[] = array(
                                         "type" => "button",
@@ -486,7 +486,8 @@ EOF;
 EOF;
 
         foreach ($button_descriptors1 as $desc) {
-            printf('<li><button class="dropdown-item" name="%s" onclick="%s">%s</button></li>', $desc['name'], $desc['onclick'], $desc['value']);
+            printf('<li><button type="button" class="dropdown-item" name="%s" onclick="%s">%s</button></li>',
+                   $desc['name'], $desc['onclick'], $desc['value']);
         }
 
 

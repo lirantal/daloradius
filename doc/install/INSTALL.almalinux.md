@@ -242,6 +242,12 @@ Listen 8000
     Require all granted
   </Directory>
 
+  # server-side only: PDF notification templates and helpers, never fetched directly
+  <Directory /var/www/daloradius/app/operators/notifications>
+    AllowOverride None
+    Require all denied
+  </Directory>
+
   <Directory /var/www/daloradius>
     Require all denied
   </Directory>
@@ -258,6 +264,12 @@ Listen 8000
     Options -Indexes +FollowSymLinks
     AllowOverride None
     Require all granted
+  </Directory>
+
+  # server-side only: PDF notification templates and helpers, never fetched directly
+  <Directory /var/www/daloradius/app/users/notifications>
+    AllowOverride None
+    Require all denied
   </Directory>
 
   <Directory /var/www/daloradius>

@@ -121,6 +121,11 @@ $configValues['CONFIG_USER_VPN_SERVER'] = 'vpn.company.com';
 
 
 // invoice templates - optional
+// note: the notification builder appends the billing plan currency code to the
+// money placeholders when a currency is known - per line item, and on the
+// invoice-wide totals only when every line item shares one currency. A custom
+// template must NOT add its own currency symbol after the [Invoice*] /
+// [InvoiceItem*] money placeholders.
 $configValues['CONFIG_INVOICE_TEMPLATE'] = 'invoice_template.html';
 $configValues['CONFIG_INVOICE_ITEM_TEMPLATE'] = 'invoice_item_template.html';
 
