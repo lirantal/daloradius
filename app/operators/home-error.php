@@ -17,32 +17,37 @@
  *
  * Description:    An operator is redirected to this specific page when they lack the permissions
  *                 to access a particular area of the system.
- * 
+ *
  * Authors:        Liran Tal <liran@lirantal.com>
  *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-   include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
-   include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
-   $operator = $_SESSION['operator_user'];
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
+    $operator = $_SESSION['operator_user'];
 
-   include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
-   include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     $log = "visited page: ";
 
     // print HTML prologue
     $title = t('Intro','msgerrorpermissions.php');
     $help = "";
-    
+
     print_html_prologue($title, $langCode);
 
     print_title_and_help($title, $help);
 
     $failureMsg = t('helpPage','msgerrorpermissions');
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+
+    $text = "Back to " . t('button','Dashboard');
+    echo '<div style="float: right; text-align: right; margin: 0; font-size: small">';
+    printf('<a href="home-main.php" title="%s">%s</a>', $text, $text);
+    echo '</div>';
 
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();
