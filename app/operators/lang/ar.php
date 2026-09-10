@@ -1481,7 +1481,7 @@ $l['helpPage']['graphsoveralllogins'] = "Plots a graphical chart of the Login at
 
 
 $l['helpPage']['rephistory'] = "Lists all activity performed on management items and provides information on <br/>
-Creation Date, Creation By as well as Updated Date and Update By history fields";
+Creation Date, Created By as well as Update Date and Updated By history fields";
 $l['helpPage']['replastconnect'] = "Lists all login attempts to the RADIUS server, both successful and failed logins";
 $l['helpPage']['replogsboot'] = "Monitor Operating System Boot log - equivalent to running the dmesg command.";
 $l['helpPage']['replogsdaloradius'] = "Monitor daloRADIUS's Logfile.";
