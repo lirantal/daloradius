@@ -240,9 +240,22 @@
 
             list($fullname, $user, $pass, $reply, $datetime) = $row;
 
+            // fullname
             $fullname = (!empty($fullname) ? $fullname : t('all','NotAvailable'));
-            $reply = sprintf('<span class="text-%s">%s</span>',
-                             (($reply == "Access-Reject") ? "danger" : "success"), $reply);
+
+            // reply
+            $is_rejected = $reply === 'Access-Reject';
+
+            $badge_class = $is_rejected ? 'text-bg-danger' : 'text-bg-success';
+            $icon = $is_rejected ? 'x-circle-fill' : 'check-circle-fill';
+
+            $reply = sprintf(
+                '<span class="badge %s"><i class="bi bi-%s me-1"></i>%s</span>',
+                $badge_class, $icon, $reply, ENT_QUOTES, 'UTF-8'
+            );
+
+            // datetime
+            $datetime = date('Y-m-d H:i:s', strtotime($datetime));
 
             $table_row = array( $user, $fullname );
             if (!$hiddenPassword) {
