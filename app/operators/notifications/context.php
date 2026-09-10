@@ -383,7 +383,8 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
     $items = array();
     $total_amount = 0.0;
     $total_tax = 0.0;
-    $currencies = array(); // distinct currency codes seen across the line items
+    $currencies = array();        // distinct currency codes seen across the line items
+    $has_uncoded_item = false;    // at least one line item has no currency at all
     $number = 1;
     if (!DB::isError($res)) {
         while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
@@ -392,6 +393,8 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
             $item_currency = empty($row['planCurrency']) ? '' : strtoupper(trim((string) $row['planCurrency']));
             if ($item_currency !== '') {
                 $currencies[$item_currency] = true;
+            } else {
+                $has_uncoded_item = true;
             }
             $items[] = array(
                 'number'   => sprintf('%02d', $number++),
@@ -407,11 +410,11 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
         }
     }
 
-    // a currency code is put on the totals only when every line item agrees on
-    // it; a mixed-currency invoice keeps the totals unlabelled rather than
-    // pretending a single currency applies
+    // a currency code is put on the invoice-wide totals only when every line item
+    // carries the same non-empty currency; a mixed- or partially-coded invoice
+    // keeps the totals unlabelled rather than pretending a single currency applies
     $currency_codes = array_keys($currencies);
-    $invoice_currency = (count($currency_codes) === 1) ? $currency_codes[0] : '';
+    $invoice_currency = (count($currency_codes) === 1 && !$has_uncoded_item) ? $currency_codes[0] : '';
 
     // format a monetary value, appending an ISO currency code when one is known
     // (e.g. "12.20 EUR"); pass a per-line code, or omit it for the invoice-wide one
