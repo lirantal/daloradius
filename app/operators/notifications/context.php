@@ -383,33 +383,42 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
     $items = array();
     $total_amount = 0.0;
     $total_tax = 0.0;
-    $currency = '';
+    $currencies = array(); // distinct currency codes seen across the line items
     $number = 1;
     if (!DB::isError($res)) {
         while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
             $amount = floatval($row['amount']);
             $tax = floatval($row['tax_amount']);
-            if ($currency === '' && !empty($row['planCurrency'])) {
-                $currency = strtoupper(trim((string) $row['planCurrency']));
+            $item_currency = empty($row['planCurrency']) ? '' : strtoupper(trim((string) $row['planCurrency']));
+            if ($item_currency !== '') {
+                $currencies[$item_currency] = true;
             }
             $items[] = array(
-                'number' => sprintf('%02d', $number++),
-                'plan'   => (string) $row['planName'],
-                'notes'  => (string) $row['notes'],
-                'amount' => $amount,
-                'tax'    => $tax,
-                'total'  => $amount + $tax,
+                'number'   => sprintf('%02d', $number++),
+                'plan'     => (string) $row['planName'],
+                'notes'    => (string) $row['notes'],
+                'amount'   => $amount,
+                'tax'      => $tax,
+                'total'    => $amount + $tax,
+                'currency' => $item_currency,
             );
             $total_amount += $amount;
             $total_tax += $tax;
         }
     }
 
-    // format a monetary value, appending the plan currency code when there is one
-    // (e.g. "12.20 EUR"), otherwise just the bare number
-    $money = function ($value) use ($currency) {
+    // a currency code is put on the totals only when every line item agrees on
+    // it; a mixed-currency invoice keeps the totals unlabelled rather than
+    // pretending a single currency applies
+    $currency_codes = array_keys($currencies);
+    $invoice_currency = (count($currency_codes) === 1) ? $currency_codes[0] : '';
+
+    // format a monetary value, appending an ISO currency code when one is known
+    // (e.g. "12.20 EUR"); pass a per-line code, or omit it for the invoice-wide one
+    $money = function ($value, $code = null) use ($invoice_currency) {
+        $code = ($code === null) ? $invoice_currency : $code;
         $formatted = notification_money($value);
-        return ($currency !== '') ? $formatted . ' ' . $currency : $formatted;
+        return ($code !== '') ? $formatted . ' ' . $code : $formatted;
     };
 
     // legacy "####__X__####" detail block
@@ -437,8 +446,8 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
                  . '</tr></thead><tbody>';
     foreach ($items as $item) {
         $items_table .= '<tr><td>' . notification_escape($item['plan']) . '</td>'
-                      . '<td>' . notification_escape($money($item['tax'])) . '</td>'
-                      . '<td>' . notification_escape($money($item['amount'])) . '</td>'
+                      . '<td>' . notification_escape($money($item['tax'], $item['currency'])) . '</td>'
+                      . '<td>' . notification_escape($money($item['amount'], $item['currency'])) . '</td>'
                       . '<td>' . notification_escape($item['notes']) . '</td></tr>';
     }
     $items_table .= '</tbody></table>';
@@ -452,9 +461,9 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
                     . '<td class="num">' . notification_escape($item['number']) . '</td>'
                     . '<td>' . notification_escape($item['plan']) . '</td>'
                     . '<td>' . notification_escape($item['notes']) . '</td>'
-                    . '<td class="num">' . notification_escape($money($item['amount'])) . '</td>'
-                    . '<td class="num">' . notification_escape($money($item['tax'])) . '</td>'
-                    . '<td class="num">' . notification_escape($money($item['total'])) . '</td>'
+                    . '<td class="num">' . notification_escape($money($item['amount'], $item['currency'])) . '</td>'
+                    . '<td class="num">' . notification_escape($money($item['tax'], $item['currency'])) . '</td>'
+                    . '<td class="num">' . notification_escape($money($item['total'], $item['currency'])) . '</td>'
                     . '</tr>';
     }
 
@@ -508,9 +517,9 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
                     '[InvoiceItemNumber]'      => notification_escape($item['number']),
                     '[InvoiceItemPlan]'        => notification_escape($item['plan']),
                     '[InvoiceItemNotes]'       => notification_escape($item['notes']),
-                    '[InvoiceItemAmount]'      => notification_escape($money($item['amount'])),
-                    '[InvoiceItemTaxAmount]'   => notification_escape($money($item['tax'])),
-                    '[InvoiceItemTotalAmount]' => notification_escape($money($item['total'])),
+                    '[InvoiceItemAmount]'      => notification_escape($money($item['amount'], $item['currency'])),
+                    '[InvoiceItemTaxAmount]'   => notification_escape($money($item['tax'], $item['currency'])),
+                    '[InvoiceItemTotalAmount]' => notification_escape($money($item['total'], $item['currency'])),
                 ));
             }
             $replacements['[InvoiceItems]'] = $rendered_items;
