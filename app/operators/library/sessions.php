@@ -46,7 +46,7 @@ function dalo_check_csrf_token($token=null) {
         $token = $_POST['csrf_token'];
     }
 
-    if (empty($token)) {
+    if (empty($token) || empty($_SESSION['csrf_token'])) {
         return false;
     }
 

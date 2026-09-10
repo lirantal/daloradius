@@ -42,7 +42,7 @@ function dalo_csrf_token() {
 
 // this function can be used for verifying if the csrf token is valid
 function dalo_check_csrf_token($token) {
-    if (empty($token)) {
+    if (empty($token) || empty($_SESSION['csrf_token'])) {
         return false;
     }
 
