@@ -34,8 +34,6 @@ include_once('../common/includes/config_read.php');
 $descriptors1 = array();
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServerStatus'), 'href' => 'rep-stat-server.php', 
                          'icon' => 'pc', 'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
-$descriptors1[] = array( 'type' => 'link', 'label' => t('button','ServicesStatus'), 'href' => 'rep-stat-services.php',
-                         'icon' => 'server', 'img' => array( 'src' => 'static/images/icons/reportsStatus.png', ), );
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','LastConnectionAttempts'), 'href' => 'rep-lastconnect.php',
                          'icon' => 'clock-history', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 
