@@ -30,7 +30,6 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/rep/status.php') !== fal
 // define descriptors
 $descriptors1 = [];
 $descriptors1[] = [ 'type' => 'link', 'label' => t('button','ServerStatus'), 'href' => 'rep-stat-server.php', 'icon' => 'pc', ];
-$descriptors1[] = [ 'type' => 'link', 'label' => t('button','ServicesStatus'), 'href' => 'rep-stat-services.php', 'icon' => 'server', ];
 
 $descriptors2 = [];
 $descriptors2[] = [ 'type' => 'link', 'label' => t('sidebar', 'CRONStatus'), 'href' => 'config-crontab.php', 'icon' => 'calendar-date', ];

@@ -126,7 +126,8 @@ daloRADIUS comes with integrated support for GIS provided by Leaflet and CARTO b
 ### Status Reporting
 
 - **Server Status**: Provides detailed information on the server where daloRADIUS is deployed, including CPU utilization, uptime, memory, disk information, and more.
-- **RADIUS Status**: Provides information on whether the FreeRADIUS server is running, along with the database server (e.g., MySQL, PostgreSQL, or others).
+
+The former **Services Status** page has been removed. Monitor daloRADIUS, FreeRADIUS, and the database using your preferred external monitoring solution (for example, [Zabbix](https://www.zabbix.com/) or [Prometheus](https://prometheus.io/)), with availability checks and alerting independent of the PHP web interface. Remove any bookmarks to the former page.
 
 ## Billing
 
