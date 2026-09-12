@@ -95,6 +95,8 @@ $_input_descriptors2[] = array(
                                     'type' => 'password',
                                     'name' => 'portalLoginPassword',
                                     'value' => '',
+                                    'minlength' => 1,
+                                    'maxlength' => null,
                                     'tooltipText' => 'For an existing user, leave this field empty to keep the current portal password.',
                               );
 

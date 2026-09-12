@@ -20,6 +20,7 @@ function check($label, $condition) {
 $login = file_get_contents($root . '/app/users/dologin.php');
 $change = file_get_contents($root . '/app/users/pref-portal-password-edit.php');
 $form = file_get_contents($root . '/app/operators/include/management/userinfo.php');
+$layout = file_get_contents($root . '/app/common/includes/layout.php');
 $functions = file_get_contents($root . '/app/operators/include/management/functions.php');
 $import = file_get_contents($root . '/app/operators/mng-import-users.php');
 $config = file_get_contents($root . '/app/operators/config-user.php');
@@ -53,6 +54,11 @@ check('operator form uses an empty password input',
       strpos($form, "'type' => 'password'") !== false
       && strpos($form, "'value' => ''") !== false
       && strpos($form, '$ui_PortalLoginPassword') === false);
+check('portal password has separate browser length constraints',
+      strpos($form, "'minlength' => 1") !== false
+      && strpos($form, "'maxlength' => null") !== false
+      && substr_count($layout, "array_key_exists('minlength', \$input_descriptor)") >= 2
+      && substr_count($layout, "array_key_exists('maxlength', \$input_descriptor)") >= 2);
 check('common create and update paths hash portal passwords',
       substr_count($functions, 'dalo_portal_password_hash') >= 2);
 check('common create and update paths redact password logs',
@@ -80,6 +86,38 @@ check('self-service validates NUL before trimming password fields',
       substr_count($change, 'dalo_portal_password_is_acceptable') >= 3);
 check('fresh schema reserves 255 characters for password hashes',
       strpos($schema, '`portalloginpassword` VARCHAR(255)') !== false);
+
+$_SERVER['PHP_SELF'] = '/cli/tests';
+require_once $root . '/app/common/includes/layout.php';
+$configValues['CONFIG_DB_PASSWORD_MIN_LENGTH'] = 8;
+$configValues['CONFIG_DB_PASSWORD_MAX_LENGTH'] = 14;
+
+ob_start();
+print_input_field(array('name' => 'radiusPassword', 'type' => 'password'));
+$default_password_html = ob_get_clean();
+check('ordinary password fields retain the configured database bounds',
+      strpos($default_password_html, ' minlength="8"') !== false
+      && strpos($default_password_html, ' maxlength="14"') !== false);
+
+$portal_descriptor = array(
+    'name' => 'portalLoginPassword',
+    'type' => 'password',
+    'minlength' => 1,
+    'maxlength' => null,
+);
+ob_start();
+print_input_field($portal_descriptor);
+$portal_password_html = ob_get_clean();
+check('portal password renderer accepts zero and omits the RADIUS maximum',
+      strpos($portal_password_html, ' minlength="1"') !== false
+      && strpos($portal_password_html, ' maxlength=') === false);
+
+ob_start();
+menu_print_input_field($portal_descriptor);
+$menu_portal_password_html = ob_get_clean();
+check('menu password renderer applies the same portal override',
+      strpos($menu_portal_password_html, ' minlength="1"') !== false
+      && strpos($menu_portal_password_html, ' maxlength=') === false);
 
 printf("\n%s\n", $failures === 0 ? 'ALL PASSED' : sprintf('%d FAILURE(S)', $failures));
 exit($failures === 0 ? 0 : 1);

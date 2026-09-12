@@ -740,6 +740,8 @@ function print_table_row($table_row) {
                             // "tooltipText" => t('Tooltip','usernameTooltip'),
                             // "pattern" => "[a-zA-Z0-9_]+",
                             // "disabled" => true,
+                            // "minlength" => 1, (type=password specific, null omits the attribute)
+                            // "maxlength" => 255, (type=password specific, null omits the attribute)
 
                             // "min" => 1|2018-10-30, (type=number|date specific)
                             // "max" => 10|2022-01-29, (type=number|date specific)
@@ -787,8 +789,17 @@ function print_input_field($input_descriptor) {
     }
 
     if ($input_descriptor['type'] == "password") {
-        printf(' maxlength="%s"', $configValues['CONFIG_DB_PASSWORD_MAX_LENGTH']);
-        printf(' minlength="%s"', $configValues['CONFIG_DB_PASSWORD_MIN_LENGTH']);
+        $maxlength = array_key_exists('maxlength', $input_descriptor)
+                   ? $input_descriptor['maxlength'] : $configValues['CONFIG_DB_PASSWORD_MAX_LENGTH'];
+        $minlength = array_key_exists('minlength', $input_descriptor)
+                   ? $input_descriptor['minlength'] : $configValues['CONFIG_DB_PASSWORD_MIN_LENGTH'];
+
+        if ($maxlength !== null) {
+            printf(' maxlength="%s"', intval($maxlength));
+        }
+        if ($minlength !== null) {
+            printf(' minlength="%s"', intval($minlength));
+        }
     }
 
     if (in_array($input_descriptor['type'], array("number", "date"))) {
@@ -1445,8 +1456,17 @@ function menu_print_input_field($input_descriptor) {
     }
 
     if ($input_descriptor['type'] == "password") {
-        printf(' maxlength="%s"', $configValues['CONFIG_DB_PASSWORD_MAX_LENGTH']);
-        printf(' minlength="%s"', $configValues['CONFIG_DB_PASSWORD_MIN_LENGTH']);
+        $maxlength = array_key_exists('maxlength', $input_descriptor)
+                   ? $input_descriptor['maxlength'] : $configValues['CONFIG_DB_PASSWORD_MAX_LENGTH'];
+        $minlength = array_key_exists('minlength', $input_descriptor)
+                   ? $input_descriptor['minlength'] : $configValues['CONFIG_DB_PASSWORD_MIN_LENGTH'];
+
+        if ($maxlength !== null) {
+            printf(' maxlength="%s"', intval($maxlength));
+        }
+        if ($minlength !== null) {
+            printf(' minlength="%s"', intval($minlength));
+        }
     }
 
     if (in_array($input_descriptor['type'], array("number", "date"))) {
