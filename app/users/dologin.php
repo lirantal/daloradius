@@ -26,11 +26,13 @@
 
 include('library/sessions.php');
 include_once('../common/includes/config_read.php');
+include_once('../common/includes/portal_password.php');
 include_once('lang/main.php');
 
 dalo_session_start();
 
 $errorMessage = '';
+$authenticated = false;
 
 // we interact with the db, ONLY IF user provided both operator_user and operator_pass params
 if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']) &&
@@ -53,24 +55,40 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dal
 
     include('../common/includes/db_open.php');
 
-    $sql_WHERE = array();
-    $sql_WHERE[] = "enableportallogin=1";
-    $sql_WHERE[] = "portalloginpassword<>''";
-    $sql_WHERE[] = "portalloginpassword IS NOT NULL";
-    $sql_WHERE[] = sprintf("portalloginpassword='%s'", $dbSocket->escapeSimple($login_pass));
-    $sql_WHERE[] = sprintf("username='%s'", $dbSocket->escapeSimple($login_user));
+    $sql = sprintf(
+        "SELECT id, portalloginpassword FROM %s WHERE username=? AND enableportallogin=1 AND portalloginpassword IS NOT NULL AND portalloginpassword<>''",
+        $configValues['CONFIG_DB_TBL_DALOUSERINFO']
+    );
+    $stmt = $dbSocket->prepare($sql);
+    $res = $dbSocket->execute($stmt, array($login_user));
+    $dbSocket->freePrepared($stmt);
 
-    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE ", $configValues['CONFIG_DB_TBL_DALOUSERINFO'])
-         . implode(" AND ", $sql_WHERE);
+    // We only accept one and only one user information record.
+    if (!DB::isError($res) && $res->numRows() === 1) {
+        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+        $res->free();
+        $stored_password = $row['portalloginpassword'];
+        $verification = dalo_portal_password_verify($login_pass, $stored_password);
 
-    $res = $dbSocket->query($sql);
-    $numrows = intval($res->fetchrow()[0]);
+        if ($verification['verified']) {
+            $authenticated = true;
+            session_regenerate_id(true);
+            $_SESSION['logged_in'] = true;
+            $_SESSION['login_user'] = $login_user;
 
-    // we only accept ONE AND ONLY ONE RECORD as result
-    if ($numrows === 1) {
-        session_regenerate_id(true);
-        $_SESSION['logged_in'] = true;
-        $_SESSION['login_user'] = $login_user;
+            if ($verification['needs_rehash']) {
+                $new_hash = dalo_portal_password_hash($login_pass);
+                if ($new_hash !== false) {
+                    $sql = sprintf(
+                        "UPDATE %s SET portalloginpassword=? WHERE id=? AND portalloginpassword=?",
+                        $configValues['CONFIG_DB_TBL_DALOUSERINFO']
+                    );
+                    $stmt = $dbSocket->prepare($sql);
+                    $dbSocket->execute($stmt, array($new_hash, intval($row['id']), $stored_password));
+                    $dbSocket->freePrepared($stmt);
+                }
+            }
+        }
     }
 
     include('../common/includes/db_close.php');
@@ -81,8 +99,10 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dal
 // so we can check it for deciding where and how redirect user browser
 $header_location = "index.php";
 
-if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] !== true) {
+if (!$authenticated) {
     $header_location = "login.php";
+    $_SESSION['logged_in'] = false;
+    unset($_SESSION['login_user']);
     $_SESSION['login_error'] = true;
 }
 

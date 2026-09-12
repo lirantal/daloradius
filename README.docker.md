@@ -85,6 +85,11 @@ docker compose exec -T radius-mysql sh -lc 'mariadb -u"$MYSQL_USER" -p"$MYSQL_PA
   < contrib/db/migrations/2026-06-operator-totp-mfa.sql
 ```
 
+For the user portal password hashing upgrade, apply
+`contrib/db/migrations/2026-09-user-portal-password-hashing.sql`, deploy the
+updated web application, then follow
+[`doc/setup/user-portal-passwords.md`](doc/setup/user-portal-passwords.md).
+
 ## Import an existing database backup
 
 To initialize a new Docker stack from an existing MariaDB dump, copy one or more `.sql` or `.sql.gz` files into `./var/backup` before the first startup:

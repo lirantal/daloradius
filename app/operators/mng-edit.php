@@ -141,11 +141,18 @@
             $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) && !empty(trim($_POST['portalLoginPassword'])))
                                     ? trim($_POST['portalLoginPassword']) : "";
 
-            // these are forced to 0 (disabled) if user portal login password is empty
-            $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
+            $ui_hasPortalLoginPassword = user_portal_password_is_set($dbSocket, $username);
+            $portal_password_available = $ui_hasPortalLoginPassword || !empty($ui_PortalLoginPassword);
+
+            // Portal permissions require either an existing password or a newly supplied one.
+            $ui_changeuserinfo = ($portal_password_available && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
                                ? '1' : '0';
-            $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) &&  isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+            $ui_enableUserPortalLogin = ($portal_password_available && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                                       ? '1' : '0';
+
+            if (!$portal_password_available && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1') {
+                $failureMsg = 'A portal password is required before portal login can be enabled.';
+            }
 
             $bi_contactperson = (array_key_exists('bi_contactperson', $_POST) && isset($_POST['bi_contactperson'])) ? $_POST['bi_contactperson'] : "";
             $bi_company = (array_key_exists('bi_company', $_POST) && isset($_POST['bi_company'])) ? $_POST['bi_company'] : "";
@@ -177,8 +184,7 @@
             $bi_faxinvoice = (array_key_exists('bi_faxinvoice', $_POST) && isset($_POST['bi_faxinvoice'])) ? $_POST['bi_faxinvoice'] : "";
             $bi_emailinvoice = (array_key_exists('bi_emailinvoice', $_POST) && isset($_POST['bi_emailinvoice'])) ? $_POST['bi_emailinvoice'] : "";
 
-            // this is forced to 0 (disabled) if user portal login password is empty
-            $bi_changeuserbillinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
+            $bi_changeuserbillinfo = ($portal_password_available && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
                                    ? '1' : '0';
 
             $planName = (array_key_exists('planName', $_POST) && isset($_POST['planName'])) ? trim($_POST['planName']) : "";
@@ -333,7 +339,9 @@
 
         /* fill-in all the user info details */
         $sql = sprintf("SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city,
-                               state, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate,
+                               state, country, zip, notes, changeuserinfo,
+                               (portalloginpassword IS NOT NULL AND portalloginpassword<>'') AS has_portal_password,
+                               enableportallogin, creationdate,
                                creationby, updatedate, updateby
                           FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
                                                         $dbSocket->escapeSimple($username));
@@ -343,7 +351,7 @@
         list(
               $ui_firstname, $ui_lastname, $ui_email, $ui_department, $ui_company, $ui_workphone, $ui_homephone,
               $ui_mobilephone, $ui_address, $ui_city, $ui_state, $ui_country, $ui_zip, $ui_notes, $ui_changeuserinfo,
-              $ui_PortalLoginPassword, $ui_enableUserPortalLogin, $ui_creationdate, $ui_creationby, $ui_updatedate,
+              $ui_hasPortalLoginPassword, $ui_enableUserPortalLogin, $ui_creationdate, $ui_creationby, $ui_updatedate,
               $ui_updateby
             ) = $res->fetchRow();
 

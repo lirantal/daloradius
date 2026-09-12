@@ -28,6 +28,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/functions.php') !== false)
     exit;
 }
 
+include_once dirname(__DIR__, 3) . '/common/includes/portal_password.php';
+
 
 
 function quote_sql_identifier($identifier) {
@@ -519,6 +521,8 @@ function update_info($dbSocket, $username, $params, $allowedFields, $skipFields,
 
 function update_user_info($dbSocket, $username, $params) {
 
+    global $configValues, $logDebugSQL;
+
     $allowedFields = array(
                             "id", "username", "firstname", "lastname", "email", "department", "company", "workphone",
                             "homephone", "mobilephone", "address", "city", "state", "country", "zip", "notes",
@@ -528,7 +532,26 @@ function update_user_info($dbSocket, $username, $params) {
 
     $skipFields = array( "id", "username" );
 
-    return update_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERINFO');
+    $password_changed = array_key_exists('portalloginpassword', $params) && $params['portalloginpassword'] !== '';
+    if (array_key_exists('portalloginpassword', $params)) {
+        if ($params['portalloginpassword'] === '') {
+            unset($params['portalloginpassword']);
+        } else {
+            $params['portalloginpassword'] = dalo_portal_password_hash($params['portalloginpassword']);
+            if ($params['portalloginpassword'] === false) {
+                return false;
+            }
+        }
+    }
+
+    $log_before = $logDebugSQL;
+    $result = update_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERINFO');
+    if ($password_changed) {
+        $logDebugSQL = $log_before . sprintf("UPDATE %s SET [portal password redacted];\n",
+                                             $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+    }
+
+    return $result;
 }
 
 function update_user_billing_info($dbSocket, $username, $params) {
@@ -569,6 +592,8 @@ function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $t
 }
 
 function add_user_info($dbSocket, $username, $params) {
+    global $configValues, $logDebugSQL;
+
     $allowedFields = array(
                             "id", "username", "firstname", "lastname", "email", "department", "company", "workphone",
                             "homephone", "mobilephone", "address", "city", "state", "country", "zip", "notes",
@@ -578,7 +603,40 @@ function add_user_info($dbSocket, $username, $params) {
 
     $skipFields = array( "id", "username" );
 
-    return add_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERINFO');
+    $password_supplied = array_key_exists('portalloginpassword', $params) && $params['portalloginpassword'] !== '';
+    if ($password_supplied) {
+        $params['portalloginpassword'] = dalo_portal_password_hash($params['portalloginpassword']);
+        if ($params['portalloginpassword'] === false) {
+            return false;
+        }
+    }
+
+    $log_before = $logDebugSQL;
+    $result = add_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERINFO');
+    if ($password_supplied) {
+        $logDebugSQL = $log_before . sprintf("INSERT INTO %s ([portal password redacted]);\n",
+                                             $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+    }
+
+    return $result;
+}
+
+function user_portal_password_is_set($dbSocket, $username) {
+    global $configValues;
+
+    $sql = sprintf(
+        "SELECT COUNT(id) FROM %s WHERE username=? AND portalloginpassword IS NOT NULL AND portalloginpassword<>''",
+        $configValues['CONFIG_DB_TBL_DALOUSERINFO']
+    );
+    $stmt = $dbSocket->prepare($sql);
+    $res = $dbSocket->execute($stmt, array($username));
+    $dbSocket->freePrepared($stmt);
+
+    if (DB::isError($res)) {
+        return false;
+    }
+
+    return intval($res->fetchRow()[0]) === 1;
 }
 
 function add_user_billing_info($dbSocket, $username, $params) {

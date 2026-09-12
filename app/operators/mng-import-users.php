@@ -48,7 +48,6 @@
     $valid_groups = get_groups();
     $valid_planNames = get_plans();
 
-    $cleartextPasswordAllowed = dalo_cleartext_password_allowed();
     $valid_passwordTypes = dalo_filter_password_types($valid_passwordTypes);
 
     $generatepassword = 'no';
@@ -501,17 +500,15 @@
                                                          'The system will take care of correctly hashing it.',
                                     );
 
-        if ($cleartextPasswordAllowed) {
-            $input_descriptors1[] = array(
-                                            "type" =>"select",
-                                            "name" => "enableportallogin",
-                                            "caption" => "Enable Portal Login",
-                                            "options" => [ "yes", "no" ],
-                                            "selected_value" => ((isset($failureMsg)) ? $enableportallogin : "no"),
-                                            "tooltipText" => "If set to 'yes', " .
-                                                             "allows the use of username and password for logging into the user portal.",
-                                        );
-        }
+        $input_descriptors1[] = array(
+                                        "type" =>"select",
+                                        "name" => "enableportallogin",
+                                        "caption" => "Enable Portal Login",
+                                        "options" => [ "yes", "no" ],
+                                        "selected_value" => ((isset($failureMsg)) ? $enableportallogin : "no"),
+                                        "tooltipText" => "If set to 'yes', " .
+                                                         "stores a secure, separate hash for user portal login.",
+                                    );
 
         $input_descriptors1[] = array(
                                         "type" => "select",

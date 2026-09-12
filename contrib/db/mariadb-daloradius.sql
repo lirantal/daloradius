@@ -888,7 +888,7 @@ CREATE TABLE `userinfo` (
   `zip` VARCHAR(200) DEFAULT NULL,
   `notes` VARCHAR(200) DEFAULT NULL,
   `changeuserinfo` VARCHAR(128) DEFAULT NULL,
-  `portalloginpassword` VARCHAR(128) DEFAULT '',
+  `portalloginpassword` VARCHAR(255) DEFAULT '',
   `enableportallogin` INT(32) DEFAULT '0',
   `creationdate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `creationby` VARCHAR(128) DEFAULT NULL,
