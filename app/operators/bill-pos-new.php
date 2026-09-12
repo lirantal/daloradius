@@ -69,13 +69,16 @@
     $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
 
     // first we check user portal login password
-    $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) && !empty(trim($_POST['portalLoginPassword'])))
+    $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) &&
+                               dalo_portal_password_is_acceptable($_POST['portalLoginPassword']))
                             ? trim($_POST['portalLoginPassword']) : "";
 
+    $portal_access_valid = dalo_portal_access_is_valid($_POST);
+
     // these are forced to 0 (disabled) if user portal login password is empty
-    $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
+    $ui_changeuserinfo = (dalo_portal_password_is_present($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
                        ? '1' : '0';
-    $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+    $ui_enableUserPortalLogin = (dalo_portal_password_is_present($ui_PortalLoginPassword) && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                               ? '1' : '0';
 
     // billing info variables
@@ -113,7 +116,7 @@
     $bi_billdue = (array_key_exists('bi_billdue', $_POST) && isset($_POST['bi_billdue'])) ? $_POST['bi_billdue'] : "";
 
     // this is forced to 0 (disabled) if user portal login password is empty
-    $bi_changeuserbillinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
+    $bi_changeuserbillinfo = (dalo_portal_password_is_present($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
                            ? '1' : '0';
 
     function addPlanProfile($dbSocket, $username, $planName) {
@@ -280,7 +283,10 @@
                 // username, password and password type are required. an empty password type
                 // means the posted one is unknown or no longer permitted (e.g. a cleartext
                 // type submitted while CONFIG_DB_PASSWORD_ENCRYPTION is set to 'no')
-                if (empty($username) || empty($password) || empty($passwordType)) {
+                if (!$portal_access_valid) {
+                    $failureMsg = "A portal password is required before portal access can be enabled";
+                    $logAction .= "Failed adding user because portal access requires a password on page: ";
+                } else if (empty($username) || empty($password) || empty($passwordType)) {
                     $failureMsg = "username, password or password type are empty or invalid";
                     $logAction .= "Failed adding (possible empty user/pass or invalid password type) new user [$username] on page: ";
                 } else {

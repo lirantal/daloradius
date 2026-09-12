@@ -6,7 +6,7 @@
 --
 -- This migration only widens the column. Use the application login path or
 -- contrib/scripts/maintenance/hash-user-portal-passwords.php to replace
--- existing plaintext values with password_hash() digests.
+-- existing plaintext values with version-marked password_hash() digests.
 --
 
 ALTER TABLE userinfo

@@ -30,6 +30,10 @@ include_once $root . '/app/common/includes/config_read.php';
 include_once $root . '/app/common/includes/portal_password.php';
 include $root . '/app/common/includes/db_open.php';
 
+// PEAR DB interpolates prepared parameters in error debug information. Never
+// invoke the application's verbose callback while credentials are in a query.
+$dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+
 $table = $configValues['CONFIG_DB_TBL_DALOUSERINFO'];
 $last_id = 0;
 $counts = array(

@@ -521,7 +521,7 @@ function update_info($dbSocket, $username, $params, $allowedFields, $skipFields,
 
 function update_user_info($dbSocket, $username, $params) {
 
-    global $configValues, $logDebugSQL;
+    global $configValues, $logDebugSQL, $error_handler;
 
     $allowedFields = array(
                             "id", "username", "firstname", "lastname", "email", "department", "company", "workphone",
@@ -545,7 +545,14 @@ function update_user_info($dbSocket, $username, $params) {
     }
 
     $log_before = $logDebugSQL;
-    $result = update_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERINFO');
+    $result = dalo_portal_db_sensitive_call(
+        $dbSocket,
+        function() use ($dbSocket, $username, $params, $allowedFields, $skipFields) {
+            return update_info($dbSocket, $username, $params, $allowedFields, $skipFields,
+                               'CONFIG_DB_TBL_DALOUSERINFO');
+        },
+        $error_handler
+    );
     if ($password_changed) {
         $logDebugSQL = $log_before . sprintf("UPDATE %s SET [portal password redacted];\n",
                                              $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
@@ -592,7 +599,7 @@ function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $t
 }
 
 function add_user_info($dbSocket, $username, $params) {
-    global $configValues, $logDebugSQL;
+    global $configValues, $logDebugSQL, $error_handler;
 
     $allowedFields = array(
                             "id", "username", "firstname", "lastname", "email", "department", "company", "workphone",
@@ -612,7 +619,14 @@ function add_user_info($dbSocket, $username, $params) {
     }
 
     $log_before = $logDebugSQL;
-    $result = add_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERINFO');
+    $result = dalo_portal_db_sensitive_call(
+        $dbSocket,
+        function() use ($dbSocket, $username, $params, $allowedFields, $skipFields) {
+            return add_info($dbSocket, $username, $params, $allowedFields, $skipFields,
+                            'CONFIG_DB_TBL_DALOUSERINFO');
+        },
+        $error_handler
+    );
     if ($password_supplied) {
         $logDebugSQL = $log_before . sprintf("INSERT INTO %s ([portal password redacted]);\n",
                                              $configValues['CONFIG_DB_TBL_DALOUSERINFO']);

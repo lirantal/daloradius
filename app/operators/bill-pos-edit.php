@@ -185,19 +185,23 @@
             $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
 
             // first we check user portal login password
-            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) && !empty(trim($_POST['portalLoginPassword'])))
+            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) &&
+                                       dalo_portal_password_is_acceptable($_POST['portalLoginPassword']))
                                     ? trim($_POST['portalLoginPassword']) : "";
 
             $ui_hasPortalLoginPassword = user_portal_password_is_set($dbSocket, $username);
-            $portal_password_available = $ui_hasPortalLoginPassword || !empty($ui_PortalLoginPassword);
+            $portal_password_available = $ui_hasPortalLoginPassword
+                                      || dalo_portal_password_is_present($ui_PortalLoginPassword);
+            $portal_access_valid = dalo_portal_access_is_valid($_POST, $ui_hasPortalLoginPassword);
 
             $ui_changeuserinfo = ($portal_password_available && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
                                ? '1' : '0';
             $ui_enableUserPortalLogin = ($portal_password_available && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                                       ? '1' : '0';
 
-            if (!$portal_password_available && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1') {
-                $failureMsg = 'A portal password is required before portal login can be enabled.';
+            if (!$portal_access_valid) {
+                $failureMsg = 'A portal password is required before portal access can be enabled.';
+                $logAction .= "Failed updating user because portal access requires a password on page: ";
             }
 
             $groups = (isset($_POST['groups']) && is_array($_POST['groups'])) ? $_POST['groups'] : array();
@@ -235,7 +239,7 @@
             $bi_faxinvoice = (array_key_exists('bi_faxinvoice', $_POST) && isset($_POST['bi_faxinvoice'])) ? $_POST['bi_faxinvoice'] : "";
             $bi_emailinvoice = (array_key_exists('bi_emailinvoice', $_POST) && isset($_POST['bi_emailinvoice'])) ? $_POST['bi_emailinvoice'] : "";
 
-            if (!empty($username)) {
+            if (!empty($username) && $portal_access_valid) {
 
                 $userinfoExist = user_exists($dbSocket, $username, 'CONFIG_DB_TBL_DALOUSERINFO');
                 $params = array(

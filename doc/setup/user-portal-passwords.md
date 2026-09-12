@@ -2,7 +2,9 @@
 
 User portal credentials are independent from FreeRADIUS authentication credentials. The **Allow cleartext password attributes in db** setting only controls whether cleartext RADIUS attributes such as `Cleartext-Password` may be stored in `radcheck`; it does not control the user portal password.
 
-The user portal password is always stored as a one-way hash produced by PHP's `password_hash()` with `PASSWORD_DEFAULT` and is verified with `password_verify()`. Operators can replace a portal password, but the stored value is never displayed or pre-filled.
+The user portal password is always stored as a one-way hash produced by PHP's `password_hash()` with `PASSWORD_DEFAULT` and is verified with `password_verify()`. Stored values carry the application marker `$dalo$portal$v1$`, which distinguishes them from legacy plaintext and identifies the verification format independently of PHP's algorithm marker. Operators can replace a portal password, but the stored value is never displayed or pre-filled.
+
+The `$dalo$portal$v1$` namespace is reserved for daloRADIUS-generated values. Before enabling this feature on an existing database, administrators should check for legacy plaintext values that already begin with this marker; a marker followed by a syntactically valid PHP password hash is treated as a stored hash.
 
 ## Upgrading an existing installation
 
@@ -35,7 +37,7 @@ Then convert them:
 php contrib/scripts/maintenance/hash-user-portal-passwords.php
 ```
 
-The command processes records in bounded batches, skips empty and already-hashed values, and does not print usernames, passwords, or hashes. It is safe to run again. Use `--batch-size=N` to select a batch size between 1 and 1000.
+The command processes records in bounded batches, skips empty and already-marked values, and does not print usernames, passwords, hashes, or database debug queries containing them. It is safe to run again. Unmarked values, including strings that happen to look like PHP password hashes, are treated as legacy plaintext. Use `--batch-size=N` to select a batch size between 1 and 1000.
 
 Legacy plaintext values also migrate automatically after the next successful portal login. New or changed portal passwords are always hashed.
 

@@ -138,11 +138,14 @@
             $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
 
             // first we check user portal login password
-            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) && !empty(trim($_POST['portalLoginPassword'])))
+            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) &&
+                                       dalo_portal_password_is_acceptable($_POST['portalLoginPassword']))
                                     ? trim($_POST['portalLoginPassword']) : "";
 
             $ui_hasPortalLoginPassword = user_portal_password_is_set($dbSocket, $username);
-            $portal_password_available = $ui_hasPortalLoginPassword || !empty($ui_PortalLoginPassword);
+            $portal_password_available = $ui_hasPortalLoginPassword
+                                      || dalo_portal_password_is_present($ui_PortalLoginPassword);
+            $portal_access_valid = dalo_portal_access_is_valid($_POST, $ui_hasPortalLoginPassword);
 
             // Portal permissions require either an existing password or a newly supplied one.
             $ui_changeuserinfo = ($portal_password_available && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
@@ -150,8 +153,9 @@
             $ui_enableUserPortalLogin = ($portal_password_available && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                                       ? '1' : '0';
 
-            if (!$portal_password_available && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1') {
-                $failureMsg = 'A portal password is required before portal login can be enabled.';
+            if (!$portal_access_valid) {
+                $failureMsg = 'A portal password is required before portal access can be enabled.';
+                $logAction .= "Failed updating user because portal access requires a password on page: ";
             }
 
             $bi_contactperson = (array_key_exists('bi_contactperson', $_POST) && isset($_POST['bi_contactperson'])) ? $_POST['bi_contactperson'] : "";
@@ -192,7 +196,7 @@
 
 
 
-            if (!empty($username)) {
+            if (!empty($username) && $portal_access_valid) {
 
                 // dealing with attributes
                 include("library/attributes.php");
@@ -311,7 +315,7 @@
                 $successMsg = sprintf("Successfully updated user <strong>%s</strong>", $username_enc);
                 $logAction .= sprintf("Successfully updated user %s on page: ", $username);
 
-            } else { // if username != ""
+            } else if (empty($username)) { // if username != ""
                 $failureMsg = "You have specified an empty or invalid username";
                 $logAction .= "empty or invalid username on page: ";
             }

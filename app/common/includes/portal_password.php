@@ -10,21 +10,62 @@ if (strpos($_SERVER['PHP_SELF'] ?? '', '/common/includes/portal_password.php') !
     exit;
 }
 
-function dalo_portal_password_is_hash($stored_password) {
-    if (!is_string($stored_password) || $stored_password === '') {
+function dalo_portal_password_prefix() {
+    return '$dalo$portal$v1$';
+}
+
+function dalo_portal_password_is_present($password) {
+    return is_string($password) && trim($password) !== '';
+}
+
+function dalo_portal_password_is_acceptable($password) {
+    return dalo_portal_password_is_present($password) && strpos($password, "\0") === false;
+}
+
+function dalo_portal_access_requested($values) {
+    foreach (array('enableUserPortalLogin', 'changeUserInfo', 'bi_changeuserbillinfo') as $field) {
+        if (isset($values[$field]) && $values[$field] === '1') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function dalo_portal_access_is_valid($values, $has_existing_password = false) {
+    $password = isset($values['portalLoginPassword']) ? $values['portalLoginPassword'] : '';
+    if (dalo_portal_password_is_present($password) && !dalo_portal_password_is_acceptable($password)) {
         return false;
     }
 
-    $info = password_get_info($stored_password);
+    return !dalo_portal_access_requested($values)
+        || $has_existing_password
+        || dalo_portal_password_is_acceptable($password);
+}
+
+function dalo_portal_password_is_hash($stored_password) {
+    $prefix = dalo_portal_password_prefix();
+    if (!is_string($stored_password) || substr($stored_password, 0, strlen($prefix)) !== $prefix) {
+        return false;
+    }
+
+    $hash = substr($stored_password, strlen($prefix));
+    $info = password_get_info($hash);
     return isset($info['algoName']) && $info['algoName'] !== 'unknown';
 }
 
 function dalo_portal_password_hash($password) {
-    if (!is_string($password) || $password === '') {
+    if (!is_string($password) || $password === '' || strpos($password, "\0") !== false) {
         return false;
     }
 
-    return password_hash($password, PASSWORD_DEFAULT);
+    try {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+    } catch (Throwable $exception) {
+        return false;
+    }
+
+    return is_string($hash) ? dalo_portal_password_prefix() . $hash : false;
 }
 
 function dalo_portal_password_verify($password, $stored_password) {
@@ -34,14 +75,20 @@ function dalo_portal_password_verify($password, $stored_password) {
         'needs_rehash' => false,
     );
 
-    if (!is_string($password) || !is_string($stored_password) || $stored_password === '') {
+    if (!is_string($password) || !is_string($stored_password) || $stored_password === '' ||
+        strpos($password, "\0") !== false) {
         return $result;
     }
 
     if (dalo_portal_password_is_hash($stored_password)) {
-        $result['verified'] = password_verify($password, $stored_password);
+        $hash = substr($stored_password, strlen(dalo_portal_password_prefix()));
+        try {
+            $result['verified'] = password_verify($password, $hash);
+        } catch (Throwable $exception) {
+            return $result;
+        }
         $result['needs_rehash'] = $result['verified']
-                                && password_needs_rehash($stored_password, PASSWORD_DEFAULT);
+                                && password_needs_rehash($hash, PASSWORD_DEFAULT);
         return $result;
     }
 
@@ -50,4 +97,16 @@ function dalo_portal_password_verify($password, $stored_password) {
     $result['needs_rehash'] = $result['verified'];
 
     return $result;
+}
+
+function dalo_portal_db_sensitive_call($dbSocket, $callback, $error_handler = null) {
+    $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+
+    try {
+        return $callback();
+    } finally {
+        if (is_callable($error_handler)) {
+            $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, $error_handler);
+        }
+    }
 }

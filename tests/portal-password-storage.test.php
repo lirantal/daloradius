@@ -23,7 +23,16 @@ $form = file_get_contents($root . '/app/operators/include/management/userinfo.ph
 $functions = file_get_contents($root . '/app/operators/include/management/functions.php');
 $import = file_get_contents($root . '/app/operators/mng-import-users.php');
 $config = file_get_contents($root . '/app/operators/config-user.php');
+$migration = file_get_contents($root . '/contrib/scripts/maintenance/hash-user-portal-passwords.php');
 $schema = file_get_contents($root . '/contrib/db/mariadb-daloradius.sql');
+$operator_flows = array(
+    'mng-new' => file_get_contents($root . '/app/operators/mng-new.php'),
+    'mng-new-quick' => file_get_contents($root . '/app/operators/mng-new-quick.php'),
+    'mng-batch-add' => file_get_contents($root . '/app/operators/mng-batch-add.php'),
+    'bill-pos-new' => file_get_contents($root . '/app/operators/bill-pos-new.php'),
+    'mng-edit' => file_get_contents($root . '/app/operators/mng-edit.php'),
+    'bill-pos-edit' => file_get_contents($root . '/app/operators/bill-pos-edit.php'),
+);
 
 check('login verifies outside SQL',
       strpos($login, 'dalo_portal_password_verify') !== false
@@ -34,6 +43,9 @@ check('failed login cannot reuse an authenticated session',
       strpos($login, '$authenticated = false') !== false
       && strpos($login, 'if (!$authenticated)') !== false
       && strpos($login, "unset(\$_SESSION['login_user'])") !== false);
+check('password zero is not rejected by login empty semantics',
+      strpos($login, "\$_POST['login_pass'] !== ''") !== false
+      && strpos($login, "!empty(\$_POST['login_pass'])") === false);
 check('password change hashes before storage',
       strpos($change, 'dalo_portal_password_hash') !== false
       && strpos($change, "SET portalloginpassword='%s'") === false);
@@ -45,6 +57,11 @@ check('common create and update paths hash portal passwords',
       substr_count($functions, 'dalo_portal_password_hash') >= 2);
 check('common create and update paths redact password logs',
       substr_count($functions, '[portal password redacted]') >= 2);
+check('all sensitive password writes disable verbose PEAR DB errors',
+      strpos($login, 'dalo_portal_db_sensitive_call') !== false
+      && strpos($change, 'dalo_portal_db_sensitive_call') !== false
+      && substr_count($functions, 'dalo_portal_db_sensitive_call') >= 2
+      && strpos($migration, 'setErrorHandling(PEAR_ERROR_RETURN)') !== false);
 check('empty edit preserves the existing portal credential',
       strpos($functions, 'unset($params[\'portalloginpassword\'])') !== false);
 check('CSV portal login is independent from cleartext RADIUS setting',
@@ -52,6 +69,15 @@ check('CSV portal login is independent from cleartext RADIUS setting',
       && strpos($import, 'stores a secure, separate hash') !== false);
 check('RADIUS cleartext setting explains the portal-password boundary',
       strpos($config, 'only controls RADIUS password attributes in radcheck') !== false);
+
+foreach ($operator_flows as $name => $flow) {
+    check("$name rejects missing credentials before writes",
+          strpos($flow, 'dalo_portal_access_is_valid') !== false
+          && strpos($flow, '!$portal_access_valid') !== false
+          && strpos($flow, 'dalo_portal_password_is_acceptable') !== false);
+}
+check('self-service validates NUL before trimming password fields',
+      substr_count($change, 'dalo_portal_password_is_acceptable') >= 3);
 check('fresh schema reserves 255 characters for password hashes',
       strpos($schema, '`portalloginpassword` VARCHAR(255)') !== false);
 

@@ -37,7 +37,7 @@ $authenticated = false;
 // we interact with the db, ONLY IF user provided both operator_user and operator_pass params
 if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']) &&
     array_key_exists('login_user', $_POST) && !empty($_POST['login_user']) &&
-    array_key_exists('login_pass', $_POST) && !empty($_POST['login_pass']) &&
+    array_key_exists('login_pass', $_POST) && is_string($_POST['login_pass']) && $_POST['login_pass'] !== '' &&
     array_key_exists('language', $_POST) && !empty(trim($_POST['language']))) {
 
     $language = strtolower(trim($_POST['language']));
@@ -83,9 +83,16 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dal
                         "UPDATE %s SET portalloginpassword=? WHERE id=? AND portalloginpassword=?",
                         $configValues['CONFIG_DB_TBL_DALOUSERINFO']
                     );
-                    $stmt = $dbSocket->prepare($sql);
-                    $dbSocket->execute($stmt, array($new_hash, intval($row['id']), $stored_password));
-                    $dbSocket->freePrepared($stmt);
+                    dalo_portal_db_sensitive_call(
+                        $dbSocket,
+                        function() use ($dbSocket, $sql, $new_hash, $row, $stored_password) {
+                            $stmt = $dbSocket->prepare($sql);
+                            $res = $dbSocket->execute($stmt, array($new_hash, intval($row['id']), $stored_password));
+                            $dbSocket->freePrepared($stmt);
+                            return $res;
+                        },
+                        $error_handler
+                    );
                 }
             }
         }

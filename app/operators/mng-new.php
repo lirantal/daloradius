@@ -84,13 +84,16 @@
             $notes = (isset($_POST['notes']) && !empty(trim($_POST['notes']))) ? trim($_POST['notes']) : "";
 
             // first we check user portal login password
-            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) && !empty(trim($_POST['portalLoginPassword'])))
+            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) &&
+                                       dalo_portal_password_is_acceptable($_POST['portalLoginPassword']))
                                     ? trim($_POST['portalLoginPassword']) : "";
 
+            $portal_access_valid = dalo_portal_access_is_valid($_POST);
+
             // these are forced to 0 (disabled) if user portal login password is empty
-            $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
+            $ui_changeuserinfo = (dalo_portal_password_is_present($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
                                ? '1' : '0';
-            $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+            $ui_enableUserPortalLogin = (dalo_portal_password_is_present($ui_PortalLoginPassword) && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                                       ? '1' : '0';
 
             isset($_POST['dictAttributes']) ? $dictAttributes = $_POST['dictAttributes'] : $dictAttributes = "";
@@ -124,7 +127,7 @@
             $bi_notes = (array_key_exists('bi_notes', $_POST) && isset($_POST['bi_notes'])) ? $_POST['bi_notes'] : "";
 
             // this is forced to 0 (disabled) if user portal login password is empty
-            $bi_changeuserbillinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
+            $bi_changeuserbillinfo = (dalo_portal_password_is_present($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
                                    ? '1' : '0';
 
             $bi_nextinvoicedue = (array_key_exists('bi_nextinvoicedue', $_POST) && isset($_POST['bi_nextinvoicedue'])) ? $_POST['bi_nextinvoicedue'] : "";
@@ -161,6 +164,11 @@
             } else {
                 // authentication method is invalid
                 $failureMsg = "Unknown authentication method";
+            }
+
+            if (!$portal_access_valid) {
+                $failureMsg = "A portal password is required before portal access can be enabled";
+                $username_to_check = "";
             }
 
             if (empty($username_to_check)) {
