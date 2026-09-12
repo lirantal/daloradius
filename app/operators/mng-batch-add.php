@@ -163,13 +163,16 @@
                 $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
 
                 // first we check user portal login password
-                $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) && !empty(trim($_POST['portalLoginPassword'])))
+                $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) &&
+                                           dalo_portal_password_is_acceptable($_POST['portalLoginPassword']))
                                         ? trim($_POST['portalLoginPassword']) : "";
 
+                $portal_access_valid = dalo_portal_access_is_valid($_POST);
+
                 // these are forced to 0 (disabled) if user portal login password is empty
-                $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
+                $ui_changeuserinfo = (dalo_portal_password_is_present($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
                                    ? '1' : '0';
-                $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+                $ui_enableUserPortalLogin = (dalo_portal_password_is_present($ui_PortalLoginPassword) && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                                           ? '1' : '0';
 
                 /* variables for userbillinfo */
@@ -204,7 +207,7 @@
                 $bi_emailinvoice = (array_key_exists('bi_emailinvoice', $_POST) && isset($_POST['bi_emailinvoice'])) ? $_POST['bi_emailinvoice'] : "";
 
                 // this is forced to 0 (disabled) if user portal login password is empty
-                $bi_changeuserbillinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
+                $bi_changeuserbillinfo = (dalo_portal_password_is_present($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
                                        ? '1' : '0';
 
 
@@ -242,14 +245,22 @@
 
                 // before looping through all generated batch users we create the batch_history entry
                 // to associate the created users with a batch_history entry
-                $sql_batch_id = addUserBatchHistory($dbSocket);
+                if (!$portal_access_valid) {
+                    $failureMsg = "A portal password is required before portal access can be enabled";
+                    $logAction .= "Failure creating batch because portal access requires a password on page: ";
+                    $sql_batch_id = 0;
+                } else {
+                    $sql_batch_id = addUserBatchHistory($dbSocket);
+                }
 
                 if ($sql_batch_id == 0) {
                     // 0 may be returned in the case of failure in adding the batch_history record due
                     // to SQL related issues or in case where there is a duplicate record of the batch_history,
                     // meaning, the same batch_name is used to identify the batch entry
-                    $failureMsg = "Failure creating batch users due to an error or possible duplicate entry: <b> $batch_name </b>";
-                    $logAction .= "Failure creating a batch_history entry on page: ";
+                    if ($portal_access_valid) {
+                        $failureMsg = "Failure creating batch users due to an error or possible duplicate entry: <b> $batch_name </b>";
+                        $logAction .= "Failure creating a batch_history entry on page: ";
+                    }
                 } else {
 
                     $actionMsgBadUsernames = "";
