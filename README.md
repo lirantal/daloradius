@@ -94,6 +94,7 @@ Would you like to contribute too? Learn how to get started: [How to Contribute](
 - **Date (From/To)**: Get accounting records within a specified date range.
 - **Display of All Accounting Records**: Access a comprehensive view of all accounting records in the radius database.
 - **Display of Active Accounting Records**: Monitor active accounting sessions using Max-All-Session attribute or Expiration attribute.
+- **Open-Session Maintenance**: Preview open accounting records and either close them while retaining usage data or permanently delete selected records. See [Maintaining open accounting sessions](doc/setup/open-session-maintenance.md).
 - **Custom Accounting Query**: Perform custom accounting queries to extract specific data.
 
 ### HotSpots Accounting
