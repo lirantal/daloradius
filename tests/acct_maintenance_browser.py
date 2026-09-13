@@ -41,6 +41,17 @@ def main():
 
         for width in (390, 1280):
             page.set_viewport_size({'width': width, 'height': 900})
+            load()
+            assert page.locator('#maintenance-scope.card').is_visible()
+            assert page.locator('#maintenance-preview.card').is_visible()
+            confirm_button = page.locator('#maintenance-confirm button')
+            assert 'btn-danger' in confirm_button.get_attribute('class').split()
+            assert confirm_button.inner_text() == 'Close 1 session'
+            assert page.locator('#preview-details').is_hidden()
+            page.get_by_role('button', name='Preview details').click()
+            assert page.locator('#preview-details').is_visible()
+            numeric_headers = page.locator('#maintenance-preview th.text-end')
+            assert numeric_headers.count() == 4
             for event in ('input', 'change'):
                 load()
                 page.locator('#close-value').dispatch_event(event)

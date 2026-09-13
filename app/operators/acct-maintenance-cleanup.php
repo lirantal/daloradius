@@ -105,8 +105,17 @@ if ($notice !== '') {
 }
 $csrfToken = dalo_csrf_token();
 ?>
-<div class="alert alert-warning"><?= maintenance_text('openWarning') ?></div>
-<p><?= maintenance_text('dateHelp') ?></p>
+<div class="alert alert-warning py-2 mb-3" role="note">
+<strong><?= maintenance_text('openWarning') ?></strong>
+<button class="btn btn-link btn-sm p-0 ms-1 align-baseline" type="button" data-bs-toggle="collapse" data-bs-target="#maintenance-guidance" aria-expanded="false" aria-controls="maintenance-guidance"><?= maintenance_text('details') ?></button>
+<div class="collapse mt-2" id="maintenance-guidance">
+<p class="mb-1"><?= maintenance_text('openHelp') ?></p>
+<p class="mb-0"><?= maintenance_text('dateHelp') ?></p>
+</div>
+</div>
+<div class="card mb-4" id="maintenance-scope">
+<div class="card-header bg-transparent py-3"><h2 class="h5 mb-0"><?= maintenance_text('selectTitle') ?></h2></div>
+<div class="card-body">
 <ul class="nav nav-tabs mb-3" role="tablist">
 <?php foreach (['close', 'delete'] as $action): ?>
 <li class="nav-item" role="presentation"><button type="button" class="nav-link <?= $active === $action ? 'active' : '' ?>" id="<?= $action ?>-tab" data-bs-toggle="tab" data-bs-target="#<?= $action ?>-panel" role="tab" aria-controls="<?= $action ?>-panel" aria-selected="<?= $active === $action ? 'true' : 'false' ?>"><?= maintenance_text($action) ?></button></li>
@@ -115,9 +124,10 @@ $csrfToken = dalo_csrf_token();
 <div class="tab-content">
 <?php foreach (['close', 'delete'] as $action): ?>
 <section id="<?= $action ?>-panel" class="tab-pane fade <?= $active === $action ? 'show active' : '' ?>" role="tabpanel" aria-labelledby="<?= $action ?>-tab" tabindex="0">
-<h2 class="h5"><?= maintenance_text($action) ?></h2>
-<div class="alert <?= $action === 'delete' ? 'alert-danger' : 'alert-secondary' ?>"><?= maintenance_text($action . 'Help') ?></div>
-<form method="post" action="acct-maintenance-cleanup.php" class="maintenance-filter mb-3">
+<p class="mb-2"><?= maintenance_text($action . 'Summary') ?></p>
+<button class="btn btn-link btn-sm p-0 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#<?= $action ?>-details" aria-expanded="false" aria-controls="<?= $action ?>-details"><?= maintenance_text('details') ?></button>
+<div class="collapse" id="<?= $action ?>-details"><div class="alert <?= $action === 'delete' ? 'alert-danger' : 'alert-secondary' ?> py-2 mb-3"><p class="mb-1"><?= maintenance_text($action . 'Help') ?></p><p class="mb-0"><?= maintenance_text('filterDetails') ?></p></div></div>
+<form method="post" action="acct-maintenance-cleanup.php" class="maintenance-filter">
 <input type="hidden" name="csrf_token" value="<?= maintenance_escape($csrfToken) ?>">
 <input type="hidden" name="action" value="<?= $action ?>">
 <input type="hidden" name="step" value="preview">
@@ -129,41 +139,63 @@ $csrfToken = dalo_csrf_token();
 <?php endforeach; ?>
 </select></div>
 <div class="col-md-5"><label class="form-label" for="<?= $action ?>-value"><?= maintenance_text('value') ?></label>
-<input class="form-control" id="<?= $action ?>-value" name="value" maxlength="253" required value="<?= $active === $action ? maintenance_escape($filter['value']) : '' ?>" aria-describedby="filter-help"></div>
+<input class="form-control" id="<?= $action ?>-value" name="value" maxlength="253" required value="<?= $active === $action ? maintenance_escape($filter['value']) : '' ?>" aria-describedby="<?= $action ?>-filter-help"></div>
 <div class="col-md-3"><button class="btn btn-primary" type="submit"><?= maintenance_text('preview') ?></button></div>
 </div>
+<p id="<?= $action ?>-filter-help" class="form-text mb-0"><?= maintenance_text('filterHelp') ?></p>
 </form>
 </section>
 <?php endforeach; ?>
 </div>
-<p id="filter-help" class="text-muted"><?= maintenance_text('filterHelp') ?></p>
-<?php if ($preview && $preview['rows']): ?>
-<section id="maintenance-preview" class="border rounded p-3 my-3">
-<h2 class="h5"><?= maintenance_text('preview') ?>: <?= maintenance_text($active) ?></h2>
-<p><?= maintenance_text($filter['scope']) ?>: <strong><?= maintenance_escape($filter['value']) ?></strong></p>
-<p><?= maintenance_escape(sprintf(t('maintenance', 'count'), $preview['total'], count($preview['rows']), DALO_MAINTENANCE_LIMIT)) ?></p>
-<p><?= maintenance_text('concurrency') ?></p>
-<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr>
-<?php foreach (['id', 'username', 'nas', 'start', 'activity', 'seconds', 'input', 'output'] as $column): ?>
-<th scope="col"><?= maintenance_text($column) ?></th>
+</div>
+</div>
+<?php if ($preview && $preview['rows']):
+$previewCount = count($preview['rows']);
+$selectionKey = $active . ($previewCount === 1 ? 'SelectionOne' : 'SelectionMany');
+$confirmKey = $active . ($previewCount === 1 ? 'ConfirmOne' : 'ConfirmMany');
+?>
+<section id="maintenance-preview" class="card mb-4">
+<div class="card-header bg-transparent py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+<h2 class="h5 mb-0"><?= maintenance_text('previewTitle') ?></h2>
+<span class="badge text-bg-secondary fs-6 fw-normal"><?= maintenance_escape(sprintf(t('maintenance', $selectionKey), $previewCount)) ?></span>
+</div>
+<div class="card-body">
+<p class="mb-3"><?= maintenance_text($filter['scope']) ?>: <strong><?= maintenance_escape($filter['value']) ?></strong></p>
+<div class="table-responsive"><table class="table table-sm table-striped align-middle mb-0"><thead><tr>
+<?php foreach (['id', 'username', 'nas', 'start', 'activity', 'seconds', 'input', 'output'] as $column):
+$numeric = in_array($column, ['id', 'seconds', 'input', 'output'], true);
+?>
+<th scope="col" class="fw-semibold <?= $numeric ? 'text-end' : 'text-start' ?>"><?= maintenance_text($column) ?></th>
 <?php endforeach; ?>
 </tr></thead><tbody>
 <?php foreach ($preview['rows'] as $row): ?>
-<tr><?php foreach (['radacctid', 'username', 'nasipaddress', 'acctstarttime', 'acctupdatetime', 'acctsessiontime', 'acctinputoctets', 'acctoutputoctets'] as $column): ?>
-<td><?= maintenance_escape($row[$column] ?? '—') ?></td>
+<tr><?php foreach (['radacctid', 'username', 'nasipaddress', 'acctstarttime', 'acctupdatetime', 'acctsessiontime', 'acctinputoctets', 'acctoutputoctets'] as $column):
+$numeric = in_array($column, ['radacctid', 'acctsessiontime', 'acctinputoctets', 'acctoutputoctets'], true);
+?>
+<td class="<?= $numeric ? 'text-end' : 'text-start' ?>"><?= maintenance_escape($row[$column] ?? '—') ?></td>
 <?php endforeach; ?></tr>
 <?php endforeach; ?>
 </tbody></table></div>
-<p class="text-muted"><?= maintenance_text('activityHelp') ?></p>
-<form method="post" action="acct-maintenance-cleanup.php" id="maintenance-confirm">
+<div class="mt-3">
+<button class="btn btn-link btn-sm p-0" type="button" data-bs-toggle="collapse" data-bs-target="#preview-details" aria-expanded="false" aria-controls="preview-details"><?= maintenance_text('previewDetails') ?></button>
+<div class="collapse" id="preview-details"><div class="text-muted small pt-2">
+<p class="mb-1"><?= maintenance_escape(sprintf(t('maintenance', 'count'), $preview['total'], $previewCount, DALO_MAINTENANCE_LIMIT)) ?></p>
+<p class="mb-1"><?= maintenance_text('concurrency') ?></p>
+<p class="mb-0"><?= maintenance_text('activityHelp') ?></p>
+</div></div>
+</div>
+</div>
+<div class="card-footer bg-transparent py-3">
+<form method="post" action="acct-maintenance-cleanup.php" id="maintenance-confirm" class="mb-0">
 <input type="hidden" name="csrf_token" value="<?= maintenance_escape($csrfToken) ?>">
 <input type="hidden" name="step" value="confirm">
 <input type="hidden" name="confirmation" value="<?= maintenance_escape($preview['token']) ?>">
 <?php foreach ($filter as $key => $value): ?>
 <input type="hidden" name="<?= maintenance_escape($key) ?>" value="<?= maintenance_escape($value) ?>">
 <?php endforeach; ?>
-<button type="submit" class="btn <?= $active === 'delete' ? 'btn-danger' : 'btn-warning' ?>"><?= maintenance_text($active . 'Confirm') ?></button>
+<button type="submit" class="btn btn-danger"><?= maintenance_escape(sprintf(t('maintenance', $confirmKey), $previewCount)) ?></button>
 </form>
+</div>
 </section>
 <script>
 // Editing a visible filter or changing action hides the old confirmation.
