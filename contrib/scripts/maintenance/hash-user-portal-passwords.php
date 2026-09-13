@@ -28,6 +28,10 @@ if ($batch_size < 1 || $batch_size > 1000) {
 $root = dirname(__DIR__, 3);
 include_once $root . '/app/common/includes/config_read.php';
 include_once $root . '/app/common/includes/portal_password.php';
+$db_error_handler = function() {
+    fwrite(STDERR, "Unable to connect to the database.\n");
+    exit(1);
+};
 include $root . '/app/common/includes/db_open.php';
 
 // PEAR DB interpolates prepared parameters in error debug information. Never
@@ -52,6 +56,10 @@ while (true) {
         $batch_size
     );
     $stmt = $dbSocket->prepare($sql);
+    if (DB::isError($stmt)) {
+        $counts['failed']++;
+        break;
+    }
     $res = $dbSocket->execute($stmt, array($last_id));
     $dbSocket->freePrepared($stmt);
 
@@ -61,10 +69,24 @@ while (true) {
     }
 
     $rows = array();
-    while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+    $fetch_failed = false;
+    while (true) {
+        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+        if (DB::isError($row) || ($row !== null && !is_array($row))) {
+            $counts['failed']++;
+            $fetch_failed = true;
+            break;
+        }
+        if ($row === null) {
+            break;
+        }
         $rows[] = $row;
     }
     $res->free();
+
+    if ($fetch_failed) {
+        break;
+    }
 
     if (count($rows) === 0) {
         break;
@@ -98,10 +120,15 @@ while (true) {
         }
 
         $sql = sprintf(
-            "UPDATE %s SET portalloginpassword=? WHERE id=? AND portalloginpassword=?",
-            $table
+            "UPDATE %s SET portalloginpassword=? WHERE id=? AND %s",
+            $table,
+            dalo_portal_password_match_condition($configValues['CONFIG_DB_ENGINE'])
         );
         $stmt = $dbSocket->prepare($sql);
+        if (DB::isError($stmt)) {
+            $counts['failed']++;
+            continue;
+        }
         $update = $dbSocket->execute($stmt, array($hash, $id, $stored_password));
         $dbSocket->freePrepared($stmt);
 
@@ -110,7 +137,10 @@ while (true) {
             continue;
         }
 
-        if ($dbSocket->affectedRows() === 1) {
+        $affected_rows = $dbSocket->affectedRows();
+        if (DB::isError($affected_rows)) {
+            $counts['failed']++;
+        } else if ($affected_rows === 1) {
             $counts['migrated']++;
         } else {
             $counts['conflicted']++;

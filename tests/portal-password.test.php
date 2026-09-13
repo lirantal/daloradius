@@ -36,6 +36,18 @@ check('hashed password is not legacy', $verified['legacy'] === false);
 check('current hash does not need rehashing', $verified['needs_rehash'] === false);
 check('wrong hashed password is rejected',
       dalo_portal_password_verify('wrong', $hash1)['verified'] === false);
+check('stored marked value cannot be replayed as the password',
+      dalo_portal_password_verify($hash1, $hash1)['verified'] === false);
+check('dummy verification never authenticates',
+      dalo_portal_password_dummy_verify('any-password') === false);
+$dummy_info = password_get_info(dalo_portal_password_dummy_hash());
+$expected_dummy_cost = defined('PASSWORD_BCRYPT_DEFAULT_COST') ? PASSWORD_BCRYPT_DEFAULT_COST : 10;
+check('dummy hash follows the runtime bcrypt default cost',
+      isset($dummy_info['options']['cost'])
+      && intval($dummy_info['options']['cost']) === min(12, max(10, $expected_dummy_cost)));
+check('credential guards are bytewise on MySQL and portable elsewhere',
+      dalo_portal_password_match_condition('mysqli') === 'BINARY portalloginpassword=BINARY ?'
+      && dalo_portal_password_match_condition('pgsql') === 'portalloginpassword=?');
 
 $old_parameters_hash = dalo_portal_password_prefix()
                      . password_hash($password, PASSWORD_BCRYPT, array('cost' => 4));
@@ -107,10 +119,16 @@ if (!defined('PEAR_ERROR_CALLBACK')) {
 class PortalPasswordFakeDb {
     public $mode = PEAR_ERROR_CALLBACK;
     public $option = null;
+    private $error_stack = array();
 
-    public function setErrorHandling($mode, $option = null) {
+    public function pushErrorHandling($mode, $option = null) {
+        $this->error_stack[] = array($this->mode, $this->option);
         $this->mode = $mode;
         $this->option = $option;
+    }
+
+    public function popErrorHandling() {
+        list($this->mode, $this->option) = array_pop($this->error_stack);
     }
 
     public function failWithDebugInfo($secret) {
@@ -123,20 +141,31 @@ class PortalPasswordFakeDb {
 
 $fake_db = new PortalPasswordFakeDb();
 $restored_handler = function() {};
+$fake_db->option = $restored_handler;
 $secret = 'portal-db-error-secret';
 ob_start();
 $result = dalo_portal_db_sensitive_call(
     $fake_db,
     function() use ($fake_db, $secret) {
         return $fake_db->failWithDebugInfo($secret);
-    },
-    $restored_handler
+    }
 );
 $output = ob_get_clean();
 check('sensitive DB errors cannot emit interpolated credentials',
       $result === false && strpos($output, $secret) === false);
 check('sensitive DB calls restore the application error callback',
       $fake_db->mode === PEAR_ERROR_CALLBACK && $fake_db->option === $restored_handler);
+
+$exception_restored = false;
+try {
+    dalo_portal_db_sensitive_call($fake_db, function() {
+        throw new RuntimeException('expected test exception');
+    });
+} catch (RuntimeException $exception) {
+    $exception_restored = $fake_db->mode === PEAR_ERROR_CALLBACK
+                       && $fake_db->option === $restored_handler;
+}
+check('sensitive DB calls restore error handling after exceptions', $exception_restored);
 
 printf("\n%s\n", $failures === 0 ? 'ALL PASSED' : sprintf('%d FAILURE(S)', $failures));
 exit($failures === 0 ? 0 : 1);

@@ -32,13 +32,17 @@ include_once('lang/main.php');
 dalo_session_start();
 
 $errorMessage = '';
-$authenticated = false;
+$authenticated = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
+$authentication_attempted = false;
 
 // we interact with the db, ONLY IF user provided both operator_user and operator_pass params
 if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']) &&
     array_key_exists('login_user', $_POST) && !empty($_POST['login_user']) &&
     array_key_exists('login_pass', $_POST) && is_string($_POST['login_pass']) && $_POST['login_pass'] !== '' &&
     array_key_exists('language', $_POST) && !empty(trim($_POST['language']))) {
+
+    $authentication_attempted = true;
+    $authenticated = false;
 
     $language = strtolower(trim($_POST['language']));
     if (in_array($language, array_keys($users_valid_languages))) {
@@ -67,35 +71,44 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dal
     if (!DB::isError($res) && $res->numRows() === 1) {
         $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
         $res->free();
-        $stored_password = $row['portalloginpassword'];
-        $verification = dalo_portal_password_verify($login_pass, $stored_password);
+        if (is_array($row)) {
+            $stored_password = $row['portalloginpassword'];
+            $verification = dalo_portal_password_verify($login_pass, $stored_password);
 
-        if ($verification['verified']) {
-            $authenticated = true;
-            session_regenerate_id(true);
-            $_SESSION['logged_in'] = true;
-            $_SESSION['login_user'] = $login_user;
+            if ($verification['verified']) {
+                $authenticated = true;
+                session_regenerate_id(true);
+                $_SESSION['logged_in'] = true;
+                $_SESSION['login_user'] = $login_user;
 
-            if ($verification['needs_rehash']) {
-                $new_hash = dalo_portal_password_hash($login_pass);
-                if ($new_hash !== false) {
-                    $sql = sprintf(
-                        "UPDATE %s SET portalloginpassword=? WHERE id=? AND portalloginpassword=?",
-                        $configValues['CONFIG_DB_TBL_DALOUSERINFO']
-                    );
-                    dalo_portal_db_sensitive_call(
-                        $dbSocket,
-                        function() use ($dbSocket, $sql, $new_hash, $row, $stored_password) {
-                            $stmt = $dbSocket->prepare($sql);
-                            $res = $dbSocket->execute($stmt, array($new_hash, intval($row['id']), $stored_password));
-                            $dbSocket->freePrepared($stmt);
-                            return $res;
-                        },
-                        $error_handler
-                    );
+                if ($verification['needs_rehash']) {
+                    $new_hash = dalo_portal_password_hash($login_pass);
+                    if ($new_hash !== false) {
+                        $sql = sprintf(
+                            "UPDATE %s SET portalloginpassword=? WHERE id=? AND %s",
+                            $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                            dalo_portal_password_match_condition($configValues['CONFIG_DB_ENGINE'])
+                        );
+                        dalo_portal_db_sensitive_call(
+                            $dbSocket,
+                            function() use ($dbSocket, $sql, $new_hash, $row, $stored_password) {
+                                $stmt = $dbSocket->prepare($sql);
+                                if (DB::isError($stmt)) {
+                                    return $stmt;
+                                }
+                                $res = $dbSocket->execute($stmt, array($new_hash, intval($row['id']), $stored_password));
+                                $dbSocket->freePrepared($stmt);
+                                return $res;
+                            }
+                        );
+                    }
                 }
             }
+        } else {
+            dalo_portal_password_dummy_verify($login_pass);
         }
+    } else {
+        dalo_portal_password_dummy_verify($login_pass);
     }
 
     include('../common/includes/db_close.php');
@@ -104,10 +117,9 @@ if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dal
 
 // if everything went fine logged_in session param has been set to true,
 // so we can check it for deciding where and how redirect user browser
-$header_location = "index.php";
+$header_location = $authenticated ? "index.php" : "login.php";
 
-if (!$authenticated) {
-    $header_location = "login.php";
+if (!$authenticated && $authentication_attempted) {
     $_SESSION['logged_in'] = false;
     unset($_SESSION['login_user']);
     $_SESSION['login_error'] = true;

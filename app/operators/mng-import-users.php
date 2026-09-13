@@ -505,7 +505,9 @@
                                         "name" => "enableportallogin",
                                         "caption" => "Enable Portal Login",
                                         "options" => [ "yes", "no" ],
-                                        "selected_value" => ((isset($failureMsg)) ? $enableportallogin : "no"),
+                                        "selected_value" => ((isset($failureMsg))
+                                                            ? (($enableportallogin === 1) ? "yes" : "no")
+                                                            : "no"),
                                         "tooltipText" => "If set to 'yes', " .
                                                          "stores a secure, separate hash for user portal login.",
                                     );
