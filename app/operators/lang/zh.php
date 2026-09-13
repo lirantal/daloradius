@@ -728,6 +728,10 @@ $l['button']['HotspotsComparison'] = "热点比较";
 
 $l['button']['CleanupStaleSessions'] = "清理过期账单";
 $l['button']['DeleteAccountingRecords'] = "删除账单记录";
+$l['maintenance'] = [
+    'title' => $l['button']['CleanupStaleSessions'],
+    'history' => $l['button']['DeleteAccountingRecords'],
+];
 
 $l['button']['ListUsers'] = "用户列表";
 $l['button']['ListBatches'] = "显示批量";

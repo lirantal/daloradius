@@ -731,6 +731,10 @@ $l['button']['HotspotsComparison'] = "熱點比較";
 
 $l['button']['CleanupStaleSessions'] = "清理過期帳單";
 $l['button']['DeleteAccountingRecords'] = "刪除帳單記錄";
+$l['maintenance'] = [
+    'title' => $l['button']['CleanupStaleSessions'],
+    'history' => $l['button']['DeleteAccountingRecords'],
+];
 
 $l['button']['ListUsers'] = "使用者清單";
 $l['button']['ListBatches'] = "顯示批次";

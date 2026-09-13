@@ -535,6 +535,10 @@ $l['button']['HotspotsComparison'] = "Hotspots Comparison";
 
 $l['button']['CleanupStaleSessions'] = "Cleanup Stale Sessions";
 $l['button']['DeleteAccountingRecords'] = "Nyilvántartási rekordok törlése";
+$l['maintenance'] = [
+    'title' => $l['button']['CleanupStaleSessions'],
+    'history' => $l['button']['DeleteAccountingRecords'],
+];
 
 $l['button']['ListUsers'] = "Felhasználók listázása";
 $l['button']['NewUser'] = "Új felhasználó";

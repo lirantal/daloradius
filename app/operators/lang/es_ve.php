@@ -486,6 +486,10 @@ $l['button']['HotspotsComparison'] = "Compara&oacute;n entre hotspots";
 
 $l['button']['CleanupStaleSessions'] = "Limpiar las sesiones vencidas";
 $l['button']['DeleteAccountingRecords'] = "Eliminar registros de conteo";
+$l['maintenance'] = [
+    'title' => $l['button']['CleanupStaleSessions'],
+    'history' => $l['button']['DeleteAccountingRecords'],
+];
 
 $l['button']['ListUsers'] = "Listado de usuarios";
 $l['button']['NewUser'] = "Nuevo usuario";

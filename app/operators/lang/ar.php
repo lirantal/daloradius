@@ -721,6 +721,10 @@ $l['button']['HotspotsComparison'] = "مقارنة نقاط الوصول";
 
 $l['button']['CleanupStaleSessions'] = "تنظيف الجلسات العالقة";
 $l['button']['DeleteAccountingRecords'] = "حذف السجلات المحاسبية";
+$l['maintenance'] = [
+    'title' => $l['button']['CleanupStaleSessions'],
+    'history' => $l['button']['DeleteAccountingRecords'],
+];
 
 $l['button']['ListUsers'] = "قائمة المستخدمين";
 $l['button']['ListBatches'] = "قائمة حزم الكروت";

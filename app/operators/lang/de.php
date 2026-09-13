@@ -677,6 +677,10 @@ $l['button']['HotspotsComparison'] = "Hotspot-Vergleich";
 
 $l['button']['CleanupStaleSessions'] = "Stale-Sessions bereinigen";
 $l['button']['DeleteAccountingRecords'] = "Accounting-Datensätze löschen";
+$l['maintenance'] = [
+    'title' => $l['button']['CleanupStaleSessions'],
+    'history' => $l['button']['DeleteAccountingRecords'],
+];
 
 $l['button']['ListUsers'] = "Benutzer auflisten";
 $l['button']['ListBatches'] = "Batches auflisten";

@@ -719,6 +719,10 @@ $l['button']['HotspotsComparison'] = "Hotspots Comparison";
 
 $l['button']['CleanupStaleSessions'] = "Cleanup Stale Sessions";
 $l['button']['DeleteAccountingRecords'] = "Delete Accounting Records";
+$l['maintenance'] = [
+    'title' => $l['button']['CleanupStaleSessions'],
+    'history' => $l['button']['DeleteAccountingRecords'],
+];
 
 $l['button']['ListUsers'] = "Kullanıcı Listesi";
 $l['button']['ListBatches'] = "List Batches";

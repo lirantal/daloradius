@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 run, sql, wait_for = harness.run, harness.sql, harness.wait_for
 DB, WEB, NETWORK = harness.DB, harness.WEB, harness.NETWORK
 IMAGE = os.environ.get('MAINTENANCE_WEB_IMAGE', 'lirantal/daloradius')
+HTTP_TIMEOUT = 10
 
 
 class Forms(HTMLParser):
@@ -71,7 +72,7 @@ session_write_close();
                 '--entrypoint', 'php', IMAGE, '-d', 'display_errors=0', '-S', '0.0.0.0:8080', '-t', '.')
             address = run('docker', 'inspect', '-f', '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', WEB)
             base = 'http://' + address + ':8080/'
-            wait_for(lambda: urllib.request.urlopen(base + 'login.php'), 'PHP HTTP server')
+            wait_for(lambda: urllib.request.urlopen(base + 'login.php', timeout=HTTP_TIMEOUT), 'PHP HTTP server')
             sessions = {}
             for operator in [9001, 9002]:
                 sessions[operator] = secrets.token_hex(16)
@@ -81,7 +82,7 @@ session_write_close();
                 headers = {} if operator is None else {'Cookie': 'daloradius_operator_sid=' + sessions[operator]}
                 req = urllib.request.Request(base + 'acct-maintenance-cleanup.php' + query,
                     data=None if data is None else urllib.parse.urlencode(data).encode(), headers=headers)
-                with urllib.request.urlopen(req) as response:
+                with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as response:
                     return response.url, response.read().decode()
 
             def csrf():

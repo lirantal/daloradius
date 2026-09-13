@@ -50,7 +50,7 @@ try {
         $step = $_POST['step'] ?? null;
         if ($step === 'preview') {
             unset($_SESSION['acct_maintenance_preview']);
-            $preview = dalo_maintenance_preview($dbSocket, $configValues['CONFIG_DB_TBL_RADACCT'], $filter);
+            $preview = dalo_maintenance_preview($dbSocket, $configValues['CONFIG_DB_TBL_RADACCT'], $filter, $logDebugSQL);
             $preview['context'] = $context;
             $_SESSION['acct_maintenance_preview'] = $preview;
             if (!$preview['rows']) {
@@ -65,7 +65,7 @@ try {
                 !hash_equals($stored['token'], $_POST['confirmation'])) {
                 throw new InvalidArgumentException('Confirmation');
             }
-            $result = dalo_maintenance_apply($dbSocket, $configValues['CONFIG_DB_TBL_RADACCT'], $stored);
+            $result = dalo_maintenance_apply($dbSocket, $configValues['CONFIG_DB_TBL_RADACCT'], $stored, $logDebugSQL);
             $notice = sprintf(t('maintenance', 'result'), t('maintenance', $active),
                               $result['affected'], $result['skipped'], $result['failed']);
             $logAction = sprintf('Open-session maintenance action=%s scope=%s value=%s affected=%d skipped=%d failed=%d on page: ',

@@ -811,6 +811,10 @@ $l['button']['HotspotsComparison'] = "ホットスポット比較";
 
 $l['button']['CleanupStaleSessions'] = "古いセッションのクリア";
 $l['button']['DeleteAccountingRecords'] = "アカウンティングレコードの削除";
+$l['maintenance'] = [
+    'title' => $l['button']['CleanupStaleSessions'],
+    'history' => $l['button']['DeleteAccountingRecords'],
+];
 
 $l['button']['ListUsers'] = "ユーザ一覧";
 $l['button']['ListBatches'] = "バッチ一覧";

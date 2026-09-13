@@ -38,21 +38,24 @@ function dalo_maintenance_where($db, $filter) {
     return "(acctstoptime IS NULL OR acctstoptime='0000-00-00 00:00:00') AND $scope";
 }
 
-function dalo_maintenance_query($db, $sql) {
+function dalo_maintenance_query($db, $sql, &$logDebugSQL = null, $throwOnError = true) {
+    if ($logDebugSQL !== null) {
+        $logDebugSQL .= "$sql;\n";
+    }
     $result = $db->query($sql);
-    if (DB::isError($result)) {
+    if ($throwOnError && DB::isError($result)) {
         throw new RuntimeException('Accounting query failed');
     }
     return $result;
 }
 
-function dalo_maintenance_preview($db, $table, $filter) {
+function dalo_maintenance_preview($db, $table, $filter, &$logDebugSQL = null) {
     $filter = dalo_maintenance_filter($filter);
     $table = dalo_maintenance_table($table);
     $where = dalo_maintenance_where($db, $filter);
-    $result = dalo_maintenance_query($db, "SELECT COUNT(*) FROM $table WHERE $where");
+    $result = dalo_maintenance_query($db, "SELECT COUNT(*) FROM $table WHERE $where", $logDebugSQL);
     $total = (int)$result->fetchRow()[0];
-    $result = dalo_maintenance_query($db, "SELECT * FROM $table WHERE $where ORDER BY radacctid LIMIT " . DALO_MAINTENANCE_LIMIT);
+    $result = dalo_maintenance_query($db, "SELECT * FROM $table WHERE $where ORDER BY radacctid LIMIT " . DALO_MAINTENANCE_LIMIT, $logDebugSQL);
     $rows = [];
     while ($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
         $rows[] = $row;
@@ -61,7 +64,7 @@ function dalo_maintenance_preview($db, $table, $filter) {
             'created' => time(), 'token' => bin2hex(random_bytes(32))];
 }
 
-function dalo_maintenance_apply($db, $table, $preview) {
+function dalo_maintenance_apply($db, $table, $preview, &$logDebugSQL = null) {
     $filter = dalo_maintenance_filter($preview['filter']);
     if (!isset($preview['created'], $preview['rows']) ||
         time() - $preview['created'] > DALO_MAINTENANCE_TTL ||
@@ -86,7 +89,7 @@ function dalo_maintenance_apply($db, $table, $preview) {
         $sql = $filter['action'] === 'close'
              ? "UPDATE $table SET acctstoptime=NOW(), acctterminatecause='Admin-Reset'"
              : "DELETE FROM $table";
-        $result = $db->query($sql . ' WHERE ' . implode(' AND ', $predicates));
+        $result = dalo_maintenance_query($db, $sql . ' WHERE ' . implode(' AND ', $predicates), $logDebugSQL, false);
         if (DB::isError($result)) {
             $failed++;
         } else {

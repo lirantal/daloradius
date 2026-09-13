@@ -272,6 +272,10 @@ $l['button']['AccountingFieldsinQuery'] = "Поля аккаунтинга в з
 $l['button']['OrderBy'] = "Сортировать по";
 $l['button']['HotspotAccounting'] = "Аккаунтинг точек доступа";
 $l['button']['HotspotsComparison'] = "Сравнение точек доступа";
+$l['maintenance'] = [
+    'title' => "Обслуживание открытых сессий",
+    'history' => "Удалить историю аккаунтинга (все записи)",
+];
 
 $l['button']['ListUsers'] = "Список пользователей";
 $l['button']['NewUser'] = "Новый пользователь";

@@ -549,6 +549,10 @@ $l['button']['HotspotsComparison'] = "Compara?ie hotspots ";
 
 $l['button']['CleanupStaleSessions'] = "Cur??ire surmenat Sessions ";
 $l['button']['DeleteAccountingRecords'] = "Delete ?nregistr?ri contabile";
+$l['maintenance'] = [
+    'title' => $l['button']['CleanupStaleSessions'],
+    'history' => $l['button']['DeleteAccountingRecords'],
+];
 
 $l['button']['Listusers'] =" Lista utilizatorilor ";
 $l['button']['NewUser'] = "utilizator nou";
