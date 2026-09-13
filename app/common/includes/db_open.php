@@ -59,7 +59,11 @@ if (strpos($_SERVER['PHP_SELF'], '/common/includes/db_open.php') !== false) {
     $dbSocket = DB::connect($dbConnectString);
 
     if (DB::isError($dbSocket)) {
-        if (isset($db_error_handler) && is_callable($db_error_handler)) {
+        if (isset($db_connect_error_handler) && is_callable($db_connect_error_handler)) {
+            call_user_func($db_connect_error_handler, $dbSocket);
+        } else if (isset($db_error_handler) && is_callable($db_error_handler)) {
+            // Preserve the historical fallback for callers that use one handler
+            // for both connection and query failures.
             call_user_func($db_error_handler, $dbSocket);
         }
         die(sprintf("<b>Database connection error</b><br/><b>Error Message</b>: %s<br/>", $dbSocket->getMessage()));

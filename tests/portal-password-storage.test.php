@@ -26,6 +26,7 @@ $functions = file_get_contents($root . '/app/operators/include/management/functi
 $import = file_get_contents($root . '/app/operators/mng-import-users.php');
 $config = file_get_contents($root . '/app/operators/config-user.php');
 $migration = file_get_contents($root . '/contrib/scripts/maintenance/hash-user-portal-passwords.php');
+$db_open = file_get_contents($root . '/app/common/includes/db_open.php');
 $schema = file_get_contents($root . '/contrib/db/mariadb-daloradius.sql');
 $operator_flows = array(
     'mng-new' => file_get_contents($root . '/app/operators/mng-new.php'),
@@ -102,9 +103,13 @@ check('portal password tooltip uses the English fallback dictionary',
       strpos($form, "t('Tooltip', 'portalPasswordKeepTooltip')") !== false
       && strpos($language_en, "['portalPasswordKeepTooltip']") !== false);
 check('migration CLI handles connection, fetch, and bytewise-guard failures',
-      strpos($migration, '$db_error_handler = function') !== false
+      strpos($migration, '$db_connect_error_handler = function') !== false
       && strpos($migration, 'DB::isError($row)') !== false
       && strpos($migration, 'dalo_portal_password_match_condition') !== false);
+check('migration connection handler is not installed for query failures',
+      strpos($db_open, 'isset($db_connect_error_handler)') !== false
+      && strpos($db_open, "\$error_handler = (isset(\$db_error_handler)") !== false
+      && strpos($migration, '$db_error_handler = function') === false);
 check('fresh schema reserves 255 characters for password hashes',
       strpos($schema, '`portalloginpassword` VARCHAR(255)') !== false);
 

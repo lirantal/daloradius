@@ -28,7 +28,7 @@ if ($batch_size < 1 || $batch_size > 1000) {
 $root = dirname(__DIR__, 3);
 include_once $root . '/app/common/includes/config_read.php';
 include_once $root . '/app/common/includes/portal_password.php';
-$db_error_handler = function() {
+$db_connect_error_handler = function() {
     fwrite(STDERR, "Unable to connect to the database.\n");
     exit(1);
 };
