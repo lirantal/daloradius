@@ -447,6 +447,7 @@ $l['text']['LoginPlease'] = "Login Please";
 
 $l['Tooltip']['batchNameTooltip'] = "Provide an identifier name for this batch creation";
 $l['Tooltip']['batchDescriptionTooltip'] = "Provide general description regarding this batch creation";
+$l['Tooltip']['portalPasswordKeepTooltip'] = "For an existing user, leave this field empty to keep the current portal password.";
 
 $l['Tooltip']['hotspotTooltip'] = "Choose the hotspot name of which this batch instance is associated with";
 

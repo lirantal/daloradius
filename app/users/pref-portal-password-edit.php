@@ -25,6 +25,7 @@
     $login_user = $_SESSION['login_user'];
 
     include_once('../common/includes/config_read.php');
+    include_once('../common/includes/portal_password.php');
 
     include_once("lang/main.php");
     include_once("../common/includes/validation.php");
@@ -39,31 +40,70 @@
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
             include('../common/includes/db_open.php');
 
-            $current_password = (isset($_POST['current_password']) && !empty(trim($_POST['current_password']))) ? trim($_POST['current_password']) : "";
+            $current_password = (isset($_POST['current_password']) &&
+                                 dalo_portal_password_is_acceptable($_POST['current_password']))
+                              ? trim($_POST['current_password']) : "";
 
-            if (empty($current_password)) {
+            $lookup_error = false;
+            $numrows = 0;
+            $row = null;
+            $verification = array('verified' => false);
+
+            if ($current_password === '') {
                 $numrows = 0;
             } else {
-                // check if current password is valid
-                $sql = sprintf("SELECT COUNT(id) FROM %s WHERE username='%s' AND portalloginpassword='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($login_user),
-                               $dbSocket->escapeSimple($current_password));
+                // Fetch by username, then verify the stored hash in PHP.
+                $sql = sprintf("SELECT id, portalloginpassword FROM %s WHERE username=?",
+                               $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
+                $res = dalo_portal_db_sensitive_call($dbSocket, function() use ($dbSocket, $sql, $login_user) {
+                    $stmt = $dbSocket->prepare($sql);
+                    if (DB::isError($stmt)) {
+                        return $stmt;
+                    }
 
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                $numrows = intval($res->fetchRow()[0]);
+                    $result = $dbSocket->execute($stmt, array($login_user));
+                    $dbSocket->freePrepared($stmt);
+                    return $result;
+                });
+
+                if (DB::isError($res)) {
+                    $lookup_error = true;
+                } else {
+                    $numrows = $res->numRows();
+                    if ($numrows === 1) {
+                        $row = dalo_portal_db_sensitive_call($dbSocket, function() use ($res) {
+                            return $res->fetchRow(DB_FETCHMODE_ASSOC);
+                        });
+                        if (DB::isError($row) || !is_array($row)) {
+                            $lookup_error = true;
+                        } else {
+                            $verification = dalo_portal_password_verify(
+                                $current_password,
+                                $row['portalloginpassword']
+                            );
+                        }
+                    }
+                    $res->free();
+                }
             }
 
-            if ($numrows === 1) {
+            if ($lookup_error) {
+                $failureMsg = "Something went wrong while checking your current portal password.";
+                $logAction = "User $login_user failed to check their portal password [db error]";
+            } else if ($numrows === 1 && $verification['verified']) {
 
-                $new_password1 = (isset($_POST['new_password1']) && !empty(trim($_POST['new_password1']))) ? trim($_POST['new_password1']) : "";
-                $new_password2 = (isset($_POST['new_password2']) && !empty(trim($_POST['new_password2']))) ? trim($_POST['new_password2']) : "";
+                $new_password1 = (isset($_POST['new_password1']) &&
+                                  dalo_portal_password_is_acceptable($_POST['new_password1']))
+                               ? trim($_POST['new_password1']) : "";
+                $new_password2 = (isset($_POST['new_password2']) &&
+                                  dalo_portal_password_is_acceptable($_POST['new_password2']))
+                               ? trim($_POST['new_password2']) : "";
 
                 $error = false;
-                if (empty($new_password1)) {
+                if ($new_password1 === '') {
                     $error = true;
                     $failureMsg = "The new password you provided is empty or invalid";
-                } else if (empty($new_password2)) {
+                } else if ($new_password2 === '') {
                     $error = true;
                     $failureMsg = "The new password (confirmation) you provided is empty or invalid";
                 } else if ($new_password1 !== $new_password2) {
@@ -72,20 +112,45 @@
                 }
 
                 if (!$error) {
-                    $sql = sprintf("UPDATE %s SET portalloginpassword='%s' WHERE username='%s'",
-                                   $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($new_password1),
-                                   $dbSocket->escapeSimple($login_user));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (!DB::isError($res)) {
-                        // success
-                        $successMsg = "The password for logging into the user portal has been changed";
-                        $logAction = "User $login_user has changed their password for logging into the user portal";
-                    } else {
-                        // failed
+                    $new_hash = dalo_portal_password_hash($new_password1);
+                    if ($new_hash === false) {
                         $failureMsg = "Something went wrong while attempting to change your password for logging into the user portal.";
-                        $logAction = "User $login_user failed to change their password for logging into the user portal [db error]";
+                        $logAction = "User $login_user failed to hash their new portal password";
+                    } else {
+                        $sql = sprintf("UPDATE %s SET portalloginpassword=? WHERE id=? AND %s",
+                                       $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
+                                       dalo_portal_password_match_condition($configValues['CONFIG_DB_ENGINE']));
+                        $res = dalo_portal_db_sensitive_call(
+                            $dbSocket,
+                            function() use ($dbSocket, $sql, $new_hash, $row) {
+                                $stmt = $dbSocket->prepare($sql);
+                                if (DB::isError($stmt)) {
+                                    return $stmt;
+                                }
+                                $res = $dbSocket->execute(
+                                    $stmt,
+                                    array($new_hash, intval($row['id']), $row['portalloginpassword'])
+                                );
+                                $dbSocket->freePrepared($stmt);
+                                return $res;
+                            }
+                        );
+                        $affected_rows = !DB::isError($res) ? $dbSocket->affectedRows() : null;
+
+                        if (DB::isError($res) || DB::isError($affected_rows)) {
+                            $failureMsg = "Something went wrong while attempting to change your password for logging into the user portal.";
+                            $logAction = "User $login_user failed to change their password for logging into the user portal [db error]";
+                        } else if ($affected_rows === 1) {
+                            // success
+                            $successMsg = "The password for logging into the user portal has been changed";
+                            $logAction = "User $login_user has changed their password for logging into the user portal";
+                        } else if ($affected_rows === 0) {
+                            $failureMsg = "Your portal password changed while this request was being processed. Please enter the current password again and retry.";
+                            $logAction = "User $login_user did not change their portal password [concurrent update]";
+                        } else {
+                            $failureMsg = "Something went wrong while attempting to change your password for logging into the user portal.";
+                            $logAction = "User $login_user failed to change their password for logging into the user portal [unexpected affected rows]";
+                        }
                     }
                 }
 

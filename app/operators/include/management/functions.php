@@ -28,6 +28,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/functions.php') !== false)
     exit;
 }
 
+include_once dirname(__DIR__, 3) . '/common/includes/portal_password.php';
+
 
 
 function quote_sql_identifier($identifier) {
@@ -495,7 +497,19 @@ function make_update_query($table, $escaped_username, $fields, $values) {
     return $sql;
 }
 
-function update_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index) {
+function redact_sensitive_values($fields, $values, $sensitiveFields) {
+    $redacted = $values;
+    foreach ($fields as $index => $field) {
+        if (in_array($field, $sensitiveFields, true)) {
+            $redacted[$index] = '[redacted]';
+        }
+    }
+
+    return $redacted;
+}
+
+function update_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index,
+                     $sensitiveFields = array()) {
     global $configValues, $logDebugSQL;
 
     // if info do not exist for this user we return false
@@ -511,10 +525,21 @@ function update_info($dbSocket, $username, $params, $allowedFields, $skipFields,
 
     $sql = make_update_query($configValues[$table_index], $dbSocket->escapeSimple($username),
                              $arr["fields"], $arr["values"]);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
+    $has_sensitive_fields = count(array_intersect($arr["fields"], $sensitiveFields)) > 0;
+    $res = $has_sensitive_fields
+         ? dalo_portal_db_sensitive_call($dbSocket, function() use ($dbSocket, $sql) {
+               return $dbSocket->query($sql);
+           })
+         : $dbSocket->query($sql);
 
-    return $res == 1;
+    $logged_values = $has_sensitive_fields
+                   ? redact_sensitive_values($arr["fields"], $arr["values"], $sensitiveFields)
+                   : $arr["values"];
+    $logged_sql = make_update_query($configValues[$table_index], $dbSocket->escapeSimple($username),
+                                    $arr["fields"], $logged_values);
+    $logDebugSQL .= "$logged_sql;\n";
+
+    return !DB::isError($res) && $res === DB_OK;
 }
 
 function update_user_info($dbSocket, $username, $params) {
@@ -528,7 +553,19 @@ function update_user_info($dbSocket, $username, $params) {
 
     $skipFields = array( "id", "username" );
 
-    return update_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERINFO');
+    if (array_key_exists('portalloginpassword', $params)) {
+        if ($params['portalloginpassword'] === '') {
+            unset($params['portalloginpassword']);
+        } else {
+            $params['portalloginpassword'] = dalo_portal_password_hash($params['portalloginpassword']);
+            if ($params['portalloginpassword'] === false) {
+                return false;
+            }
+        }
+    }
+
+    return update_info($dbSocket, $username, $params, $allowedFields, $skipFields,
+                       'CONFIG_DB_TBL_DALOUSERINFO', array('portalloginpassword'));
 }
 
 function update_user_billing_info($dbSocket, $username, $params) {
@@ -546,7 +583,8 @@ function update_user_billing_info($dbSocket, $username, $params) {
     return update_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
 }
 
-function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index) {
+function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index,
+                  $sensitiveFields = array()) {
     global $configValues, $logDebugSQL;
 
     // if info do not exist for this user we return false
@@ -562,10 +600,21 @@ function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $t
 
     $sql = make_insert_query($configValues[$table_index], $dbSocket->escapeSimple($username),
                              $arr["fields"], $arr["values"]);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
+    $has_sensitive_fields = count(array_intersect($arr["fields"], $sensitiveFields)) > 0;
+    $res = $has_sensitive_fields
+         ? dalo_portal_db_sensitive_call($dbSocket, function() use ($dbSocket, $sql) {
+               return $dbSocket->query($sql);
+           })
+         : $dbSocket->query($sql);
 
-    return $res == 1;
+    $logged_values = $has_sensitive_fields
+                   ? redact_sensitive_values($arr["fields"], $arr["values"], $sensitiveFields)
+                   : $arr["values"];
+    $logged_sql = make_insert_query($configValues[$table_index], $dbSocket->escapeSimple($username),
+                                    $arr["fields"], $logged_values);
+    $logDebugSQL .= "$logged_sql;\n";
+
+    return !DB::isError($res) && $res === DB_OK;
 }
 
 function add_user_info($dbSocket, $username, $params) {
@@ -578,7 +627,37 @@ function add_user_info($dbSocket, $username, $params) {
 
     $skipFields = array( "id", "username" );
 
-    return add_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERINFO');
+    if (array_key_exists('portalloginpassword', $params)) {
+        if ($params['portalloginpassword'] === '') {
+            unset($params['portalloginpassword']);
+        } else {
+            $params['portalloginpassword'] = dalo_portal_password_hash($params['portalloginpassword']);
+            if ($params['portalloginpassword'] === false) {
+                return false;
+            }
+        }
+    }
+
+    return add_info($dbSocket, $username, $params, $allowedFields, $skipFields,
+                    'CONFIG_DB_TBL_DALOUSERINFO', array('portalloginpassword'));
+}
+
+function user_portal_password_is_set($dbSocket, $username) {
+    global $configValues;
+
+    $sql = sprintf(
+        "SELECT COUNT(id) FROM %s WHERE username=? AND portalloginpassword IS NOT NULL AND portalloginpassword<>''",
+        $configValues['CONFIG_DB_TBL_DALOUSERINFO']
+    );
+    $stmt = $dbSocket->prepare($sql);
+    $res = $dbSocket->execute($stmt, array($username));
+    $dbSocket->freePrepared($stmt);
+
+    if (DB::isError($res)) {
+        return false;
+    }
+
+    return intval($res->fetchRow()[0]) === 1;
 }
 
 function add_user_billing_info($dbSocket, $username, $params) {

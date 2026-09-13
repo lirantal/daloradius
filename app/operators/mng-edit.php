@@ -138,14 +138,25 @@
             $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? $_POST['notes'] : "";
 
             // first we check user portal login password
-            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) && !empty(trim($_POST['portalLoginPassword'])))
+            $ui_PortalLoginPassword = (isset($_POST['portalLoginPassword']) &&
+                                       dalo_portal_password_is_acceptable($_POST['portalLoginPassword']))
                                     ? trim($_POST['portalLoginPassword']) : "";
 
-            // these are forced to 0 (disabled) if user portal login password is empty
-            $ui_changeuserinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
+            $ui_hasPortalLoginPassword = user_portal_password_is_set($dbSocket, $username);
+            $portal_password_available = $ui_hasPortalLoginPassword
+                                      || dalo_portal_password_is_present($ui_PortalLoginPassword);
+            $portal_access_valid = dalo_portal_access_is_valid($_POST, $ui_hasPortalLoginPassword);
+
+            // Portal permissions require either an existing password or a newly supplied one.
+            $ui_changeuserinfo = ($portal_password_available && isset($_POST['changeUserInfo']) && $_POST['changeUserInfo'] === '1')
                                ? '1' : '0';
-            $ui_enableUserPortalLogin = (!empty($ui_PortalLoginPassword) &&  isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
+            $ui_enableUserPortalLogin = ($portal_password_available && isset($_POST['enableUserPortalLogin']) && $_POST['enableUserPortalLogin'] === '1')
                                       ? '1' : '0';
+
+            if (!$portal_access_valid) {
+                $failureMsg = 'A portal password is required before portal access can be enabled.';
+                $logAction .= "Failed updating user because portal access requires a password on page: ";
+            }
 
             $bi_contactperson = (array_key_exists('bi_contactperson', $_POST) && isset($_POST['bi_contactperson'])) ? $_POST['bi_contactperson'] : "";
             $bi_company = (array_key_exists('bi_company', $_POST) && isset($_POST['bi_company'])) ? $_POST['bi_company'] : "";
@@ -177,8 +188,7 @@
             $bi_faxinvoice = (array_key_exists('bi_faxinvoice', $_POST) && isset($_POST['bi_faxinvoice'])) ? $_POST['bi_faxinvoice'] : "";
             $bi_emailinvoice = (array_key_exists('bi_emailinvoice', $_POST) && isset($_POST['bi_emailinvoice'])) ? $_POST['bi_emailinvoice'] : "";
 
-            // this is forced to 0 (disabled) if user portal login password is empty
-            $bi_changeuserbillinfo = (!empty($ui_PortalLoginPassword) && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
+            $bi_changeuserbillinfo = ($portal_password_available && isset($_POST['bi_changeuserbillinfo']) && $_POST['bi_changeuserbillinfo'] === '1')
                                    ? '1' : '0';
 
             $planName = (array_key_exists('planName', $_POST) && isset($_POST['planName'])) ? trim($_POST['planName']) : "";
@@ -186,7 +196,7 @@
 
 
 
-            if (!empty($username)) {
+            if (!empty($username) && $portal_access_valid) {
 
                 // dealing with attributes
                 include("library/attributes.php");
@@ -305,7 +315,7 @@
                 $successMsg = sprintf("Successfully updated user <strong>%s</strong>", $username_enc);
                 $logAction .= sprintf("Successfully updated user %s on page: ", $username);
 
-            } else { // if username != ""
+            } else if (empty($username)) { // if username != ""
                 $failureMsg = "You have specified an empty or invalid username";
                 $logAction .= "empty or invalid username on page: ";
             }
@@ -333,7 +343,9 @@
 
         /* fill-in all the user info details */
         $sql = sprintf("SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city,
-                               state, country, zip, notes, changeuserinfo, portalloginpassword, enableportallogin, creationdate,
+                               state, country, zip, notes, changeuserinfo,
+                               (portalloginpassword IS NOT NULL AND portalloginpassword<>'') AS has_portal_password,
+                               enableportallogin, creationdate,
                                creationby, updatedate, updateby
                           FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
                                                         $dbSocket->escapeSimple($username));
@@ -343,7 +355,7 @@
         list(
               $ui_firstname, $ui_lastname, $ui_email, $ui_department, $ui_company, $ui_workphone, $ui_homephone,
               $ui_mobilephone, $ui_address, $ui_city, $ui_state, $ui_country, $ui_zip, $ui_notes, $ui_changeuserinfo,
-              $ui_PortalLoginPassword, $ui_enableUserPortalLogin, $ui_creationdate, $ui_creationby, $ui_updatedate,
+              $ui_hasPortalLoginPassword, $ui_enableUserPortalLogin, $ui_creationdate, $ui_creationby, $ui_updatedate,
               $ui_updateby
             ) = $res->fetchRow();
 

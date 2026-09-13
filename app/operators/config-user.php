@@ -115,6 +115,7 @@
                                     "caption" => "Allow cleartext password attributes in db",
                                     "name" => 'CONFIG_DB_PASSWORD_ENCRYPTION',
                                     "selected_value" => $configValues['CONFIG_DB_PASSWORD_ENCRYPTION'],
+                                    "tooltipText" => "This setting only controls RADIUS password attributes in radcheck. User portal passwords are always stored as secure hashes.",
                                  );
 
     $input_descriptors0[] = array(
