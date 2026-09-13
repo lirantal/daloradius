@@ -32,6 +32,10 @@ $db_connect_error_handler = function() {
     fwrite(STDERR, "Unable to connect to the database.\n");
     exit(1);
 };
+$db_error_handler = function() {
+    // Keep db_open.php's best-effort session initialization silent in CLI
+    // mode. PEAR still returns the error object to the query caller.
+};
 include $root . '/app/common/includes/db_open.php';
 
 // PEAR DB interpolates prepared parameters in error debug information. Never
