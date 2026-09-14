@@ -630,6 +630,7 @@ $l['button']['NewUsers'] = "New Users";
 $l['button']['ClearSessions'] = "Clear Sessions";
 $l['button']['CSVExport'] = "CSV Export";
 $l['button']['Dashboard'] = "Dashboard";
+$l['button']['BackToDashboard'] = "Back to Dashboard";
 $l['button']['MailSettings'] = "Mail Settings";
 
 $l['button']['Batch'] = "Batch";

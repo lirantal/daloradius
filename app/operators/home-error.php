@@ -44,7 +44,7 @@
     $failureMsg = t('helpPage','msgerrorpermissions');
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
-    $text = "Back to " . t('button','Dashboard');
+    $text = t('button','BackToDashboard');
     echo '<div style="float: right; text-align: right; margin: 0; font-size: small">';
     printf('<a href="home-main.php" title="%s">%s</a>', htmlspecialchars($text, ENT_QUOTES, 'UTF-8'), $text);
     echo '</div>';
