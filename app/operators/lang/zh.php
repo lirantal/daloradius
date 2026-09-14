@@ -728,6 +728,55 @@ $l['button']['HotspotsComparison'] = "热点比较";
 
 $l['button']['CleanupStaleSessions'] = "清理过期账单";
 $l['button']['DeleteAccountingRecords'] = "删除账单记录";
+$l['maintenance'] = [
+    'title' => '开放会话维护',
+    'history' => '删除计费历史记录（所有记录）',
+    'help' => <<<'HTML'
+    <h2 class="fs-6">开始前</h2><p>开放的计费记录不一定是过期记录。此工具不会检查用户活动或NAS连接状态。</p><h2 class="fs-6">操作</h2><ul><li><strong>关闭会话</strong>会保留已记录的使用量，并使用<code>Admin-Reset</code>将所选行标记为已关闭。此操作不会断开用户与NAS的连接。</li><li><strong>删除记录</strong>会永久删除所选的开放行及其使用量数据。</li></ul><h2 class="fs-6">范围和确认</h2><p>用户名匹配遵循数据库排序规则，并执行精确匹配。日期匹配计费数据库／服务器时区中在该日期午夜之前开始的会话。</p><p>确认前请预览每项操作。每次预览最多包含100行，10分钟后过期，且只能使用一次。已更改或不再符合条件的行将被跳过。</p>
+    HTML,
+    'close' => '关闭会话',
+    'delete' => '删除记录',
+    'details' => '详细信息',
+    'openWarning' => '开放会话可能仍处于活动状态。',
+    'openHelp' => '只有停止时间缺失或采用旧格式的零值的记录才符合条件。不执行不活动检测。',
+    'dateHelp' => '日期范围表示会话开始时间早于所选日期，即计费数据库／服务器时区中严格早于00:00:00的会话（不是浏览器时区）。这不是最后活动时间的截止条件。',
+    'selectTitle' => '选择会话',
+    'closeSummary' => '保留计费数据，并将所选会话标记为已关闭。',
+    'deleteSummary' => '永久删除所选的开放计费记录。',
+    'closeHelp' => '记录现在将以手动终止原因Admin-Reset关闭。此操作不会断开用户与NAS的连接。已记录的持续时间和流量计数器保持不变；不保证后续计费更新。',
+    'deleteHelp' => '删除不可撤销。已记录的使用量将被永久删除，报表或使用量总计可能发生变化。此工具不会删除已关闭的历史记录。',
+    'scope' => '选择范围',
+    'username' => '用户名',
+    'date' => '会话开始早于日期',
+    'value' => '用户名或日期（YYYY-MM-DD）',
+    'filterHelp' => '更改此筛选条件需要新的预览。',
+    'filterDetails' => '用户名匹配遵循计费数据库的排序规则；不支持通配符搜索。',
+    'preview' => '预览匹配记录',
+    'previewTitle' => '预览',
+    'previewDetails' => '预览详细信息',
+    'count' => '计数时有%d条匹配记录；此次预览有%d条记录。每次操作最多%d条，按计费ID排序。只有显示的记录可以更改。要处理另一批记录，请重新预览；计费更新期间计数可能会变化。',
+    'concurrency' => '确认在10分钟后过期且只能使用一次。被Interim／Stop更新更改的记录或不再符合条件的记录将被跳过。新匹配的记录绝不会加入此操作。',
+    'id' => '计费ID',
+    'nas' => 'NAS地址',
+    'start' => '会话开始时间',
+    'activity' => '记录的更新时间',
+    'seconds' => '记录的秒数',
+    'input' => '记录的输入字节数',
+    'output' => '记录的输出字节数',
+    'activityHelp' => '仅当计费架构提供acctupdatetime时才显示更新时间。缺失值显示为短横线。这些数据库值不能证明用户不活动或NAS连接状态。',
+    'closeSelectionOne' => '已选择%d个会话',
+    'closeSelectionMany' => '已选择%d个会话',
+    'deleteSelectionOne' => '已选择%d条记录',
+    'deleteSelectionMany' => '已选择%d条记录',
+    'closeConfirmOne' => '关闭%d个会话',
+    'closeConfirmMany' => '关闭%d个会话',
+    'deleteConfirmOne' => '永久删除%d条记录',
+    'deleteConfirmMany' => '永久删除%d条记录',
+    'empty' => '没有匹配的开放记录。未进行任何更改。',
+    'result' => '%s：实际影响%d条，跳过%d条已更改或不符合条件的记录，失败%d条。在进行任何后续操作前，请重新预览。',
+    'invalid' => '请求、筛选条件、CSRF令牌或确认已过期无效。未进行任何更改。请创建新的预览。',
+    'error' => '无法读取计费记录。未执行任何操作。',
+];
 
 $l['button']['ListUsers'] = "用户列表";
 $l['button']['ListBatches'] = "显示批量";

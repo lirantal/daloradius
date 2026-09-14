@@ -1985,6 +1985,57 @@ $l['helpPage']['gisviewmap'] = <<<EOF
 <p>By clicking on a hotspot, you can access more detailed information about it, including contact information and other relevant details.</p>
 EOF;
 
+// Open-only maintenance uses new keys so legacy stale-session translations cannot change its meaning.
+$l['maintenance'] = [
+    'title' => 'Open-session maintenance',
+    'history' => 'Delete accounting history (all records)',
+    'help' => <<<'HTML'
+    <h2 class="fs-6">Before you start</h2><p>An open accounting record is not necessarily stale. This tool does not check user activity or NAS connectivity.</p><h2 class="fs-6">Actions</h2><ul><li><strong>Close sessions</strong> keeps recorded usage and marks the selected rows as closed with <code>Admin-Reset</code>. It does not disconnect users from the NAS.</li><li><strong>Delete records</strong> permanently removes the selected open rows and their usage data.</li></ul><h2 class="fs-6">Scope and confirmation</h2><p>Username matching is exact according to the database collation. A date matches sessions started strictly before midnight on that date in the accounting database/server timezone.</p><p>Preview every operation before confirming it. A preview contains at most 100 rows, expires after 10 minutes, and can be used once. Changed or no-longer-eligible rows are skipped.</p>
+    HTML,
+    'close' => 'Close sessions',
+    'delete' => 'Delete records',
+    'details' => 'Details',
+    'openWarning' => 'Open sessions may still be active.',
+    'openHelp' => 'Only records with a missing or legacy zero stop time are eligible. No inactivity detection is performed.',
+    'dateHelp' => 'Date scope means session START BEFORE the selected date, exclusively at 00:00:00 in the accounting database/server timezone (not your browser timezone). It is not a last-activity cutoff.',
+    'selectTitle' => 'Select sessions',
+    'closeSummary' => 'Keep accounting data and mark the selected sessions as closed.',
+    'deleteSummary' => 'Permanently remove the selected open accounting records.',
+    'closeHelp' => 'Records are closed now with the manual termination cause Admin-Reset. This does not disconnect users from the NAS. Recorded duration and traffic counters are retained unchanged; future accounting updates are not guaranteed.',
+    'deleteHelp' => 'Deletion is irreversible. Recorded usage is permanently removed and reports or usage totals may change. Closed history is not deleted by this tool.',
+    'scope' => 'Select scope',
+    'username' => 'Username',
+    'date' => 'Session start before date',
+    'value' => 'Username or date (YYYY-MM-DD)',
+    'filterHelp' => 'Changing this filter requires a new preview.',
+    'filterDetails' => 'Username matching follows the accounting database collation; wildcard search is not supported.',
+    'preview' => 'Preview matching records',
+    'previewTitle' => 'Preview',
+    'previewDetails' => 'Preview details',
+    'count' => '%d matching records at count time; %d records in this preview. Maximum %d per operation, ordered by accounting ID. Only displayed records can be changed. Repeat preview for another batch; the count may change during accounting updates.',
+    'concurrency' => 'Confirmation expires after 10 minutes and is single-use. Records changed by Interim/Stop updates or no longer eligible are skipped. Newly matching records are never added to this operation.',
+    'id' => 'Accounting ID',
+    'nas' => 'NAS address',
+    'start' => 'Session start',
+    'activity' => 'Recorded update time',
+    'seconds' => 'Recorded seconds',
+    'input' => 'Recorded input bytes',
+    'output' => 'Recorded output bytes',
+    'activityHelp' => 'Update time is shown only if the accounting schema provides acctupdatetime. Missing values are shown as a dash. These database values do not prove inactivity or NAS connectivity.',
+    'closeSelectionOne' => '%d session selected',
+    'closeSelectionMany' => '%d sessions selected',
+    'deleteSelectionOne' => '%d record selected',
+    'deleteSelectionMany' => '%d records selected',
+    'closeConfirmOne' => 'Close %d session',
+    'closeConfirmMany' => 'Close %d sessions',
+    'deleteConfirmOne' => 'Permanently delete %d record',
+    'deleteConfirmMany' => 'Permanently delete %d records',
+    'empty' => 'No matching open records. Nothing was changed.',
+    'result' => '%s: %d actually affected, %d changed or ineligible records skipped, %d failed. Preview again before any further operation.',
+    'invalid' => 'Invalid request, filter, CSRF token, or expired confirmation. Nothing was changed. Create a new preview.',
+    'error' => 'Cannot read accounting records. No operation was performed.',
+];
+
 $l['helpPage']['gismain'] = <<<EOF
 <p>The <strong>GIS feature</strong> provides visual mappings of hotspot locations around the world.</p>
 <p>When adding a new hotspot, you can specify its geolocation by providing its latitude and longitude coordinates, which are used to pinpoint its exact location on the map.</p>

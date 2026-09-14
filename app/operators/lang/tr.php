@@ -719,6 +719,55 @@ $l['button']['HotspotsComparison'] = "Hotspots Comparison";
 
 $l['button']['CleanupStaleSessions'] = "Cleanup Stale Sessions";
 $l['button']['DeleteAccountingRecords'] = "Delete Accounting Records";
+$l['maintenance'] = [
+    'title' => 'Açık oturumların bakımı',
+    'history' => 'Muhasebe geçmişini sil (tüm kayıtlar)',
+    'help' => <<<'HTML'
+    <h2 class="fs-6">Başlamadan önce</h2><p>Açık bir muhasebe kaydı mutlaka geçerliliğini yitirmiş değildir. Bu araç kullanıcı etkinliğini veya NAS bağlantısını kontrol etmez.</p><h2 class="fs-6">İşlemler</h2><ul><li><strong>Oturumları kapat</strong>, kaydedilen kullanımı korur ve seçilen satırları <code>Admin-Reset</code> ile kapatılmış olarak işaretler. Kullanıcıların NAS bağlantısını kesmez.</li><li><strong>Kayıtları sil</strong>, seçilen açık satırları ve kullanım verilerini kalıcı olarak kaldırır.</li></ul><h2 class="fs-6">Kapsam ve onay</h2><p>Kullanıcı adı eşleştirmesi, veritabanı kolasyonuna göre tam eşleşir. Bir tarih, muhasebe veritabanı/sunucu saat diliminde o tarihin 00:00:00 anından kesin olarak önce başlatılan oturumlarla eşleşir.</p><p>Her işlemi onaylamadan önce önizleyin. Önizleme en fazla 100 satır içerir, 10 dakika sonra sona erer ve bir kez kullanılabilir. Değiştirilmiş veya artık uygun olmayan satırlar atlanır.</p>
+    HTML,
+    'close' => 'Oturumları kapat',
+    'delete' => 'Kayıtları sil',
+    'details' => 'Ayrıntılar',
+    'openWarning' => 'Açık oturumlar hâlâ etkin olabilir.',
+    'openHelp' => 'Yalnızca durdurma zamanı eksik olan veya eski sıfır durdurma zamanına sahip kayıtlar uygundur. Etkinlik dışı algılaması yapılmaz.',
+    'dateHelp' => 'Tarih kapsamı, muhasebe veritabanı/sunucu saat dilimindeki 00:00:00 anına göre (tarayıcı saat diliminize göre değil) oturumun seçilen tarihten ÖNCE BAŞLAMASI demektir. Bu, son etkinlik kesme noktası değildir.',
+    'selectTitle' => 'Oturumları seç',
+    'closeSummary' => 'Muhasebe verilerini koru ve seçilen oturumları kapatılmış olarak işaretle.',
+    'deleteSummary' => 'Seçilen açık muhasebe kayıtlarını kalıcı olarak kaldır.',
+    'closeHelp' => 'Kayıtlar, manuel sonlandırma nedeni Admin-Reset ile şimdi kapatılır. Bu, kullanıcıların NAS bağlantısını kesmez. Kaydedilen süre ve trafik sayaçları değiştirilmeden korunur; gelecekteki muhasebe güncellemeleri garanti edilmez.',
+    'deleteHelp' => 'Silme işlemi geri alınamaz. Kaydedilen kullanım kalıcı olarak kaldırılır ve raporlar veya kullanım toplamları değişebilir. Kapatılmış geçmiş bu araç tarafından silinmez.',
+    'scope' => 'Kapsamı seç',
+    'username' => 'Kullanıcı adı',
+    'date' => 'Oturum başlangıcı tarihten önce',
+    'value' => 'Kullanıcı adı veya tarih (YYYY-MM-DD)',
+    'filterHelp' => 'Bu filtreyi değiştirmek yeni bir önizleme gerektirir.',
+    'filterDetails' => 'Kullanıcı adı eşleştirmesi muhasebe veritabanı kolasyonunu izler; joker karakter araması desteklenmez.',
+    'preview' => 'Eşleşen kayıtları önizle',
+    'previewTitle' => 'Önizleme',
+    'previewDetails' => 'Önizleme ayrıntıları',
+    'count' => '%d eşleşen kayıt sayım zamanında; bu önizlemede %d kayıt var. İşlem başına en fazla %d kayıt, muhasebe kimliğine göre sıralanır. Yalnızca görüntülenen kayıtlar değiştirilebilir. Başka bir grup için önizlemeyi tekrarlayın; muhasebe güncellemeleri sırasında sayı değişebilir.',
+    'concurrency' => 'Onay 10 dakika sonra sona erer ve tek kullanımlıktır. Interim/Stop güncellemeleriyle değiştirilen veya artık uygun olmayan kayıtlar atlanır. Yeni eşleşen kayıtlar bu işleme hiçbir zaman eklenmez.',
+    'id' => 'Muhasebe kimliği',
+    'nas' => 'NAS adresi',
+    'start' => 'Oturum başlangıcı',
+    'activity' => 'Kaydedilen güncelleme zamanı',
+    'seconds' => 'Kaydedilen saniyeler',
+    'input' => 'Kaydedilen giriş baytları',
+    'output' => 'Kaydedilen çıkış baytları',
+    'activityHelp' => 'Güncelleme zamanı yalnızca muhasebe şeması acctupdatetime alanını sağlıyorsa gösterilir. Eksik değerler tire olarak gösterilir. Bu veritabanı değerleri etkinlik dışılığını veya NAS bağlantısını kanıtlamaz.',
+    'closeSelectionOne' => '%d oturum seçildi',
+    'closeSelectionMany' => '%d oturum seçildi',
+    'deleteSelectionOne' => '%d kayıt seçildi',
+    'deleteSelectionMany' => '%d kayıt seçildi',
+    'closeConfirmOne' => '%d oturumu kapat',
+    'closeConfirmMany' => '%d oturumu kapat',
+    'deleteConfirmOne' => '%d kaydı kalıcı olarak sil',
+    'deleteConfirmMany' => '%d kaydı kalıcı olarak sil',
+    'empty' => 'Eşleşen açık kayıt yok. Hiçbir şey değiştirilmedi.',
+    'result' => '%s: %d gerçekten etkilendi, %d değiştirilmiş veya uygun olmayan kayıt atlandı, %d başarısız oldu. Başka bir işlem yapmadan önce önizlemeyi yeniden oluşturun.',
+    'invalid' => 'Geçersiz istek, filtre, CSRF belirteci veya süresi dolmuş onay. Hiçbir şey değiştirilmedi. Yeni bir önizleme oluşturun.',
+    'error' => 'Muhasebe kayıtları okunamıyor. Hiçbir işlem gerçekleştirilmedi.',
+];
 
 $l['button']['ListUsers'] = "Kullanıcı Listesi";
 $l['button']['ListBatches'] = "List Batches";

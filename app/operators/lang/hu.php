@@ -535,6 +535,55 @@ $l['button']['HotspotsComparison'] = "Hotspots Comparison";
 
 $l['button']['CleanupStaleSessions'] = "Cleanup Stale Sessions";
 $l['button']['DeleteAccountingRecords'] = "Nyilvántartási rekordok törlése";
+$l['maintenance'] = [
+    'title' => 'Nyitott munkamenetek karbantartása',
+    'history' => 'Elszámolási előzmények törlése (minden rekord)',
+    'help' => <<<'HTML'
+    <h2 class="fs-6">Mielőtt elkezdi</h2><p>Egy nyitott elszámolási rekord nem feltétlenül elavult. Ez az eszköz nem ellenőrzi a felhasználói aktivitást vagy a NAS-kapcsolatot.</p><h2 class="fs-6">Műveletek</h2><ul><li><strong>Munkamenetek lezárása</strong> megőrzi a rögzített használatot, és a kiválasztott sorokat <code>Admin-Reset</code> értékkel lezártként jelöli. A felhasználókat nem választja le a NAS-ról.</li><li><strong>Rekordok törlése</strong> véglegesen eltávolítja a kiválasztott nyitott sorokat és használati adataikat.</li></ul><h2 class="fs-6">Hatókör és megerősítés</h2><p>A felhasználónév-egyezés az adatbázis rendezési szabályai szerint pontos. Egy dátum az adott dátum éjfélje előtt szigorúan megkezdett munkamenetekre illeszkedik, az elszámolási adatbázis/szerver időzónájában.</p><p>Minden művelet előtt tekintse meg az előnézetet. Az előnézet legfeljebb 100 sort tartalmaz, 10 perc után lejár, és egyszer használható. A módosult vagy már nem jogosult sorokat a rendszer kihagyja.</p>
+    HTML,
+    'close' => 'Munkamenetek lezárása',
+    'delete' => 'Rekordok törlése',
+    'details' => 'Részletek',
+    'openWarning' => 'A nyitott munkamenetek még aktívak lehetnek.',
+    'openHelp' => 'Csak a hiányzó vagy örökölt, nulla leállítási idővel rendelkező rekordok jogosultak. A rendszer nem végez inaktivitás-észlelést.',
+    'dateHelp' => 'A dátum szerinti hatókör azt jelenti, hogy a munkamenet KEZDETE a kiválasztott dátum előtt legyen, kizárólag az elszámolási adatbázis/szerver időzónájában érvényes 00:00:00 időpont szerint (nem a böngésző időzónája szerint). Ez nem az utolsó aktivitás határideje.',
+    'selectTitle' => 'Munkamenetek kiválasztása',
+    'closeSummary' => 'Az elszámolási adatok megőrzése és a kiválasztott munkamenetek lezártként megjelölése.',
+    'deleteSummary' => 'A kiválasztott nyitott elszámolási rekordok végleges eltávolítása.',
+    'closeHelp' => 'A rekordokat most lezárjuk a kézi megszüntetés okával: Admin-Reset. Ez nem választja le a felhasználókat a NAS-ról. A rögzített időtartam és forgalmi számlálók változatlanul megmaradnak; a jövőbeli elszámolási frissítések nem garantáltak.',
+    'deleteHelp' => 'A törlés visszafordíthatatlan. A rögzített használat véglegesen eltávolításra kerül, és a jelentések vagy használati összesítések megváltozhatnak. Ezzel az eszközzel a lezárt előzmények nem törölhetők.',
+    'scope' => 'Hatókör kiválasztása',
+    'username' => 'Felhasználónév',
+    'date' => 'Munkamenet kezdete a dátum előtt',
+    'value' => 'Felhasználónév vagy dátum (YYYY-MM-DD)',
+    'filterHelp' => 'A szűrő módosítása új előnézetet igényel.',
+    'filterDetails' => 'A felhasználónév-egyezés az elszámolási adatbázis rendezési szabályait követi; helyettesítő karakteres keresés nem támogatott.',
+    'preview' => 'Egyező rekordok előnézete',
+    'previewTitle' => 'Előnézet',
+    'previewDetails' => 'Előnézet részletei',
+    'count' => '%d egyező rekord a számláláskor; %d rekord ebben az előnézetben. Műveletenként legfeljebb %d, elszámolási azonosító szerint rendezve. Csak a megjelenített rekordok módosíthatók. Ismételje meg az előnézetet egy újabb köteghez; a számlálás az elszámolási frissítések során változhat.',
+    'concurrency' => 'A megerősítés 10 perc után lejár és egyszer használható. Az Interim/Stop frissítések által módosított vagy már nem jogosult rekordokat kihagyjuk. Az újonnan egyező rekordok soha nem kerülnek hozzá ehhez a művelethez.',
+    'id' => 'Elszámolási azonosító',
+    'nas' => 'NAS-cím',
+    'start' => 'Munkamenet kezdete',
+    'activity' => 'Rögzített frissítési idő',
+    'seconds' => 'Rögzített másodpercek',
+    'input' => 'Rögzített bejövő bájtok',
+    'output' => 'Rögzített kimenő bájtok',
+    'activityHelp' => 'A frissítési idő csak akkor jelenik meg, ha az elszámolási séma biztosítja az acctupdatetime mezőt. A hiányzó értékeket kötőjel jelzi. Ezek az adatbázisértékek nem bizonyítják az inaktivitást vagy a NAS-kapcsolatot.',
+    'closeSelectionOne' => '%d munkamenet kiválasztva',
+    'closeSelectionMany' => '%d munkamenet kiválasztva',
+    'deleteSelectionOne' => '%d rekord kiválasztva',
+    'deleteSelectionMany' => '%d rekord kiválasztva',
+    'closeConfirmOne' => '%d munkamenet lezárása',
+    'closeConfirmMany' => '%d munkamenet lezárása',
+    'deleteConfirmOne' => '%d rekord végleges törlése',
+    'deleteConfirmMany' => '%d rekord végleges törlése',
+    'empty' => 'Nincs egyező nyitott rekord. Semmi nem változott.',
+    'result' => '%s: ténylegesen érintett: %d, kihagyott módosult vagy nem jogosult rekord: %d, sikertelen: %d. Újabb művelet előtt tekintse meg ismét az előnézetet.',
+    'invalid' => 'Érvénytelen kérés, szűrő, CSRF-token vagy lejárt megerősítés. Semmi nem változott. Hozzon létre új előnézetet.',
+    'error' => 'Az elszámolási rekordok nem olvashatók. A művelet nem lett végrehajtva.',
+];
 
 $l['button']['ListUsers'] = "Felhasználók listázása";
 $l['button']['NewUser'] = "Új felhasználó";
