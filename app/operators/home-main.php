@@ -202,7 +202,7 @@ HTML;
             }, $row);
 
             // datetime
-            $datetime = date('Y-m-d H:i:s', strtotime($datetime));
+            $datetime = !empty($datetime) ? date('Y-m-d H:i:s', strtotime($datetime)) : t('all','NotAvailable');
 
             // reply
             $is_rejected = $reply === 'Access-Reject';
@@ -212,7 +212,7 @@ HTML;
 
             $reply = sprintf(
                 '<span class="badge %s"><i class="bi bi-%s me-1"></i>%s</span>',
-                $badge_class, $icon, $reply, ENT_QUOTES, 'UTF-8'
+                $badge_class, $icon, $reply
             );
 
             print_dashboard_table_row(array($user, $reply, $datetime));
