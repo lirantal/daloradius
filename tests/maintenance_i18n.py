@@ -9,8 +9,8 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 LANG = ROOT / 'app/operators/lang'
-LOCALES = ['ar', 'de', 'es_ve', 'hu', 'it', 'ja', 'pt_br', 'ro', 'ru', 'tr', 'zh', 'zh_tw']
-ENTRY = re.compile(r"^\s*'([^']+)'\s*=>\s*'((?:\\.|[^'])*)',\r?$", re.MULTILINE)
+SCALAR_ENTRY = re.compile(r"^\s*'([^']+)'\s*=>\s*'((?:\\.|[^'])*)',\s*$")
+NOWDOC_ENTRY = re.compile(r"^\s*'([^']+)'\s*=>\s*<<<'([A-Z][A-Z0-9_]*)'\s*$")
 PLACEHOLDER = re.compile(r'%(?:\d+\$)?[sd]')
 TAG = re.compile(r'</?([a-zA-Z0-9]+)(?:\s+[^>]*)?>')
 
@@ -24,17 +24,34 @@ def maintenance_block(locale):
 
 def entries(locale):
     block = maintenance_block(locale)
-    values = dict(ENTRY.findall(block))
+    values = {}
+    lines = iter(block.splitlines())
+    for line in lines:
+        if match := SCALAR_ENTRY.match(line):
+            values[match.group(1)] = match.group(2)
+            continue
+        if match := NOWDOC_ENTRY.match(line):
+            key, label = match.groups()
+            content = []
+            for nowdoc_line in lines:
+                if nowdoc_line.strip() == f'{label},':
+                    break
+                content.append(nowdoc_line)
+            else:
+                raise AssertionError(f'{locale}.{key}: unterminated nowdoc {label}')
+            values[key] = '\n'.join(content)
     assert values, f'{locale}: maintenance block is empty or unparsable'
     return block, values
 
 
 def main():
+    locales = sorted(path.stem for path in LANG.glob('*.php')
+                     if path.stem not in {'en', 'main'})
     _, english = entries('en')
     expected_keys = list(english)
     assert len(expected_keys) == 45, f'en: expected 45 keys, found {len(expected_keys)}'
 
-    for locale in LOCALES:
+    for locale in locales:
         block, translated = entries(locale)
         assert list(translated) == expected_keys, (
             f'{locale}: maintenance keys/order differ from English; '
