@@ -632,6 +632,7 @@ $l['button']['NewUsers'] = "Nuovi Utenti";
 $l['button']['ClearSessions'] = "Pulisci Sessioni";
 $l['button']['CSVExport'] = "Esporta CSV";
 $l['button']['Dashboard'] = "Dashboard";
+$l['button']['BackToDashboard'] = "Torna alla Dashboard";
 $l['button']['MailSettings'] = "Impostazioni Mail";
 
 $l['button']['Batch'] = "Batch";

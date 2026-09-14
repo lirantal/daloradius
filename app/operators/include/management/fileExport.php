@@ -341,7 +341,7 @@ switch ($reportType) {
 
 
 		case "reportsBatchList":
-            $outputHeader = "Batch Name, Hotspot, Status, Total Users, Active Users, Plan Name, Plan Cost, Batch Cost, Creation Date, Creation By" . "\n";
+            $outputHeader = "Batch Name, Hotspot, Status, Total Users, Active Users, Plan Name, Plan Cost, Batch Cost, Creation Date, Created By" . "\n";
             $outputContent = "";
 
             $sql = $reportQuery;

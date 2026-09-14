@@ -236,9 +236,9 @@ $l['all']['MACAddress'] = "MAC Address";
 $l['all']['Geocode'] = "Geocode";
 $l['all']['PINCode'] = "PIN Code";
 $l['all']['CreationDate'] = "Creation Date";
-$l['all']['CreationBy'] = "Creation By";
+$l['all']['CreationBy'] = "Created By";
 $l['all']['UpdateDate'] = "Update Date";
-$l['all']['UpdateBy'] = "Update By";
+$l['all']['UpdateBy'] = "Updated By";
 
 $l['all']['Discount'] = "Discount";
 $l['all']['BillAmount'] = "Billed Amount";
@@ -631,6 +631,7 @@ $l['button']['NewUsers'] = "New Users";
 $l['button']['ClearSessions'] = "Clear Sessions";
 $l['button']['CSVExport'] = "CSV Export";
 $l['button']['Dashboard'] = "Dashboard";
+$l['button']['BackToDashboard'] = "Back to Dashboard";
 $l['button']['MailSettings'] = "Mail Settings";
 
 $l['button']['Batch'] = "Batch";
@@ -1780,7 +1781,7 @@ $l['helpPage']['graphmain'] = '<h1 class="fs-5">Graphs</h1>'
 
 $l['helpPage']['rephistory'] = <<<EOF
 Lists all activity performed on management items and provides information on<br>
-Creation Date, Creation By as well as Updated Date and Update By history fields
+Creation Date, Created By as well as Update Date and Updated By history fields
 EOF;
 $l['helpPage']['replastconnect'] = "Lists all login attempts to the RADIUS server, both successful and failed logins";
 $l['helpPage']['replogsboot'] = <<<EOF
