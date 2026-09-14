@@ -1987,7 +1987,9 @@ EOF;
 $l['maintenance'] = [
     'title' => 'Open-session maintenance',
     'history' => 'Delete accounting history (all records)',
-    'help' => '<h2 class="fs-6">Before you start</h2><p>An open accounting record is not necessarily stale. This tool does not check user activity or NAS connectivity.</p><h2 class="fs-6">Actions</h2><ul><li><strong>Close sessions</strong> keeps recorded usage and marks the selected rows as closed with <code>Admin-Reset</code>. It does not disconnect users from the NAS.</li><li><strong>Delete records</strong> permanently removes the selected open rows and their usage data.</li></ul><h2 class="fs-6">Scope and confirmation</h2><p>Username matching is exact according to the database collation. A date matches sessions started strictly before midnight on that date in the accounting database/server timezone.</p><p>Preview every operation before confirming it. A preview contains at most 100 rows, expires after 10 minutes, and can be used once. Changed or no-longer-eligible rows are skipped.</p>',
+    'help' => <<<'HTML'
+    <h2 class="fs-6">Before you start</h2><p>An open accounting record is not necessarily stale. This tool does not check user activity or NAS connectivity.</p><h2 class="fs-6">Actions</h2><ul><li><strong>Close sessions</strong> keeps recorded usage and marks the selected rows as closed with <code>Admin-Reset</code>. It does not disconnect users from the NAS.</li><li><strong>Delete records</strong> permanently removes the selected open rows and their usage data.</li></ul><h2 class="fs-6">Scope and confirmation</h2><p>Username matching is exact according to the database collation. A date matches sessions started strictly before midnight on that date in the accounting database/server timezone.</p><p>Preview every operation before confirming it. A preview contains at most 100 rows, expires after 10 minutes, and can be used once. Changed or no-longer-eligible rows are skipped.</p>
+    HTML,
     'close' => 'Close sessions',
     'delete' => 'Delete records',
     'details' => 'Details',

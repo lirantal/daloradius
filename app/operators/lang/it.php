@@ -682,18 +682,26 @@ $l['button']['DeleteAccountingRecords'] = "Cancella Registrazioni Contabilizzate
 $l['maintenance'] = [
     'title' => 'Manutenzione delle sessioni aperte',
     'history' => 'Elimina la cronologia contabile (tutti i record)',
-    'help' => '<h2 class="fs-6">Prima di iniziare</h2><p>Un record contabile aperto non è necessariamente obsoleto. Questo strumento non verifica l\'attività dell\'utente né la connettività del NAS.</p><h2 class="fs-6">Azioni</h2><ul><li><strong>Chiudi sessioni</strong> conserva l\'utilizzo registrato e contrassegna le righe selezionate come chiuse con <code>Admin-Reset</code>. Non disconnette gli utenti dal NAS.</li><li><strong>Elimina record</strong> rimuove definitivamente le righe aperte selezionate e i relativi dati di utilizzo.</li></ul><h2 class="fs-6">Ambito e conferma</h2><p>La corrispondenza del nome utente è esatta secondo la collation del database. Una data corrisponde alle sessioni avviate strettamente prima della mezzanotte di quella data nel fuso orario del database/server contabile.</p><p>Visualizza in anteprima ogni operazione prima di confermarla. Un\'anteprima contiene al massimo 100 righe, scade dopo 10 minuti e può essere utilizzata una sola volta. Le righe modificate o non più idonee vengono ignorate.</p>',
+    'help' => <<<'HTML'
+    <h2 class="fs-6">Prima di iniziare</h2><p>Un record contabile aperto non è necessariamente obsoleto. Questo strumento non verifica l'attività dell'utente né la connettività del NAS.</p><h2 class="fs-6">Azioni</h2><ul><li><strong>Chiudi sessioni</strong> conserva l'utilizzo registrato e contrassegna le righe selezionate come chiuse con <code>Admin-Reset</code>. Non disconnette gli utenti dal NAS.</li><li><strong>Elimina record</strong> rimuove definitivamente le righe aperte selezionate e i relativi dati di utilizzo.</li></ul><h2 class="fs-6">Ambito e conferma</h2><p>La corrispondenza del nome utente è esatta secondo la collation del database. Una data corrisponde alle sessioni avviate strettamente prima della mezzanotte di quella data nel fuso orario del database/server contabile.</p><p>Visualizza in anteprima ogni operazione prima di confermarla. Un'anteprima contiene al massimo 100 righe, scade dopo 10 minuti e può essere utilizzata una sola volta. Le righe modificate o non più idonee vengono ignorate.</p>
+    HTML,
     'close' => 'Chiudi sessioni',
     'delete' => 'Elimina record',
     'details' => 'Dettagli',
     'openWarning' => 'Le sessioni aperte potrebbero essere ancora attive.',
-    'openHelp' => 'Sono idonei solo i record con un tempo di arresto mancante o con il valore zero legacy. Non viene eseguito alcun rilevamento dell\'inattività.',
-    'dateHelp' => 'L\'ambito della data indica INIZIO SESSIONE PRIMA della data selezionata, esclusivamente alle 00:00:00 nel fuso orario del database/server contabile (non nel fuso orario del browser). Non è un limite basato sull\'ultima attività.',
+    'openHelp' => <<<'OPENHELP'
+    Sono idonei solo i record con un tempo di arresto mancante o con il valore zero legacy. Non viene eseguito alcun rilevamento dell'inattività.
+    OPENHELP,
+    'dateHelp' => <<<'DATEHELP'
+    L'ambito della data indica INIZIO SESSIONE PRIMA della data selezionata, esclusivamente alle 00:00:00 nel fuso orario del database/server contabile (non nel fuso orario del browser). Non è un limite basato sull'ultima attività.
+    DATEHELP,
     'selectTitle' => 'Seleziona sessioni',
     'closeSummary' => 'Conserva i dati contabili e contrassegna le sessioni selezionate come chiuse.',
     'deleteSummary' => 'Rimuovi definitivamente i record contabili aperti selezionati.',
     'closeHelp' => 'I record vengono chiusi ora con la causa di terminazione manuale Admin-Reset. Questo non disconnette gli utenti dal NAS. La durata registrata e i contatori del traffico vengono conservati senza modifiche; gli aggiornamenti contabili futuri non sono garantiti.',
-    'deleteHelp' => 'L\'eliminazione è irreversibile. L\'utilizzo registrato viene rimosso definitivamente e i report o i totali di utilizzo potrebbero cambiare. La cronologia chiusa non viene eliminata da questo strumento.',
+    'deleteHelp' => <<<'DELETEHELP'
+    L'eliminazione è irreversibile. L'utilizzo registrato viene rimosso definitivamente e i report o i totali di utilizzo potrebbero cambiare. La cronologia chiusa non viene eliminata da questo strumento.
+    DELETEHELP,
     'scope' => 'Seleziona ambito',
     'username' => 'Nome utente',
     'date' => 'Inizio sessione prima della data',
@@ -702,17 +710,25 @@ $l['maintenance'] = [
     'filterDetails' => 'La corrispondenza del nome utente segue la collation del database contabile; la ricerca con caratteri jolly non è supportata.',
     'preview' => 'Visualizza in anteprima i record corrispondenti',
     'previewTitle' => 'Anteprima',
-    'previewDetails' => 'Dettagli dell\'anteprima',
-    'count' => '%d record corrispondenti al momento del conteggio; %d record in questa anteprima. Massimo %d per operazione, ordinati per ID contabile. Solo i record visualizzati possono essere modificati. Ripeti l\'anteprima per un altro lotto; il conteggio può cambiare durante gli aggiornamenti contabili.',
+    'previewDetails' => <<<'PREVIEWDETAILS'
+    Dettagli dell'anteprima
+    PREVIEWDETAILS,
+    'count' => <<<'COUNT'
+    %d record corrispondenti al momento del conteggio; %d record in questa anteprima. Massimo %d per operazione, ordinati per ID contabile. Solo i record visualizzati possono essere modificati. Ripeti l'anteprima per un altro lotto; il conteggio può cambiare durante gli aggiornamenti contabili.
+    COUNT,
     'concurrency' => 'La conferma scade dopo 10 minuti e può essere utilizzata una sola volta. I record modificati dagli aggiornamenti Interim/Stop o non più idonei vengono ignorati. I record che corrispondono successivamente non vengono mai aggiunti a questa operazione.',
     'id' => 'ID contabile',
     'nas' => 'Indirizzo NAS',
     'start' => 'Inizio sessione',
-    'activity' => 'Ora dell\'aggiornamento registrato',
+    'activity' => <<<'ACTIVITY'
+    Ora dell'aggiornamento registrato
+    ACTIVITY,
     'seconds' => 'Secondi registrati',
     'input' => 'Byte di input registrati',
     'output' => 'Byte di output registrati',
-    'activityHelp' => 'L\'ora dell\'aggiornamento viene mostrata solo se lo schema contabile fornisce acctupdatetime. I valori mancanti vengono mostrati come un trattino. Questi valori del database non dimostrano l\'inattività o la connettività del NAS.',
+    'activityHelp' => <<<'ACTIVITYHELP'
+    L'ora dell'aggiornamento viene mostrata solo se lo schema contabile fornisce acctupdatetime. I valori mancanti vengono mostrati come un trattino. Questi valori del database non dimostrano l'inattività o la connettività del NAS.
+    ACTIVITYHELP,
     'closeSelectionOne' => '%d sessione selezionata',
     'closeSelectionMany' => '%d sessioni selezionate',
     'deleteSelectionOne' => '%d record selezionato',
@@ -722,7 +738,9 @@ $l['maintenance'] = [
     'deleteConfirmOne' => 'Elimina definitivamente %d record',
     'deleteConfirmMany' => 'Elimina definitivamente %d record',
     'empty' => 'Nessun record aperto corrispondente. Non è stato modificato nulla.',
-    'result' => '%s: %d effettivamente interessati, %d record modificati o non più idonei ignorati, %d non riusciti. Visualizza nuovamente l\'anteprima prima di qualsiasi ulteriore operazione.',
+    'result' => <<<'RESULT'
+    %s: %d effettivamente interessati, %d record modificati o non più idonei ignorati, %d non riusciti. Visualizza nuovamente l'anteprima prima di qualsiasi ulteriore operazione.
+    RESULT,
     'invalid' => 'Richiesta, filtro, token CSRF o conferma scaduta non validi. Non è stato modificato nulla. Crea una nuova anteprima.',
     'error' => 'Impossibile leggere i record contabili. Non è stata eseguita alcuna operazione.',
 ];
