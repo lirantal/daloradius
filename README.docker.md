@@ -85,6 +85,10 @@ docker compose exec -T radius-mysql sh -lc 'mariadb -u"$MYSQL_USER" -p"$MYSQL_PA
   < contrib/db/migrations/2026-06-operator-totp-mfa.sql
 ```
 
+When upgrading a database initialized by daloRADIUS 2.3, apply
+`contrib/db/migrations/2026-09-operator-config-acls.sql` to make the Mail and
+Message Settings permissions available in the operator ACL editor.
+
 For the user portal password hashing upgrade, apply
 `contrib/db/migrations/2026-09-user-portal-password-hashing.sql`, deploy the
 updated web application, then follow
