@@ -44,14 +44,18 @@ def wait_for_database():
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
         result = subprocess.run(
-            ["docker", "exec", DB, "mariadb-admin", "ping", "-uroot", "--silent"],
+            [
+                "docker", "exec", DB,
+                "mariadb", "-uroot", "--batch", "--skip-column-names",
+                "-e", "SELECT @@skip_networking",
+            ],
             capture_output=True,
             text=True,
         )
-        if result.returncode == 0:
+        if result.returncode == 0 and result.stdout.strip() == "0":
             return
         time.sleep(1)
-    raise AssertionError("MariaDB did not become ready")
+    raise AssertionError("MariaDB final server did not become ready")
 
 
 def scalar(statement):
