@@ -201,7 +201,7 @@ class NativeLdapAdapter implements OperatorLdapAdapter
     public function connect($uri)
     {
         $this->available('ldap_connect');
-        return ldap_connect($uri);
+        return @ldap_connect($uri);
     }
 
     public function setOption($connection, $option, $value)
@@ -213,19 +213,19 @@ class NativeLdapAdapter implements OperatorLdapAdapter
     public function startTls($connection)
     {
         $this->available('ldap_start_tls');
-        return ldap_start_tls($connection);
+        return @ldap_start_tls($connection);
     }
 
     public function bind($connection, $dn, $password)
     {
         $this->available('ldap_bind');
-        return ldap_bind($connection, $dn, $password);
+        return @ldap_bind($connection, $dn, $password);
     }
 
     public function search($connection, $baseDn, $filter, array $attributes)
     {
         $this->available('ldap_search');
-        return ldap_search($connection, $baseDn, $filter, $attributes);
+        return @ldap_search($connection, $baseDn, $filter, $attributes);
     }
 
     public function entries($connection, $searchResult)
@@ -691,7 +691,7 @@ final class LdapAuthProvider implements OperatorAuthProvider
         if ($code === null || $code === '') {
             return false;
         }
-        return in_array((int) $code, array(1, 51, 52, 53, 81, 82, 85, 86, 91, 110, 112, 113, 114, 115, 116, 118), true);
+        return in_array((int) $code, array(-1, 0, 1, 51, 52, 53, 81, 82, 85, 86, 91, 110, 112, 113, 114, 115, 116, 118), true);
     }
 
     private function safeClose($connection)
