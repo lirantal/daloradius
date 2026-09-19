@@ -195,14 +195,14 @@ function tables_exist {
 }
 
 function ensure_operator_password_column {
-    local column_length
+    local column_metadata
 
     if ! table_exists "operators"; then
         return
     fi
 
-    column_length=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
-SELECT CHARACTER_MAXIMUM_LENGTH
+    column_metadata=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
+SELECT CONCAT(CHARACTER_MAXIMUM_LENGTH, ':', IS_NULLABLE)
 FROM information_schema.columns
 WHERE table_schema = DATABASE()
   AND table_name = 'operators'
@@ -210,18 +210,28 @@ WHERE table_schema = DATABASE()
 EOSQL
 )
 
-    case "$column_length" in
-        ""|*[!0-9]*)
+    case "$column_metadata" in
+        ""|*[!0-9:Y]*)
             return
             ;;
     esac
 
-    if [ "$column_length" -lt 95 ]; then
+    if [ "${column_metadata%%:*}" -lt 95 ] || [ "${column_metadata##*:}" != "YES" ]; then
         echo "Updating operators.password column length for password hashes."
         mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
-ALTER TABLE operators MODIFY password VARCHAR(95) NOT NULL;
+ALTER TABLE operators MODIFY password VARCHAR(95) DEFAULT NULL;
 EOSQL
     fi
+}
+
+function run_operator_ldap_migration {
+    if ! table_exists "operators"; then
+        return
+    fi
+
+    echo "Applying operator LDAP authentication migration."
+    mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" \
+        < "$DALORADIUS_PATH/contrib/db/migrations/2026-09-operator-ldap.sql"
 }
 
 function ensure_operator_totp_columns {
@@ -301,6 +311,7 @@ else
 fi
 
 ensure_operator_password_column
+run_operator_ldap_migration
 ensure_operator_totp_columns
 
 # Start Apache2 in the foreground
