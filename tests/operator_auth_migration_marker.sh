@@ -26,20 +26,27 @@ line_number_after() {
 
 marker_path=/data/.migration_2026-09-operator-ldap.done
 marker_def=$(line_number "$INIT" "OPERATOR_LDAP_MIGRATION_MARKER=$marker_path")
-marker_guard=$(line_number "$INIT" 'if test -f "$OPERATOR_LDAP_MIGRATION_MARKER"; then')
-table_guard=$(line_number_after "$INIT" "$marker_guard" 'if ! table_exists "operators"; then')
+migration_function=$(line_number "$INIT" 'function run_operator_ldap_migration')
+table_guard=$(line_number_after "$INIT" "$migration_function" 'if ! table_exists "operators"; then')
+marker_guard=$(line_number_after "$INIT" "$table_guard" 'if test -f "$OPERATOR_LDAP_MIGRATION_MARKER" && operator_ldap_schema_ready; then')
 migration_sql=$(line_number "$INIT" '< "$DALORADIUS_PATH/contrib/db/migrations/2026-09-operator-ldap.sql"')
 marker_write=$(line_number "$INIT" 'date > "$OPERATOR_LDAP_MIGRATION_MARKER"')
 
 [ -n "$marker_def" ] || fail 'migration marker is not version-specific and persistent'
+[ -n "$migration_function" ] || fail 'migration function is missing'
 [ -n "$marker_guard" ] || fail 'startup path does not check the migration marker'
 [ -n "$table_guard" ] || fail 'startup path no longer preserves the missing-operators guard'
 [ -n "$migration_sql" ] || fail 'startup path does not invoke the LDAP migration SQL'
 [ -n "$marker_write" ] || fail 'successful migration does not write the marker'
-[ "$marker_def" -lt "$marker_guard" ] || fail 'marker is defined after the migration function starts'
-[ "$marker_guard" -lt "$table_guard" ] || fail 'marker check does not precede migration work'
+[ "$marker_def" -lt "$migration_function" ] || fail 'marker is defined after the migration function starts'
+[ "$migration_function" -lt "$table_guard" ] || fail 'operators table guard is outside the migration function'
+[ "$table_guard" -lt "$marker_guard" ] || fail 'schema table guard does not precede marker validation'
 [ "$migration_sql" -lt "$marker_write" ] || fail 'marker can be written before migration SQL succeeds'
 grep -Fq 'set -euo pipefail' "$INIT" || fail 'startup script does not stop on migration failure'
+grep -Fq 'test "$schema_state" = "1:1:1:1:1"' "$INIT" || fail 'marker skip does not verify the live LDAP schema'
+grep -Fq "column_name = 'auth_source' AND data_type = 'varchar'" "$INIT" || fail 'auth_source shape is not verified'
+grep -Fq "column_name = 'external_id' AND data_type = 'varchar'" "$INIT" || fail 'external_id shape is not verified'
+grep -Fq "seq_in_index = 1 AND column_name = 'external_id'" "$INIT" || fail 'external identity index target is not verified'
 
 password_check=$(line_number "$INIT" 'ensure_operator_password_column')
 ldap_check=$(line_number "$INIT" 'run_operator_ldap_migration')

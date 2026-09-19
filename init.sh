@@ -257,13 +257,49 @@ EOSQL
 
 OPERATOR_LDAP_MIGRATION_MARKER=/data/.migration_2026-09-operator-ldap.done
 
+function operator_ldap_schema_ready {
+    local schema_state
+
+    schema_state=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
+SELECT CONCAT(
+    (SELECT COUNT(*) FROM information_schema.columns
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND column_name = 'auth_source' AND data_type = 'varchar'
+       AND character_maximum_length = 16 AND is_nullable = 'NO'
+       AND REPLACE(column_default, CHAR(39), '') = 'local'),
+    ':',
+    (SELECT COUNT(*) FROM information_schema.columns
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND column_name = 'external_id' AND data_type = 'varchar'
+       AND character_maximum_length = 255 AND is_nullable = 'YES'),
+    ':',
+    (SELECT COUNT(*) FROM information_schema.columns
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND column_name = 'password' AND data_type = 'varchar'
+       AND character_maximum_length >= 95 AND is_nullable = 'YES'),
+    ':',
+    (SELECT COUNT(*) FROM information_schema.statistics
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND index_name = 'operators_external_id_uq' AND non_unique = 0
+       AND seq_in_index = 1 AND column_name = 'external_id'),
+    ':',
+    (SELECT COUNT(*) FROM information_schema.statistics
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND index_name = 'operators_external_id_uq')
+);
+EOSQL
+    )
+
+    test "$schema_state" = "1:1:1:1:1"
+}
+
 function run_operator_ldap_migration {
-    if test -f "$OPERATOR_LDAP_MIGRATION_MARKER"; then
-        echo "Operator LDAP authentication migration already applied, skipping."
+    if ! table_exists "operators"; then
         return
     fi
 
-    if ! table_exists "operators"; then
+    if test -f "$OPERATOR_LDAP_MIGRATION_MARKER" && operator_ldap_schema_ready; then
+        echo "Operator LDAP authentication migration already applied, skipping."
         return
     fi
 

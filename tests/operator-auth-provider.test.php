@@ -75,7 +75,8 @@ foreach ($fake->options as $option) {
 }
 check_auth('LDAP network timeout is applied as a bounded integer', $hasNetworkTimeout);
 check_auth('LDAP time limit option is applied when available', $hasTimeLimit);
-check_auth('LDAP search is bounded to two results and two seconds', $fake->searchLimits[0] === array(2, 2));
+check_auth('LDAP search is bounded to two results and the remaining deadline',
+    $fake->searchLimits[0] === array(2, 5));
 
 function option_has_value(array $options, $option, $value)
 {

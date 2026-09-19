@@ -348,7 +348,7 @@ final class LdapAuthProvider implements OperatorAuthProvider
                 }
                 $filter = $this->userFilter($username);
                 $attributes = $this->requestedAttributes();
-                $searchTimeLimit = min(2, $remaining);
+                $searchTimeLimit = $remaining;
                 $search = $this->adapter->search(
                     $connection,
                     $this->userBaseDn(),
@@ -594,7 +594,7 @@ final class LdapAuthProvider implements OperatorAuthProvider
         }
         $ca = $this->caFile();
         if ($ca !== '' && !$this->adapter->setOption($connection,
-            $this->ldapConstant('LDAP_OPT_X_TLS_CACERTFILE', 24579), $ca)) {
+            $this->ldapConstant('LDAP_OPT_X_TLS_CACERTFILE', 24578), $ca)) {
             return false;
         }
         if ($timeout === null) {
