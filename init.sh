@@ -255,7 +255,14 @@ EOSQL
     fi
 }
 
+OPERATOR_LDAP_MIGRATION_MARKER=/data/.migration_2026-09-operator-ldap.done
+
 function run_operator_ldap_migration {
+    if test -f "$OPERATOR_LDAP_MIGRATION_MARKER"; then
+        echo "Operator LDAP authentication migration already applied, skipping."
+        return
+    fi
+
     if ! table_exists "operators"; then
         return
     fi
@@ -263,6 +270,7 @@ function run_operator_ldap_migration {
     echo "Applying operator LDAP authentication migration."
     mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" \
         < "$DALORADIUS_PATH/contrib/db/migrations/2026-09-operator-ldap.sql"
+    date > "$OPERATOR_LDAP_MIGRATION_MARKER"
 }
 
 function ensure_operator_totp_columns {

@@ -53,7 +53,7 @@ check_auth('LDAP technical failover reaches second URI', $result->isAuthenticate
 check_auth('LDAP provider has a stable name', $ldap->getName() === 'ldap');
 check_auth('LDAP exact security key enables startTLS', $fake->startTls === 1);
 $hasGlobalCa = false;
-$caOption = defined('LDAP_OPT_X_TLS_CACERTFILE') ? LDAP_OPT_X_TLS_CACERTFILE : 24579;
+$caOption = defined('LDAP_OPT_X_TLS_CACERTFILE') ? LDAP_OPT_X_TLS_CACERTFILE : 24578;
 foreach ($fake->options as $option) {
     if ($option[0] === null && $option[1] === $caOption && $option[2] === '/etc/ldap/operator-ca.pem') {
         $hasGlobalCa = true;
