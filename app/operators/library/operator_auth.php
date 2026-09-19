@@ -181,7 +181,7 @@ interface OperatorLdapAdapter
     public function setOption($connection, $option, $value);
     public function startTls($connection);
     public function bind($connection, $dn, $password);
-    public function search($connection, $baseDn, $filter, array $attributes);
+    public function search($connection, $baseDn, $filter, array $attributes, $sizeLimit = 2, $timeLimit = 2);
     public function entries($connection, $searchResult);
     public function escape($value, $ignore = '', $flags = 0);
     public function errorCode($connection);
@@ -222,10 +222,11 @@ class NativeLdapAdapter implements OperatorLdapAdapter
         return @ldap_bind($connection, $dn, $password);
     }
 
-    public function search($connection, $baseDn, $filter, array $attributes)
+    public function search($connection, $baseDn, $filter, array $attributes, $sizeLimit = 2, $timeLimit = 2)
     {
         $this->available('ldap_search');
-        return @ldap_search($connection, $baseDn, $filter, $attributes);
+        return @ldap_search($connection, $baseDn, $filter, $attributes, false,
+            (int) $sizeLimit, (int) $timeLimit);
     }
 
     public function entries($connection, $searchResult)
@@ -260,6 +261,8 @@ class OperatorNativeLdapAdapter extends NativeLdapAdapter
 
 final class LdapAuthProvider implements OperatorAuthProvider
 {
+    const LDAP_TIMEOUT_MIN_SECONDS = 1;
+    const LDAP_TIMEOUT_MAX_SECONDS = 30;
     private $config;
     private $adapter;
 
@@ -292,18 +295,27 @@ final class LdapAuthProvider implements OperatorAuthProvider
         if ($this->externalIdAttribute() === null) {
             return OperatorAuthResult::failure('ldap_configuration_invalid');
         }
+        $timeout = $this->configuredTimeout();
+        if ($timeout === null) {
+            return OperatorAuthResult::failure('ldap_configuration_invalid');
+        }
 
         $uris = $this->uris();
         if (!$uris) {
             return OperatorAuthResult::failure('ldap_unavailable', true);
         }
+        $deadline = microtime(true) + $timeout;
         $lastTechnical = false;
         foreach ($uris as $uri) {
+            $remaining = $this->remainingSeconds($deadline, $timeout);
+            if ($remaining === 0) {
+                break;
+            }
             $connection = null;
             $searchCompleted = false;
             try {
                 $security = $this->securityMode($uri);
-                if ($security === null || !$this->configureTlsOptions(null)) {
+                if ($security === null || !$this->configureTlsOptions(null, $remaining)) {
                     $lastTechnical = true;
                     continue;
                 }
@@ -312,7 +324,8 @@ final class LdapAuthProvider implements OperatorAuthProvider
                     $lastTechnical = true;
                     continue;
                 }
-                if (!$this->configureTls($connection, $uri)) {
+                $remaining = $this->remainingSeconds($deadline, $timeout);
+                if ($remaining === 0 || !$this->configureTls($connection, $uri, $remaining)) {
                     $lastTechnical = true;
                     $this->safeClose($connection);
                     continue;
@@ -327,9 +340,23 @@ final class LdapAuthProvider implements OperatorAuthProvider
                     return OperatorAuthResult::failure('service_auth_failed');
                 }
 
+                $remaining = $this->remainingSeconds($deadline, $timeout);
+                if ($remaining === 0) {
+                    $lastTechnical = true;
+                    $this->safeClose($connection);
+                    break;
+                }
                 $filter = $this->userFilter($username);
                 $attributes = $this->requestedAttributes();
-                $search = $this->adapter->search($connection, $this->userBaseDn(), $filter, $attributes);
+                $searchTimeLimit = min(2, $remaining);
+                $search = $this->adapter->search(
+                    $connection,
+                    $this->userBaseDn(),
+                    $filter,
+                    $attributes,
+                    2,
+                    $searchTimeLimit
+                );
                 if (!$search) {
                     $code = $this->errorCode($connection);
                     $this->safeClose($connection);
@@ -364,6 +391,15 @@ final class LdapAuthProvider implements OperatorAuthProvider
                     $this->safeClose($connection);
                     return OperatorAuthResult::failure('ldap_search_failed');
                 }
+                $remaining = $this->remainingSeconds($deadline, $timeout);
+                if ($remaining === 0) {
+                    $lastTechnical = true;
+                    $this->safeClose($connection);
+                    break;
+                }
+                /* Refresh per-connection limits before the user bind so a
+                 * slow service bind cannot consume the entire request budget. */
+                $this->configureTimeoutOptions($connection, $remaining);
                 if (!$this->adapter->bind($connection, $dn, $password)) {
                     $code = $this->errorCode($connection);
                     $this->safeClose($connection);
@@ -372,6 +408,11 @@ final class LdapAuthProvider implements OperatorAuthProvider
                         continue;
                     }
                     return OperatorAuthResult::failure('invalid_credentials');
+                }
+                if ($this->remainingSeconds($deadline, $timeout) === 0) {
+                    $lastTechnical = true;
+                    $this->safeClose($connection);
+                    break;
                 }
 
                 $identity = array(
@@ -489,7 +530,59 @@ final class LdapAuthProvider implements OperatorAuthProvider
                 $this->value('CONFIG_OPERATOR_LDAP_CA_CERT', '')));
     }
 
-    private function configureTlsOptions($connection)
+    private function configuredTimeout()
+    {
+        $value = $this->value('CONFIG_OPERATOR_LDAP_NETWORK_TIMEOUT', 5);
+        if (is_int($value)) {
+            $timeout = $value;
+        } elseif (is_string($value) && preg_match('/^[+\-]?\d+$/D', trim($value))) {
+            $value = trim($value);
+            $negative = isset($value[0]) && $value[0] === '-';
+            $digits = ltrim(ltrim($value, '+-'), '0');
+            if ($digits === '') {
+                $timeout = 0;
+            } elseif (strlen($digits) > strlen((string) self::LDAP_TIMEOUT_MAX_SECONDS)
+                || (strlen($digits) === strlen((string) self::LDAP_TIMEOUT_MAX_SECONDS)
+                    && strcmp($digits, (string) self::LDAP_TIMEOUT_MAX_SECONDS) > 0)) {
+                $timeout = $negative ? self::LDAP_TIMEOUT_MIN_SECONDS : self::LDAP_TIMEOUT_MAX_SECONDS;
+            } else {
+                $timeout = (int) $digits;
+                if ($negative) {
+                    $timeout = -$timeout;
+                }
+            }
+        } else {
+            return null;
+        }
+        return max(self::LDAP_TIMEOUT_MIN_SECONDS,
+            min(self::LDAP_TIMEOUT_MAX_SECONDS, $timeout));
+    }
+
+    private function remainingSeconds($deadline, $maximum)
+    {
+        $remaining = $deadline - microtime(true);
+        if ($remaining <= 0) {
+            return 0;
+        }
+        return min($maximum, max(1, (int) ceil($remaining)));
+    }
+
+    private function configureTimeoutOptions($connection, $timeout)
+    {
+        /* Timeout options are optional across LDAP implementations. A server
+         * that does not support one must not turn a usable connection into a
+         * configuration failure; the search limits still bound the query. */
+        try {
+            $this->adapter->setOption($connection,
+                $this->ldapConstant('LDAP_OPT_NETWORK_TIMEOUT', 20485), (int) $timeout);
+            $this->adapter->setOption($connection,
+                $this->ldapConstant('LDAP_OPT_TIMELIMIT', 4), (int) $timeout);
+        } catch (Throwable $exception) {
+            /* Best effort: native LDAP reports unsupported options here. */
+        }
+    }
+
+    private function configureTlsOptions($connection, $timeout = null)
     {
         $verify = $this->booleanValue('CONFIG_OPERATOR_LDAP_TLS_VERIFY', true);
         $requireCert = $verify
@@ -504,18 +597,20 @@ final class LdapAuthProvider implements OperatorAuthProvider
             $this->ldapConstant('LDAP_OPT_X_TLS_CACERTFILE', 24579), $ca)) {
             return false;
         }
-        $timeout = $this->value('CONFIG_OPERATOR_LDAP_NETWORK_TIMEOUT', null);
-        if ($timeout !== null && !$this->adapter->setOption($connection,
-            $this->ldapConstant('LDAP_OPT_NETWORK_TIMEOUT', 20485), (int) $timeout)) {
+        if ($timeout === null) {
+            $timeout = $this->configuredTimeout();
+        }
+        if ($timeout === null) {
             return false;
         }
+        $this->configureTimeoutOptions($connection, $timeout);
         return true;
     }
 
-    private function configureTls($connection, $uri)
+    private function configureTls($connection, $uri, $timeout = null)
     {
         $mode = $this->securityMode($uri);
-        if ($mode === null || !$this->configureTlsOptions($connection)) {
+        if ($mode === null || !$this->configureTlsOptions($connection, $timeout)) {
             return false;
         }
         if ($mode === 'starttls' && !$this->adapter->startTls($connection)) {
@@ -549,7 +644,7 @@ final class LdapAuthProvider implements OperatorAuthProvider
             $filter = '(&' . $template . '(' . $attribute . '=' . $escaped . '))';
         }
         $groups = $this->allowedGroups();
-        $rule = (string) $this->value('CONFIG_OPERATOR_LDAP_GROUP_MATCHING_RULE', '');
+        $rule = $this->groupMatchingRule();
         if ($groups && $rule !== '') {
             $groupAttribute = $this->value('CONFIG_OPERATOR_LDAP_GROUP_ATTRIBUTE', 'memberOf');
             $parts = array();
@@ -582,10 +677,16 @@ final class LdapAuthProvider implements OperatorAuthProvider
             $attrs[] = $external;
         }
         $group = $this->value('CONFIG_OPERATOR_LDAP_GROUP_ATTRIBUTE', 'memberOf');
-        if ($group !== '') {
+        if ($group !== '' && $this->groupMatchingRule() === '') {
             $attrs[] = $group;
         }
         return array_values(array_unique($attrs));
+    }
+
+    private function groupMatchingRule()
+    {
+        $rule = $this->value('CONFIG_OPERATOR_LDAP_GROUP_MATCHING_RULE', '');
+        return is_string($rule) ? trim($rule) : '';
     }
 
     private function allowedGroups()
@@ -605,7 +706,7 @@ final class LdapAuthProvider implements OperatorAuthProvider
         }
         /* With the AD matching rule, the server has already enforced nested
          * membership in the search filter.  Do not require memberOf in attrs. */
-        if ((string) $this->value('CONFIG_OPERATOR_LDAP_GROUP_MATCHING_RULE', '') !== '') {
+        if ($this->groupMatchingRule() !== '') {
             return true;
         }
         $attribute = $this->value('CONFIG_OPERATOR_LDAP_GROUP_ATTRIBUTE', 'memberOf');

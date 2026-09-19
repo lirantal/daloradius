@@ -121,7 +121,7 @@ lists are JSON arrays in Docker and PHP arrays in the configuration file.
 | `CONFIG_OPERATOR_AUTH_LDAP_BIND_PASSWORD` | `DALORADIUS_LDAP_BIND_PASSWORD` | secret / empty | Service-account password. A non-empty environment value overrides the PHP-file value. |
 | `CONFIG_OPERATOR_AUTH_LDAP_FILTER` | `DALORADIUS_LDAP_FILTER` | LDAP filter | User search filter. It should contain exactly one escaped `{username}` placeholder. |
 | `CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE` | `DALORADIUS_LDAP_EXTERNAL_ID_ATTRIBUTE` | attribute / required when LDAP is enabled | Stable directory identifier stored in `operators.external_id`; normally `objectGUID` for AD or `entryUUID` for OpenLDAP. The supplied configuration samples use `uid`, but the Compose fallback is empty if the variable is omitted, so set it explicitly. |
-| `CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT` | `DALORADIUS_LDAP_TIMEOUT` | integer seconds / `5` | Per-server LDAP network timeout. |
+| `CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT` | `DALORADIUS_LDAP_TIMEOUT` | positive integer seconds / `5`, clamped to `1..30` | Request-wide LDAP deadline shared by sequential failover URIs; also bounds each server operation where supported. |
 | `CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS` | `DALORADIUS_LDAP_ALLOWED_GROUPS` | PHP array / JSON array / empty | Optional allowed group DNs. Empty means no additional LDAP group restriction. |
 | `CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE` | `DALORADIUS_LDAP_GROUP_ATTRIBUTE` | attribute / `memberOf` | DN-valued membership attribute read from the user entry. |
 | `CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE` | `DALORADIUS_LDAP_GROUP_MATCHING_RULE` | OID / empty | Optional server-side matching rule. Use the AD recursive membership OID for nested AD groups. |
