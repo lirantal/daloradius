@@ -131,14 +131,20 @@ log "creating LDAP service account, user, and group"
 docker exec "$DC_NAME" samba-tool user create ldap-service "$SERVICE_PASS" >/dev/null
 docker exec "$DC_NAME" samba-tool user create smoke-user "$USER_PASS" >/dev/null
 docker exec "$DC_NAME" samba-tool group add "Smoke Group" >/dev/null
+docker exec "$DC_NAME" samba-tool group add "Parent Group" >/dev/null
 docker exec "$DC_NAME" samba-tool group addmembers "Smoke Group" smoke-user >/dev/null
+docker exec "$DC_NAME" samba-tool group addmembers "Parent Group" "Smoke Group" >/dev/null
 
 log "running LDAP assertions from disposable client"
 docker run --rm --name "$CLIENT_NAME" --network "$NETWORK" \
     --add-host "ldapdc:$DC_IP" \
     --add-host "ldapdc.example.test:$DC_IP" \
     --volume "$CA_DIR:/run/ldap-ca:ro" \
+    --volume "$SCRIPT_DIR/..:/opt/daloradius:ro" \
     --env "LDAP_URI=ldap://$DC_IP" \
+    --env "LDAP_HOST=ldapdc.example.test" \
+    --env "LDAP_CA_FILE=/run/ldap-ca/ca.pem" \
+    --env "LDAP_WRONG_CA_FILE=/run/ldap-ca/untrusted-ca.pem" \
     --env "BASE_DN=$BASE_DN" \
     --env "SERVICE_BIND=$SERVICE_BIND" \
     --env "SERVICE_PASS=$SERVICE_PASS" \
@@ -256,6 +262,8 @@ ldapsearch -LLL -o ldif-wrap=no -x -H "$ldaps_uri" \
     -D "$SERVICE_BIND" -w "$SERVICE_PASS" -b "$BASE_DN" -s base \
     "(objectClass=*)" dn >/tmp/ldaps-no-verify.out
 printf "LDAPS TLS_REQCERT=never: PASS\n"
+
+php /opt/daloradius/tests/operator-ldap-provider-live.test.php
 '
 
 log "PASS: Samba AD plain LDAP and TLS smoke tests"

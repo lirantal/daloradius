@@ -9,6 +9,8 @@ RUN apt-get update \
         ldap-utils \
         openssl \
         procps \
+        php-cli \
+        php-ldap \
         samba-ad-dc \
         samba-ad-provision \
         samba-dsdb-modules \
