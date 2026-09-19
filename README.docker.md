@@ -73,6 +73,12 @@ RADIUS authentication and accounting listen on host UDP ports `1812` and `1813`.
 
 MariaDB data remains in `./data/mysql`, FreeRADIUS init state remains in `./data/freeradius`, and daloRADIUS init state remains in `./data/daloradius`.
 
+## Operator LDAP authentication
+
+Operator LDAP configuration, including all environment variables, LDAPS and
+StartTLS, private CA mounts, Active Directory and OpenLDAP examples, operator
+provisioning, and rollout guidance, is documented in
+[`doc/setup/operator-ldap.md`](doc/setup/operator-ldap.md#docker-compose).
 
 ## Database migrations for upgrades
 
