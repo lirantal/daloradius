@@ -35,6 +35,7 @@ RUN apt-get update \
   php-gd \
   php-cli \
   php-curl \
+  php-ldap \
   php-mail \
   php-mail-mime \
   php-mbstring \

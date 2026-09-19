@@ -21,6 +21,20 @@ MAIL_SMTPADDR=${MAIL_SMTPADDR:-}
 MAIL_PORT=${MAIL_PORT:-}
 MAIL_FROM=${MAIL_FROM:-}
 MAIL_AUTH=${MAIL_AUTH:-}
+OPERATOR_AUTH_LOCAL_ENABLED=${DALORADIUS_OPERATOR_AUTH_LOCAL_ENABLED:-true}
+OPERATOR_AUTH_LDAP_ENABLED=${DALORADIUS_OPERATOR_AUTH_LDAP_ENABLED:-false}
+OPERATOR_AUTH_DEFAULT=${DALORADIUS_OPERATOR_AUTH_DEFAULT:-local}
+LDAP_URI_JSON=${DALORADIUS_LDAP_URI:-[]}
+LDAP_SECURITY=${DALORADIUS_LDAP_SECURITY:-starttls}
+LDAP_TLS_VERIFY=${DALORADIUS_LDAP_TLS_VERIFY:-true}
+LDAP_TLS_CA_FILE=${DALORADIUS_LDAP_TLS_CA_FILE:-}
+LDAP_BASE_DN=${DALORADIUS_LDAP_BASE_DN:-}
+LDAP_USER_BASE_DN=${DALORADIUS_LDAP_USER_BASE_DN:-}
+LDAP_BIND_DN=${DALORADIUS_LDAP_BIND_DN:-}
+LDAP_FILTER=${DALORADIUS_LDAP_FILTER:-}
+LDAP_EXTERNAL_ID_ATTRIBUTE=${DALORADIUS_LDAP_EXTERNAL_ID_ATTRIBUTE:-}
+LDAP_TIMEOUT=${DALORADIUS_LDAP_TIMEOUT:-5}
+LDAP_ALLOWED_GROUPS_JSON=${DALORADIUS_LDAP_ALLOWED_GROUPS:-[]}
 
 MYSQL_DEFAULTS_FILE=""
 
@@ -58,6 +72,48 @@ function php_config_set {
     sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = '$value';|" "$DALORADIUS_CONF_PATH"
 }
 
+function php_config_set_boolean {
+    local key="$1"
+    local raw="$2"
+    local value
+    case "${raw,,}" in
+        1|true|yes|on) value=true ;;
+        0|false|no|off) value=false ;;
+        *)
+            echo "Invalid boolean value for ${key}." >&2
+            exit 1
+            ;;
+    esac
+    sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = $value;|" "$DALORADIUS_CONF_PATH"
+}
+
+function php_config_set_integer {
+    local key="$1"
+    local value="$2"
+    case "$value" in
+        ''|*[!0-9]*)
+            echo "Invalid integer value for ${key}." >&2
+            exit 1
+            ;;
+    esac
+    sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = $value;|" "$DALORADIUS_CONF_PATH"
+}
+
+function php_config_set_array {
+    local key="$1"
+    local json="$2"
+    local value
+
+    # JSON is used instead of delimiter splitting so commas, spaces, and DN
+    # punctuation remain data. The value is validated before touching config.
+    value=$(php -r '$value = json_decode($argv[1], true); if (!is_array($value) || json_last_error() !== JSON_ERROR_NONE) { exit(1); } echo var_export($value, true);' "$json" | tr -d '\n') || {
+        echo "Invalid JSON array value for ${key}." >&2
+        exit 1
+    }
+    value=$(escape_sed_replacement "$value")
+    sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = $value;|" "$DALORADIUS_CONF_PATH"
+}
+
 function init_daloradius {
 
     if ! test -f "$DALORADIUS_CONF_PATH" || ! test -s "$DALORADIUS_CONF_PATH"; then
@@ -81,6 +137,22 @@ function init_daloradius {
     [ -n "$MAIL_PORT" ] && php_config_set "CONFIG_MAIL_SMTPPORT" "$MAIL_PORT"
     [ -n "$MAIL_FROM" ] && php_config_set "CONFIG_MAIL_SMTPFROM" "$MAIL_FROM"
     [ -n "$MAIL_AUTH" ] && php_config_set "CONFIG_MAIL_SMTPAUTH" "$MAIL_AUTH"
+
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LOCAL_ENABLED" "$OPERATOR_AUTH_LOCAL_ENABLED"
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LDAP_ENABLED" "$OPERATOR_AUTH_LDAP_ENABLED"
+    php_config_set "CONFIG_OPERATOR_AUTH_DEFAULT" "$OPERATOR_AUTH_DEFAULT"
+    php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_URI" "$LDAP_URI_JSON"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_SECURITY" "$LDAP_SECURITY"
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LDAP_TLS_VERIFY" "$LDAP_TLS_VERIFY"
+    [ -n "$LDAP_TLS_CA_FILE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_TLS_CA_FILE" "$LDAP_TLS_CA_FILE"
+    [ -n "$LDAP_BASE_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BASE_DN" "$LDAP_BASE_DN"
+    [ -n "$LDAP_USER_BASE_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_USER_BASE_DN" "$LDAP_USER_BASE_DN"
+    [ -n "$LDAP_BIND_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BIND_DN" "$LDAP_BIND_DN"
+    [ -n "$LDAP_FILTER" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "$LDAP_FILTER"
+    [ -n "$LDAP_EXTERNAL_ID_ATTRIBUTE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$LDAP_EXTERNAL_ID_ATTRIBUTE"
+    php_config_set_integer "CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT" "$LDAP_TIMEOUT"
+    php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS" "$LDAP_ALLOWED_GROUPS_JSON"
+
     php_config_set "CONFIG_LOG_FILE" "/var/www/daloradius/var/log/daloradius.log"
 
     chown www-data:www-data "$DALORADIUS_CONF_PATH"

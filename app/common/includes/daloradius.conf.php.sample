@@ -118,6 +118,30 @@ $configValues['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT'] = '1073741824';
 $configValues['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT'] = '536870912';
 $configValues['CONFIG_USER_VPN_SERVER'] = 'vpn.company.com';
 
+// Operator authentication. Keep local authentication enabled as the recovery
+// path until LDAP has been tested and a local break-glass operator is verified.
+$configValues['CONFIG_OPERATOR_AUTH_LOCAL_ENABLED'] = true;
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_ENABLED'] = false;
+$configValues['CONFIG_OPERATOR_AUTH_DEFAULT'] = 'local';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_URI'] = array();
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_SECURITY'] = 'starttls';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_TLS_VERIFY'] = true;
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_TLS_CA_FILE'] = '';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_BASE_DN'] = '';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_USER_BASE_DN'] = '';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_BIND_DN'] = '';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_BIND_PASSWORD'] = '';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_FILTER'] = '(&(objectClass=person)(uid={username}))';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE'] = 'uid';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT'] = 5;
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS'] = array();
+
+// The environment value is intentionally not written to logs or persisted by
+// the Docker entrypoint. It overrides the file value for this PHP request.
+if (getenv('DALORADIUS_LDAP_BIND_PASSWORD') !== false) {
+    $configValues['CONFIG_OPERATOR_AUTH_LDAP_BIND_PASSWORD'] = getenv('DALORADIUS_LDAP_BIND_PASSWORD');
+}
+
 
 
 // invoice templates - optional
