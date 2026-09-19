@@ -191,9 +191,12 @@ $configValues['CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS'] = array(
 );
 ```
 
-If groups use `groupOfNames`, verify whether the directory exposes membership
-through `member` or `memberUid`. Test nested groups explicitly; OpenLDAP
-overlay and schema choices differ between installations.
+Group enforcement reads the configured membership attribute from the user
+entry. For OpenLDAP, expose `memberOf` (or another DN-valued user attribute) and
+set `CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE` accordingly. Direct searches of
+`groupOfNames`/`posixGroup` entries using `member` or `memberUid` are not part of
+this first implementation. Test the chosen overlay and nested-group behavior
+explicitly because OpenLDAP schema choices differ between installations.
 
 ## Multiple LDAP servers
 
@@ -203,6 +206,12 @@ URI only for a connection/availability failure, not after an invalid password.
 Otherwise a mistyped password can create unnecessary load and confusing audit
 trails. Keep all servers in the same identity domain or document differences in
 base DN, schema, and group membership before enabling failover.
+
+The existing operator login has no built-in IP-and-username rate limiter. LDAP
+failures therefore can contribute to directory lockout thresholds. Apply a
+suitable limit at the reverse proxy/WAF and monitor directory audit logs. The
+provider selection and authentication manager are centralized so a native
+`IP + username` limiter can be added later without changing LDAP bind logic.
 
 ## Operator provisioning and MFA
 
