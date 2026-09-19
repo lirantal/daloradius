@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run a real, isolated Samba AD DC and exercise plain LDAP from a disposable client.
+# Run a real, isolated Samba AD DC and exercise plain LDAP and TLS transports from a disposable client.
 set -Eeuo pipefail
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
@@ -20,6 +20,7 @@ SERVICE_BIND="ldap-service@${REALM}"
 USER_BIND="smoke-user@${REALM}"
 NETWORK_CREATED=0
 DC_CREATED=0
+CA_DIR=""
 
 log() {
     printf 'operator-ldap-ad-smoke: %s\n' "$*"
@@ -41,6 +42,9 @@ cleanup() {
     fi
     if (( IMAGE_OWNED )); then
         docker image rm "$IMAGE" >/dev/null 2>&1
+    fi
+    if [[ -n "$CA_DIR" ]]; then
+        rm -rf -- "$CA_DIR"
     fi
     exit "$status"
 }
@@ -114,6 +118,15 @@ realm_value=$(docker exec "$DC_NAME" samba-tool testparm --parameter-name realm 
     fail "provisioned realm was not $REALM"
 }
 
+CA_DIR=$(mktemp -d "${TMPDIR:-/tmp}/operator-ldap-ad-ca.XXXXXX")
+chmod 0700 "$CA_DIR"
+log "copying disposable test CAs"
+docker cp "$DC_NAME:/etc/samba/tls/certs/ca.pem" "$CA_DIR/ca.pem" >/dev/null
+docker cp "$DC_NAME:/etc/samba/tls/certs/untrusted-ca.pem" "$CA_DIR/untrusted-ca.pem" >/dev/null
+chmod 0600 "$CA_DIR/ca.pem" "$CA_DIR/untrusted-ca.pem"
+[[ -s "$CA_DIR/ca.pem" && -s "$CA_DIR/untrusted-ca.pem" ]] || \
+    fail "Samba test CA files were not copied"
+
 log "creating LDAP service account, user, and group"
 docker exec "$DC_NAME" samba-tool user create ldap-service "$SERVICE_PASS" >/dev/null
 docker exec "$DC_NAME" samba-tool user create smoke-user "$USER_PASS" >/dev/null
@@ -122,6 +135,9 @@ docker exec "$DC_NAME" samba-tool group addmembers "Smoke Group" smoke-user >/de
 
 log "running LDAP assertions from disposable client"
 docker run --rm --name "$CLIENT_NAME" --network "$NETWORK" \
+    --add-host "ldapdc:$DC_IP" \
+    --add-host "ldapdc.example.test:$DC_IP" \
+    --volume "$CA_DIR:/run/ldap-ca:ro" \
     --env "LDAP_URI=ldap://$DC_IP" \
     --env "BASE_DN=$BASE_DN" \
     --env "SERVICE_BIND=$SERVICE_BIND" \
@@ -130,6 +146,10 @@ docker run --rm --name "$CLIENT_NAME" --network "$NETWORK" \
     --env "USER_PASS=$USER_PASS" \
     --entrypoint /bin/sh "$IMAGE" -c '
 set -eu
+
+auth_args() {
+    printf "%s\n" -D "$SERVICE_BIND" -w "$SERVICE_PASS"
+}
 
 ldap_search() {
     ldapsearch -LLL -o ldif-wrap=no -x -H "$LDAP_URI" "$@"
@@ -190,6 +210,52 @@ printf "%s\n" "$wildcard_output" | grep -Fqx "sAMAccountName: smoke-user" || {
     exit 1
 }
 printf "escaped special-character filter: PASS\n"
+
+tls_uri="ldap://ldapdc.example.test"
+ldaps_uri="ldaps://ldapdc.example.test"
+tls_output=$(ldapsearch -LLL -o ldif-wrap=no -x -H "$tls_uri" -ZZ \
+    -o TLS_CACERT=/run/ldap-ca/ca.pem -o TLS_REQCERT=demand \
+    -D "$SERVICE_BIND" -w "$SERVICE_PASS" -b "$BASE_DN" -s base \
+    "(objectClass=*)" dn)
+printf "%s\n" "$tls_output" | grep -Fqx "dn: $BASE_DN" || {
+    printf "%s\n" "$tls_output" >&2
+    printf "StartTLS CA verification did not return the base DN\n" >&2
+    exit 1
+}
+printf "StartTLS with CA verification: PASS\n"
+
+ldapsearch -LLL -o ldif-wrap=no -x -H "$tls_uri" -ZZ \
+    -o TLS_REQCERT=never \
+    -D "$SERVICE_BIND" -w "$SERVICE_PASS" -b "$BASE_DN" -s base \
+    "(objectClass=*)" dn >/tmp/starttls-no-verify.out
+printf "StartTLS TLS_REQCERT=never: PASS\n"
+
+ldaps_output=$(ldapsearch -LLL -o ldif-wrap=no -x -H "$ldaps_uri" \
+    -o TLS_CACERT=/run/ldap-ca/ca.pem -o TLS_REQCERT=demand \
+    -D "$SERVICE_BIND" -w "$SERVICE_PASS" -b "$BASE_DN" -s base \
+    "(objectClass=*)" dn)
+printf "%s\n" "$ldaps_output" | grep -Fqx "dn: $BASE_DN" || {
+    printf "%s\n" "$ldaps_output" >&2
+    printf "LDAPS CA verification did not return the base DN\n" >&2
+    exit 1
+}
+printf "LDAPS with CA verification: PASS\n"
+
+if ldapsearch -LLL -o ldif-wrap=no -x -H "$ldaps_uri" \
+    -o TLS_CACERT=/run/ldap-ca/untrusted-ca.pem \
+    -D "$SERVICE_BIND" -w "$SERVICE_PASS" -b "$BASE_DN" -s base \
+    "(objectClass=*)" dn >/tmp/ldaps-untrusted-ca.out 2>/tmp/ldaps-untrusted-ca.err; then
+    printf "LDAPS accepted an intentionally untrusted CA\n" >&2
+    cat /tmp/ldaps-untrusted-ca.out /tmp/ldaps-untrusted-ca.err >&2
+    exit 1
+fi
+printf "LDAPS with untrusted CA/default verification rejected: PASS\n"
+
+ldapsearch -LLL -o ldif-wrap=no -x -H "$ldaps_uri" \
+    -o TLS_REQCERT=never \
+    -D "$SERVICE_BIND" -w "$SERVICE_PASS" -b "$BASE_DN" -s base \
+    "(objectClass=*)" dn >/tmp/ldaps-no-verify.out
+printf "LDAPS TLS_REQCERT=never: PASS\n"
 '
 
-log "PASS: Samba AD plain LDAP smoke test"
+log "PASS: Samba AD plain LDAP and TLS smoke tests"

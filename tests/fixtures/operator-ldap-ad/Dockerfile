@@ -7,6 +7,7 @@ RUN apt-get update \
         ca-certificates \
         iproute2 \
         ldap-utils \
+        openssl \
         procps \
         samba-ad-dc \
         samba-ad-provision \
