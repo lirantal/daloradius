@@ -12,7 +12,11 @@ if (!empty($_SESSION['operator_2fa_pending']) && empty($_SESSION['operator_2fa_a
 
 if (empty($_SESSION['operator_2fa_pending']) || empty($_SESSION['operator_2fa_id'])
     || empty($_SESSION['operator_2fa_user']) || empty($_SESSION['operator_2fa_auth_source'])
-    || !in_array($_SESSION['operator_2fa_auth_source'], array('local', 'ldap'), true)) {
+    || !in_array($_SESSION['operator_2fa_auth_source'], array('local', 'ldap'), true)
+    || ($_SESSION['operator_2fa_auth_source'] === 'ldap'
+        && (!array_key_exists('operator_2fa_external_id', $_SESSION)
+            || !is_string($_SESSION['operator_2fa_external_id'])
+            || $_SESSION['operator_2fa_external_id'] === ''))) {
     header('Location: login.php');
     exit;
 }
@@ -32,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $operator_user = $dbSocket->escapeSimple($_SESSION['operator_2fa_user']);
         $operator_auth_source = $_SESSION['operator_2fa_auth_source'];
         $sql = sprintf(
-            "SELECT id, username, auth_source, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1",
+            "SELECT id, username, auth_source, external_id, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1",
             $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user
         );
         $res = $dbSocket->query($sql);
@@ -50,7 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!DB::isError($res) && $res->numRows() === 1) {
             $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
             $row_auth_source = isset($row['auth_source']) ? $row['auth_source'] : 'local';
-            if (hash_equals($operator_auth_source, $row_auth_source)) {
+            $externalIdMatches = $operator_auth_source !== 'ldap'
+                || (array_key_exists('operator_2fa_external_id', $_SESSION)
+                    && dalo_operator_auth_external_id_matches(
+                        isset($row['external_id']) ? $row['external_id'] : null,
+                        $_SESSION['operator_2fa_external_id']
+                    ));
+            if (hash_equals($operator_auth_source, $row_auth_source) && $externalIdMatches) {
                 $matched_counter = dalo_totp_verify_once(
                     $row['totp_secret'],
                     $otp_code,
@@ -83,14 +93,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['operator_user'] = $_SESSION['operator_2fa_user'];
             $_SESSION['operator_id'] = intval($_SESSION['operator_2fa_id']);
             $_SESSION['operator_auth_source'] = $finalAuthSource;
-            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_auth_source'], $_SESSION['operator_2fa_attempts']);
+            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_auth_source'], $_SESSION['operator_2fa_external_id'], $_SESSION['operator_2fa_attempts']);
             header('Location: index.php');
             exit;
         }
 
         include('../common/includes/db_close.php');
         if (intval($_SESSION['operator_2fa_attempts']) >= 5) {
-            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_auth_source'], $_SESSION['operator_2fa_attempts']);
+            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_auth_source'], $_SESSION['operator_2fa_external_id'], $_SESSION['operator_2fa_attempts']);
             $_SESSION['operator_login_error'] = true;
             header('Location: login.php');
             exit;

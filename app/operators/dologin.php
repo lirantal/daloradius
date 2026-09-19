@@ -108,13 +108,64 @@ function dalo_operator_auth_safe_reason($reason)
     return substr($reason === '' ? 'unknown' : $reason, 0, 80);
 }
 
-function dalo_operator_auth_set_pending(array &$session, $operatorId, $operatorUser, $source)
+/* Link an LDAP identity without allowing a concurrent different identity to
+ * take over the operator row. A zero-row conditional update is resolved by a
+ * fresh read, so a concurrent link of the same identity is accepted while a
+ * different identity fails closed. */
+function dalo_operator_ldap_link_external_id($dbSocket, $operatorsTable, $operatorId, $externalId)
+{
+    $updateSql = sprintf(
+        'UPDATE %s SET external_id=? WHERE id=? AND external_id IS NULL',
+        $operatorsTable
+    );
+    $updateStmt = $dbSocket->prepare($updateSql);
+    if (DB::isError($updateStmt)) {
+        return false;
+    }
+
+    $updateResult = $dbSocket->execute($updateStmt, array($externalId, intval($operatorId)));
+    $affectedRows = !DB::isError($updateResult) ? $dbSocket->affectedRows() : null;
+    $dbSocket->freePrepared($updateStmt);
+    if (DB::isError($updateResult) || DB::isError($affectedRows)) {
+        return false;
+    }
+    if ((int) $affectedRows === 1) {
+        return true;
+    }
+    if ((int) $affectedRows !== 0) {
+        return false;
+    }
+
+    $selectSql = sprintf('SELECT external_id FROM %s WHERE id=?', $operatorsTable);
+    $selectStmt = $dbSocket->prepare($selectSql);
+    if (DB::isError($selectStmt)) {
+        return false;
+    }
+    $selectResult = $dbSocket->execute($selectStmt, array(intval($operatorId)));
+    $dbSocket->freePrepared($selectStmt);
+    if (DB::isError($selectResult) || $selectResult->numRows() !== 1) {
+        return false;
+    }
+
+    $linkedRow = $selectResult->fetchRow(DB_FETCHMODE_ASSOC);
+    $selectResult->free();
+    return is_array($linkedRow)
+        && array_key_exists('external_id', $linkedRow)
+        && dalo_operator_auth_external_id_matches($linkedRow['external_id'], $externalId);
+}
+
+function dalo_operator_auth_set_pending(array &$session, $operatorId, $operatorUser, $source, $externalId = null)
 {
     $session['operator_2fa_pending'] = true;
     $session['operator_2fa_id'] = (int) $operatorId;
     $session['operator_2fa_user'] = (string) $operatorUser;
     $session['operator_2fa_auth_source'] = (string) $source;
     $session['operator_2fa_attempts'] = 0;
+    if ($source === 'ldap') {
+        $session['operator_2fa_external_id'] = (string) $externalId;
+    } else {
+        unset($session['operator_2fa_external_id']);
+    }
     unset($session['operator_pass'], $session['operator_password'], $session['operator_2fa_password']);
 }
 
@@ -124,6 +175,7 @@ function dalo_operator_auth_set_authenticated(array &$session, $operatorId, $ope
     $session['operator_user'] = (string) $operatorUser;
     $session['operator_id'] = (int) $operatorId;
     $session['operator_auth_source'] = (string) $source;
+    unset($session['operator_2fa_external_id']);
     unset($session['operator_pass'], $session['operator_password'], $session['operator_2fa_password']);
 }
 
@@ -139,6 +191,7 @@ unset(
     $_SESSION['operator_2fa_id'],
     $_SESSION['operator_2fa_user'],
     $_SESSION['operator_2fa_auth_source'],
+    $_SESSION['operator_2fa_external_id'],
     $_SESSION['operator_2fa_attempts'],
     $_SESSION['operator_auth_source']
 );
@@ -209,20 +262,18 @@ if (isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])
                             } elseif (!array_key_exists('external_id', $row)) {
                                 $authenticationFailure = 'operator_identity_missing';
                             } elseif ($row['external_id'] !== null
-                                && !hash_equals((string) $row['external_id'], $externalId)) {
+                                && !dalo_operator_auth_external_id_matches((string) $row['external_id'], $externalId)) {
                                 $authenticationFailure = 'external_id_mismatch';
                             } else {
                                 /* Bind identity first; only then fill a null
                                  * external id. LDAP never writes a password. */
                                 if ($row['external_id'] === null) {
-                                    $externalSql = sprintf(
-                                        'UPDATE %s SET external_id=? WHERE id=? AND external_id IS NULL',
-                                        $configValues['CONFIG_DB_TBL_DALOOPERATORS']
-                                    );
-                                    $externalStmt = $dbSocket->prepare($externalSql);
-                                    $externalResult = $dbSocket->execute($externalStmt, array($externalId, intval($row['id'])));
-                                    $dbSocket->freePrepared($externalStmt);
-                                    if (DB::isError($externalResult)) {
+                                    if (!dalo_operator_ldap_link_external_id(
+                                        $dbSocket,
+                                        $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
+                                        $row['id'],
+                                        $externalId
+                                    )) {
                                         $authenticationFailure = 'operator_identity_update_failed';
                                     }
                                 }
@@ -256,7 +307,8 @@ if ($authenticated) {
     $totpSecret = array_key_exists('totp_secret', $row) && !empty($row['totp_secret']) ? $row['totp_secret'] : '';
 
     if ($totpEnabled && $totpSecret !== '') {
-        dalo_operator_auth_set_pending($_SESSION, $operatorId, $operator, $authSource);
+        $pendingExternalId = $authSource === 'ldap' ? $externalId : null;
+        dalo_operator_auth_set_pending($_SESSION, $operatorId, $operator, $authSource, $pendingExternalId);
         include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
         $databaseOpen = false;
         header('Location: login-otp.php');

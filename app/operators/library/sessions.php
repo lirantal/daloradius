@@ -58,6 +58,15 @@ function dalo_check_csrf_token($token=null) {
     return $result;
 }
 
+/* LDAP MFA must remain bound to the identity authenticated before the OTP
+ * prompt. Local/pre-migration sessions do not use this check. */
+function dalo_operator_auth_external_id_matches($storedExternalId, $pendingExternalId) {
+    return is_string($storedExternalId)
+        && is_string($pendingExternalId)
+        && $pendingExternalId !== ''
+        && hash_equals($storedExternalId, $pendingExternalId);
+}
+
 // daloRADIUS session start function support timestamp management
 function dalo_session_start() {
     $session_max_lifetime = 3600;
