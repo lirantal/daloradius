@@ -90,7 +90,7 @@ $input_descriptors1[] = array( 'name' =>'messenger2', 'caption' => 'Operator Mes
                                'value' => ((isset($operator_messenger2)) ? $operator_messenger2 : ""),
                              );
 $input_descriptors1[] = array( 'name' =>'notes', 'caption' => 'Operator Notes', 'type' => 'textarea',
-                               'content' => ((isset($notes)) ? $notes : ""),
+                               'content' => ((isset($operator_notes)) ? $operator_notes : ((isset($notes)) ? $notes : "")),
                              );
                              
 $input_descriptors1[] = array( 'name' => 'operator_lastlogin', 'caption' => 'Operator Last Login', 'disabled' => true,
