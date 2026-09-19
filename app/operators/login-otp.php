@@ -5,13 +5,14 @@ include_once('library/totp.php');
 
 dalo_session_start();
 
-if (empty($_SESSION['operator_2fa_pending']) || empty($_SESSION['operator_2fa_id']) || empty($_SESSION['operator_2fa_user'])) {
+if (empty($_SESSION['operator_2fa_pending']) || empty($_SESSION['operator_2fa_id'])
+    || empty($_SESSION['operator_2fa_user']) || empty($_SESSION['operator_2fa_auth_source'])
+    || !in_array($_SESSION['operator_2fa_auth_source'], array('local', 'ldap'), true)) {
     header('Location: login.php');
     exit;
 }
 
 include("lang/main.php");
-
 $failureMsg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,54 +23,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['operator_2fa_attempts'] = intval($_SESSION['operator_2fa_attempts'] ?? 0) + 1;
 
         include('../common/includes/db_open.php');
-
         $operator_id = intval($_SESSION['operator_2fa_id']);
         $operator_user = $dbSocket->escapeSimple($_SESSION['operator_2fa_user']);
-        $sql = sprintf("SELECT id, username, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1",
-                       $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user);
+        $operator_auth_source = $_SESSION['operator_2fa_auth_source'];
+        $sql = sprintf(
+            "SELECT id, username, auth_source, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1",
+            $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user
+        );
         $res = $dbSocket->query($sql);
 
         $authenticated = false;
         if ($res->numRows() === 1) {
             $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-            $matched_counter = dalo_totp_verify_once($row['totp_secret'], $otp_code, isset($row['totp_last_counter']) ? intval($row['totp_last_counter']) : null);
+            if (isset($row['auth_source']) && hash_equals($operator_auth_source, $row['auth_source'])) {
+                $matched_counter = dalo_totp_verify_once(
+                    $row['totp_secret'],
+                    $otp_code,
+                    isset($row['totp_last_counter']) ? intval($row['totp_last_counter']) : null
+                );
 
-            if ($matched_counter !== null) {
-                $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_last_counter=%d WHERE id=%d",
-                               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'), $matched_counter, $operator_id);
-                $dbSocket->query($sql);
-                $authenticated = true;
-            } else {
-                list($recovery_ok, $new_recovery_codes) = dalo_totp_verify_recovery_code($row['totp_recovery_codes'], $otp_code);
-                if ($recovery_ok) {
-                    $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_recovery_codes='%s' WHERE id=%d",
-                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'),
-                                   $dbSocket->escapeSimple($new_recovery_codes), $operator_id);
+                if ($matched_counter !== null) {
+                    $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_last_counter=%d WHERE id=%d",
+                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'), $matched_counter, $operator_id);
                     $dbSocket->query($sql);
                     $authenticated = true;
+                } else {
+                    list($recovery_ok, $new_recovery_codes) = dalo_totp_verify_recovery_code($row['totp_recovery_codes'], $otp_code);
+                    if ($recovery_ok) {
+                        $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_recovery_codes='%s' WHERE id=%d",
+                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'),
+                                       $dbSocket->escapeSimple($new_recovery_codes), $operator_id);
+                        $dbSocket->query($sql);
+                        $authenticated = true;
+                    }
                 }
             }
         }
 
-        include('../common/includes/db_close.php');
-
         if ($authenticated) {
+            include('../common/includes/db_close.php');
             session_regenerate_id(true);
+            $finalAuthSource = $_SESSION['operator_2fa_auth_source'];
             $_SESSION['daloradius_logged_in'] = true;
             $_SESSION['operator_user'] = $_SESSION['operator_2fa_user'];
             $_SESSION['operator_id'] = intval($_SESSION['operator_2fa_id']);
-            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_attempts']);
+            $_SESSION['operator_auth_source'] = $finalAuthSource;
+            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_auth_source'], $_SESSION['operator_2fa_attempts']);
             header('Location: index.php');
             exit;
         }
 
+        include('../common/includes/db_close.php');
         if (intval($_SESSION['operator_2fa_attempts']) >= 5) {
-            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_attempts']);
+            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_auth_source'], $_SESSION['operator_2fa_attempts']);
             $_SESSION['operator_login_error'] = true;
             header('Location: login.php');
             exit;
         }
-
         $failureMsg = 'Invalid verification code';
     }
 }
@@ -106,7 +116,6 @@ body { display: flex; align-items: center; padding-top: 40px; padding-bottom: 40
         <input type="text" class="form-control" id="otp_code" name="otp_code" inputmode="numeric" autocomplete="one-time-code" placeholder="Verification code" required autofocus>
         <label for="otp_code">Verification code</label>
     </div>
-
     <button class="w-100 btn btn-lg btn-primary" type="submit">Verify</button>
     <input name="csrf_token" type="hidden" value="<?= dalo_csrf_token() ?>">
     </form>
