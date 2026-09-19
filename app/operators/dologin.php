@@ -83,6 +83,8 @@ function dalo_operator_ldap_provider_config(array $config)
         'CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE',
         'CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT' => 'CONFIG_OPERATOR_LDAP_NETWORK_TIMEOUT',
         'CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS' => 'CONFIG_OPERATOR_LDAP_ALLOWED_GROUPS',
+        'CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE' => 'CONFIG_OPERATOR_LDAP_GROUP_ATTRIBUTE',
+        'CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE' => 'CONFIG_OPERATOR_LDAP_GROUP_MATCHING_RULE',
     );
     $providerConfig = array();
     foreach ($map as $configKey => $providerKey) {
@@ -92,7 +94,7 @@ function dalo_operator_ldap_provider_config(array $config)
     }
 
     $bindPassword = getenv('DALORADIUS_LDAP_BIND_PASSWORD');
-    if ($bindPassword !== false) {
+    if ($bindPassword !== false && $bindPassword !== '') {
         $providerConfig['CONFIG_OPERATOR_LDAP_BIND_PASSWORD'] = $bindPassword;
     } elseif (array_key_exists('CONFIG_OPERATOR_AUTH_LDAP_BIND_PASSWORD', $config)) {
         $providerConfig['CONFIG_OPERATOR_LDAP_BIND_PASSWORD'] = $config['CONFIG_OPERATOR_AUTH_LDAP_BIND_PASSWORD'];
@@ -178,9 +180,11 @@ if (isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])
             if (!DB::isError($res) && $res->numRows() === 1) {
                 $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                 $res->free();
-                $rowSource = array_key_exists('auth_source', $row) ? $row['auth_source'] : null;
+                /* Rows from a pre-migration schema are historical local accounts. */
+                $rowSource = array_key_exists('auth_source', $row) && is_string($row['auth_source'])
+                           ? $row['auth_source'] : 'local';
 
-                if (is_string($rowSource) && hash_equals($authSource, $rowSource)) {
+                if (hash_equals($authSource, $rowSource)) {
                     $rehashCallback = function ($newHash, $username) use ($dbSocket, $configValues) {
                         $rehashSql = sprintf('UPDATE %s SET `password`=? WHERE `username`=?',
                                              $configValues['CONFIG_DB_TBL_DALOOPERATORS']);

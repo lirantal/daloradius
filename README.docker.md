@@ -78,6 +78,11 @@ MariaDB data remains in `./data/mysql`, FreeRADIUS init state remains in `./data
 
 Fresh Docker deployments initialize the database from the bundled schema. When upgrading an existing Docker deployment, check `contrib/db/migrations/` in the updated source tree and apply the relevant SQL migrations before using newly added features.
 
+Operator LDAP authentication requires
+`contrib/db/migrations/2026-09-operator-ldap.sql`; it preserves existing local
+operator passwords and can be applied repeatedly. The current web-container
+entrypoint also applies this migration automatically on startup.
+
 For example, to apply the operator MFA migration from the directory that contains `docker-compose.yml`:
 
 ```bash

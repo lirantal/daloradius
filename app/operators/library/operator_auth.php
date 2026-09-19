@@ -365,7 +365,12 @@ final class LdapAuthProvider implements OperatorAuthProvider
                     return OperatorAuthResult::failure('ldap_search_failed');
                 }
                 if (!$this->adapter->bind($connection, $dn, $password)) {
+                    $code = $this->errorCode($connection);
                     $this->safeClose($connection);
+                    if ($this->isTechnicalCode($code)) {
+                        $lastTechnical = true;
+                        continue;
+                    }
                     return OperatorAuthResult::failure('invalid_credentials');
                 }
 
@@ -447,7 +452,34 @@ final class LdapAuthProvider implements OperatorAuthProvider
             $mode = 'plain';
         }
         $mode = strtolower(trim((string) $mode));
-        return in_array($mode, array('plain', 'starttls', 'ldaps'), true) ? $mode : null;
+        if (!in_array($mode, array('plain', 'starttls', 'ldaps'), true)) {
+            return null;
+        }
+
+        /* A configured security mode must agree with the URI scheme. Merely
+         * setting certificate options does not upgrade ldap:// to LDAPS. */
+        $scheme = strtolower((string) parse_url((string) $uri, PHP_URL_SCHEME));
+        if (($mode === 'ldaps' && $scheme !== 'ldaps')
+            || ($mode !== 'ldaps' && $scheme !== 'ldap')) {
+            return null;
+        }
+        return $mode;
+    }
+
+    private function booleanValue($key, $default)
+    {
+        $value = $this->value($key, $default);
+        if (is_bool($value)) {
+            return $value;
+        }
+        if (is_int($value)) {
+            return $value !== 0;
+        }
+        if (is_string($value)) {
+            $parsed = filter_var(trim($value), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            return $parsed === null ? (bool) $default : $parsed;
+        }
+        return (bool) $value;
     }
 
     private function caFile()
@@ -459,7 +491,7 @@ final class LdapAuthProvider implements OperatorAuthProvider
 
     private function configureTlsOptions($connection)
     {
-        $verify = (bool) $this->value('CONFIG_OPERATOR_LDAP_TLS_VERIFY', true);
+        $verify = $this->booleanValue('CONFIG_OPERATOR_LDAP_TLS_VERIFY', true);
         $requireCert = $verify
             ? $this->ldapConstant('LDAP_OPT_X509_DEMAND', 2)
             : $this->ldapConstant('LDAP_OPT_X509_NEVER', 0);

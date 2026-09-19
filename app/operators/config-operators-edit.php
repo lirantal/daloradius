@@ -131,6 +131,10 @@
                     $res = $dbSocket->query($sql);
                     // Never put a submitted password or derived hash in debug logs.
                     $logDebugSQL .= "UPDATE operator identity and profile WHERE id=$curr_operator_id;\n";
+                    if (DB::isError($res)) {
+                        $failureMsg = "Failed to update this operator identity";
+                        $logAction .= "Failed updating operator identity on page: ";
+                    } else {
 
                     if (array_key_exists('reset_totp', $_POST) && $_POST['reset_totp'] === '1') {
                         $sql = sprintf("UPDATE %s SET totp_enabled=0, totp_secret=NULL, totp_last_counter=NULL, totp_confirmed_at=NULL, totp_recovery_codes=NULL, updatedate='%s', updateby='%s' WHERE id=%d",
@@ -167,6 +171,7 @@
                     $current_external_id = $operator_external_id;
                     $successMsg = "Updated settings for: <b> $operator_username_enc </b>";
                     $logAction .= "Successfully updated settings for operator user [$operator_username] on page: ";
+                    }
                 }
             }
 

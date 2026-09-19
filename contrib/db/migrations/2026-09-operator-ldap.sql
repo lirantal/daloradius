@@ -19,3 +19,6 @@ ALTER TABLE operators
 UPDATE operators
 SET auth_source = 'local'
 WHERE auth_source IS NULL OR auth_source = '';
+
+ALTER TABLE operators
+  ADD UNIQUE INDEX IF NOT EXISTS operators_external_id_uq (external_id);

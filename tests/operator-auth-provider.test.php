@@ -86,6 +86,55 @@ check_auth('LDAP missing external ID fails authentication', !$missingIdResult->i
 $invalidConfig = new LdapAuthProvider(array('CONFIG_OPERATOR_LDAP_URI' => 'ldap://directory', 'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => ''), new FakeOperatorLdapAdapter());
 check_auth('LDAP empty external ID attribute fails configuration', $invalidConfig->authenticate('missing', 'ldap-secret')->getReason() === 'ldap_configuration_invalid');
 
+class TechnicalUserBindAdapter extends FakeOperatorLdapAdapter {
+    public function bind($connection, $dn, $password) {
+        $this->binds[] = array($connection, $dn, $password);
+        if ($dn === 'cn=service') { return true; }
+        if ($connection === 'ldap://one') {
+            $this->codes[$connection] = 81;
+            return false;
+        }
+        return $password === 'ldap-secret';
+    }
+}
+$technicalBindFake = new TechnicalUserBindAdapter();
+$technicalBindFake->searchEntries = $fake->searchEntries;
+$technicalBindProvider = new LdapAuthProvider(array(
+    'CONFIG_OPERATOR_LDAP_URIS' => array('ldap://one', 'ldap://two'),
+    'CONFIG_OPERATOR_LDAP_SECURITY' => 'plain',
+    'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
+    'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+), $technicalBindFake);
+check_auth('technical user-bind failure reaches second URI',
+    $technicalBindProvider->authenticate('Alice', 'ldap-secret')->isAuthenticated()
+    && count($technicalBindFake->uris) === 2);
+
+$mismatchFake = new FakeOperatorLdapAdapter();
+$mismatchProvider = new LdapAuthProvider(array(
+    'CONFIG_OPERATOR_LDAP_URI' => 'ldap://directory',
+    'CONFIG_OPERATOR_LDAP_SECURITY' => 'ldaps',
+    'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
+), $mismatchFake);
+check_auth('LDAPS mode rejects a cleartext ldap URI before connecting',
+    !$mismatchProvider->authenticate('Alice', 'ldap-secret')->isAuthenticated()
+    && count($mismatchFake->uris) === 0);
+
+$stringFalseFake = new FakeOperatorLdapAdapter();
+$stringFalseFake->searchEntries = $fake->searchEntries;
+$stringFalseProvider = new LdapAuthProvider(array(
+    'CONFIG_OPERATOR_LDAP_URI' => 'ldaps://directory',
+    'CONFIG_OPERATOR_LDAP_SECURITY' => 'ldaps',
+    'CONFIG_OPERATOR_LDAP_TLS_VERIFY' => 'false',
+    'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
+    'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+), $stringFalseFake);
+$stringFalseProvider->authenticate('Alice', 'ldap-secret');
+$usesNever = false;
+foreach ($stringFalseFake->options as $option) {
+    if ($option[1] === 24582 && $option[2] === 0) { $usesNever = true; }
+}
+check_auth('string false explicitly disables certificate verification', $usesNever);
+
 $manager = new OperatorAuthenticationManager($local);
 check_auth('manager delegates to its explicit provider', $manager->authenticate('alice', 'local-secret')->isAuthenticated());
 check_auth('manager has no implicit fallback', $manager->authenticate('not-alice', 'local-secret')->getReason() === 'invalid_credentials');

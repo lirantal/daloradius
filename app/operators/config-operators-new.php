@@ -114,6 +114,10 @@
                     $res = $dbSocket->query($sql);
                     $logDebugSQL .= "INSERT operator identity;\n";
 
+                    if (DB::isError($res)) {
+                        $failureMsg = "Failed to add this operator identity to the database";
+                        $logAction .= "Failed adding new operator identity on page: ";
+                    } else {
                     // lets make sure we've inserted the new operator successfully and grab his operator_id
                     $sql = sprintf("SELECT id FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
                                                                             $dbSocket->escapeSimple($operator_username));
@@ -171,6 +175,7 @@
                         $f = "Failed to add this new operator [%s] to database";
                         $failureMsg = sprintf($f, $operator_username_enc);
                         $logAction .= sprintf($f, $operator_username);
+                    }
                     }
                 }
                 

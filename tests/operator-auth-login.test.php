@@ -74,10 +74,19 @@ $ldapConfig = array(
     'CONFIG_OPERATOR_AUTH_LDAP_URI' => array('ldap://directory'),
     'CONFIG_OPERATOR_AUTH_LDAP_FILTER' => '(&(uid={username}))',
     'CONFIG_OPERATOR_AUTH_LDAP_BIND_PASSWORD' => 'file-secret',
+    'CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE' => 'memberOf',
+    'CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE' => '1.2.840.113556.1.4.1941',
 );
 $providerConfig = dalo_operator_ldap_provider_config($ldapConfig);
 check_login('LDAP config maps the configured URI', $providerConfig['CONFIG_OPERATOR_LDAP_URI'] === array('ldap://directory'));
 check_login('LDAP environment bind password overrides file config', $providerConfig['CONFIG_OPERATOR_LDAP_BIND_PASSWORD'] === 'env-test-secret');
+check_login('LDAP group configuration reaches the provider',
+    $providerConfig['CONFIG_OPERATOR_LDAP_GROUP_ATTRIBUTE'] === 'memberOf'
+    && $providerConfig['CONFIG_OPERATOR_LDAP_GROUP_MATCHING_RULE'] === '1.2.840.113556.1.4.1941');
+putenv('DALORADIUS_LDAP_BIND_PASSWORD=');
+$providerConfig = dalo_operator_ldap_provider_config($ldapConfig);
+check_login('empty LDAP bind environment value preserves file config',
+    $providerConfig['CONFIG_OPERATOR_LDAP_BIND_PASSWORD'] === 'file-secret');
 putenv('DALORADIUS_LDAP_BIND_PASSWORD');
 
 $session = array('operator_pass' => 'must-not-survive');
@@ -97,6 +106,8 @@ $flow = file_get_contents(dirname(__DIR__) . '/app/operators/dologin.php');
 check_login('login page exposes explicit selection only for both providers', strpos($loginPage, 'name="operator_auth_source"') !== false && strpos($loginPage, '$showAuthSource') !== false);
 check_login('MFA finalizes operator auth source', strpos($otpPage, "\$_SESSION['operator_auth_source']") !== false);
 check_login('primary authentication gates MFA', strpos($flow, 'if ($authenticated)') !== false && strpos($flow, "dalo_operator_auth_set_pending") !== false);
+check_login('pre-migration operator rows default to local auth', strpos($flow, "? \$row['auth_source'] : 'local'") !== false);
+check_login('pre-provider pending MFA sessions default to local auth', strpos($otpPage, "operator_2fa_auth_source'] = 'local'") !== false);
 check_login('LDAP flow never updates password', strpos($flow, "'UPDATE %s SET `password`=?") !== false && strpos($flow, '$authSource === \'local\'') !== false);
 
 printf("\n%s\n", $failures === 0 ? 'ALL PASSED' : "$failures FAILURE(S)");

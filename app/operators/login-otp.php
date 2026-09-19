@@ -5,6 +5,11 @@ include_once('library/totp.php');
 
 dalo_session_start();
 
+/* Pending sessions created before provider-aware authentication were local. */
+if (!empty($_SESSION['operator_2fa_pending']) && empty($_SESSION['operator_2fa_auth_source'])) {
+    $_SESSION['operator_2fa_auth_source'] = 'local';
+}
+
 if (empty($_SESSION['operator_2fa_pending']) || empty($_SESSION['operator_2fa_id'])
     || empty($_SESSION['operator_2fa_user']) || empty($_SESSION['operator_2fa_auth_source'])
     || !in_array($_SESSION['operator_2fa_auth_source'], array('local', 'ldap'), true)) {
@@ -31,11 +36,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user
         );
         $res = $dbSocket->query($sql);
+        if (DB::isError($res) && $operator_auth_source === 'local') {
+            /* Permit an already-pending pre-upgrade local MFA session to finish
+             * before the LDAP schema migration is applied. */
+            $sql = sprintf(
+                "SELECT id, username, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1",
+                $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user
+            );
+            $res = $dbSocket->query($sql);
+        }
 
         $authenticated = false;
-        if ($res->numRows() === 1) {
+        if (!DB::isError($res) && $res->numRows() === 1) {
             $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-            if (isset($row['auth_source']) && hash_equals($operator_auth_source, $row['auth_source'])) {
+            $row_auth_source = isset($row['auth_source']) ? $row['auth_source'] : 'local';
+            if (hash_equals($operator_auth_source, $row_auth_source)) {
                 $matched_counter = dalo_totp_verify_once(
                     $row['totp_secret'],
                     $otp_code,

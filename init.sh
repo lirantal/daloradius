@@ -35,6 +35,8 @@ LDAP_FILTER=${DALORADIUS_LDAP_FILTER:-}
 LDAP_EXTERNAL_ID_ATTRIBUTE=${DALORADIUS_LDAP_EXTERNAL_ID_ATTRIBUTE:-}
 LDAP_TIMEOUT=${DALORADIUS_LDAP_TIMEOUT:-5}
 LDAP_ALLOWED_GROUPS_JSON=${DALORADIUS_LDAP_ALLOWED_GROUPS:-[]}
+LDAP_GROUP_ATTRIBUTE=${DALORADIUS_LDAP_GROUP_ATTRIBUTE:-memberOf}
+LDAP_GROUP_MATCHING_RULE=${DALORADIUS_LDAP_GROUP_MATCHING_RULE:-}
 
 MYSQL_DEFAULTS_FILE=""
 
@@ -152,6 +154,8 @@ function init_daloradius {
     [ -n "$LDAP_EXTERNAL_ID_ATTRIBUTE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$LDAP_EXTERNAL_ID_ATTRIBUTE"
     php_config_set_integer "CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT" "$LDAP_TIMEOUT"
     php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS" "$LDAP_ALLOWED_GROUPS_JSON"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE" "$LDAP_GROUP_ATTRIBUTE"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE" "$LDAP_GROUP_MATCHING_RULE"
 
     php_config_set "CONFIG_LOG_FILE" "/var/www/daloradius/var/log/daloradius.log"
 
@@ -159,6 +163,33 @@ function init_daloradius {
     chmod 0600 "$DALORADIUS_CONF_PATH"
 
     echo "daloRADIUS initialization completed."
+}
+
+function refresh_operator_auth_config {
+    if [ ! -s "$DALORADIUS_CONF_PATH" ]; then
+        return
+    fi
+
+    # Operator-auth environment settings are runtime deployment settings. Apply
+    # them on every container start, not only while creating the data volume.
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LOCAL_ENABLED" "$OPERATOR_AUTH_LOCAL_ENABLED"
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LDAP_ENABLED" "$OPERATOR_AUTH_LDAP_ENABLED"
+    php_config_set "CONFIG_OPERATOR_AUTH_DEFAULT" "$OPERATOR_AUTH_DEFAULT"
+    php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_URI" "$LDAP_URI_JSON"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_SECURITY" "$LDAP_SECURITY"
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LDAP_TLS_VERIFY" "$LDAP_TLS_VERIFY"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_TLS_CA_FILE" "$LDAP_TLS_CA_FILE"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BASE_DN" "$LDAP_BASE_DN"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_USER_BASE_DN" "$LDAP_USER_BASE_DN"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BIND_DN" "$LDAP_BIND_DN"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "$LDAP_FILTER"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$LDAP_EXTERNAL_ID_ATTRIBUTE"
+    php_config_set_integer "CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT" "$LDAP_TIMEOUT"
+    php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS" "$LDAP_ALLOWED_GROUPS_JSON"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE" "$LDAP_GROUP_ATTRIBUTE"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE" "$LDAP_GROUP_MATCHING_RULE"
+    chown www-data:www-data "$DALORADIUS_CONF_PATH"
+    chmod 0600 "$DALORADIUS_CONF_PATH"
 }
 
 function init_database {
@@ -296,6 +327,7 @@ else
     date > "$INIT_LOCK"
 fi
 
+refresh_operator_auth_config
 wait_for_mysql
 
 DB_LOCK=/data/.db_init_done

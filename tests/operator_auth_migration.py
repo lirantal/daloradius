@@ -141,10 +141,25 @@ VALUES (3, 'ldap-operator', NULL, 'ldap',
             "ldap-operator\tldap\tuid=ldap-operator,ou=people,dc=example,dc=org\t<NULL>"
         )
         assert scalar("SELECT COUNT(*) FROM operators") == "3"
+        assert scalar(
+            "SELECT NON_UNIQUE FROM information_schema.statistics "
+            "WHERE table_schema = DATABASE() AND table_name = 'operators' "
+            "AND index_name = 'operators_external_id_uq'"
+        ) == "0"
+        duplicate = subprocess.run(
+            ["docker", "exec", "-i", DB, "mariadb", "-uroot", "radius"],
+            input=("INSERT INTO operators (id, username, password, auth_source, external_id) "
+                   "VALUES (4, 'duplicate-ldap', NULL, 'ldap', "
+                   "'uid=ldap-operator,ou=people,dc=example,dc=org');"),
+            capture_output=True,
+            text=True,
+        )
+        assert duplicate.returncode != 0, "duplicate external_id was accepted"
 
         print("PASS: legacy operator rows and password values preserved")
         print("PASS: auth_source defaults to local and external_id/password are nullable")
         print("PASS: LDAP operator row accepts external identity without a local password")
+        print("PASS: duplicate LDAP external identities are rejected")
         print("PASS: migration is idempotent")
     finally:
         run("docker", "rm", "-f", "-v", DB, check=False)

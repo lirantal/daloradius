@@ -39,13 +39,17 @@ $configValues['CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT'] = 5;
 $configValues['CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS'] = array(
     'cn=daloradius-operators,ou=Groups,dc=example,dc=org',
 );
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE'] = 'memberOf';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE'] = '';
 ```
 
 The implementation must treat the following values as configuration types, not
 as display strings: the three enable/default values are booleans/string, URI
 and allowed-group values are arrays, TLS verification is a boolean, and timeout
 is an integer. `{username}` is replaced with the submitted operator name by the
-LDAP authentication flow.
+LDAP authentication flow. The URI scheme must match the security mode:
+`plain` and `starttls` require `ldap://`; `ldaps` requires `ldaps://`. A mismatch
+is rejected before any bind, and certificate failure never downgrades security.
 
 ### Bind-password handling
 
@@ -80,6 +84,8 @@ DALORADIUS_LDAP_BIND_PASSWORD=store-this-outside-source-control
 DALORADIUS_LDAP_FILTER=(&(objectClass=user)(sAMAccountName={username}))
 DALORADIUS_LDAP_EXTERNAL_ID_ATTRIBUTE=objectGUID
 DALORADIUS_LDAP_TIMEOUT=5
+DALORADIUS_LDAP_GROUP_ATTRIBUTE=memberOf
+DALORADIUS_LDAP_GROUP_MATCHING_RULE=1.2.840.113556.1.4.1941
 DALORADIUS_LDAP_ALLOWED_GROUPS=["CN=daloRADIUS Operators,OU=Groups,DC=example,DC=org"]
 ```
 
@@ -136,6 +142,16 @@ $configValues['CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS'] = array(
 );
 ```
 
+For nested AD membership, set:
+
+```php
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE'] = 'memberOf';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE'] = '1.2.840.113556.1.4.1941';
+```
+
+The matching rule is inserted only with the configured allowed group DNs. Leave
+it empty for direct membership checks.
+
 AD deployments may instead use `userPrincipalName` when operators enter an
 email-style login. Make the filter match the chosen login format and test
 case-folding behavior with the actual directory. Do not use an unrestricted
@@ -155,6 +171,8 @@ into a direct group and list that group in `LDAP_ALLOWED_GROUPS`.
 ## OpenLDAP example
 
 OpenLDAP commonly uses `uid` and `inetOrgPerson`:
+When group restrictions are enabled, the user entry must expose the configured group attribute (commonly `memberOf` via the memberof overlay).
+
 
 ```php
 $configValues['CONFIG_OPERATOR_AUTH_LDAP_URI'] = array(
@@ -210,6 +228,16 @@ and local TOTP/MFA are separate controls; LDAP does not replace MFA. Follow
 MFA after an LDAP login and keep recovery codes offline.
 
 ## Rollout and local recovery
+
+For an existing database, apply the idempotent migration before deploying the
+provider-aware pages:
+
+```bash
+mariadb -u root -p radius < contrib/db/migrations/2026-09-operator-ldap.sql
+```
+
+The official Docker entrypoint applies it automatically. It preserves existing
+passwords, marks existing operators as `local`, and may be run more than once.
 
 1. Install `php-ldap` and deploy the CA file.
 2. Leave `LOCAL_ENABLED=true`, `LDAP_ENABLED=false`, and `DEFAULT=local`.
