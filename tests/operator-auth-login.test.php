@@ -100,6 +100,25 @@ check_login('final session carries provider', $session['operator_auth_source'] =
 check_login('final session preserves ACL identity', $session['operator_id'] === 7 && $session['operator_user'] === 'alice');
 check_login('final session is authenticated', $session['daloradius_logged_in'] === true);
 
+require_once dirname(__DIR__) . '/app/operators/library/totp.php';
+$totpSecret = dalo_totp_generate_secret();
+$totpCode = dalo_totp_new()->getCode($totpSecret);
+$totpCounter = dalo_totp_verify_once($totpSecret, $totpCode, null);
+check_login('LDAP pending session accepts a valid common TOTP factor',
+    $session['operator_auth_source'] === 'ldap' && $totpCounter !== null);
+check_login('common TOTP rejects an incorrect factor',
+    dalo_totp_verify_once($totpSecret, '000000', null) === null);
+$recoveryCodes = dalo_totp_generate_recovery_codes(2);
+$recoveryHashes = dalo_totp_hash_recovery_codes($recoveryCodes);
+list($recoveryOk, $remainingRecoveryHashes) = dalo_totp_verify_recovery_code($recoveryHashes, $recoveryCodes[0]);
+list($reusedRecoveryOk) = dalo_totp_verify_recovery_code($remainingRecoveryHashes, $recoveryCodes[0]);
+check_login('common recovery code is accepted once for provider sessions',
+    $recoveryOk && !$reusedRecoveryOk);
+$localMfaSession = array();
+dalo_operator_auth_set_pending($localMfaSession, 8, 'local-admin', 'local');
+check_login('local provider enters the same MFA pending flow',
+    $localMfaSession['operator_2fa_auth_source'] === 'local');
+
 $loginPage = file_get_contents(dirname(__DIR__) . '/app/operators/login.php');
 $otpPage = file_get_contents(dirname(__DIR__) . '/app/operators/login-otp.php');
 $flow = file_get_contents(dirname(__DIR__) . '/app/operators/dologin.php');
