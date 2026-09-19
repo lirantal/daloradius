@@ -67,7 +67,6 @@ CREATE TABLE `billing_history` (
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `operators_external_id_uq` (`external_id`),
   KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
@@ -118,7 +117,6 @@ CREATE TABLE `billing_merchant` (
   `vendor_type` VARCHAR(200) NOT NULL DEFAULT '',
   `payer_status` VARCHAR(200) NOT NULL DEFAULT '',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `operators_external_id_uq` (`external_id`),
   KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
@@ -157,7 +155,6 @@ CREATE TABLE `billing_paypal` (
   `payment_address_status` VARCHAR(200) DEFAULT NULL,
   `payer_status` VARCHAR(200) DEFAULT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `operators_external_id_uq` (`external_id`),
   KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
@@ -864,7 +861,6 @@ CREATE TABLE `userbillinfo` (
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `operators_external_id_uq` (`external_id`),
   KEY `username` (`username`),
   KEY `planname` (`planName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -902,7 +898,6 @@ CREATE TABLE `userinfo` (
   `updatedate` DATETIME DEFAULT '0000-00-00 00:00:00',
   `updateby` VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `operators_external_id_uq` (`external_id`),
   KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;
