@@ -31,9 +31,14 @@ check_ui('login translates location labels',
     strpos($login, "t('all','Default')") !== false
     && strpos($login, "t('all','Location')") !== false);
 $postMarker = strpos($new, "if (\$_SERVER['REQUEST_METHOD'] === 'POST')");
+$authSourceInitialization = strpos($new, "\$operator_auth_source = 'local';");
+$externalIdInitialization = strpos($new, '$operator_external_id = null;');
 check_ui('new operator GET initializes identity fields before POST handling',
-    strpos($new, "\$operator_auth_source = 'local';") < $postMarker
-    && strpos($new, '\$operator_external_id = null;') < $postMarker);
+    $postMarker !== false
+    && $authSourceInitialization !== false
+    && $externalIdInitialization !== false
+    && $authSourceInitialization < $postMarker
+    && $externalIdInitialization < $postMarker);
 check_ui('removed dead login default helper',
     strpos($dologin, 'function dalo_operator_auth_default_source') === false);
 check_ui('English catalog contains the new UI keys',

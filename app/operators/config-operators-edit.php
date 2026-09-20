@@ -134,8 +134,8 @@
 
                     $identity_source_sql = $dbSocket->escapeSimple($current_auth_source);
                     $identity_external_sql = is_null($current_external_id)
-                                           ? 'external_id IS NULL'
-                                           : "external_id='" . $dbSocket->escapeSimple($current_external_id) . "'";
+                                           ? "(external_id IS NULL OR TRIM(external_id)='')"
+                                           : "TRIM(external_id)='" . $dbSocket->escapeSimple($current_external_id) . "'";
                     $identity_source_predicate = $current_auth_source === 'local'
                                                ? "(auth_source='local' OR auth_source IS NULL)"
                                                : "auth_source='" . $identity_source_sql . "'";

@@ -27,13 +27,15 @@ fi
 
 # Empty optional environment values must not erase configured sample defaults
 # during an existing-container refresh.
-grep -Fq '[ -n "$LDAP_FILTER" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "$LDAP_FILTER"' "$INIT" \
+refresh_function=$(awk '/^function refresh_operator_auth_config \{/{capture=1} capture {print} capture && /^}/{exit}' "$INIT")
+[ -n "$refresh_function" ] || fail 'refresh_operator_auth_config could not be extracted'
+grep -Fq '[ -n "$LDAP_FILTER" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "$LDAP_FILTER"' <<<"$refresh_function" \
     || fail 'refresh does not preserve the sample LDAP filter'
-grep -Fq '[ -n "$LDAP_EXTERNAL_ID_ATTRIBUTE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$LDAP_EXTERNAL_ID_ATTRIBUTE"' "$INIT" \
+grep -Fq '[ -n "$LDAP_EXTERNAL_ID_ATTRIBUTE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$LDAP_EXTERNAL_ID_ATTRIBUTE"' <<<"$refresh_function" \
     || fail 'refresh does not preserve the configured external ID'
-grep -Eq '^[[:space:]]+php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "\$LDAP_FILTER"' "$INIT" \
+grep -Eq '^[[:space:]]+php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "\$LDAP_FILTER"' <<<"$refresh_function" \
     && fail 'refresh still unconditionally writes the LDAP filter'
-grep -Eq '^[[:space:]]+php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "\$LDAP_EXTERNAL_ID_ATTRIBUTE"' "$INIT" \
+grep -Eq '^[[:space:]]+php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "\$LDAP_EXTERNAL_ID_ATTRIBUTE"' <<<"$refresh_function" \
     && fail 'refresh still unconditionally writes the external ID'
 
 [ "$(grep -F "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$SAMPLE" | head -n 1)" = "\$configValues['CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE'] = '';" ] \
