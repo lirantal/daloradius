@@ -71,7 +71,7 @@ Docker deployments use the corresponding environment variables.
 | `CONFIG_OPERATOR_AUTH_LDAP_BIND_DN` | `DALORADIUS_LDAP_BIND_DN` | Read-only service-account DN. |
 | `CONFIG_OPERATOR_AUTH_LDAP_BIND_PASSWORD` | `DALORADIUS_LDAP_BIND_PASSWORD` | Service-account password. A non-empty environment value overrides the PHP value. |
 | `CONFIG_OPERATOR_AUTH_LDAP_FILTER` | `DALORADIUS_LDAP_FILTER` | User filter containing `{username}`. |
-| `CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE` | `DALORADIUS_LDAP_EXTERNAL_ID_ATTRIBUTE` | Stable identifier: normally `objectGUID` for AD or `entryUUID` for OpenLDAP. Set it explicitly when enabling LDAP. |
+| `CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE` | `DALORADIUS_LDAP_EXTERNAL_ID_ATTRIBUTE` | Required when LDAP is enabled; use an immutable identifier such as `objectGUID` for AD or `entryUUID` for OpenLDAP. There is no mutable `uid` default. |
 | `CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT` | `DALORADIUS_LDAP_TIMEOUT` | `5`; request-wide timeout, clamped to 1–30 seconds. |
 | `CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS` | `DALORADIUS_LDAP_ALLOWED_GROUPS` | Optional allowed group DN list. Docker uses a JSON array. |
 | `CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE` | `DALORADIUS_LDAP_GROUP_ATTRIBUTE` | `memberOf`; user membership attribute. |

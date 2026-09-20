@@ -12,6 +12,34 @@ MYSQL_DATABASE=${MYSQL_DATABASE:-raddb}
 MYSQL_USER=${MYSQL_USER:-raduser}
 MYSQL_PASSWORD=${MYSQL_PASSWORD:-radpass}
 MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-5}
+
+function normalize_ldap_timeout {
+    local value="$1"
+
+    case "$value" in
+        ''|*[!0-9]*)
+            echo "Invalid integer value for CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT." >&2
+            return 1
+            ;;
+    esac
+
+    # PHP interprets an unquoted leading-zero integer as octal. Canonicalize
+    # the decimal string before writing it to daloradius.conf.php.
+    while [ "${#value}" -gt 1 ] && [ "${value:0:1}" = 0 ]; do
+        value="${value:1}"
+    done
+
+    if [ "${#value}" -gt 2 ] || {
+        [ "${#value}" -eq 2 ] && [ "$value" -gt 30 ]
+    }; then
+        value=30
+    fi
+    if [ "$value" -lt 1 ]; then
+        value=1
+    fi
+    printf '%s' "$value"
+}
+
 PASSWORD_MIN_LENGTH=${PASSWORD_MIN_LENGTH:-}
 PASSWORD_MAX_LENGTH=${PASSWORD_MAX_LENGTH:-}
 DEFAULT_FREERADIUS_SERVER=${DEFAULT_FREERADIUS_SERVER:-radius}
@@ -33,7 +61,7 @@ LDAP_USER_BASE_DN=${DALORADIUS_LDAP_USER_BASE_DN:-}
 LDAP_BIND_DN=${DALORADIUS_LDAP_BIND_DN:-}
 LDAP_FILTER=${DALORADIUS_LDAP_FILTER:-}
 LDAP_EXTERNAL_ID_ATTRIBUTE=${DALORADIUS_LDAP_EXTERNAL_ID_ATTRIBUTE:-}
-LDAP_TIMEOUT=${DALORADIUS_LDAP_TIMEOUT:-5}
+LDAP_TIMEOUT=$(normalize_ldap_timeout "${DALORADIUS_LDAP_TIMEOUT:-5}")
 LDAP_ALLOWED_GROUPS_JSON=${DALORADIUS_LDAP_ALLOWED_GROUPS:-[]}
 LDAP_GROUP_ATTRIBUTE=${DALORADIUS_LDAP_GROUP_ATTRIBUTE:-memberOf}
 LDAP_GROUP_MATCHING_RULE=${DALORADIUS_LDAP_GROUP_MATCHING_RULE:-}
@@ -178,16 +206,16 @@ function refresh_operator_auth_config {
     php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_URI" "$LDAP_URI_JSON"
     php_config_set "CONFIG_OPERATOR_AUTH_LDAP_SECURITY" "$LDAP_SECURITY"
     php_config_set_boolean "CONFIG_OPERATOR_AUTH_LDAP_TLS_VERIFY" "$LDAP_TLS_VERIFY"
-    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_TLS_CA_FILE" "$LDAP_TLS_CA_FILE"
-    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BASE_DN" "$LDAP_BASE_DN"
-    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_USER_BASE_DN" "$LDAP_USER_BASE_DN"
-    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BIND_DN" "$LDAP_BIND_DN"
-    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "$LDAP_FILTER"
-    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$LDAP_EXTERNAL_ID_ATTRIBUTE"
+    [ -n "$LDAP_TLS_CA_FILE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_TLS_CA_FILE" "$LDAP_TLS_CA_FILE"
+    [ -n "$LDAP_BASE_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BASE_DN" "$LDAP_BASE_DN"
+    [ -n "$LDAP_USER_BASE_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_USER_BASE_DN" "$LDAP_USER_BASE_DN"
+    [ -n "$LDAP_BIND_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BIND_DN" "$LDAP_BIND_DN"
+    [ -n "$LDAP_FILTER" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "$LDAP_FILTER"
+    [ -n "$LDAP_EXTERNAL_ID_ATTRIBUTE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$LDAP_EXTERNAL_ID_ATTRIBUTE"
     php_config_set_integer "CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT" "$LDAP_TIMEOUT"
     php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS" "$LDAP_ALLOWED_GROUPS_JSON"
     php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE" "$LDAP_GROUP_ATTRIBUTE"
-    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE" "$LDAP_GROUP_MATCHING_RULE"
+    [ -n "$LDAP_GROUP_MATCHING_RULE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE" "$LDAP_GROUP_MATCHING_RULE"
     chown www-data:www-data "$DALORADIUS_CONF_PATH"
     chmod 0600 "$DALORADIUS_CONF_PATH"
 }

@@ -132,17 +132,15 @@ $configValues['CONFIG_OPERATOR_AUTH_LDAP_USER_BASE_DN'] = '';
 $configValues['CONFIG_OPERATOR_AUTH_LDAP_BIND_DN'] = '';
 $configValues['CONFIG_OPERATOR_AUTH_LDAP_BIND_PASSWORD'] = '';
 $configValues['CONFIG_OPERATOR_AUTH_LDAP_FILTER'] = '(&(objectClass=person)(uid={username}))';
-$configValues['CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE'] = 'uid';
+$configValues['CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE'] = '';
 $configValues['CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT'] = 5;
 $configValues['CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS'] = array();
 $configValues['CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE'] = 'memberOf';
 $configValues['CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE'] = '';
 
-// The environment value is intentionally not written to logs or persisted by
-// the Docker entrypoint. It overrides the file value for this PHP request.
-if (getenv('DALORADIUS_LDAP_BIND_PASSWORD') !== false && getenv('DALORADIUS_LDAP_BIND_PASSWORD') !== '') {
-    $configValues['CONFIG_OPERATOR_AUTH_LDAP_BIND_PASSWORD'] = getenv('DALORADIUS_LDAP_BIND_PASSWORD');
-}
+// Set a stable external ID attribute explicitly before enabling LDAP. A
+// protected DALORADIUS_LDAP_BIND_PASSWORD environment value is applied only
+// by the login path and is intentionally not loaded into $configValues.
 
 
 

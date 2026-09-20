@@ -268,12 +268,6 @@ final class LdapAuthProvider implements OperatorAuthProvider
 
     public function __construct(array $config = array(), $adapter = null)
     {
-        /* Accept adapter-first too; it is convenient for small isolated tests. */
-        if (is_object($config) && (is_array($adapter) || $adapter === null)) {
-            $tmp = $config;
-            $config = is_array($adapter) ? $adapter : array();
-            $adapter = $tmp;
-        }
         $this->config = $config;
         $this->adapter = $adapter ?: new NativeLdapAdapter();
     }
@@ -306,8 +300,12 @@ final class LdapAuthProvider implements OperatorAuthProvider
         }
         $deadline = microtime(true) + $timeout;
         $lastTechnical = false;
+        $firstUri = true;
         foreach ($uris as $uri) {
-            $remaining = $this->remainingSeconds($deadline, $timeout);
+            /* The first operation receives the complete configured budget;
+             * subsequent operations require a full second to remain. */
+            $remaining = $firstUri ? $timeout : $this->remainingSeconds($deadline, $timeout);
+            $firstUri = false;
             if ($remaining === 0) {
                 break;
             }
@@ -564,7 +562,7 @@ final class LdapAuthProvider implements OperatorAuthProvider
         if ($remaining <= 0) {
             return 0;
         }
-        return min($maximum, max(1, (int) ceil($remaining)));
+        return min($maximum, max(0, (int) floor($remaining)));
     }
 
     private function configureTimeoutOptions($connection, $timeout)
@@ -658,7 +656,7 @@ final class LdapAuthProvider implements OperatorAuthProvider
 
     private function externalIdAttribute()
     {
-        $attribute = $this->value('CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE', 'uid');
+        $attribute = $this->value('CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE', null);
         $attribute = is_string($attribute) ? trim($attribute) : '';
         return $attribute === '' ? null : $attribute;
     }
@@ -673,7 +671,7 @@ final class LdapAuthProvider implements OperatorAuthProvider
     {
         $attrs = array('dn');
         $external = $this->externalIdAttribute();
-        if ($external !== '') {
+        if ($external !== null) {
             $attrs[] = $external;
         }
         $group = $this->value('CONFIG_OPERATOR_LDAP_GROUP_ATTRIBUTE', 'memberOf');

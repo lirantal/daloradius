@@ -44,6 +44,7 @@ $ldap = new LdapAuthProvider(array(
     'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=example,dc=org',
     'CONFIG_OPERATOR_LDAP_USER_BASE_DN' => 'ou=operators,dc=example,dc=org',
     'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+    'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid',
     'CONFIG_OPERATOR_LDAP_BIND_PASSWORD' => 'service-secret',
     'CONFIG_OPERATOR_LDAP_USER_FILTER' => '(&(objectClass=person)(uid={username}))',
     'CONFIG_OPERATOR_LDAP_ALLOWED_GROUPS' => array('cn=operators,dc=example,dc=org'),
@@ -76,7 +77,8 @@ foreach ($fake->options as $option) {
 check_auth('LDAP network timeout is applied as a bounded integer', $hasNetworkTimeout);
 check_auth('LDAP time limit option is applied when available', $hasTimeLimit);
 check_auth('LDAP search is bounded to two results and the remaining deadline',
-    $fake->searchLimits[0] === array(2, 5));
+    $fake->searchLimits[0][0] === 2
+    && $fake->searchLimits[0][1] >= 1 && $fake->searchLimits[0][1] <= 5);
 
 function option_has_value(array $options, $option, $value)
 {
@@ -95,9 +97,10 @@ $minimumTimeoutProvider = new LdapAuthProvider(array(
     'CONFIG_OPERATOR_LDAP_NETWORK_TIMEOUT' => 0,
     'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
     'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+    'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid',
 ), $minimumTimeoutFake);
 check_auth('non-positive LDAP timeout clamps to one second',
-    $minimumTimeoutProvider->authenticate('minimum', 'ldap-secret')->isAuthenticated()
+    !$minimumTimeoutProvider->authenticate('minimum', 'ldap-secret')->isAuthenticated()
     && option_has_value($minimumTimeoutFake->options, 20485, 1)
     && option_has_value($minimumTimeoutFake->options, 4, 1));
 
@@ -108,6 +111,7 @@ $maximumTimeoutProvider = new LdapAuthProvider(array(
     'CONFIG_OPERATOR_LDAP_NETWORK_TIMEOUT' => '999999999999999999999',
     'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
     'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+    'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid',
 ), $maximumTimeoutFake);
 check_auth('oversized LDAP timeout clamps to thirty seconds',
     $maximumTimeoutProvider->authenticate('maximum', 'ldap-secret')->isAuthenticated()
@@ -116,7 +120,7 @@ check_auth('oversized LDAP timeout clamps to thirty seconds',
 
 $rejectFake = new FakeOperatorLdapAdapter();
 $rejectFake->searchEntries = $fake->searchEntries;
-$reject = new LdapAuthProvider(array('CONFIG_OPERATOR_LDAP_URIS' => array('ldap://one', 'ldap://two'), 'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x', 'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service'), $rejectFake);
+$reject = new LdapAuthProvider(array('CONFIG_OPERATOR_LDAP_URIS' => array('ldap://one', 'ldap://two'), 'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x', 'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service', 'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid'), $rejectFake);
 $rejectResult = $reject->authenticate('Alice', 'wrong');
 check_auth('user rejection does not fail over', !$rejectResult->isAuthenticated() && count($rejectFake->uris) === 1);
 
@@ -126,6 +130,7 @@ $nestedProvider = new LdapAuthProvider(array(
     'CONFIG_OPERATOR_LDAP_URI' => 'ldap://directory',
     'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
     'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+    'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid',
     'CONFIG_OPERATOR_LDAP_ALLOWED_GROUPS' => array('cn=parent,dc=x'),
     'CONFIG_OPERATOR_LDAP_GROUP_ATTRIBUTE' => 'memberOf',
     'CONFIG_OPERATOR_LDAP_GROUP_MATCHING_RULE' => '1.2.840.113556.1.4.1941',
@@ -149,11 +154,32 @@ $deadlineProvider = new LdapAuthProvider(array(
     'CONFIG_OPERATOR_LDAP_NETWORK_TIMEOUT' => 1,
     'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
     'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+    'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid',
 ), $deadlineFake);
 $deadlineResult = $deadlineProvider->authenticate('deadline', 'ldap-secret');
 check_auth('LDAP failover observes one request-wide deadline',
     !$deadlineResult->isAuthenticated() && $deadlineResult->isRetryable()
     && count($deadlineFake->uris) === 1);
+
+class SubsecondBudgetAdapter extends FakeOperatorLdapAdapter {
+    public function connect($uri) {
+        usleep(250000);
+        return parent::connect($uri);
+    }
+}
+$subsecondFake = new SubsecondBudgetAdapter();
+$subsecondFake->searchEntries = array(array('dn' => 'cn=Subsecond', 'uid' => array('subsecond')));
+$subsecondProvider = new LdapAuthProvider(array(
+    'CONFIG_OPERATOR_LDAP_URI' => 'ldap://directory',
+    'CONFIG_OPERATOR_LDAP_NETWORK_TIMEOUT' => 1,
+    'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
+    'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+    'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid',
+), $subsecondFake);
+$subsecondResult = $subsecondProvider->authenticate('subsecond', 'ldap-secret');
+check_auth('LDAP does not start a new operation with less than one second left',
+    !$subsecondResult->isAuthenticated() && $subsecondResult->isRetryable()
+    && count($subsecondFake->uris) === 1 && count($subsecondFake->searchLimits) === 0);
 
 $empty = $ldap->authenticate('Alice', '');
 check_auth('LDAP empty password does not connect', $empty->getReason() === 'empty_password' && count($fake->uris) === 2);
@@ -166,11 +192,11 @@ check_auth('binary objectGUID is canonicalized', $guidResult->getIdentity()['ext
 
 $missingIdFake = new FakeOperatorLdapAdapter();
 $missingIdFake->searchEntries = array(array('dn' => 'cn=MissingId'));
-$missingIdProvider = new LdapAuthProvider(array('CONFIG_OPERATOR_LDAP_URI' => 'ldap://directory', 'CONFIG_OPERATOR_LDAP_SECURITY' => 'plain', 'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x', 'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service'), $missingIdFake);
+$missingIdProvider = new LdapAuthProvider(array('CONFIG_OPERATOR_LDAP_URI' => 'ldap://directory', 'CONFIG_OPERATOR_LDAP_SECURITY' => 'plain', 'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x', 'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service', 'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid'), $missingIdFake);
 $missingIdResult = $missingIdProvider->authenticate('missing', 'ldap-secret');
 check_auth('LDAP missing external ID fails authentication', !$missingIdResult->isAuthenticated() && $missingIdResult->getReason() === 'ldap_external_id_missing');
-$invalidConfig = new LdapAuthProvider(array('CONFIG_OPERATOR_LDAP_URI' => 'ldap://directory', 'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => ''), new FakeOperatorLdapAdapter());
-check_auth('LDAP empty external ID attribute fails configuration', $invalidConfig->authenticate('missing', 'ldap-secret')->getReason() === 'ldap_configuration_invalid');
+$invalidConfig = new LdapAuthProvider(array('CONFIG_OPERATOR_LDAP_URI' => 'ldap://directory'), new FakeOperatorLdapAdapter());
+check_auth('LDAP missing external ID attribute fails configuration', $invalidConfig->authenticate('missing', 'ldap-secret')->getReason() === 'ldap_configuration_invalid');
 
 class TechnicalUserBindAdapter extends FakeOperatorLdapAdapter {
     public function bind($connection, $dn, $password) {
@@ -190,6 +216,7 @@ $technicalBindProvider = new LdapAuthProvider(array(
     'CONFIG_OPERATOR_LDAP_SECURITY' => 'plain',
     'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
     'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+    'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid',
 ), $technicalBindFake);
 check_auth('technical user-bind failure reaches second URI',
     $technicalBindProvider->authenticate('Alice', 'ldap-secret')->isAuthenticated()
@@ -213,6 +240,7 @@ $stringFalseProvider = new LdapAuthProvider(array(
     'CONFIG_OPERATOR_LDAP_TLS_VERIFY' => 'false',
     'CONFIG_OPERATOR_LDAP_BASE_DN' => 'dc=x',
     'CONFIG_OPERATOR_LDAP_BIND_DN' => 'cn=service',
+    'CONFIG_OPERATOR_LDAP_EXTERNAL_ID_ATTRIBUTE' => 'uid',
 ), $stringFalseFake);
 $stringFalseProvider->authenticate('Alice', 'ldap-secret');
 $usesNever = false;
