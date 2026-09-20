@@ -33,7 +33,7 @@ check_management_identity(strpos($edit, "identity_state_predicate") !== false
     && strpos($edit, "affectedRows()") !== false,
     'edit conditionally updates the identity and rejects a concurrent change');
 check_management_identity(strpos($edit, "(external_id IS NULL OR TRIM(external_id)='')") !== false
-    && strpos($edit, "TRIM(external_id)='") !== false,
+    && strpos($edit, "\"TRIM(external_id)='\" . \$dbSocket->escapeSimple(\$current_external_id) . \"'\"") !== false,
     'edit concurrency predicate uses the same external ID normalization as the form state');
 check_management_identity(strpos($edit, "password=NULL") !== false,
     'edit clears local password material for LDAP identities');
