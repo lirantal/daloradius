@@ -27,6 +27,7 @@
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
     include_once("lang/main.php");
+    include_once("include/management/operator_identity.php");
     include("../common/includes/layout.php");
 
     // init logging variables
@@ -38,20 +39,14 @@
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
     $cols = array(
-                    "id" => t('all','ID'), 
-                    "username" => t('all','Username')
+                    "id" => t('all','ID'),
+                    "username" => t('all','Username'),
+                    "auth_source" => t('all','AuthenticationSource'),
+                    "identity_status" => t('all','ExternalIdentity'),
+                    "fullname" => "Full name",
+                    "title" => "Title"
                  );
-    
-    if (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes") {
-        $cols[] = t('all','Password');
-    } else {
-        $cols["auth"] = t('all','Password');
-    }
-    
-    $cols["fullname"] = "Full name";
-    $cols["title"] = "Title";
-    
-    
+
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
                  
@@ -98,7 +93,7 @@
         /* END */
         
         // we execute and log the actual query
-        $sql = sprintf("SELECT id, username, password AS auth, CONCAT(firstname, ' ', lastname) AS fullname, title
+        $sql = sprintf("SELECT id, username, auth_source, CASE WHEN external_id IS NULL OR external_id='' THEN 'Not linked' ELSE 'Linked' END AS identity_status, CONCAT(firstname, ' ', lastname) AS fullname, title
                           FROM %s", $configValues['CONFIG_DB_TBL_DALOOPERATORS']);
         $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
         $res = $dbSocket->query($sql);
@@ -145,11 +140,11 @@
                 $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
             }
             
-            list($id, $username, $auth, $fullname, $title) = $row;
-            
-            if (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) === "yes") {
-                $auth = "[Password is hidden]";
-            }
+            list($id, $username, $auth_source, $identity_status, $fullname, $title) = $row;
+            $auth_source = operator_auth_source_label($auth_source);
+            $identity_status = $identity_status === 'Linked'
+                             ? t('all','Linked')
+                             : t('all','NotLinked');
             
             // preparing checkboxes and tooltips stuff
             $tooltip = array(
@@ -166,7 +161,7 @@
             $checkbox = get_checkbox_str($d);
 
             // build table row
-            $table_row = array( $checkbox, $tooltip, $auth, $fullname, $title );
+            $table_row = array( $checkbox, $tooltip, $auth_source, $identity_status, $fullname, $title );
 
             // print table row
             print_table_row($table_row);

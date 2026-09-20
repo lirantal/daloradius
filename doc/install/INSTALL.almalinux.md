@@ -173,7 +173,7 @@ Therefore, the presented steps provide a general outline for enabling communicat
 To proceed with the installation of daloRADIUS, install the Apache HTTP Server and the necessary PHP packages:
 
 ```bash
-dnf install -y httpd php php-cli php-mysqlnd php-mbstring php-gd php-xml php-pear php-process \
+dnf install -y httpd php php-cli php-ldap php-mysqlnd php-mbstring php-gd php-xml php-pear php-process \
                git tar unzip wget firewalld policycoreutils-python-utils
 ```
 
@@ -352,6 +352,15 @@ httpd -t
 systemctl enable --now httpd
 systemctl restart httpd
 ```
+
+# Operator LDAP authentication
+
+The PHP `php-ldap` package is included above, but LDAP operator login remains
+local by default. To configure LDAP safely, follow
+[`doc/setup/operator-ldap.md`](../setup/operator-ldap.md). Keep
+`CONFIG_OPERATOR_AUTH_LOCAL_ENABLED=true` and a tested local break-glass
+operator until LDAP login, group authorization, and recovery have been
+verified.
 
 # Testing the Infrastructure
 

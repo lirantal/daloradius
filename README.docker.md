@@ -73,10 +73,21 @@ RADIUS authentication and accounting listen on host UDP ports `1812` and `1813`.
 
 MariaDB data remains in `./data/mysql`, FreeRADIUS init state remains in `./data/freeradius`, and daloRADIUS init state remains in `./data/daloradius`.
 
+## Operator LDAP authentication
+
+Operator LDAP configuration, including all environment variables, LDAPS and
+StartTLS, private CA mounts, Active Directory and OpenLDAP examples, operator
+provisioning, and rollout guidance, is documented in
+[`doc/setup/operator-ldap.md`](doc/setup/operator-ldap.md#docker-compose).
 
 ## Database migrations for upgrades
 
 Fresh Docker deployments initialize the database from the bundled schema. When upgrading an existing Docker deployment, check `contrib/db/migrations/` in the updated source tree and apply the relevant SQL migrations before using newly added features.
+
+Operator LDAP authentication requires
+`contrib/db/migrations/2026-09-operator-ldap.sql`; it preserves existing local
+operator passwords and can be applied repeatedly. The current web-container
+entrypoint also applies this migration automatically on startup.
 
 For example, to apply the operator MFA migration from the directory that contains `docker-compose.yml`:
 

@@ -12,6 +12,34 @@ MYSQL_DATABASE=${MYSQL_DATABASE:-raddb}
 MYSQL_USER=${MYSQL_USER:-raduser}
 MYSQL_PASSWORD=${MYSQL_PASSWORD:-radpass}
 MYSQL_WAIT_INTERVAL=${MYSQL_WAIT_INTERVAL:-5}
+
+function normalize_ldap_timeout {
+    local value="$1"
+
+    case "$value" in
+        ''|*[!0-9]*)
+            echo "Invalid integer value for CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT." >&2
+            return 1
+            ;;
+    esac
+
+    # PHP interprets an unquoted leading-zero integer as octal. Canonicalize
+    # the decimal string before writing it to daloradius.conf.php.
+    while [ "${#value}" -gt 1 ] && [ "${value:0:1}" = 0 ]; do
+        value="${value:1}"
+    done
+
+    if [ "${#value}" -gt 2 ] || {
+        [ "${#value}" -eq 2 ] && [ "$value" -gt 30 ]
+    }; then
+        value=30
+    fi
+    if [ "$value" -lt 1 ]; then
+        value=1
+    fi
+    printf '%s' "$value"
+}
+
 PASSWORD_MIN_LENGTH=${PASSWORD_MIN_LENGTH:-}
 PASSWORD_MAX_LENGTH=${PASSWORD_MAX_LENGTH:-}
 DEFAULT_FREERADIUS_SERVER=${DEFAULT_FREERADIUS_SERVER:-radius}
@@ -21,6 +49,22 @@ MAIL_SMTPADDR=${MAIL_SMTPADDR:-}
 MAIL_PORT=${MAIL_PORT:-}
 MAIL_FROM=${MAIL_FROM:-}
 MAIL_AUTH=${MAIL_AUTH:-}
+OPERATOR_AUTH_LOCAL_ENABLED=${DALORADIUS_OPERATOR_AUTH_LOCAL_ENABLED:-true}
+OPERATOR_AUTH_LDAP_ENABLED=${DALORADIUS_OPERATOR_AUTH_LDAP_ENABLED:-false}
+OPERATOR_AUTH_DEFAULT=${DALORADIUS_OPERATOR_AUTH_DEFAULT:-local}
+LDAP_URI_JSON=${DALORADIUS_LDAP_URI:-[]}
+LDAP_SECURITY=${DALORADIUS_LDAP_SECURITY:-starttls}
+LDAP_TLS_VERIFY=${DALORADIUS_LDAP_TLS_VERIFY:-true}
+LDAP_TLS_CA_FILE=${DALORADIUS_LDAP_TLS_CA_FILE:-}
+LDAP_BASE_DN=${DALORADIUS_LDAP_BASE_DN:-}
+LDAP_USER_BASE_DN=${DALORADIUS_LDAP_USER_BASE_DN:-}
+LDAP_BIND_DN=${DALORADIUS_LDAP_BIND_DN:-}
+LDAP_FILTER=${DALORADIUS_LDAP_FILTER:-}
+LDAP_EXTERNAL_ID_ATTRIBUTE=${DALORADIUS_LDAP_EXTERNAL_ID_ATTRIBUTE:-}
+LDAP_TIMEOUT=$(normalize_ldap_timeout "${DALORADIUS_LDAP_TIMEOUT:-5}")
+LDAP_ALLOWED_GROUPS_JSON=${DALORADIUS_LDAP_ALLOWED_GROUPS:-[]}
+LDAP_GROUP_ATTRIBUTE=${DALORADIUS_LDAP_GROUP_ATTRIBUTE:-memberOf}
+LDAP_GROUP_MATCHING_RULE=${DALORADIUS_LDAP_GROUP_MATCHING_RULE:-}
 
 MYSQL_DEFAULTS_FILE=""
 
@@ -58,6 +102,48 @@ function php_config_set {
     sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = '$value';|" "$DALORADIUS_CONF_PATH"
 }
 
+function php_config_set_boolean {
+    local key="$1"
+    local raw="$2"
+    local value
+    case "${raw,,}" in
+        1|true|yes|on) value=true ;;
+        0|false|no|off) value=false ;;
+        *)
+            echo "Invalid boolean value for ${key}." >&2
+            exit 1
+            ;;
+    esac
+    sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = $value;|" "$DALORADIUS_CONF_PATH"
+}
+
+function php_config_set_integer {
+    local key="$1"
+    local value="$2"
+    case "$value" in
+        ''|*[!0-9]*)
+            echo "Invalid integer value for ${key}." >&2
+            exit 1
+            ;;
+    esac
+    sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = $value;|" "$DALORADIUS_CONF_PATH"
+}
+
+function php_config_set_array {
+    local key="$1"
+    local json="$2"
+    local value
+
+    # JSON is used instead of delimiter splitting so commas, spaces, and DN
+    # punctuation remain data. The value is validated before touching config.
+    value=$(php -r '$value = json_decode($argv[1], true); if (!is_array($value) || json_last_error() !== JSON_ERROR_NONE) { exit(1); } echo var_export($value, true);' "$json" | tr -d '\n') || {
+        echo "Invalid JSON array value for ${key}." >&2
+        exit 1
+    }
+    value=$(escape_sed_replacement "$value")
+    sed -i "s|\$configValues\['$key'\] = .*;|\$configValues['$key'] = $value;|" "$DALORADIUS_CONF_PATH"
+}
+
 function init_daloradius {
 
     if ! test -f "$DALORADIUS_CONF_PATH" || ! test -s "$DALORADIUS_CONF_PATH"; then
@@ -81,12 +167,57 @@ function init_daloradius {
     [ -n "$MAIL_PORT" ] && php_config_set "CONFIG_MAIL_SMTPPORT" "$MAIL_PORT"
     [ -n "$MAIL_FROM" ] && php_config_set "CONFIG_MAIL_SMTPFROM" "$MAIL_FROM"
     [ -n "$MAIL_AUTH" ] && php_config_set "CONFIG_MAIL_SMTPAUTH" "$MAIL_AUTH"
+
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LOCAL_ENABLED" "$OPERATOR_AUTH_LOCAL_ENABLED"
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LDAP_ENABLED" "$OPERATOR_AUTH_LDAP_ENABLED"
+    php_config_set "CONFIG_OPERATOR_AUTH_DEFAULT" "$OPERATOR_AUTH_DEFAULT"
+    php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_URI" "$LDAP_URI_JSON"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_SECURITY" "$LDAP_SECURITY"
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LDAP_TLS_VERIFY" "$LDAP_TLS_VERIFY"
+    [ -n "$LDAP_TLS_CA_FILE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_TLS_CA_FILE" "$LDAP_TLS_CA_FILE"
+    [ -n "$LDAP_BASE_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BASE_DN" "$LDAP_BASE_DN"
+    [ -n "$LDAP_USER_BASE_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_USER_BASE_DN" "$LDAP_USER_BASE_DN"
+    [ -n "$LDAP_BIND_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BIND_DN" "$LDAP_BIND_DN"
+    [ -n "$LDAP_FILTER" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "$LDAP_FILTER"
+    [ -n "$LDAP_EXTERNAL_ID_ATTRIBUTE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$LDAP_EXTERNAL_ID_ATTRIBUTE"
+    php_config_set_integer "CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT" "$LDAP_TIMEOUT"
+    php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS" "$LDAP_ALLOWED_GROUPS_JSON"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE" "$LDAP_GROUP_ATTRIBUTE"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE" "$LDAP_GROUP_MATCHING_RULE"
+
     php_config_set "CONFIG_LOG_FILE" "/var/www/daloradius/var/log/daloradius.log"
 
     chown www-data:www-data "$DALORADIUS_CONF_PATH"
     chmod 0600 "$DALORADIUS_CONF_PATH"
 
     echo "daloRADIUS initialization completed."
+}
+
+function refresh_operator_auth_config {
+    if [ ! -s "$DALORADIUS_CONF_PATH" ]; then
+        return
+    fi
+
+    # Operator-auth environment settings are runtime deployment settings. Apply
+    # them on every container start, not only while creating the data volume.
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LOCAL_ENABLED" "$OPERATOR_AUTH_LOCAL_ENABLED"
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LDAP_ENABLED" "$OPERATOR_AUTH_LDAP_ENABLED"
+    php_config_set "CONFIG_OPERATOR_AUTH_DEFAULT" "$OPERATOR_AUTH_DEFAULT"
+    php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_URI" "$LDAP_URI_JSON"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_SECURITY" "$LDAP_SECURITY"
+    php_config_set_boolean "CONFIG_OPERATOR_AUTH_LDAP_TLS_VERIFY" "$LDAP_TLS_VERIFY"
+    [ -n "$LDAP_TLS_CA_FILE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_TLS_CA_FILE" "$LDAP_TLS_CA_FILE"
+    [ -n "$LDAP_BASE_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BASE_DN" "$LDAP_BASE_DN"
+    [ -n "$LDAP_USER_BASE_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_USER_BASE_DN" "$LDAP_USER_BASE_DN"
+    [ -n "$LDAP_BIND_DN" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_BIND_DN" "$LDAP_BIND_DN"
+    [ -n "$LDAP_FILTER" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_FILTER" "$LDAP_FILTER"
+    [ -n "$LDAP_EXTERNAL_ID_ATTRIBUTE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_EXTERNAL_ID_ATTRIBUTE" "$LDAP_EXTERNAL_ID_ATTRIBUTE"
+    php_config_set_integer "CONFIG_OPERATOR_AUTH_LDAP_TIMEOUT" "$LDAP_TIMEOUT"
+    php_config_set_array "CONFIG_OPERATOR_AUTH_LDAP_ALLOWED_GROUPS" "$LDAP_ALLOWED_GROUPS_JSON"
+    php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_ATTRIBUTE" "$LDAP_GROUP_ATTRIBUTE"
+    [ -n "$LDAP_GROUP_MATCHING_RULE" ] && php_config_set "CONFIG_OPERATOR_AUTH_LDAP_GROUP_MATCHING_RULE" "$LDAP_GROUP_MATCHING_RULE"
+    chown www-data:www-data "$DALORADIUS_CONF_PATH"
+    chmod 0600 "$DALORADIUS_CONF_PATH"
 }
 
 function init_database {
@@ -123,14 +254,14 @@ function tables_exist {
 }
 
 function ensure_operator_password_column {
-    local column_length
+    local column_metadata
 
     if ! table_exists "operators"; then
         return
     fi
 
-    column_length=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
-SELECT CHARACTER_MAXIMUM_LENGTH
+    column_metadata=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
+SELECT CONCAT(CHARACTER_MAXIMUM_LENGTH, ':', IS_NULLABLE)
 FROM information_schema.columns
 WHERE table_schema = DATABASE()
   AND table_name = 'operators'
@@ -138,18 +269,72 @@ WHERE table_schema = DATABASE()
 EOSQL
 )
 
-    case "$column_length" in
-        ""|*[!0-9]*)
+    case "$column_metadata" in
+        ""|*[!0-9:Y]*)
             return
             ;;
     esac
 
-    if [ "$column_length" -lt 95 ]; then
+    if [ "${column_metadata%%:*}" -lt 95 ] || [ "${column_metadata##*:}" != "YES" ]; then
         echo "Updating operators.password column length for password hashes."
         mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
-ALTER TABLE operators MODIFY password VARCHAR(95) NOT NULL;
+ALTER TABLE operators MODIFY password VARCHAR(95) DEFAULT NULL;
 EOSQL
     fi
+}
+
+OPERATOR_LDAP_MIGRATION_MARKER=/data/.migration_2026-09-operator-ldap.done
+
+function operator_ldap_schema_ready {
+    local schema_state
+
+    schema_state=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
+SELECT CONCAT(
+    (SELECT COUNT(*) FROM information_schema.columns
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND column_name = 'auth_source' AND data_type = 'varchar'
+       AND character_maximum_length = 16 AND is_nullable = 'NO'
+       AND REPLACE(column_default, CHAR(39), '') = 'local'),
+    ':',
+    (SELECT COUNT(*) FROM information_schema.columns
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND column_name = 'external_id' AND data_type = 'varchar'
+       AND character_maximum_length = 255 AND is_nullable = 'YES'),
+    ':',
+    (SELECT COUNT(*) FROM information_schema.columns
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND column_name = 'password' AND data_type = 'varchar'
+       AND character_maximum_length >= 95 AND is_nullable = 'YES'),
+    ':',
+    (SELECT COUNT(*) FROM information_schema.statistics
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND index_name = 'operators_external_id_uq' AND non_unique = 0
+       AND seq_in_index = 1 AND column_name = 'external_id'),
+    ':',
+    (SELECT COUNT(*) FROM information_schema.statistics
+     WHERE table_schema = DATABASE() AND table_name = 'operators'
+       AND index_name = 'operators_external_id_uq')
+);
+EOSQL
+    )
+
+    test "$schema_state" = "1:1:1:1:1"
+}
+
+function run_operator_ldap_migration {
+    if ! table_exists "operators"; then
+        return
+    fi
+
+    if test -f "$OPERATOR_LDAP_MIGRATION_MARKER" && operator_ldap_schema_ready; then
+        echo "Operator LDAP authentication migration already applied, skipping."
+        return
+    fi
+
+    echo "Applying operator LDAP authentication migration."
+    mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" \
+        < "$DALORADIUS_PATH/contrib/db/migrations/2026-09-operator-ldap.sql"
+    date > "$OPERATOR_LDAP_MIGRATION_MARKER"
 }
 
 function ensure_operator_totp_columns {
@@ -214,6 +399,7 @@ else
     date > "$INIT_LOCK"
 fi
 
+refresh_operator_auth_config
 wait_for_mysql
 
 DB_LOCK=/data/.db_init_done
@@ -229,6 +415,7 @@ else
 fi
 
 ensure_operator_password_column
+run_operator_ldap_migration
 ensure_operator_totp_columns
 
 # Start Apache2 in the foreground

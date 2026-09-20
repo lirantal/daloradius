@@ -1,0 +1,188 @@
+<?php
+/**
+ * Validation and persistence decisions for operator identities.
+ *
+ * Keep these decisions independent from the page and database layers so the
+ * password/source rules can be tested without bootstrapping the application.
+ */
+
+function operator_auth_source_options()
+{
+    return array(
+        'local' => 'Local',
+        'ldap' => 'LDAP',
+    );
+}
+
+function operator_normalize_auth_source($source)
+{
+    if (!is_string($source)) {
+        return null;
+    }
+
+    $source = strtolower(trim($source));
+    return array_key_exists($source, operator_auth_source_options()) ? $source : null;
+}
+
+function operator_auth_source_from_post(array $post)
+{
+    return array_key_exists('auth_source', $post)
+        ? operator_normalize_auth_source($post['auth_source'])
+        : 'local';
+}
+
+function operator_auth_source_label($source)
+{
+    $source = operator_normalize_auth_source($source);
+    if ($source === null) {
+        return function_exists('t') ? t('all', 'Unknown') : 'Unknown';
+    }
+
+    if (function_exists('t')) {
+        return t('all', $source === 'ldap' ? 'LDAP' : 'Local');
+    }
+
+    return operator_auth_source_options()[$source];
+}
+
+function operator_normalize_external_id($externalId)
+{
+    if (!is_string($externalId)) {
+        return null;
+    }
+
+    $externalId = trim($externalId);
+    return $externalId === '' ? null : $externalId;
+}
+
+function operator_validate_external_id($externalId)
+{
+    $externalId = operator_normalize_external_id($externalId);
+    if ($externalId === null) {
+        return array('ok' => true, 'external_id' => null);
+    }
+
+    $length = function_exists('mb_strlen')
+        ? mb_strlen($externalId, 'UTF-8')
+        : preg_match_all('/./us', $externalId, $unused);
+    if ($length === false) {
+        $length = strlen($externalId);
+    }
+    if ($length > 255) {
+        return operator_identity_error('external ID must not exceed 255 characters');
+    }
+
+    return array('ok' => true, 'external_id' => $externalId);
+}
+
+function operator_identity_state_matches($currentSource, $currentExternalId, $submittedSource, $submittedExternalId)
+{
+    $currentSource = operator_normalize_auth_source($currentSource);
+    $submittedSource = operator_normalize_auth_source($submittedSource);
+    if ($currentSource === null || $submittedSource === null || $currentSource !== $submittedSource) {
+        return false;
+    }
+
+    if (!is_null($submittedExternalId) && !is_string($submittedExternalId)) {
+        return false;
+    }
+
+    return operator_normalize_external_id($currentExternalId)
+        === operator_normalize_external_id($submittedExternalId);
+}
+
+function operator_identity_error($message)
+{
+    return array(
+        'ok' => false,
+        'error' => $message,
+    );
+}
+
+function operator_prepare_create_identity($authSource, $password, $externalId)
+{
+    $authSource = operator_normalize_auth_source($authSource);
+    if ($authSource === null) {
+        return operator_identity_error('invalid authentication source');
+    }
+
+    $validatedExternalId = operator_validate_external_id($externalId);
+    if (!$validatedExternalId['ok']) {
+        return $validatedExternalId;
+    }
+
+    $passwordHash = null;
+    if ($authSource === 'local') {
+        if (!is_string($password) || trim($password) === '') {
+            return operator_identity_error('local operators require a password');
+        }
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        if ($passwordHash === false) {
+            return operator_identity_error('unable to hash operator password');
+        }
+    }
+
+    return array(
+        'ok' => true,
+        'auth_source' => $authSource,
+        'external_id' => $authSource === 'ldap' ? $validatedExternalId['external_id'] : null,
+        'password_hash' => $passwordHash,
+    );
+}
+
+function operator_prepare_update_identity($currentSource, $requestedSource, $password, $confirmed, $externalId = null)
+{
+    $currentSource = operator_normalize_auth_source($currentSource);
+    $requestedSource = operator_normalize_auth_source($requestedSource);
+
+    if ($currentSource === null || $requestedSource === null) {
+        return operator_identity_error('invalid authentication source');
+    }
+
+    $validatedExternalId = operator_validate_external_id($externalId);
+    if (!$validatedExternalId['ok']) {
+        return $validatedExternalId;
+    }
+
+    $sourceChanged = $currentSource !== $requestedSource;
+    if ($sourceChanged && $confirmed !== true) {
+        return operator_identity_error('authentication source conversion requires confirmation');
+    }
+
+    if ($requestedSource === 'ldap') {
+        // LDAP accounts never retain a local password, including on a
+        // same-source edit where a forged password field was submitted.
+        return array(
+            'ok' => true,
+            'auth_source' => 'ldap',
+            'external_id' => $validatedExternalId['external_id'],
+            'password_mode' => 'clear',
+        );
+    }
+
+    if (!is_string($password) || trim($password) === '') {
+        if ($sourceChanged) {
+            return operator_identity_error('LDAP to Local conversion requires a new password');
+        }
+
+        return array(
+            'ok' => true,
+            'auth_source' => 'local',
+            'external_id' => null,
+            'password_mode' => 'preserve',
+        );
+    }
+
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    if ($passwordHash === false) {
+        return operator_identity_error('unable to hash operator password');
+    }
+
+    return array(
+        'ok' => true,
+        'auth_source' => 'local',
+        'external_id' => null,
+        'password_mode' => 'replace',
+        'password_hash' => $passwordHash,
+    );
+}
