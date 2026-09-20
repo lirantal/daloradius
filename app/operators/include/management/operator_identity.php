@@ -47,6 +47,42 @@ function operator_normalize_external_id($externalId)
     return $externalId === '' ? null : $externalId;
 }
 
+function operator_validate_external_id($externalId)
+{
+    $externalId = operator_normalize_external_id($externalId);
+    if ($externalId === null) {
+        return array('ok' => true, 'external_id' => null);
+    }
+
+    $length = function_exists('mb_strlen')
+        ? mb_strlen($externalId, 'UTF-8')
+        : preg_match_all('/./us', $externalId, $unused);
+    if ($length === false) {
+        $length = strlen($externalId);
+    }
+    if ($length > 255) {
+        return operator_identity_error('external ID must not exceed 255 characters');
+    }
+
+    return array('ok' => true, 'external_id' => $externalId);
+}
+
+function operator_identity_state_matches($currentSource, $currentExternalId, $submittedSource, $submittedExternalId)
+{
+    $currentSource = operator_normalize_auth_source($currentSource);
+    $submittedSource = operator_normalize_auth_source($submittedSource);
+    if ($currentSource === null || $submittedSource === null || $currentSource !== $submittedSource) {
+        return false;
+    }
+
+    if (!is_null($submittedExternalId) && !is_string($submittedExternalId)) {
+        return false;
+    }
+
+    return operator_normalize_external_id($currentExternalId)
+        === operator_normalize_external_id($submittedExternalId);
+}
+
 function operator_identity_error($message)
 {
     return array(
@@ -60,6 +96,11 @@ function operator_prepare_create_identity($authSource, $password, $externalId)
     $authSource = operator_normalize_auth_source($authSource);
     if ($authSource === null) {
         return operator_identity_error('invalid authentication source');
+    }
+
+    $validatedExternalId = operator_validate_external_id($externalId);
+    if (!$validatedExternalId['ok']) {
+        return $validatedExternalId;
     }
 
     $passwordHash = null;
@@ -76,18 +117,23 @@ function operator_prepare_create_identity($authSource, $password, $externalId)
     return array(
         'ok' => true,
         'auth_source' => $authSource,
-        'external_id' => $authSource === 'ldap' ? operator_normalize_external_id($externalId) : null,
+        'external_id' => $authSource === 'ldap' ? $validatedExternalId['external_id'] : null,
         'password_hash' => $passwordHash,
     );
 }
 
-function operator_prepare_update_identity($currentSource, $requestedSource, $password, $confirmed)
+function operator_prepare_update_identity($currentSource, $requestedSource, $password, $confirmed, $externalId = null)
 {
     $currentSource = operator_normalize_auth_source($currentSource);
     $requestedSource = operator_normalize_auth_source($requestedSource);
 
     if ($currentSource === null || $requestedSource === null) {
         return operator_identity_error('invalid authentication source');
+    }
+
+    $validatedExternalId = operator_validate_external_id($externalId);
+    if (!$validatedExternalId['ok']) {
+        return $validatedExternalId;
     }
 
     $sourceChanged = $currentSource !== $requestedSource;
@@ -101,6 +147,7 @@ function operator_prepare_update_identity($currentSource, $requestedSource, $pas
         return array(
             'ok' => true,
             'auth_source' => 'ldap',
+            'external_id' => $validatedExternalId['external_id'],
             'password_mode' => 'clear',
         );
     }
@@ -113,6 +160,7 @@ function operator_prepare_update_identity($currentSource, $requestedSource, $pas
         return array(
             'ok' => true,
             'auth_source' => 'local',
+            'external_id' => null,
             'password_mode' => 'preserve',
         );
     }
@@ -125,6 +173,7 @@ function operator_prepare_update_identity($currentSource, $requestedSource, $pas
     return array(
         'ok' => true,
         'auth_source' => 'local',
+        'external_id' => null,
         'password_mode' => 'replace',
         'password_hash' => $passwordHash,
     );

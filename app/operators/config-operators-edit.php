@@ -60,6 +60,7 @@
         $curr_operator_id = intval($curr_operator_id);
         $current_auth_source = operator_normalize_auth_source($current_auth_source);
         $current_auth_source = $current_auth_source === null ? 'local' : $current_auth_source;
+        $current_external_id = operator_normalize_external_id($current_external_id);
     }
 
     //feed the sidebar variables
@@ -84,12 +85,24 @@
                                       && $_POST['confirm_auth_source_change'] === '1';
                 $operator_external_id = ($requested_auth_source === 'ldap')
                                       ? operator_normalize_external_id($_POST['external_id'] ?? null) : null;
-                $identity = operator_prepare_update_identity(
-                    $current_auth_source,
-                    $requested_auth_source,
-                    $operator_password,
-                    $confirm_source_change
-                );
+                $identity_snapshot_present = array_key_exists('identity_auth_source', $_POST)
+                                          && array_key_exists('identity_external_id', $_POST);
+                $identity_snapshot_matches = $identity_snapshot_present
+                                          && operator_identity_state_matches(
+                                              $current_auth_source,
+                                              $current_external_id,
+                                              $_POST['identity_auth_source'],
+                                              $_POST['identity_external_id']
+                                          );
+                $identity = $identity_snapshot_matches
+                          ? operator_prepare_update_identity(
+                              $current_auth_source,
+                              $requested_auth_source,
+                              $operator_password,
+                              $confirm_source_change,
+                              $operator_external_id
+                          )
+                          : operator_identity_error('operator identity changed; reload and retry');
 
                 $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? trim($_POST['firstname']) : "";
                 $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? trim($_POST['lastname']) : "";
@@ -115,24 +128,54 @@
                     } else {
                         $password_clause = 'password=password';
                     }
+                    $operator_external_id = $identity['external_id'];
                     $external_id_sql = is_null($operator_external_id)
                                      ? 'NULL' : "'" . $dbSocket->escapeSimple($operator_external_id) . "'";
 
+                    $identity_source_sql = $dbSocket->escapeSimple($current_auth_source);
+                    $identity_external_sql = is_null($current_external_id)
+                                           ? 'external_id IS NULL'
+                                           : "external_id='" . $dbSocket->escapeSimple($current_external_id) . "'";
+                    $identity_source_predicate = $current_auth_source === 'local'
+                                               ? "(auth_source='local' OR auth_source IS NULL)"
+                                               : "auth_source='" . $identity_source_sql . "'";
+                    $identity_state_predicate = $identity_source_predicate . ' AND ' . $identity_external_sql;
                     $sql = sprintf("UPDATE %s SET %s, auth_source='%s', external_id=%s, firstname='%s', lastname='%s', title='%s', department='%s',
                                                   company='%s', phone1='%s', phone2='%s', email1='%s', email2='%s', messenger1='%s',
-                                                  messenger2='%s', notes='%s', updatedate='%s', updateby='%s' WHERE id=%d",
+                                                  messenger2='%s', notes='%s', updatedate='%s', updateby='%s' WHERE id=%d AND %s",
                                    $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $password_clause,
                                    $dbSocket->escapeSimple($identity['auth_source']), $external_id_sql,
                                    $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($title),
                                    $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
                                    $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1), $dbSocket->escapeSimple($email2),
                                    $dbSocket->escapeSimple($messenger1), $dbSocket->escapeSimple($messenger2), $dbSocket->escapeSimple($notes),
-                                   $current_datetime, $dbSocket->escapeSimple($currBy), $curr_operator_id);
+                                   $current_datetime, $dbSocket->escapeSimple($currBy), $curr_operator_id, $identity_state_predicate);
                     $res = $dbSocket->query($sql);
+                    $identity_update_ok = false;
+                    if (!DB::isError($res)) {
+                        $affected_rows = $dbSocket->affectedRows();
+                        if (!DB::isError($affected_rows) && (int) $affected_rows === 1) {
+                            $identity_update_ok = true;
+                        } elseif (!DB::isError($affected_rows) && (int) $affected_rows === 0) {
+                            // MySQL may report no changed rows for an idempotent save.
+                            $verify_sql = sprintf("SELECT auth_source, external_id FROM %s WHERE id=%d",
+                                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $curr_operator_id);
+                            $verify_res = $dbSocket->query($verify_sql);
+                            if (!DB::isError($verify_res) && $verify_res->numRows() === 1) {
+                                $verify_row = $verify_res->fetchRow(DB_FETCHMODE_ASSOC);
+                                $identity_update_ok = operator_identity_state_matches(
+                                    $current_auth_source,
+                                    $current_external_id,
+                                    isset($verify_row['auth_source']) ? $verify_row['auth_source'] : 'local',
+                                    array_key_exists('external_id', $verify_row) ? $verify_row['external_id'] : null
+                                );
+                            }
+                        }
+                    }
                     // Never put a submitted password or derived hash in debug logs.
                     $logDebugSQL .= "UPDATE operator identity and profile WHERE id=$curr_operator_id;\n";
-                    if (DB::isError($res)) {
-                        $failureMsg = "Failed to update this operator identity";
+                    if (!$identity_update_ok) {
+                        $failureMsg = "Failed to update this operator identity; reload and retry";
                         $logAction .= "Failed updating operator identity on page: ";
                     } else {
 
@@ -333,6 +376,16 @@
 
         $input_descriptors1 = array();
 
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => $current_auth_source,
+                                        "name" => "identity_auth_source"
+                                     );
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => $current_external_id ?? "",
+                                        "name" => "identity_external_id"
+                                     );
         $input_descriptors1[] = array(
                                         "type" => "hidden",
                                         "value" => dalo_csrf_token(),

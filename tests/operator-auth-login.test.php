@@ -197,6 +197,24 @@ check_login('MFA finalizes operator auth source', strpos($otpPage, "\$_SESSION['
 check_login('MFA queries and verifies external identity continuity',
     strpos($otpPage, 'external_id') !== false
     && strpos($otpPage, 'dalo_operator_auth_external_id_matches') !== false);
+check_login('MFA locks the identity row before provider verification and state update',
+    strpos($otpPage, 'autoCommit(false)') !== false
+    && strpos($otpPage, 'FOR UPDATE') !== false
+    && strpos($otpPage, 'dalo_operator_auth_external_id_matches') !== false);
+$otpUpdate = strpos($otpPage, '$updateResult = $dbSocket->query($sql);');
+$otpIdentityCheck = strpos($otpPage, '$externalIdMatches =');
+$otpCommit = strpos($otpPage, '$commit = $dbSocket->commit();');
+$otpSession = strpos($otpPage, "session_regenerate_id(true);");
+check_login('MFA checks provider identity before updating one-time state',
+    $otpIdentityCheck !== false && $otpUpdate !== false && $otpIdentityCheck < $otpUpdate);
+check_login('MFA checks state-update results and commits before creating a session',
+    $otpUpdate !== false
+    && strpos($otpPage, '$affectedRows =', $otpUpdate) !== false
+    && $otpCommit !== false
+    && $otpSession !== false
+    && $otpCommit < $otpSession);
+check_login('MFA rolls back failed or invalid verification attempts',
+    strpos($otpPage, '$rollback = $dbSocket->rollback();') !== false);
 check_login('primary authentication gates MFA', strpos($flow, 'if ($authenticated)') !== false && strpos($flow, "dalo_operator_auth_set_pending") !== false);
 check_login('pre-migration operator rows default to local auth', strpos($flow, "? \$row['auth_source'] : 'local'") !== false);
 check_login('pre-provider pending MFA sessions default to local auth', strpos($otpPage, "operator_2fa_auth_source'] = 'local'") !== false);

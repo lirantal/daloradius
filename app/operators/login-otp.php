@@ -32,55 +32,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['operator_2fa_attempts'] = intval($_SESSION['operator_2fa_attempts'] ?? 0) + 1;
 
         include('../common/includes/db_open.php');
+        $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
         $operator_id = intval($_SESSION['operator_2fa_id']);
         $operator_user = $dbSocket->escapeSimple($_SESSION['operator_2fa_user']);
         $operator_auth_source = $_SESSION['operator_2fa_auth_source'];
-        $sql = sprintf(
-            "SELECT id, username, auth_source, external_id, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1",
-            $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user
-        );
-        $res = $dbSocket->query($sql);
-        if (DB::isError($res) && $operator_auth_source === 'local') {
-            /* Permit an already-pending pre-upgrade local MFA session to finish
-             * before the LDAP schema migration is applied. */
+        $authenticated = false;
+        $transactionStarted = false;
+
+        $transaction = $dbSocket->autoCommit(false);
+        if (!DB::isError($transaction)) {
+            $transactionStarted = true;
             $sql = sprintf(
-                "SELECT id, username, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1",
+                "SELECT id, username, auth_source, external_id, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1 FOR UPDATE",
                 $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user
             );
             $res = $dbSocket->query($sql);
-        }
-
-        $authenticated = false;
-        if (!DB::isError($res) && $res->numRows() === 1) {
-            $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-            $row_auth_source = isset($row['auth_source']) ? $row['auth_source'] : 'local';
-            $externalIdMatches = $operator_auth_source !== 'ldap'
-                || (array_key_exists('operator_2fa_external_id', $_SESSION)
-                    && dalo_operator_auth_external_id_matches(
-                        isset($row['external_id']) ? $row['external_id'] : null,
-                        $_SESSION['operator_2fa_external_id']
-                    ));
-            if (hash_equals($operator_auth_source, $row_auth_source) && $externalIdMatches) {
-                $matched_counter = dalo_totp_verify_once(
-                    $row['totp_secret'],
-                    $otp_code,
-                    isset($row['totp_last_counter']) ? intval($row['totp_last_counter']) : null
+            if (DB::isError($res) && $operator_auth_source === 'local') {
+                /* Permit an already-pending pre-upgrade local MFA session to finish
+                 * before the LDAP schema migration is applied. */
+                $sql = sprintf(
+                    "SELECT id, username, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1 FOR UPDATE",
+                    $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user
                 );
+                $res = $dbSocket->query($sql);
+            }
 
-                if ($matched_counter !== null) {
-                    $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_last_counter=%d WHERE id=%d",
-                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'), $matched_counter, $operator_id);
-                    $dbSocket->query($sql);
-                    $authenticated = true;
-                } else {
-                    list($recovery_ok, $new_recovery_codes) = dalo_totp_verify_recovery_code($row['totp_recovery_codes'], $otp_code);
-                    if ($recovery_ok) {
-                        $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_recovery_codes='%s' WHERE id=%d",
-                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'),
-                                       $dbSocket->escapeSimple($new_recovery_codes), $operator_id);
-                        $dbSocket->query($sql);
-                        $authenticated = true;
+            if (!DB::isError($res) && $res->numRows() === 1) {
+                $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                $row_auth_source = isset($row['auth_source']) ? (string) $row['auth_source'] : 'local';
+                $externalIdMatches = $operator_auth_source !== 'ldap'
+                    || (array_key_exists('operator_2fa_external_id', $_SESSION)
+                        && dalo_operator_auth_external_id_matches(
+                            isset($row['external_id']) ? $row['external_id'] : null,
+                            $_SESSION['operator_2fa_external_id']
+                        ));
+                if (hash_equals((string) $operator_auth_source, $row_auth_source) && $externalIdMatches) {
+                    $matched_counter = dalo_totp_verify_once(
+                        $row['totp_secret'],
+                        $otp_code,
+                        isset($row['totp_last_counter']) ? intval($row['totp_last_counter']) : null
+                    );
+                    $stateUpdated = false;
+
+                    if ($matched_counter !== null) {
+                        $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_last_counter=%d WHERE id=%d",
+                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'), $matched_counter, $operator_id);
+                        $updateResult = $dbSocket->query($sql);
+                        $affectedRows = !DB::isError($updateResult) ? $dbSocket->affectedRows() : null;
+                        $stateUpdated = !DB::isError($updateResult)
+                            && !DB::isError($affectedRows)
+                            && (int) $affectedRows === 1;
+                    } else {
+                        list($recovery_ok, $new_recovery_codes) = dalo_totp_verify_recovery_code($row['totp_recovery_codes'], $otp_code);
+                        if ($recovery_ok) {
+                            $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_recovery_codes='%s' WHERE id=%d",
+                                           $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'),
+                                           $dbSocket->escapeSimple($new_recovery_codes), $operator_id);
+                            $updateResult = $dbSocket->query($sql);
+                            $affectedRows = !DB::isError($updateResult) ? $dbSocket->affectedRows() : null;
+                            $stateUpdated = !DB::isError($updateResult)
+                                && !DB::isError($affectedRows)
+                                && (int) $affectedRows === 1;
+                        }
                     }
+
+                    if ($stateUpdated) {
+                        $commit = $dbSocket->commit();
+                        if (!DB::isError($commit)) {
+                            $authenticated = true;
+                            $transactionStarted = false;
+                        }
+                    }
+                }
+            }
+
+            if ($transactionStarted) {
+                $rollback = $dbSocket->rollback();
+                $transactionStarted = false;
+                if (DB::isError($rollback)) {
+                    $authenticated = false;
                 }
             }
         }

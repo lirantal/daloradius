@@ -23,6 +23,15 @@ check_management_identity(strpos($edit, "SELECT id, auth_source, external_id") !
     'edit loads the persisted identity source before validating changes');
 check_management_identity(strpos($edit, "WHERE id=%d") !== false,
     'edit updates the selected immutable operator id');
+check_management_identity(strpos($edit, "identity_auth_source") !== false && strpos($edit, "identity_external_id") !== false,
+    'edit renders the identity state used for optimistic concurrency');
+check_management_identity(strpos($edit, "operator identity changed; reload and retry") !== false,
+    'edit rejects a stale identity snapshot before mutation');
+check_management_identity(strpos($edit, "operator_identity_state_matches(") !== false,
+    'edit compares the submitted identity snapshot with the current row');
+check_management_identity(strpos($edit, "identity_state_predicate") !== false
+    && strpos($edit, "affectedRows()") !== false,
+    'edit conditionally updates the identity and rejects a concurrent change');
 check_management_identity(strpos($edit, "password=NULL") !== false,
     'edit clears local password material for LDAP identities');
 check_management_identity(strpos($edit, "UPDATE operator identity and profile") !== false,
