@@ -20,20 +20,34 @@ if (array_key_exists('daloradius_logged_in', $_SESSION)
 
 include("lang/main.php");
 
+function dalo_operator_login_auth_settings(array $config)
+{
+    $localEnabled = !array_key_exists('CONFIG_OPERATOR_AUTH_LOCAL_ENABLED', $config)
+        || !in_array(strtolower(trim((string) $config['CONFIG_OPERATOR_AUTH_LOCAL_ENABLED'])), array('', '0', 'false', 'no', 'off'), true);
+    $ldapEnabled = array_key_exists('CONFIG_OPERATOR_AUTH_LDAP_ENABLED', $config)
+        && !in_array(strtolower(trim((string) $config['CONFIG_OPERATOR_AUTH_LDAP_ENABLED'])), array('', '0', 'false', 'no', 'off'), true);
+    $default = strtolower(trim((string) ($config['CONFIG_OPERATOR_AUTH_DEFAULT'] ?? 'local')));
+    if (!in_array($default, array('local', 'ldap'), true)
+        || ($default === 'local' && !$localEnabled)
+        || ($default === 'ldap' && !$ldapEnabled)) {
+        $default = $localEnabled ? 'local' : ($ldapEnabled ? 'ldap' : '');
+    }
+    return array(
+        'local_enabled' => $localEnabled,
+        'ldap_enabled' => $ldapEnabled,
+        'show_source' => $localEnabled && $ldapEnabled,
+        'default_source' => $default,
+    );
+}
+
 $onlyDefaultLocation = !(array_key_exists('CONFIG_LOCATIONS', $configValues)
                         && is_array($configValues['CONFIG_LOCATIONS'])
                         && count($configValues['CONFIG_LOCATIONS']) > 0);
-$localAuthEnabled = !array_key_exists('CONFIG_OPERATOR_AUTH_LOCAL_ENABLED', $configValues)
-    || !in_array(strtolower(trim((string) $configValues['CONFIG_OPERATOR_AUTH_LOCAL_ENABLED'])), array('', '0', 'false', 'no', 'off'), true);
-$ldapAuthEnabled = array_key_exists('CONFIG_OPERATOR_AUTH_LDAP_ENABLED', $configValues)
-    && !in_array(strtolower(trim((string) $configValues['CONFIG_OPERATOR_AUTH_LDAP_ENABLED'])), array('', '0', 'false', 'no', 'off'), true);
-$showAuthSource = $localAuthEnabled && $ldapAuthEnabled;
-$configuredAuthSource = strtolower(trim((string) ($configValues['CONFIG_OPERATOR_AUTH_DEFAULT'] ?? 'local')));
-if (!in_array($configuredAuthSource, array('local', 'ldap'), true)
-    || ($configuredAuthSource === 'local' && !$localAuthEnabled)
-    || ($configuredAuthSource === 'ldap' && !$ldapAuthEnabled)) {
-    $configuredAuthSource = $localAuthEnabled ? 'local' : ($ldapAuthEnabled ? 'ldap' : '');
-}
+$authSettings = dalo_operator_login_auth_settings($configValues);
+$localAuthEnabled = $authSettings['local_enabled'];
+$ldapAuthEnabled = $authSettings['ldap_enabled'];
+$showAuthSource = $authSettings['show_source'];
+$configuredAuthSource = $authSettings['default_source'];
 
 $dir = (strtolower($langCode) === 'ar') ? "rtl" : "ltr";
 ?>

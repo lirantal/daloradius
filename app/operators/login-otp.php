@@ -3,12 +3,39 @@ include_once("library/sessions.php");
 include_once('../common/includes/config_read.php');
 include_once('library/totp.php');
 
+function dalo_operator_auth_otp_prepare_session(array &$session)
+{
+    if (!empty($session['operator_2fa_pending']) && empty($session['operator_2fa_auth_source'])) {
+        $session['operator_2fa_auth_source'] = 'local';
+    }
+}
+
+function dalo_operator_auth_otp_identity_matches($authSource, array $row, array $session)
+{
+    if ($authSource !== 'ldap') {
+        return true;
+    }
+    return array_key_exists('operator_2fa_external_id', $session)
+        && dalo_operator_auth_external_id_matches(
+            isset($row['external_id']) ? $row['external_id'] : null,
+            $session['operator_2fa_external_id']
+        );
+}
+
+function dalo_operator_auth_otp_finalize_session(array &$session)
+{
+    $finalAuthSource = $session['operator_2fa_auth_source'];
+    $session['daloradius_logged_in'] = true;
+    $session['operator_user'] = $session['operator_2fa_user'];
+    $session['operator_id'] = intval($session['operator_2fa_id']);
+    $session['operator_auth_source'] = $finalAuthSource;
+    unset($session['operator_2fa_pending'], $session['operator_2fa_id'], $session['operator_2fa_user'], $session['operator_2fa_auth_source'], $session['operator_2fa_external_id'], $session['operator_2fa_attempts']);
+}
+
 dalo_session_start();
 
 /* Pending sessions created before provider-aware authentication were local. */
-if (!empty($_SESSION['operator_2fa_pending']) && empty($_SESSION['operator_2fa_auth_source'])) {
-    $_SESSION['operator_2fa_auth_source'] = 'local';
-}
+dalo_operator_auth_otp_prepare_session($_SESSION);
 
 if (empty($_SESSION['operator_2fa_pending']) || empty($_SESSION['operator_2fa_id'])
     || empty($_SESSION['operator_2fa_user']) || empty($_SESSION['operator_2fa_auth_source'])
@@ -60,12 +87,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!DB::isError($res) && $res->numRows() === 1) {
                 $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                 $row_auth_source = isset($row['auth_source']) ? (string) $row['auth_source'] : 'local';
-                $externalIdMatches = $operator_auth_source !== 'ldap'
-                    || (array_key_exists('operator_2fa_external_id', $_SESSION)
-                        && dalo_operator_auth_external_id_matches(
-                            isset($row['external_id']) ? $row['external_id'] : null,
-                            $_SESSION['operator_2fa_external_id']
-                        ));
+                $externalIdMatches = dalo_operator_auth_otp_identity_matches(
+                    $operator_auth_source,
+                    $row,
+                    $_SESSION
+                );
                 if (hash_equals((string) $operator_auth_source, $row_auth_source) && $externalIdMatches) {
                     $matched_counter = dalo_totp_verify_once(
                         $row['totp_secret'],
@@ -118,12 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($authenticated) {
             include('../common/includes/db_close.php');
             session_regenerate_id(true);
-            $finalAuthSource = $_SESSION['operator_2fa_auth_source'];
-            $_SESSION['daloradius_logged_in'] = true;
-            $_SESSION['operator_user'] = $_SESSION['operator_2fa_user'];
-            $_SESSION['operator_id'] = intval($_SESSION['operator_2fa_id']);
-            $_SESSION['operator_auth_source'] = $finalAuthSource;
-            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_auth_source'], $_SESSION['operator_2fa_external_id'], $_SESSION['operator_2fa_attempts']);
+            dalo_operator_auth_otp_finalize_session($_SESSION);
             header('Location: index.php');
             exit;
         }

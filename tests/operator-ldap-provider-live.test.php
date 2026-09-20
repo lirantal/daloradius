@@ -65,6 +65,34 @@ function live_auth($config, $username, $password)
     return (new LdapAuthProvider($config))->authenticate($username, $password);
 }
 
+function run_wrong_ca_isolated()
+{
+    $environment = array('LDAP_WRONG_CA_ONLY' => '1');
+    foreach (array('BASE_DN', 'SERVICE_BIND', 'SERVICE_PASS', 'USER_PASS', 'LDAP_CA_FILE', 'LDAP_WRONG_CA_FILE', 'LDAP_HOST') as $name) {
+        $environment[$name] = (string) getenv($name);
+    }
+    $descriptors = array(
+        0 => array('file', '/dev/null', 'r'),
+        1 => array('file', '/dev/null', 'w'),
+        2 => array('file', '/dev/null', 'w'),
+    );
+    $process = proc_open(array(PHP_BINARY, __FILE__), $descriptors, $pipes, dirname(__FILE__), $environment);
+    if (!is_resource($process)) {
+        return false;
+    }
+    return proc_close($process) === 0;
+}
+
+if (getenv('LDAP_WRONG_CA_ONLY') === '1') {
+    $isolatedWrongCa = live_auth(
+        live_config($baseDn, $serviceBind, $servicePassword, $caFile, "ldaps://$ldapHost", 'ldaps', true, array(), '', null, $wrongCaFile),
+        'smoke-user',
+        $userPassword
+    );
+    check_live('isolated LDAPS with the supplied untrusted CA fails verification', !$isolatedWrongCa->isAuthenticated());
+    exit($failures === 0 ? 0 : 1);
+}
+
 $plainConfig = live_config($baseDn, $serviceBind, $servicePassword, $caFile, "ldap://$ldapHost", 'plain', true);
 $plain = live_auth($plainConfig, 'smoke-user', $userPassword);
 $plainIdentity = $plain->getIdentity();
@@ -178,6 +206,8 @@ $ldapsBadCa = live_auth(
     $userPassword
 );
 check_live('LDAPS certificate hostname mismatch fails verification', !$ldapsBadCa->isAuthenticated());
+
+check_live('LDAPS with the supplied untrusted CA fails verification', run_wrong_ca_isolated());
 
 $ldapsUnverified = live_auth(
     live_config($baseDn, $serviceBind, $servicePassword, $caFile, "ldaps://$ldapHost", 'ldaps', false),

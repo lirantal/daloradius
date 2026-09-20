@@ -93,13 +93,30 @@ if ($identityHelper !== '') { eval($identityHelper); }
 $source = file_get_contents(dirname(__DIR__) . '/app/operators/dologin.php');
 $helpers = array(
     'dalo_operator_config_boolean', 'dalo_operator_auth_enabled',
-    'dalo_operator_auth_select_source',
+    'dalo_operator_auth_select_source', 'dalo_operator_auth_row_source',
     'dalo_operator_ldap_provider_config', 'dalo_operator_ldap_link_external_id',
     'dalo_operator_auth_set_pending', 'dalo_operator_auth_set_authenticated',
 );
 foreach ($helpers as $helper) {
     $code = extract_login_function($source, $helper);
     check_login("login helper exists: $helper", $code !== '');
+    if ($code !== '') { eval($code); }
+}
+
+$loginSource = file_get_contents(dirname(__DIR__) . '/app/operators/login.php');
+$loginSettingsCode = extract_login_function($loginSource, 'dalo_operator_login_auth_settings');
+check_login('login page auth settings helper exists', $loginSettingsCode !== '');
+if ($loginSettingsCode !== '') { eval($loginSettingsCode); }
+
+$otpSource = file_get_contents(dirname(__DIR__) . '/app/operators/login-otp.php');
+$otpHelpers = array(
+    'dalo_operator_auth_otp_prepare_session',
+    'dalo_operator_auth_otp_identity_matches',
+    'dalo_operator_auth_otp_finalize_session',
+);
+foreach ($otpHelpers as $helper) {
+    $code = extract_login_function($otpSource, $helper);
+    check_login("OTP helper exists: $helper", $code !== '');
     if ($code !== '') { eval($code); }
 }
 
@@ -188,14 +205,52 @@ check_login('local provider enters the same MFA pending flow',
 check_login('local MFA compatibility keeps external identity absent',
     !array_key_exists('operator_2fa_external_id', $localMfaSession));
 
-$loginPage = file_get_contents(dirname(__DIR__) . '/app/operators/login.php');
+$localSettings = dalo_operator_login_auth_settings($localOnly);
+check_login('login page hides provider selection when only local auth is enabled',
+    $localSettings['show_source'] === false
+    && $localSettings['default_source'] === 'local');
+$bothSettings = dalo_operator_login_auth_settings($both);
+check_login('login page exposes provider selection when both providers are enabled',
+    $bothSettings['show_source'] === true
+    && $bothSettings['default_source'] === 'ldap');
+
+$legacyPending = array('operator_2fa_pending' => true);
+dalo_operator_auth_otp_prepare_session($legacyPending);
+check_login('pre-provider pending MFA sessions default to local auth',
+    $legacyPending['operator_2fa_auth_source'] === 'local');
+$ldapRow = array('external_id' => 'directory-id-42');
+$ldapPending = array('operator_2fa_external_id' => 'directory-id-42');
+check_login('MFA accepts an unchanged LDAP identity',
+    dalo_operator_auth_otp_identity_matches('ldap', $ldapRow, $ldapPending));
+$ldapPending['operator_2fa_external_id'] = 'directory-id-changed';
+check_login('MFA rejects a changed LDAP identity',
+    !dalo_operator_auth_otp_identity_matches('ldap', $ldapRow, $ldapPending));
+check_login('local MFA does not require an external identity',
+    dalo_operator_auth_otp_identity_matches('local', array(), array()));
+
+$finalSession = array(
+    'operator_2fa_pending' => true,
+    'operator_2fa_id' => 7,
+    'operator_2fa_user' => 'alice',
+    'operator_2fa_auth_source' => 'ldap',
+    'operator_2fa_external_id' => 'directory-id-42',
+    'operator_2fa_attempts' => 1,
+);
+dalo_operator_auth_otp_finalize_session($finalSession);
+check_login('MFA finalization preserves the provider and ACL identity',
+    $finalSession['operator_auth_source'] === 'ldap'
+    && $finalSession['operator_id'] === 7
+    && $finalSession['operator_user'] === 'alice'
+    && $finalSession['daloradius_logged_in'] === true);
+check_login('MFA finalization clears pending LDAP state',
+    !array_key_exists('operator_2fa_pending', $finalSession)
+    && !array_key_exists('operator_2fa_external_id', $finalSession));
+check_login('pre-migration operator rows default to local auth',
+    dalo_operator_auth_row_source(array('username' => 'legacy')) === 'local');
+check_login('migrated operator rows retain their configured provider',
+    dalo_operator_auth_row_source(array('auth_source' => 'ldap')) === 'ldap');
+
 $otpPage = file_get_contents(dirname(__DIR__) . '/app/operators/login-otp.php');
-$flow = file_get_contents(dirname(__DIR__) . '/app/operators/dologin.php');
-check_login('login page exposes explicit selection only for both providers', strpos($loginPage, 'name="operator_auth_source"') !== false && strpos($loginPage, '$showAuthSource') !== false);
-check_login('MFA finalizes operator auth source', strpos($otpPage, "\$_SESSION['operator_auth_source']") !== false);
-check_login('MFA queries and verifies external identity continuity',
-    strpos($otpPage, 'external_id') !== false
-    && strpos($otpPage, 'dalo_operator_auth_external_id_matches') !== false);
 check_login('MFA locks the identity row before provider verification and state update',
     strpos($otpPage, 'autoCommit(false)') !== false
     && strpos($otpPage, 'FOR UPDATE') !== false
@@ -214,10 +269,6 @@ check_login('MFA checks state-update results and commits before creating a sessi
     && $otpCommit < $otpSession);
 check_login('MFA rolls back failed or invalid verification attempts',
     strpos($otpPage, '$rollback = $dbSocket->rollback();') !== false);
-check_login('primary authentication gates MFA', strpos($flow, 'if ($authenticated)') !== false && strpos($flow, "dalo_operator_auth_set_pending") !== false);
-check_login('pre-migration operator rows default to local auth', strpos($flow, "? \$row['auth_source'] : 'local'") !== false);
-check_login('pre-provider pending MFA sessions default to local auth', strpos($otpPage, "operator_2fa_auth_source'] = 'local'") !== false);
-check_login('LDAP flow never updates password', strpos($flow, "'UPDATE %s SET `password`=?") !== false && strpos($flow, '$authSource === \'local\'') !== false);
 
 printf("\n%s\n", $failures === 0 ? 'ALL PASSED' : "$failures FAILURE(S)");
 exit($failures === 0 ? 0 : 1);

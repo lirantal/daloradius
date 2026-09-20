@@ -35,6 +35,12 @@ function dalo_operator_auth_enabled(array $config, $source)
     return false;
 }
 
+function dalo_operator_auth_row_source(array $row)
+{
+    return array_key_exists('auth_source', $row) && is_string($row['auth_source'])
+        ? $row['auth_source'] : 'local';
+}
+
 /* A missing source is backward-compatible only when one provider is enabled.
  * With both providers enabled the browser must submit its explicit choice. */
 function dalo_operator_auth_select_source(array $config, array $post)
@@ -225,8 +231,7 @@ if (isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])
                 $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
                 $res->free();
                 /* Rows from a pre-migration schema are historical local accounts. */
-                $rowSource = array_key_exists('auth_source', $row) && is_string($row['auth_source'])
-                           ? $row['auth_source'] : 'local';
+                $rowSource = dalo_operator_auth_row_source($row);
 
                 if (hash_equals($authSource, $rowSource)) {
                     $rehashCallback = function ($newHash, $username) use ($dbSocket, $configValues) {

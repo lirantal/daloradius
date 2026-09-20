@@ -17,12 +17,13 @@ DB = PREFIX + "-db"
 NETWORK = PREFIX + "-network"
 
 
-def run(*args, input_text=None, check=True):
+def run(*args, input_text=None, check=True, timeout=300):
     result = subprocess.run(
         args,
         input=input_text,
         capture_output=True,
         text=True,
+        timeout=timeout,
     )
     if check and result.returncode != 0:
         raise AssertionError(
@@ -51,6 +52,7 @@ def wait_for_database():
             ],
             capture_output=True,
             text=True,
+            timeout=10,
         )
         if result.returncode == 0 and result.stdout.strip() == "0":
             return

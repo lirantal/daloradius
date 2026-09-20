@@ -62,7 +62,7 @@ EOF
             --dns-backend=SAMBA_INTERNAL \
             --use-rfc2307 \
             --adminpass="$ADMIN_PASS" \
-            --option="dns forwarder = 127.0.0.1" \
+            --option="dns forwarder = 127.0.0.11" \
             --option="ldap server require strong auth = no" \
             --option="interfaces = 0.0.0.0" \
             --option="bind interfaces only = no"

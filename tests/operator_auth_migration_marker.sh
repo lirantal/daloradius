@@ -24,6 +24,12 @@ line_number_after() {
     awk -v start="$start" -v needle="$needle" 'NR > start && index($0, needle) { print NR; exit }' "$file"
 }
 
+invocation_line() {
+    local file=$1
+    local function_name=$2
+    awk -v function_name="$function_name" '$0 ~ "^[[:space:]]*" function_name "[[:space:]]*$" { print NR; exit }' "$file"
+}
+
 marker_path=/data/.migration_2026-09-operator-ldap.done
 marker_def=$(line_number "$INIT" "OPERATOR_LDAP_MIGRATION_MARKER=$marker_path")
 migration_function=$(line_number "$INIT" 'function run_operator_ldap_migration')
@@ -48,11 +54,14 @@ grep -Fq "column_name = 'auth_source' AND data_type = 'varchar'" "$INIT" || fail
 grep -Fq "column_name = 'external_id' AND data_type = 'varchar'" "$INIT" || fail 'external_id shape is not verified'
 grep -Fq "seq_in_index = 1 AND column_name = 'external_id'" "$INIT" || fail 'external identity index target is not verified'
 
-password_check=$(line_number "$INIT" 'ensure_operator_password_column')
-ldap_check=$(line_number "$INIT" 'run_operator_ldap_migration')
-totp_check=$(line_number "$INIT" 'ensure_operator_totp_columns')
-[ "$password_check" -lt "$ldap_check" ] || fail 'password schema check was moved after LDAP migration'
-[ "$ldap_check" -lt "$totp_check" ] || fail 'MFA schema check was moved before LDAP migration'
+password_check=$(invocation_line "$INIT" 'ensure_operator_password_column')
+ldap_check=$(invocation_line "$INIT" 'run_operator_ldap_migration')
+totp_check=$(invocation_line "$INIT" 'ensure_operator_totp_columns')
+[ -n "$password_check" ] || fail 'password schema check invocation is missing'
+[ -n "$ldap_check" ] || fail 'LDAP migration invocation is missing'
+[ -n "$totp_check" ] || fail 'MFA schema check invocation is missing'
+[ "$password_check" -lt "$ldap_check" ] || fail 'password schema check was moved after LDAP migration invocation'
+[ "$ldap_check" -lt "$totp_check" ] || fail 'MFA schema check was moved before LDAP migration invocation'
 
 grep -Fq 'ADD COLUMN IF NOT EXISTS auth_source' "$MIGRATION" || fail 'auth_source migration is not idempotent'
 grep -Fq 'ADD COLUMN IF NOT EXISTS external_id' "$MIGRATION" || fail 'external_id migration is not idempotent'
