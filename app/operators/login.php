@@ -80,10 +80,10 @@ body { display: flex; align-items: center; padding-top: 40px; padding-bottom: 40
 <?php if ($showAuthSource): ?>
     <div class="form-floating">
         <select class="form-select" id="operator_auth_source" name="operator_auth_source" required>
-            <option value="local" <?= $configuredAuthSource === 'local' ? 'selected' : '' ?>>Local database</option>
-            <option value="ldap" <?= $configuredAuthSource === 'ldap' ? 'selected' : '' ?>>LDAP</option>
+            <option value="local" <?= $configuredAuthSource === 'local' ? 'selected' : '' ?>><?= t('all','LocalDatabase') ?></option>
+            <option value="ldap" <?= $configuredAuthSource === 'ldap' ? 'selected' : '' ?>><?= t('all','LDAP') ?></option>
         </select>
-        <label for="operator_auth_source">Authentication provider</label>
+        <label for="operator_auth_source"><?= t('all','AuthenticationProvider') ?></label>
     </div>
 <?php endif; ?>
 
@@ -92,7 +92,7 @@ body { display: flex; align-items: center; padding-top: 40px; padding-bottom: 40
 <?php
         $defaultLocationFormat = '<option value="%s">%s</option>' . "\n";
         if ($onlyDefaultLocation) {
-            printf($defaultLocationFormat, "default", "default");
+            printf($defaultLocationFormat, "default", t('all','Default'));
         } else {
             $locations = array_keys($configValues['CONFIG_LOCATIONS']);
             foreach ($locations as $location) {
@@ -102,7 +102,7 @@ body { display: flex; align-items: center; padding-top: 40px; padding-bottom: 40
         }
 ?>
         </select>
-        <label for="location">Location</label>
+        <label for="location"><?= t('all','Location') ?></label>
     </div>
 
     <button class="w-100 btn btn-lg btn-primary" type="submit"><?= t('text','LoginPlease') ?></button>

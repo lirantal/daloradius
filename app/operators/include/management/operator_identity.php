@@ -34,7 +34,15 @@ function operator_auth_source_from_post(array $post)
 function operator_auth_source_label($source)
 {
     $source = operator_normalize_auth_source($source);
-    return $source === null ? 'Unknown' : operator_auth_source_options()[$source];
+    if ($source === null) {
+        return function_exists('t') ? t('all', 'Unknown') : 'Unknown';
+    }
+
+    if (function_exists('t')) {
+        return t('all', $source === 'ldap' ? 'LDAP' : 'Local');
+    }
+
+    return operator_auth_source_options()[$source];
 }
 
 function operator_normalize_external_id($externalId)

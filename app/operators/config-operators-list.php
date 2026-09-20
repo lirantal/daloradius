@@ -27,6 +27,7 @@
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
     include_once("lang/main.php");
+    include_once("include/management/operator_identity.php");
     include("../common/includes/layout.php");
 
     // init logging variables
@@ -40,8 +41,8 @@
     $cols = array(
                     "id" => t('all','ID'),
                     "username" => t('all','Username'),
-                    "auth_source" => "Authentication Source",
-                    "identity_status" => "External Identity",
+                    "auth_source" => t('all','AuthenticationSource'),
+                    "identity_status" => t('all','ExternalIdentity'),
                     "fullname" => "Full name",
                     "title" => "Title"
                  );
@@ -140,6 +141,10 @@
             }
             
             list($id, $username, $auth_source, $identity_status, $fullname, $title) = $row;
+            $auth_source = operator_auth_source_label($auth_source);
+            $identity_status = $identity_status === 'Linked'
+                             ? t('all','Linked')
+                             : t('all','NotLinked');
             
             // preparing checkboxes and tooltips stuff
             $tooltip = array(

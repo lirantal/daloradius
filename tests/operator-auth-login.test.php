@@ -93,7 +93,7 @@ if ($identityHelper !== '') { eval($identityHelper); }
 $source = file_get_contents(dirname(__DIR__) . '/app/operators/dologin.php');
 $helpers = array(
     'dalo_operator_config_boolean', 'dalo_operator_auth_enabled',
-    'dalo_operator_auth_default_source', 'dalo_operator_auth_select_source',
+    'dalo_operator_auth_select_source',
     'dalo_operator_ldap_provider_config', 'dalo_operator_ldap_link_external_id',
     'dalo_operator_auth_set_pending', 'dalo_operator_auth_set_authenticated',
 );
@@ -116,7 +116,6 @@ $both = array(
     'CONFIG_OPERATOR_AUTH_LDAP_ENABLED' => true,
     'CONFIG_OPERATOR_AUTH_DEFAULT' => 'ldap',
 );
-check_login('configured default is LDAP when both are enabled', dalo_operator_auth_default_source($both) === 'ldap');
 check_login('both enabled requires explicit source POST', dalo_operator_auth_select_source($both, array()) === null);
 check_login('explicit LDAP stays LDAP with no local fallback', dalo_operator_auth_select_source($both, array('operator_auth_source' => 'ldap')) === 'ldap');
 check_login('explicit local stays local', dalo_operator_auth_select_source($both, array('operator_auth_source' => 'local')) === 'local');

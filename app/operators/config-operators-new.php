@@ -38,6 +38,8 @@
     $logAction = "";
     $logDebugSQL = "";
 
+    $operator_auth_source = 'local';
+    $operator_external_id = null;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         

@@ -35,15 +35,6 @@ function dalo_operator_auth_enabled(array $config, $source)
     return false;
 }
 
-function dalo_operator_auth_default_source(array $config)
-{
-    $default = strtolower(trim((string) ($config['CONFIG_OPERATOR_AUTH_DEFAULT'] ?? 'local')));
-    if (in_array($default, array('local', 'ldap'), true) && dalo_operator_auth_enabled($config, $default)) {
-        return $default;
-    }
-    return null;
-}
-
 /* A missing source is backward-compatible only when one provider is enabled.
  * With both providers enabled the browser must submit its explicit choice. */
 function dalo_operator_auth_select_source(array $config, array $post)
