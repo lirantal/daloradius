@@ -189,6 +189,7 @@ test_install_script() {
 
         escaped_sql_password=$(escape_mysql_sql_string "$DB_PASS")
 
+        ready=0
         for _ in {1..30}; do
             if docker run --rm \
                 --network "$network" \
@@ -199,9 +200,14 @@ test_install_script() {
                 --password="$root_password" \
                 --execute="SELECT 1" >/dev/null 2>&1
             then
+                ready=1
                 break
             fi
             sleep 1
+        done
+        if [ "$ready" -eq 0 ]; then
+            fail "MariaDB test container did not become ready in time"
+        fi
         done
 
         docker run --rm \
