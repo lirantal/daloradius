@@ -232,7 +232,8 @@ mariadb_db_init() {
     local escaped_db_pass
 
     echo -n "[+] Initializing MariaDB database and user... "
-    escaped_db_pass=$(escape_mysql_sql_string "$DB_PASS")
+    escaped_db_pass=$(escape_mysql_sql_string "$DB_PASS"; printf '\001')
+    escaped_db_pass=${escaped_db_pass%$'\001'}
 
     if ! mariadb -u root <<SQL >/dev/null 2>&1
 CREATE DATABASE ${DB_SCHEMA};
