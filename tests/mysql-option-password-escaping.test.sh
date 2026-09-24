@@ -212,9 +212,9 @@ test_install_script() {
             --user=root \
             --password="$root_password" \
             --execute="CREATE DATABASE IF NOT EXISTS ${DB_SCHEMA};
-CREATE USER IF NOT EXISTS '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${escaped_sql_password}';
-ALTER USER '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${escaped_sql_password}';
-GRANT ALL ON ${DB_SCHEMA}.* TO '${DB_USER}'@'${DB_HOST}';
+CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${escaped_sql_password}';
+ALTER USER '${DB_USER}'@'%' IDENTIFIED BY '${escaped_sql_password}';
+GRANT ALL ON ${DB_SCHEMA}.* TO '${DB_USER}'@'%';
 FLUSH PRIVILEGES;" >/dev/null
 
         mariadb_init_conf >/dev/null
