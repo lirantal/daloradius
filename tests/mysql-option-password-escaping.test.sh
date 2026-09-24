@@ -208,7 +208,6 @@ test_install_script() {
         if [ "$ready" -eq 0 ]; then
             fail "MariaDB test container did not become ready in time"
         fi
-        done
 
         docker run --rm \
             --network "$network" \
