@@ -67,16 +67,30 @@ print_spinner() {
     printf "\b"
 }
 
+escape_mysql_option_value() {
+    local value="$1"
+
+    value=${value//\\/\\\\}
+    value=${value//\"/\\\"}
+    value=${value//$'\n'/\\n}
+
+    printf '%s' "$value"
+}
+
 mariadb_init_conf() {
+    local escaped_db_pass
+
     echo -n "[+] Initializing MariaDB configuration... "
     MARIADB_CLIENT_FILENAME="$(mktemp -qu).conf"
+    escaped_db_pass=$(escape_mysql_option_value "$DB_PASS")
+
     if ! cat << EOF > "${MARIADB_CLIENT_FILENAME}"
 [client]
 database=${DB_SCHEMA}
 host=${DB_HOST}
 port=${DB_PORT}
 user=${DB_USER}
-password=${DB_PASS}
+password="${escaped_db_pass}"
 EOF
     then
         print_red "KO"

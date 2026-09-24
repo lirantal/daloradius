@@ -80,6 +80,7 @@ function escape_mysql_option_value {
 
     value=${value//\\/\\\\}
     value=${value//\"/\\\"}
+    value=${value//$'\n'/\\n}
 
     printf '%s' "$value"
 }
