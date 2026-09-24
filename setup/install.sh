@@ -81,7 +81,7 @@ escape_mysql_sql_string() {
     local value="$1"
 
     value=${value//\\/\\\\}
-    value=${value//\'/\\\'}
+value=${value//\'/\'\'}
 
     printf '%s' "$value"
 }
