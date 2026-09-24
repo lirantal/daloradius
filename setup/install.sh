@@ -77,6 +77,15 @@ escape_mysql_option_value() {
     printf '%s' "$value"
 }
 
+escape_mysql_sql_string() {
+    local value="$1"
+
+    value=${value//\\/\\\\}
+    value=${value//\'/\\\'}
+
+    printf '%s' "$value"
+}
+
 mariadb_init_conf() {
     local escaped_db_pass
 
@@ -220,10 +229,14 @@ SQL
 
 # Function to initialize MariaDB database and user
 mariadb_db_init() {
+    local escaped_db_pass
+
     echo -n "[+] Initializing MariaDB database and user... "
+    escaped_db_pass=$(escape_mysql_sql_string "$DB_PASS")
+
     if ! mariadb -u root <<SQL >/dev/null 2>&1
 CREATE DATABASE ${DB_SCHEMA};
-GRANT ALL ON ${DB_SCHEMA}.* TO '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${DB_PASS}';
+GRANT ALL ON ${DB_SCHEMA}.* TO '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${escaped_db_pass}';
 FLUSH PRIVILEGES;
 SQL
     then

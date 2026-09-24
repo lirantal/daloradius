@@ -131,9 +131,20 @@ test_freeradius_script() {
 
 test_install_script() {
     local install="$ROOT/setup/install.sh"
+    local network="daloradius-mysql-option-test"
+    local container="daloradius-mysql-option-test-db"
+    local root_password="root-test-password"
+    local escaped_sql_password
+    local parsed
 
     eval "$(awk '
         /^escape_mysql_option_value\(\) \{/ { capture=1 }
+        capture { print }
+        capture && /^}/ { exit }
+    ' "$install")"
+
+    eval "$(awk '
+        /^escape_mysql_sql_string\(\) \{/ { capture=1 }
         capture { print }
         capture && /^}/ { exit }
     ' "$install")"
@@ -144,21 +155,94 @@ test_install_script() {
         capture && /^}/ { exit }
     ' "$install")"
 
+    cleanup_install_test() {
+        docker rm -f daloradius-mysql-option-test-db >/dev/null 2>&1 || true
+        docker network rm daloradius-mysql-option-test >/dev/null 2>&1 || true
+    }
+
+    cleanup_install_test
+
+    docker network create "$network" >/dev/null
+    trap cleanup_install_test EXIT
+
+    docker run -d \
+        --name "$container" \
+        --network "$network" \
+        -e MARIADB_ROOT_PASSWORD="$root_password" \
+        mariadb:11.8 >/dev/null
+
     for password in \
         'abc#123' \
         'abc;123' \
         'abc 123' \
         ' pass ' \
         'abc"123' \
+        "abc'123" \
         'abc\123' \
         $'abc\n123'
     do
+        DB_HOST="$container"
+        DB_PORT=3306
+        DB_SCHEMA=raddb
+        DB_USER=raduser
         DB_PASS="$password"
+
+        escaped_sql_password=$(escape_mysql_sql_string "$DB_PASS")
+
+        for _ in {1..30}; do
+            if docker run --rm \
+                --network "$network" \
+                mariadb:11.8 \
+                mariadb \
+                --host="$container" \
+                --user=root \
+                --password="$root_password" \
+                --execute="SELECT 1" >/dev/null 2>&1
+            then
+                break
+            fi
+            sleep 1
+        done
+
+        docker run --rm \
+            --network "$network" \
+            mariadb:11.8 \
+            mariadb \
+            --host="$container" \
+            --user=root \
+            --password="$root_password" \
+            --execute="CREATE DATABASE IF NOT EXISTS ${DB_SCHEMA};
+CREATE USER IF NOT EXISTS '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${escaped_sql_password}';
+ALTER USER '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${escaped_sql_password}';
+GRANT ALL ON ${DB_SCHEMA}.* TO '${DB_USER}'@'${DB_HOST}';
+FLUSH PRIVILEGES;" >/dev/null
+
         mariadb_init_conf >/dev/null
-        test_option_file "$password" "$MARIADB_CLIENT_FILENAME" "$DB_SCHEMA"
+
+        parsed=$(
+            docker run --rm \
+                --network "$network" \
+                -v "$MARIADB_CLIENT_FILENAME:/tmp/mysql-options.cnf:ro,Z" \
+                mariadb:11.8 \
+                mariadb \
+                --defaults-extra-file=/tmp/mysql-options.cnf \
+                --execute="SELECT 1" 2>/dev/null
+        )
+
+        if [ "$parsed" != $'1\n1' ]; then
+            printf 'Password authentication failed for password test case:\n' >&2
+            printf '%q\n' "$password" >&2
+            printf 'Generated option file:\n' >&2
+            cat "$MARIADB_CLIENT_FILENAME" >&2
+            fail "SQL account password and MySQL option-file password do not match"
+        fi
+
         rm -f "$MARIADB_CLIENT_FILENAME"
         MARIADB_CLIENT_FILENAME=
     done
+
+    cleanup_install_test
+    trap cleanup EXIT
 }
 
 test_init_script
