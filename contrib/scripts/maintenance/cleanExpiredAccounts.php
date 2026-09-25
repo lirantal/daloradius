@@ -56,7 +56,7 @@ function databaseConnect() {
 
     $mydbEngine = $configValues['CONFIG_DB_ENGINE'];
     $mydbUser = $configValues['CONFIG_DB_USER'];
-    $mydbPass = $configValues['CONFIG_DB_PASS'];
+    $mydbPass = rawurlencode($configValues['CONFIG_DB_PASS']);
     $mydbHost = $configValues['CONFIG_DB_HOST'];
     $mydbPort = $configValues['CONFIG_DB_PORT'];
     $mydbName = $configValues['CONFIG_DB_NAME'];
