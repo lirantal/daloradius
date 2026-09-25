@@ -250,8 +250,138 @@ FLUSH PRIVILEGES;" >/dev/null
     trap cleanup EXIT
 }
 
+test_db_open_password_escaping() {
+    local network="daloradius-db-open-password-test"
+    local container="daloradius-db-open-password-test-db"
+    local php_container="daloradius-db-open-password-test-php"
+    local image="daloradius-db-open-password-test"
+    local root_password="root-test-password"
+    local password='abc@#%123'
+    local database="radius"
+    local user="radius"
+    local config_file
+    local result
+
+    config_file=$(mktemp)
+
+    cleanup_db_open_test() {
+        rm -f "$config_file"
+        docker rm -f "$php_container" "$container" >/dev/null 2>&1 || true
+        docker network rm "$network" >/dev/null 2>&1 || true
+        docker image rm "$image" >/dev/null 2>&1 || true
+    }
+
+    trap cleanup_db_open_test EXIT
+
+    docker network create "$network" >/dev/null
+
+    docker build \
+        --tag "$image" \
+        "$ROOT" >/dev/null
+
+    docker run -d \
+        --name "$container" \
+        --network "$network" \
+        -e MARIADB_ROOT_PASSWORD="$root_password" \
+        mariadb:11.8 >/dev/null
+
+    ready=0
+    for _ in {1..30}; do
+        if docker run --rm \
+            --network "$network" \
+            mariadb:11.8 \
+            mariadb \
+            --host="$container" \
+            --user=root \
+            --password="$root_password" \
+            --execute="SELECT 1" >/dev/null 2>&1
+        then
+            ready=1
+            break
+        fi
+        sleep 1
+    done
+
+    if [ "$ready" -eq 0 ]; then
+        fail "MariaDB test container did not become ready in time"
+    fi
+
+    docker run --rm \
+        --network "$network" \
+        mariadb:11.8 \
+        mariadb \
+        --host="$container" \
+        --user=root \
+        --password="$root_password" \
+        --execute="CREATE DATABASE ${database};
+CREATE USER '${user}'@'%' IDENTIFIED BY '${password}';
+GRANT ALL ON ${database}.* TO '${user}'@'%';
+FLUSH PRIVILEGES;" >/dev/null
+
+    cat > "$config_file" <<EOF
+<?php
+\$configValues = [
+    'CONFIG_DB_ENGINE' => 'mysqli',
+    'CONFIG_DB_HOST' => '$container',
+    'CONFIG_DB_PORT' => 3306,
+    'CONFIG_DB_USER' => '$user',
+    'CONFIG_DB_PASS' => '$password',
+    'CONFIG_DB_NAME' => '$database',
+    'CONFIG_LOCATIONS' => [],
+];
+EOF
+
+    docker run -d \
+        --name "$php_container" \
+        --network "$network" \
+	--entrypoint sleep \
+        "$image" \
+        infinity >/dev/null
+
+    docker cp \
+        "$config_file" \
+        "$php_container:/var/www/daloradius/app/common/includes/daloradius.conf.php"
+
+    result=$(
+        docker exec "$php_container" \
+            php -r '
+$_SERVER["PHP_SELF"] = "/test.php";
+
+include "/var/www/daloradius/app/common/includes/db_open.php";
+
+if (DB::isError($dbSocket)) {
+    fwrite(STDERR, "DB connection failed\n");
+    exit(1);
+}
+
+$result = $dbSocket->getOne("SELECT 1");
+
+if (DB::isError($result) || (string) $result !== "1") {
+    fwrite(STDERR, "Database query failed\n");
+    exit(1);
+}
+
+echo "DB connection OK\n";
+'
+    )
+
+    if [ "$result" != "DB connection OK" ]; then
+        printf 'Actual db_open.php result:\n%s\n' "$result" >&2
+        fail "db_open.php did not connect with a password containing DSN-sensitive characters"
+    fi
+
+    docker rm -f "$php_container" "$container" >/dev/null
+    docker network rm "$network" >/dev/null
+    docker image rm "$image" >/dev/null
+
+    rm -f "$config_file"
+
+    trap cleanup EXIT
+}
+
 test_init_script
 test_freeradius_script
 test_install_script
+test_db_open_password_escaping
 
 printf 'PASS: MySQL option-file password escaping and MariaDB parsing\n'
