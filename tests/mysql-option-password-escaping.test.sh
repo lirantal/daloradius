@@ -216,7 +216,8 @@ test_install_script() {
             --host="$container" \
             --user=root \
             --password="$root_password" \
-            --execute="CREATE DATABASE IF NOT EXISTS ${DB_SCHEMA};
+            --execute="SET SESSION sql_mode = REPLACE(@@SESSION.sql_mode, 'NO_BACKSLASH_ESCAPES', '');
+CREATE DATABASE IF NOT EXISTS ${DB_SCHEMA};
 CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${escaped_sql_password}';
 ALTER USER '${DB_USER}'@'%' IDENTIFIED BY '${escaped_sql_password}';
 GRANT ALL ON ${DB_SCHEMA}.* TO '${DB_USER}'@'%';

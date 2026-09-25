@@ -236,6 +236,7 @@ mariadb_db_init() {
     escaped_db_pass=${escaped_db_pass%$'\001'}
 
     if ! mariadb -u root <<SQL >/dev/null 2>&1
+SET SESSION sql_mode = REPLACE(@@SESSION.sql_mode, 'NO_BACKSLASH_ESCAPES', '');
 CREATE DATABASE ${DB_SCHEMA};
 GRANT ALL ON ${DB_SCHEMA}.* TO '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${escaped_db_pass}';
 FLUSH PRIVILEGES;
