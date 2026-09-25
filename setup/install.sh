@@ -67,16 +67,39 @@ print_spinner() {
     printf "\b"
 }
 
+escape_mysql_option_value() {
+    local value="$1"
+
+    value=${value//\\/\\\\}
+    value=${value//\"/\\\"}
+    value=${value//$'\n'/\\n}
+
+    printf '%s' "$value"
+}
+
+escape_mysql_sql_string() {
+    local value="$1"
+
+    value=${value//\\/\\\\}
+value=${value//\'/\'\'}
+
+    printf '%s' "$value"
+}
+
 mariadb_init_conf() {
+    local escaped_db_pass
+
     echo -n "[+] Initializing MariaDB configuration... "
     MARIADB_CLIENT_FILENAME="$(mktemp -qu).conf"
+    escaped_db_pass=$(escape_mysql_option_value "$DB_PASS")
+
     if ! cat << EOF > "${MARIADB_CLIENT_FILENAME}"
 [client]
 database=${DB_SCHEMA}
 host=${DB_HOST}
 port=${DB_PORT}
 user=${DB_USER}
-password=${DB_PASS}
+password="${escaped_db_pass}"
 EOF
     then
         print_red "KO"
@@ -206,10 +229,15 @@ SQL
 
 # Function to initialize MariaDB database and user
 mariadb_db_init() {
+    local escaped_db_pass
+
     echo -n "[+] Initializing MariaDB database and user... "
+    escaped_db_pass=$(escape_mysql_sql_string "$DB_PASS"; printf '\001')
+    escaped_db_pass=${escaped_db_pass%$'\001'}
+
     if ! mariadb -u root <<SQL >/dev/null 2>&1
 CREATE DATABASE ${DB_SCHEMA};
-GRANT ALL ON ${DB_SCHEMA}.* TO '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${DB_PASS}';
+GRANT ALL ON ${DB_SCHEMA}.* TO '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${escaped_db_pass}';
 FLUSH PRIVILEGES;
 SQL
     then
