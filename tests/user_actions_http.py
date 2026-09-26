@@ -19,6 +19,7 @@ import urllib.parse
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
+BASELINE = os.environ.get('USER_ACTIONS_BASELINE') == '1'
 PREFIX = 'dalo-actions-' + secrets.token_hex(4)
 DB, WEB, NETWORK = PREFIX + '-db', PREFIX + '-web', PREFIX + '-net'
 IMAGE = os.environ.get('USER_ACTIONS_WEB_IMAGE', 'lirantal/daloradius')
@@ -49,6 +50,10 @@ def main():
     with tempfile.TemporaryDirectory(prefix=PREFIX) as directory:
         fixture = Path(directory)
         shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True)
+        if BASELINE:
+            # Freeze only this unit's endpoint to the pre-UNIT-024 commit.
+            old = run('git', 'show', 'd48b19a2a:app/operators/library/ajax/user_actions.php')
+            (fixture / 'app/operators/library/ajax/user_actions.php').write_text(old + '\n')
         token = secrets.token_hex(32)
         try:
             run('docker', 'network', 'create', '--internal', NETWORK)
@@ -231,21 +236,105 @@ while ($client = stream_socket_accept($server, -1)) {
             assert any('fixture-bob' in message for message in captures)
             print('PASS: individual/bulk SMTP capture, mixed failure aggregation and no recipients (no external mail)')
 
-            # Force failures at each sensitive step; JSON must never claim success after a partial mutation.
-            for table, action in [('billing_history', 'refillSessionTime'), ('invoice', 'refillSessionTraffic'), ('invoice_items', 'refillSessionTime'), ('radusergroup', 'userDisable')]:
-                invoice_count = sql('SELECT COUNT(*) FROM invoice')
-                invoice_item_count = sql('SELECT COUNT(*) FROM invoice_items')
-                sql(f'RENAME TABLE {table} TO {table}_unavailable')
+            def state():
+                # No email bodies, credentials or payment-card columns enter snapshots.
+                return {
+                    'acct': sql('SELECT username,acctsessiontime,acctinputoctets,acctoutputoctets FROM radacct ORDER BY radacctid'),
+                    'groups': sql('SELECT username,groupname,priority FROM radusergroup ORDER BY id'),
+                    'history': sql('SELECT username,planId,billAmount,billAction,billPerformer,billReason,paymentmethod,cash FROM billing_history ORDER BY id'),
+                    'invoices': sql('SELECT user_id,status_id,type_id,notes,creationby FROM invoice ORDER BY id'),
+                    'items': sql('SELECT plan_id,amount,tax_amount,notes FROM invoice_items ORDER BY id'),
+                }
+
+            # Compare this projection between the pinned PEAR endpoint and candidate.
+            print('NORMAL_STATE=' + json.dumps(state(), ensure_ascii=False, sort_keys=True))
+            if BASELINE:
+                for table, action in [('billing_history', 'refillSessionTime'), ('invoice', 'refillSessionTraffic'),
+                                      ('invoice_items', 'refillSessionTime'), ('radusergroup', 'userDisable')]:
+                    sql(f'RENAME TABLE {table} TO {table}_unavailable')
+                    try:
+                        status, result = request(action, ['alice'])
+                        assert status == 500 and result['success'] is False, (table, status, result)
+                        assert 'already have been applied' in result['message']
+                    finally:
+                        sql(f'RENAME TABLE {table}_unavailable TO {table}')
+            else:
+                for table, action in [('billing_history', 'refillSessionTime'), ('invoice', 'refillSessionTraffic'),
+                                      ('invoice_items', 'refillSessionTime'), ('radusergroup', 'userDisable')]:
+                    before = state()
+                    sql(f'RENAME TABLE {table} TO {table}_unavailable')
+                    try:
+                        status, result = request(action, ['alice'])
+                        assert status == 500 and result['success'] is False, (table, status, result)
+                    finally:
+                        sql(f'RENAME TABLE {table}_unavailable TO {table}')
+                    assert state() == before, table
+                print('PASS: absent transactional tables reject without any mutation')
+
+                # A later paid invoice item must roll back earlier accounting,
+                # history, invoice, and first item for the whole selected batch.
+                sql("INSERT INTO billing_plans (id,planName,planTimeRefillCost,planTrafficRefillCost,planTax) "
+                    "VALUES (9003,'paid-second','2','3','10'); "
+                    "UPDATE userbillinfo SET planName='paid-second' WHERE username='bob'; "
+                    "UPDATE radacct SET acctsessiontime=444,acctinputoctets=555,acctoutputoctets=666 "
+                    "WHERE username IN ('alice','bob')")
+                before = state()
+                sql("DELIMITER //\nCREATE TRIGGER block_later_item BEFORE INSERT ON invoice_items FOR EACH ROW "
+                    "BEGIN IF NEW.plan_id=9003 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='fixture failure'; END IF; END//\nDELIMITER ;\n")
                 try:
-                    status, result = request(action, ['alice'])
-                    assert status == 500 and result['success'] is False, (table, status, result)
-                    assert 'already have been applied' in result['message']
+                    status, result = request('refillSessionTime', ['alice','bob'])
+                    assert status == 500 and result['success'] is False, (status, result)
+                    assert state() == before, 'late invoice item did not roll back entire batch'
                 finally:
-                    sql(f'RENAME TABLE {table}_unavailable TO {table}')
-                if table == 'invoice_items':
-                    assert sql('SELECT COUNT(*) FROM invoice') == invoice_count
-                    assert sql('SELECT COUNT(*) FROM invoice_items') == invoice_item_count
-            print('PASS: database failures return JSON; invoice-item failure rolls back its invoice')
+                    sql('DROP TRIGGER block_later_item')
+
+                before = state()
+                sql("DELIMITER //\nCREATE TRIGGER block_second_disable BEFORE INSERT ON radusergroup FOR EACH ROW "
+                    "BEGIN IF NEW.username='bob' THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='fixture failure'; END IF; END//\nDELIMITER ;\n")
+                try:
+                    status, result = request('userDisable', ['alice','bob'])
+                    assert status == 500 and result['success'] is False, (status, result)
+                    assert state() == before, 'late disable did not roll back first disable'
+                finally:
+                    sql('DROP TRIGGER block_second_disable')
+                print('PASS: late invoice-item and second-disable failures roll back the entire selection')
+
+                before = state()
+                sql('ALTER TABLE billing_history ENGINE=MyISAM')
+                try:
+                    assert request('refillSessionTime', ['alice'])[0] == 500
+                    assert state() == before
+                finally:
+                    sql('ALTER TABLE billing_history ENGINE=InnoDB')
+                sql("UPDATE billing_plans SET planTimeRefillCost='invalid' WHERE id=9001")
+                before = state()
+                assert request('refillSessionTime', ['alice'])[0] == 500
+                assert state() == before
+                sql("UPDATE billing_plans SET planTimeRefillCost='10' WHERE id=9001")
+                assert request('userDisable', ['alice','x' * 65])[0] == 400
+                assert request('userDisable', ['alice','x' * 129])[0] == 400
+                assert state() == before
+                print('PASS: nontransactional table, invalid price and late invalid username leave state unchanged')
+
+                # Prepared predicates preserve quotes, percent signs and Unicode.
+                odd_bill = "O'Reilly % + é"
+                sql("INSERT INTO userbillinfo (id,username,planName) VALUES "
+                    "(9005, 'O''Reilly % + é','paid-fixture'),(9006,'null-fixture-user','null-fixture'); "
+                    "INSERT INTO billing_plans (id,planName,planTimeRefillCost,planTrafficRefillCost,planTax) "
+                    "VALUES (9006,'null-fixture',NULL,NULL,NULL); "
+                    "INSERT INTO radacct (username,acctsessionid,acctuniqueid,nasipaddress,acctsessiontime) "
+                    "VALUES ('O''Reilly % + é','odd','odd','127.0.0.1',123), "
+                    "('null-fixture-user','null','null','127.0.0.1',123)")
+                assert request('refillSessionTime', [odd_bill])[1]['success'] is True
+                assert sql("SELECT acctsessiontime FROM radacct WHERE acctuniqueid='odd'") == '0'
+                assert sql("SELECT COUNT(*) FROM billing_history WHERE username='O''Reilly % + é'") == '1'
+                count = sql('SELECT COUNT(*) FROM invoice')
+                assert request('refillSessionTime', ['null-fixture-user'])[1]['success'] is True
+                assert sql('SELECT COUNT(*) FROM invoice') == count
+                assert sql("SELECT billAmount FROM billing_history WHERE username='null-fixture-user'") == ''
+                assert sql("SELECT acctsessiontime FROM radacct WHERE acctuniqueid='null'") == '0'
+                print('PASS: quoted/Unicode billing identity and nullable free refill')
+            print('PASS: database errors return JSON without exposing driver data')
             log_result = subprocess.run(['docker', 'logs', WEB], capture_output=True, text=True, check=True)
             logs = log_result.stdout + log_result.stderr
             assert 'PHP Fatal error' not in logs and 'PHP Warning' not in logs, logs[-2000:]
