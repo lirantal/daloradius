@@ -93,7 +93,13 @@ function hashPasswordAttribute($attribute, $value) {
  * @return bool True if the attribute is already present, otherwise false.
  */
 function is_attribute_already_present($dbSocket, $table, $param, $subject, $attribute, $op, $value) {
-    global $logDebugSQL;
+    global $logDebugSQL, $configValues;
+
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/attributes_pdo.php';
+        return dalo_attribute_exists_pdo($dbSocket, $configValues, $table, $param,
+                                         $subject, $attribute, $op, $value);
+    }
 
     // Construct the SQL query
     $sql = sprintf("SELECT COUNT(`id`) FROM `%s` WHERE `%s`='%s' AND `attribute`='%s' AND `op`='%s' AND `value`='%s'",
@@ -145,6 +151,12 @@ function get_table_name($user_or_group, $table) {
 // returns an array of prepared attributes
 function handleAttributes($dbSocket, $subject, $skipList, $insert_only=true, $user_or_group='user') {
     global $configValues, $valid_ops, $logDebugSQL;
+
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/attributes_pdo.php';
+        return dalo_handle_attributes_pdo($dbSocket, $configValues, $_POST, $subject,
+                                          $skipList, $valid_ops, $insert_only, $user_or_group);
+    }
 
     $param = (is_group($user_or_group)) ? 'groupname' : 'username';
     $counter = 0;
