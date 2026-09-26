@@ -31,202 +31,66 @@
     $logDebugSQL = "";
     $log = "visited page: ";
 
-    include_once('include/management/populate_selectbox.php');
-    $valid_profiles = get_groups();
-
-    $profile_tables = array(
-                                $configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
-                                $configValues['CONFIG_DB_TBL_RADGROUPREPLY']
-                           );
-
-    include('../common/includes/db_open.php');
+    require_once('../common/includes/pdo_connection.php');
+    require_once('library/profile_delete.php');
+    $pdoProfiles = dalo_pdo_connect($configValues);
+    $profile_tables = dalo_profile_delete_tables($configValues);
+    $valid_profiles = dalo_profile_delete_list($pdoProfiles, $profile_tables);
+    $profile_name = '';
+    $profile__id__table = '';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-         
-           
-        
-            if (array_key_exists('profile_names', $_POST) && !empty($_POST['profile_names'])) {
-            
-                $profile_delete_assoc = (array_key_exists('profile_delete_assoc', $_POST) &&
-                                         strtolower(trim($_POST['profile_delete_assoc'])) == "yes");
-                
-                $profile_names = (!is_array($_POST['profile_names'])) ? array( trim($_POST['profile_names']) ) : $_POST['profile_names'];
-                
-                $profile_tables[] = $configValues['CONFIG_DB_TBL_RADUSERGROUP'];
-                                    
-                $sql_format = "DELETE FROM %s WHERE groupname='%s'";
-                
-                $deleted_profiles = 0;
-                $deleted_mappings = 0;
-                foreach ($profile_names as $profile_name) {
-                    $profile_name = trim($profile_name);
-                    
-                    if (!in_array($profile_name, $valid_profiles)) {
-                        continue;
-                    }
-                    
-                    if ($profile_delete_assoc) {
-                        // only delete user-profile mappings
-                        $sql = sprintf($sql_format, $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                                    $dbSocket->escapeSimple($profile_name));
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-
-                        if (!DB::isError($res)) {
-                            $deleted_mappings++;
-                        }
-
-                    } else {
-                        
-                        // delete everything (all attributes and user-profile mappings)
-                        foreach ($profile_tables as $profile_table) {
-                            $sql = sprintf($sql_format, $profile_table, $dbSocket->escapeSimple($profile_name));
-                            $res = $dbSocket->query($sql);
-                            $logDebugSQL .= "$sql;\n";
-                            
-                            if (!DB::isError($res)) {
-                                $deleted_profiles++;
-                            }
-                        }
-                    }
+        $csrf = $_POST['csrf_token'] ?? null;
+        if (!is_string($csrf) || !dalo_check_csrf_token($csrf)) {
+            $failureMsg = 'CSRF token error';
+            $logAction .= "$failureMsg on page: ";
+        } else {
+            try {
+                if (array_key_exists('profile_names', $_POST) &&
+                    array_key_exists('profile__id__table', $_POST)) {
+                    throw new InvalidArgumentException('Ambiguous profile selection');
                 }
-                
-                if ($deleted_profiles > 0) {
-                    $successMsg = sprintf("Completely removed attributes and user mappings for %s profile(s)", $deleted_profiles);
+                if (array_key_exists('profile_names', $_POST)) {
+                    $names = dalo_profile_delete_names($_POST['profile_names']);
+                    $choice = $_POST['profile_delete_assoc'] ?? '';
+                    if (!is_string($choice) || !in_array($choice, array('', 'no', 'yes'), true)) {
+                        throw new InvalidArgumentException('Invalid profile deletion mode');
+                    }
+                    $mappingsOnly = $choice === 'yes';
+                    $count = dalo_profile_delete_groups($pdoProfiles, $configValues, $names, $mappingsOnly);
+                    $successMsg = $mappingsOnly
+                        ? sprintf('Removed all user mappings for %d profile(s)', $count)
+                        : sprintf('Completely removed attributes and user mappings for %d profile(s)', $count);
                     $logAction .= "$successMsg on page: ";
-                } else if ($deleted_mappings > 0) {
-                    $successMsg = sprintf("Removed all user mappings for %s profile(s)", $deleted_profiles);
+                } elseif (array_key_exists('profile__id__table', $_POST)) {
+                    $items = dalo_profile_delete_items($_POST['profile__id__table'], $configValues);
+                    $count = dalo_profile_delete_attributes($pdoProfiles, $configValues, $items);
+                    $successMsg = sprintf('%d profile(s) have been deleted/modified', $count);
                     $logAction .= "$successMsg on page: ";
                 } else {
-                    $failureMsg = "Failed to remove attributes and/or user mappings for the selected profile(s)";
-                    $logAction .= "$failureMsg on page: ";
+                    throw new InvalidArgumentException('No profile selected');
                 }
-                
-            } else if (array_key_exists('profile__id__table', $_POST) && !empty($_POST['profile__id__table'])) {
-                
-                $arr = (!is_array($_POST['profile__id__table'])) ? array( trim($_POST['profile__id__table']) ) : $_POST['profile__id__table'];
-                
-                // needed for a possible later clean up
-                $modified_profiles = array();
-                
-                foreach ($arr as $arr_item) {
-                    
-                    $tmp = explode("__", $arr_item);
-                    if (count($tmp) != 3) {
-                        continue;
-                    }
-                    
-                    list($profile, $id, $table) = $tmp;
-                    
-                    // validate table
-                    $table = trim($table);
-                    if (!in_array($table, $profile_tables)) {
-                        continue;
-                    }
-                    
-                    // validate id
-                    $id = trim($id);
-                    if (preg_match("/^[0-9]+$/", $id) === false) {
-                        continue;
-                    }
-                    
-                    $id = intval($id);
-                    
-                    // validate profile name
-                    $profile = trim($profile);
-                    
-                    if (!in_array($profile, $valid_profiles)) {
-                        continue;
-                    }
-                    
-                    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE id=%d", $dbSocket->escapeSimple($table), $id);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    $exists = $res->fetchrow()[0] == 1;
-                    
-                    if (!$exists) {
-                        continue;
-                    }
-                    
-                    $sql = sprintf("DELETE FROM %s WHERE id=%d", $dbSocket->escapeSimple($table), $id);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    if (!DB::isError($res)) {
-                        if (!in_array($profile, $modified_profiles)) {
-                            $modified_profiles[] = $profile;
-                        }
-                    }
-                    
-                } // foreach
-                
-                $modified = count($modified_profiles);
-                if ($modified > 0) {
-                    // if there are no check and reply attributes left for a modified profile
-                    // we clean up user-profile mapping(s) (if any)
-                    
-                    
-                    foreach ($modified_profiles as $profile_name) {
-                    
-                        $attributes_left = 0;
-                        foreach ($profile_tables as $profile_table) {
-                            $sql = sprintf("SELECT COUNT(id) FROM %s WHERE groupname='%s'",
-                                           $profile_table, $dbSocket->escapeSimple($profile_name));
-                            $res = $dbSocket->query($sql);
-                            $logDebugSQL .= "$sql;\n";
-                            
-                            $attributes_left += intval($res->fetchrow()[0]);
-                        }
-                        
-                        if ($attributes_left == 0) {
-                            $sql = sprintf("DELETE FROM %s WHERE groupname='%s'",
-                                           $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                           $dbSocket->escapeSimple($profile_name));
-                            $res = $dbSocket->query($sql);
-                            $logDebugSQL .= "$sql;\n";
-                        }
-                        
-                    }
-                    
-                    $successMsg = sprintf("%s profile(s) have been deleted/modified", $modified);
-                    $logAction .= "$successMsg on page: ";
-
-                } else {
-                    // 
-                    $failureMsg = "No profile(s) have been changed";
-                    $logAction .= "$successMsg on page: ";
-                }
-                
-            } else {
-                // invalid request
-                $failureMsg = "Invalid request";
+            } catch (Throwable $error) {
+                // Do not disclose driver errors or submitted data in the response/logs.
+                $failureMsg = 'Invalid or stale profile selection; no changes were saved';
                 $logAction .= "$failureMsg on page: ";
             }
-
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "CSRF token error on page: ";
         }
     } else {
-        // !POST
-        $profile_name = (array_key_exists('profile_name', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['profile_name']))))
-                      ? str_replace("%", "", trim($_REQUEST['profile_name'])) : "";
-                      
-        $id = (array_key_exists('id', $_REQUEST) && preg_match("/^[0-9]+$/", $_REQUEST['id'])) ? intval($_REQUEST['id']) : "";
-        
-        $profile_table = (array_key_exists('tablename', $_REQUEST) && in_array($_REQUEST['tablename'], $profile_tables))
-                       ? $_REQUEST['tablename'] : "";
-        
-        if (!empty($profile_name) && !empty($id) && !empty($profile_table)) {
-            $profile__id__table = sprintf("%s__%d__%s", $profile_name, $id, $profile_table);
+        $requested = $_GET['profile_name'] ?? '';
+        $profile_name = is_string($requested) ? trim($requested) : '';
+        if (!in_array($profile_name, $valid_profiles, true)) {
+            $profile_name = '';
         }
-        
+        $id = $_GET['id'] ?? null;
+        $table = $_GET['tablename'] ?? null;
+        if ($profile_name !== '' && is_string($id) && ctype_digit($id) && (int) $id > 0 &&
+            is_string($table) && in_array($table, array($configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
+                $configValues['CONFIG_DB_TBL_RADGROUPREPLY']), true)) {
+            $profile__id__table = sprintf('%s__%d__%s', $profile_name, (int) $id, $table);
+        }
     }
 
-    include('../common/includes/db_close.php');
-    
     include_once("lang/main.php");
     include("../common/includes/layout.php");
 
@@ -255,29 +119,17 @@
         if (!empty($profile__id__table) || empty($profile_name)) {
             $options = array();
             
-            include('../common/includes/db_open.php');
-            
-            foreach ($profile_tables as $profile_table) {
-                $sql = sprintf("SELECT id, groupname, attribute FROM %s", $profile_table);
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                while ($row = $res->fetchrow()) {
-                    list($id, $profile_name, $attribute) = $row;
-                    
-                    $key = sprintf("%s__%s__%s", $profile_name, $id, $profile_table);
-                    
-                    if (array_key_exists($key, $options)) {
-                        continue;
-                    }
-                    
-                    $options[$key] = sprintf("%s, %s (%s)", $profile_name, $attribute, $profile_table);
+            foreach (array('CONFIG_DB_TBL_RADGROUPCHECK', 'CONFIG_DB_TBL_RADGROUPREPLY') as $key) {
+                $table = $profile_tables[$key];
+                $sql = "SELECT id,groupname,attribute FROM $table ORDER BY id";
+                foreach ($pdoProfiles->query($sql)->fetchAll(PDO::FETCH_NUM) as $row) {
+                    list($id, $this_profile, $attribute) = $row;
+                    $table_value = $configValues[$key];
+                    $value = sprintf('%s__%s__%s', $this_profile, $id, $table_value);
+                    $options[$value] = sprintf('%s, %s (%s)', $this_profile, $attribute, $table_value);
                 }
-
             }
-            
-            include('../common/includes/db_close.php');
-            
+
             $input_descriptors1[] = array(
                                             'name' => 'profile__id__table[]',
                                             'id' => 'profile__id__table',
