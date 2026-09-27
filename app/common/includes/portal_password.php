@@ -70,6 +70,14 @@ function dalo_portal_password_match_condition($db_engine) {
          : 'portalloginpassword=?';
 }
 
+/** Conditional portal-password replacement; the caller validates the table identifier. */
+function dalo_portal_password_update(PDO $pdo, $table, array $row, $username, $newHash) {
+    $condition = dalo_portal_password_match_condition($pdo->getAttribute(PDO::ATTR_DRIVER_NAME));
+    $stmt = $pdo->prepare("UPDATE $table SET portalloginpassword=? WHERE id=? AND username=? AND $condition");
+    $stmt->execute(array($newHash, (int) $row['id'], $username, $row['portalloginpassword']));
+    return $stmt->rowCount();
+}
+
 function dalo_portal_password_is_present($password) {
     return is_string($password) && trim($password) !== '';
 }

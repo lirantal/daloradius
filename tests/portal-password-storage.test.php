@@ -76,7 +76,8 @@ check('sensitive login rehash uses PDO without verbose PEAR errors',
       strpos($login, 'dalo_portal_login_rehash') !== false
       && strpos($login, 'dalo_portal_password_match_condition') !== false
       && strpos($login, '$dbSocket') === false
-      && strpos($change, 'dalo_portal_db_sensitive_call') !== false
+      && strpos($change, 'dalo_portal_password_update') !== false
+      && strpos($change, '$dbSocket') === false
       && substr_count($functions, 'dalo_portal_db_sensitive_call') >= 2
       && strpos($migration, 'setErrorHandling(PEAR_ERROR_RETURN)') !== false);
 check('empty edit preserves the existing portal credential',
@@ -100,7 +101,8 @@ check('self-service validates NUL before trimming password fields',
 check('self-service distinguishes database and concurrent failures',
       strpos($change, '$lookup_error') !== false
       && strpos($change, '[concurrent update]') !== false
-      && strpos($change, 'dalo_portal_password_match_condition') !== false);
+      && strpos($change, 'dalo_portal_password_update') !== false
+      && strpos($change, 'dalo_portal_password_match_condition') === false);
 check('portal password tooltip uses the English fallback dictionary',
       strpos($form, "t('Tooltip', 'portalPasswordKeepTooltip')") !== false
       && strpos($language_en, "['portalPasswordKeepTooltip']") !== false);

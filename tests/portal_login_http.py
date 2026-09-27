@@ -15,6 +15,9 @@ from operator_login_http import FormParser, NoRedirect, hash_password, quote, ru
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = os.environ.get('PORTAL_LOGIN_BASELINE') == '1'
+CHANGE_TEST = os.environ.get('PORTAL_CHANGE_TEST') == '1'
+CHANGE_BASELINE = os.environ.get('PORTAL_CHANGE_BASELINE') == '1'
+CHANGE_BASE_COMMIT = 'a9721356bb41b89d002dba2f143ac81b531b892d'
 BASE_COMMIT = '6eea7640feef13e69ec3b35e03e11c16e5d87ba4'
 IMAGE = os.environ.get('PORTAL_LOGIN_WEB_IMAGE', 'lirantal/daloradius')
 DB, WEB, NETWORK = fixture_helpers.DB, fixture_helpers.WEB, fixture_helpers.NETWORK
@@ -88,6 +91,109 @@ def state():
                'FROM userinfo ORDER BY username,id')
 
 
+def change_password(client, current, new, confirmation=None, csrf=None):
+    status, _, page = client.request('pref-portal-password-edit.php')
+    assert status == 200, ('change page HTTP', status)
+    form = FormParser(); form.feed(page)
+    assert form.csrf
+    fields = [('csrf_token', form.csrf if csrf is None else csrf),
+              ('current_password', current), ('new_password1', new),
+              ('new_password2', new if confirmation is None else confirmation)]
+    return client.request('pref-portal-password-edit.php', fields)
+
+
+def test_change(base, names, passwords):
+    client = Client(base)
+    assert client.login(names['modern'],passwords['modern'])[0] == 302
+    assert client.probe()['logged_in']
+    previous = passwords['modern']
+    replacement = secrets.token_urlsafe(18)
+    status,_,body = change_password(client, previous,replacement)
+    assert status == 200 and 'has been changed' in body
+    assert verify_stored(names['modern'],replacement) == 'yes'
+    assert verify_stored(names['modern'],previous) == 'no'
+    fresh = Client(base)
+    assert fresh.login(names['modern'],previous)[0] == 302 and not fresh.probe()['logged_in']
+    fresh = Client(base)
+    assert fresh.login(names['modern'],replacement)[0] == 302 and fresh.probe()['logged_in']
+    assert client.probe()['logged_in']
+    print('PASS: authenticated portal password change persists a new hash')
+
+    for current,new,confirm,fragment in (
+        (previous,secrets.token_urlsafe(18),None,'correctly provide your current password'),
+        (replacement,secrets.token_urlsafe(18),'different','should match'),
+        (replacement,'',None,'empty or invalid')):
+        status,_,body = change_password(client,current,new,confirm)
+        assert status == 200 and fragment in body
+        assert verify_stored(names['modern'],replacement) == 'yes'
+    print('PASS: invalid current password, confirmation and empty replacement leave the hash intact')
+
+    other = Client(base)
+    assert other.login(names['special'],passwords['special'])[0] == 302
+    special_new = secrets.token_urlsafe(18)
+    status,_,body = change_password(other,passwords['special'],special_new)
+    assert status == 200 and 'has been changed' in body
+    assert verify_stored(names['special'],special_new) == 'yes'
+    client = Client(base)
+    assert client.login(names['zero'],'0')[0] == 302
+    status,_,body = change_password(client,'0','0')
+    assert status == 200 and 'has been changed' in body
+    assert verify_stored(names['zero'],'0') == 'yes'
+    print('PASS: quoted Unicode username and password zero')
+
+    client = Client(base)
+    assert client.login(names['modern'],replacement)[0] == 302
+    status,_,body = change_password(client,replacement,secrets.token_urlsafe(18),csrf='invalid')
+    assert status == 200 and 'CSRF token error' in body
+    assert verify_stored(names['modern'],replacement) == 'yes'
+    print('PASS: invalid CSRF cannot change a password')
+
+    if CHANGE_BASELINE:
+        return
+
+    token_current = replacement
+    before = state()
+    for malformed in ([('current_password[]',token_current),('new_password1','new'),('new_password2','new')],
+                      [('current_password',token_current),('new_password1[]','new'),('new_password2','new')],
+                      [('csrf_token[]','bad'),('current_password',token_current),
+                       ('new_password1','new'),('new_password2','new')]):
+        status,_,page = client.request('pref-portal-password-edit.php')
+        assert status == 200
+        form = FormParser(); form.feed(page)
+        fields = malformed if malformed[0][0] == 'csrf_token[]' else [('csrf_token',form.csrf)] + malformed
+        status,_,body = client.request('pref-portal-password-edit.php',fields)
+        assert status == 200 and 'has been changed' not in body and state() == before
+    print('PASS: array-typed controls fail without a password mutation')
+
+    sql("CREATE TRIGGER reject_portal_change BEFORE UPDATE ON userinfo FOR EACH ROW "
+        "SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='fixture portal failure'")
+    try:
+        status,_,body = change_password(client,replacement,secrets.token_urlsafe(18))
+        assert status == 200 and 'Something went wrong while attempting to change' in body
+        assert 'SQLSTATE' not in body and 'fixture portal failure' not in body
+        assert verify_stored(names['modern'],replacement) == 'yes'
+    finally:
+        sql('DROP TRIGGER reject_portal_change')
+    print('PASS: database write error is generic and preserves the previous hash')
+
+    code = '''
+require '/fixtures/app/common/includes/portal_password.php';
+$p=new PDO('mysql:host=' . $argv[1] . ';dbname=radius;charset=utf8mb4','root','');
+$p->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+$q=$p->prepare('SELECT id,portalloginpassword FROM userinfo WHERE username=?');
+$q->execute([$argv[2]]);$row=$q->fetch(PDO::FETCH_ASSOC);
+$other=new PDO('mysql:host=' . $argv[1] . ';dbname=radius;charset=utf8mb4','root','');
+$winner=dalo_portal_password_hash(bin2hex(random_bytes(16)));
+$loser=dalo_portal_password_hash(bin2hex(random_bytes(16)));
+$other->prepare('UPDATE userinfo SET portalloginpassword=? WHERE id=?')->execute([$winner,$row['id']]);
+$n=dalo_portal_password_update($p,'`userinfo`',$row,$argv[2],$loser);
+$q->execute([$argv[2]]);$current=$q->fetch(PDO::FETCH_ASSOC);
+echo $n===0 && hash_equals($winner,$current['portalloginpassword']) ? 'ok' : 'no';
+'''
+    assert run('docker','exec',WEB,'php','-r',code,DB,names['cas']) == 'ok'
+    print('PASS: PDO bytewise compare-and-swap cannot overwrite a concurrent password reset')
+
+
 def main():
     scratch = Path.home() / '.hermes/cache/scratch'; scratch.mkdir(parents=True, exist_ok=True)
     names = {k:'portal-' + k + '-' + secrets.token_hex(5)
@@ -101,6 +207,9 @@ def main():
         if BASELINE:
             old = run('git','show',BASE_COMMIT + ':app/users/dologin.php')
             (root/'app/users/dologin.php').write_text(old + '\n')
+        if CHANGE_BASELINE:
+            old = run('git','show',CHANGE_BASE_COMMIT + ':app/users/pref-portal-password-edit.php')
+            (root/'app/users/pref-portal-password-edit.php').write_text(old + '\n')
         (root/'app/users/session_probe.php').write_text('''<?php
 session_name('daloradius_user_sid');session_start();
 echo json_encode(['logged_in'=>!empty($_SESSION['logged_in']),
@@ -248,6 +357,9 @@ try {
                 finally:
                     sql('ALTER TABLE userinfo ENGINE=InnoDB')
                 print('PASS: nontransactional table rejected before authentication')
+
+            if CHANGE_TEST:
+                test_change(base,names,passwords)
 
             logs = subprocess.run(['docker','logs',WEB],text=True,capture_output=True,timeout=30,check=True)
             assert 'PHP Fatal error' not in logs.stdout + logs.stderr
