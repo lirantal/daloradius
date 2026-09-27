@@ -7,52 +7,38 @@ function check_login($label, $condition) {
     if ($condition) { echo "ok   - $label\n"; } else { echo "FAIL - $label\n"; $failures++; }
 }
 
-if (!defined('DB_FETCHMODE_ASSOC')) {
-    define('DB_FETCHMODE_ASSOC', 2);
-}
-class OperatorIdentityTestError {}
-if (!class_exists('DB')) {
-    class DB {
-        public static function isError($value) {
-            return $value instanceof OperatorIdentityTestError;
-        }
-    }
-}
-class OperatorIdentityTestResult {
-    private $rows;
-    public function __construct($rows) { $this->rows = $rows; }
-    public function numRows() { return count($this->rows); }
-    public function fetchRow($mode) { return array_shift($this->rows); }
-    public function free() {}
-}
-class OperatorIdentityTestSocket {
-    public $state;
-    private $affectedRows = 0;
-    public function __construct(&$state) { $this->state =& $state; }
-    public function prepare($sql) { return $sql; }
-    public function execute($sql, $params) {
-        if (strpos($sql, 'UPDATE') !== false) {
+class OperatorIdentityTestStatement extends PDOStatement {
+    private $sql;
+    private $state;
+    private $changed = 0;
+    public function __construct($sql, &$state) { $this->sql = $sql; $this->state =& $state; }
+    public function execute(?array $params = null): bool {
+        $this->changed = 0;
+        if (strpos($this->sql, 'UPDATE') !== false) {
             if (!empty($this->state->update_error)) {
-                return new OperatorIdentityTestError();
+                throw new RuntimeException('Fixture update error');
             }
-            if ($this->state->external_id === null) {
+            if ($this->state->external_id === null && $this->state->source === 'ldap') {
                 $this->state->external_id = $params[0];
-                $this->affectedRows = 1;
-            } else {
-                $this->affectedRows = 0;
+                $this->changed = 1;
             }
-            return new OperatorIdentityTestResult(array());
+        } elseif (!empty($this->state->select_error)) {
+            throw new RuntimeException('Fixture select error');
         }
-        if (!empty($this->state->select_error)) {
-            return new OperatorIdentityTestError();
-        }
-        $rows = $this->state->external_id === null
-            ? array()
-            : array(array('external_id' => $this->state->external_id));
-        return new OperatorIdentityTestResult($rows);
+        return true;
     }
-    public function affectedRows() { return $this->affectedRows; }
-    public function freePrepared($stmt) {}
+    public function rowCount(): int { return $this->changed; }
+    public function fetchAll(int $mode = PDO::FETCH_DEFAULT, ...$args): array {
+        return $this->state->external_id === null || $this->state->source !== 'ldap'
+            ? array() : array(array('external_id' => $this->state->external_id));
+    }
+}
+class OperatorIdentityTestSocket extends PDO {
+    public $state;
+    public function __construct(&$state) { $this->state =& $state; }
+    public function prepare(string $query, array $options = []): PDOStatement|false {
+        return new OperatorIdentityTestStatement($query, $this->state);
+    }
 }
 
 function extract_login_function($source, $name) {
@@ -94,7 +80,9 @@ $source = file_get_contents(dirname(__DIR__) . '/app/operators/dologin.php');
 $helpers = array(
     'dalo_operator_config_boolean', 'dalo_operator_auth_enabled',
     'dalo_operator_auth_select_source', 'dalo_operator_auth_row_source',
-    'dalo_operator_ldap_provider_config', 'dalo_operator_ldap_link_external_id',
+    'dalo_operator_ldap_provider_config', 'dalo_operator_auth_table',
+    'dalo_operator_ldap_link_external_id', 'dalo_operator_auth_rehash',
+    'dalo_operator_auth_finalize',
     'dalo_operator_auth_set_pending', 'dalo_operator_auth_set_authenticated',
 );
 foreach ($helpers as $helper) {
@@ -165,16 +153,34 @@ check_login('pending session carries operator identity', $session['operator_2fa_
 check_login('LDAP pending session carries external identity', $session['operator_2fa_external_id'] === 'directory-id-42');
 check_login('pending session does not carry password', !array_key_exists('operator_pass', $session));
 
-$sharedIdentity = (object) array('external_id' => null);
+$sharedIdentity = (object) array('external_id' => null, 'source' => 'ldap');
 $firstLink = dalo_operator_ldap_link_external_id(new OperatorIdentityTestSocket($sharedIdentity), 'operators', 7, 'directory-id-42');
 $secondLink = dalo_operator_ldap_link_external_id(new OperatorIdentityTestSocket($sharedIdentity), 'operators', 7, 'directory-id-42');
 check_login('same-identity concurrent link is accepted', $firstLink && $secondLink);
-$differentIdentity = (object) array('external_id' => null);
+$differentIdentity = (object) array('external_id' => null, 'source' => 'ldap');
 $winnerLink = dalo_operator_ldap_link_external_id(new OperatorIdentityTestSocket($differentIdentity), 'operators', 7, 'directory-id-winner');
 $loserLink = dalo_operator_ldap_link_external_id(new OperatorIdentityTestSocket($differentIdentity), 'operators', 7, 'directory-id-other');
 check_login('different-identity concurrent link is rejected', $winnerLink && !$loserLink);
-$errorState = (object) array('external_id' => null, 'update_error' => true);
-check_login('identity link database update errors fail closed', !dalo_operator_ldap_link_external_id(new OperatorIdentityTestSocket($errorState), 'operators', 7, 'directory-id-42'));
+$sourceChanged = (object) array('external_id' => null, 'source' => 'local');
+check_login('local identity cannot be linked', !dalo_operator_ldap_link_external_id(
+    new OperatorIdentityTestSocket($sourceChanged), 'operators', 7, 'directory-id-42'));
+$errorState = (object) array('external_id' => null, 'source' => 'ldap', 'update_error' => true);
+try {
+    dalo_operator_ldap_link_external_id(new OperatorIdentityTestSocket($errorState), 'operators', 7, 'directory-id-42');
+    $linkFailed = false;
+} catch (RuntimeException $exception) {
+    $linkFailed = true;
+}
+check_login('identity link database update errors fail closed', $linkFailed);
+check_login('operator table identifier is allowlisted',
+    dalo_operator_auth_table(array('CONFIG_DB_TBL_DALOOPERATORS' => 'operators')) === '`operators`');
+try {
+    dalo_operator_auth_table(array('CONFIG_DB_TBL_DALOOPERATORS' => 'operators;DROP TABLE operators'));
+    $invalidTableRejected = false;
+} catch (InvalidArgumentException $exception) {
+    $invalidTableRejected = true;
+}
+check_login('invalid operator table is rejected', $invalidTableRejected);
 
 check_login('unchanged LDAP identity permits MFA continuity', dalo_operator_auth_external_id_matches('directory-id-42', $session['operator_2fa_external_id']));
 check_login('changed LDAP identity rejects MFA continuity', !dalo_operator_auth_external_id_matches('directory-id-changed', $session['operator_2fa_external_id']));
