@@ -32,91 +32,52 @@
     $logDebugSQL = "";
     $log = "visited page: ";
 
-    include('../common/includes/db_open.php');
+    require_once('../common/includes/pdo_connection.php');
+    require_once('library/operator_delete.php');
 
-    // init field_name and values (all, valid and to delete)
-    $field_name = 'operator_username';
-    
-    $valid_values = array();
-    
-    $sql = sprintf("SELECT id, username FROM %s", $configValues['CONFIG_DB_TBL_DALOOPERATORS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    // foreach username we obtain a map of valid username => id
-    while ($row = $res->fetchRow()) {
-        list($id, $username) = $row;
-        if (!in_array($username, array_values($valid_values))) {
-            $valid_values["$id"] = $username;
-        }
-    }
-    
-    if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        $values = array();
-        $deleted_values = array();
-        
-        // validate values
-        if (array_key_exists($field_name, $_POST) && isset($_POST[$field_name])) {
-            
-            $tmp = (!is_array($_POST[$field_name])) ? array($_POST[$field_name]) : $_POST[$field_name];
-            foreach ($tmp as $value) {
-                
-                $value = trim(str_replace("%", "", $value));
-        
-                foreach ($valid_values as $id => $valid_value) {
-                    if ($value == $valid_value) {
-                        $values[] = $id;
-                    }
-                }
-            }
-        }
-        
-        // use valid values for updating db,
-        // update deleted_values as a valid value has been removed
-        if (count($values) > 0) {
-            foreach ($values as $id) {
-                $id = intval($id);
-                
-                // delete all operators' acl entries
-                $sql = sprintf("DELETE FROM %s WHERE operator_id=%d",
-                               $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'], $id);
-                $result = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                // delete operator from database
-                $sql = sprintf("DELETE FROM %s WHERE id=%d", $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $id);
-                $result += $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                if ($result > 0) {
-                    $deleted_values[] = $valid_values["$id"];
-                }
-            }
-        }
-        
-        $success = $_SERVER['REQUEST_METHOD'] == 'POST' && count($values) > 0 && count($deleted_values) > 0;
-        
-        // present results
-        if ($success) {
-            $tmp = array();
-            foreach ($deleted_values as $deleted_value) {
-                $tmp[] = htmlspecialchars($deleted_value, ENT_QUOTES, 'UTF-8');
-            }
-            
-            $successMsg = sprintf("Deleted operator(s): <strong>%s</strong>", implode(", ", $tmp));
-            $logAction .= sprintf("Successfully deleted operator(s) [%s] on page: ", implode(", ", $deleted_values));
+    $success = false;
+    $options = array();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) ||
+            !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
+            $logAction .= 'CSRF token error on page: ';
         } else {
-            $failureMsg = "empty or invalid operator(s) have been entered";
-            $logAction .= sprintf("Failed deleting operator(s) [%s] on page: ", implode(", ", $valid_values));
+            try {
+                $selected = dalo_operator_delete_selection($_POST['operator_username'] ?? null);
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                $deleted = dalo_operator_delete($pdo, $configValues, $selected);
+                $escaped = array_map(function ($name) {
+                    return htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+                }, $deleted);
+                $successMsg = sprintf('Deleted operator(s): <strong>%s</strong>', implode(', ', $escaped));
+                $logAction .= 'Successfully deleted operator account(s) on page: ';
+                $logDebugSQL .= 'Deleted operator ACLs and accounts using PDO;';
+                $success = true;
+            } catch (InvalidArgumentException $error) {
+                $failureMsg = $error->getMessage();
+                $logAction .= 'Rejected invalid operator selection on page: ';
+            } catch (DomainException $error) {
+                $failureMsg = $error->getMessage();
+                $logAction .= 'Rejected stale operator selection on page: ';
+            } catch (Throwable $error) {
+                $failureMsg = 'Failed to delete operator(s); no changes saved';
+                $logAction .= 'Failed deleting operator account(s) on page: ';
+            }
         }
-        
-        include('../common/includes/db_close.php');
-    } else {
-        $success = false;
-        $failureMsg = "CSRF token error";
-        $logAction .= "$failureMsg on page: ";
     }
-    
+    if (!$success) {
+        try {
+            if (!isset($pdo)) {
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+            }
+            $options = dalo_operator_delete_options($pdo, $configValues);
+        } catch (Throwable $error) {
+            $failureMsg = 'Unable to load operator list';
+            $logAction .= 'Failed loading operator list on page: ';
+        }
+    }
+
     include_once('../common/includes/config_read.php');
     include_once("lang/main.php");
     include("../common/includes/layout.php");
@@ -133,13 +94,11 @@
 
     print_title_and_help($title, $help);
     
-    if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+    if ($_SERVER['REQUEST_METHOD'] != 'GET' || isset($failureMsg)) {
         include_once('include/management/actionMessages.php');
     }
 
     if (!$success) {
-        $options = array_values($valid_values);
-    
         $input_descriptors1 = array();
         
         $input_descriptors1[0] = array(
