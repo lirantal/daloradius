@@ -72,8 +72,10 @@ check('common create and update paths redact password logs',
       strpos($functions, 'redact_sensitive_values') !== false
       && strpos($functions, "array('portalloginpassword')") !== false
       && strpos($functions, '[portal password redacted]') === false);
-check('all sensitive password writes disable verbose PEAR DB errors',
-      strpos($login, 'dalo_portal_db_sensitive_call') !== false
+check('sensitive login rehash uses PDO without verbose PEAR errors',
+      strpos($login, 'dalo_portal_login_rehash') !== false
+      && strpos($login, 'dalo_portal_password_match_condition') !== false
+      && strpos($login, '$dbSocket') === false
       && strpos($change, 'dalo_portal_db_sensitive_call') !== false
       && substr_count($functions, 'dalo_portal_db_sensitive_call') >= 2
       && strpos($migration, 'setErrorHandling(PEAR_ERROR_RETURN)') !== false);

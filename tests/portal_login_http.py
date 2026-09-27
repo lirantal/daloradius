@@ -1,0 +1,267 @@
+#!/usr/bin/env python3
+"""UNIT-030: differential user portal login over isolated HTTP/PHP/MariaDB."""
+import os
+import secrets
+import shutil
+import subprocess
+import tempfile
+import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+import operator_login_http as fixture_helpers
+from operator_login_http import FormParser, NoRedirect, hash_password, quote, run, sql, wait_for
+
+ROOT = Path(__file__).resolve().parents[1]
+BASELINE = os.environ.get('PORTAL_LOGIN_BASELINE') == '1'
+BASE_COMMIT = '6eea7640feef13e69ec3b35e03e11c16e5d87ba4'
+IMAGE = os.environ.get('PORTAL_LOGIN_WEB_IMAGE', 'lirantal/daloradius')
+DB, WEB, NETWORK = fixture_helpers.DB, fixture_helpers.WEB, fixture_helpers.NETWORK
+
+
+class Client:
+    def __init__(self, base):
+        self.base, self.sid = base, None
+        self.opener = urllib.request.build_opener(NoRedirect())
+
+    def request(self, path, fields=None):
+        data = urllib.parse.urlencode(fields, doseq=True).encode() if fields is not None else None
+        request = urllib.request.Request(self.base + path, data=data)
+        if self.sid:
+            request.add_header('Cookie', 'daloradius_user_sid=' + self.sid)
+        try:
+            response = self.opener.open(request, timeout=25)
+        except urllib.error.HTTPError as error:
+            response = error
+        for cookie in response.headers.get_all('Set-Cookie', []):
+            marker = 'daloradius_user_sid='
+            if marker in cookie:
+                value = cookie.split(marker, 1)[1].split(';', 1)[0]
+                if value: self.sid = value
+        return response.status, response.headers, response.read().decode('utf-8', 'replace')
+
+    def csrf(self):
+        status, _, body = self.request('login.php')
+        assert status == 200
+        form = FormParser(); form.feed(body)
+        assert form.csrf
+        self.last_csrf = form.csrf
+        return form.csrf
+
+    def login(self, username, password, language='en'):
+        return self.request('dologin.php', [('csrf_token', self.csrf()),
+            ('login_user', username), ('login_pass', password), ('language', language)])
+
+    def probe(self):
+        import json
+        status, _, body = self.request('session_probe.php')
+        assert status == 200
+        return json.loads(body)
+
+
+def portal_hash(password):
+    return run('docker', 'exec', '-i', WEB, 'php', '-r',
+        "require '/fixtures/app/common/includes/portal_password.php';"
+        "echo dalo_portal_password_hash(stream_get_contents(STDIN));", input=password)
+
+
+def verify_stored(username, password):
+    code = '''
+require '/fixtures/app/common/includes/portal_password.php';
+$p=new PDO('mysql:host=' . $argv[1] . ';dbname=radius;charset=utf8mb4','root','');
+$s=$p->prepare('SELECT portalloginpassword FROM userinfo WHERE username=?');
+$s->execute([$argv[2]]); $h=$s->fetchColumn();
+echo dalo_portal_password_verify(stream_get_contents(STDIN), $h)['verified'] ? 'yes' : 'no';
+'''
+    return run('docker','exec','-i',WEB,'php','-r',code,DB,username,input=password)
+
+
+def add_user(username, password, enabled=1):
+    sql('INSERT INTO userinfo (username,enableportallogin,portalloginpassword) VALUES (%s,%d,%s)' %
+        (quote(username), enabled, 'NULL' if password is None else quote(password)))
+
+
+def state():
+    return sql('SELECT username,enableportallogin,portalloginpassword IS NULL,'
+               'portalloginpassword IS NOT NULL AND portalloginpassword<>\'\' '
+               'FROM userinfo ORDER BY username,id')
+
+
+def main():
+    scratch = Path.home() / '.hermes/cache/scratch'; scratch.mkdir(parents=True, exist_ok=True)
+    names = {k:'portal-' + k + '-' + secrets.token_hex(5)
+             for k in ('modern','legacy','zero','missing','disabled','empty','duplicate','special','cas')}
+    passwords = {k:secrets.token_urlsafe(18) for k in ('modern','legacy','disabled','duplicate','special','cas')}
+    passwords['zero'] = '0'
+    names['special'] = "é'" + secrets.token_hex(4)
+    with tempfile.TemporaryDirectory(prefix='dalo-portal-login-', dir=scratch) as directory:
+        root = Path(directory)
+        shutil.copytree(ROOT / 'app', root / 'app', symlinks=True)
+        if BASELINE:
+            old = run('git','show',BASE_COMMIT + ':app/users/dologin.php')
+            (root/'app/users/dologin.php').write_text(old + '\n')
+        (root/'app/users/session_probe.php').write_text('''<?php
+session_name('daloradius_user_sid');session_start();
+echo json_encode(['logged_in'=>!empty($_SESSION['logged_in']),
+'username'=>isset($_SESSION['login_user'])?(string)$_SESSION['login_user']:'']);
+''')
+        if not BASELINE:
+            (root/'app/users/rehash_race.php').write_text('''<?php
+define('DALORADIUS_PORTAL_LOGIN_TEST_ONLY',true);
+chdir('/fixtures/app/users');require '/fixtures/app/users/dologin.php';
+require_once '/fixtures/app/common/includes/pdo_connection.php';
+try {
+  $pdo=dalo_pdo_connect($configValues,'default');
+  $table=dalo_portal_login_table($configValues);
+  $q=$pdo->prepare("SELECT id,username,portalloginpassword FROM $table WHERE username=?");
+  $q->execute([$argv[1]]);$row=$q->fetch(PDO::FETCH_ASSOC);
+  if (!$row) { echo 'no'; exit; }
+  $old=$row['portalloginpassword'];
+  $replacement=dalo_portal_password_hash(bin2hex(random_bytes(16)));
+  $candidate=dalo_portal_password_hash(bin2hex(random_bytes(16)));
+  $other=dalo_pdo_connect($configValues,'default');
+  $w=$other->prepare("UPDATE $table SET portalloginpassword=? WHERE id=?");
+  $w->execute([$replacement,$row['id']]);
+  $changed=dalo_portal_login_rehash($pdo,$table,$row,$old,$candidate);
+  $recheck=dalo_portal_login_current($pdo,$table,$row,$old);
+  $q->execute([$argv[1]]);$current=$q->fetch(PDO::FETCH_ASSOC);
+  $other->prepare("UPDATE $table SET enableportallogin=0 WHERE id=?")->execute([$row['id']]);
+  $locked=$current && !dalo_portal_login_current($pdo,$table,$current,$replacement);
+  echo (!$changed && !$recheck && $locked && $current
+      && hash_equals($replacement,$current['portalloginpassword'])) ? 'ok' : 'no';
+} catch (Throwable $e) { echo 'no'; }
+''')
+        try:
+            run('docker','network','create','--internal',NETWORK)
+            run('docker','run','-d','--name',DB,'--network',NETWORK,'--tmpfs','/var/lib/mysql',
+                '-e','MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1','-e','MARIADB_DATABASE=radius','mariadb:11.8')
+            wait_for(lambda: sql('SELECT 1'), 'MariaDB')
+            for name in ('fr3-mariadb-freeradius.sql','mariadb-daloradius.sql'):
+                sql((ROOT/'contrib/db'/name).read_text())
+            config = (ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')
+            for key,value in {'CONFIG_DB_ENGINE':'mysqli','CONFIG_DB_HOST':DB,'CONFIG_DB_PORT':'3306',
+                              'CONFIG_DB_USER':'root','CONFIG_DB_PASS':'','CONFIG_DB_NAME':'radius',
+                              'CONFIG_LOG_PAGES':'no','CONFIG_LOG_QUERIES':'no','CONFIG_LOG_ACTIONS':'no',
+                              'CONFIG_DEBUG_SQL':'no','CONFIG_DEBUG_SQL_ONPAGE':'no'}.items():
+                config += '\n$configValues[' + quote(key) + '] = ' + quote(value) + ';\n'
+            (root/'app/common/includes/daloradius.conf.php').write_text(config)
+            run('docker','run','-d','--name',WEB,'--network',NETWORK,
+                '-v',f'{root}:/fixtures','-w','/fixtures/app/users',
+                '--entrypoint','php',IMAGE,'-d','display_errors=0',
+                '-S','0.0.0.0:8080','-t','.')
+            address = run('docker','inspect','-f',
+                          '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}',WEB)
+            base = 'http://' + address + ':8080/'
+            wait_for(lambda: Client(base).request('login.php')[0] == 200,'portal HTTP')
+            add_user(names['modern'], portal_hash(passwords['modern']))
+            add_user(names['legacy'], passwords['legacy'])
+            add_user(names['zero'], '0')
+            add_user(names['disabled'], portal_hash(passwords['disabled']), enabled=0)
+            add_user(names['empty'], '')
+            add_user(names['duplicate'], portal_hash(passwords['duplicate']))
+            add_user(names['duplicate'], portal_hash(passwords['duplicate']))
+            add_user(names['special'], portal_hash(passwords['special']))
+            add_user(names['cas'], portal_hash(passwords['cas']))
+
+            client = Client(base)
+            status, headers, _ = client.login(names['modern'],passwords['modern'])
+            assert status == 302 and headers.get('Location','').endswith('index.php')
+            assert client.probe() == {'logged_in':True,'username':names['modern']}
+            status,headers,_ = client.request('dologin.php')
+            assert status == 302 and headers.get('Location','').endswith('index.php')
+            assert client.probe()['logged_in']
+            status,headers,_ = client.request('dologin.php', [('csrf_token',client.last_csrf),
+                ('login_user',names['modern']),('login_pass',secrets.token_urlsafe(18)),
+                ('language','en')])
+            assert status == 302 and headers.get('Location','').endswith('login.php')
+            assert not client.probe()['logged_in']
+            print('PASS: current hash login, non-authenticating request and failed retry session reset')
+
+            for key in ('modern','disabled','empty','duplicate','missing'):
+                client = Client(base)
+                credential = secrets.token_urlsafe(18) if key == 'modern' else passwords.get(key,'not-used')
+                status,headers,_ = client.login(names[key],credential)
+                assert status == 302 and headers.get('Location','').endswith('login.php')
+                assert client.probe()['logged_in'] is False
+            print('PASS: wrong, missing, disabled, blank and duplicate accounts fail closed')
+
+            client = Client(base)
+            status,headers,_ = client.login(names['legacy'],passwords['legacy'])
+            assert status == 302 and headers.get('Location','').endswith('index.php')
+            assert verify_stored(names['legacy'],passwords['legacy']) == 'yes'
+            assert sql('SELECT portalloginpassword LIKE %s FROM userinfo WHERE username=%s' %
+                       (quote('$dalo$portal$v1$%'),quote(names['legacy']))) == '1'
+            client = Client(base)
+            status,headers,_ = client.login(names['zero'],'0')
+            assert status == 302 and headers.get('Location','').endswith('index.php')
+            assert verify_stored(names['zero'],'0') == 'yes'
+            print('PASS: legacy plaintext and password zero rehash without exposing credentials')
+
+            client = Client(base)
+            status,headers,_ = client.login(names['special'],passwords['special'])
+            assert status == 302 and headers.get('Location','').endswith('index.php')
+            assert client.probe()['username'] == names['special']
+            print('PASS: quote-bearing Unicode username is bound, not interpolated')
+
+            if not BASELINE:
+                original_state = state()
+                for bad in ([('login_user[]',names['modern']),('login_pass',passwords['modern'])],
+                            [('login_user',names['modern']),('login_pass[]',passwords['modern'])],
+                            [('login_user',names['modern']),('login_pass',passwords['modern']),('language[]','en')]):
+                    client = Client(base); token = client.csrf()
+                    status,headers,_ = client.request('dologin.php',
+                        [('csrf_token',token),('language','en')] + bad)
+                    assert status == 302 and headers.get('Location','').endswith('login.php')
+                    assert not client.probe()['logged_in'] and state() == original_state
+                print('PASS: malformed fields fail closed without a database mutation')
+
+                assert run('docker','exec',WEB,'php','/fixtures/app/users/rehash_race.php',names['cas']) == 'ok'
+                print('PASS: old-hash compare-and-swap cannot overwrite a concurrent reset')
+
+                add_user('portal-trigger-'+secrets.token_hex(4), portal_hash(secrets.token_urlsafe(18)))
+                failure_user = 'portal-failure-'+secrets.token_hex(4)
+                failure_password = secrets.token_urlsafe(18)
+                add_user(failure_user, failure_password)
+                before = state()
+                sql("CREATE TRIGGER reject_portal_rehash BEFORE UPDATE ON userinfo FOR EACH ROW "
+                    "SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='fixture portal error'")
+                try:
+                    client = Client(base)
+                    status,headers,body = client.login(failure_user,failure_password)
+                    assert status == 302 and headers.get('Location','').endswith('login.php')
+                    assert not client.probe()['logged_in'] and state() == before
+                    assert 'SQLSTATE' not in body and 'fixture portal error' not in body
+                finally:
+                    sql('DROP TRIGGER reject_portal_rehash')
+                client = Client(base)
+                status,headers,_ = client.login(failure_user,failure_password)
+                assert status == 302 and headers.get('Location','').endswith('index.php')
+                print('PASS: rehash database error cannot authenticate or expose SQL details')
+
+                sql('ALTER TABLE userinfo ENGINE=MyISAM')
+                try:
+                    client = Client(base)
+                    status,headers,_ = client.login(names['modern'],passwords['modern'])
+                    assert status == 302 and headers.get('Location','').endswith('login.php')
+                    assert not client.probe()['logged_in']
+                finally:
+                    sql('ALTER TABLE userinfo ENGINE=InnoDB')
+                print('PASS: nontransactional table rejected before authentication')
+
+            logs = subprocess.run(['docker','logs',WEB],text=True,capture_output=True,timeout=30,check=True)
+            assert 'PHP Fatal error' not in logs.stdout + logs.stderr
+            assert 'PHP Warning' not in logs.stdout + logs.stderr
+            print('PASS: disposable web server has no PHP fatal errors or warnings')
+        finally:
+            # The PHP image may create root-owned HTMLPurifier cache in this
+            # disposable fixture; return ownership before removing the tree.
+            run('docker','exec','-u','root',WEB,'chown','-R',
+                f'{os.getuid()}:{os.getgid()}','/fixtures',check=False)
+            for container in (WEB,DB):run('docker','rm','-f','-v',container,check=False)
+            run('docker','network','rm',NETWORK,check=False)
+            assert not run('docker','ps','-aq','--filter','name=' + fixture_helpers.harness.PREFIX)
+            print('CLEANUP: disposable portal database, containers, sessions and fixture data removed')
+
+if __name__=='__main__':
+    main()
