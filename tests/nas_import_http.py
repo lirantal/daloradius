@@ -101,6 +101,9 @@ def main():
     secret_values=[secrets.token_urlsafe(18) for _ in range(6)]
     with tempfile.TemporaryDirectory(prefix='dalo-nas-import-',dir=scratch) as directory:
         root=Path(directory);shutil.copytree(ROOT/'app',root/'app',symlinks=True)
+        # Keep one legacy PEAR consumer in the fixture after UNIT-034 migrates CRUD.
+        old=run('git','show',BASE_COMMIT+':app/operators/mng-rad-nas-new.php')
+        (root/'app/operators/mng-rad-nas-new.php').write_text(old+'\n')
         if BASELINE:
             old=run('git','show',BASE_COMMIT+':app/operators/mng-rad-nas-import.php')
             (root/'app/operators/mng-rad-nas-import.php').write_text(old+'\n')
