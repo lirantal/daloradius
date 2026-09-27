@@ -18,6 +18,9 @@ BASELINE = os.environ.get('PORTAL_LOGIN_BASELINE') == '1'
 CHANGE_TEST = os.environ.get('PORTAL_CHANGE_TEST') == '1'
 CHANGE_BASELINE = os.environ.get('PORTAL_CHANGE_BASELINE') == '1'
 CHANGE_BASE_COMMIT = 'a9721356bb41b89d002dba2f143ac81b531b892d'
+AUTH_TEST = os.environ.get('RADIUS_CHANGE_TEST') == '1'
+AUTH_BASELINE = os.environ.get('RADIUS_CHANGE_BASELINE') == '1'
+AUTH_BASE_COMMIT = '894e04924040f90c355982cf1eff5e3bcb51fd33'
 BASE_COMMIT = '6eea7640feef13e69ec3b35e03e11c16e5d87ba4'
 IMAGE = os.environ.get('PORTAL_LOGIN_WEB_IMAGE', 'lirantal/daloradius')
 DB, WEB, NETWORK = fixture_helpers.DB, fixture_helpers.WEB, fixture_helpers.NETWORK
@@ -194,6 +197,172 @@ echo $n===0 && hash_equals($winner,$current['portalloginpassword']) ? 'ok' : 'no
     print('PASS: PDO bytewise compare-and-swap cannot overwrite a concurrent password reset')
 
 
+def auth_password_page(client, current, new, confirmation=None, csrf=None):
+    status,_,page = client.request('pref-auth-password-edit.php')
+    assert status == 200
+    form = FormParser(); form.feed(page)
+    assert form.csrf
+    fields = [('csrf_token', form.csrf if csrf is None else csrf),
+              ('current_password', current), ('new_password1', new),
+              ('new_password2', new if confirmation is None else confirmation)]
+    return client.request('pref-auth-password-edit.php',fields)
+
+
+def test_radius_change(base,names,passwords):
+    import hashlib
+    original = secrets.token_urlsafe(18)
+    changed = secrets.token_urlsafe(18)
+    another = secrets.token_urlsafe(18)
+    crypt_hash = run('docker','exec','-i',WEB,'php','-r',
+        "echo crypt(stream_get_contents(STDIN), '$6$' . bin2hex(random_bytes(8)) . '$');",
+        input=original)
+    types = [
+        ('Cleartext-Password',original),('MD5-Password',hashlib.md5(original.encode()).hexdigest().upper()),
+        ('SHA1-Password',hashlib.sha1(original.encode()).hexdigest()),
+        ('SHA2-Password',hashlib.sha256(original.encode()).hexdigest()),
+        ('User-Password',original),('Crypt-Password',crypt_hash),
+        ('Cleartext-Password',another),
+    ]
+    for attr,value in types:
+        sql('INSERT INTO radcheck (username,attribute,op,value) VALUES (%s,%s,%s,%s)' %
+            (quote(names['modern']),quote(attr),quote(':='),quote(value)))
+    sql('INSERT INTO radcheck (username,attribute,op,value) VALUES (%s,%s,%s,%s)' %
+        (quote(names['modern']),quote('Cleartext-Password'),quote('='),quote(original)))
+    sql('INSERT INTO radcheck (username,attribute,op,value) VALUES (%s,%s,%s,%s)' %
+        (quote(names['special']),quote('Cleartext-Password'),quote(':='),quote(original)))
+    sql('INSERT INTO radcheck (username,attribute,op,value) VALUES (%s,%s,%s,%s)' %
+        (quote(names['missing']),quote('Cleartext-Password'),quote(':='),quote(original)))
+    def values(user):
+        return sql('SELECT id,attribute,op,value FROM radcheck WHERE username=%s ORDER BY id' % quote(user)).splitlines()
+    before_modern = values(names['modern'])
+    before_special = values(names['special'])
+    before_other = values(names['missing'])
+    client = Client(base)
+    assert client.login(names['modern'],passwords['modern'])[0] == 302 and client.probe()['logged_in']
+    status,_,body = auth_password_page(client,original,changed)
+    assert status == 200 and '6 auth password(s) have been changed' in body
+    if not AUTH_BASELINE:
+        assert original not in body and changed not in body
+    after_modern = values(names['modern'])
+    after_special = values(names['special'])
+    assert after_modern != before_modern and after_special == before_special and values(names['missing']) == before_other
+    # Only expected values are compared; neither password nor hash is emitted.
+    assert after_modern[0].split('\t')[-1] == changed
+    assert after_modern[1].split('\t')[-1] == hashlib.md5(changed.encode()).hexdigest().upper()
+    assert after_modern[2].split('\t')[-1] == hashlib.sha1(changed.encode()).hexdigest()
+    assert after_modern[3].split('\t')[-1] == hashlib.sha256(changed.encode()).hexdigest()
+    assert after_modern[4].split('\t')[-1] == changed
+    assert after_modern[5].split('\t')[-1] != crypt_hash
+    assert after_modern[6].split('\t')[-1] == another
+    assert after_modern[7].split('\t')[-1] == original
+    print('PASS: all six matching password attributes change; mismatched/op/other user remain')
+
+    for current,new,confirm,fragment in (
+        (original,secrets.token_urlsafe(18),None,'Something went wrong'),
+        (changed,'',None,'empty or invalid'),
+        (changed,secrets.token_urlsafe(18),'different','should match'),
+        (changed,'0',None,'empty or invalid')):
+        status,_,body = auth_password_page(client,current,new,confirm)
+        assert status == 200 and fragment in body and values(names['modern']) == after_modern
+    status,_,body = auth_password_page(client,changed,secrets.token_urlsafe(18),csrf='invalid')
+    assert status == 200 and 'CSRF token error' in body and values(names['modern']) == after_modern
+    print('PASS: wrong current, invalid replacement and invalid CSRF do not write')
+
+    other = Client(base)
+    assert other.login(names['special'],passwords['special'])[0] == 302
+    status,_,body = auth_password_page(other,original,changed)
+    assert status == 200 and '1 auth password(s) have been changed' in body
+    assert values(names['special']) != before_special
+    absent = Client(base)
+    assert absent.login(names['zero'],'0')[0] == 302
+    status,_,body = auth_password_page(absent,original,changed)
+    assert status == 200 and 'auth password(s) have been changed' not in body
+    print('PASS: quoted Unicode username and no matching password attributes')
+
+    if AUTH_BASELINE:
+        return
+    for bad in (
+        [('current_password[]',changed),('new_password1',another),('new_password2',another)],
+        [('current_password',changed),('new_password1[]',another),('new_password2',another)],
+        [('csrf_token[]','bad'),('current_password',changed),('new_password1',another),('new_password2',another)],
+    ):
+        status,_,page = client.request('pref-auth-password-edit.php')
+        assert status == 200
+        form = FormParser(); form.feed(page)
+        fields = bad if bad[0][0] == 'csrf_token[]' else [('csrf_token',form.csrf)] + bad
+        status,_,body = client.request('pref-auth-password-edit.php',fields)
+        assert status == 200 and 'auth password(s) have been changed' not in body
+        assert values(names['modern']) == after_modern
+    print('PASS: malformed controls cannot mutate RADIUS credentials')
+
+    sql("DELIMITER //\nCREATE TRIGGER reject_later_radius BEFORE UPDATE ON radcheck FOR EACH ROW "
+        "BEGIN IF OLD.attribute='SHA1-Password' THEN "
+        "SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='fixture later failure'; END IF; END//\n"
+        "DELIMITER ;\n")
+    try:
+        status,_,body = auth_password_page(client,changed,another)
+        assert status == 200 and 'Something went wrong' in body
+        assert 'fixture later failure' not in body and 'SQLSTATE' not in body
+        assert values(names['modern']) == after_modern
+    finally:
+        sql('DROP TRIGGER reject_later_radius')
+    print('PASS: failure on later attribute rolls back all earlier password updates')
+
+    sql('ALTER TABLE radcheck ENGINE=MyISAM')
+    try:
+        status,_,body = auth_password_page(client,changed,another)
+        assert status == 200 and 'Something went wrong' in body
+        assert values(names['modern']) == after_modern
+    finally:
+        sql('ALTER TABLE radcheck ENGINE=InnoDB')
+    print('PASS: nontransactional table rejected without changing credentials')
+
+    # The stock FreeRADIUS column is NOT NULL; emulate a legacy nullable schema.
+    sql('ALTER TABLE radcheck MODIFY value varchar(253) NULL DEFAULT NULL')
+    try:
+        sql('INSERT INTO radcheck (username,attribute,op,value) VALUES (%s,%s,%s,NULL)' %
+            (quote(names['zero']),quote('Cleartext-Password'),quote(':=')))
+        before_null = values(names['zero'])
+        status,_,body = auth_password_page(absent,original,another)
+        assert status == 200 and 'Something went wrong' in body and values(names['zero']) == before_null
+    finally:
+        sql('DELETE FROM radcheck WHERE username=%s' % quote(names['zero']))
+        sql("ALTER TABLE radcheck MODIFY value varchar(253) NOT NULL DEFAULT ''")
+    print('PASS: NULL password attributes on a nullable legacy schema cannot authorize an update')
+
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+    sessions = [Client(base),Client(base)]
+    for session in sessions:
+        assert session.login(names['modern'],passwords['modern'])[0] == 302
+    prepared = []
+    for session in sessions:
+        status,_,page = session.request('pref-auth-password-edit.php')
+        assert status == 200
+        form = FormParser(); form.feed(page)
+        prepared.append(form.csrf)
+    barrier = Barrier(2)
+    replacements = [secrets.token_urlsafe(18),secrets.token_urlsafe(18)]
+    def race(index):
+        barrier.wait(timeout=10)
+        fields = [('csrf_token',prepared[index]),('current_password',changed),
+                  ('new_password1',replacements[index]),('new_password2',replacements[index])]
+        return sessions[index].request('pref-auth-password-edit.php',fields)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(race,range(2)))
+    winners = [i for i,(status,_,body) in enumerate(results)
+               if status == 200 and '6 auth password(s) have been changed' in body]
+    assert len(winners) == 1 and all(status == 200 for status,_,_ in results)
+    final = values(names['modern'])
+    assert final[0].split('\t')[-1] == replacements[winners[0]]
+    assert final[1].split('\t')[-1] == hashlib.md5(replacements[winners[0]].encode()).hexdigest().upper()
+    assert final[2].split('\t')[-1] == hashlib.sha1(replacements[winners[0]].encode()).hexdigest()
+    assert final[3].split('\t')[-1] == hashlib.sha256(replacements[winners[0]].encode()).hexdigest()
+    assert final[4].split('\t')[-1] == replacements[winners[0]]
+    assert final[6] == after_modern[6] and final[7] == after_modern[7]
+    print('PASS: two concurrent sessions yield one complete password change')
+
+
 def main():
     scratch = Path.home() / '.hermes/cache/scratch'; scratch.mkdir(parents=True, exist_ok=True)
     names = {k:'portal-' + k + '-' + secrets.token_hex(5)
@@ -210,6 +379,9 @@ def main():
         if CHANGE_BASELINE:
             old = run('git','show',CHANGE_BASE_COMMIT + ':app/users/pref-portal-password-edit.php')
             (root/'app/users/pref-portal-password-edit.php').write_text(old + '\n')
+        if AUTH_BASELINE:
+            old = run('git','show',AUTH_BASE_COMMIT + ':app/users/pref-auth-password-edit.php')
+            (root/'app/users/pref-auth-password-edit.php').write_text(old + '\n')
         (root/'app/users/session_probe.php').write_text('''<?php
 session_name('daloradius_user_sid');session_start();
 echo json_encode(['logged_in'=>!empty($_SESSION['logged_in']),
@@ -252,12 +424,14 @@ try {
             for key,value in {'CONFIG_DB_ENGINE':'mysqli','CONFIG_DB_HOST':DB,'CONFIG_DB_PORT':'3306',
                               'CONFIG_DB_USER':'root','CONFIG_DB_PASS':'','CONFIG_DB_NAME':'radius',
                               'CONFIG_LOG_PAGES':'no','CONFIG_LOG_QUERIES':'no','CONFIG_LOG_ACTIONS':'no',
-                              'CONFIG_DEBUG_SQL':'no','CONFIG_DEBUG_SQL_ONPAGE':'no'}.items():
+                              'CONFIG_DEBUG_SQL':'no',
+                              'CONFIG_DEBUG_SQL_ONPAGE':'yes' if AUTH_TEST and not AUTH_BASELINE else 'no'}.items():
                 config += '\n$configValues[' + quote(key) + '] = ' + quote(value) + ';\n'
             (root/'app/common/includes/daloradius.conf.php').write_text(config)
+            web_workers = ['-e','PHP_CLI_SERVER_WORKERS=2'] if AUTH_TEST and not AUTH_BASELINE else []
             run('docker','run','-d','--name',WEB,'--network',NETWORK,
                 '-v',f'{root}:/fixtures','-w','/fixtures/app/users',
-                '--entrypoint','php',IMAGE,'-d','display_errors=0',
+                *web_workers,'--entrypoint','php',IMAGE,'-d','display_errors=0',
                 '-S','0.0.0.0:8080','-t','.')
             address = run('docker','inspect','-f',
                           '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}',WEB)
@@ -360,6 +534,8 @@ try {
 
             if CHANGE_TEST:
                 test_change(base,names,passwords)
+            if AUTH_TEST:
+                test_radius_change(base,names,passwords)
 
             logs = subprocess.run(['docker','logs',WEB],text=True,capture_output=True,timeout=30,check=True)
             assert 'PHP Fatal error' not in logs.stdout + logs.stderr
