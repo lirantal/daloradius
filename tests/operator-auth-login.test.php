@@ -257,44 +257,30 @@ check_login('migrated operator rows retain their configured provider',
     dalo_operator_auth_row_source(array('auth_source' => 'ldap')) === 'ldap');
 
 $otpPage = file_get_contents(dirname(__DIR__) . '/app/operators/login-otp.php');
-check_login('MFA locks the identity row before provider verification and state update',
-    strpos($otpPage, 'autoCommit(false)') !== false
-    && strpos($otpPage, 'FOR UPDATE') !== false
-    && strpos($otpPage, 'dalo_operator_auth_external_id_matches') !== false);
-$otpUpdateNeedle = '$updateResult = $dbSocket->query($sql);';
-$otpUpdates = array();
-$otpUpdateOffset = 0;
-while (($otpUpdatePosition = strpos($otpPage, $otpUpdateNeedle, $otpUpdateOffset)) !== false) {
-    $otpUpdates[] = $otpUpdatePosition;
-    $otpUpdateOffset = $otpUpdatePosition + strlen($otpUpdateNeedle);
-}
-$otpUpdate = count($otpUpdates) > 0 ? $otpUpdates[0] : false;
-$otpIdentityCheck = strpos($otpPage, '$externalIdMatches =');
-$otpCommit = strpos($otpPage, '$commit = $dbSocket->commit();');
-$otpSession = strpos($otpPage, "session_regenerate_id(true);");
-$otpUpdatesValidated = count($otpUpdates) === 2 && $otpCommit !== false;
-foreach ($otpUpdates as $index => $updatePosition) {
-    $segmentEnd = array_key_exists($index + 1, $otpUpdates) ? $otpUpdates[$index + 1] : $otpCommit;
-    if ($segmentEnd === false || $updatePosition >= $segmentEnd) {
-        $otpUpdatesValidated = false;
-        break;
-    }
-    $updateSegment = substr($otpPage, $updatePosition, $segmentEnd - $updatePosition);
-    if (strpos($updateSegment, '$affectedRows = !DB::isError($updateResult) ? $dbSocket->affectedRows() : null;') === false
-        || strpos($updateSegment, '$stateUpdated = !DB::isError($updateResult)') === false
-        || strpos($updateSegment, '(int) $affectedRows === 1;') === false) {
-        $otpUpdatesValidated = false;
-        break;
-    }
-}
-check_login('MFA checks provider identity before updating one-time state',
-    $otpIdentityCheck !== false && $otpUpdate !== false && $otpIdentityCheck < $otpUpdate);
-check_login('MFA validates both TOTP and recovery-code state updates before commit',
-    $otpUpdatesValidated
-    && $otpSession !== false
-    && $otpCommit < $otpSession);
-check_login('MFA rolls back failed or invalid verification attempts',
-    strpos($otpPage, '$rollback = $dbSocket->rollback();') !== false);
+$otpConsume = extract_login_function($otpPage, 'dalo_operator_auth_otp_consume');
+check_login('MFA uses one PDO transaction with a locked identity',
+    $otpConsume !== '' && strpos($otpConsume, 'beginTransaction()') !== false
+    && strpos($otpConsume, 'FOR UPDATE') !== false
+    && strpos($otpConsume, 'fetchAll(PDO::FETCH_ASSOC)') !== false);
+$identityCheck = strpos($otpConsume, 'dalo_operator_auth_otp_identity_matches(');
+$counterUpdate = strpos($otpConsume, 'totp_last_counter=?');
+$recoveryUpdate = strpos($otpConsume, 'totp_recovery_codes=?');
+$commit = strpos($otpConsume, '$pdo->commit()');
+$regenerate = strpos($otpPage, 'session_regenerate_id(true);');
+$consumeCall = strrpos($otpPage, 'dalo_operator_auth_otp_consume(');
+check_login('MFA validates provider identity before changing state',
+    $identityCheck !== false && $counterUpdate !== false
+    && $identityCheck < $counterUpdate && $identityCheck < $recoveryUpdate);
+check_login('MFA checks both one-time updates and commits before session regeneration',
+    $counterUpdate !== false && $recoveryUpdate !== false
+    && substr_count($otpConsume, '$update->rowCount() === 1') === 2
+    && $commit !== false && $regenerate !== false && $consumeCall !== false
+    && $consumeCall < $regenerate);
+check_login('MFA rolls back invalid verification and database failures',
+    substr_count($otpConsume, '$pdo->rollBack()') >= 3
+    && strpos($otpConsume, '$pdo->inTransaction()') !== false);
+check_login('MFA contains no PEAR database calls',
+    strpos($otpPage, '$dbSocket') === false && strpos($otpPage, 'DB::isError') === false);
 
 printf("\n%s\n", $failures === 0 ? 'ALL PASSED' : "$failures FAILURE(S)");
 exit($failures === 0 ? 0 : 1);
