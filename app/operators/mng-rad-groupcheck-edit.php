@@ -1,209 +1,148 @@
 <?php
-/*
- *********************************************************************************************************
- * daloRADIUS - RADIUS Web Platform
- * Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- *********************************************************************************************************
- *
- * Authors:    Liran Tal <liran@lirantal.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
- *
- *********************************************************************************************************
- */
+/* UNIT-036: migrate group attribute create/edit writes to caller-owned PDO. */
 
     include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
-
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
-
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
-    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
+    require_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'pdo_connection.php' ]);
+    require_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes_pdo.php' ]);
 
-    // init logging variables
-    $log = "visited page: ";
-    $logAction = "";
-    $logDebugSQL = "";
+    $log = 'visited page: ';
+    $logAction = '';
+    $logDebugSQL = '';
 
-    
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $item = (array_key_exists('item', $_POST) && !empty(str_replace("%", "", trim($_POST['item']))))
-              ? str_replace("%", "", trim($_POST['item'])) : "";
-    } else {
-        $item = (array_key_exists('item', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['item']))))
-              ? str_replace("%", "", trim($_REQUEST['item'])) : "";
+    $item_prefix = 'groupcheck-';
+    $item_table_key = 'CONFIG_DB_TBL_RADGROUPCHECK';
+    $item_table = $configValues[$item_table_key] ?? '';
+    if (!is_string($item_table) || !preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $item_table)) {
+        $item_table = '';
     }
-    
-    $item_prefix = "groupcheck-";
-    $item_table = $configValues['CONFIG_DB_TBL_RADGROUPCHECK'];
-    
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-    
-    // get valid attributes
+    $pdo = null;
+    $item_raw = $_SERVER['REQUEST_METHOD'] === 'POST' ? ($_POST['item'] ?? null) : ($_REQUEST['item'] ?? null);
+    $item = is_string($item_raw) ? trim($item_raw) : '';
+    $internal_id = null;
+    if (preg_match('/^groupcheck-([1-9][0-9]*)$/D', $item, $match)) {
+        $internal_id = (int) $match[1];
+    } else {
+        $item = '';
+    }
+    $exists = false;
     $valid_attributes = array();
-    $sql = sprintf("SELECT DISTINCT(attribute)
-                      FROM %s
-                     WHERE RecommendedTable IS NULL OR RecommendedTable='' OR RecommendedTable=?
-                     ORDER BY attribute ASC",
-                    $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
-    $prep = $dbSocket->prepare($sql);
-    $values = array( $item_table, );
-    $res = $dbSocket->execute($prep, $values);
-    $logDebugSQL .= "$sql;\n";
-    
-    while ($row = $res->fetchrow()) {
-        $valid_attributes[] = $row[0];
+
+    try {
+        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $table = dalo_attribute_pdo_identifier($configValues, $item_table_key);
+        $dictionary_name = $configValues['CONFIG_DB_TBL_DALODICTIONARY'] ?? '';
+        if (!is_string($dictionary_name) || !preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $dictionary_name)) {
+            throw new InvalidArgumentException('Invalid dictionary table configuration');
+        }
+        $dict = '`' . $dictionary_name . '`';
+        $statement = $pdo->prepare("SELECT DISTINCT(attribute) FROM $dict
+            WHERE RecommendedTable IS NULL OR RecommendedTable='' OR RecommendedTable=? ORDER BY attribute ASC");
+        $statement->execute(array($item_table));
+        while ($attributeRow = $statement->fetch(PDO::FETCH_NUM)) { $valid_attributes[] = $attributeRow[0]; }
+        $valid_attributes = dalo_filter_cleartext_password_attributes($valid_attributes);
+        if ($internal_id !== null) {
+            $statement = $pdo->prepare("SELECT id FROM $table WHERE id=?");
+            $statement->execute(array($internal_id));
+            $exists = $statement->fetchColumn() !== false;
+        }
+    } catch (Throwable $exception) {
+        error_log('groupcheck read: ' . get_class($exception));
+        $failureMsg = 'Unable to load groupcheck; please retry';
+    } finally {
+        $pdo = null;
     }
 
-    $valid_attributes = dalo_filter_cleartext_password_attributes($valid_attributes);
-
-    // check if item is valid
-    if (!empty($item)) {
-        $internal_id = intval(str_replace($item_prefix, "", $item));
-        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE id=?", $item_table);
-        $prep = $dbSocket->prepare($sql);
-        $values = array( $internal_id, );
-        $res = $dbSocket->execute($prep, $values);
-        $logDebugSQL .= "$sql;\n";
-
-        $exists = $res->fetchrow()[0] > 0;
-        
-    } else {
-        $item = "";
-        $internal_id = "";
-        $exists = false;
-    }
-    
-    
-    //feed the sidebar variables
     $selected_groupcheck_item = $item;
-    
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            if (empty($internal_id)) {
-                // required
-                $failureMsg = sprintf("Selected an empty/invalid %s item", $item_table);
-                $logAction .= "$failureMsg on page: ";
-            } else {
-                $sql_SET = array();
-                $required_fields = array();
-                
-                $op = (array_key_exists('op', $_POST) && isset($_POST['op']) && in_array($_POST['op'], $valid_ops))
-                    ? $_POST['op'] : "";
-                
-                if (!empty($op)) {
-                    $sql_SET[] = sprintf("op='%s'", $op);
-                } else {
-                    $required_fields['op'] = t('all','Operator');
-                }
-                
-                $groupname = (array_key_exists('groupname', $_POST) && !empty(str_replace("%", "", trim($_POST['groupname']))))
-                           ? str_replace("%", "", trim($_POST['groupname'])) : "";
-                if (!empty($groupname)) {
-                    $sql_SET[] = sprintf("groupname='%s'", $dbSocket->escapeSimple($groupname));
-                } else {
-                    $required_fields['groupname'] = t('all','Groupname');
-                }
-                
-                $attribute = (array_key_exists('attribute', $_POST) && !empty(str_replace("%", "", trim($_POST['attribute']))))
-                           ? str_replace("%", "", trim($_POST['attribute'])) : "";
-
-                // the attribute field is free text, so the datalist alone does not keep a
-                // cleartext password attribute out of radgroupcheck: reject it here as well
-                if (!dalo_cleartext_password_allowed() &&
-                    in_array($attribute, dalo_cleartext_password_attributes(), true)) {
-                    $attribute = "";
-                }
-
-                if (!empty($attribute)) {
-                    $sql_SET[] = sprintf("attribute='%s'", $dbSocket->escapeSimple($attribute));
-                } else {
-                    $required_fields['attribute'] = t('all','Attribute');
-                }
-                
-                $value = (array_key_exists('value', $_POST) && !empty(str_replace("%", "", trim($_POST['value']))))
-                       ? str_replace("%", "", trim($_POST['value'])) : "";
-                if (!empty($value)) {
-                    $sql_SET[] = sprintf("value='%s'", $dbSocket->escapeSimple($value));
-                } else {
-                    $required_fields['value'] = t('all','Value');
-                }
-                
-                if (count($required_fields) > 0) {
-                    // required/invalid
-                    $failureMsg = sprintf("Empty or invalid required field(s) [%s]", implode(", ", array_values($required_fields)));
-                    $logAction .= "$failureMsg on page: ";
-                } else {
-                
-                    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE groupname=? AND attribute=? AND value=? AND id<>?",
-                                   $item_table);
-                    $prep = $dbSocket->prepare($sql);
-                    $values = array( $groupname, $attribute, $value, $internal_id );
-                    $res = $dbSocket->execute($prep, $values);
-                    $logDebugSQL .= "$sql;\n";
-
-                    $exists = $res->fetchrow()[0] > 0;
-                    
-                    if ($exists) {
-                        // already exists
-                        $failureMsg = sprintf("Failed to update %s item, duplicate entry", $item_table);
-                        $logAction .= sprintf("Failed to update %s item, duplicate entry [%s %s %s (%s)] on page: ",
-                                              $item_table, $attribute, $op, $value, $groupname);
-                    } else {
-                        $sql = sprintf("UPDATE %s SET ", $item_table)
-                             . implode(", ", $sql_SET)
-                             . sprintf(" WHERE id=%d", $internal_id);
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-                        
-                        if (!DB::isError($res)) {
-                            $successMsg = sprintf("Successfully updated %s item", $item_table);
-                            $logAction .= sprintf("Successfully updated %s item [%s %s %s (%s)] on page: ",
-                                                  $item_table, $attribute, $op, $value, $groupname);
-                        } else {
-                            $failureMsg = sprintf("Failed to update %s item", $item_table);
-                            $logAction .= sprintf("Failed to update %s item [%s %s %s (%s)] on page: ",
-                                                  $item_table, $attribute, $op, $value, $groupname);
-                        }
-                    }
-                }
-            }
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
+            $logAction .= 'Failed updating groupcheck: CSRF on page: ';
+        } elseif ($internal_id === null) {
+            $failureMsg = 'Selected an empty/invalid groupcheck item';
+            $logAction .= 'Failed updating groupcheck: invalid item on page: ';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            $opRaw = $_POST['op'] ?? null;
+            $groupRaw = $_POST['groupname'] ?? null;
+            $attributeRaw = $_POST['attribute'] ?? null;
+            $valueRaw = $_POST['value'] ?? null;
+            $op = is_string($opRaw) ? trim($opRaw) : '';
+            $groupname = is_string($groupRaw) ? trim($groupRaw) : '';
+            $attribute = is_string($attributeRaw) ? trim($attributeRaw) : '';
+            $value = is_string($valueRaw) ? trim($valueRaw) : '';
+            try {
+                if (!in_array($op, $valid_ops, true) || $groupname === '' || $attribute === '' || $value === '') {
+                    throw new InvalidArgumentException('Invalid required group attribute field');
+                }
+                if (dalo_attribute_pdo_length($groupname) > 64 || dalo_attribute_pdo_length($attribute) > 64 ||
+                    dalo_attribute_pdo_length($value) > 253) {
+                    throw new InvalidArgumentException('Group attribute field is too long');
+                }
+                if (!in_array($groupname, array_keys(get_groups()), true)) {
+                    throw new InvalidArgumentException('Group does not exist');
+                }
+                if (!dalo_cleartext_password_allowed() && in_array($attribute, dalo_cleartext_password_attributes(), true)) {
+                    throw new InvalidArgumentException('Cleartext password attribute is disabled');
+                }
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                if (!$pdo->beginTransaction()) { throw new RuntimeException('Attribute transaction unavailable'); }
+                $table = dalo_attribute_pdo_identifier($configValues, $item_table_key);
+                $lock = $pdo->prepare("SELECT groupname,attribute,op,value FROM $table WHERE id=? FOR UPDATE");
+                $lock->execute(array($internal_id));
+                $current = $lock->fetch(PDO::FETCH_ASSOC);
+                if (!$current) { throw new InvalidArgumentException('Stale or foreign group attribute ID'); }
+                $duplicate = $pdo->prepare("SELECT 1 FROM $table WHERE groupname=? AND attribute=? AND value=? AND id<>? LIMIT 1");
+                $duplicate->execute(array($groupname, $attribute, $value, $internal_id));
+                if ($duplicate->fetchColumn() !== false) { throw new DomainException('Duplicate group attribute'); }
+                $update = $pdo->prepare("UPDATE $table SET groupname=?,attribute=?,op=?,value=? WHERE id=?");
+                $update->execute(array($groupname, $attribute, $op, $value, $internal_id));
+                if (!$pdo->commit()) { throw new RuntimeException('Attribute commit failed'); }
+                $exists = true;
+                $successMsg = 'Successfully updated groupcheck item';
+                $logAction .= 'Successfully updated groupcheck on page: ';
+            } catch (Throwable $exception) {
+                if ($pdo instanceof PDO && $pdo->inTransaction()) { $pdo->rollBack(); }
+                error_log('groupcheck update: ' . get_class($exception));
+                $failureMsg = $exception instanceof DomainException
+                    ? 'Failed to update groupcheck item, duplicate entry'
+                    : ($exception instanceof InvalidArgumentException
+                        ? 'Empty or invalid required field(s)'
+                        : 'Unable to update groupcheck; please retry');
+                $logAction .= 'Failed updating groupcheck on page: ';
+            } finally {
+                $pdo = null;
+            }
         }
     }
-    
-    
-    if (empty($internal_id)) {
-        $failureMsg = sprintf("Selected an empty/invalid %s item", $item_table);
-        $logAction .= sprintf("Failed updating (possible empty/invalid %s item) on page: ", $item_table);
-    } else {
-        $sql = sprintf("SELECT groupname, attribute, op, value FROM %s WHERE id=?", $item_table);
-        $prep = $dbSocket->prepare($sql);
-        $values = array( $internal_id );
-        $res = $dbSocket->execute($prep, $values);
-        $logDebugSQL .= "$sql;\n";
 
-        list( $groupname, $attribute, $op, $value ) = $res->fetchrow();
+    // Keep the legacy PEAR read for the edit form and shared presentation contract.
+    $groupname = $attribute = $op = $value = '';
+    if ($internal_id !== null) {
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+        $read = $dbSocket->prepare("SELECT groupname,attribute,op,value FROM $item_table WHERE id=?");
+        $readResult = $dbSocket->execute($read, array($internal_id));
+        $readRow = $readResult->fetchRow();
+        if ($readRow) {
+            list($groupname, $attribute, $op, $value) = $readRow;
+            $exists = true;
+        } else {
+            $exists = false;
+        }
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
     }
-    
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    if (!$exists) {
+        $internal_id = null;
+        $item = '';
+    }
 
-    
     // print HTML prologue
     $title = t('Intro','mngradgroupcheckedit.php');
     $help = t('helpPage','mngradgroupcheckedit');

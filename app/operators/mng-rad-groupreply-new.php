@@ -1,100 +1,67 @@
 <?php
-/*
- *********************************************************************************************************
- * daloRADIUS - RADIUS Web Platform
- * Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- *********************************************************************************************************
- *
- * Authors:    Liran Tal <liran@lirantal.com>
- *             Filippo Lauria <filippo.lauria@iit.cnr.it>
- *
- *********************************************************************************************************
- */
+/* UNIT-036: migrate group attribute create/edit writes to caller-owned PDO. */
 
-    include("library/checklogin.php");
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
-    
-    include('library/check_operator_perm.php');
-    include_once('../common/includes/config_read.php');
-    
-    // init logging variables
-    $log = "visited page: ";
-    $logAction = "";
-    $logDebugSQL = "";
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
+    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
+    require_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'pdo_connection.php' ]);
+    require_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes_pdo.php' ]);
 
-    include_once("lang/main.php");
-    include("../common/includes/validation.php");
-    include("../common/includes/layout.php");
+    $log = 'visited page: ';
+    $logAction = '';
+    $logDebugSQL = '';
 
-    include_once('include/management/populate_selectbox.php');
-    
-
+    $groupname = '';
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-    
-            $groupname = (array_key_exists('groupname', $_POST) && isset($_POST['groupname']))
-                     ? trim(str_replace("%", "", $_POST['groupname'])) : "";
-            $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
-        
-            if (empty($groupname)) {
-                // profile required
-                $failureMsg = "The specified group name is empty or invalid";
-                $logAction .= "Failed creating a new group reply mapping [empty or invalid group name] on page: ";
-            } else {
-                
-                include('../common/includes/db_open.php');
-                
-                $groups = array_keys(get_groups());
-                if (!in_array($groupname, $groups)) {
-                    // invalid profile name
-                    $failureMsg = "The chosen group [<strong>$groupname_enc</strong>] does not exist";
-                    $logAction .= "Failed creating group reply mapping [$groupname, does not exist] on page: ";
-                } else {
-        
-                    include("library/attributes.php");
-                    $skipList = array( "groupname", "submit", "csrf_token" );
-                    $count = handleAttributes($dbSocket, $groupname, $skipList, true, 'group');
-
-                    if ($count > 0) {
-                        // retrieve item id
-                        $sql = sprintf("SELECT CONCAT('groupreply-', LAST_INSERT_ID()) FROM %s",
-                                       $configValues['CONFIG_DB_TBL_RADGROUPREPLY']);
-                        $item_id = $dbSocket->getOne($sql);
-                        
-                        $successMsg = sprintf("Successfully added a new groupreply item (item id: %s)", $item_id)
-                                    . sprintf(' [<a href="mng-rad-groupreply-edit.php?item=%s" title="Edit">Edit</a>]',
-                                              urlencode($item_id));
-                        $logAction .= "Successfully added a new groupreply item (item id: $item_id) on page: ";
-                    } else {
-                        $failureMsg = "Failed adding a new groupreply item (item id: $item_id), invalid or empty attributes list";
-                        $logAction .= "Failed adding a new groupreply item (item id: $item_id) [invalid or empty attributes list] on page: ";
-                    }
-
-                } // profile non-existent
-                
-                include('../common/includes/db_close.php');
-                
-            } // profile name not empty
-        
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
+            $logAction .= 'Failed creating groupreply: CSRF on page: ';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            $postedGroup = $_POST['groupname'] ?? null;
+            $groupname = is_string($postedGroup) ? trim($postedGroup) : '';
+            if ($groupname === '') {
+                $failureMsg = 'The specified group name is empty or invalid';
+                $logAction .= 'Failed creating groupreply: invalid group name on page: ';
+            } else if (!in_array($groupname, array_keys(get_groups()), true)) {
+                $groupname_enc = htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8');
+                $failureMsg = "The chosen group [<strong>$groupname_enc</strong>] does not exist";
+                $logAction .= 'Failed creating groupreply: group does not exist on page: ';
+            } else {
+                $pdo = null;
+                try {
+                    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                    if (!$pdo->beginTransaction()) { throw new RuntimeException('Attribute transaction unavailable'); }
+                    $count = handleAttributes($pdo, $groupname,
+                        array('groupname', 'submit', 'csrf_token'), true, 'group');
+                    if ($count < 1) { throw new DomainException('No valid group attributes'); }
+                    $last = $pdo->lastInsertId();
+                    if (!ctype_digit((string) $last) || (int) $last < 1) {
+                        throw new RuntimeException('Attribute insert ID unavailable');
+                    }
+                    if (!$pdo->commit()) { throw new RuntimeException('Attribute commit failed'); }
+                    $item_id = 'groupreply-' . $last;
+                    $successMsg = sprintf('Successfully added a new groupreply item (item id: %s)', $item_id)
+                        . sprintf(' [<a href="mng-rad-groupreply-edit.php?item=%s" title="Edit">Edit</a>]', urlencode($item_id));
+                    $logAction .= 'Successfully added a new groupreply item on page: ';
+                } catch (Throwable $exception) {
+                    if ($pdo instanceof PDO && $pdo->inTransaction()) { $pdo->rollBack(); }
+                    error_log('groupreply create: ' . get_class($exception));
+                    $failureMsg = $exception instanceof DomainException
+                        ? 'Failed adding a new groupreply item, invalid or empty attributes list'
+                        : 'Unable to add groupreply; please retry';
+                    $logAction .= 'Failed creating groupreply on page: ';
+                } finally {
+                    $pdo = null;
+                }
+            }
         }
-        
     }
-
 
     // print HTML prologue
     $extra_js = array(
