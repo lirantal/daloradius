@@ -194,6 +194,11 @@ function user_exists($dbSocket, $username, $table_index='CONFIG_DB_TBL_RADCHECK'
 function group_exists($dbSocket, $groupname) {
     global $configValues, $logDebugSQL;
 
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/groupMappingsPdo.php';
+        return dalo_mapping_group_exists($dbSocket, $configValues, $groupname);
+    }
+
     $groupname = trim($groupname);
 
     $tables = array(
@@ -203,11 +208,19 @@ function group_exists($dbSocket, $groupname) {
 
 
     foreach ($tables as $table) {
-        $sql = sprintf("SELECT COUNT(DISTINCT(groupname)) FROM %s", $table);
-        $res = $dbSocket->query($sql);
+        if (!is_string($table) || !preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $table)) {
+            return false;
+        }
+        // Count this group, not every group in the database (legacy predicate bug).
+        $sql = sprintf("SELECT COUNT(DISTINCT(groupname)) FROM `%s` WHERE groupname=?", $table);
+        $prep = $dbSocket->prepare($sql);
+        if (DB::isError($prep)) { return false; }
+        $res = $dbSocket->execute($prep, array($groupname));
+        $dbSocket->freePrepared($prep);
         $logDebugSQL .= "$sql;\n";
-
-        if ($res->fetchrow()[0] > 0) {
+        if (DB::isError($res)) { return false; }
+        $row = $res->fetchRow();
+        if ($row && $row[0] > 0) {
             return true;
         }
     }
@@ -238,6 +251,11 @@ function normalize_user_group_priority($groupname, $priority=0) {
 
 function update_user_group_mapping_priority($dbSocket, $username, $groupname, $new_priority) {
     global $configValues, $logDebugSQL;
+
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/groupMappingsPdo.php';
+        return dalo_mapping_update_priority($dbSocket, $configValues, $username, $groupname, $new_priority);
+    }
 
     $username = trim($username);
     $groupname = trim($groupname);
@@ -287,6 +305,11 @@ function update_user_group_mapping_priority($dbSocket, $username, $groupname, $n
 // provided $priority (default: 0)
 function insert_single_user_group_mapping($dbSocket, $username, $groupname, $priority=0) {
     global $configValues, $logDebugSQL;
+
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/groupMappingsPdo.php';
+        return dalo_mapping_insert_single($dbSocket, $configValues, $username, $groupname, $priority);
+    }
 
     $username = trim($username);
     $groupname = trim($groupname);
@@ -353,6 +376,11 @@ function get_user_group_mappings($dbSocket, $username) {
 function insert_multiple_plan_group_mappings($dbSocket, $planName, $groupnames) {
     global $configValues, $logDebugSQL;
 
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/groupMappingsPdo.php';
+        return dalo_mapping_insert_many($dbSocket, $configValues, $planName, $groupnames, true);
+    }
+
     if (!is_array($groupnames)) {
         return false;
     }
@@ -397,6 +425,11 @@ function insert_multiple_plan_group_mappings($dbSocket, $planName, $groupnames) 
 // inserts (if possible) an user-group mapping for each groupname
 function insert_multiple_user_group_mappings($dbSocket, $username, $groupnames) {
     global $configValues, $logDebugSQL;
+
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/groupMappingsPdo.php';
+        return dalo_mapping_insert_many($dbSocket, $configValues, $username, $groupnames);
+    }
 
     if (!is_array($groupnames)) {
         return false;
