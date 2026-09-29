@@ -33,6 +33,7 @@
     include("include/management/functions.php");
     include_once("include/management/populate_selectbox.php");
     
+    include_once('include/management/realmProxyPdo.php');
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
@@ -44,94 +45,30 @@
     $valid_types = array( "fail-over", "load-balance", "client-balance", "client-port-balance", "keyed-balance" );
 
 
-    include('../common/includes/db_open.php');
-    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            
-            $realmname = (array_key_exists('realmname', $_POST) && !empty(str_replace("%", "", trim($_POST['realmname']))) &&
-                          !in_array(str_replace("%", "", trim($_POST['realmname'])), $valid_realmnames))
-                       ? str_replace("%", "", trim($_POST['realmname'])) : "";
-            $realmname_enc = (!empty($realmname)) ? htmlspecialchars($realmname, ENT_QUOTES, 'UTF-8') : "";
-            
-            if (empty($realmname)) {
-                // emptyn invalid or already existent
-                $failureMsg = sprintf("Empty or invalid %s", t('all','RealmName'));
-                $logAction .= "$failureMsg on page: ";
-            } else {
-                $type = (array_key_exists('type', $_POST) && !empty(trim($_POST['type'])) && in_array(trim($_POST['type']), $valid_types))
-                      ? trim($_POST['type']) : $valid_types[0];
-                $nostrip = (array_key_exists('nostrip', $_POST) && strtolower(trim($_POST['nostrip'])) === "yes");
-                $authhost = (array_key_exists('authhost', $_POST) && !empty(trim($_POST['authhost']))) ? trim($_POST['authhost']) : "";
-                $accthost = (array_key_exists('accthost', $_POST) && !empty(trim($_POST['accthost']))) ? trim($_POST['accthost']) : "";
-                $secret = (array_key_exists('secret', $_POST) && !empty(trim($_POST['secret']))) ? trim($_POST['secret']) : "";
-                
-                $ldflag = (array_key_exists('ldflag', $_POST) && !empty(trim($_POST['ldflag']))) ? trim($_POST['ldflag']) : "";
-                $hints = (array_key_exists('hints', $_POST) && !empty(trim($_POST['hints']))) ? trim($_POST['hints']) : "";
-                $notrealm = (array_key_exists('notrealm', $_POST) && !empty(trim($_POST['notrealm']))) ? trim($_POST['notrealm']) : "";
-                
-                // required later
-                $current_datetime = date('Y-m-d H:i:s');
-                $currBy = $operator;
-                
-                $sql = sprintf("INSERT INTO %s (id, type, authhost, accthost, secret, ldflag, nostrip, hints,
-                                                notrealm, creationdate, creationby, updatedate, updateby, realmname)
-                                        VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?)",
-                               $configValues['CONFIG_DB_TBL_DALOREALMS']);
-                $prep = $dbSocket->prepare($sql);
-                $values = array( 
-                                    $type, $authhost, $accthost, $secret, $ldflag,
-                                    $nostrip, $hints, $notrealm, $current_datetime, $currBy, $realmname
-                               );
-                $res = $dbSocket->execute($prep, $values);
-                $logDebugSQL .= "$sql;\n";
-                
-                if (!DB::isError($res)) {
-                    $successMsg = sprintf('Successfully inserted new realm in db [<a href="mng-rad-realms-edit.php?realmname=%s">Edit</a>]',
-                                          urlencode($realmname_enc), $realmname_enc);
-                    $logAction .= "Successfully inserted new realm $realmname in db";
-                    
-                    // write file
-                    if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
-                        $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
-                        $fileFlag = 1;
-                    } else {
-                        $filenameRealmsProxys = "";
-                        $fileFlag = 0;
-                    }
-                    
-                    if (!(file_exists($filenameRealmsProxys))) {
-                        $logAction .= "Failed non-existed realm configuration file [$filenameRealmsProxys] on page: ";
-                        $failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save realm information to the file";
-                        $fileFlag = 0;
-                    }
-
-                    if (!(is_writable($filenameRealmsProxys))) {
-                        $logAction .= "Failed writing realm configuration to file [$filenameRealmsProxys] on page: ";
-                        $failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save realm information to the file";
-                        $fileFlag = 0;
-                    }
-                    
-                    /*******************************************************************/
-                    /* enumerate from database all proxy entries */
-                    include_once('include/management/saveRealmsProxys.php');
-                    /*******************************************************************/
-                } else {
-                    $failureMsg = "Failed to insert new realm in db";
-                    $logAction .= "$failureMsg on page: ";
-                }
-            }
-            
+        $realmname = $type = $authhost = $accthost = $secret = $ldflag = $hints = $notrealm = '';
+        $nostrip = 0;
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                $fields = realm_proxy_fields('realm', $_POST);
+                foreach ($fields as $key => $value) { $$key = $value; }
+                $result = realm_proxy_mutate($configValues, $_SESSION['location_name'] ?? 'default',
+                                             $operator, 'realm', 'create', $_POST);
+                $successMsg = sprintf('Successfully inserted new realm in db [<a href="mng-rad-realms-edit.php?realmname=%s">Edit</a>]',
+                    urlencode($result['name']));
+                $logAction .= 'Successfully inserted new realm on page: ';
+            } catch (Throwable $exception) {
+                error_log('Realm create page: ' . get_class($exception));
+                $failureMsg = $exception instanceof RealmProxyUncertainException
+                    ? 'Realm/proxy state uncertain; verify file and database before retrying'
+                    : 'Unable to save realm and configuration; no change applied';
+            }
         }
+        // Do not re-render a submitted shared secret on a failed create.
+        if (!isset($successMsg)) { $secret = ''; }
     }
-    
-    include('../common/includes/db_close.php');
-
 
     // print HTML prologue
     $extra_css = array();
@@ -212,7 +149,7 @@
         $input_descriptors2 = array();
         $input_descriptors2[] = array(
                                         "type" =>"select",
-                                        "name" => "type",
+                                        "name" => "nostrip",
                                         "caption" => t('all','Nostrip'),
                                         "options" => array( "yes", "no" ),
                                         "selected_value" => ((isset($nostrip) && $nostrip) ? "yes" : "no"),

@@ -32,6 +32,7 @@
     include("../common/includes/layout.php");
     include_once("include/management/populate_selectbox.php");
 
+    include_once('include/management/realmProxyPdo.php');
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
@@ -41,154 +42,43 @@
     $valid_proxynames = get_proxies();
 
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $item = (array_key_exists('item', $_POST) && !empty(str_replace("%", "", trim($_POST['item']))))
-              ? str_replace("%", "", trim($_POST['item'])) : "";
-    } else {
-        $item = (array_key_exists('item', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['item']))))
-              ? str_replace("%", "", trim($_REQUEST['item'])) : "";
-    }
-
-    $exists = in_array($item, array_keys($valid_proxynames));
-    
-    if (!$exists) {
-        // we reset the rate if it does not exist
-        $item = "";
-        $internal_id = "";
-    } else {
-        $internal_id = intval(str_replace("proxy-", "", $item));
-    }
-
-    //feed the sidebar variables
+    $rawItem = $_SERVER['REQUEST_METHOD'] === 'POST' ? ($_POST['item'] ?? null) : ($_GET['item'] ?? null);
+    $item = is_string($rawItem) && preg_match('/^proxy-([1-9][0-9]*)$/D', $rawItem, $matches)
+        ? $rawItem : '';
+    $internal_id = $item !== '' ? (int)$matches[1] : 0;
     $selected_proxy = $item;
-
-    include('../common/includes/db_open.php');
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            if (empty($internal_id)) {
-                // required
-                $failureMsg = sprintf("Selected an empty/invalid proxy");
-                $logAction .= "$failureMsg on page: ";
-            } else {
-                
-                $proxyname = (array_key_exists('proxyname', $_POST) && !empty(str_replace("%", "", trim($_POST['proxyname']))))
-                           ? str_replace("%", "", trim($_POST['proxyname'])) : "";
-                           
-                if (empty($proxyname)) {
-                    // required
-                    $failureMsg = sprintf("Empty/invalid %s", t('all','ProxyName'));
-                    $logAction .= "$failureMsg on page: ";
-                } else {
-                    $sql = sprintf("SELECT COUNT(id)
-                                      FROM %s
-                                     WHERE proxyname=? AND id<>?", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
-                    $prep = $dbSocket->prepare($sql);
-                    $values = array( $proxyname, $internal_id, );
-                    $res = $dbSocket->execute($prep, $values);
-                    $logDebugSQL .= "$sql;\n";
-
-                    $exists = $res->fetchrow()[0] > 0;
-                    
-                    if ($exists) {
-                        // invalid
-                        $failureMsg = sprintf("The chosen %s is already in use", t('all','ProxyName'));
-                        $logAction .= "$failureMsg on page: ";
-                    } else {
-                        // required later
-                        $current_datetime = date('Y-m-d H:i:s');
-                        $currBy = $operator;
-                        
-                        $retry_delay = (array_key_exists('retry_delay', $_POST) && intval(trim($_POST['retry_delay'])) > 0)
-                                     ? intval(trim($_POST['retry_delay'])) : "";
-                        
-                        $retry_count = (array_key_exists('retry_count', $_POST) && intval(trim($_POST['retry_count'])) > 0)
-                                     ? intval(trim($_POST['retry_count'])) : "";
-                                     
-                        $dead_time = (array_key_exists('dead_time', $_POST) && intval(trim($_POST['dead_time'])) > 0)
-                                   ? intval(trim($_POST['dead_time'])) : "";
-                                   
-                        $default_fallback = (array_key_exists('default_fallback', $_POST) && intval(trim($_POST['default_fallback'])) > 0)
-                                          ? intval(trim($_POST['default_fallback'])) : "";
-                        
-                        $sql = sprintf("UPDATE %s
-                                           SET retry_delay=?, retry_count=?, dead_time=?,
-                                               default_fallback=?, updatedate=?, updateby=?
-                                         WHERE proxyname=?", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
-                        $prep = $dbSocket->prepare($sql);
-                        $values = array( $retry_delay, $retry_count, $dead_time, $default_fallback, $current_datetime, $currBy, $proxyname );
-                        $res = $dbSocket->execute($prep, $values);
-                        $logDebugSQL .= "$sql;\n";
-
-                        if (!DB::isError($res)) {
-                            $successMsg = "Successfully updated proxy";
-                            $logAction .= "Successfully updated proxy [$proxyname] on page: ";
-                            
-                            // write file
-                            if (isset($configValues['CONFIG_FILE_RADIUS_PROXY'])) {
-                                $filenameRealmsProxys = $configValues['CONFIG_FILE_RADIUS_PROXY'];
-                                $fileFlag = 1;
-                            } else {
-                                $filenameRealmsProxys = "";
-                                $fileFlag = 0;
-                            }
-                            
-                            if (!(file_exists($filenameRealmsProxys))) {
-                                $logAction .= "Failed non-existed proxys configuration file [$filenameRealmsProxys] on page: ";
-                                $failureMsg = "the file $filenameRealmsProxys doesn't exist, I can't save proxys information to the file";
-                                $fileFlag = 0;
-                            }
-
-                            if (!(is_writable($filenameRealmsProxys))) {
-                                $logAction .= "Failed writing proxys configuration to file [$filenameRealmsProxys] on page: ";
-                                $failureMsg = "the file $filenameRealmsProxys isn't writable, I can't save proxys information to the file";
-                                $fileFlag = 0;
-                            }
-                            
-                            /*******************************************************************/
-                            /* enumerate from database all proxy entries */
-                            include_once('include/management/saveRealmsProxys.php');
-                            /*******************************************************************/
-                            
-                            
-                        } else {
-                            $failureMsg = "Failed to update proxy";
-                            $logAction .= "Failed to update proxy [$proxyname] on page: ";
-                        }
-                    }
-                }
-                
-            }
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                if ($item === '') { throw new InvalidArgumentException('Invalid proxy item'); }
+                $result = realm_proxy_mutate($configValues, $_SESSION['location_name'] ?? 'default',
+                                             $operator, 'proxy', 'edit', $_POST);
+                $successMsg = 'Successfully updated proxy';
+                $logAction .= 'Successfully updated proxy on page: ';
+            } catch (Throwable $exception) {
+                error_log('Proxy edit page: ' . get_class($exception));
+                $failureMsg = $exception instanceof RealmProxyUncertainException
+                    ? 'Realm/proxy state uncertain; verify file and database before retrying'
+                    : 'Unable to save proxy and configuration; no change applied';
+            }
         }
     }
-    
-    if (empty($internal_id)) {
-        $failureMsg = sprintf("Selected an empty/invalid proxy item");
-        $logAction .= "Failed updating this proxy (possible empty or invalid proxy item) on page: ";
-    } else {
-        $sql = sprintf("SELECT proxyname, retry_delay, retry_count, dead_time, default_fallback,
-                               creationdate, creationby, updatedate, updateby
-                          FROM %s
-                         WHERE id=?", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
-        $prep = $dbSocket->prepare($sql);
-        $values = array( $internal_id );
-        $res = $dbSocket->execute($prep, $values);
-        $logDebugSQL .= "$sql;\n";
-
-        list(
-                $proxyname, $retry_delay, $retry_count, $dead_time, $default_fallback,
-                $creationdate, $creationby, $updatedate, $updateby
-            ) = $res->fetchrow();
-    }
-
-    include('../common/includes/db_close.php');
-
+    try {
+        list($pdo, $tables) = realm_proxy_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $stmt = $pdo->prepare("SELECT proxyname,retry_delay,retry_count,dead_time,default_fallback,"
+                              . "creationdate,creationby,updatedate,updateby FROM {$tables['proxy']} WHERE id=?");
+        $stmt->execute(array($internal_id));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) { $internal_id = 0; $item = ''; }
+        else { foreach ($row as $key => $value) { $$key = $value; } }
+    } catch (Throwable $exception) {
+        error_log('Proxy edit lookup: ' . get_class($exception));
+        $internal_id = 0; $item = '';
+        $failureMsg = 'Unable to read proxy';
+    } finally { $pdo = null; }
+    if (!$internal_id && !isset($failureMsg)) { $failureMsg = 'Selected an empty/invalid proxy item'; }
 
     // print HTML prologue
     $title = t('Intro','mngradproxysedit.php');
