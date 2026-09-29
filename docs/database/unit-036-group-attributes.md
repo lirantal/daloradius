@@ -8,7 +8,8 @@ Migrates create/edit mutations for `radgroupcheck` and `radgroupreply` to a call
 - Create operations and the complete attribute list share one PDO transaction; edits lock the existing row, reject stale IDs and duplicate values, and commit on the same handle. Cleartext password policy remains enforced.
 - Values are bound as data. Literal `%` is preserved. Numeric string `0` is treated as a value, not as an empty input.
 - Driver exceptions are not rendered or logged; users receive generic failures and logs contain only exception classes.
-- Group existence selection still uses the existing PEAR `get_groups()` helper; its three-table UNION is not part of this write migration.
+- Creation selects an existing group using the PEAR `get_groups()` helper; its three-table UNION is not part of this write migration. Editing keeps the legacy free-text destination: an attribute may be moved into a previously nonexistent group.
+- Both edit pages preflight the target table as InnoDB before locking or updating; a MyISAM edit is rejected with unchanged persisted rows.
 
 ## Fixture diagnosis and differential runs
 
@@ -28,6 +29,8 @@ Run pinned-baseline ordinary create/edit parity:
 GROUP_ATTRIBUTES_BASELINE=1 python3 tests/group_attributes_http.py
 ```
 
-The ordinary check value is `fixture-value` in both modes. The candidate separately exercises literal `0`, `%` group names, invalid CSRF, stale and array-typed edit inputs, duplicate rejection, late-insert rollback, and fail-closed behavior for a non-InnoDB participating table. The legacy and candidate edit success-message wording differs; persisted ordinary row values are compared explicitly, rather than treating that wording difference as a data mismatch.
+The ordinary check value is `fixture-value` in both modes. The candidate separately exercises literal `0`, `%` group names, invalid CSRF, stale and array-typed edit inputs, duplicate rejection, late-insert rollback, UPDATE-trigger failures and wrong-family IDs on both edit pages, and fail-closed MyISAM creation/edit behavior. Both modes also verify moving an attribute to a previously nonexistent destination group. The legacy and candidate edit success-message wording differs; persisted ordinary row values are compared explicitly, rather than treating that wording difference as a data mismatch.
+
+The direct follow-up review found and reproduced two omissions in the initial UNIT-036 commit: edits allowed nontransactional tables, and requiring an already-existing destination group introduced a regression against PEAR. Both are corrected and covered by HTTP/database tests. Obsolete diagnostics referencing an undefined variable were removed, and original copyright/license headers were restored. Duplicate prechecks are not a universal uniqueness guarantee against independent writers without a schema constraint; remaining PEAR display/authorization helpers are outside this unit.
 
 These tests exercise disposable HTTP/PHP/MariaDB state only. No live records were changed; nothing was deployed or pushed.

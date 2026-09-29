@@ -33,10 +33,6 @@ def form(client, page):
         safe_failure = re.sub(r'(?is)Debug info:.*', '[debug details omitted]', failure.group(1)) if failure else '[no rendered failure block]'
         safe_failure = re.sub(r'<[^>]+>', ' ', safe_failure)
         safe_failure = re.sub(r'\s+', ' ', safe_failure)[:500]
-        safe_queries = re.findall(r'SELECT DISTINCT\(groupname\) FROM [A-Za-z0-9_]+(?: UNION SELECT DISTINCT\(groupname\) FROM [A-Za-z0-9_]+){2}', debug_text)
-        safe_code = re.search(r'\b(?:errno|error|code)\s*[=:]?\s*(\d{3,5})', debug_text, re.I)
-        safe_debug = re.sub(r'\b\w+://[^\s<>]+', '[DSN-REDACTED]', debug_text)
-        safe_debug = re.sub(r'(?i)(password|passwd|pwd)(\s*[=:]\s*)[^\s,;]+', r'\1\2[REDACTED]', safe_debug)
         print('FORM_DIAGNOSTIC', page, 'url=', url, 'csrf_name_count=', body.count('csrf_token'),
                             'group_info=', 'GroupInfo' in body, 'permission=', 'permission' in body.lower(),
               'home_error=', 'home-error.php' in body, 'failure=', safe_failure)
@@ -173,6 +169,22 @@ def main():
                         'Reply-Name', 'reply-edited', '=')
             assert ('Successfully updated radgroupreply item' if BASELINE else 'Successfully updated groupreply item') in page
             print('PASS: groupreply edit persists through PDO')
+            assert sql('SELECT groupname,attribute,op,value FROM radgroupreply WHERE id=' + reply_id) == \
+                second_group + '\tReply-Name\t=\treply-edited'
+
+            # The legacy text field allows moving an attribute into a new group.
+            destination = 'u36-new-destination-' + secrets.token_hex(4)
+            for kind, row_id, attribute, original_value in (
+                    ('check', check_id, 'Filter-Id', edited_value),
+                    ('reply', reply_id, 'Reply-Name', 'reply-edited')):
+                item = 'group' + kind + '-' + row_id
+                page = edit(client, kind, item, destination + '-' + kind, attribute, original_value, '=')
+                expected = 'Successfully updated ' + ('radgroup' if BASELINE else 'group') + kind + ' item'
+                assert expected in page, 'Edit must accept a new destination group: ' + kind
+                assert sql('SELECT groupname FROM radgroup' + kind + ' WHERE id=' + row_id) == destination + '-' + kind
+                page = edit(client, kind, item, second_group, attribute, original_value, '=')
+                assert expected in page
+            print('PASS: edits can move an attribute to a new destination group, as on PEAR')
 
             if not BASELINE:
                 # Literal percent, value 0, malformed/stale IDs, and duplicate protection.
@@ -232,6 +244,32 @@ def main():
                     sql('DROP TRIGGER u36_groupcheck_late')
                 print('PASS: late child insert failure rolls back the whole create')
 
+                for kind, row_id, attribute in (('check', check_id, 'Filter-Id'),
+                                                ('reply', reply_id, 'Reply-Name')):
+                    table = 'radgroup' + kind
+                    item = 'group' + kind + '-' + row_id
+                    page = edit(client, kind, item, percent_group, attribute, '0', '=')
+                    assert 'Successfully updated group' + kind in page
+                    assert sql('SELECT COUNT(*) FROM ' + table + ' WHERE id=' + row_id +
+                               ' AND groupname=' + quote(percent_group) + " AND value='0'") == '1'
+                    before = state()
+                    trigger = 'u36_' + kind + '_update_error'
+                    sql('CREATE TRIGGER ' + trigger + ' BEFORE UPDATE ON ' + table +
+                        " FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='fixture edit rejected'")
+                    try:
+                        page = edit(client, kind, item, second_group, attribute, 'must-not-persist', '=')
+                        assert 'Unable to update group' + kind in page and state() == before
+                        assert 'fixture edit rejected' not in page and 'SQLSTATE' not in page
+                    finally:
+                        sql('DROP TRIGGER ' + trigger)
+                    token = form(client, 'mng-rad-group' + kind + '-edit.php?item=' + item)
+                    wrong = 'group' + ('reply' if kind == 'check' else 'check') + '-' + row_id
+                    page = post(client, 'mng-rad-group' + kind + '-edit.php', [
+                        ('csrf_token', token), ('item', wrong), ('groupname', second_group),
+                        ('attribute', attribute), ('op', '='), ('value', 'wrong-family')])
+                    assert state() == before and 'Successfully updated' not in page
+                print('PASS: zero/percent edits, UPDATE failures and wrong-family IDs in both families')
+
                 # The candidate refuses a nontransactional participating table.
                 sql('ALTER TABLE radgroupreply ENGINE=MyISAM')
                 try:
@@ -240,7 +278,21 @@ def main():
                     assert 'Unable to add groupreply' in page and state() == before
                 finally:
                     sql('ALTER TABLE radgroupreply ENGINE=InnoDB')
-                print('PASS: non-InnoDB group attribute writes fail closed')
+                print('PASS: non-InnoDB group attribute creates fail closed')
+
+                for kind, row_id, attribute in (('check', check_id, 'Filter-Id'),
+                                                ('reply', reply_id, 'Reply-Name')):
+                    table = 'radgroup' + kind
+                    sql('ALTER TABLE ' + table + ' ENGINE=MyISAM')
+                    try:
+                        before = state()
+                        page = edit(client, kind, 'group' + kind + '-' + row_id,
+                                    second_group, attribute, 'myisam-edit-rejected', '=')
+                        assert 'Unable to update group' + kind in page and state() == before, \
+                            'Nontransactional edit was not rejected: ' + kind
+                    finally:
+                        sql('ALTER TABLE ' + table + ' ENGINE=InnoDB')
+                print('PASS: non-InnoDB edits fail closed for both attribute families')
 
             logs = subprocess.run(['docker', 'logs', WEB], capture_output=True, text=True, timeout=30, check=True)
             combined = logs.stdout + logs.stderr

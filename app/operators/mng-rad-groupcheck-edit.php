@@ -1,4 +1,25 @@
 <?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Authors:    Liran Tal <liran@lirantal.com>
+ *             Filippo Lauria <filippo.lauria@iit.cnr.it>
+ *
+ *********************************************************************************************************
+ */
 /* UNIT-036: migrate group attribute create/edit writes to caller-owned PDO. */
 
     include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
@@ -86,15 +107,13 @@
                     dalo_attribute_pdo_length($value) > 253) {
                     throw new InvalidArgumentException('Group attribute field is too long');
                 }
-                if (!in_array($groupname, array_keys(get_groups()), true)) {
-                    throw new InvalidArgumentException('Group does not exist');
-                }
                 if (!dalo_cleartext_password_allowed() && in_array($attribute, dalo_cleartext_password_attributes(), true)) {
                     throw new InvalidArgumentException('Cleartext password attribute is disabled');
                 }
                 $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
                 if (!$pdo->beginTransaction()) { throw new RuntimeException('Attribute transaction unavailable'); }
                 $table = dalo_attribute_pdo_identifier($configValues, $item_table_key);
+                dalo_attribute_pdo_require_innodb($pdo, array($table));
                 $lock = $pdo->prepare("SELECT groupname,attribute,op,value FROM $table WHERE id=? FOR UPDATE");
                 $lock->execute(array($internal_id));
                 $current = $lock->fetch(PDO::FETCH_ASSOC);
