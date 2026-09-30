@@ -22,88 +22,28 @@ $usernamePrefix = "guest";
  /**********************************************************************************************************/
 
 
-session_start();						// we keep a session to save the captcha key
-
-
-function randomAlphanumeric($length) {
-
-    $chars = "abcdefghijkmnopqrstuvwxyz023456789";
-    srand((double)microtime()*1000000);
-    $i = 0;
-    $pass = '' ;
-
-    while ($i <= ($length - 1)) {
-        $num = rand() % 33;
-        $tmp = substr($chars, $num, 1);
-        $pass = $pass . $tmp;
-        $i++;
-    }
-
-    return $pass;
-
+header('Content-Type: text/html; charset=UTF-8');
+session_start();
+$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = 'usergroup';
+$configValues['CONFIG_USERNAME_PREFIX'] = $usernamePrefix;
+$configValues['CONFIG_USERNAME_LENGTH'] = 4;
+$configValues['CONFIG_PASSWORD_LENGTH'] = 4;
+$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = 'abcdefghijkmnopqrstuvwxyz023456789';
+require_once dirname(__DIR__, 2) . '/common/freeSignup.php';
+$signup = dalo_chilli_signup_request($configValues);
+if ($signup['status'] === 'success') {
+    echo '<br/><br/>Welcome ' . htmlspecialchars($signup['firstname'], ENT_QUOTES, 'UTF-8') . ',<br/>' .
+        'Your username is: ' . htmlspecialchars($signup['username'], ENT_QUOTES, 'UTF-8') .
+        ' <br/>and your password is: ' . htmlspecialchars($signup['password'], ENT_QUOTES, 'UTF-8') . ' <br/>';
+    exit;
 }
-
-        if (isset($_POST['submit'])) {
-
-                isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
-                isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = "";
-                isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
-
-		$captchaKey = substr($_SESSION['key'],0,5);
-		$formKey = $_POST['formKey'];
-		if ( $formKey == $captchaKey ) {
-
-	                if ( ($firstname) && ($lastname) ) {
-
-	                        include_once ('DB.php');
-	                        $dbConnectString = $configValues['CONFIG_DB_ENGINE'] . "://".
-					$configValues['CONFIG_DB_USER'].":".$configValues['CONFIG_DB_PASS']."@".
-					$configValues['CONFIG_DB_HOST']."/".$configValues['CONFIG_DB_NAME'];
-
-	                        $dbSocket = DB::connect($dbConnectString);
-
-	                        /* let's generate a random username and password
-	                           of length 4 and with username prefix 'guest' */
-	                        $rand = randomAlphanumeric(4);
-	                        $username = $usernamePrefix . $rand;
-        	                $password = randomAlphanumeric(4);
-
-	                        /* adding the user to the radcheck table */
-	                        $sql = "INSERT INTO radcheck values (0, '$username', 'User-Password', '==', '$password')";
-	                        $res = $dbSocket->query($sql);
-
-				/* adding user information to the userinfo table */
-	                        $sql = "INSERT INTO userinfo (username, firstname, lastname, email) values ".
-					"('$username', '$firstname', '$lastname', '$email')";
-	                        $res = $dbSocket->query($sql);
-
-				/* adding the user to the default group defined */
-	                        $sql = "INSERT INTO usergroup values ('$username', '".$configValues['CONFIG_GROUP_NAME'].
-					"', '".$configValues['CONFIG_GROUP_PRIORITY']."')";
-	                        $res = $dbSocket->query($sql);
-
-
-
-	                        echo "<br/><br/>
-	                                Welcome ". $_POST['firstname']  . ",<br/>"
-	                                ."Your username is: $username <br/>and your password is: $password <br/>";
-
-	                        $dbSocket->disconnect();
-
-	                        exit;
-	                } else {
-
-	                        echo "<br/><br/>
-                                Please fill in your first and last name <br/>";
-	                        exit;
-                	} // if (firstname... lastname)...
-
-		} else {
-			echo 'bad capctah key...';
-
-		} // if captcha key
-
-	} // if submit
+if ($signup['status'] === 'fieldsFailure') {
+    echo '<br/><br/>Please fill in your first and last name <br/>';
+} elseif ($signup['status'] === 'captchaFailure') {
+    echo 'bad capctah key...';
+} elseif ($signup['status'] === 'databaseFailure') {
+    echo 'Signup could not be completed';
+}
 ?>
 
 
@@ -128,7 +68,8 @@ function setFocus() {
 
 <h2>Contact Details </h2>
 
-<form name="signup" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form name="signup" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>" method="post">
+<?php echo dalo_chilli_signup_csrf_field(); ?>
 
 	First name <input type="text" value="" name="firstname" /> <br/>
 	Last name <input type="text" value="" name="lastname" /> <br/>
