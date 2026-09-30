@@ -20,6 +20,11 @@
  *********************************************************************************************************
  */
 
+// UNIT-041: do not register unpaid accounts for a retired payment flow.
+require_once __DIR__ . '/include/common/retired.php';
+dalo_chilli_2checkout_retired();
+return;
+
 	include('library/opendb.php');
 	include_once('include/common/common.php');
 	$txnId = createPassword(64, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
