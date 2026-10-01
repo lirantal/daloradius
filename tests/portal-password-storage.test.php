@@ -79,7 +79,9 @@ check('sensitive login rehash uses PDO without verbose PEAR errors',
       && strpos($change, 'dalo_portal_password_update') !== false
       && strpos($change, '$dbSocket') === false
       && substr_count($functions, 'dalo_portal_db_sensitive_call') >= 2
-      && strpos($migration, 'setErrorHandling(PEAR_ERROR_RETURN)') !== false);
+      && strpos($migration, 'dalo_pdo_connect') !== false
+      && strpos($migration, 'catch (Throwable $error)') !== false
+      && strpos($migration, '$dbSocket') === false);
 check('empty edit preserves the existing portal credential',
       strpos($functions, 'unset($params[\'portalloginpassword\'])') !== false);
 check('CSV portal login is independent from cleartext RADIUS setting',
@@ -106,16 +108,22 @@ check('self-service distinguishes database and concurrent failures',
 check('portal password tooltip uses the English fallback dictionary',
       strpos($form, "t('Tooltip', 'portalPasswordKeepTooltip')") !== false
       && strpos($language_en, "['portalPasswordKeepTooltip']") !== false);
-check('migration CLI handles connection, fetch, and bytewise-guard failures',
-      strpos($migration, '$db_connect_error_handler = function') !== false
-      && strpos($migration, 'DB::isError($row)') !== false
-      && strpos($migration, 'dalo_portal_password_match_condition') !== false);
-check('migration uses distinct connection and silent startup-query handlers',
+check('migration CLI handles connection, batch fetch, and bytewise-guard failures',
+      strpos($migration, 'dalo_pdo_connect') !== false
+      && strpos($migration, 'fetchAll(PDO::FETCH_ASSOC)') !== false
+      && strpos($migration, 'catch (Throwable $error)') !== false
+      && strpos($migration, 'dalo_portal_password_match_condition($driver)') !== false);
+check('legacy handlers remain while the migration uses PDO autocommit directly',
       strpos($db_open, 'isset($db_connect_error_handler)') !== false
       && strpos($db_open, "\$error_handler = (isset(\$db_error_handler)") !== false
-      && strpos($migration, '$db_connect_error_handler = function') !== false
-      && strpos($migration, '$db_error_handler = function') !== false
-      && strpos($migration, "PEAR still returns the error object") !== false);
+      && strpos($migration, 'db_open.php') === false
+      && strpos($migration, 'db_close.php') === false
+      && strpos($migration, 'beginTransaction') === false);
+check('migration binds keyset limits and requires adequate password capacity',
+      strpos($migration, '$last_id, PDO::PARAM_INT') !== false
+      && strpos($migration, '$batch_size, PDO::PARAM_INT') !== false
+      && strpos($migration, '(int) $column[\'capacity\'] < 255') !== false
+      && strpos($migration, '$update->rowCount()') !== false);
 check('fresh schema reserves 255 characters for password hashes',
       strpos($schema, '`portalloginpassword` VARCHAR(255)') !== false);
 
