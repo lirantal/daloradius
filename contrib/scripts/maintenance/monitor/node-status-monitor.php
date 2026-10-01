@@ -15,51 +15,64 @@
  *
  *********************************************************************************************************
  *
- * Description:    This script is responsible for managing non-terminated (or stale) sessions.
- *                 It updates the acctstoptime field in the RADIUS accounting table to the current time
- *                 and sets the acctterminatecause field to 'Stale-Session' for sessions
- *                 that have exceeded a predefined time threshold. The time threshold is determined
- *                 by adding the configured interval and grace period, ensuring it's greater than the
- *                 Acct-Interim-Interval to avoid premature session termination.
+ * Description:    Read-only node status monitor; send offline-node alerts via SMTP.
  * 
  * Authors:        Filippo Lauria <filippo.lauria@iit.cnr.it>
  *
  *********************************************************************************************************
  */
 
-    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', '..', 'app', 'common', 'includes', 'config_read.php' ]);
+// Scheduled maintenance runs in PHP CLI; deny HTTP before config, SQL or SMTP.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit;
+}
 
-    if (strtolower($configValues['CONFIG_MAIL_ENABLED']) !== 'yes') {
+$pdo = null;
+$mail_failed = false;
+$monitor_failed = false;
+try {
+    $includes = dirname(__DIR__, 4) . '/app/common/includes';
+    foreach (array('config_read.php', 'daloradius.conf.php', 'pdo_connection.php') as $file) {
+        if (!is_file($includes . '/' . $file) || !is_readable($includes . '/' . $file)) {
+            throw new RuntimeException('Monitor configuration unavailable');
+        }
+    }
+    require_once $includes . '/config_read.php';
+    if (strtolower($configValues['CONFIG_MAIL_ENABLED'] ?? '') !== 'yes') {
         echo "SMTP Server not configured";
         return;
     }
-
-    $configValues['CONFIG_NODE_STATUS_MONITOR_EMAIL_TO'] =
-        filter_var(trim($configValues['CONFIG_NODE_STATUS_MONITOR_EMAIL_TO'] ?? ''), FILTER_VALIDATE_EMAIL)
-            ? trim($configValues['CONFIG_NODE_STATUS_MONITOR_EMAIL_TO']) : '';
-
-    if (empty($configValues['CONFIG_NODE_STATUS_MONITOR_EMAIL_TO'])) {
+    $recipient = trim($configValues['CONFIG_NODE_STATUS_MONITOR_EMAIL_TO'] ?? '');
+    if (!filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
         echo "Email not valid";
         return;
     }
-
-    $configValues['CONFIG_NODE_STATUS_MONITOR_HARD_DELAY'] = max(1, intval($_POST['CONFIG_NODE_STATUS_MONITOR_HARD_DELAY'] ?? 15));
-
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
+    require_once $includes . '/pdo_connection.php';
+    $table = $configValues['CONFIG_DB_TBL_DALONODE'] ?? null;
+    if (!is_string($table) || strlen($table) > 64 || !preg_match('/\A[A-Za-z0-9_]+\z/D', $table)) {
+        throw new InvalidArgumentException('Invalid monitor table');
+    }
+    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+    if ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'mysql') {
+        throw new RuntimeException('Monitor SQL requires MySQL/MariaDB');
+    }
+    $delay = $_POST['CONFIG_NODE_STATUS_MONITOR_HARD_DELAY']
+        ?? $configValues['CONFIG_NODE_STATUS_MONITOR_HARD_DELAY'] ?? 15;
+    if (!is_scalar($delay)) {
+        throw new InvalidArgumentException('Invalid node delay');
+    }
+    $delay = max(1, intval($delay));
     $columns = ['mac', 'memfree', 'cpu', 'wan_ip', 'wan_gateway', 'lan_mac', 'firmware', 'firmware_revision'];
     $imploded_columns = '`' . implode('`, `', $columns) . '`';
-
-    $sql = sprintf("SELECT %s
-                      FROM %s WHERE UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(`time`) > %d", $imploded_columns,
-                      $configValues['CONFIG_DB_TBL_DALONODE'], $configValues['CONFIG_NODE_STATUS_MONITOR_HARD_DELAY']);
-
-    // Execute SQL query on the database
-    $res = $dbSocket->query($sql);
-
-    $numrows = $res->numRows();        
-    
-    if ($numrows > 0) {
+    $stmt = $pdo->prepare("SELECT $imploded_columns FROM `$table`
+                           WHERE UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(`time`) > ?");
+    $stmt->bindValue(1, $delay, PDO::PARAM_INT);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_NUM);
+    $stmt->closeCursor();
+    $stmt = null;
+    if ($rows) {
         $body = <<<EOF
 Dear system administrator,
 the following nodes seem to be offline:
@@ -67,17 +80,22 @@ the following nodes seem to be offline:
 {$imploded_columns}
 
 EOF;
-
-        while ($row = $res->fetchRow()) {
+        foreach ($rows as $row) {
+            // Preserve the historical separator-free node row format.
             $body .= implode($row) . "\n";
         }
-
         $subject = "daloRADIUS node status monitor";
-
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'mail.php' ]);
-        list($success, $message) = send_email($configValues, $configValues['CONFIG_NODE_STATUS_MONITOR_EMAIL_TO'],
-                                              'daloRADIUS sysadmin', $subject, $body);
-        printf("%s: %s", (($success) ? "SUCCESS" : "FAILURE"), $message);
+        require_once $includes . '/mail.php';
+        list($success, $message) = send_email($configValues, $recipient, 'daloRADIUS sysadmin', $subject, $body);
+        $mail_failed = !$success;
+        printf("%s: %s", $success ? "SUCCESS" : "FAILURE",
+               $success ? "Email sent successfully" : "Email delivery failed");
     }
-
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+} catch (Throwable $error) {
+    // SQL/SMTP exceptions can contain connection or account data; never print them.
+    fwrite(STDERR, "Unable to run node status monitor.\n");
+    $monitor_failed = true;
+} finally {
+    $stmt = $rows = $row = $pdo = null;
+}
+exit(($monitor_failed || $mail_failed) ? 1 : 0);

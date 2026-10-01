@@ -25,125 +25,117 @@
  *********************************************************************************************************
  */
 
-    // Include the configuration file
-    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', '..', 'app', 'common', 'includes', 'config_read.php' ]);
+// Scheduled maintenance runs in PHP CLI; deny HTTP before config, SQL or SMTP.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit;
+}
 
-    // Check if SMTP server is enabled
-    if (strtolower($configValues['CONFIG_MAIL_ENABLED']) !== 'yes') {
+$pdo = null;
+$mail_failed = false;
+$monitor_failed = false;
+try {
+    $includes = dirname(__DIR__, 4) . '/app/common/includes';
+    foreach (array('config_read.php', 'daloradius.conf.php', 'pdo_connection.php') as $file) {
+        if (!is_file($includes . '/' . $file) || !is_readable($includes . '/' . $file)) {
+            throw new RuntimeException('Monitor configuration unavailable');
+        }
+    }
+    require_once $includes . '/config_read.php';
+    if (strtolower($configValues['CONFIG_MAIL_ENABLED'] ?? '') !== 'yes') {
         echo "SMTP Server not configured";
         return;
     }
-
-    // Validate and sanitize the email address for traffic monitoring
-    $configValues['CONFIG_USER_TRAFFIC_MONITOR_EMAIL_TO'] =
-        filter_var(trim($configValues['CONFIG_USER_TRAFFIC_MONITOR_EMAIL_TO'] ?? ''), FILTER_VALIDATE_EMAIL)
-            ? trim($configValues['CONFIG_USER_TRAFFIC_MONITOR_EMAIL_TO']) : '';
-
-    // Check if the email address is valid
-    if (empty($configValues['CONFIG_USER_TRAFFIC_MONITOR_EMAIL_TO'])) {
+    $recipient = trim($configValues['CONFIG_USER_TRAFFIC_MONITOR_EMAIL_TO'] ?? '');
+    if (!filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
         echo "Email not valid";
         return;
     }
-
-    // Set the hard limit for user traffic monitoring
-    $configValues['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT'] = max(1, intval($_POST['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT'] ?? 1073741824));
-
-    // Calculate the soft limit for user traffic monitoring
-    $configValues['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT'] =
-        max(1, intval($_POST['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT'] ?? intdiv($configValues['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT'], 2)));
-
-    // Include the database connection file
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-    // Define the columns to be selected in the SQL query
+    require_once $includes . '/pdo_connection.php';
+    $table = $configValues['CONFIG_DB_TBL_RADACCT'] ?? null;
+    if (!is_string($table) || strlen($table) > 64 || !preg_match('/\A[A-Za-z0-9_]+\z/D', $table)) {
+        throw new InvalidArgumentException('Invalid monitor table');
+    }
+    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+    if ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'mysql') {
+        throw new RuntimeException('Monitor SQL requires MySQL/MariaDB');
+    }
+    $hard = $_POST['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT']
+        ?? $configValues['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT'] ?? 1073741824;
+    if (!is_scalar($hard)) {
+        throw new InvalidArgumentException('Invalid hard limit');
+    }
+    $hard = max(1, intval($hard));
+    $soft = $_POST['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT']
+        ?? $configValues['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT'] ?? intdiv($hard, 2);
+    if (!is_scalar($soft)) {
+        throw new InvalidArgumentException('Invalid soft limit');
+    }
+    $soft = max(1, intval($soft));
     $columns = ['radacctid', 'acctsessionid', 'username', 'nasipaddress', 'nasportid', 'acctstarttime', 'acctsessiontime',
                 'acctinputoctets', 'acctoutputoctets', 'calledstationid', 'callingstationid', 'framedipaddress'];
     $imploded_columns = implode(', ', $columns);
-
-    // Construct the SQL query to retrieve user data
-    $sql = sprintf("SELECT %s FROM %s WHERE (acctstoptime = '0000-00-00 00:00:00' OR acctstoptime IS NULL) ",
-                $imploded_columns, $configValues['CONFIG_DB_TBL_RADACCT']);
-
-    // Add conditions to the SQL query based on hard traffic limit
-    $sql1 = $sql . sprintf("AND (CAST(`acctinputoctets` AS UNSIGNED) + CAST(`acctoutputoctets` AS UNSIGNED)) >= %d", $configValues['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT']);
-
-    // Execute the SQL query
-    $res = $dbSocket->query($sql1);
-
-    // Get the number of rows returned by the query
-    $numrows1 = $res->numRows();   
-
-    // Initialize an array to store user information
-    $users = [];
-
-    // Define the email subject
-    $subject = "daloRADIUS user traffic monitor";
-
-    // Include the mailer helper
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'mail.php' ]);
-
-    // Check if there are users who have exceeded the hard traffic limit
-    if ($numrows1 > 0) {
-        // Initialize the email body
+    $sql = "SELECT $imploded_columns FROM `$table` WHERE (acctstoptime = '0000-00-00 00:00:00' OR acctstoptime IS NULL) ";
+    $sum = '(CAST(`acctinputoctets` AS UNSIGNED) + CAST(`acctoutputoctets` AS UNSIGNED))';
+    $stmt = $pdo->prepare($sql . "AND $sum >= ?");
+    $stmt->bindValue(1, $hard, PDO::PARAM_INT);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+    $stmt = null;
+    // Preserve the historical policy: soft is checked only after a hard match.
+    if ($rows) {
+        $users = [];
+        $subject = "daloRADIUS user traffic monitor";
         $body1 = <<<EOF
     Dear system administrator,
-    the following users seem to have exceeded the traffic monitor hard limit threshold ({$configValues['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT']} bytes):
+    the following users seem to have exceeded the traffic monitor hard limit threshold ({$hard} bytes):
 
     EOF;
-        // Iterate over the query results and append user information to the email body
-        $print_columns = true;
-        while ($row1 = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-            if ($print_columns) {
-                $body1 .= implode(", ", array_keys($row1)) . "\n";
-                $print_columns = false;
-            }
-            $users[] = $row1['username'];
-            $body1 .= implode(", ", $row1) . "\n";
+        $body1 .= implode(", ", array_keys($rows[0])) . "\n";
+        foreach ($rows as $row) {
+            $users[] = $row['username'];
+            $body1 .= implode(", ", $row) . "\n";
         }
+        require_once $includes . '/mail.php';
+        list($success, $message) = send_email($configValues, $recipient, 'daloRADIUS sysadmin', $subject, $body1);
+        $mail_failed = !$success;
+        printf("HARD LIMIT TRAFFIC MONITOR => %s: %s", $success ? "SUCCESS" : "FAILURE",
+               $success ? "Email sent successfully" : "Email delivery failed");
 
-        // Send an email notification for users exceeding the hard limit
-        list($success, $message) = send_email($configValues, $configValues['CONFIG_USER_TRAFFIC_MONITOR_EMAIL_TO'],
-                                            'daloRADIUS sysadmin', $subject, $body1);
-        printf("HARD LIMIT TRAFFIC MONITOR => %s: %s", (($success) ? "SUCCESS" : "FAILURE"), $message);
-
-        // Construct a new SQL query to check for users exceeding the soft traffic limit
-        $sql2 = $sql . sprintf("AND (CAST(`acctinputoctets` AS UNSIGNED) + CAST(`acctoutputoctets` AS UNSIGNED)) > %d", $configValues['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT']);
-
-        if ($users > 0) {
-            $sql2 .= sprintf(" AND `username` NOT IN ('%s')", implode("', '", $users));
+        // Values from the hard result are still data: never interpolate names.
+        $placeholders = implode(', ', array_fill(0, count($users), '?'));
+        $stmt = $pdo->prepare($sql . "AND $sum > ? AND `username` NOT IN ($placeholders)");
+        $stmt->bindValue(1, $soft, PDO::PARAM_INT);
+        foreach ($users as $index => $username) {
+            $stmt->bindValue($index + 2, $username, $username === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         }
-
-        // Execute the SQL query
-        $res = $dbSocket->query($sql2);
-
-        // Get the number of rows returned by the query
-        $numrows2 = $res->numRows();
-        
-        // Check if there are users who have exceeded the soft traffic limit
-        if ($numrows2 > 0) {
-            // Initialize the email body
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        $stmt = null;
+        if ($rows) {
             $body2 = <<<EOF
     Dear system administrator,
-    the following users seem to have exceeded the traffic monitor soft limit threshold ({$configValues['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT']} bytes):
+    the following users seem to have exceeded the traffic monitor soft limit threshold ({$soft} bytes):
 
     EOF;
-            // Iterate over the query results and append user information to the email body
-            $print_columns = true;
-            while ($row2 = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-                if ($print_columns) {
-                    $body2 .= implode(", ", array_keys($row2)) . "\n";
-                    $print_columns = false;
-                }
-                $body2 .= implode(", ", $row2) . "\n";
+            $body2 .= implode(", ", array_keys($rows[0])) . "\n";
+            foreach ($rows as $row) {
+                $body2 .= implode(", ", $row) . "\n";
             }
-
-            // Send an email notification for users exceeding the soft limit
-            list($success, $message) = send_email($configValues, $configValues['CONFIG_USER_TRAFFIC_MONITOR_EMAIL_TO'],
-                                            'daloRADIUS sysadmin', $subject, $body1);
-            printf("SOFT LIMIT TRAFFIC MONITOR => %s: %s", (($success) ? "SUCCESS" : "FAILURE"), $message);
+            // Correct the old copy/paste bug: this alert carries the soft body.
+            list($success, $message) = send_email($configValues, $recipient, 'daloRADIUS sysadmin', $subject, $body2);
+            $mail_failed = $mail_failed || !$success;
+            printf("SOFT LIMIT TRAFFIC MONITOR => %s: %s", $success ? "SUCCESS" : "FAILURE",
+                   $success ? "Email sent successfully" : "Email delivery failed");
         }
-        
     }
-
-    // Close the database connection
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+} catch (Throwable $error) {
+    // SQL/SMTP exceptions can contain connection or account data; never print them.
+    fwrite(STDERR, "Unable to run user traffic monitor.\n");
+    $monitor_failed = true;
+} finally {
+    $stmt = $rows = $row = $pdo = null;
+}
+exit(($monitor_failed || $mail_failed) ? 1 : 0);
