@@ -21,67 +21,75 @@ $logAction = "";
 $logDebugSQL = "";
 $generated_recovery_codes = array();
 
-include('../common/includes/db_open.php');
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!array_key_exists('csrf_token', $_POST) || !dalo_check_csrf_token($_POST['csrf_token'])) {
-        $failureMsg = "CSRF token error";
-        $logAction .= "$failureMsg on page: ";
-    } else {
-        $action = (array_key_exists('action', $_POST) && isset($_POST['action'])) ? $_POST['action'] : '';
-
-        if ($action === 'start_enable') {
-            $_SESSION['operator_totp_pending_secret'] = dalo_totp_generate_secret();
-            $successMsg = "Scan or enter the new TOTP secret, then confirm with a verification code.";
-        } elseif ($action === 'cancel_enable') {
-            unset($_SESSION['operator_totp_pending_secret']);
-            $successMsg = "Two-factor authentication setup cancelled.";
-        } elseif ($action === 'confirm_enable') {
-            $pending_secret = $_SESSION['operator_totp_pending_secret'] ?? '';
-            $otp_code = (array_key_exists('otp_code', $_POST) && isset($_POST['otp_code'])) ? trim($_POST['otp_code']) : '';
-
-            if (empty($pending_secret) || !dalo_totp_verify($pending_secret, $otp_code)) {
-                $failureMsg = "Invalid verification code";
-            } else {
-                $generated_recovery_codes = dalo_totp_generate_recovery_codes();
-                $recovery_hashes = dalo_totp_hash_recovery_codes($generated_recovery_codes);
-                $sql = sprintf("UPDATE %s SET totp_enabled=1, totp_secret='%s', totp_last_counter=NULL, totp_confirmed_at='%s', totp_recovery_codes='%s' WHERE id=%d",
-                               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($pending_secret),
-                               date('Y-m-d H:i:s'), $dbSocket->escapeSimple($recovery_hashes), $operator_id);
-                $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                unset($_SESSION['operator_totp_pending_secret']);
-                $successMsg = "Two-factor authentication has been enabled. Save these recovery codes now; they will not be shown again.";
+require_once '../common/includes/pdo_connection.php';
+require_once 'library/operator_mfa_config.php';
+$mfa_pdo = null;
+$row = null;
+$pending_context = array('id' => $operator_id, 'operator' => $operator,
+                         'location' => $_SESSION['location_name'] ?? 'default');
+// Do not reuse an enrollment started for another identity/backend or before context binding.
+if (($_SESSION['operator_totp_pending_context'] ?? null) !== $pending_context ||
+    !is_string($_SESSION['operator_totp_pending_secret'] ?? '') ||
+    !preg_match('/\A[A-Z2-7]{16,128}\z/', $_SESSION['operator_totp_pending_secret'] ?? '') ||
+    strlen($_SESSION['operator_totp_pending_secret'] ?? '') % 8 !== 0) {
+    unset($_SESSION['operator_totp_pending_secret'], $_SESSION['operator_totp_pending_context']);
+}
+try {
+    $mfa_pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+    $row = dalo_operator_mfa_row($mfa_pdo, $configValues, $operator_id, $operator);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) ||
+            !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
+        } else {
+            $action = $_POST['action'] ?? '';
+            if (!is_string($action) || !in_array($action, array('start_enable', 'cancel_enable',
+                    'confirm_enable', 'disable', 'regenerate_recovery'), true)) {
+                throw new InvalidArgumentException('Invalid MFA operation');
             }
-        } elseif ($action === 'disable') {
-            $sql = sprintf("UPDATE %s SET totp_enabled=0, totp_secret=NULL, totp_last_counter=NULL, totp_confirmed_at=NULL, totp_recovery_codes=NULL WHERE id=%d",
-                           $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id);
-            $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-            unset($_SESSION['operator_totp_pending_secret']);
-            $successMsg = "Two-factor authentication has been disabled.";
-        } elseif ($action === 'regenerate_recovery') {
-            $generated_recovery_codes = dalo_totp_generate_recovery_codes();
-            $recovery_hashes = dalo_totp_hash_recovery_codes($generated_recovery_codes);
-            $sql = sprintf("UPDATE %s SET totp_recovery_codes='%s' WHERE id=%d AND totp_enabled=1",
-                           $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($recovery_hashes), $operator_id);
-            $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-            $successMsg = "New recovery codes generated. Save them now; they will not be shown again.";
+            if ($action === 'start_enable') {
+                if ((int) $row['totp_enabled'] === 1) {
+                    throw new DomainException('Two-factor authentication is already enabled');
+                }
+                $_SESSION['operator_totp_pending_secret'] = dalo_totp_generate_secret();
+                $_SESSION['operator_totp_pending_context'] = $pending_context;
+                $successMsg = 'Scan or enter the new TOTP secret, then confirm with a verification code.';
+            } elseif ($action === 'cancel_enable') {
+                unset($_SESSION['operator_totp_pending_secret'], $_SESSION['operator_totp_pending_context']);
+                $successMsg = 'Two-factor authentication setup cancelled.';
+            } else {
+                $secret = $_SESSION['operator_totp_pending_secret'] ?? '';
+                $otp = $_POST['otp_code'] ?? '';
+                if ($action === 'confirm_enable' && !is_string($otp)) {
+                    throw new DomainException('Invalid verification code');
+                }
+                $result = dalo_operator_mfa_apply($mfa_pdo, $configValues, $operator_id,
+                                                 $operator, $action, $secret,
+                                                 is_string($otp) ? trim($otp) : '');
+                $row = $result['row'];
+                $generated_recovery_codes = $result['codes'];
+                if ($action === 'confirm_enable' || $action === 'disable') {
+                    unset($_SESSION['operator_totp_pending_secret'], $_SESSION['operator_totp_pending_context']);
+                }
+                $messages = array(
+                    'confirm_enable' => 'Two-factor authentication has been enabled. Save these recovery codes now; they will not be shown again.',
+                    'disable' => 'Two-factor authentication has been disabled.',
+                    'regenerate_recovery' => 'New recovery codes generated. Save them now; they will not be shown again.'
+                );
+                $successMsg = $messages[$action];
+            }
         }
     }
+} catch (DomainException $error) {
+    $failureMsg = $error->getMessage(); // Only fixed, non-sensitive domain messages.
+} catch (Throwable $error) {
+    $failureMsg = 'Unable to update two-factor authentication.';
+    error_log('Operator MFA configuration failed: ' . get_class($error));
+} finally {
+    $mfa_pdo = null;
 }
-
-$sql = sprintf("SELECT username, totp_enabled, totp_secret, totp_confirmed_at, totp_recovery_codes FROM %s WHERE id=%d",
-               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id);
-$res = $dbSocket->query($sql);
-$logDebugSQL .= "$sql;\n";
-$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-include('../common/includes/db_close.php');
-
 $totp_enabled = is_array($row) && intval($row['totp_enabled']) === 1;
-$pending_secret = $_SESSION['operator_totp_pending_secret'] ?? '';
+$pending_secret = is_array($row) && !$totp_enabled ? ($_SESSION['operator_totp_pending_secret'] ?? '') : '';
 $pending_uri = !empty($pending_secret) ? dalo_totp_generate_uri($pending_secret, $operator) : '';
 $pending_qr = !empty($pending_uri) ? dalo_totp_generate_qr_svg_data_uri($pending_uri) : '';
 $csrf_token = dalo_csrf_token();
