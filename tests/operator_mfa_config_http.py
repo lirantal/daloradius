@@ -25,7 +25,7 @@ def run(*args, input=None, check=True, timeout=180):
     p = subprocess.run(args, input=input, text=True, capture_output=True, timeout=timeout)
     if check and p.returncode:
         raise RuntimeError('Isolated fixture command failed; sensitive details suppressed')
-    return p.stdout.strip()
+    return (p.stdout+p.stderr).strip() if args[:2]==('docker','logs') else p.stdout.strip()
 
 
 def sql(query, database='radius'):
@@ -85,6 +85,7 @@ $_SESSION['operator_user']=$p['operator'];$_SESSION['location_name']=$p['locatio
 if (!empty($p['clear'])) {unset($_SESSION['operator_totp_pending_secret'],$_SESSION['operator_totp_pending_context']);}
 session_write_close();
 ''')
+        (fixture / 'app/operators/log-channel.php').write_text("<?php error_log('FIXTURE_LOG_CHANNEL'); echo 'ok';")
         try:
             run('docker', 'network', 'create', '--internal', NETWORK)
             run('docker', 'run', '-d', '--name', DB, '--network', NETWORK,
@@ -271,7 +272,9 @@ echo $ok?'yes':'no';''', {'secret':secret,'codes':codes})
                 assert not Form(results[1-winner][3]).codes
                 print('PASS: two independent enrollment sessions/workers cannot replace an enabled factor; only the committed winner publishes recovery codes')
 
+            assert client.request('log-channel.php')[0] == 200
             logs=run('docker','logs',WEB)
+            assert 'FIXTURE_LOG_CHANNEL' in logs, 'PHP stderr log channel was not captured'
             assert 'PHP Fatal error' not in logs and 'PHP Warning' not in logs
             assert all(value not in logs for value in factor_values)
             print('PASS: native PHP logs contain no factors, raw hashes, fatal errors or warnings')

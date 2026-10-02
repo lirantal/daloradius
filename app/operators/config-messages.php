@@ -35,12 +35,14 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    include('../common/includes/db_open.php');
+    require_once '../common/includes/pdo_connection.php';
+    require_once '../common/includes/messages_pdo.php';
+    $messages_pdo = null;
 
     function get_caption($message) {
         $caption = sprintf("Created by <strong>%s</strong> on <strong>%s</strong>.",
-                            htmlspecialchars($message['created_by'], ENT_QUOTES, 'UTF-8'),
-                            htmlspecialchars($message['created_on'], ENT_QUOTES, 'UTF-8'));
+                            htmlspecialchars((string) ($message['created_by'] ?? ''), ENT_QUOTES, 'UTF-8'),
+                            htmlspecialchars((string) ($message['created_on'] ?? ''), ENT_QUOTES, 'UTF-8'));
         if (isset($message['modified_on']) && !empty($message['modified_on']) &&
             isset($message['modified_by']) && !empty($message['modified_by'])) {
             $caption .= sprintf("<br>Last modification by <strong>%s</strong> on <strong>%s</strong>.",
@@ -50,33 +52,64 @@
         return $caption;
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            $updated_types = array();
-            foreach ($valid_message_types as $type) {
-                if (should_update_message($type)) {
-                    if (update_message($dbSocket, $type)) {
-                        $updated_types[] = $type;
-                    }
+    try {
+        $messages_pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        // Parse/purify the full selected batch before any write or transaction begins.
+        $updates = array();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) ||
+                !dalo_check_csrf_token($_POST['csrf_token'])) {
+                $failureMsg = 'CSRF token error';
+            } else {
+                $updates = dalo_messages_input($_POST, $valid_message_types, $purifier);
+                if (!$updates) {
+                    $failureMsg = 'No messages have been updated';
                 }
             }
-
-            if (count($updated_types) > 0) {
-                $successMsg = sprintf("Updated messages of the following types: [%s]", implode(", ", $updated_types));
-                $logAction .= "$successMsg on page: ";
-            } else {
-                $failureMsg = "No messages have been updated";
-                $logAction .= "$failureMsg on page: ";
-            }
-
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
         }
+        if ($updates) {
+            if (!$messages_pdo->beginTransaction()) {
+                throw new RuntimeException('Could not begin message update');
+            }
+            dalo_messages_lock($messages_pdo, $configValues, $updates, $operator);
+            foreach ($updates as $type => $content) {
+                if (!update_message($messages_pdo, $type, $content)) {
+                    throw new RuntimeException('Message update failed');
+                }
+            }
+            if (!$messages_pdo->commit()) {
+                throw new RuntimeException('Message update did not commit');
+            }
+            $successMsg = sprintf('Updated messages of the following types: [%s]', implode(', ', array_keys($updates)));
+            $logAction .= "$successMsg on page: ";
+        }
+    } catch (Throwable $error) {
+        if ($messages_pdo instanceof PDO && $messages_pdo->inTransaction()) {
+            try {
+                $messages_pdo->rollBack();
+            } catch (Throwable $rollback_error) {
+                error_log('Operator message rollback failed: ' . get_class($rollback_error));
+            }
+        }
+        $failureMsg = 'Unable to update user messages.';
+        error_log('Operator message update failed: ' . get_class($error));
     }
 
+    // A display error must not describe an already-committed update as rolled back.
+    $message_data = array();
+    foreach ($valid_message_types as $type) {
+        try {
+            if (!$messages_pdo instanceof PDO) {
+                throw new RuntimeException('Message connection unavailable');
+            }
+            $message_data[$type] = get_message($messages_pdo, $type);
+        } catch (Throwable $error) {
+            $message_data[$type] = array('content'=>'', 'created_by'=>'', 'created_on'=>'');
+            $failureMsg = 'Unable to load user messages.';
+            error_log('Operator message display failed: ' . get_class($error));
+        }
+    }
+    $messages_pdo = null;
 
     // print HTML prologue
     $extra_css = array();
@@ -102,7 +135,7 @@
                                     "value" => "no",
                                  );
 
-    $message0 = get_message($dbSocket, "login");
+    $message0 = $message_data['login'];
     $input_descriptors0[] = array(
                                         "name" => "login_message",
                                         "caption" => get_caption($message0),
@@ -120,7 +153,7 @@
                                     "value" => "no",
                                  );
 
-    $message1 = get_message($dbSocket, "support");
+    $message1 = $message_data['support'];
     $input_descriptors1[] = array(
                                         "name" => "support_message",
                                         "caption" => get_caption($message1),
@@ -140,7 +173,7 @@
                                     "value" => "no",
                                  );
 
-    $message2 = get_message($dbSocket, "dashboard");
+    $message2 = $message_data['dashboard'];
     $input_descriptors2[] = array(
                                         "name" => "dashboard_message",
                                         "caption" => get_caption($message2),
@@ -214,7 +247,6 @@
 
     close_form();
 
-    include('../common/includes/db_close.php');
 
     include('include/config/logging.php');
 
