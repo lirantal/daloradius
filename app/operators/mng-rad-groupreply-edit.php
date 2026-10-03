@@ -139,20 +139,21 @@
         }
     }
 
-    // Keep the legacy PEAR read for the edit form and shared presentation contract.
+    // Read the edit form on a private PDO connection; writes above remain unchanged.
     $groupname = $attribute = $op = $value = '';
     if ($internal_id !== null) {
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-        $read = $dbSocket->prepare("SELECT groupname,attribute,op,value FROM $item_table WHERE id=?");
-        $readResult = $dbSocket->execute($read, array($internal_id));
-        $readRow = $readResult->fetchRow();
-        if ($readRow) {
-            list($groupname, $attribute, $op, $value) = $readRow;
-            $exists = true;
-        } else {
+        try {
+            $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+            $table = dalo_attribute_pdo_identifier($configValues, $item_table_key);
+            $read = $pdo->prepare("SELECT groupname,attribute,op,value FROM $table WHERE id=?");
+            $read->execute(array($internal_id));
+            $readRow = $read->fetch(PDO::FETCH_NUM);
+            $exists = $readRow !== false;
+            if ($exists) { list($groupname, $attribute, $op, $value) = $readRow; }
+        } catch (Throwable $error) {
             $exists = false;
-        }
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+            $failureMsg = 'Unable to load group attribute; please retry';
+        } finally { $pdo = null; }
     }
     if (!$exists) {
         $internal_id = null;
