@@ -41,6 +41,27 @@ function quote_sql_identifier($identifier) {
 }
 
 function get_table_column_names($dbSocket, $table_name, $fallback_columns=array()) {
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/read_helpers_pdo.php';
+        try {
+            $quoted = dalo_read_identifier($dbSocket, $table_name);
+            if ($dbSocket->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+                $columns = dalo_read_statement($dbSocket, "SHOW COLUMNS FROM $quoted")->fetchAll(PDO::FETCH_COLUMN);
+            } else {
+                $columns = dalo_read_statement($dbSocket,
+                    'SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name=? ORDER BY ordinal_position',
+                    array($table_name))->fetchAll(PDO::FETCH_COLUMN);
+            }
+            $columns = array_values(array_filter($columns, function ($column) {
+                return is_string($column) && preg_match('/^[A-Za-z0-9_]+$/', $column);
+            }));
+            return $columns ?: $fallback_columns;
+        } catch (Throwable $error) {
+            error_log('Column read failed: ' . get_class($error));
+            return $fallback_columns;
+        }
+    }
+
     $quoted_table_name = quote_sql_identifier($table_name);
     if (empty($quoted_table_name)) {
         return $fallback_columns;
@@ -155,6 +176,15 @@ function insert_single_attribute($dbSocket, $subject, $attribute, $op, $value, $
 }
 
 function hotspots_exists($dbSocket, $hotspot_name) {
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/read_helpers_pdo.php';
+        global $configValues, $logDebugSQL;
+        $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_DALOHOTSPOTS');
+        $sql = "SELECT COUNT(DISTINCT(id)) FROM $table WHERE name=?";
+        $logDebugSQL .= "$sql;\n";
+        return dalo_read_statement($dbSocket, $sql, array($hotspot_name))->fetchColumn() > 0;
+    }
+
     global $configValues, $logDebugSQL;
     $sql = sprintf("SELECT COUNT(DISTINCT(`id`)) FROM %s WHERE `name` = '%s'",
                    $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'], $dbSocket->escapeSimple($hotspot_name));
@@ -171,6 +201,15 @@ function hotspots_exists($dbSocket, $hotspot_name) {
 // otherwise in the table associated with $table_index
 // in the $convigValues array
 function user_exists($dbSocket, $username, $table_index='CONFIG_DB_TBL_RADCHECK') {
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/read_helpers_pdo.php';
+        global $configValues, $logDebugSQL;
+        $table = dalo_read_table($dbSocket, $configValues, $table_index);
+        $sql = "SELECT COUNT(DISTINCT(username)) FROM $table WHERE username=?";
+        $logDebugSQL .= "$sql;\n";
+        return dalo_read_statement($dbSocket, $sql, array(trim($username)))->fetchColumn() > 0;
+    }
+
     global $configValues, $logDebugSQL;
 
     $username = trim($username);
@@ -351,6 +390,20 @@ function delete_user_group_mappings($dbSocket, $username) {
 
 // returns all groups associated with a provided $username
 function get_user_group_mappings($dbSocket, $username) {
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/read_helpers_pdo.php';
+        global $configValues, $logDebugSQL;
+        try {
+            $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_RADUSERGROUP');
+            $sql = "SELECT DISTINCT(groupname) FROM $table WHERE username=? ORDER BY groupname ASC";
+            $logDebugSQL .= "$sql;\n";
+            return dalo_read_statement($dbSocket, $sql, array(trim($username)))->fetchAll(PDO::FETCH_COLUMN);
+        } catch (Throwable $error) {
+            error_log('Group list read failed: ' . get_class($error));
+            return array();
+        }
+    }
+
     global $configValues, $logDebugSQL;
 
     $username = trim($username);
@@ -676,6 +729,19 @@ function add_user_info($dbSocket, $username, $params) {
 }
 
 function user_portal_password_is_set($dbSocket, $username) {
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/read_helpers_pdo.php';
+        global $configValues;
+        try {
+            $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_DALOUSERINFO');
+            $sql = "SELECT COUNT(id) FROM $table WHERE username=? AND portalloginpassword IS NOT NULL AND portalloginpassword<>''";
+            return (int) dalo_read_statement($dbSocket, $sql, array($username))->fetchColumn() === 1;
+        } catch (Throwable $error) {
+            error_log('Portal presence read failed: ' . get_class($error));
+            return false;
+        }
+    }
+
     global $configValues;
 
     $sql = sprintf(
@@ -716,6 +782,11 @@ function add_user_billing_info($dbSocket, $username, $params) {
  * @return int The number of records returned by the query.
  */
 function count_sql($dbSocket, $sql) {
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/read_helpers_pdo.php';
+        return (int) dalo_read_statement($dbSocket, $sql)->fetchColumn();
+    }
+
     $res = $dbSocket->query($sql);
     return intval($res->fetchrow()[0]);
 }
@@ -774,5 +845,10 @@ function count_nas($dbSocket) {
  *       Queries returning multiple columns or rows may lead to unexpected results.
  */
 function get_numrows($dbSocket, $query) {
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/read_helpers_pdo.php';
+        return dalo_read_statement($dbSocket, $query)->fetchColumn();
+    }
+
     return $dbSocket->query($query)->fetchrow()[0];
 }
