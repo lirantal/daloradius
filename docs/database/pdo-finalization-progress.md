@@ -10,7 +10,9 @@ claim that historical counts are still current after each commit.
 | R01b1 | Implemented and validated | RES-048 MFA configuration | [MFA report](residual-r01b1-operator-mfa.md), native baseline/candidate HTTP/PHP/MariaDB, error and concurrent enrollment tests |
 | R01b2 | Implemented and validated | RES-047 editor; RES-005 PDO write; RES-006 PDO read dispatch | [Message report](residual-r01b2-messages.md), native baseline/candidate, rollback and lock contention; PEAR portal reader stays pending R21/R29 |
 | R01c | Implemented and validated | RES-049 catalog; RES-112 unused AJAX legacy open; required `get_operators` selector dependency | [Catalog report](residual-r01c-operator-catalog.md), native PEAR/PDO parity, selected locations, caller preservation and legacy-open tripwire |
-| R02–R27 | Pending | Functional read/write consumers from `finalization-lots.csv`; R02 `get_operators` dependency already migrated with R01c | Split according to the original commit slices and test equivalent fixtures |
+| R02a | Implemented and validated | RES-081–RES-087 selectors and indirect getter callers; R01c operator selector unchanged | [Selector report](residual-r02a-selectors.md), native PEAR/PDO parity, selected locations, NULL/empty/duplicate options, caller preservation and legacy-open tripwire; producing-form regression suites |
+| R02b/R02c | Pending | Shared counters/existence/columns; invoice/group sidebars and realm/proxy lists | Continue the original bounded R02 slices; retain PEAR for remaining callers |
+| R03–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
 | R28 | Pending | Helpers without proven callers and obsolete compatibility branches | Recheck function names, includes/callbacks, tests and known external usages before removing |
 | R29 | Blocked by remaining consumers | Legacy providers, PEAR DB package and installation paths | Remove only after a fresh tokenized inventory finds no active/indirect PEAR consumers |
 
@@ -25,6 +27,8 @@ claim that historical counts are still current after each commit.
 - [x] R01b2: editor baseline/candidate, full-batch rollback and actual lock contention validated.
 - [x] R01b: Docker stderr log channel positively verified; legacy portal reader compatibility tested.
 - [x] R01c: native catalog/selector parity, independent caller transaction, AJAX contracts and full legacy-open tripwire passed.
+- [x] R02a: nineteen getter contracts plus retained string-SQL helper, custom tables, selected locations, NULL/empty/duplicate options and caller-owned transaction preservation validated.
+- [x] R02a: producing-form native regressions passed; no legacy opens in selector fixture; resources removed.
 - [ ] Entire migration: refreshed residual inventory after all functional slices.
 - [ ] Entire migration: dependency removal, installer/Docker validation and transverse tests.
 - [ ] Entire migration: installed external legacy cron callers verified before deployment.
