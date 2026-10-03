@@ -37,102 +37,23 @@
     $logDebugSQL = "";
 
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (dalo_check_csrf_token()) {
-
-            $macaddress = (array_key_exists('macaddress', $_POST) && isset($_POST['macaddress']) &&
-                           (preg_match(MACADDR_REGEX, trim($_POST['macaddress'])) ||
-                            preg_match(IP_REGEX, trim($_POST['macaddress']))))
-                        ? trim($_POST['macaddress']) : "";
-
-            $name = (array_key_exists('name', $_POST) && !empty(str_replace("%", "", trim($_POST['name']))))
-                  ? str_replace("%", "", trim($_POST['name'])) : "";
-            $name_enc = (!empty($name)) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : "";
-
-            $geocode = (array_key_exists('geocode', $_POST) && !empty(trim($_POST['geocode']))) ? trim($_POST['geocode']) : "";
-            $hotspot_type = (array_key_exists('hotspot_type', $_POST) && !empty(trim($_POST['hotspot_type']))) ? trim($_POST['hotspot_type']) : "";
-
-            $ownername = (array_key_exists('ownername', $_POST) && !empty(trim($_POST['ownername']))) ? trim($_POST['ownername']) : "";
-            $managername = (array_key_exists('managername', $_POST) && !empty(trim($_POST['managername']))) ? trim($_POST['managername']) : "";
-            $emailmanager = (array_key_exists('emailmanager', $_POST) && !empty(trim($_POST['emailmanager'])) &&
-                             filter_var(trim($_POST['emailmanager']), FILTER_VALIDATE_EMAIL)) ? trim($_POST['emailmanager']) : "";
-            $emailowner = (array_key_exists('emailowner', $_POST) && !empty(trim($_POST['emailowner'])) &&
-                           filter_var(trim($_POST['emailowner']), FILTER_VALIDATE_EMAIL)) ? trim($_POST['emailowner']) : "";
-            $address = (array_key_exists('address', $_POST) && !empty(trim($_POST['address']))) ? trim($_POST['address']) : "";
-            $company = (array_key_exists('company', $_POST) && !empty(trim($_POST['company']))) ? trim($_POST['company']) : "";
-            $phone1 = (array_key_exists('phone1', $_POST) && !empty(trim($_POST['phone1']))) ? trim($_POST['phone1']) : "";
-            $phone2 = (array_key_exists('phone2', $_POST) && !empty(trim($_POST['phone2']))) ? trim($_POST['phone2']) : "";
-
-            $companyphone = (array_key_exists('companyphone', $_POST) && !empty(trim($_POST['companyphone']))) ? trim($_POST['companyphone']) : "";
-            $companywebsite = (array_key_exists('companywebsite', $_POST) && !empty(trim($_POST['companywebsite']))) ? trim($_POST['companywebsite']) : "";
-            $companyemail = (array_key_exists('companyemail', $_POST) && !empty(trim($_POST['companyemail'])) &&
-                             filter_var(trim($_POST['companyemail']), FILTER_VALIDATE_EMAIL)) ? trim($_POST['companyemail']) : "";
-            $companycontact = (array_key_exists('companycontact', $_POST) && !empty(trim($_POST['companycontact']))) ? trim($_POST['companycontact']) : "";
-
-            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-            if (empty($macaddress) || empty($name)) {
-                // if statement returns false which means that the user has left an empty field for
-                // either macaddress, name, or both
-
-                $failureMsg = "IP/MAC address or name is empty or not valid";
-                $logAction .= "Failed adding (possible empty IP/MAC addr and/or name) new HS on page: ";
-            } else {
-                $sql = sprintf("SELECT COUNT(id) FROM %s WHERE name='%s' OR mac='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                               $dbSocket->escapeSimple($name), $dbSocket->escapeSimple($macaddress));
-                $exists = get_numrows($dbSocket, $sql) > 0;
-                $logDebugSQL .= "$sql;\n";
-
-                if ($exists) {
-                    // if statement returns false which means there is at least one HS
-                    // in the database with the same name or macaddress
-
-                    $failureMsg = sprintf("Name <strong>%s</strong> or IP/MAC address <strong>%s</strong> already exist in database", $name_enc, $macaddress);
-                    $logAction .= "Failed adding new HS. Name or IP/MAC address already existing in database [$name, $macaddress] on page: ";
-                } else {
-                    $current_datetime = date('Y-m-d H:i:s');
-                    $currBy = $_SESSION['operator_user'];
-
-                    $sql = sprintf("INSERT INTO %s (id, name, mac, geocode, owner, email_owner, manager, email_manager, address,
-                                                    company, phone1, phone2, type, companywebsite, companyemail, companycontact,
-                                                    companyphone, creationdate, creationby, updatedate, updateby)
-                                            VALUES (0, '%s', '%s', '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
-                                                    '%s', '%s', '%s', NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                                   $dbSocket->escapeSimple($name), $dbSocket->escapeSimple($macaddress), $dbSocket->escapeSimple($geocode),
-                                   $dbSocket->escapeSimple($ownername), $dbSocket->escapeSimple($emailowner), $dbSocket->escapeSimple($managername),
-                                   $dbSocket->escapeSimple($emailmanager), $dbSocket->escapeSimple($address), $dbSocket->escapeSimple($company),
-                                   $dbSocket->escapeSimple($phone1), $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($hotspot_type),
-                                   $dbSocket->escapeSimple($companywebsite), $dbSocket->escapeSimple($companyemail),
-                                   $dbSocket->escapeSimple($companycontact), $dbSocket->escapeSimple($companyphone), $current_datetime, $currBy);
-
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (!DB::isError($res)) {
-                        $successMsg = sprintf('Successfully added a new hotspot (<strong>%s</strong>) '
-                                            . '<a href="mng-hs-edit.php?name=%s" title="Edit">Edit</a>',
-                                              $name_enc, urlencode($name_enc));
-                        $logAction .= "Successfully added a new hotspot [$name] on page: ";
-                    } else {
-                        // it seems that operator could not be added
-                        $f = "Failed to add a new hostspot [%s] to database";
-                        $failureMsg = sprintf($f, $name_enc);
-                        $logAction .= sprintf($f, $name);
-                    }
-                }
-
-            }
-
-            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    require_once __DIR__ . '/library/hotspot_pages_pdo.php';
+    if (($_SERVER['REQUEST_METHOD'] ?? '')==='POST') {
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg='CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                $fields=dalo_hotspot_fields($_POST);
+                foreach (dalo_hotspot_map() as $column=>$control) { $$control=$fields[$column]; }
+                $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+                if (!dalo_hotspot_save($pdo,$configValues,$fields,$operator)) { $failureMsg='Name or IP/MAC address already exist in database'; }
+                else {
+                    $successMsg=sprintf('Successfully added a new hotspot (<strong>%s</strong>) <a href="mng-hs-edit.php?name=%s" title="Edit">Edit</a>',htmlspecialchars($name,ENT_QUOTES,'UTF-8'),rawurlencode($name));
+                    $logAction.='Successfully added a new hotspot on page: ';
+                }
+            } catch (Throwable $e) { $failureMsg='Unable to create hotspot'; }
         }
     }
-
 
     // print HTML prologue
     $title = t('Intro','mnghsnew.php');
