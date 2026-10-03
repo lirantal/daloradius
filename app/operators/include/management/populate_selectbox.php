@@ -487,8 +487,30 @@ function get_users_that_have_groups() {
 
 function get_operators() {
     global $configValues;
-    $sql = sprintf("SELECT DISTINCT(username) FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_DALOOPERATORS']);
-    return list_from_db($sql);
+    // This sidebar read owns its handle; never close a page's business connection.
+    require_once __DIR__ . '/../../../common/includes/pdo_connection.php';
+    $operator_names_pdo = null;
+    try {
+        $operator_names_pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $name = $configValues['CONFIG_DB_TBL_DALOOPERATORS'] ?? null;
+        if (!is_string($name) || !preg_match('/\A[A-Za-z_][A-Za-z0-9_]{0,63}\z/', $name)) {
+            throw new InvalidArgumentException('Invalid operator selector table');
+        }
+        $driver = $operator_names_pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        if (!in_array($driver, array('mysql', 'pgsql'), true)) {
+            throw new InvalidArgumentException('Unsupported operator selector driver');
+        }
+        $quote = $driver === 'mysql' ? '`' : '"';
+        $table = $quote . $name . $quote;
+        $stmt = $operator_names_pdo->query("SELECT DISTINCT(username) FROM $table ORDER BY username ASC");
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    } catch (Throwable $error) {
+        error_log('Operator selector read failed: ' . get_class($error));
+        return array();
+    } finally {
+        $stmt = null;
+        $operator_names_pdo = null;
+    }
 }
 
 function get_attributes() {

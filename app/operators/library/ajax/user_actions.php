@@ -82,8 +82,7 @@ try {
 try {
     $operator_perm_file = ($action === 'checkDisabled') ? 'mng_search' : 'mng_edit';
     $operator_perm_deny_http_status = 403;
-    include_once('../check_operator_perm.php'); // Independent PEAR authorization read.
-    include_once('../../../common/includes/db_open.php');
+    include_once('../check_operator_perm.php'); // Independent PDO authorization read.
     $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
     $label = count($usernames) > 1 ? 'users' : 'user';
     $namesLabel = implode(', ', $usernames);
