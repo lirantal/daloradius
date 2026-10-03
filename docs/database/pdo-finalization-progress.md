@@ -15,7 +15,8 @@ claim that historical counts are still current after each commit.
 | R02c | Implemented and validated | RES-106/107 sidebars; RES-171/172 realm/proxy catalogs | [Sidebar/catalog report](residual-r02c-sidebars-catalogs.md), native option/descriptor and row/control parity, sort/pagination, caller preservation, late SELECT failure and no-legacy-open tripwire |
 | R03a–d | Implemented and validated | Standard/quick creation, multiline import, associated providers and page-local/AJAX reads | [R03 report](residual-r03-user-create-import.md), native A/B, whole-batch rollback, concurrent collisions, configured tables/locations and PEAR compatibility; R06/R20 indirect families retain their separate scope |
 | R04a–d | Implemented and validated, PEAR compatibility retained | Eleven residual profile/group pages and existing shared attribute dispatch | [R04 report](residual-r04-group-profiles.md), native PEAR/PDO state and 132 list/search projections, late rollback, ACL bootstrap repair, concurrent creation, selected/configured tables and no-legacy-open tripwire |
-| R05–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
+| R05a–d | Implemented and validated, PEAR compatibility retained | User-group CRUD/list pages, shared mappings and dual-handle widget | [R05 report](residual-r05-user-group-mappings.md), native PEAR/PDO parity, full-selection rollback, actual concurrent create/edit/delete, selected/configured tables and widget/caller ownership; synthetic JS DOM test separately labeled |
+| R06–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
 | R28 | Pending | Helpers without proven callers and obsolete compatibility branches | Recheck function names, includes/callbacks, tests and known external usages before removing |
 | R29 | Blocked by remaining consumers | Legacy providers, PEAR DB package and installation paths | Remove only after a fresh tokenized inventory finds no active/indirect PEAR consumers |
 
@@ -36,6 +37,7 @@ claim that historical counts are still current after each commit.
 - [x] R02c: real sidebar/catalog parity, late SELECT failure, configured tables/locations and no-legacy-open tripwire verified; invoice caller-disposal defect characterized separately.
 - [x] R03a–d: all four planned slices implemented and validated on isolated native PHP/HTTP/MariaDB; caller ownership, complete import rollback, real concurrent creation, selected locations and configured tables checked.
 - [x] R04a–d: all planned residual pages migrated and validated; shared attribute PDO dispatch reused and PEAR compatibility preserved; late rollback, edit ACL bootstrap, sorting/pagination, concurrent creates and fixture cleanup verified.
+- [x] R05a–d: complete mapping pages migrated; shared insert/priority/batch PDO dispatch reused, borrowed delete dispatch added, complete rollback/concurrency and both widget transports tested; PEAR compatibility retained.
 - [ ] Entire migration: refreshed residual inventory after all functional slices.
 - [ ] Entire migration: dependency removal, installer/Docker validation and transverse tests.
 - [ ] Entire migration: installed external legacy cron callers verified before deployment.

@@ -116,7 +116,7 @@ foreach ($_groups as $g => $p) {
     
     echo '<div>';
     printf('<label for="group-%d-name">%s</label>', $counter, $groupLabel);
-    printf('<input class="form-control" type="text" value="%s" name="groups[%d][0]" id="group-%d-name">', $g, $counter, $counter);
+    printf('<input class="form-control" type="text" value="%s" name="groups[%d][0]" id="group-%d-name">', htmlspecialchars((string)$g, ENT_QUOTES, 'UTF-8'), $counter, $counter);
     echo '</div>';
     
     echo '<div>';
@@ -140,19 +140,20 @@ echo '</div>';
 close_fieldset();
 
 echo '<small class="mt-4 d-block">You can also manage all user-group mappings for this user '
-   . sprintf('<a href="mng-rad-usergroup-list-user.php?username=%s">here</a>.', htmlspecialchars($username, ENT_QUOTES, 'UTF-8'))
+   . sprintf('<a href="mng-rad-usergroup-list-user.php?username=%s">here</a>.', urlencode($username))
    . '</small>';
 
 echo '</div><!-- .container -->';
 
 echo "<script>" . "\n";
 
-$selected_groups_js = json_encode(array_keys($_groups));
+$selected_groups_js = json_encode(array_map('strval', array_keys($_groups)), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 $disabled_users_group_js = json_encode(DALO_DISABLED_USERS_GROUP);
 $disabled_users_group_priority_js = json_encode((string)DALO_DISABLED_USERS_GROUP_PRIORITY);
 
 echo <<<EOF
 var selected_groups = {$selected_groups_js};
+var nextGroupId = {$counter};
 var disabledUsersGroupName = {$disabled_users_group_js};
 var disabledUsersGroupPriority = {$disabled_users_group_priority_js};
 
@@ -165,7 +166,7 @@ function add_group() {
     }
     
     // inner html
-    var num = selected_groups.length;
+    var num = nextGroupId++;
     
     var onclick = `del_group('group-\${num}')`;
     
@@ -176,7 +177,7 @@ function add_group() {
     
     content += '<div>'
             +  `<label for="group-\${num}-name">{$groupLabel}</label>`
-            +  `<input class="form-control" type="text" value="\${selected_group}" name="groups[\${num}][0]" id="group-\${num}-name">`
+            +  `<input class="form-control" type="text" value="" name="groups[\${num}][0]" id="group-\${num}-name">`
             +  '</div>';
     
     var disabledUsersGroup = selected_group === disabledUsersGroupName;
@@ -198,6 +199,7 @@ function add_group() {
     groupDiv.setAttribute('class', 'd-flex flex-row justify-content-center align-items-center gap-2 my-1');
     
     groupDiv.innerHTML = content;
+    groupDiv.querySelector('input[type="text"]').value = selected_group;
     
     var groupsDiv = document.getElementById('groupsDiv');
     groupsDiv.appendChild(groupDiv);
