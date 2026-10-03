@@ -37,85 +37,27 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // load valid huntgroups
-    $valid_huntgroups = get_huntgroups();
-
-    
-    include('../common/includes/db_open.php');
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            
-            $nasipaddress = (array_key_exists('nasipaddress', $_POST) && !empty(trim($_POST['nasipaddress'])) &&
-                             filter_var(trim($_POST['nasipaddress']), FILTER_VALIDATE_IP) !== false)
-                          ? trim($_POST['nasipaddress']) : "";
-            
-            $groupname = (array_key_exists('groupname', $_POST) && !empty(str_replace("%", "", trim($_POST['groupname']))))
-                       ? str_replace("%", "", trim($_POST['groupname'])) : "";
-            
-            $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
-            
-            $nasportid = (array_key_exists('nasportid', $_POST) && intval(trim($_POST['nasportid'])) > 0)
-                       ? intval(trim($_POST['nasportid'])) : 0;
-            
-            if (empty($nasipaddress) || empty($groupname)) {
-                // required
-                $failureMsg = sprintf("Empty/invalid IP address and/or group name");
-                $logAction .= "$failureMsg on page: ";
-            } else {
-                
-                $sql = sprintf("SELECT COUNT(id)
-                                  FROM %s
-                                 WHERE nasipaddress=? AND nasportid=?", $configValues['CONFIG_DB_TBL_RADHG']);
-                $prep = $dbSocket->prepare($sql);
-                $values = array( $nasipaddress, $nasportid, );
-                $res = $dbSocket->execute($prep, $values);
-                $logDebugSQL .= "$sql;\n";
-                
-                $exists = $res->fetchrow()[0] > 0;
-                
-                if ($exists) {
-                    // invalid
-                    $failureMsg = sprintf("The chosen %s/%s pair is already contained in a group",
-                                          t('all','HgIPHost'), t('all','HgPortId'));
-                    $logAction .= "$failureMsg on page: ";
-                } else {
-                    $sql = sprintf("INSERT INTO %s (id, groupname, nasipaddress, nasportid)
-                                            VALUES (0, ?, ?, ?)", $configValues['CONFIG_DB_TBL_RADHG']);
-                    $prep = $dbSocket->prepare($sql);
-                    $values = array( $groupname, $nasipaddress, $nasportid );
-                    $res = $dbSocket->execute($prep, $values);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    if (!DB::isError($res)) {
-                        // retrieve item id
-                        $sql = sprintf("SELECT CONCAT('huntgroup-', LAST_INSERT_ID()) FROM %s",
-                                       $configValues['CONFIG_DB_TBL_RADHG']);
-                        $item_id = $dbSocket->getOne($sql);
-                        
-                        $successMsg = sprintf("Successfully added a new huntgroup item (item id: %s)", $item_id)
-                                    . sprintf(' [<a href="mng-rad-hunt-edit.php?item=%s" title="Edit">Edit</a>]',
-                                              urlencode($item_id));
-                        $logAction .= "Successfully added a new huntgroup item (item id: $item_id) on page: ";
-                    } else {
-                        $failureMsg = "Failed adding a new huntgroup item (item id: $item_id)";
-                        $logAction .= "$failureMsg on page: ";
-                    }
-                }
-                
-            }
-            
+    require_once __DIR__ . '/library/huntgroup_pages_pdo.php';
+    $groupname=$nasipaddress=$nasportid='';
+    if (($_SERVER['REQUEST_METHOD'] ?? '')==='POST') {
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg='CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                $fields=dalo_hunt_fields($_POST);
+                $groupname=$fields['groupname']; $nasipaddress=$fields['nasipaddress']; $nasportid=$fields['nasportid'];
+                $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+                $item_id=dalo_hunt_save($pdo,$configValues,$fields);
+                if ($item_id===false) { $failureMsg=sprintf('The chosen %s/%s pair is already contained in a group',t('all','HgIPHost'),t('all','HgPortId')); }
+                else {
+                    $successMsg=sprintf('Successfully added a new huntgroup item (item id: %s) [<a href="mng-rad-hunt-edit.php?item=%s" title="Edit">Edit</a>]',
+                                        htmlspecialchars($item_id,ENT_QUOTES,'UTF-8'),rawurlencode($item_id));
+                    $logAction.='Successfully added a new huntgroup item on page: ';
+                }
+            } catch (Throwable $e) { $failureMsg='Unable to create Huntgroup item'; }
         }
     }
-    
-    include('../common/includes/db_close.php');
 
-    
     // print HTML prologue    
     $title = t('Intro','mngradhuntnew.php');
     $help = t('helpPage','mngradhuntnew');
