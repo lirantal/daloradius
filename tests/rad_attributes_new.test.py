@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Regression test for dictionary attribute creation and edit-link rendering.
+"""Pinned PEAR characterization of dictionary creation and edit-link rendering.
 
-Runs the production create and edit pages with an isolated stateful synthetic DB.
+Runs the pre-R06 create and edit pages with an isolated stateful synthetic DB.
+Production PDO candidate coverage is in dictionary_pages_http.py.
 No real database, session, or application files are modified.
 """
 
@@ -52,8 +53,8 @@ def run():
         create_page = operators / "mng-rad-attributes-new.php"
         edit_page = operators / "mng-rad-attributes-edit.php"
         operators.mkdir(parents=True)
-        shutil.copyfile(ROOT / "app/operators/mng-rad-attributes-new.php", create_page)
-        shutil.copyfile(ROOT / "app/operators/mng-rad-attributes-edit.php", edit_page)
+        for name, target in [('mng-rad-attributes-new.php', create_page), ('mng-rad-attributes-edit.php', edit_page)]:
+            target.write_bytes(subprocess.check_output(['git', 'show', '603a33bdc24258d822d63d560d649c6881d16a5a:app/operators/' + name], cwd=ROOT))
 
         write(operators / "library/checklogin.php", "<?php $_SESSION['operator_user'] = 'fixture-admin';\n")
         write(operators / "library/check_operator_perm.php", "<?php // Allowed by fixture.\n")
@@ -260,7 +261,7 @@ echo json_encode([
         assert edited["type"] == "string", edited
         assert len(edited["queries"]) == 2, edited["queries"]
 
-    print("PASS: dictionary attribute POST persists escaped values and its edit link resolves them.")
+    print("PASS: pinned PEAR dictionary attribute POST persists escaped values and its edit link resolves them.")
 
 
 if __name__ == "__main__":
