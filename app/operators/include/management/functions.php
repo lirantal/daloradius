@@ -154,6 +154,11 @@ function add_invoice_items($dbSocket, $invoice_id='', $clean_before_adding=true)
 function insert_single_attribute($dbSocket, $subject, $attribute, $op, $value, $table_index='CONFIG_DB_TBL_RADCHECK') {
     global $configValues, $logDebugSQL;
 
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/../../library/user_create.php';
+        return dalo_create_attribute($dbSocket,$configValues,$subject,$attribute,$op,$value,$table_index);
+    }
+
     $subject = trim($subject);
 
     if (preg_match('/^CONFIG_DB_TBL/', $table_index) !== false &&
@@ -530,6 +535,16 @@ function insert_multiple_user_group_mappings($dbSocket, $username, $groupnames) 
 }
 
 function prepare_fields_and_values($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index) {
+    if ($dbSocket instanceof PDO) {
+        $fields=array(); $values=array();
+        foreach ($params as $field=>$value) {
+            if (!in_array($field,$allowedFields,true) || in_array($field,$skipFields,true)) { continue; }
+            if (!is_string($value) && !is_int($value)) { throw new InvalidArgumentException('Invalid information field'); }
+            $fields[]=$field; $values[]=trim((string)$value);
+        }
+        return $fields ? array('fields'=>$fields,'values'=>$values) : null;
+    }
+
 
     $fields = array();
     $values = array();
@@ -598,6 +613,11 @@ function update_info($dbSocket, $username, $params, $allowedFields, $skipFields,
                      $sensitiveFields = array()) {
     global $configValues, $logDebugSQL;
 
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/../../library/user_create.php';
+        return dalo_create_info($dbSocket,$configValues,$username,$params,$allowedFields,$skipFields,$table_index,true);
+    }
+
     // if info do not exist for this user we return false
     if (!user_exists($dbSocket, $username, $table_index)) {
         return false;
@@ -645,6 +665,7 @@ function update_user_info($dbSocket, $username, $params) {
         } else {
             $params['portalloginpassword'] = dalo_portal_password_hash($params['portalloginpassword']);
             if ($params['portalloginpassword'] === false) {
+                if ($dbSocket instanceof PDO) { throw new RuntimeException('Could not hash portal password'); }
                 return false;
             }
         }
@@ -672,6 +693,11 @@ function update_user_billing_info($dbSocket, $username, $params) {
 function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index,
                   $sensitiveFields = array()) {
     global $configValues, $logDebugSQL;
+
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/../../library/user_create.php';
+        return dalo_create_info($dbSocket,$configValues,$username,$params,$allowedFields,$skipFields,$table_index,false);
+    }
 
     // if info do not exist for this user we return false
     if (user_exists($dbSocket, $username, $table_index)) {
@@ -719,6 +745,7 @@ function add_user_info($dbSocket, $username, $params) {
         } else {
             $params['portalloginpassword'] = dalo_portal_password_hash($params['portalloginpassword']);
             if ($params['portalloginpassword'] === false) {
+                if ($dbSocket instanceof PDO) { throw new RuntimeException('Could not hash portal password'); }
                 return false;
             }
         }
