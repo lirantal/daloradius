@@ -38,10 +38,9 @@
     include_once("include/management/functions.php");
 
 
-    include('../common/includes/db_open.php');
-
     require_once('../common/includes/pdo_connection.php');
     require_once('library/user_edit.php');
+    $dbSocket = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $username = (isset($_POST['username']) && is_string($_POST['username']))
@@ -231,7 +230,7 @@
                                );
 
                 try {
-                    $pdoEdit = dalo_pdo_connect($configValues);
+                    $pdoEdit = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
                     dalo_user_edit($pdoEdit, $configValues, $username, $planName, $oldplanName,
                                    $groups, $_POST, $skipList, $valid_ops, $userParams,
                                    $billingParams, $current_datetime, $currBy);
@@ -264,7 +263,7 @@
         $inline_extra_js = "";
     } else {
 
-        $pdoDisplay = dalo_pdo_connect($configValues);
+        $pdoDisplay = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
         $passwordRow = dalo_user_edit_read($pdoDisplay, $configValues,
             'CONFIG_DB_TBL_RADCHECK', $username, 'value',
             "AND attribute LIKE '%-Password' ORDER BY id DESC LIMIT 1");
@@ -310,7 +309,7 @@ function enableUser() {
 }' . "\n";
     }
 
-    include('../common/includes/db_close.php');
+    $dbSocket = null;
 
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
                     ? 'password' : 'text';
@@ -604,9 +603,9 @@ EOF;
         // open 5-th tab (not shown)
         open_tab($navkeys, 5);
 
-        include('../common/includes/db_open.php');
+        $dbSocket = $pdoDisplay;
         include_once('include/management/groups.php');
-        include('../common/includes/db_close.php');
+        $dbSocket = null;
 
         close_tab($navkeys, 5);
 

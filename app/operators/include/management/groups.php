@@ -41,6 +41,16 @@ $groupLabel = t('all',$groupTerminology);
 $prorityLabel = t('all',$groupTerminologyPriority);
 
 
+$_groups = array();
+if ($dbSocket instanceof PDO) {
+    require_once __DIR__ . '/read_helpers_pdo.php';
+    $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_RADUSERGROUP');
+    $stmt = $dbSocket->prepare("SELECT groupname,priority FROM $table WHERE username=? ORDER BY priority ASC");
+    $stmt->execute(array($username));
+    foreach ($stmt->fetchAll(PDO::FETCH_NUM) as $row) {
+        if (!array_key_exists($row[0], $_groups)) { $_groups[$row[0]] = (int)$row[1]; }
+    }
+} else {
 $sql = sprintf("SELECT groupname, priority FROM %s WHERE username='%s' ORDER BY priority ASC",
                $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
 $res = $dbSocket->query($sql);
@@ -55,6 +65,8 @@ while ($row = $res->fetchRow()) {
     }
     
     $_groups[$group_name] = $group_priority;
+}
+
 }
 
 echo '<div class="container">';

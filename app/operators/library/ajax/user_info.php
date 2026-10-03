@@ -30,22 +30,17 @@ $operator_perm_deny_http_status = 403;
 include('../check_operator_perm.php');
 
 $value = dalo_info_parameter('username');
-include('../../../common/includes/db_open.php');
-// The default PEAR callback prints HTML, which would corrupt the JSON response.
-$dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-include_once('../../include/management/pages_common.php');
-
-$sql = sprintf("SELECT SUM(AcctInputOctets) AS Upload, SUM(AcctOutputOctets) AS Download FROM %s WHERE username='%s'",
-               $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($value));
-$res = $dbSocket->query($sql);
-if (DB::isError($res)) {
+require_once '../../../common/includes/pdo_connection.php';
+require_once '../../include/management/read_helpers_pdo.php';
+try {
+    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+    $table = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $stmt = $pdo->prepare("SELECT SUM(AcctInputOctets), SUM(AcctOutputOctets) FROM $table WHERE username=?");
+    $stmt->execute(array($value));
+    $row = $stmt->fetch(PDO::FETCH_NUM);
+    $data = ['upload' => dalo_info_bytes($row[0] ?? null), 'download' => dalo_info_bytes($row[1] ?? null)];
+    $pdo = null;
+} catch (Throwable $error) {
     dalo_info_response(['error' => 'Unable to load user information.'], 500);
 }
-$row = $res->fetchRow();
-if (DB::isError($row)) {
-    dalo_info_response(['error' => 'Unable to load user information.'], 500);
-}
-$data = ['upload' => dalo_info_bytes($row[0] ?? null), 'download' => dalo_info_bytes($row[1] ?? null)];
-
-include('../../../common/includes/db_close.php');
 dalo_info_response($data);
