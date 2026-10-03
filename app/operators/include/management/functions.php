@@ -379,6 +379,11 @@ function insert_single_user_group_mapping($dbSocket, $username, $groupname, $pri
 function delete_user_group_mappings($dbSocket, $username) {
     global $configValues, $logDebugSQL;
 
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/groupMappingsPdo.php';
+        return dalo_mapping_delete_all($dbSocket, $configValues, $username);
+    }
+
     $username = trim($username);
 
     if (!user_exists($dbSocket, $username)) {

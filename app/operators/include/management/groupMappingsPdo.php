@@ -172,3 +172,21 @@ function dalo_mapping_update_priority(PDO $pdo, $config, $username, $group, $pri
     $logDebugSQL .= "$sql;\n";
     return true; // An unchanged update is successful after the locked existence check.
 }
+
+/** R05: borrowed-handle deletion; the caller commits or rolls back. */
+function dalo_mapping_delete_all(PDO $pdo, $config, $username) {
+    global $logDebugSQL;
+    $username = dalo_mapping_name($username, 64);
+    $table = dalo_mapping_prepare($pdo, $config, $username, array());
+    $sql = "SELECT id FROM $table WHERE username=? ORDER BY id FOR UPDATE";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(array($username));
+    $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $stmt->closeCursor();
+    $logDebugSQL .= "$sql;\n";
+    $sql = "DELETE FROM $table WHERE username=?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(array($username));
+    $logDebugSQL .= "$sql;\n";
+    return true;
+}

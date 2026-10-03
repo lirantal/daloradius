@@ -108,6 +108,9 @@ def main():
     disabled = 'daloRADIUS-Disabled-Users'
     with tempfile.TemporaryDirectory(prefix='dalo-group-mappings-', dir=scratch) as directory:
         fixture = Path(directory); shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True)
+        # R05 migrated the live page; pin its previous PEAR producer for compatibility coverage.
+        legacy_page = run('git', 'show', 'fb33d38a505bf8d3a1cfcd3d987b3f67d939932b:app/operators/mng-rad-usergroup-new.php')
+        (fixture / 'app/operators/mng-rad-usergroup-new.php').write_text(legacy_page + '\n')
         if BASELINE:
             old = run('git', 'show', BASE_COMMIT + ':app/operators/include/management/functions.php')
             (fixture / 'app/operators/include/management/functions.php').write_text(old + '\n')
@@ -200,7 +203,7 @@ def main():
                 status, _, _, page = client.request('mng-rad-usergroup-new.php', [
                     ('csrf_token', parser.csrf), ('username', user), ('group', 'absent-group'), ('priority', '6')])
                 assert status == 200 and 'DB Error when adding' in page and state() == before
-                print('PASS: existing PEAR page creates valid mapping and rejects nonexistent group')
+                print('PASS: pinned PEAR page creates valid mapping and rejects nonexistent group')
 
                 # Validate every input before the first provider write; caller rollback includes sentinel.
                 for action, fields in (
