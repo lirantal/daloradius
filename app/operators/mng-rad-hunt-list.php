@@ -31,6 +31,8 @@
     include_once("../common/includes/validation.php");
     include("../common/includes/layout.php");
 
+    require_once __DIR__ . '/library/huntgroup_pages_pdo.php';
+
     // init loggin variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -52,14 +54,10 @@
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
 
     // whenever possible we use a whitelist approach
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
-             ? $_GET['orderBy'] : array_keys($param_cols)[0];
-
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "asc";
-
+    $orderBy=isset($_GET['orderBy']) && is_string($_GET['orderBy']) && in_array($_GET['orderBy'],array_keys($param_cols),true)
+             ? $_GET['orderBy'] : 'id';
+    $orderType=isset($_GET['orderType']) && is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']),array('desc','asc'),true)
+               ? strtolower($_GET['orderType']) : 'asc';
 
     // print HTML prologue
     $title = t('Intro','mngradhuntlist.php');
@@ -70,33 +68,31 @@
     // start printing content
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
     include('include/management/pages_common.php');
-
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADHG']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
+    $numrows=0;
+    try {
+        $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+        $table=dalo_hunt_table($configValues);
+        $numrows=(int)dalo_hunt_query($pdo,"SELECT COUNT(id) FROM $table")->fetchColumn();
+    } catch (Throwable $e) { $failureMsg='Unable to load huntgroups'; }
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
 
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        include('include/management/pages_numbering.php'); // Uses the loaded listing configuration.
 
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
 
         /* END */
 
-        // we execute and log the actual query
-        $sql = sprintf("SELECT id, groupname, nasipaddress, nasportid FROM %s ORDER BY %s %s LIMIT %s, %s",
-                       $configValues['CONFIG_DB_TBL_RADHG'], $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        $per_page_numrows = $res->numRows();
+        $rows=array();
+        try {
+            $sql="SELECT id,groupname,nasipaddress,nasportid FROM $table ORDER BY $orderBy $orderType LIMIT ?,?";
+            $rows=dalo_hunt_query($pdo,$sql,array((int)$offset,(int)$rowsPerPage))->fetchAll(PDO::FETCH_NUM);
+        } catch (Throwable $e) { $failureMsg='Unable to load huntgroups'; }
+        $per_page_numrows=count($rows);
 
         // this can be passed as form attribute and
         // printTableFormControls function parameter
@@ -129,19 +125,18 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($rows as $row) {
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)$row[$i], ENT_QUOTES, 'UTF-8');
             }
 
             list($id, $groupname, $nasipaddress, $nasportid) = $row;
 
             // preparing checkbox
-            $id = intval($id);
-            $item_id = sprintf("huntgroup-%d", $id);
+            $item_id = 'huntgroup-' . $id;
 
             $tooltip = array(
                                 'subject' => $groupname,
@@ -184,11 +179,11 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
 
-    include('../common/includes/db_close.php');
+    if (isset($failureMsg)) { include_once('include/management/actionMessages.php'); }
 
     include('include/config/logging.php');
 

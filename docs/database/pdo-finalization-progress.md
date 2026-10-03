@@ -18,7 +18,8 @@ claim that historical counts are still current after each commit.
 | R05a–d | Implemented and validated, PEAR compatibility retained | User-group CRUD/list pages, shared mappings and dual-handle widget | [R05 report](residual-r05-user-group-mappings.md), native PEAR/PDO parity, full-selection rollback, actual concurrent create/edit/delete, selected/configured tables and widget/caller ownership; synthetic JS DOM test separately labeled |
 | R06a–d | Implemented and validated, PEAR retained for other families | Dictionary CRUD/list/search pages and attribute/vendor JSON; existing shared widget getter reused | [R06 report](residual-r06-dictionary-metadata.md), 66 native comparisons, whole-selection/multi-row rollback, actual concurrent create/edit/delete, enum preservation, ACL/CSRF and selected/configured tables; pre-existing synthetic harness limitation separately characterized |
 | R07a–b | Implemented and validated, PEAR retained for other families | RES-161–RES-164 IP pool CRUD/list pages | [R07 report](residual-r07-ip-pools.md), 77 native comparisons, full lease-state parity, stale/late rollback, cross-pool invariance, actual concurrency/lock contention and selected/configured tables |
-| R08–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
+| R08a–b | Implemented and validated, PEAR retained for other families | RES-157–RES-160 huntgroup CRUD/list pages | [R08 report](residual-r08-huntgroups.md), 35 native comparisons, pair/self-collision characterization, full-selection rollback, other-group invariance, port/capacity checks, actual concurrency/lock contention and selected/configured tables |
+| R09–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
 | R28 | Pending | Helpers without proven callers and obsolete compatibility branches | Recheck function names, includes/callbacks, tests and known external usages before removing |
 | R29 | Blocked by remaining consumers | Legacy providers, PEAR DB package and installation paths | Remove only after a fresh tokenized inventory finds no active/indirect PEAR consumers |
 
@@ -42,6 +43,7 @@ claim that historical counts are still current after each commit.
 - [x] R05a–d: complete mapping pages migrated; shared insert/priority/batch PDO dispatch reused, borrowed delete dispatch added, complete rollback/concurrency and both widget transports tested; PEAR compatibility retained.
 - [x] R06a–d: all planned dictionary pages/JSON migrated; already-PDO shared attributes getter reused; global collision policy, enum Value/Format preservation, full-selection rollback, actual concurrency and retained indirect consumers validated.
 - [x] R07a–b: all four pool pages migrated; native PEAR/PDO parity, full-selection rollback, other-pool/lease invariance, configured capacity/readback, actual concurrency and legacy-open/close tripwires validated.
+- [x] R08a–b: all four huntgroup pages migrated; native PEAR/PDO CRUD/read parity, repaired self-collision, whole-selection rollback, other-group invariance, exact port/schema checks, actual concurrency and legacy-open/close tripwires validated.
 - [ ] Entire migration: refreshed residual inventory after all functional slices.
 - [ ] Entire migration: dependency removal, installer/Docker validation and transverse tests.
 - [ ] Entire migration: installed external legacy cron callers verified before deployment.
