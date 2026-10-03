@@ -24,8 +24,9 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
+    include('library/check_operator_perm.php');
+    require_once __DIR__ . '/library/dictionary_pages_pdo.php';
     include_once("lang/main.php");
     include("../common/includes/layout.php");
 
@@ -50,18 +51,10 @@
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
     
     // whenever possible we use a whitelist approach
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
+    $orderBy = isset($_GET['orderBy']) && is_string($_GET['orderBy']) && in_array($_GET['orderBy'], array_keys($param_cols), true)
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
-
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "asc";
-
-    // get vendor name passed to us from menu-mng-rad-attributes.php
-    $vendor = (array_key_exists('vendor', $_GET) && isset($_GET['vendor']))
-            ? str_replace("%", "", $_GET['vendor']) : "";
-
+    $orderType = isset($_GET['orderType']) && is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array('desc','asc'), true)
+               ? strtolower($_GET['orderType']) : 'asc';
 
     // print HTML prologue
     $extra_js = array(
@@ -78,21 +71,23 @@
     print_title_and_help($title, $help);
 
 
-    include('../common/includes/db_open.php');
     include('include/management/pages_common.php');
+    $vendor = '';
+    $numrows = 0;
+    $sql_WHERE = "(Type <> '' OR Type IS NOT NULL)";
+    $bindings = array();
+    try {
+        $vendor = dalo_dictionary_text($_GET['vendor'] ?? '', 256);
+        // Keep legacy percent removal and LIKE underscore behavior in search filters.
+        $vendor = str_replace('%', '', $vendor);
+        if ($vendor !== '') { $sql_WHERE .= ' AND Vendor LIKE :filter'; $bindings[':filter'] = '%' . $vendor . '%'; }
+        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $dictionaryTable = dalo_dictionary_table($configValues);
+        $stmt = $pdo->prepare("SELECT COUNT(id) FROM $dictionaryTable WHERE $sql_WHERE");
+        $stmt->execute($bindings);
+        $numrows = (int)$stmt->fetchColumn();
+    } catch (Throwable $e) { $failureMsg = 'Could not load dictionary list'; }
 
-    $sql_WHERE = array();
-    $sql_WHERE[] = "(type <> '' OR type IS NOT NULL)";
-    if (!empty($vendor)) {
-        $sql_WHERE[] = sprintf("vendor LIKE '%%%s%%'", $dbSocket->escapeSimple($vendor));
-    }
-
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
-    $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
-    
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
         
@@ -105,19 +100,22 @@
         
         /* END */
                      
-        // we execute and log the actual query
-        $sql = sprintf("SELECT id, vendor, attribute FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
-        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
+        $rows = array();
+        try {
+            $sql = "SELECT id, Vendor, Attribute FROM $dictionaryTable WHERE $sql_WHERE ORDER BY $orderBy $orderType LIMIT :offset, :limit";
+            $stmt = $pdo->prepare($sql);
+            foreach ($bindings as $key=>$value) { $stmt->bindValue($key, $value, PDO::PARAM_STR); }
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', (int)$rowsPerPage, PDO::PARAM_INT);
+            $stmt->execute(); $rows = $stmt->fetchAll(PDO::FETCH_NUM);
+            $logDebugSQL = $sql . ";\n";
+        } catch (Throwable $e) { $failureMsg = 'Could not load dictionary list'; }
+        $per_page_numrows = count($rows);
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = (!empty($vendor))
-                              ? "&vendor=" . urlencode(htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8')) : "";
+        $partial_query_string = ($vendor !== '')
+                              ? "&vendor=" . urlencode($vendor) : "";
                               
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
@@ -150,19 +148,15 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
-            $rowlen = count($row);
-        
-            // escape row elements
-            for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
-            }
+        foreach ($rows as $row) {
+            list($raw_id, $raw_vendor, $raw_attribute) = $row;
+            $this_id = htmlspecialchars((string)$raw_id, ENT_QUOTES, 'UTF-8');
+            $this_vendor = htmlspecialchars((string)$raw_vendor, ENT_QUOTES, 'UTF-8');
+            $this_attribute = htmlspecialchars((string)$raw_attribute, ENT_QUOTES, 'UTF-8');
 
-            list($this_id, $this_vendor, $this_attribute) = $row;
-            
             // define tooltip
             $ajax_id = "divContainerAttributeInfo_" . $count;
-            $param = sprintf('attribute=%s', urlencode($this_attribute));
+            $param = sprintf('attribute=%s', rawurlencode((string)$raw_attribute));
             $onclick = "daloInfo.attribute('$ajax_id','$param')";
             $tooltip = array(
                                 'subject' => $this_id,
@@ -170,14 +164,14 @@
                                 'ajax_id' => $ajax_id,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-attributes-edit.php?vendor=%s&attribute=%s', urlencode($this_vendor), urlencode($this_attribute), ), 'label' => t('Tooltip','AttributeEdit'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-attributes-edit.php?vendor=%s&attribute=%s', rawurlencode((string)$raw_vendor), rawurlencode((string)$raw_attribute), ), 'label' => t('Tooltip','AttributeEdit'), );
             
             // create tooltip
             $tooltip = get_tooltip_list_str($tooltip);
             
             // create checkbox
             $d = array( 'name' => 'vendor__attribute[]',
-                        'value' => sprintf("%s__%s", urlencode($this_vendor), urlencode($this_attribute)));
+                        'value' => dalo_dictionary_selection_token((string)$raw_vendor, (string)$raw_attribute));
             $checkbox = get_checkbox_str($d);
             
             // build table row
@@ -207,11 +201,11 @@
         printLinks($links, $drawNumberLinks);
         
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');
+    if (isset($failureMsg)) { include_once 'include/management/actionMessages.php'; }
 
     include('include/config/logging.php');
     
