@@ -33,150 +33,40 @@
     $log = "visited page: ";
 
 
+    require_once __DIR__ . '/library/user_group_pages_pdo.php';
     $success = false;
-    $count_involved_users = 0;
-    $count_involved_groups = 0;
-
-    include('../common/includes/db_open.php');
-
-
-    function check_usergroup_mapping($dbSocket, $username, $group) {
-        global $configValues, $logDebugSQL;
-    
-        $sql = sprintf("SELECT COUNT(*) FROM %s WHERE username='%s' AND groupname='%s'",
-                       $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $username, $group);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-                            
-        return ($res->fetchrow()[0] > 0);
-    }
-
+    $input = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+    $username = is_string($input['username'] ?? null) ? trim($input['username']) : '';
+    $groupname = is_string($input['group'] ?? null) ? trim($input['group']) : '';
+    $pdo = null;
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-    
-            $usergroup_mappings = array();
-        
-            if (array_key_exists('usergroup', $_POST) && !empty($_POST['usergroup'])) {
-                $usergroup = (!is_array($_POST['usergroup'])) ? array( trim($_POST['usergroup']) ) : $_POST['usergroup'];
-                
-                foreach ($usergroup as $item) {
-                    if(strpos($item, "||") === false) {
-                        continue;
-                    }
-                    
-                    $arr = explode("||", $item);
-                    
-                    if (count($arr) != 2) {
-                        continue;
-                    }
-                    
-                    list($u, $g) = $arr;
-                    
-                    $u = $dbSocket->escapeSimple(trim(str_replace("%", "", $u)));
-                    $g = $dbSocket->escapeSimple(trim(str_replace("%", "", $g)));
-                    
-                    if (empty($u) || empty($g)) {
-                        continue;
-                    }
-                    
-                    if (array_key_exists($u, $usergroup_mappings) && in_array($g, $usergroup_mappings[$u])) {
-                        continue;
-                    }
-                    
-                    if (!check_usergroup_mapping($dbSocket, $u, $g)) {
-                        continue;
-                    }
-                    
-                    $usergroup_mappings[$u][] = $g;
-                }
-
-            } else {
-                $username_is_set = array_key_exists('username', $_POST) && !empty($_POST['username']);
-                $groupname_is_set = array_key_exists('group', $_POST) && !empty($_POST['group']);
-            
-                if ($username_is_set) {
-                    $u = $dbSocket->escapeSimple(trim(str_replace("%", "", $_POST['username'])));
-                    if (!empty($u)) {
-                        
-                        if (!$groupname_is_set) {
-                            // if user is set but groupname not we want to delete all groups
-                            if (check_usergroup_mapping($dbSocket, $u, $g)) {
-                                $usergroup_mappings[$u] = array();
-                            
-                                while ($row = $res->fetchrow()) {
-                                    $usergroup_mappings[$u][] = $dbSocket->escapeSimple($row[0]);
-                                }
-                            }
-                            
-                        } else {
-                            $g = $dbSocket->escapeSimple(trim(str_replace("%", "", $_POST['group'])));
-                            
-                            if (!empty($g)) {
-                                $sql = sprintf("SELECT COUNT(*) FROM %s WHERE username='%s' AND groupname='%s'",
-                                               $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $u, $g);
-                                $res = $dbSocket->query($sql);
-                                $logDebugSQL .= "$sql;\n";
-                                
-                                if ($res->fetchrow()[0] > 0) {
-                                    $usergroup_mappings[$u] = array( $g );
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-       
-            if (count($usergroup_mappings) > 0) {
-                foreach ($usergroup_mappings as $username => $groups) {
-                    $sql = sprintf("DELETE FROM %s WHERE username='%s' AND groupname IN ('%s')",
-                                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
-                                   implode("', '", $groups));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    if ($res > 0) {
-                        $count_involved_users++;
-                        $count_involved_groups += $res;
-                    }
-                }
-            }
-            
-            $success = $count_involved_users > 0 && $count_involved_groups > 0;
-            
-            // present results
-            if ($success) {
-                $successMsg = sprintf("Deleted %s group mapping(s) for a total of %s user(s)", $count_involved_groups, $count_involved_users);
-                $logAction .= sprintf("%s on page: ", $successMsg);
-            } else {
-                $failureMsg = "Cannot remove the specified group mapping(s)";
-                $logAction .= sprintf("%s on page: ", $failureMsg);
-            }
-            
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
         } else {
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                list($count_involved_groups, $count_involved_users) = dalo_usergroup_delete($pdo, $configValues, $_POST);
+                $success = true;
+                $successMsg = sprintf('Deleted %d group mapping(s) for a total of %d user(s)', $count_involved_groups, $count_involved_users);
+                $logAction = 'Deleted user-group mappings on page: ';
+            } catch (Throwable $error) {
+                $failureMsg = 'Unable to delete user-group mappings: invalid or stale selection or database operation failed';
+                $logAction = 'User-group deletion failed on page: ';
+            } finally { $pdo = null; }
         }
-        
-    } else {
-        
-        $username = (array_key_exists('username', $_REQUEST) && !empty($_REQUEST['username']))
-                  ? trim(str_replace("%", "", $_REQUEST['username'])) : "";
-                  
-        $groupname = (array_key_exists('group', $_REQUEST) && !empty($_REQUEST['group']))
-                   ? trim(str_replace("%", "", $_REQUEST['group'])) : "";
-        
-        if (!empty($username) && !empty($groupname)) {
-            $valid = check_usergroup_mapping($dbSocket, $dbSocket->escapeSimple($username), $dbSocket->escapeSimple($groupname));
-        
-            if (!$valid) {
-                $username = "";
-                $groupname = "";
+    } elseif ($username !== '' && $groupname !== '') {
+        try {
+            $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+            $table = dalo_usergroup_table($configValues, 'CONFIG_DB_TBL_RADUSERGROUP');
+            if (dalo_usergroup_query($pdo, "SELECT id FROM $table WHERE username=? AND groupname=? LIMIT 1",
+                                    array($username, $groupname))->fetchColumn() === false) {
+                $username = $groupname = '';
             }
-        }
-        
+        } catch (Throwable $error) {
+            $username = $groupname = '';
+            $failureMsg = 'Unable to load user-group mapping';
+        } finally { $pdo = null; }
     }
-
-    include('../common/includes/db_close.php');
 
     include_once("lang/main.php");
     include("../common/includes/layout.php");
@@ -193,7 +83,7 @@
 
     print_title_and_help($title, $help);
 
-    if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+    if (isset($failureMsg) || $_SERVER['REQUEST_METHOD'] != 'GET') {
         include_once('include/management/actionMessages.php');
     }
 
