@@ -12,7 +12,7 @@ claim that historical counts are still current after each commit.
 | R01c | Implemented and validated | RES-049 catalog; RES-112 unused AJAX legacy open; required `get_operators` selector dependency | [Catalog report](residual-r01c-operator-catalog.md), native PEAR/PDO parity, selected locations, caller preservation and legacy-open tripwire |
 | R02a | Implemented and validated | RES-081–RES-087 selectors and indirect getter callers; R01c operator selector unchanged | [Selector report](residual-r02a-selectors.md), native PEAR/PDO parity, selected locations, NULL/empty/duplicate options, caller preservation and legacy-open tripwire; producing-form regression suites |
 | R02b | Implemented and validated, PEAR compatibility retained | RES-059/061/062/063/065/073/074 common read providers | [Borrowed-reader report](residual-r02b-common-reads.md), native PEAR/PDO/compatibility parity, actual caller INSERT/rollback ownership, named/custom tables and error redaction; legacy page callers remain scheduled |
-| R02c | Pending | Invoice/group sidebars and realm/proxy lists | Separate bounded commit; retain PEAR for remaining callers |
+| R02c | Implemented and validated | RES-106/107 sidebars; RES-171/172 realm/proxy catalogs | [Sidebar/catalog report](residual-r02c-sidebars-catalogs.md), native option/descriptor and row/control parity, sort/pagination, caller preservation, late SELECT failure and no-legacy-open tripwire |
 | R03–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
 | R28 | Pending | Helpers without proven callers and obsolete compatibility branches | Recheck function names, includes/callbacks, tests and known external usages before removing |
 | R29 | Blocked by remaining consumers | Legacy providers, PEAR DB package and installation paths | Remove only after a fresh tokenized inventory finds no active/indirect PEAR consumers |
@@ -30,6 +30,8 @@ claim that historical counts are still current after each commit.
 - [x] R01c: native catalog/selector parity, independent caller transaction, AJAX contracts and full legacy-open tripwire passed.
 - [x] R02a: nineteen getter contracts plus retained string-SQL helper, custom tables, selected locations, NULL/empty/duplicate options and caller-owned transaction preservation validated.
 - [x] R02a: producing-form native regressions passed; no legacy opens in selector fixture; resources removed.
+- [x] R02b: native dual dispatch, exact PEAR branch preservation and real caller INSERT/rollback ownership verified.
+- [x] R02c: real sidebar/catalog parity, late SELECT failure, configured tables/locations and no-legacy-open tripwire verified; invoice caller-disposal defect characterized separately.
 - [ ] Entire migration: refreshed residual inventory after all functional slices.
 - [ ] Entire migration: dependency removal, installer/Docker validation and transverse tests.
 - [ ] Entire migration: installed external legacy cron callers verified before deployment.
