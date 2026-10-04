@@ -112,7 +112,7 @@ if (count($menu_ratenames) > 0) {
     $descriptors2[] = array( 'type' => 'form', 'title' => t('button','EditRate'), 'action' => 'bill-rates-edit.php', 'method' => 'GET',
                              'icon' => 'pencil-square', 'form_components' => $components, );
 
-    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemoveRate'), 'href' => 'bill-plans-del.php',
+    $descriptors2[] = array( 'type' => 'link', 'label' => t('button','RemoveRate'), 'href' => 'bill-rates-del.php',
                              'icon' => 'x-circle-fill', );
 }
 
