@@ -55,7 +55,7 @@ def main():
                     if p=='bill-rates-del.php':raw=raw.replace(b'    print_html_prologue($title, $langCode);',b"    if (is_array($ratename)) { $ratename = ''; }\n    print_html_prologue($title, $langCode);")
                     (f/v/'app/operators'/p).write_bytes(raw)
             if v=='base':
-                for sidebar in ('app/operators/include/menu/sidebar/bill/rates.php','app/operators/include/menu/sidebar/bill/merchant.php'):
+                for sidebar in ('app/operators/include/menu/sidebar/bill/rates.php','app/operators/include/menu/sidebar/bill/merchant.php','app/operators/include/management/userBilling.php'):
                     (f/v/sidebar).write_bytes(subprocess.check_output(['git','show',BASE+':'+sidebar],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')
             for k,value in dict(tables,CONFIG_DB_HOST=h.DB,CONFIG_DB_USER='root',CONFIG_DB_PASS='',CONFIG_DB_NAME=v,CONFIG_IFACE_TABLES_LISTING='2',CONFIG_IFACE_DEBUG='0',CONFIG_MAIL_ENABLED='no').items():conf+='\n$configValues['+repr(k)+']='+repr(value)+';\n'
@@ -411,13 +411,11 @@ try {
             assert 'Successfully inserted new rate' in post(PAGES[0],dict(values,ratename='Tripwire'))
             assert 'Successfully updated rate' in post(PAGES[1],dict(values,ratename='Tripwire'),{'ratename':'Tripwire'})
             assert 'Deleted 1 rate(s)' in post(PAGES[2],{'ratename':['Tripwire']})
-            # R20 summary calls are the only permitted legacy consumer on these two routes.
-            summary=f/'candidate/app/operators/include/management/userBilling.php';old_summary=summary.read_text()
-            summary.write_text(old_summary.replace("    include('../common/includes/db_open.php');", "    return; // Fixture-only disable independent R20 summaries"))
+            # R20 closes the independent summaries too: all report calls must remain PDO-only.
             for page in PAGES[4:5]+PAGES[6:]:
-                text=req(page,DEFAULT[page])[1];assert '</html>' in text and 'Unable to read billing rate data' not in text and Rows(text).rows
-            summary.write_text(old_summary)
-            print('PASS R19 six late read routes, committed-write/display distinction and scoped PEAR tripwires',flush=True)
+                text=req(page,DEFAULT[page])[1]
+                assert '</html>' in text and 'Unable to read billing rate data' not in text and 'Unable to load user summary' not in text and Rows(text).rows
+            print('PASS R19 six late read routes, committed-write/display distinction and complete PEAR tripwires',flush=True)
             logs=subprocess.run(['docker','logs',h.WEB+'-candidate'],capture_output=True,text=True);text=logs.stdout+logs.stderr
             for marker in ('PHP Fatal','PHP Warning','PHP Notice','Uncaught','SQLSTATE'):assert marker not in text,('Candidate log gate',marker)
             print('PASS R19 candidate PHP log gate',flush=True)

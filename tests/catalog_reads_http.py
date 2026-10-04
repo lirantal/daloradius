@@ -48,7 +48,7 @@ def main():
         for v in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/v/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if v=='base':
-                for p in PAGES:(f/v/'app/operators'/p).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+p],cwd=ROOT))
+                for p in PAGES+['include/management/userBilling.php','include/management/userReports.php']:(f/v/'app/operators'/p).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+p],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')
             for k,value in dict(tables,CONFIG_DB_HOST=h.DB,CONFIG_DB_USER='root',CONFIG_DB_PASS='',CONFIG_DB_NAME=v,CONFIG_IFACE_TABLES_LISTING='2',CONFIG_IFACE_PASSWORD_HIDDEN='yes',CONFIG_IFACE_DEBUG='0',CONFIG_MAIL_ENABLED='no').items():conf+='\n$configValues['+repr(k)+']='+repr(value)+';\n'
             conf+="\n$configValues['CONFIG_LOCATIONS']['other']=array('Engine'=>'mysqli','Hostname'=>'"+h.DB+"','Username'=>'root','Password'=>'','Database'=>'"+v+"_other','Port'=>'3306');\n"
@@ -235,18 +235,14 @@ def main():
             (f/'candidate/app/operators/borrowed.php').write_text("<?php include '../common/includes/config_read.php';include 'library/checklogin.php';require 'library/catalog_reads_pdo.php';$pdo=dalo_catalog_read_open($configValues);$pdo->beginTransaction();$pdo->exec(\"UPDATE custom_plans SET planId='borrowed' WHERE id=40\");$rows=dalo_catalog_read_rows($pdo,'SELECT planId FROM custom_plans WHERE id=40');try{dalo_catalog_read_rows($pdo,'SELECT missing FROM missing_table');}catch(Throwable $e){}echo json_encode([$rows==[['borrowed']],$pdo->inTransaction()]);$pdo->rollBack();")
             assert json.loads(req('borrowed.php')[1])==[True,True]
             assert db('SELECT planId FROM custom_plans WHERE id=40')=='P0'
-            # Real PDO-only seven routes; POS edit still invokes separately planned R20 reports.
+            # R20 completes the POS edit's shared summaries: all eight paths are PDO-only.
             legacy=f/'candidate/app/common/includes/db_open.php';legacy_text=legacy.read_text()
             close=f/'candidate/app/common/includes/db_close.php';close_text=close.read_text()
             for file in (legacy,close):file.write_text("<?php throw new RuntimeException('Legacy connection tripwire');")
             for p in PAGES:
-                if p!='bill-pos-edit.php':
-                    status,text,_=req(p,DEFAULT.get(p));assert status==200 and '</html>' in text and 'Unable to read billing catalogue data' not in text,(p,'legacy tripwire')
-            # Allow only existing R20 functions, not page-local opens, on full POS edit.
-            legacy.write_text("<?php $frame=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);$caller=$frame[1]['function']??'';if(!in_array($caller,['userInvoicesStatus','userPlanInformation','userSubscriptionAnalysis','userConnectionStatus','checkUserOnline'],true)){throw new RuntimeException('Unexpected legacy caller');}\n"+legacy_text.removeprefix('<?php'))
-            close.write_text(close_text)
-            status,text,_=req('bill-pos-edit.php',DEFAULT['bill-pos-edit.php']);assert status==200 and '</html>' in text
-            legacy.write_text(legacy_text)
+                status,text,_=req(p,DEFAULT.get(p))
+                assert status==200 and '</html>' in text and 'Unable to read billing catalogue data' not in text and 'Unable to load user summary' not in text,(p,'legacy tripwire')
+            legacy.write_text(legacy_text);close.write_text(close_text)
             # SQL SELECT-only grants prove these reads do not require business writes.
             account='r'+secrets.token_hex(10);connection_factor=secrets.token_hex(24)
             sql("CREATE USER '"+account+"'@'%' IDENTIFIED BY '"+connection_factor+"';GRANT SELECT ON candidate.* TO '"+account+"'@'%';GRANT SELECT ON candidate_other.* TO '"+account+"'@'%';")
@@ -270,18 +266,12 @@ def main():
             req('log-marker.php')
             logs=subprocess.run(['docker','logs',h.WEB+'-candidate'],capture_output=True,text=True);logs=logs.stdout+logs.stderr
             assert 'R16_LOG_CHANNEL_MARKER' in logs and factor not in logs
-            # Retained R20 warning sites are characterized; page/provider warnings are not accepted.
+            # R20 now handles missing invoices without warnings; no diagnostic exemptions.
             failures=[line for line in logs.splitlines() if any(k in line for k in ('PHP Warning:','PHP Fatal error:','PHP Deprecated:','SQLSTATE['))]
-            baseline_logs=subprocess.run(['docker','logs',h.WEB+'-base'],capture_output=True,text=True)
-            baseline_logs=baseline_logs.stdout+baseline_logs.stderr
-            allowed_lines={'213','214','215','216'}
-            for line in failures:
-                site=re.search(r'in /fixtures/candidate/app/operators/include/management/userBilling.php on line (\d+)',line)
-                assert site and site[1] in allowed_lines and 'Trying to access array offset on null' in line, 'Unexpected candidate PHP diagnostic; details suppressed'
-                assert 'Trying to access array offset on null in /fixtures/base/app/operators/include/management/userBilling.php on line '+site[1] in baseline_logs, 'Uncharacterized R20 warning'
-            print('PASS retained R20 no-invoice warning sites match pinned baseline; no other candidate PHP diagnostics')
+            assert not failures, 'Unexpected candidate PHP diagnostic; details suppressed'
+            print('PASS R20 shared summaries with no candidate PHP diagnostic exemptions')
             print('PASS R16 complete PEAR/PDO comparisons',comparisons)
-            print('PASS configured/named/SELECT-only reads, eight page-local plus grouped-widget late SQL errors, transaction ownership, committed edit/delete, blocked pre-write failure, retained R20 reports, tripwires and empty datasets')
+            print('PASS configured/named/SELECT-only reads, eight page-local plus grouped-widget late SQL errors, transaction ownership, committed edit/delete, blocked pre-write failure, migrated R20 reports, tripwires and empty datasets')
         finally:
             for n in (h.WEB+'-base',h.WEB+'-candidate',h.DB):run('docker','rm','-f','-v',n,check=False)
             run('docker','network','rm',h.NETWORK,check=False)
