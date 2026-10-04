@@ -34,7 +34,18 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+    require_once __DIR__.'/library/widget_reads_pdo.php';
+    $widgetPDO=null;$dashboardFailed=false;
+    try {$widgetPDO=dalo_widget_open();} catch (Throwable $exception) {dalo_widget_failure($exception);$dashboardFailed=true;}
+    function dashboard_table($key) {
+        global $configValues,$dashboardFailed;
+        try {return dalo_widget_table($configValues,$key);} catch (Throwable $exception) {dalo_widget_failure($exception);$dashboardFailed=true;return '`invalid_widget_table`';}
+    }
+    function dashboard_rows($sql) {
+        global $widgetPDO,$dashboardFailed;
+        if ($dashboardFailed) {return array();}
+        try {return dalo_widget_rows($widgetPDO,$sql);} catch (Throwable $exception) {dalo_widget_failure($exception);$dashboardFailed=true;return array();}
+    }
 
     // setting table-related parameters first
     $tableSetting = [
@@ -56,9 +67,12 @@
     print_html_prologue($title, $langCode);
 
     // Consolidated SQL queries
-    $total_users = count_users($dbSocket);
-    $total_hotspots = count_hotspots($dbSocket);
-    $total_nas = count_nas($dbSocket);
+    $cardRows=dashboard_rows(sprintf("SELECT COUNT(DISTINCT ui.username) FROM %s AS rc,%s AS ui WHERE ui.username=rc.username AND (rc.attribute='Auth-Type' OR rc.attribute LIKE '%%-Password')",dashboard_table('CONFIG_DB_TBL_RADCHECK'),dashboard_table('CONFIG_DB_TBL_DALOUSERINFO')));
+    $total_users=$cardRows[0][0] ?? 0;
+    $cardRows=dashboard_rows('SELECT COUNT(*) FROM '.dashboard_table('CONFIG_DB_TBL_DALOHOTSPOTS'));
+    $total_hotspots=$cardRows[0][0] ?? 0;
+    $cardRows=dashboard_rows('SELECT COUNT(*) FROM '.dashboard_table('CONFIG_DB_TBL_RADNAS'));
+    $total_nas=$cardRows[0][0] ?? 0;
 
 
     function print_title($title, $href, $icon) {
@@ -156,6 +170,11 @@ HTML;
         ]
     ];
 
+    if ($dashboardFailed) {
+        foreach($card_params as &$card) {$card['total']='Unable to read widget data';}
+        unset($card);
+    }
+
     $version = t('all', 'daloRADIUS');
     $copyright = strip_tags(t('all', 'copyright2'));
 
@@ -182,9 +201,9 @@ HTML;
 
     $sql = sprintf("SELECT %s AS `username`, reply, %s AS `datetime` FROM %s ORDER BY `datetime` DESC LIMIT 10",
                    $tableSetting['postauth']['user'], $tableSetting['postauth']['date'],
-                   $configValues['CONFIG_DB_TBL_RADPOSTAUTH']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+                   dashboard_table('CONFIG_DB_TBL_RADPOSTAUTH'));
+    $res = dashboard_rows($sql);
+    $numrows = count($res);
 
     echo '<div class="col-12 col-xl-6 m-0 px-3">';
     $title = t('button', 'LastConnectionAttempts');
@@ -195,10 +214,10 @@ HTML;
         $headers = array(t('all', 'Username'), t('all', 'RADIUSReply'), t('all', 'Date'));
         print_dashboard_table_head($headers);
 
-        while ($row = $res->fetchRow()) {
+        foreach ($res as $row) {
             // Apply htmlspecialchars to each element of the row
             list($user, $reply, $datetime) = array_map(function($value) {
-                return htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
+                return htmlspecialchars(trim((string)($value ?? '')), ENT_QUOTES, 'UTF-8');
             }, $row);
 
             // datetime
@@ -228,9 +247,9 @@ HTML;
     $sql = sprintf("SELECT `username`, `acctstarttime` FROM %s
                      WHERE `acctstoptime` IS NULL OR `acctstoptime`='0000-00-00 00:00:00'
                      ORDER BY `acctstarttime` DESC LIMIT 10",
-                   $configValues['CONFIG_DB_TBL_RADACCT']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+                   dashboard_table('CONFIG_DB_TBL_RADACCT'));
+    $res = dashboard_rows($sql);
+    $numrows = count($res);
 
     echo '<div class="col-12 col-xl-6 m-0 px-3">';
     print_title(t('dashboard', 'CurrentlyOnline'), "rep-online.php?orderBy=acctstarttime&orderType=desc", "bi-box-arrow-up-right");
@@ -238,10 +257,10 @@ HTML;
     if ($numrows > 0) {
         print_dashboard_table_head(array(t('all', 'Username'), t('dashboard', 'OnlineSince')));
 
-        while ($row = $res->fetchRow()) {
+        foreach ($res as $row) {
             // Apply htmlspecialchars to each element of the row
             $row = array_map(function($value) {
-                return htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
+                return htmlspecialchars(trim((string)($value ?? '')), ENT_QUOTES, 'UTF-8');
             }, $row);
 
             print_dashboard_table_row($row);
@@ -267,9 +286,9 @@ HTML;
                     WHERE ra.acctstarttime >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
                     GROUP BY `username`
                     ORDER BY `session_time` DESC
-                    LIMIT 10", $configValues['CONFIG_DB_TBL_RADACCT']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+                    LIMIT 10", dashboard_table('CONFIG_DB_TBL_RADACCT'));
+    $res = dashboard_rows($sql);
+    $numrows = count($res);
 
 
     // Today's date
@@ -285,9 +304,9 @@ HTML;
     if ($numrows > 0) {
         print_dashboard_table_head(array(t('all', 'Username'), t('all', 'TotalSessionTime'), t('all', 'Upload'), t('all', 'Download')));
 
-        while ($row = $res->fetchRow()) {
+        foreach ($res as $row) {
             list($username, $session_time, $uploaded_bytes, $downloaded_bytes) = array_map(function($value) {
-                return htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
+                return htmlspecialchars(trim((string)($value ?? '')), ENT_QUOTES, 'UTF-8');
             }, $row);
 
             $session_time = time2str($session_time);
@@ -307,7 +326,8 @@ HTML;
 
     echo '</div>';
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    if ($dashboardFailed) {print_dashboard_info_message('Unable to read widget data');}
+    unset($widgetPDO);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
 
     $inline_extra_js = <<<JS
