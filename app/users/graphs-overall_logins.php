@@ -31,7 +31,7 @@
     // validate (or pre-validate) parameters
     $goto_stats = (array_key_exists('goto_stats', $_GET) && isset($_GET['goto_stats']));
 
-    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) && is_string($_GET['type']) &&
              in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
           ? strtolower($_GET['type']) : "daily";
 
