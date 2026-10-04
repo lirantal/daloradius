@@ -31,6 +31,7 @@
     include("../common/includes/validation.php");
     include("../common/includes/layout.php");
 
+    require_once 'library/billing_rates_pdo.php';
     // init loggin variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -39,56 +40,38 @@
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    $sqlfields = (array_key_exists('sqlfields', $_GET) && !empty($_GET['sqlfields']) && is_array($_GET['sqlfields']) &&
-                  array_intersect($_GET['sqlfields'], array_keys($bill_merchant_transactions_options_all)) == $_GET['sqlfields'])
-               ? $_GET['sqlfields'] : $bill_merchant_transactions_options_default;
-    
-    $cols = array();
-    foreach ($sqlfields as $sqlfield) {
-        $cols[$sqlfield] = $bill_merchant_transactions_options_all[$sqlfield];
+    $input_error = false;
+    $sqlfields = $bill_merchant_transactions_options_default;
+    if (isset($_GET['sqlfields'])) {
+        if (is_array($_GET['sqlfields']) && $_GET['sqlfields'] && count($_GET['sqlfields']) <= count($bill_merchant_transactions_options_all) &&
+            count(array_filter($_GET['sqlfields'], 'is_string')) === count($_GET['sqlfields']) &&
+            !array_diff($_GET['sqlfields'], array_keys($bill_merchant_transactions_options_all))) { $sqlfields = array_values(array_unique($_GET['sqlfields'])); }
+        else { $input_error = true; }
     }
-    $colspan = count($cols);
-    $half_colspan = intval($colspan / 2);
-    
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($bill_merchant_transactions_options_all)))
-             ? $_GET['orderBy'] : array_keys($bill_merchant_transactions_options_all)[0];
+    $cols = array();
+    foreach ($sqlfields as $field) { $cols[$field] = $bill_merchant_transactions_options_all[$field]; }
+    $colspan = count($cols); $half_colspan = intval($colspan / 2);
+    $orderBy = isset($_GET['orderBy']) && is_string($_GET['orderBy']) && array_key_exists($_GET['orderBy'], $bill_merchant_transactions_options_all) ? $_GET['orderBy'] : 'id';
+    $orderType = isset($_GET['orderType']) && is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array('asc','desc'), true) ? strtolower($_GET['orderType']) : 'asc';
+    $startdate = $enddate = $payer_email = $payment_status = $vendor_type = $payment_address_status = $payer_status = '';
+    try {
+        dalo_catalog_read_inputs($_GET, array('payer_email','payment_status','vendor_type','payment_address_status','payer_status'));
+        $defaults = date_range_default('previous_month');
+        $startdate = dalo_billing_date($_GET, 'startdate', $defaults['start']);
+        $enddate = dalo_billing_date($_GET, 'enddate', $defaults['end']);
+        $payer_email = trim($_GET['payer_email'] ?? '');
+        $payer_email_enc = htmlspecialchars($payer_email, ENT_QUOTES, 'UTF-8');
+        $vendor_type = isset($_GET['vendor_type']) && in_array($_GET['vendor_type'], array_slice($valid_vendorTypes, 1), true) ? $_GET['vendor_type'] : '';
+        $payment_status = isset($_GET['payment_status']) && in_array($_GET['payment_status'], array_slice($valid_paymentStatus, 1), true) ? $_GET['payment_status'] : '';
+        // Historical summary-only filters; the local table never used these controls.
+        $payment_address_status = trim($_GET['payment_address_status'] ?? '');
+        $payer_status = trim($_GET['payer_status'] ?? '');
+    } catch (Throwable $error) { $input_error = true; }
 
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array("asc", "desc")))
-               ? strtolower($_GET['orderType']) : "asc";
-    
-    $date_default = date_range_default('previous_month');
+    $billing_paypal_vendor_type = $vendor_type;
+    $billing_paypal_payeremail = $payer_email;
+    $billing_paypal_paymentstatus = $payment_status;
 
-    $startdate = (array_key_exists('startdate', $_GET) && !empty($_GET['startdate']) &&
-                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
-                  checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : $date_default['start'];
-
-    $enddate = (array_key_exists('enddate', $_GET) && !empty($_GET['enddate']) &&
-                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
-                checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : $date_default['end'];
-             
-    $vendor_type = (array_key_exists('vendor_type', $_GET) && isset($_GET['vendor_type']) &&
-                    in_array($_GET['vendor_type'], array_slice($valid_vendorTypes, 1))) // avoid inserting "Any" in the SQL query
-                 ? $_GET['vendor_type'] : "";
-
-    $payer_email = (array_key_exists('payer_email', $_GET) && !empty(str_replace("%", "", trim($_GET['payer_email']))))
-                 ? str_replace("%", "", trim($_GET['payer_email'])) : "";
-    $payer_email_enc = (!empty($payer_email)) ? htmlspecialchars($payer_email, ENT_QUOTES, 'UTF-8') : "";
-
-	$payment_status = (array_key_exists('payment_status', $_GET) && isset($_GET['payment_status']) &&
-                       in_array($_GET['payment_status'], array_slice($valid_paymentStatus, 1))) // avoid inserting "Any" in the SQL query
-                    ? $_GET['payment_status'] : "";
-    
-    // FIX THIS: they aren't passed
-    $payment_address_status = (array_key_exists('payment_address_status', $_GET) &&
-                               !empty(str_replace("%", "", trim($_GET['payment_address_status']))))
-                            ? str_replace("%", "", trim($_GET['payment_address_status'])) : "";
-    $payer_status = (array_key_exists('payer_status', $_GET) && !empty(str_replace("%", "", trim($_GET['payer_status']))))
-                  ? str_replace("%", "", trim($_GET['payer_status'])) : "";
-	
     // print HTML prologue
     $title = t('Intro','billpaypaltransactions.php');
     $help = t('helpPage','billpaypaltransactions');
@@ -97,83 +80,38 @@
     
 	print_title_and_help($title, $help);
 
-    // draw the billing rates summary table
-    include_once('include/management/userBilling.php');
-    userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, $vendor_type, 1);
-									                         
-
-    include('../common/includes/db_open.php');
     include_once('include/management/pages_common.php');
-    
-    // preparing the custom query
-    
-    $sql_WHERE = array();
-    $partial_query_string_pieces = array();
-    
-    foreach ($sqlfields as $sqlfield) {
-        $partial_query_string_pieces[] = sprintf("sqlfields[]=%s", $sqlfield);
+    $numrows = 0; $billing_rows = array(); $pdo = null;
+    try {
+        if ($input_error) { throw new InvalidArgumentException('Invalid billing report input'); }
+        $pdo = dalo_catalog_read_open($configValues);
+        $table = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGMERCHANT');
+        $where = array(); $bind = array();
+        $partial_query_string_pieces = array();
+        foreach ($sqlfields as $field) { $partial_query_string_pieces[] = 'sqlfields[]=' . urlencode($field); }
+        if ($startdate !== '') { $where[] = 'payment_date >= :startdate'; $bind[':startdate'] = $startdate; $partial_query_string_pieces[] = 'startdate=' . urlencode($startdate); }
+        if ($enddate !== '') { $where[] = 'payment_date < (:enddate + INTERVAL 1 DAY)'; $bind[':enddate'] = $enddate; $partial_query_string_pieces[] = 'enddate=' . urlencode($enddate); }
+        if ($payer_email !== '') { $where[] = 'payer_email LIKE :payer_email'; $bind[':payer_email'] = dalo_billing_like($payer_email); $partial_query_string_pieces[] = 'payer_email=' . urlencode($payer_email); }
+        if ($payment_status !== '') { $where[] = 'payment_status=:payment_status'; $bind[':payment_status'] = $payment_status; $partial_query_string_pieces[] = 'payment_status=' . urlencode($payment_status); }
+        if ($vendor_type !== '') { $where[] = 'vendor_type=:vendor_type'; $bind[':vendor_type'] = $vendor_type; $partial_query_string_pieces[] = 'vendor_type=' . urlencode($vendor_type); }
+        $sql_where = $where ? ' WHERE ' . implode(' AND ', $where) : '';
+        $numrows = (int)dalo_catalog_read_rows($pdo, "SELECT COUNT(*) FROM $table$sql_where", $bind)[0][0];
+        if ($numrows > 0) {
+            include('include/management/pages_numbering.php');
+            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+            $sql = 'SELECT ' . implode(',', $sqlfields) . " FROM $table$sql_where ORDER BY $orderBy $orderType LIMIT :offset,:limit";
+            $billing_rows = dalo_catalog_read_rows($pdo, $sql, array_merge($bind, array(':offset'=>(int)$offset, ':limit'=>(int)$rowsPerPage)));
+        }
+    } catch (Throwable $error) { $numrows = 0; dalo_rate_failure($error); }
+    finally { $pdo = null; }
+    // Independent legacy summary remains in R20; no dependent mutation crosses clients.
+    if (!isset($failureMsg)) {
+        include_once('include/management/userBilling.php');
+        userBillingPayPalSummary($startdate, $enddate, $payer_email, $payment_address_status, $payer_status, $payment_status, $vendor_type, 1);
     }
-    
-    if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("payment_date >= '%s'", $dbSocket->escapeSimple($startdate));
-        $partial_query_string_pieces[] = sprintf("startdate=%s", $startdate);
-    }
-
-    if (!empty($enddate)) {
-        // inclusive end date: match the whole $enddate day
-        $sql_WHERE[] = sprintf("payment_date < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
-        $partial_query_string_pieces[] = sprintf("enddate=%s", $enddate);
-    }
-    
-    if (!empty($payer_email)) {
-        $sql_WHERE[] = sprintf("payer_email LIKE '%%%s%%'", $dbSocket->escapeSimple($payer_email));
-        $partial_query_string_pieces[] = sprintf("payer_email=%s", $payer_email);
-    }
-    
-    if (!empty($payment_status)) {
-        $sql_WHERE[] = sprintf("payment_status='%s'", $dbSocket->escapeSimple($payment_status));
-        $partial_query_string_pieces[] = sprintf("payment_status=%s", $payment_status);
-    }
-    
-    if (!empty($vendor_type)) {
-        $sql_WHERE[] = sprintf("vendor_type='%s'", $dbSocket->escapeSimple($vendor_type));
-        $partial_query_string_pieces[] = sprintf("vendor_type=%s", $vendor_type);
-    }
-    
-    // executing the custom query
-
-    $sql = sprintf("SELECT %s FROM %s", implode(", ", $sqlfields), $configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT']);
-    
-    if (count($sql_WHERE) > 0) {
-        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-    }
-
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    $numrows = $res->numRows();
-			
     if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
-        
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
-        
-        // the partial query is built starting from user input
-        // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = (count($partial_query_string_pieces) > 0)
-                              ? "&" . implode("&", $partial_query_string_pieces) : "";
-
+        $per_page_numrows = count($billing_rows);
+        $partial_query_string = $partial_query_string_pieces ? '&' . implode('&', $partial_query_string_pieces) : '';
         $descriptors = array();
 
         $params = array(
@@ -199,10 +137,10 @@
 
         // table content
         $count = 0;
-        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+        foreach ($billing_rows as $row) {
             printf('<tr id="row-%d">', $count);
-            foreach ($sqlfields as $field) {
-                printf("<td>%s</td>", htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8'));
+            foreach ($sqlfields as $index=>$field) {
+                printf("<td>%s</td>", htmlspecialchars($row[$index] ?? '', ENT_QUOTES, 'UTF-8'));
             }
             echo '</tr>';
             $count++;
@@ -226,11 +164,9 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
-        
-    include('../common/includes/db_close.php');    
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
