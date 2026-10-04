@@ -74,19 +74,17 @@
     $source = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
     $planName = (isset($source['planName']) && is_string($source['planName']))
               ? trim($source['planName']) : '';
-    include('../common/includes/db_open.php');
-    
-    // check if this plan exists
-    $sql = sprintf("SELECT COUNT(DISTINCT(planName)) FROM %s WHERE planName='%s'",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($planName));
-    $res = $dbSocket->query($sql);
-    
-    $exists = intval($res->fetchrow()[0]) == 1;
-
-    if (!$exists) {
-        // we reset the plan if it does not exist
-        $planName = "";
-    }
+    require_once('library/catalog_reads_pdo.php');
+    $catalog_pdo = null;
+    try {
+        dalo_catalog_read_inputs($source, array('planName'));
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $table = dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS');
+        $exists = (int)dalo_catalog_read_rows($catalog_pdo, "SELECT COUNT(DISTINCT(planName)) FROM $table WHERE planName=:planName", array(':planName'=>$planName))[0][0] === 1;
+        if (!$exists) { $planName = ''; }
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error); $planName = ''; $invalidRequest = true;
+    } finally { $catalog_pdo = null; }
     $planName_enc = ($planName !== '') ? htmlspecialchars($planName, ENT_QUOTES, 'UTF-8') : '';
     
     
@@ -193,41 +191,40 @@
     }
     
     $selected_groups = array();
-    if (empty($planName)) {
+    if ($planName === '') {
         // required/invalid
-        $failureMsg = sprintf("The required field '%s' is empty or invalid", t('all','PlanName'));
+        if (!isset($failureMsg)) { $failureMsg = sprintf("The required field '%s' is empty or invalid", t('all','PlanName')); }
         $logAction .= "$failureMsg on page: ";
     } else {
-        
-        $sql = sprintf("SELECT planId, planType, planTimeBank, planTimeType, planTimeRefillCost, planBandwidthUp,
-                               planBandwidthDown, planTrafficTotal, planTrafficUp, planTrafficDown, planTrafficRefillCost,
-                               planRecurring, planRecurringPeriod, planRecurringBillingSchedule, planCost, planSetupCost,
-                               planTax, planCurrency, planGroup, planActive, creationdate, creationby, updatedate, updateby
-                          FROM %s WHERE planName='%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($planName));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $row = $res->fetchrow();
-        
-        list(
-                $planId, $planType, $planTimeBank, $planTimeType, $planTimeRefillCost, $planBandwidthUp, $planBandwidthDown,
-                $planTrafficTotal, $planTrafficUp, $planTrafficDown, $planTrafficRefillCost, $planRecurring, $planRecurringPeriod,
-                $planRecurringBillingSchedule, $planCost, $planSetupCost, $planTax, $planCurrency, $planGroup, $planActive,
-                $creationdate, $creationby, $updatedate, $updateby
-            ) = $row;
-        
-        // get all profiles associated with this plan name
-        $sql = sprintf("SELECT DISTINCT(profile_name) FROM %s WHERE plan_name='%s'",
-                       $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'], $dbSocket->escapeSimple($planName));
-        $res = $dbSocket->query($sql);
-        
-        while ($row = $res->fetchRow()) {
-            $selected_groups[] = $row[0];
-        }
+        try {
+            $catalog_pdo = dalo_catalog_read_open($configValues);
+
+            $sql = sprintf("SELECT planId, planType, planTimeBank, planTimeType, planTimeRefillCost, planBandwidthUp,
+                                   planBandwidthDown, planTrafficTotal, planTrafficUp, planTrafficDown, planTrafficRefillCost,
+                                   planRecurring, planRecurringPeriod, planRecurringBillingSchedule, planCost, planSetupCost,
+                                   planTax, planCurrency, planGroup, planActive, creationdate, creationby, updatedate, updateby
+                              FROM %s WHERE planName=:planName", dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS'));
+            $rows = dalo_catalog_read_rows($catalog_pdo, $sql, array(':planName'=>$planName));
+            $logDebugSQL .= "$sql;\n";
+
+            $row = $rows[0] ?? null;
+            if ($row === null) { throw new DomainException('Plan no longer exists'); }
+
+            list(
+                    $planId, $planType, $planTimeBank, $planTimeType, $planTimeRefillCost, $planBandwidthUp, $planBandwidthDown,
+                    $planTrafficTotal, $planTrafficUp, $planTrafficDown, $planTrafficRefillCost, $planRecurring, $planRecurringPeriod,
+                    $planRecurringBillingSchedule, $planCost, $planSetupCost, $planTax, $planCurrency, $planGroup, $planActive,
+                    $creationdate, $creationby, $updatedate, $updateby
+                ) = $row;
+
+            $table = dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES');
+            $selected_groups = array_map(function ($row) { return (string)$row[0]; },
+                dalo_catalog_read_rows($catalog_pdo, "SELECT DISTINCT(profile_name) FROM $table WHERE plan_name=:planName", array(':planName'=>$planName)));
+        } catch (Throwable $error) {
+            dalo_catalog_read_failure($error);
+            $planName = ''; $selected_groups = array();
+        } finally { $catalog_pdo = null; }
     }
-    
-    include('../common/includes/db_close.php');
-    
 
     // print HTML prologue
     $extra_css = array();
@@ -249,7 +246,7 @@
     include_once('include/management/actionMessages.php');
     
     
-    if (!empty($planName)) {
+    if ($planName !== '') {
     
         // descriptors 0
         $input_descriptors0 = array();

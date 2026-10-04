@@ -35,21 +35,15 @@
     $logDebugSQL = "";
     $log = "visited page: ";
 
-    include('../common/includes/db_open.php');
+    require_once('library/catalog_reads_pdo.php');
+    $valid_planNames = array(); $catalog_pdo = null;
+    try {
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $valid_planNames = dalo_catalog_read_options($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS', 'planName', true);
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error);
+    } finally { $catalog_pdo = null; }
 
-    $valid_planNames = array();
-    
-    $sql = sprintf("SELECT DISTINCT(planName) FROM %s ORDER BY planName ASC",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    while ($row = $res->fetchrow()) {
-        if (!in_array($row[0], $valid_planNames)) {
-            $valid_planNames[] = $row[0];
-        }
-    }
-    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) &&
             dalo_check_csrf_token($_POST['csrf_token'])) {
@@ -84,7 +78,7 @@
         }
     }
 
-    include('../common/includes/db_close.php');
+
 
     include_once("lang/main.php");
     include("../common/includes/layout.php");
