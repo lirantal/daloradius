@@ -71,7 +71,7 @@ function dalo_hotspot_mutate(PDO $pdo, $config, $operation) {
     if ($pdo->inTransaction()) { throw new LogicException('Hotspot page requires its own transaction'); }
     $table=dalo_hotspot_table($config);
     $schema=dalo_hotspot_query($pdo,'SELECT DATABASE()')->fetchColumn();
-    $name='dalo_hotspot_' . substr(hash('sha256', $schema . ':' . $table),0,52);
+    $name='dalo_hotspot_' . substr(hash('sha256', $schema . ':' . $table),0,64-strlen('dalo_hotspot_'));
     if ((int)dalo_hotspot_query($pdo,'SELECT GET_LOCK(?, 10)',array($name))->fetchColumn()!==1) {
         throw new RuntimeException('Hotspot is busy');
     }

@@ -269,7 +269,7 @@ def main():
             def race_delete(s):return req(delete,{'name[]':['Concurrent'],'csrf_token':tokens[s]},session_id=s)[1]
             with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:out=list(pool.map(race_delete,(sid,sid2)))
             assert sum('Deleted hotspot(s)' in x for x in out)==1 and sum('Unable to delete' in x for x in out)==1
-            lockname='dalo_hotspot_'+hashlib.sha256(b'candidate:`hotspots`').hexdigest()[:52]
+            lockname='dalo_hotspot_'+hashlib.sha256(b'candidate:`hotspots`').hexdigest()[:64-len('dalo_hotspot_')]
             tok=token();holder=subprocess.Popen(['docker','exec',h.DB,'mariadb','-uroot','-N','-B','candidate','-e',"SELECT GET_LOCK('"+lockname+"',0); SELECT SLEEP(2); SELECT RELEASE_LOCK('"+lockname+"');"],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
             try:
                 wait_for(lambda:db("SELECT IS_USED_LOCK('"+lockname+"')")!='NULL','independent lock')
