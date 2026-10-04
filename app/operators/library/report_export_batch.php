@@ -145,11 +145,11 @@ function dalo_export_batch_query($source, $type, $filters, $configValues) {
             $bindings[$placeholder] = $filters[$dateFilter];
         }
     }
-    if (!empty($filters['username'])) {
+    if (($filters['username'] ?? '') !== '') {
         $where[] = 'b.username LIKE :username';
         $bindings[':username'] = '%' . $filters['username'] . '%';
     }
-    if (!empty($filters['invoice_status'])) {
+    if (($filters['invoice_status'] ?? '') !== '') {
         $where[] = 'a.status_id = :invoice_status';
         $bindings[':invoice_status'] = $filters['invoice_status'];
     }
