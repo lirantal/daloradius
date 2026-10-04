@@ -12,6 +12,11 @@ function dalo_chart_bar_dataset($label, $values) {
 }
 
 function dalo_chart_overall_user_statistics($dbSocket, $radacct_table, $username, $category, $type, $size, $traffic_title_template, $require_existing_user = false) {
+    if ($dbSocket instanceof PDO) {
+        require_once __DIR__ . '/chart_pdo.php';
+        return dalo_chart_overall_pdo($dbSocket,$radacct_table,$username,$category,$type,$size,$traffic_title_template,$require_existing_user);
+    }
+
     $labels = array();
     $values = array();
 
