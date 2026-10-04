@@ -21,11 +21,23 @@
  *********************************************************************************************************
  */
 
+    include_once('../common/includes/config_read.php');
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
+    include('library/check_operator_perm.php');
+    require_once __DIR__ . '/library/operator_reports_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+        foreach (array('batch_name','radiusReply') as $key) {
+            if (isset($_GET[$key])) { dalo_accounting_scalar($_GET, $key); }
+        }
+    } catch (Throwable $exception) {
+        http_response_code(400); exit('Invalid operator report filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
 
     include_once('../common/includes/config_read.php');
-    include('library/check_operator_perm.php');
 
     // This page has no CSV export builder. Do not reuse a prior page's report.
     unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'],
@@ -75,32 +87,22 @@
     print_title_and_help($title, $help);
 
     include('include/management/pages_common.php');
-    include('../common/includes/db_open.php');
 
     // we use this convenient way to build our SQL query
-    $sql_piece_format = "SELECT '%s' AS section, %s AS item, creationdate, creationby, updatedate, updateby FROM %s";
-
-    $sql_pieces = array(
-        sprintf($sql_piece_format, 'proxy', 'proxyname', $configValues['CONFIG_DB_TBL_DALOPROXYS']),
-        sprintf($sql_piece_format, 'realm', 'realmname', $configValues['CONFIG_DB_TBL_DALOREALMS']),
-        sprintf($sql_piece_format, 'userinfo', 'username', $configValues['CONFIG_DB_TBL_DALOUSERINFO']),
-        sprintf($sql_piece_format, 'operators', 'username', $configValues['CONFIG_DB_TBL_DALOOPERATORS']),
-        sprintf($sql_piece_format, 'invoice', 'id', $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']),
-        sprintf($sql_piece_format, 'payment', 'id', $configValues['CONFIG_DB_TBL_DALOPAYMENTS']),
-        sprintf($sql_piece_format, 'hotspot', 'name', $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'])
-    );
-    
-    $sql = implode(" UNION ", $sql_pieces);
-    
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    $numrows = $res->numRows();
+    $reportPDO = null;
+    $reportRows = array();
+    $numrows = 0;
+    try {
+        $reportPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        list($reportSQL, $reportBindings) = dalo_operator_query('rep-history', array(), $configValues);
+        $numrows = dalo_accounting_count($reportPDO, $reportSQL, $reportBindings, $configValues);
+    } catch (Throwable $exception) { dalo_accounting_failure($exception); }
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
         
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+        include('include/management/pages_numbering.php');    // must follow configuration initialization because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
         
         // here we decide if page numbers should be shown
@@ -109,11 +111,13 @@
         /* END */
 
         // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
+        try {
+            $reportRows = dalo_operator_rows($reportPDO, $reportSQL, $reportBindings, 'rep-history',
+                $orderBy, $orderType, (int)$offset, (int)$rowsPerPage, false);
+        } catch (Throwable $exception) { dalo_accounting_failure($exception); }
+        $per_page_numrows = count($reportRows);
+
+
         
         $descriptors = array();
 
@@ -141,12 +145,12 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($reportRows as $row) {
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = (!empty($row[$i])) ? htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8') : "(n/a)";
+                $row[$i] = (!empty($row[$i])) ? htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8') : "(n/a)";
             }
             
             // print table row
@@ -174,12 +178,19 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
 
-    include('../common/includes/db_close.php');
         
+    if (isset($failureMsg)) {
+        include_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/actionMessages.php';
+    }
+
     include('include/config/logging.php');
+    if (isset($failureMsg) || empty($numrows)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($reportPDO, $reportRows);
     print_footer_and_html_epilogue();
 ?>
