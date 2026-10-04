@@ -24,8 +24,19 @@
     include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
-
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    require_once __DIR__ . '/library/operator_reports_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+        foreach (array('batch_name','radiusReply') as $key) {
+            if (isset($_GET[$key])) { dalo_accounting_scalar($_GET, $key); }
+        }
+    } catch (Throwable $exception) {
+        http_response_code(400); exit('Invalid operator report filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
@@ -50,15 +61,9 @@
     // in other cases we just check that syntax is ok
     $date_default = date_range_default('last_7_days');
 
-    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match(DATE_REGEX, $_GET['startdate'], $m) === 1 &&
-                  checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : $date_default['start'];
+    $startdate = dalo_accounting_date($_GET, 'startdate', $date_default['start']);
 
-    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match(DATE_REGEX, $_GET['enddate'], $m) === 1 &&
-                checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : $date_default['end'];
+    $enddate = dalo_accounting_date($_GET, 'enddate', $date_default['end']);
 
     $radiusReply = (array_key_exists('radiusReply', $_GET) && !empty(trim($_GET['radiusReply'])) &&
                     in_array(trim($_GET['radiusReply']), $valid_radiusReplys))
@@ -66,9 +71,8 @@
 
     // and in other cases we partially strip some character,
     // and leave validation/escaping to other functions used later in the script
-    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
-              ? str_replace("%", "", trim($_GET['username'])) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    $username = dalo_accounting_scalar($_GET, 'username');
+    $username_enc = ($username !== '') ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes");
 
@@ -127,57 +131,24 @@
     print_title_and_help($title, $help);
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
-    // pa is a placeholder in the SQL statements below
-    // except for $username, which has been only partially escaped,
-    // all other query parameters have been validated earlier.
-    $sql_WHERE = array();
-    if (!empty($username)) {
-        $sql_WHERE[] = sprintf("pa.%s LIKE '%%%s%%'", $tableSetting['postauth']['user'],
-                                                    $dbSocket->escapeSimple($username));
-    }
-    // inclusive end date: match the whole $enddate day
-    $sql_WHERE[] = sprintf("pa.%s >= '%s' AND pa.%s < ('%s' + INTERVAL 1 DAY)",
-                           $tableSetting['postauth']['date'], $dbSocket->escapeSimple($startdate),
-                           $tableSetting['postauth']['date'], $dbSocket->escapeSimple($enddate));
-    if ($radiusReply != "Any") {
-        $sql_WHERE[] = sprintf("pa.reply='%s'", $dbSocket->escapeSimple($radiusReply));
-    }
-
-    // setup local PEAR-query variables and the structured export descriptor
-    $reportTable = sprintf("%s AS pa LEFT JOIN %s AS ui ON pa.%s = ui.username",
-                          $configValues['CONFIG_DB_TBL_RADPOSTAUTH'],
-                          $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                          $tableSetting['postauth']['user']);
-    $reportQuery = " WHERE " . implode(" AND ", $sql_WHERE);
-
-    $_SESSION['reportExport'] = array(
-        'source' => 'rep-lastconnect',
-        'type' => 'reportsLastConnectionAttempts',
-        'filters' => array(
-            'startdate' => $startdate,
-            'enddate' => $enddate,
-            'radiusReply' => $radiusReply,
-            'username' => $username,
-        ),
-    );
-    $_SESSION['reportType'] = "reportsLastConnectionAttempts";
-    unset($_SESSION['reportTable'], $_SESSION['reportQuery']);
-
-    $sql = sprintf("SELECT CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
-                           pa.%s AS username, pa.pass, pa.reply, pa.%s
-                      FROM %s %s", $tableSetting['postauth']['user'], $tableSetting['postauth']['date'],
-                                   $reportTable, $reportQuery);
-
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+    // The selected-backend provider binds the validated scalar filters.
+    $_SESSION['reportType'] = 'reportsLastConnectionAttempts';
+    $_SESSION['reportExport'] = array('source'=>'rep-lastconnect','type'=>'reportsLastConnectionAttempts','filters'=>array('username'=>$username,'startdate'=>$startdate,'enddate'=>$enddate,'radiusReply'=>$radiusReply));
+    $reportPDO = null;
+    $reportRows = array();
+    $numrows = 0;
+    try {
+        $reportPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        list($reportSQL, $reportBindings) = dalo_operator_query('rep-lastconnect', array('username'=>$username,'startdate'=>$startdate,'enddate'=>$enddate,'radiusReply'=>$radiusReply), $configValues);
+        $numrows = dalo_accounting_count($reportPDO, $reportSQL, $reportBindings, $configValues);
+    } catch (Throwable $exception) { dalo_accounting_failure($exception); }
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
 
         // when $numrows is set, $maxPage is calculated inside this include file
-        // must be included after opendb because it needs to read
+        // must follow configuration initialization because it needs to read
         // the CONFIG_IFACE_TABLES_LISTING variable from the config file
         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
 
@@ -186,11 +157,13 @@
 
         /* END */
 
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
+        try {
+            $reportRows = dalo_operator_rows($reportPDO, $reportSQL, $reportBindings, 'rep-lastconnect',
+                $orderBy, $orderType, (int)$offset, (int)$rowsPerPage, false);
+        } catch (Throwable $exception) { dalo_accounting_failure($exception); }
+        $per_page_numrows = count($reportRows);
 
-        $per_page_numrows = $res->numRows();
+
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
@@ -201,8 +174,8 @@
         if (!empty($enddate)) {
             $partial_query_params[] = sprintf("enddate=%s", $enddate);
         }
-        if (!empty($username_enc)) {
-            $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
+        if ($username_enc !== '') {
+            $partial_query_params[] = sprintf("username=%s", urlencode($username));
         }
         if (!empty($radiusReply)) {
             $partial_query_params[] = sprintf("radiusReply=%s", $radiusReply);
@@ -224,7 +197,7 @@
 
 
         $descriptors['end'] = array();
-        $descriptors['end'][] = get_csv_export_control();
+        if (!isset($failureMsg)) { $descriptors['end'][] = get_csv_export_control(); }
         print_table_prologue($descriptors);
 
         // print table top
@@ -238,12 +211,12 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($reportRows as $row) {
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars(trim($row[$i]), ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars(trim((string)($row[$i] ?? '')), ENT_QUOTES, 'UTF-8');
             }
 
             // The table that is being produced is in the format of:
@@ -303,11 +276,18 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
-         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+        $failureMsg = $failureMsg ?? "Nothing to display";
+         include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
+    if (isset($failureMsg)) {
+        include_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/actionMessages.php';
+    }
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
+    if (isset($failureMsg) || empty($numrows)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($reportPDO, $reportRows);
     print_footer_and_html_epilogue();
