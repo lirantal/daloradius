@@ -35,7 +35,7 @@
     $logDebugSQL = "";
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
             $invoice_id = null;
             try {
                 // Validate the full selection before opening the write transaction.
@@ -86,21 +86,30 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
     
+    require_once __DIR__.'/library/invoice_reads_pdo.php';
+    $options = array();
+    try {
+    $invoiceReadPDO=dalo_invoice_read_open($configValues);
     // load options
-    include('../common/includes/db_open.php');
-    $sql = sprintf("SELECT id FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']);
-    $res = $dbSocket->query($sql);
+
+    $readBindings = array();
+    $sql = sprintf("SELECT id FROM %s", dalo_invoice_read_table($configValues, 'CONFIG_DB_TBL_DALOBILLINGINVOICE'));
+    $res = dalo_invoice_read_rows($invoiceReadPDO, $sql, $readBindings);
     $logDebugSQL .= "$sql;\n";
     
     $options = array();
-    while ($row = $res->fetchrow()) {
+    foreach ($res as $row) {
         $id = intval($row[0]);
         $options[$id] = $id;
     }
-    include('../common/includes/db_close.php');
     
+
+    } catch (Throwable $error) {
+        $options=array(); dalo_invoice_read_failure($error);
+    }
+    unset($invoiceReadPDO);
+    include_once 'include/management/actionMessages.php';
     $input_descriptors1 = array();
 
     $input_descriptors1[] = array(
