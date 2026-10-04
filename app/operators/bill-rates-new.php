@@ -36,94 +36,29 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    include('../common/includes/db_open.php');
-
+    require_once 'library/billing_rates_pdo.php';
+    $ratename = $ratecost = $ratetypenum = $ratetypetime = '';
+    foreach (array('ratename','ratecost','ratetypenum','ratetypetime') as $key) {
+        if (isset($_POST[$key]) && is_string($_POST[$key])) { $$key = trim($_POST[$key]); }
+    }
+    $ratename_enc = htmlspecialchars($ratename, ENT_QUOTES, 'UTF-8');
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            // required later
-            $current_datetime = date('Y-m-d H:i:s');
-            $currBy = $operator;
-
-            $required_fields = array();
-
-            $ratename = (array_key_exists('ratename', $_POST) && !empty(trim($_POST['ratename'])))
-                      ? trim($_POST['ratename']) : "";
-            if (empty($ratename)) {
-                $required_fields['ratename'] = t('all','RateName');
-            } else {
-                $ratename_enc = htmlspecialchars($ratename, ENT_QUOTES, 'UTF-8');
-            }
-
-            $ratecost = (array_key_exists('ratecost', $_POST) && intval(trim($_POST['ratecost'])) > 0)
-                      ? intval(trim($_POST['ratecost'])) : "";
-            if (empty($ratecost)) {
-                $required_fields['ratecost'] = t('all','RateCost');
-            }
-
-            $ratetypenum = (array_key_exists('ratetypenum', $_POST) && intval(trim($_POST['ratetypenum'])) > 0)
-                      ? intval(trim($_POST['ratetypenum'])) : "";
-            if (empty($ratetypenum)) {
-                $required_fields['ratetypenum'] = t('all','RateType') . " (number)";
-            }
-
-            $ratetypetime = (array_key_exists('ratetypetime', $_POST) && !empty(trim($_POST['ratetypetime'])) &&
-                             in_array(trim($_POST['ratetypetime']), $valid_timeUnits))
-                          ? trim($_POST['ratetypetime']) : "";
-            if (empty($ratetypetime)) {
-                $required_fields['ratetypetime'] = t('all','RateType') . " (time unit)";
-            }
-
-            if (count($required_fields) > 0) {
-                // required/invalid
-                $failureMsg = sprintf("Empty or invalid required field(s) [%s]", implode(", ", array_values($required_fields)));
-                $logAction .= "$failureMsg on page: ";
-            } else {
-
-                // check if this rate exists
-                $sql = sprintf("SELECT COUNT(id) FROM %s WHERE rateName='%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'],
-                                                                               $dbSocket->escapeSimple($ratename));
-                $res = $dbSocket->query($sql);
-
-                $exists = intval($res->fetchrow()[0]) == 1;
-
-                if ($exists) {
-                    // invalid
-                    $failureMsg = sprintf("You have provided an invalid rate name");
-                    $logAction .= "$failureMsg on page: ";
-                } else {
-
-                    $ratetype = sprintf("%d/%s", $ratetypenum, $ratetypetime);
-
-                    $sql = sprintf("INSERT INTO %s (id, ratename, ratetype, ratecost, creationdate, creationby, updatedate, updateby)
-                                            VALUES (0, '%s', '%s', %d, '%s', '%s', NULL, NULL)",
-                                   $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $dbSocket->escapeSimple($ratename),
-                                   $dbSocket->escapeSimple($ratetype), $ratecost, $current_datetime, $currBy);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (!DB::isError($res)) {
-                        $successMsg = sprintf('Successfully inserted new rate (<strong>%s</strong>) '
-                                            . '<a href="bill-rates-edit.php?ratename=%s" title="Edit">%s</a>',
-                                              $ratename_enc, $ratename_enc, urlencode($ratename_enc));
-                        $logAction .= "Successfully inserted new rate [$ratename] on page: ";
-                    } else {
-                        $failureMsg = "Failed to inserted new rate (<strong>$ratename_enc</strong>)";
-                        $logAction .= "Failed to inserted new rate [$ratename] on page: ";
-                    }
-                }
-            }
-
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            $pdo = null;
+            try {
+                $pdo = dalo_catalog_read_open($configValues);
+                dalo_rate_mutate($pdo, $configValues, 'new', $_POST['ratename'] ?? '', $_POST, $operator);
+                $successMsg = sprintf('Successfully inserted new rate (<strong>%s</strong>) <a href="bill-rates-edit.php?ratename=%s" title="Edit">%s</a>',
+                    $ratename_enc, htmlspecialchars(urlencode($ratename), ENT_QUOTES, 'UTF-8'), $ratename_enc);
+                $logAction .= 'Successfully inserted new rate on page: ';
+            } catch (Throwable $error) {
+                $failureMsg = 'Failed to insert rate; check the fields and current state before retrying';
+                $logAction .= 'Rate create failed [' . get_class($error) . '] on page: ';
+            } finally { $pdo = null; }
         }
     }
-
-    include('../common/includes/db_close.php');
-
 
     // print HTML prologue
     $extra_css = array();
