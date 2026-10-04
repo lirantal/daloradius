@@ -35,10 +35,27 @@
                        . "Open your web browser and enter each needed field.";
     $ticketLogoFile = "../../static/images/daloradius_small.png";
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && !is_string($_POST['csrf_token'])) {
+        http_response_code(400); exit('Invalid ticket request.');
+    }
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && dalo_check_csrf_token()) {
         
         if (array_key_exists('accounts', $_POST) && !empty($_POST['accounts']) && is_array($_POST['accounts']) &&
             array_key_exists('type', $_POST) && $_POST['type'] == "batch") {
+
+            foreach (array('batch_name', 'ticketInformation', 'plan') as $field) {
+                if (isset($_POST[$field]) && !is_string($_POST[$field])) {
+                    http_response_code(400); exit('Invalid ticket request.');
+                }
+            }
+            // The real batch producer sends one heading row, followed by pairs.
+            foreach ($_POST['accounts'] as $account) {
+                if (!is_array($account) || array_keys($account) !== array(0, 1) ||
+                    !is_string($account[0]) || !is_string($account[1])) {
+                    http_response_code(400); exit('Invalid ticket request.');
+                }
+            }
 
             $batch_name = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])))
                         ? htmlspecialchars(trim($_POST['batch_name']), ENT_QUOTES, 'UTF-8') : "";
@@ -58,18 +75,35 @@
             $ticketCost = "";
             $ticketTime = "";
 
-            if (!empty($plan)) {
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-                $sql = sprintf("SELECT `plancost`, `plantimebank`, `plancurrency` FROM `%s` WHERE `planname`='%s'",
-                                $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($plan));                    
-                $res = $dbSocket->query($sql);
-                list($ticketCost, $ticketTime, $ticketCurrency) = $res->fetchRow();
-
-                $ticketCost = "$ticketCost $ticketCurrency";
-                $ticketTime = time2str($ticketTime);
-
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+            require_once $configValues['OPERATORS_LIBRARY'] . '/shared_context_pdo.php';
+            require_once $configValues['OPERATORS_LIBRARY'] . '/operator_acl_read.php';
+            $ticket_pdo = null;
+            try {
+                $ticket_pdo = dalo_shared_handle($configValues);
+                if (!dalo_operator_acl_allowed($ticket_pdo, $configValues, $_SESSION['operator_id'] ?? null, 'mng_batch_add')) {
+                    http_response_code(403);
+                    exit;
+                }
+                if ($plan !== '') {
+                    include_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/pages_common.php';
+                    $plans_table = dalo_shared_table($ticket_pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS');
+                    $rows = dalo_shared_rows($ticket_pdo,
+                        "SELECT plancost, plantimebank, plancurrency FROM $plans_table WHERE planname=:plan",
+                        array(':plan' => $plan));
+                    if (!$rows) { throw new InvalidArgumentException('Unknown ticket plan'); }
+                    list($ticketCost, $ticketTime, $ticketCurrency) = $rows[0];
+                    $ticketCost = "$ticketCost $ticketCurrency";
+                    $ticketTime = time2str($ticketTime);
+                }
+            } catch (InvalidArgumentException $error) {
+                http_response_code(400);
+                exit('Invalid ticket request.');
+            } catch (Throwable $error) {
+                error_log('Ticket context failed: ' . get_class($error));
+                http_response_code(503);
+                exit('Unable to load ticket data.');
+            } finally {
+                $ticket_pdo = null;
             }
 
             $card_body_height = 10;
