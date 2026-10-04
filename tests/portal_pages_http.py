@@ -160,12 +160,10 @@ echo json_encode([$before,$failed,$owned,$changed,$rolled]);
                 conf+="'Username'=>'root','Password'=>'','Database'=>'"+v+"_other','Port'=>'3306');\n"
                 configs[v]=conf;(f/v/'app/common/includes/daloradius.conf.php').write_text(conf)
                 if v=='candidate':
-                    # Only traced, separately scheduled R22 widget consumers may open/close PEAR.
+                    # R22 finished independent widgets: the candidate portal must
+                    # no longer open or close a legacy connection on these routes.
                     for name in ('db_open.php','db_close.php'):
-                        path=f/v/'app/common/includes'/name;original=path.read_text()
-                        path.write_text("<?php\n$legacyAllowed=false;foreach(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) as $frame){"
-                            "if(in_array($frame['function']??'',array('userConnectionStatus','userPlanInformation','userSubscriptionAnalysis'),true))"
-                            "{$legacyAllowed=true;}}if(!$legacyAllowed){throw new RuntimeException('Legacy portal connection reached');}\n?>"+original)
+                        (f/v/'app/common/includes'/name).write_text("<?php throw new RuntimeException('Legacy portal connection reached');")
                     (f/v/'app/users/probe.php').write_text(probe)
                 endpoint=(f/v/'app/users/include/common/notificationsUserInvoice.php').read_text()
                 context=endpoint[endpoint.index('function getInvoiceDetails('):].replace('?>','')
