@@ -37,15 +37,14 @@
     $batch_name = '';
     $deleted_batches = 0;
 
-    include('../common/includes/db_open.php');
-
-    $valid_batch_names = array();
-    $sql = sprintf("SELECT DISTINCT(batch_name) FROM %s ORDER BY batch_name ASC", $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    while ($row = $res->fetchrow()) {
-        $valid_batch_names[] = $row[0];
-    }
+    require_once('library/catalog_reads_pdo.php');
+    $valid_batch_names = array(); $catalog_pdo = null;
+    try {
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $valid_batch_names = dalo_catalog_read_options($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOBATCHHISTORY', 'batch_name', true);
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error);
+    } finally { $catalog_pdo = null; }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
@@ -74,7 +73,7 @@
         }
     }
 
-    include('../common/includes/db_close.php');
+
 
 
 

@@ -42,7 +42,7 @@
 
     $valid_passwordTypes = dalo_filter_password_types($valid_passwordTypes);
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+
 
     // init valid account type
     $valid_accountTypes = array(
@@ -51,17 +51,23 @@
                             "random_pincode_no_password" => "random PIN code (no password)"
                         );
 
-    // get valid hotspots
-    $sql = sprintf("SELECT id, name FROM %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    $valid_hotspots = array( );
-    while ($row = $res->fetchrow()) {
-        list($id, $name) = $row;
-
-        $valid_hotspots["hotspot-$id"] = $name;
-    }
+    require_once('library/catalog_reads_pdo.php');
+    $valid_hotspots = array(); $catalog_pdo = null; $catalog_read_failed = false;
+    $batch_name = ''; $batch_description = ''; $hotspot_id = '';
+    $accountType = ''; $group = ''; $group_priority = '';
+    $length_pass = ''; $length_user = ''; $number = '';
+    $passwordType = ''; $planName = ''; $startingIndex = ''; $username_prefix = '';
+    try {
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $table = dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOHOTSPOTS');
+        $sql = "SELECT id, name FROM $table";
+        foreach (dalo_catalog_read_rows($catalog_pdo, $sql) as $row) {
+            $valid_hotspots['hotspot-' . $row[0]] = $row[1];
+        }
+        $logDebugSQL .= "$sql;\n";
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error); $catalog_read_failed = true;
+    } finally { $catalog_pdo = null; }
 
     // get valid groups and plan names
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
@@ -91,7 +97,7 @@
     $exportForm = "";
     $detailedInfo = array();
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!$catalog_read_failed && $_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
             $invalidBatchField = false;
             $scalarInputs = array('batch_name','batch_description','hotspot_id',
@@ -394,7 +400,7 @@
         }
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
 
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
