@@ -31,29 +31,17 @@
     include("../common/includes/validation.php");
     include("../common/includes/layout.php");
     
-    //setting values for the order by and order type variables
-    // and in other cases we partially strip some character,
-    // and leave validation/escaping to other functions used later in the script
-    $ratename = (array_key_exists('ratename', $_GET) && isset($_GET['ratename']))
-              ? trim(str_replace("%", "", $_GET['ratename'])) : "";
-    $ratename_enc = (!empty($ratename)) ? htmlspecialchars($ratename, ENT_QUOTES, 'UTF-8') : "";
-
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? trim(str_replace("%", "", $_GET['username'])) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
-    // in other cases we just check that syntax is ok
-    $date_default = date_range_default('current_month');
-
-    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
-                  checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : $date_default['start'];
-
-    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
-                checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : $date_default['end'];
+    require_once 'library/billing_rates_pdo.php';
+    $input_error = false; $ratename = $username = '';
+    try {
+        dalo_catalog_read_inputs($_GET, array('ratename','username'));
+        $ratename = trim($_GET['ratename'] ?? ''); $username = trim($_GET['username'] ?? '');
+        $date_default = date_range_default('current_month');
+        $startdate = dalo_billing_date($_GET, 'startdate', $date_default['start']);
+        $enddate = dalo_billing_date($_GET, 'enddate', $date_default['end']);
+    } catch (Throwable $error) { $input_error = true; }
+    $ratename_enc = htmlspecialchars($ratename, ENT_QUOTES, 'UTF-8');
+    $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
 
     $cols = array(
                     "username" => t('all','Username'),
@@ -68,11 +56,11 @@
     $param_cols = array();
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
     
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+    $orderBy = (array_key_exists('orderBy', $_GET) && is_string($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+    $orderType = (array_key_exists('orderType', $_GET) && is_string($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array("asc", "desc")))
                ? strtolower($_GET['orderType']) : "asc";
 
@@ -95,143 +83,49 @@
 
     print_title_and_help($title, $help);
 
-    if (!empty($ratename)) {
-        
-        include('../common/includes/db_open.php');
-        
-        $sql_WHERE = array();
-        $partial_query_params = array();
-
-        if (!empty($startdate)) {
-            $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
-            $partial_query_params[] = sprintf("startdate=%s", $startdate);
-        }
-
-        if (!empty($enddate)) {
-            $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
-            $partial_query_params[] = sprintf("enddate=%s", $enddate);
-        }
-
-        if (!empty($username)) {
-            $sql_WHERE[] = sprintf("username='%s'", $dbSocket->escapeSimple($username));
-            $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
-        }
-        
-        $sql_WHERE[] = sprintf("ratename='%s'", $dbSocket->escapeSimple($ratename));
-        $partial_query_params[] = sprintf("ratename=%s", urlencode($ratename_enc));
-        
-
-        include 'include/management/pages_common.php';
-        include 'include/management/pages_numbering.php';        // must be included after opendb because it needs to read the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-        // we can only use the $dbSocket after we have included '../common/includes/db_open.php' which initialzes the connection and the $dbSocket object
-        $username = $dbSocket->escapeSimple($username);
-        $startdate = $dbSocket->escapeSimple($startdate);
-        $enddate = $dbSocket->escapeSimple($enddate);
-        $ratename = $dbSocket->escapeSimple($ratename);
-
-        include_once('include/management/userBilling.php');
-        userBillingRatesSummary($username, $startdate, $enddate, $ratename, 1);                // draw the billing rates summary table
-
-
-        // get rate type
-        $sql = sprintf("SELECT rateType FROM %s WHERE rateName='%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $ratename);
-        $res = $dbSocket->query($sql);
-
-        if ($res->numRows() == 0) {
-            $failureMsg = "Rate was not found in database, check again please";
-        } else {
-
-            $row = $res->fetchRow();
-            list($ratetypenum, $ratetypetime) = explode("/", $row[0]);
-
-            switch ($ratetypetime) {                  // we need to translate any kind of time into seconds,
-                                                      // so a minute is 60 seconds, an hour is 3600,
-                case "second":                        // and so on...
-                    $multiplicate = 1;
-                    break;
-                case "minute":
-                    $multiplicate = 60;
-                    break;
-                case "hour":
-                    $multiplicate = 3600;
-                    break;
-                case "day":
-                    $multiplicate = 86400;
-                    break;
-                case "week":
-                    $multiplicate = 604800;
-                    break;
-                case "month":
-                    $multiplicate = 187488000;        // a month is 31 days
-                    break;
-                default:
-                    $multiplicate = 0;
-                    break;
+    $numrows = 0; $billing_rows = array(); $pdo = null;
+    if ($ratename !== '' && !$input_error) {
+        try {
+            $pdo = dalo_catalog_read_open($configValues);
+            $rate = dalo_rate_read($pdo, $configValues, dalo_rate_text($ratename, true));
+            $rateDivisor = dalo_rate_divisor($rate[2]);
+            $acct = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+            $rates = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGRATES');
+            $sql = "SELECT DISTINCT ra.username,ra.NASIPAddress,ra.AcctStartTime,ra.AcctSessionTime,dbr.rateCost FROM $acct AS ra CROSS JOIN $rates AS dbr WHERE dbr.rateName=:ratename AND ra.AcctStartTime>:startdate AND ra.AcctStartTime<:enddate";
+            $bind = array(':ratename'=>$ratename, ':startdate'=>$startdate, ':enddate'=>$enddate);
+            if ($username !== '') { $sql .= ' AND ra.username=:username'; $bind[':username']=$username; }
+            $partial_query_string = '&' . http_build_query(array('startdate'=>$startdate,'enddate'=>$enddate,'username'=>$username,'ratename'=>$ratename));
+            include('include/management/pages_common.php');
+            $numrows = (int)dalo_catalog_read_rows($pdo, "SELECT COUNT(*) FROM ($sql) AS rate_count", $bind)[0][0];
+            if ($numrows > 0) {
+                include('include/management/pages_numbering.php');
+                $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+                $billing_rows = dalo_catalog_read_rows($pdo, "$sql ORDER BY $orderBy $orderType LIMIT :offset,:limit",
+                    array_merge($bind, array(':offset'=>(int)$offset, ':limit'=>(int)$rowsPerPage)));
             }
-
-            // then the rate cost would be the amount of seconds times the prefix multiplicator thus:
-            $rateDivisor = $ratetypenum * $multiplicate;
+        } catch (DomainException $error) { $numrows = 0; $failureMsg = 'Rate was not found or has an invalid stored type'; }
+        catch (Throwable $error) { $numrows = 0; dalo_rate_failure($error); }
+        finally { $pdo = null; }
+        if (!isset($failureMsg)) {
+            // Independent R20 summary retains its own inclusive date policy.
+            include_once('include/management/userBilling.php');
+            userBillingRatesSummary($username, $startdate, $enddate, $ratename, 1);
         }
-
-        $sql = sprintf("SELECT DISTINCT(ra.username), ra.NASIPAddress, ra.AcctStartTime, ra.AcctSessionTime, dbr.rateCost
-                          FROM %s AS ra, %s AS dbr WHERE dbr.rateName='%s' ",
-                       $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $ratename);
-
-        if (count($sql_WHERE) > 0) {
-            $sql .= " AND " . implode(" AND ", $sql_WHERE);
-        }
-        $res = $dbSocket->query($sql);
-        $numrows = $res->numRows();
-
         if ($numrows > 0) {
-            /* START - Related to pages_numbering.php */
-            
-            // when $numrows is set, $maxPage is calculated inside this include file
-            include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                                  // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-            
-            // here we decide if page numbers should be shown
-            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-            
-            $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-
-            $per_page_numrows = $res->numRows();
-
-            $partial_query_string = (count($partial_query_params) > 0)
-                                  ? ("&" . implode("&", $partial_query_params)) : "";
-                                  
-            $descriptors = array();
-
-            $params = array(
-                                'num_rows' => $numrows,
-                                'rows_per_page' => $rowsPerPage,
-                                'page_num' => $pageNum,
-                                'order_by' => $orderBy,
-                                'order_type' => $orderType,
-                                'partial_query_string' => $partial_query_string,
-                            );
-            $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
-
-            print_table_prologue($descriptors);
-            
-            // print table top
+            $per_page_numrows = count($billing_rows);
+            $params = array('num_rows'=>$numrows,'rows_per_page'=>$rowsPerPage,'page_num'=>$pageNum,
+                'order_by'=>$orderBy,'order_type'=>$orderType,'partial_query_string'=>$partial_query_string);
+            print_table_prologue(array('center'=>array('draw'=>$drawNumberLinks,'params'=>$params)));
             print_table_top();
-            
-            // second line of table header
             printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-
-            // closes table header, opens table body
             print_table_middle();
 
             $sumBilled = 0;
             $sumSession = 0;
 
-            while($row = $res->fetchRow()) {
+            foreach ($billing_rows as $row) {
                 foreach ($row as $i => $value) {
-                    $row[$i] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                    $row[$i] = htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
                 }
 
                 list($username, $nasIPAddress, $acctStartTime, $sessionTime, $rateCost) = $row;
@@ -269,13 +163,13 @@
             printLinks($links, $drawNumberLinks);
     
         } else {
-            $failureMsg = "No entries retrieved";
+            $failureMsg = $failureMsg ?? "No entries retrieved";
         }
         
-        include('../common/includes/db_close.php');
+
         
     } else {
-        $failureMsg = "Rate name is required";
+        $failureMsg = $input_error ? "Invalid billing report input" : "Rate name is required";
         
     }
     
