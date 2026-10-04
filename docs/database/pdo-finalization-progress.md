@@ -8,7 +8,7 @@ claim that historical counts are still current after each commit.
 |---|---|---|---|
 | R01a | Implemented and validated | RES-117 permission gate; RES-080 ACL form renderer | [R01a report](residual-r01a-operator-acl-reads.md), differential HTTP/PHP/MariaDB and targeted regression scripts |
 | R01b1 | Implemented and validated | RES-048 MFA configuration | [MFA report](residual-r01b1-operator-mfa.md), native baseline/candidate HTTP/PHP/MariaDB, error and concurrent enrollment tests |
-| R01b2 | Implemented and validated | RES-047 editor; RES-005 PDO write; RES-006 PDO read dispatch | [Message report](residual-r01b2-messages.md), native baseline/candidate, rollback and lock contention; PEAR portal reader stays pending R21/R29 |
+| R01b2 | Implemented and validated | RES-047 editor; RES-005 PDO write; RES-006 PDO read dispatch | [Message report](residual-r01b2-messages.md), native baseline/candidate, rollback and lock contention; portal consumers closed by R21; compatibility branch retained until R29 |
 | R01c | Implemented and validated | RES-049 catalog; RES-112 unused AJAX legacy open; required `get_operators` selector dependency | [Catalog report](residual-r01c-operator-catalog.md), native PEAR/PDO parity, selected locations, caller preservation and legacy-open tripwire |
 | R02a | Implemented and validated | RES-081–RES-087 selectors and indirect getter callers; R01c operator selector unchanged | [Selector report](residual-r02a-selectors.md), native PEAR/PDO parity, selected locations, NULL/empty/duplicate options, caller preservation and legacy-open tripwire; producing-form regression suites |
 | R02b | Implemented and validated, PEAR compatibility retained | RES-059/061/062/063/065/073/074 common read providers | [Borrowed-reader report](residual-r02b-common-reads.md), native PEAR/PDO/compatibility parity, actual caller INSERT/rollback ownership, named/custom tables and error redaction; legacy page callers remain scheduled |
@@ -31,7 +31,8 @@ claim that historical counts are still current after each commit.
 | R18a–b | Implemented and validated, PEAR retained for other families | RES-026/027/028/029 four payment-type pages | [R18 report](residual-r18-payment-types.md), 34 native PEAR/PDO comparisons, exact raw identities and stored notes, owned InnoDB CRUD, complete-selection rollback, referenced-type refusal, actual duplicate-creator contention and three R17 races, configured/named/SELECT-only reads and four adjacent regressions |
 | R19a–d | Implemented and validated, independent summary PEAR retained for R20 | RES-019/025/040/041/042/043/044 seven tariff/history/merchant pages | [R19 report](residual-r19-billing-rates.md), 165 native PEAR/PDO comparisons, preserved INT truncation/date/month policy, complete owned catalogue transactions, actual late rollback and four observed concurrency scenarios, selected/configured/SELECT-only reads, six late read faults, actual producers and four adjacent regressions |
 | R20a–d | Implemented and validated; all five shared consumers PDO-only | RES-054/055/098/099/101/102/103/104/105/180/181/182 notifications, billing/user summaries and tickets | [R20 report](residual-r20-notifications-summaries-tickets.md), 133 native PEAR/PDO comparisons, actual PDF/isolated SMTP/cards, complete invoice rollback, selected/read-only/borrowed handles and nine adjacent regressions |
-| R21–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
+| R21a–d | Implemented and validated; nine page-local consumers PDO-only | RES-191/192/193/194/195/196/211/216/217/218 portal preferences, accounting/invoices/PDF, messages and sidebar | [R21 report](residual-r21-user-portal-pages.md), 274 native PEAR/PDO comparisons, complete user-state rollback, observed permission-revocation contention, selected/read-only/borrowed reads, real PDFs/CSV, actual filter producers and eleven adjacent regression configurations; independent portal R22 widgets retained |
+| R22–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
 | R28 | Pending | Helpers without proven callers and obsolete compatibility branches | Recheck function names, includes/callbacks, tests and known external usages before removing |
 | R29 | Blocked by remaining consumers | Legacy providers, PEAR DB package and installation paths | Remove only after a fresh tokenized inventory finds no active/indirect PEAR consumers |
 
@@ -68,13 +69,16 @@ claim that historical counts are still current after each commit.
 - [x] R18a–b: all four payment-type pages migrated; bounded exact identities/storage, duplicate/ambiguous rejection, complete selection and referenced-type refusal preserve payments, native rollback and cooperating R17 locks validated; PEAR open/close tripwires, named/configured/SELECT-only reads and four regressions passed, with a test-only R15 tied-checkbox normalization.
 - [x] R19a–d: seven page-local paths migrated; native forms/rows/rank/pagination and ordinary CRUD/decimal/date parity established, exact identities and physical storage verified, full-selection deletion/ownership/error invariance plus actual contention passed; two actual sidebar producers repaired, independent R20 summaries retained and fixtures removed.
 - [x] R20a–d: all five shared files and twelve inventoried blocks migrated; complete context/recipient/template, native PDF/isolated SMTP/card parity and selected-location reads verified; callable invoice helper owns one transaction with exact storage, observed late rollback and two independent creators; summary failures/online unavailable, ACL/CSRF/read-only/borrowed tripwires and nine regressions passed; obsolete R16/R19 legacy/warning exemptions removed, fixtures cleaned.
+- [x] R21a–d: nine portal page-local consumers migrated; complete native forms/rows/CSV/context/PDF and userinfo state parity, stable tied pagination, session identity/CSRF/ownership, current permission recheck with observed blocking, late rollback/coercion/committed-display failures, configured/named/SELECT-only reads and eleven regression configurations verified; R22 portal widgets and R29 compatibility explicitly retained, fixtures removed.
 - [ ] Entire migration: refreshed residual inventory after all functional slices.
 - [ ] Entire migration: dependency removal, installer/Docker validation and transverse tests.
 - [ ] Entire migration: installed external legacy cron callers verified before deployment.
 - [ ] Entire migration: release/PR/push/deployment separately authorized and verified.
 
-R01a, R01b1, the R01b2 operator editor and R01c are complete here. The message PEAR reader
-still serves the three user-portal callers and must close with R21/R29. In particular,
+R01a, R01b1, the R01b2 operator editor and R01c are complete here. The three user-portal message
+consumers use PDO following R21. The explicit message PEAR compatibility branch
+remains pending R29, while R22/other active PEAR consumers still prevent dependency
+removal. In particular,
 permission-bootstrap migration does not
 mean every calling page is entirely PDO: its own remaining provider/reads must still
 be reviewed. Do not subtract historic block counts to invent a current remainder.

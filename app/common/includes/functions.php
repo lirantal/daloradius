@@ -89,7 +89,8 @@ function get_message($dbSocket, $type) {
         require_once __DIR__ . '/messages_pdo.php';
         return dalo_messages_read($dbSocket, $configValues, $type, $purifier);
     }
-    // PEAR read compatibility remains for users/login.php, home-main.php and help-main.php.
+    // R21 portal message consumers now use PDO. Keep the explicit PEAR
+    // compatibility branch until the separately scheduled R29 dependency cleanup.
     // SQL query to retrieve the message content from the database for the given type.
     $sql = sprintf("SELECT content, modified_on, modified_by, created_on, created_by FROM %s WHERE `type`='%s' ORDER BY id ASC LIMIT 1",
                    $configValues['CONFIG_DB_TBL_DALOMESSAGES'], $dbSocket->escapeSimple($type));

@@ -57,11 +57,13 @@ def main():
         fixture=Path(directory)
         shutil.copytree(ROOT/'app',fixture/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
-            for path in ('app/operators/config-messages.php','app/common/includes/functions.php'):
+            for path in ('app/operators/config-messages.php','app/common/includes/functions.php',
+                         'app/users/login.php','app/users/help-main.php'):
                 (fixture/path).write_text(run('git','show',BASE+':'+path)+'\n')
         else:
             legacy=fixture/'app/common/includes/db_open.php'
-            legacy.write_text("<?php if (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'config-messages.php') "
+            legacy.write_text("<?php if (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'config-messages.php' || "
+                              "in_array($_SERVER['SCRIPT_NAME'] ?? '', array('/users/login.php','/users/help-main.php'), true)) "
                               "{throw new RuntimeException('Legacy provider tripwire');} ?>\n"+legacy.read_text())
         (fixture/'session.php').write_text('''<?php
 $p=json_decode(stream_get_contents(STDIN),true); session_name($p['user']?'daloradius_user_sid':'daloradius_operator_sid');
@@ -160,7 +162,8 @@ $configValues['CONFIG_LOCATIONS']['other']=array('Engine'=>'mysqli','Hostname'=>
             assert state()==stored and state('radius_other')!=before_other
             print('PASS: gates, no-change and multi-message save, purification/quotes/Unicode, captions, idempotent save and named-location isolation')
 
-            # Actual legacy portal entry points keep reading the mixed helper's PEAR branch.
+            # Current portal entry points are PDO since R21; only the explicit fixture probe
+            # retains PEAR until the common compatibility branch is retired in R29.
             portal=Client(origin+'users/'); response=portal.request('login.php')
             assert response[0]==200 and "O'Reilly % +" in response[3]
             user=session(user=True)
@@ -171,7 +174,7 @@ $configValues['CONFIG_LOCATIONS']['other']=array('Engine'=>'mysqli','Hostname'=>
             assert result[0]==200, 'Legacy helper HTTP status: '+str(result[0])
             message=json.loads(result[3])
             assert message['content']=='<p>private-marker-dashboard</p>', 'Legacy helper content differs'
-            print('PASS: real users login/help and dashboard PEAR helper dispatch remain usable')
+            print('PASS: real users login/help and explicitly retained dashboard PEAR helper remain usable')
 
             # Duplicated type rows remain updated together; rendering still reads the lowest id.
             sql("INSERT INTO messages_custom(type,content,created_on,created_by) VALUES('login','<p>duplicate</p>','2000-01-01','fixture creator')")
