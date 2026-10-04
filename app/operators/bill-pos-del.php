@@ -93,18 +93,16 @@
     include_once('include/management/actionMessages.php');
     
     // load options
-    include('../common/includes/db_open.php');
-    
-    $sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    $options = array( "" );
-    while ($row = $res->fetchrow()) {
-        $options[] = $row[0];
-    }
-    
-    include('../common/includes/db_close.php');
+    require_once('library/catalog_reads_pdo.php');
+    $options = array('');
+    $catalog_pdo = null;
+    try {
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $options = array_merge($options, dalo_catalog_read_options($catalog_pdo, $configValues, 'CONFIG_DB_TBL_RADCHECK', 'username'));
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error);
+        include('include/management/actionMessages.php');
+    } finally { $catalog_pdo = null; }
 
     $input_descriptors1 = array();
 

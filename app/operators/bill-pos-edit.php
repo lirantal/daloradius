@@ -38,7 +38,8 @@
     $logDebugSQL = "";
 
 
-    include('../common/includes/db_open.php');
+    require_once('library/catalog_reads_pdo.php');
+    $catalog_pdo = null;
     require_once('../common/includes/pdo_connection.php');
     require_once('library/pos_update.php');
 
@@ -46,17 +47,20 @@
     $username_input = $_SERVER['REQUEST_METHOD'] === 'POST' ? ($_POST['username'] ?? '') : ($_GET['username'] ?? '');
     $username = is_string($username_input) ? trim($username_input) : '';
 
-    // check if this user exists
-    $exists = user_exists($dbSocket, $username);
+    try {
+        $source = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+        dalo_catalog_read_inputs($source, array('username'));
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $table = dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_RADCHECK');
+        $exists = (int)dalo_catalog_read_rows($catalog_pdo, "SELECT COUNT(DISTINCT(username)) FROM $table WHERE username=:username", array(':username'=>$username))[0][0] > 0;
+        if (!$exists) { $username = ''; }
+        $table = dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOUSERINFO');
+        $portal_password_is_set = (int)dalo_catalog_read_rows($catalog_pdo, "SELECT COUNT(id) FROM $table WHERE username=:username AND portalloginpassword IS NOT NULL AND portalloginpassword<>''", array(':username'=>$username))[0][0] === 1;
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error); $username = ''; $portal_password_is_set = false;
+    } finally { $catalog_pdo = null; }
 
-    if (!$exists) {
-        // we reset the username if it does not exist
-        $username = "";
-    }
-
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-    //feed the sidebar variables
+    $username_enc = $username !== '' ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : '';
     $edit_username = $username_enc;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -98,7 +102,7 @@
                                        dalo_portal_password_is_acceptable($_POST['portalLoginPassword']))
                                     ? trim($_POST['portalLoginPassword']) : "";
 
-            $ui_hasPortalLoginPassword = user_portal_password_is_set($dbSocket, $username);
+            $ui_hasPortalLoginPassword = $portal_password_is_set;
             $portal_password_available = $ui_hasPortalLoginPassword
                                       || dalo_portal_password_is_present($ui_PortalLoginPassword);
             $portal_access_valid = dalo_portal_access_is_valid($_POST, $ui_hasPortalLoginPassword);
@@ -206,57 +210,62 @@
 
     }
 
-    if (empty($username)) {
-        $failureMsg = "You have specified an empty or invalid username";
+    if ($username === '') {
+        if (!isset($failureMsg)) { $failureMsg = "You have specified an empty or invalid username"; }
         $inline_extra_js = "";
     } else {
 
-        /* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity */
-        $sql = sprintf("SELECT value FROM %s WHERE username='%s' AND attribute LIKE '%%-Password' ORDER BY id DESC LIMIT 1",
-                       $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($username));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        $user_password = $res->fetchRow()[0];
+        try {
+            $catalog_pdo = dalo_catalog_read_open($configValues);
+            /* an sql query to retrieve the password for the username to use in the quick link for the user test connectivity */
+            $sql = sprintf("SELECT value FROM %s WHERE username=:username AND attribute LIKE '%%-Password' ORDER BY id DESC LIMIT 1",
+                           dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_RADCHECK'));
+            $rows = dalo_catalog_read_rows($catalog_pdo, $sql, array(':username'=>$username));
+            $logDebugSQL .= "$sql;\n";
+            $user_password = $rows[0][0] ?? '';
 
-        /* fill-in all the user info details */
-        $sql = sprintf("SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city,
-                               state, country, zip, notes, changeuserinfo,
-                               (portalloginpassword IS NOT NULL AND portalloginpassword<>'') AS has_portal_password,
-                               enableportallogin, creationdate,
-                               creationby, updatedate, updateby
-                          FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                                                        $dbSocket->escapeSimple($username));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
+            /* fill-in all the user info details */
+            $sql = sprintf("SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone, address, city,
+                                   state, country, zip, notes, changeuserinfo,
+                                   (portalloginpassword IS NOT NULL AND portalloginpassword<>'') AS has_portal_password,
+                                   enableportallogin, creationdate,
+                                   creationby, updatedate, updateby
+                              FROM %s WHERE username=:username", dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOUSERINFO'));
+            $rows = dalo_catalog_read_rows($catalog_pdo, $sql, array(':username'=>$username));
+            $logDebugSQL .= "$sql;\n";
 
-        list(
-              $ui_firstname, $ui_lastname, $ui_email, $ui_department, $ui_company, $ui_workphone, $ui_homephone,
-              $ui_mobilephone, $ui_address, $ui_city, $ui_state, $ui_country, $ui_zip, $ui_notes, $ui_changeuserinfo,
-              $ui_hasPortalLoginPassword, $ui_enableUserPortalLogin, $ui_creationdate, $ui_creationby, $ui_updatedate,
-              $ui_updateby
-            ) = $res->fetchRow();
+            list(
+                  $ui_firstname, $ui_lastname, $ui_email, $ui_department, $ui_company, $ui_workphone, $ui_homephone,
+                  $ui_mobilephone, $ui_address, $ui_city, $ui_state, $ui_country, $ui_zip, $ui_notes, $ui_changeuserinfo,
+                  $ui_hasPortalLoginPassword, $ui_enableUserPortalLogin, $ui_creationdate, $ui_creationby, $ui_updatedate,
+                  $ui_updateby
+                ) = $rows[0] ?? array_fill(0, 21, '');
 
 
-        /* fill-in all the user bill info details */
-        $sql = sprintf("SELECT id, planName, contactperson, company, email, phone, address, city, state, country, zip, paymentmethod,
-                               cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp,
-                               notes, changeuserbillinfo, `lead`, coupon, ordertaker, billstatus, lastbill, nextbill,
-                               nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, creationdate, creationby,
-                               updatedate, updateby
-                          FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                                                        $dbSocket->escapeSimple($username));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
+            /* fill-in all the user bill info details */
+            $sql = sprintf("SELECT id, planName, contactperson, company, email, phone, address, city, state, country, zip, paymentmethod,
+                                   cash, creditcardname, creditcardnumber, creditcardverification, creditcardtype, creditcardexp,
+                                   notes, changeuserbillinfo, `lead`, coupon, ordertaker, billstatus, lastbill, nextbill,
+                                   nextinvoicedue, billdue, postalinvoice, faxinvoice, emailinvoice, creationdate, creationby,
+                                   updatedate, updateby
+                              FROM %s WHERE username=:username", dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOUSERBILLINFO'));
+            $rows = dalo_catalog_read_rows($catalog_pdo, $sql, array(':username'=>$username));
+            $logDebugSQL .= "$sql;\n";
 
-        list(
-                $user_id, $bi_planname, $bi_contactperson, $bi_company, $bi_email, $bi_phone, $bi_address, $bi_city,
-                $bi_state, $bi_country, $bi_zip, $bi_paymentmethod, $bi_cash, $bi_creditcardname, $bi_creditcardnumber,
-                $bi_creditcardverification, $bi_creditcardtype, $bi_creditcardexp, $bi_notes, $bi_changeuserbillinfo,
-                $bi_lead, $bi_coupon, $bi_ordertaker, $bi_billstatus, $bi_lastbill, $bi_nextbill, $bi_nextinvoicedue,
-                $bi_billdue, $bi_postalinvoice, $bi_faxinvoice, $bi_emailinvoice, $bi_creationdate, $bi_creationby,
-                $bi_updatedate, $bi_updateby
-            ) = $res->fetchRow();
+            list(
+                    $user_id, $bi_planname, $bi_contactperson, $bi_company, $bi_email, $bi_phone, $bi_address, $bi_city,
+                    $bi_state, $bi_country, $bi_zip, $bi_paymentmethod, $bi_cash, $bi_creditcardname, $bi_creditcardnumber,
+                    $bi_creditcardverification, $bi_creditcardtype, $bi_creditcardexp, $bi_notes, $bi_changeuserbillinfo,
+                    $bi_lead, $bi_coupon, $bi_ordertaker, $bi_billstatus, $bi_lastbill, $bi_nextbill, $bi_nextinvoicedue,
+                    $bi_billdue, $bi_postalinvoice, $bi_faxinvoice, $bi_emailinvoice, $bi_creationdate, $bi_creationby,
+                    $bi_updatedate, $bi_updateby
+                ) = $rows[0] ?? array_fill(0, 35, '');
 
+
+        } catch (Throwable $error) {
+            dalo_catalog_read_failure($error);
+            $username = ''; $username_enc = ''; $inline_extra_js = '';
+        } finally { $catalog_pdo = null; }
 
         // inline extra javascript
         $inline_extra_js = sprintf("var actionUsername = %s;\n", json_encode($username, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT));
@@ -297,7 +306,7 @@ function refillSessionTraffic() {
 ' . "\n";
     }
 
-    include('../common/includes/db_close.php');
+
 
     $hiddenPassword = (strtolower($configValues['CONFIG_IFACE_PASSWORD_HIDDEN']) == "yes")
                     ? 'password' : 'text';
@@ -326,7 +335,7 @@ function refillSessionTraffic() {
     include_once('include/management/actionMessages.php');
 
     $inline_extra_js = "";
-    if (!empty($username)) {
+    if ($username !== '') {
 
         // ajax return div
         echo '<div id="returnMessages"></div>';
@@ -482,9 +491,18 @@ EOF;
         $groupTerminology = "Profile";
         $groupTerminologyPriority = "ProfilePriority";
 
-        include('../common/includes/db_open.php');
-        include_once('include/management/groups.php');
-        include('../common/includes/db_close.php');
+        $dbSocket = null;
+        ob_start();
+        try {
+            $dbSocket = dalo_catalog_read_open($configValues);
+            include_once('include/management/groups.php');
+            ob_end_flush();
+        } catch (Throwable $error) {
+            ob_end_clean();
+            dalo_catalog_read_failure($error);
+            include('include/management/actionMessages.php');
+        } finally { $dbSocket = null; }
+
 
         close_tab($navkeys, 3);
 
