@@ -20,7 +20,8 @@ claim that historical counts are still current after each commit.
 | R07a–b | Implemented and validated, PEAR retained for other families | RES-161–RES-164 IP pool CRUD/list pages | [R07 report](residual-r07-ip-pools.md), 77 native comparisons, full lease-state parity, stale/late rollback, cross-pool invariance, actual concurrency/lock contention and selected/configured tables |
 | R08a–b | Implemented and validated, PEAR retained for other families | RES-157–RES-160 huntgroup CRUD/list pages | [R08 report](residual-r08-huntgroups.md), 35 native comparisons, pair/self-collision characterization, full-selection rollback, other-group invariance, port/capacity checks, actual concurrency/lock contention and selected/configured tables |
 | R09a–c | Implemented and validated, PEAR retained for other families | RES-110/120/135–138 hotspot CRUD/list, AJAX information and chart | [R09 report](residual-r09-hotspots.md), 55 native comparisons, full-selection rollback, billing/accounting invariance, stored contact/type verification, actual concurrency, producer ACL and selected/configured read backends |
-| R10–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
+| R10a–b | Implemented and validated, PEAR retained for other families | RES-050/051/052 GIS and heartbeat | [R10 report](residual-r10-gis-heartbeat.md), native PEAR/PDO state/markers/CPU, actual rollback and concurrency, special/large producer identities, bounded coordinates, sanitized debug and selected/default/configured backends; Leaflet API test explicitly synthetic |
+| R11–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
 | R28 | Pending | Helpers without proven callers and obsolete compatibility branches | Recheck function names, includes/callbacks, tests and known external usages before removing |
 | R29 | Blocked by remaining consumers | Legacy providers, PEAR DB package and installation paths | Remove only after a fresh tokenized inventory finds no active/indirect PEAR consumers |
 
@@ -46,6 +47,7 @@ claim that historical counts are still current after each commit.
 - [x] R07a–b: all four pool pages migrated; native PEAR/PDO parity, full-selection rollback, other-pool/lease invariance, configured capacity/readback, actual concurrency and legacy-open/close tripwires validated.
 - [x] R08a–b: all four huntgroup pages migrated; native PEAR/PDO CRUD/read parity, repaired self-collision, whole-selection rollback, other-group invariance, exact port/schema checks, actual concurrency and legacy-open/close tripwires validated.
 - [x] R09a–c: all six planned entry points migrated; native PEAR/PDO state/read parity, characterized legacy type/MAC/delete defects, full-selection rollback, retained relations, SELECT-only reads, actual concurrency and legacy-open/close tripwires validated.
+- [x] R10a–b: both GIS pages and heartbeat migrated; native PEAR/PDO parity, characterized baseline false successes, full rollback, unchanged relations/registration fields, CPU-percent/hostname contracts, actual contention, privacy and backend isolation validated.
 - [ ] Entire migration: refreshed residual inventory after all functional slices.
 - [ ] Entire migration: dependency removal, installer/Docker validation and transverse tests.
 - [ ] Entire migration: installed external legacy cron callers verified before deployment.
