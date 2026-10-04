@@ -70,6 +70,7 @@ claim that historical counts are still current after each commit.
 - [x] R19a–d: seven page-local paths migrated; native forms/rows/rank/pagination and ordinary CRUD/decimal/date parity established, exact identities and physical storage verified, full-selection deletion/ownership/error invariance plus actual contention passed; two actual sidebar producers repaired, independent R20 summaries retained and fixtures removed.
 - [x] R20a–d: all five shared files and twelve inventoried blocks migrated; complete context/recipient/template, native PDF/isolated SMTP/card parity and selected-location reads verified; callable invoice helper owns one transaction with exact storage, observed late rollback and two independent creators; summary failures/online unavailable, ACL/CSRF/read-only/borrowed tripwires and nine regressions passed; obsolete R16/R19 legacy/warning exemptions removed, fixtures cleaned.
 - [x] R21a–d: nine portal page-local consumers migrated; complete native forms/rows/CSV/context/PDF and userinfo state parity, stable tied pagination, session identity/CSRF/ownership, current permission recheck with observed blocking, late rollback/coercion/committed-display failures, configured/named/SELECT-only reads and eleven regression configurations verified; R22 portal widgets and R29 compatibility explicitly retained, fixtures removed.
+- [x] R22a–c: all five portal widget/provider files (eight inventoried blocks) and three actual graph producers migrated; 802 native PEAR/PDO HTML/JSON comparisons, distinct session/backend identity, bounded tables/capped graphs, complete tied pagination, SELECT-only reads, borrowed transaction preservation, native later errors, no-legacy tripwires and five regressions passed; explicit historical R14 PEAR fixture retained, R21 widget exemptions removed, CRLF and fixture cleanup verified.
 - [ ] Entire migration: refreshed residual inventory after all functional slices.
 - [ ] Entire migration: dependency removal, installer/Docker validation and transverse tests.
 - [ ] Entire migration: installed external legacy cron callers verified before deployment.
@@ -77,8 +78,8 @@ claim that historical counts are still current after each commit.
 
 R01a, R01b1, the R01b2 operator editor and R01c are complete here. The three user-portal message
 consumers use PDO following R21. The explicit message PEAR compatibility branch
-remains pending R29, while R22/other active PEAR consumers still prevent dependency
-removal. In particular,
+remains pending R29. R22 has migrated the independent user-portal widgets;
+other active PEAR consumers and compatibility still prevent dependency removal. In particular,
 permission-bootstrap migration does not
 mean every calling page is entirely PDO: its own remaining provider/reads must still
 be reviewed. Do not subtract historic block counts to invent a current remainder.

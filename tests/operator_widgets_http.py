@@ -53,6 +53,10 @@ def main():
             if version=='base':
                 for source in ['app/common/includes/chart.php', 'app/operators/home-main.php', 'app/operators/library/graphs/alltime_users_data.php', 'app/operators/library/graphs/logged_users.php', 'app/operators/library/graphs/new_users.php', 'app/operators/library/graphs/online_nas.php', 'app/operators/library/graphs/online_users.php', 'app/operators/library/graphs/overall_users_data.php', 'app/operators/library/graphs/total_users.php', 'app/operators/library/tables/alltime_users_login.php', 'app/operators/library/tables/overall_users_download.php', 'app/operators/library/tables/overall_users_login.php', 'app/operators/library/tables/overall_users_upload.php', 'app/operators/graphs-alltime_logins.php', 'app/operators/graphs-overall_logins.php', 'app/operators/graphs-overall_upload.php', 'app/operators/graphs-overall_download.php']:
                     (f/version/source).write_bytes(subprocess.check_output(['git','show',BASE+':'+source],cwd=ROOT))
+            # Pin the pre-R22 portal consumer in both copies to exercise the
+            # shared PEAR dispatch explicitly; production portal now uses PDO.
+            (f/version/'app/users/library/graphs/overall_users_data.php').write_bytes(
+                subprocess.check_output(['git','show', '41b2b0ee4c3a930aeb298adda53cad020a86ba46:app/users/library/graphs/overall_users_data.php'],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')
             for key,value in {'CONFIG_DB_HOST':h.DB,'CONFIG_DB_USER':'root','CONFIG_DB_PASS':'','CONFIG_DB_NAME':version,'CONFIG_IFACE_TABLES_LISTING':'2','CONFIG_DB_TBL_RADACCT':'custom_acct','CONFIG_DB_TBL_DALOHOTSPOTS':'custom_hs','CONFIG_DB_TBL_RADCHECK':'custom_check','CONFIG_DB_TBL_DALOUSERBILLINFO':'custom_bill','CONFIG_DB_TBL_DALOBILLINGPLANS':'custom_plans','CONFIG_DB_TBL_DALOUSERINFO':'custom_info','CONFIG_DB_TBL_RADREPLY':'custom_reply','CONFIG_DB_TBL_RADUSERGROUP':'custom_groups','CONFIG_DB_TBL_RADPOSTAUTH':'custom_postauth','CONFIG_DB_TBL_RADNAS':'custom_nas','CONFIG_DB_TBL_DALOBATCHHISTORY':'custom_batches','CONFIG_DB_TBL_DALONODE':'custom_node','CONFIG_DB_TBL_DALOPROXYS':'custom_proxy','CONFIG_DB_TBL_DALOREALMS':'custom_realms','CONFIG_DB_TBL_DALOBILLINGINVOICE':'custom_invoice','CONFIG_DB_TBL_DALOPAYMENTS':'custom_payments','CONFIG_IFACE_PASSWORD_HIDDEN':'yes','CONFIG_IFACE_DEBUG':'0'}.items():
                 conf+='\n$configValues['+repr(key)+']='+repr(value)+';\n'
@@ -246,13 +250,13 @@ def main():
             duplicate=int(db('SELECT MAX(id) FROM operators_acl'))
             assert req('library/graphs/overall_users_data.php',{'user':'Alice','category':'download'},session=denied)[0]==403
             db('DELETE FROM operators_acl WHERE id='+str(duplicate))
-            # Real remaining portal PEAR consumer of the shared chart function.
+            # Pinned pre-R22 portal consumer of the retained shared PEAR branch.
             portal=secrets.token_hex(16);run('docker','exec',h.WEB,'php','/fixtures/portal-session.php',portal)
             portal_outputs=[]
             for version in ('base','candidate'):
                 request=urllib.request.Request('http://'+ip+':8080/'+version+'/app/users/library/graphs/overall_users_data.php?category=upload&type=monthly',headers={'Cookie':'daloradius_user_sid='+portal})
                 with urllib.request.urlopen(request,timeout=15) as response:portal_outputs.append(json.loads(response.read()))
-            assert portal_outputs[0]==portal_outputs[1] and portal_outputs[1]['data']['labels'],'remaining PEAR portal compatibility'
+            assert portal_outputs[0]==portal_outputs[1] and portal_outputs[1]['data']['labels'],'pinned PEAR portal compatibility'
             # Direct extension/provider guards are still effective.
             for page in ['library/tables/'+Path(p).name for p in ['app/operators/library/tables/alltime_users_login.php', 'app/operators/library/tables/overall_users_download.php', 'app/operators/library/tables/overall_users_login.php', 'app/operators/library/tables/overall_users_upload.php']]+['library/widget_reads_pdo.php']:
                 assert req(page)[0] in (302,404),(page,'direct access guard')
@@ -307,7 +311,7 @@ def main():
             assert not bad,'Candidate PHP diagnostics (details suppressed)'
             assert 'SQLSTATE' not in logs
             print('PASS '+str(comparisons)+' pinned PEAR/PDO complete JSON/HTML comparisons: periods, categories, units, every table sort/pagination, capped and empty results, and all dashboard sections',flush=True)
-            print('PASS exact canvas/sort links, raw special identities, scalar/injection/ACL, configured/named reads, SELECT-only grants, retained portal PEAR dispatch, native later failures and no-legacy tripwires',flush=True)
+            print('PASS exact canvas/sort links, raw special identities, scalar/injection/ACL, configured/named reads, SELECT-only grants, pinned historical portal PEAR dispatch, native later failures and no-legacy tripwires',flush=True)
         finally:
             run('docker','rm','-f',h.WEB,h.DB,check=False);run('docker','network','rm',h.NETWORK,check=False)
             subprocess.run(['sudo','-n','chown','-R',str(os.getuid())+':'+str(os.getgid()),str(f)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)

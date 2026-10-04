@@ -30,83 +30,32 @@ if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
     exit;
 }
 
+require_once __DIR__ . '/../portal_widgets_pdo.php';
 $username = $_SESSION['login_user'];
-$username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
-             in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
-          ? strtolower($_GET['type']) : "daily";
-
-$size = (array_key_exists('size', $_GET) && isset($_GET['size']) &&
-         in_array(strtolower($_GET['size']), array( "gigabytes", "megabytes" )))
-      ? strtolower($_GET['size']) : "megabytes";
-
-// whenever possible we use a whitelist approach
-$orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-              in_array($_GET['orderType'], array( "desc", "asc" )))
-           ? $_GET['orderType'] : "asc";
-
-// used for presentation purpose
-$label_param = array();
-$label_param['day'] = "Day of month";
-$label_param['month'] = "Month of year";
-$label_param['year'] = "Year";
-
-$size_division = array("gigabytes" => 1073741824, "megabytes" => 1048576);
-$short_size = array("gigabytes" => "GBs", "megabytes" => "MBs");
-
-
-include('../common/includes/db_open.php');
-include('include/management/pages_common.php');
-
-
-switch ($type) {
-    case "yearly":
-        $selected_param = "year";
-        $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                    in_array(strtolower($_GET['orderBy']), array( "downloads", "year" )))
-                 ? strtolower($_GET['orderBy']) : "downloads";
-
-        $sql = "SELECT YEAR(AcctStartTime) AS year, SUM(AcctOutputOctets) AS downloads
-                  FROM %s
-                 WHERE username='%s' AND AcctStopTime>0
-                 GROUP BY year";
-        break;
-
-    case "monthly":
-        $selected_param = "month";
-        $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                    in_array(strtolower($_GET['orderBy']), array( "downloads", "month" )))
-                 ? strtolower($_GET['orderBy']) : "downloads";
-
-        $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
-                       SUM(AcctOutputOctets) AS downloads,
-                       CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
-                  FROM %s WHERE username='%s' AND AcctStopTime>0
-                 GROUP BY month";
-
-        break;
-
-    default:
-    case "daily":
-        $selected_param = "day";
-        $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                    in_array(strtolower($_GET['orderBy']), array( "downloads", "day" )))
-                 ? strtolower($_GET['orderBy']) : "downloads";
-
-        $sql = "SELECT DATE(AcctStartTime) AS day, SUM(AcctOutputOctets) AS downloads
-                  FROM %s
-                 WHERE username='%s' AND AcctStopTime>0
-                 GROUP BY day";
-        break;
-}
-
-$sql = sprintf($sql . " ORDER BY %s %s", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                         $dbSocket->escapeSimple($username), $orderBy, $orderType);
-
-$res = $dbSocket->query($sql);
-
-$numrows = $res->numRows();
+$username_enc = htmlspecialchars((string) $username, ENT_QUOTES, 'UTF-8');
+$type = dalo_portal_widget_choice($_GET, 'type', array('daily', 'monthly', 'yearly'), 'daily');
+$size = dalo_portal_widget_choice($_GET, 'size', array('gigabytes', 'megabytes'), 'megabytes');
+$orderType = dalo_portal_widget_choice($_GET, 'orderType', array('desc', 'asc'), 'asc', false);
+$selected_param = array('daily' => 'day', 'monthly' => 'month', 'yearly' => 'year')[$type];
+$orderBy = dalo_portal_widget_choice($_GET, 'orderBy', array('downloads', $selected_param), 'downloads');
+$label_param = array('day' => 'Day of month', 'month' => 'Month of year', 'year' => 'Year');
+$size_division = array('gigabytes' => 1073741824, 'megabytes' => 1048576);
+$short_size = array('gigabytes' => 'GBs', 'megabytes' => 'MBs');
+include_once('include/management/pages_common.php');
+$widgetPdo = null;
+$numrows = 0;
+try {
+    $widgetPdo = dalo_portal_handle($configValues);
+    $allRows = dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'download', $type, $orderBy, $orderType);
+    $numrows = count($allRows);
+    include_once('include/management/pages_numbering.php');
+    $total_data = 0;
+    foreach ($allRows as $row) { $total_data += intval($row[1]); }
+    $pageRows = $numrows ? dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'download', $type, $orderBy, $orderType, (int) $offset, (int) $rowsPerPage) : array();
+} catch (Throwable $exception) {
+    $numrows = 0;
+    $failureMsg = 'Portal statistics unavailable';
+} finally { $widgetPdo = null; }
 
 if ($numrows > 0) {
     // $cols is needed only if $numwrows > 0
@@ -117,38 +66,17 @@ if ($numrows > 0) {
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
 
-    /* START - Related to pages_numbering.php */
-
-    // when $numrows is set, $maxPage is calculated inside this include file
-    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                          // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-    // here we decide if page numbers should be shown
-    $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-
-    /* END */
-
-
-    $total_data = 0;
-    while ($row = $res->fetchRow()) {
-        $total_data += intval($row[1]);
-    }
-
+    $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+    $per_page_numrows = count($pageRows);
     $total_data = number_format(floatval($total_data / $size_division[$size]), 1, ".", "");
-
-    $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL = "$sql;\n";
-
-    $per_page_numrows = $res->numRows();
 
     // the partial query is built starting from user input
     // and for being passed to setupNumbering and setupLinks functions
     $partial_query_string = sprintf("&type=%s&size=%s&goto_stats=true", $type, $size);
 
     echo '<div class="my-3 text-center">';
-    printf("<h4>%s of traffic in download %s produced by user %s</h4>", $size, $type, $username);
-    
+    printf("<h4>%s of traffic in download %s produced by user %s</h4>", $size, $type, $username_enc);
+
     $descriptors = array();
 
     $params = array(
@@ -168,12 +96,12 @@ if ($numrows > 0) {
 
     // second line of table header
     printTableHead($cols, $orderBy, $orderType, $partial_query_string);
-    
+
     // closes table header, opens table body
     print_table_middle();
 
     $per_page_data = 0;
-    while ($row = $res->fetchRow()) {
+    foreach ($pageRows as $row) {
         $data = intval($row[1]);
         $per_page_data += $data;
 
@@ -201,12 +129,12 @@ if ($numrows > 0) {
     // get and print "links"
     $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
     printLinks($links, $drawNumberLinks);
-    
+
     echo '</div>';
 
 } else {
     // $numrows <= 0
-    $failureMsg = "No download(s) found";
+    $failureMsg = $failureMsg ?? "No download(s) found";
 }
 
 
@@ -215,6 +143,6 @@ if (!empty($failureMsg)) {
     include_once("include/management/actionMessages.php");
 }
 
-include('../common/includes/db_close.php');
+
 
 ?>
