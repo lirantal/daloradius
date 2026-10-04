@@ -31,14 +31,18 @@ if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
     exit;
 }
 
+require_once __DIR__.'/../widget_reads_pdo.php';
+dalo_widget_inputs();
+$widgetPDO=null;$res=array();
+try {
 // validating type and username
 $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
          in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
       ? strtolower($_GET['type']) : "daily";
 
 $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-          ? str_replace('%', '', $_GET['username']) : "";
-$username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+          ? $_GET['username'] : "";
+$username_enc = ($username !== '') ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
 // whenever possible we use a whitelist approach
 $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
@@ -54,14 +58,14 @@ $label_param['month'] = "Month of year";
 $label_param['year'] = "Year";
 
 
-include('../common/includes/db_open.php');
+$widgetPDO=dalo_widget_open();
 include('include/management/pages_common.php');
 
-if (!empty($username)) {
-    $sql = sprintf("SELECT DISTINCT(username) FROM %s WHERE username='%s'",
-                   $configValues['CONFIG_DB_TBL_RADACCT'], $dbSocket->escapeSimple($username));
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+if ($username !== '') {
+    $sql = sprintf("SELECT DISTINCT(username) FROM %s WHERE username=:widget_username",
+                   dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'));
+    $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
+    $numrows = count($res);
 
     $is_valid = $numrows == 1;
 }
@@ -75,7 +79,7 @@ if ($is_valid) {
                      ? strtolower($_GET['orderBy']) : "year";
 
             $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(AcctStartTime) AS logins
-                      FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY year";
+                      FROM %s WHERE username=:widget_username AND AcctStopTime>0 GROUP BY year";
             break;
 
         case "monthly":
@@ -87,7 +91,7 @@ if ($is_valid) {
             $sql = "SELECT CONCAT(MONTHNAME(AcctStartTime), ' (', YEAR(AcctStartTime), ')'),
                            COUNT(AcctStartTime) AS logins,
                            CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
-                      FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY month";
+                      FROM %s WHERE username=:widget_username AND AcctStopTime>0 GROUP BY month";
             break;
 
         default:
@@ -97,16 +101,16 @@ if ($is_valid) {
                         in_array(strtolower($_GET['orderBy']), array( "logins", "day" )))
                      ? strtolower($_GET['orderBy']) : "day";
             $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(AcctStartTime) AS logins
-                      FROM %s WHERE username='%s' AND AcctStopTime>0
+                      FROM %s WHERE username=:widget_username AND AcctStopTime>0
                      GROUP BY day";
             break;
     }
 
-    $sql = sprintf($sql . " ORDER BY %s %s", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                             $dbSocket->escapeSimple($username), $orderBy, $orderType);
-    $res = $dbSocket->query($sql);
+    $sql = sprintf($sql . " ORDER BY %s %s", dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'),
+                                             $orderBy, $orderType);
+    $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
 
-    $numrows = $res->numRows();
+    $numrows = count($res);
 
     if ($numrows > 0) {
         // $cols is needed only if $numwrows > 0
@@ -120,7 +124,7 @@ if ($is_valid) {
         /* START - Related to pages_numbering.php */
 
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+        include('include/management/pages_numbering.php');    // must follow configuration initialization because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
         // here we decide if page numbers should be shown
@@ -130,19 +134,19 @@ if ($is_valid) {
 
 
         $total_data = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($res as $row) {
             $total_data += intval($row[1]);
         }
 
-        $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
+        $sql .= sprintf(" LIMIT %s, %s", (int)$offset, (int)$rowsPerPage);
+        $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
         $logDebugSQL = "$sql;\n";
 
-        $per_page_numrows = $res->numRows();
+        $per_page_numrows = count($res);
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = sprintf("&type=%s&username=%s&goto_stats=true", $type, $username_enc);
+        $partial_query_string = sprintf("&type=%s&username=%s&goto_stats=true", $type, urlencode($username));
 
         echo '<div class="my-3 text-center">';
         printf('<h4>%s login/hit statistics for user <em>%s</em></h4>', ucfirst($type), $username_enc);
@@ -172,11 +176,11 @@ if ($is_valid) {
 
         // table content
         $per_page_data = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($res as $row) {
             $data = intval($row[1]);
 
             echo "<tr>"
-               . "<td>" . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . "</td>"
+               . "<td>" . htmlspecialchars((string)($row[0] ?? ''), ENT_QUOTES, 'UTF-8') . "</td>"
                . "<td>" . $data . "</td>"
                . "</tr>";
             $per_page_data += $data;
@@ -215,6 +219,10 @@ if (!empty($failureMsg)) {
     include_once("include/management/actionMessages.php");
 }
 
-include('../common/includes/db_close.php');
+} catch (Throwable $exception) {
+    dalo_widget_failure($exception);
+    include $configValues['OPERATORS_INCLUDE_MANAGEMENT'].'/actionMessages.php';
+}
+unset($widgetPDO,$res);
 
 ?>

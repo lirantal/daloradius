@@ -4,10 +4,18 @@ include implode(DIRECTORY_SEPARATOR, array($configValues['OPERATORS_LIBRARY'], '
 include_once implode(DIRECTORY_SEPARATOR, array($configValues['OPERATORS_LANG'], 'main.php'));
 include implode(DIRECTORY_SEPARATOR, array($configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php'));
 include implode(DIRECTORY_SEPARATOR, array($configValues['COMMON_INCLUDES'], 'chart.php'));
-include implode(DIRECTORY_SEPARATOR, array($configValues['COMMON_INCLUDES'], 'db_open.php'));
+require_once __DIR__.'/../widget_reads_pdo.php';
+dalo_widget_inputs(true);
+try {
+$widgetPDO=dalo_widget_open();
+dalo_widget_authorize($widgetPDO,array('mng-main','mng-users'));
 
-$values = array(count_users($dbSocket));
-include implode(DIRECTORY_SEPARATOR, array($configValues['COMMON_INCLUDES'], 'db_close.php'));
+$checkTable=dalo_widget_table($configValues,'CONFIG_DB_TBL_RADCHECK');
+$infoTable=dalo_widget_table($configValues,'CONFIG_DB_TBL_DALOUSERINFO');
+$countRows=dalo_widget_rows($widgetPDO,"SELECT COUNT(DISTINCT ui.username) FROM $checkTable AS rc,$infoTable AS ui WHERE ui.username=rc.username AND (rc.attribute='Auth-Type' OR rc.attribute LIKE '%-Password')");
+$values=array((int)$countRows[0][0]);
+unset($widgetPDO);
+} catch (Throwable $exception) {dalo_widget_failure($exception,true);}
 
 $dataset = array(
     'label' => strtolower(t('all', 'Users')),
