@@ -29,7 +29,7 @@
     include_once('../common/includes/config_read.php');
 
     include_once("lang/main.php");
-    include("../common/includes/validation.php");
+    include_once("../common/includes/validation.php");
     include("../common/includes/layout.php");
     
     $username = $login_user;
@@ -63,11 +63,11 @@
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
     
-    $orderBy = (array_key_exists('orderBy', $_GET) && !empty($_GET['orderBy']) &&
+    $orderBy = (array_key_exists('orderBy', $_GET) && is_string($_GET['orderBy']) && !empty($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($cols)))
              ? $_GET['orderBy'] : array_keys($cols)[0];
 
-    $orderType = (array_key_exists('orderType', $_GET) && !empty($_GET['orderType']) &&
+    $orderType = (array_key_exists('orderType', $_GET) && is_string($_GET['orderType']) && !empty($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array("asc", "desc")))
                ? strtolower($_GET['orderType']) : "asc";
     
@@ -83,34 +83,17 @@
 
     print_title_and_help($title, $help);
 
-    // we can only use the $dbSocket after we have included '../common/includes/db_open.php' which initialzes the connection and the $dbSocket object
-    include('../common/includes/db_open.php');
+    require_once __DIR__ . '/library/portal_pages_pdo.php';
     include('include/management/pages_common.php');
-
-    $sql_WHERE = array();
+    $portalPdo = null;
+    try {
+    $portalPdo = dalo_portal_handle($configValues);
+    list($sql, $portalParams) = dalo_portal_report_query('acct-date', $login_user, $configValues, array('startdate' => $startdate, 'enddate' => $enddate));
+    $numrows = dalo_portal_report_count($portalPdo, $sql, $portalParams, 'acct-date');
     $partial_query_params = array();
-
-    if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("AcctStartTime > '%s'", $dbSocket->escapeSimple($startdate));
-        $partial_query_params[] = sprintf("startdate=%s", $startdate);
-    }
-
-    if (!empty($enddate)) {
-        $sql_WHERE[] = sprintf("AcctStartTime < '%s'", $dbSocket->escapeSimple($enddate));
-        $partial_query_params[] = sprintf("enddate=%s", $enddate);
-    }
-    
-    $sql_WHERE[] = sprintf("username='%s'", $dbSocket->escapeSimple($username));
-    $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
-
-    $sql = sprintf("SELECT COUNT(radacctid) FROM %s", $configValues['CONFIG_DB_TBL_RADACCT']);
-    if (count($sql_WHERE) > 0) {
-        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-    }
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    $numrows = $res->fetchrow()[0];
+    if ($startdate !== '') { $partial_query_params[] = 'startdate=' . rawurlencode($startdate); }
+    if ($enddate !== '') { $partial_query_params[] = 'enddate=' . rawurlencode($enddate); }
+    $partial_query_params[] = 'username=' . rawurlencode($login_user);
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
@@ -122,26 +105,15 @@
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
         
-        $sql = sprintf("SELECT ra.RadAcctId, dhs.name AS hotspot, ra.NASIPAddress, ra.FramedIPAddress,
-                               ra.AcctStartTime, ra.AcctStopTime, ra.AcctSessionTime, ra.AcctInputOctets,
-                               ra.AcctOutputOctets, ra.AcctTerminateCause
-                          FROM %s AS ra LEFT JOIN %s AS dhs ON ra.calledstationid=dhs.mac",
-                       $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-        if (count($sql_WHERE) > 0) {
-            $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-        }
-
         // The exporter builds its own user-scoped, unpaginated PDO query.
+        $portalRows = dalo_portal_report_rows($portalPdo, $sql, $portalParams, 'acct-date',
+            $orderBy, $orderType, $offset, $rowsPerPage);
+        $per_page_numrows = count($portalRows);
         $_SESSION['userReportExport'] = array(
             'source' => 'acct-date',
             'filters' => array('startdate' => $startdate, 'enddate' => $enddate),
         );
-        
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
+
 
         $partial_query_string = (count($partial_query_params) > 0)
                               ? ("&" . implode("&", $partial_query_params)) : "";
@@ -175,12 +147,12 @@
         // table content
         $count = 0;
         
-        while ($row = $res->fetchRow()) {                
+        foreach ($portalRows as $row) {
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string) ($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
             }
             
             list($radAcctId, $hotspot, $nasIPAddress, $framedIPAddress, $acctStartTime, $acctStopTime,
@@ -231,7 +203,12 @@
 
     include_once("include/management/actionMessages.php");
 
-    include('../common/includes/db_close.php');
+    } catch (Throwable $exception) {
+        unset($_SESSION['userReportExport']);
+        $failureMsg = 'Report unavailable';
+        include('include/management/actionMessages.php');
+    } finally { $portalPdo = null; }
+
     
     include('include/config/logging.php');
     print_footer_and_html_epilogue();
