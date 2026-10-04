@@ -103,6 +103,10 @@ def main():
                             names={'Alice':'Alice Customer','Bob':'Bob Customer','0':'Zero Customer'};ordered=[names[x.removesuffix(' Edit User')] for x in keys];assert ordered==sorted(ordered,reverse=q['orderType']=='desc')
                         else:
                             ids={'open':1,'disputed':2,'draft':3,'sent':4,'paid':5,'partial':6};ordered=[ids[x] for x in keys];assert ordered==sorted(ordered,reverse=q['orderType']=='desc')
+                        # Tied SQL rows may reorder; checkbox identities follow those rows.
+                        # Keep the rank check above and compare the complete checkbox multiset.
+                        checkboxes=[c for c in controls if c[0]=='input' and c[1]=='invoice_id[]' and c[2]=='checkbox']
+                        controls=[c for c in controls if c not in checkboxes]+sorted(checkboxes)
                         projection=(sorted(projection[0]),projection[1])
                     data.append((projection,controls))
                 assert data[0]==data[1],(page,'complete row/control mismatch',q,data)
