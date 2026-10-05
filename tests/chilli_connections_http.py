@@ -104,7 +104,9 @@ def main():
         fixture=Path(directory)
         for family in FAMILIES:
             target=fixture/'contrib/chilli'/family/'library';target.mkdir(parents=True)
-            for name in ('opendb.php','closedb.php','config_read.php','errorHandling.php'):
+            names=('opendb.php','closedb.php','config_read.php')
+            if BASELINE: names+=('errorHandling.php',)
+            for name in names:
                 source='contrib/chilli/'+family+'/library/'+name
                 content=run('git','show',BASE+':'+source) if BASELINE else (ROOT/source).read_text()
                 (target/name).write_text(content+'\n')
