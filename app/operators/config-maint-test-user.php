@@ -35,6 +35,20 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY_EXTENSIONS'], 'maintenance_radclient.php' ]);
 
 
+    // These form controls are scalar; reject arrays before string operations.
+    $invalidControls = false;
+    foreach (array('username', 'nas_id', 'packetType', 'customAttributes', 'port',
+                   'debug', 'timeout', 'retries', 'count', 'requests', 'simulate',
+                   'dictionary', 'radius_addr', 'radius_port', 'secret', 'password',
+                   'password1', 'password2', 'csrf_token') as $control) {
+        foreach (array('_GET', '_POST', '_REQUEST') as $source) {
+            if (isset(${$source}[$control]) && !is_string(${$source}[$control])) {
+                $invalidControls = true;
+                unset(${$source}[$control]);
+            }
+        }
+    }
+
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
@@ -91,11 +105,25 @@
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            if (!$invalidControls && array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+                require_once $configValues['COMMON_INCLUDES'] . '/pdo_connection.php';
+                $userPdo = null;
+                $userExists = false;
+                $userReadFailed = false;
+                try {
+                    $userPdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                    $userExists = user_exists($userPdo, $username);
+                } catch (Throwable $exception) {
+                    $userReadFailed = true;
+                    error_log('Maintenance user lookup: ' . get_class($exception));
+                } finally {
+                    $userPdo = null;
+                }
 
-                if (!user_exists($dbSocket, $username)) {
+                if ($userReadFailed) {
+                    $failureMsg = 'Unable to check the user';
+                } elseif (!$userExists) {
                     // required
                     $failureMsg = "This user does not exist";
                 } else {
@@ -190,7 +218,6 @@
                     }
                 }
 
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
             } else {
                 // csrf

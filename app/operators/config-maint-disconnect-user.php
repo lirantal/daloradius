@@ -32,6 +32,20 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY_EXTENSIONS'], 'maintenance_radclient.php' ]);
 
+    // These form controls are scalar; reject arrays before string operations.
+    $invalidControls = false;
+    foreach (array('username', 'nas_id', 'packetType', 'customAttributes', 'port',
+                   'debug', 'timeout', 'retries', 'count', 'requests', 'simulate',
+                   'dictionary', 'radius_addr', 'radius_port', 'secret', 'password',
+                   'password1', 'password2', 'csrf_token') as $control) {
+        foreach (array('_GET', '_POST', '_REQUEST') as $source) {
+            if (isset(${$source}[$control]) && !is_string(${$source}[$control])) {
+                $invalidControls = true;
+                unset(${$source}[$control]);
+            }
+        }
+    }
+
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
@@ -42,28 +56,36 @@
                                     "coa" => 'CoA - Change of Authorization'
                               );
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-    $sql = sprintf("SELECT DISTINCT(nasname), shortname, CONCAT('nas-', id) FROM %s ORDER BY nasname ASC",
-                   $configValues['CONFIG_DB_TBL_RADNAS']);
-    $res = $dbSocket->query($sql);
-
+    require_once $configValues['COMMON_INCLUDES'] . '/pdo_connection.php';
+    require_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/read_helpers_pdo.php';
     $valid_nas_ids = array();
-    while ($row = $res->fetchRow()) {
-        list($nasname, $shortname, $nas_id) = $row;
-        $shortname = trim($shortname);
-        $valid_nas_ids[$nas_id] = ($shortname !== "") ? sprintf("%s (%s)", $shortname, $nasname) : $nasname;
+    $nasReadFailed = false;
+    $nasPdo = null;
+    try {
+        $nasPdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $table = dalo_read_table($nasPdo, $configValues, 'CONFIG_DB_TBL_RADNAS');
+        $sql = "SELECT DISTINCT(nasname), shortname, CONCAT('nas-', id) FROM $table ORDER BY nasname ASC";
+        $nasRows = dalo_read_statement($nasPdo, $sql)->fetchAll(PDO::FETCH_NUM);
+        foreach ($nasRows as $row) {
+            list($nasname, $shortname, $nas_id) = $row;
+            $shortname = trim((string)$shortname);
+            $valid_nas_ids[$nas_id] = ($shortname !== "") ? sprintf("%s (%s)", $shortname, $nasname) : $nasname;
+        }
+    } catch (Throwable $exception) {
+        $nasReadFailed = true;
+        $failureMsg = 'Unable to read NAS configuration';
+        error_log('Disconnect NAS selector: ' . get_class($exception));
+    } finally {
+        $nasPdo = null;
     }
-
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     $radclient_path = RadClient::is_radclient_present();
 
-    if ($radclient_path !== false) {
+    if (!$nasReadFailed && $radclient_path !== false) {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            if (!$invalidControls && array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
                 $required_fields = array();
 
                 $username = (isset($_POST['username']) && !empty(trim($_POST['username']))) ? trim($_POST['username']) : "";
@@ -159,7 +181,7 @@
                               ? normalize_custom_attributes($_GET['customAttributes']) : "";
         }
 
-    } else {
+    } elseif (!$nasReadFailed) {
         $failureMsg = "Cannot perform disconnect action [radclient binary not found on the system]";
         $logAction .= "$failureMsg on page: ";
     }

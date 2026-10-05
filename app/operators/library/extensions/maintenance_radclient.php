@@ -231,15 +231,21 @@ class RadClient {
     private function get_nas($nas_id) {
         global $configValues;
 
-        include implode(DIRECTORY_SEPARATOR, [$configValues['COMMON_INCLUDES'], 'db_open.php']);
-
-        $sql      = sprintf("SELECT DISTINCT(`nasname`), `secret` FROM `%s` WHERE `id`=?",
-                            $configValues['CONFIG_DB_TBL_RADNAS']);
-        $prepared = $dbSocket->prepare($sql);
-        $res      = $dbSocket->execute($prepared, $nas_id);
-        $row      = $res->fetchRow();
-
-        include implode(DIRECTORY_SEPARATOR, [$configValues['COMMON_INCLUDES'], 'db_close.php']);
+        require_once $configValues['COMMON_INCLUDES'] . '/pdo_connection.php';
+        require_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/read_helpers_pdo.php';
+        $nasPdo = null;
+        try {
+            $nasPdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+            $table = dalo_read_table($nasPdo, $configValues, 'CONFIG_DB_TBL_RADNAS');
+            $row = dalo_read_statement($nasPdo,
+                "SELECT DISTINCT(nasname), secret FROM $table WHERE id=?", array($nas_id))
+                ->fetch(PDO::FETCH_NUM);
+        } catch (Throwable $exception) {
+            error_log('RadClient NAS lookup: ' . get_class($exception));
+            throw new RuntimeException('Unable to read NAS configuration');
+        } finally {
+            $nasPdo = null;
+        }
 
         return $row ? array($row[0], $row[1]) : null;
     }
