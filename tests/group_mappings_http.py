@@ -30,7 +30,6 @@ include_once '../common/includes/config_read.php';
 include_once 'lang/main.php';
 include_once '../common/includes/validation.php';
 require_once '../common/includes/pdo_connection.php';
-include_once 'include/management/functions.php';
 header('Content-Type: application/json');
 $logDebugSQL=''; $socket=null; $legacy=false;
 try {
@@ -38,6 +37,7 @@ try {
     if (!is_array($data) || !is_string($data['csrf_token'] ?? null) ||
         !dalo_check_csrf_token($data['csrf_token'])) { throw new RuntimeException('Invalid request'); }
     $legacy=__BASELINE__ || ($data['mode'] ?? '') === 'legacy';
+    include_once ($legacy ? 'include/management/functions-legacy.php' : 'include/management/functions.php');
     if ($legacy) {
         $db_error_handler=static function($error) {}; // Redact legacy driver error output only.
         include '../common/includes/db_open.php'; $socket=$dbSocket;
@@ -107,9 +107,13 @@ def main():
     first = 'u37-check-' + secrets.token_hex(4); second = 'u37-reply-' + secrets.token_hex(4)
     disabled = 'daloRADIUS-Disabled-Users'
     with tempfile.TemporaryDirectory(prefix='dalo-group-mappings-', dir=scratch) as directory:
-        fixture = Path(directory); shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True)
+        fixture = Path(directory); shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True, ignore=shutil.ignore_patterns('daloradius.conf.php'))
         # R05 migrated the live page; pin its previous PEAR producer for compatibility coverage.
         legacy_page = run('git', 'show', 'fb33d38a505bf8d3a1cfcd3d987b3f67d939932b:app/operators/mng-rad-usergroup-new.php')
+        # R28 removes obsolete PEAR dispatch; historical requests use a pinned helper.
+        legacy_functions = run('git', 'show', (BASE_COMMIT if BASELINE else '2753c9d1c2fb922e64cf978d889f49626042c25b') + ':app/operators/include/management/functions.php')
+        (fixture / 'app/operators/include/management/functions-legacy.php').write_text(legacy_functions + '\n')
+        legacy_page = legacy_page.replace("'functions.php'", "'functions-legacy.php'")
         (fixture / 'app/operators/mng-rad-usergroup-new.php').write_text(legacy_page + '\n')
         if BASELINE:
             old = run('git', 'show', BASE_COMMIT + ':app/operators/include/management/functions.php')

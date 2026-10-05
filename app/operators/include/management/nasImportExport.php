@@ -14,74 +14,44 @@ const NAS_BACKUP_BINARY_VERSION = 2;
 const NAS_BACKUP_MAX_BYTES = 2097152;
 const NAS_BACKUP_MAX_ENTRIES = 5000;
 
-function nas_backup_lock_name($dbSocket, $table) {
-    if ($dbSocket instanceof PDO) {
-        try {
-            $database = $dbSocket->query('SELECT DATABASE()')->fetchColumn();
-        } catch (Throwable $exception) {
-            return false;
-        }
-        return is_string($database) && $database !== ''
-            ? 'daloradius:nas:' . substr(hash('sha256', $database . "\0" . $table), 0, 48)
-            : false;
-    }
-    $database = $dbSocket->getOne('SELECT DATABASE()');
-    if (DB::isError($database) || !is_string($database) || $database === '') {
+function nas_backup_lock_name(PDO $dbSocket, $table) {
+    try {
+        $database = $dbSocket->query('SELECT DATABASE()')->fetchColumn();
+    } catch (Throwable $exception) {
         return false;
     }
-
-    return 'daloradius:nas:' . substr(hash('sha256', $database . "\0" . $table), 0, 48);
+    return is_string($database) && $database !== ''
+        ? 'daloradius:nas:' . substr(hash('sha256', $database . "\0" . $table), 0, 48)
+        : false;
 }
 
-function nas_backup_acquire_lock($dbSocket, $table, $timeout) {
+function nas_backup_acquire_lock(PDO $dbSocket, $table, $timeout) {
     $lockName = nas_backup_lock_name($dbSocket, $table);
     if ($lockName === false) {
         return array('name' => '', 'acquired' => false, 'error' => true);
     }
-    if ($dbSocket instanceof PDO) {
-        try {
-            $stmt = $dbSocket->prepare('SELECT GET_LOCK(?, ?)');
-            $stmt->execute(array($lockName, max(0, (int)$timeout)));
-            $result = $stmt->fetchColumn();
-            return array('name' => $lockName, 'acquired' => (int)$result === 1,
-                         'error' => $result === null || $result === false);
-        } catch (Throwable $exception) {
-            return array('name' => $lockName, 'acquired' => false, 'error' => true);
-        }
+    try {
+        $stmt = $dbSocket->prepare('SELECT GET_LOCK(?, ?)');
+        $stmt->execute(array($lockName, max(0, (int)$timeout)));
+        $result = $stmt->fetchColumn();
+        return array('name' => $lockName, 'acquired' => (int)$result === 1,
+                     'error' => $result === null || $result === false);
+    } catch (Throwable $exception) {
+        return array('name' => $lockName, 'acquired' => false, 'error' => true);
     }
-
-    $result = $dbSocket->getOne(sprintf(
-        "SELECT GET_LOCK('%s', %d)",
-        $dbSocket->escapeSimple($lockName),
-        max(0, intval($timeout))
-    ));
-
-    return array(
-        'name' => $lockName,
-        'acquired' => !DB::isError($result) && intval($result) === 1,
-        'error' => DB::isError($result),
-    );
 }
 
-function nas_backup_release_lock($dbSocket, $lockName) {
+function nas_backup_release_lock(PDO $dbSocket, $lockName) {
     if (!is_string($lockName) || $lockName === '') {
         return false;
     }
-    if ($dbSocket instanceof PDO) {
-        try {
-            $stmt = $dbSocket->prepare('SELECT RELEASE_LOCK(?)');
-            $stmt->execute(array($lockName));
-            return (int)$stmt->fetchColumn() === 1;
-        } catch (Throwable $exception) {
-            return false;
-        }
+    try {
+        $stmt = $dbSocket->prepare('SELECT RELEASE_LOCK(?)');
+        $stmt->execute(array($lockName));
+        return (int)$stmt->fetchColumn() === 1;
+    } catch (Throwable $exception) {
+        return false;
     }
-
-    $result = $dbSocket->getOne(sprintf(
-        "SELECT RELEASE_LOCK('%s')",
-        $dbSocket->escapeSimple($lockName)
-    ));
-    return !DB::isError($result) && intval($result) === 1;
 }
 
 function nas_backup_is_valid_utf8($value) {
@@ -314,19 +284,6 @@ function nas_backup_parse_document($contents) {
 }
 
 function nas_import_is_duplicate_error($error) {
-    if ($error instanceof PDOException) {
-        return $error->getCode() === '23000' && (int)($error->errorInfo[1] ?? 0) === 1062;
-    }
-    if (!DB::isError($error)) {
-        return false;
-    }
-
-    $details = $error->getMessage();
-    foreach (array('getUserInfo', 'getDebugInfo') as $method) {
-        if (method_exists($error, $method)) {
-            $details .= ' ' . $error->{$method}();
-        }
-    }
-
-    return preg_match('/(?:nativecode[=:\\s]*1062|duplicate entry|duplicate key|unique constraint)/i', $details) === 1;
+    return $error instanceof PDOException && $error->getCode() === '23000'
+        && (int)($error->errorInfo[1] ?? 0) === 1062;
 }

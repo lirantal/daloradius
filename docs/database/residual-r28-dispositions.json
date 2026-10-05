@@ -1,0 +1,323 @@
+{
+  "lot": "R28",
+  "baseline": "2753c9d1c2fb922e64cf978d889f49626042c25b",
+  "inventory_entries": 35,
+  "scope_note": "Original lot entries, not a whole-repository live-consumer count. Repository tracing cannot rule out custom/external callers.",
+  "entries": [
+    {
+      "id": "RES-058",
+      "file": "app/operators/include/management/functions.php",
+      "function": "add_invoice_items",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-060",
+      "file": "app/operators/include/management/functions.php",
+      "function": "delete_user_group_mappings",
+      "disposition": "retained-pdo-contract-removed-pear-branch",
+      "evidence": "PDO callers and/or native fixtures preserved; PEAR fixtures use pinned provider paths. No production caller of mapping wrappers was found, but tested contracts are retained.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-066",
+      "file": "app/operators/include/management/functions.php",
+      "function": "insert_multiple_plan_group_mappings",
+      "disposition": "retained-pdo-contract-removed-pear-branch",
+      "evidence": "PDO callers and/or native fixtures preserved; PEAR fixtures use pinned provider paths. No production caller of mapping wrappers was found, but tested contracts are retained.",
+      "production_callers": "",
+      "test_references": "tests/group_mappings_http.py:59 [reference/template]"
+    },
+    {
+      "id": "RES-072",
+      "file": "app/operators/include/management/functions.php",
+      "function": "update_user_group_mapping_priority",
+      "disposition": "retained-pdo-contract-removed-pear-branch",
+      "evidence": "PDO callers and/or native fixtures preserved; PEAR fixtures use pinned provider paths. No production caller of mapping wrappers was found, but tested contracts are retained.",
+      "production_callers": "",
+      "test_references": "tests/group_mappings_http.py:61 [reference/template]"
+    },
+    {
+      "id": "RES-076",
+      "file": "app/operators/include/management/nasImportExport.php",
+      "function": "nas_backup_acquire_lock",
+      "disposition": "retained-pdo-contract-removed-pear-branch",
+      "evidence": "PDO callers and/or native fixtures preserved; PEAR fixtures use pinned provider paths. No production caller of mapping wrappers was found, but tested contracts are retained.",
+      "production_callers": "app/operators/mng-rad-nas-import.php:146::nas_import_apply [function-call/unique-symbol]; app/operators/include/management/nasManagementPdo.php:68::nas_management_lock [function-call/unique-symbol]",
+      "test_references": ""
+    },
+    {
+      "id": "RES-077",
+      "file": "app/operators/include/management/nasImportExport.php",
+      "function": "nas_backup_lock_name",
+      "disposition": "retained-pdo-contract-removed-pear-branch",
+      "evidence": "PDO callers and/or native fixtures preserved; PEAR fixtures use pinned provider paths. No production caller of mapping wrappers was found, but tested contracts are retained.",
+      "production_callers": "app/operators/include/management/nasImportExport.php:37::nas_backup_acquire_lock [function-call/unique-symbol]",
+      "test_references": ""
+    },
+    {
+      "id": "RES-078",
+      "file": "app/operators/include/management/nasImportExport.php",
+      "function": "nas_backup_release_lock",
+      "disposition": "retained-pdo-contract-removed-pear-branch",
+      "evidence": "PDO callers and/or native fixtures preserved; PEAR fixtures use pinned provider paths. No production caller of mapping wrappers was found, but tested contracts are retained.",
+      "production_callers": "app/operators/mng-rad-nas-import.php:221::nas_import_apply [function-call/unique-symbol]; app/operators/include/management/nasManagementPdo.php:81::nas_management_finish [function-call/unique-symbol]",
+      "test_references": ""
+    },
+    {
+      "id": "RES-079",
+      "file": "app/operators/include/management/nasImportExport.php",
+      "function": "nas_import_is_duplicate_error",
+      "disposition": "retained-pdo-contract-removed-pear-branch",
+      "evidence": "PDO callers and/or native fixtures preserved; PEAR fixtures use pinned provider paths. No production caller of mapping wrappers was found, but tested contracts are retained.",
+      "production_callers": "app/operators/mng-rad-nas-import.php:184::nas_import_apply [function-call/unique-symbol]",
+      "test_references": ""
+    },
+    {
+      "id": "RES-088",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_customer_id",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-089",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_groups",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-090",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_hotspots",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-091",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_invoice_status_id",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-092",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_invoice_type_id",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-093",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_payment_type_id",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-094",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_plans",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-095",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_proxys",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-096",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_realms",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-097",
+      "file": "app/operators/include/management/populate_selectbox.php",
+      "function": "populate_vendors",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-100",
+      "file": "app/operators/include/management/userBilling.php",
+      "function": "userInvoiceAdd",
+      "disposition": "retained-already-pdo",
+      "evidence": "R20 already migrated this function; tests/shared_context_http.py exercises its ownership, rollback and callback contracts. Entire provider file unchanged.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-197",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_customer_id",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-198",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_groups",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-199",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_hotspots",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-200",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_invoice_status_id",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-201",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_invoice_type_id",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-202",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_payment_type_id",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-203",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_plans",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-204",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_proxys",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-205",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_realms",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-206",
+      "file": "app/users/include/management/populate_selectbox.php",
+      "function": "populate_vendors",
+      "disposition": "removed-unused-function",
+      "evidence": "No executable call or callback-string reference in current tracked application source; historical documentation is not a caller.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-225",
+      "file": "contrib/chilli/portal1/signup-paypal/library/errorHandling.php",
+      "function": "errorHandler",
+      "disposition": "removed-unloaded-copy",
+      "evidence": "No incoming include of this portal-specific copy; callback names in the common DB bootstrap and mailer resolve to other providers. UNIT-038 baseline copies remain in historical fixtures.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-230",
+      "file": "contrib/chilli/portal2/signup-2checkout/library/errorHandling.php",
+      "function": "errorHandler",
+      "disposition": "removed-unloaded-copy",
+      "evidence": "No incoming include of this portal-specific copy; callback names in the common DB bootstrap and mailer resolve to other providers. UNIT-038 baseline copies remain in historical fixtures.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-234",
+      "file": "contrib/chilli/portal2/signup-free/library/errorHandling.php",
+      "function": "errorHandler",
+      "disposition": "removed-unloaded-copy",
+      "evidence": "No incoming include of this portal-specific copy; callback names in the common DB bootstrap and mailer resolve to other providers. UNIT-038 baseline copies remain in historical fixtures.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-238",
+      "file": "contrib/chilli/portal2/signup-paypal/library/errorHandling.php",
+      "function": "errorHandler",
+      "disposition": "removed-unloaded-copy",
+      "evidence": "No incoming include of this portal-specific copy; callback names in the common DB bootstrap and mailer resolve to other providers. UNIT-038 baseline copies remain in historical fixtures.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-242",
+      "file": "contrib/chilli/portal3/signup-free/library/errorHandling.php",
+      "function": "errorHandler",
+      "disposition": "removed-unloaded-copy",
+      "evidence": "No incoming include of this portal-specific copy; callback names in the common DB bootstrap and mailer resolve to other providers. UNIT-038 baseline copies remain in historical fixtures.",
+      "production_callers": "",
+      "test_references": ""
+    },
+    {
+      "id": "RES-246",
+      "file": "contrib/chilli/portal3/signup-paypal/library/errorHandling.php",
+      "function": "errorHandler",
+      "disposition": "removed-unloaded-copy",
+      "evidence": "No incoming include of this portal-specific copy; callback names in the common DB bootstrap and mailer resolve to other providers. UNIT-038 baseline copies remain in historical fixtures.",
+      "production_callers": "",
+      "test_references": ""
+    }
+  ]
+}

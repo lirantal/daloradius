@@ -100,9 +100,13 @@ def main():
     duplicate='nas-existing-'+secrets.token_hex(4)
     secret_values=[secrets.token_urlsafe(18) for _ in range(6)]
     with tempfile.TemporaryDirectory(prefix='dalo-nas-import-',dir=scratch) as directory:
-        root=Path(directory);shutil.copytree(ROOT/'app',root/'app',symlinks=True)
+        root=Path(directory);shutil.copytree(ROOT/'app',root/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         # Keep one legacy PEAR consumer in the fixture after UNIT-034 migrates CRUD.
         old=run('git','show',BASE_COMMIT+':app/operators/mng-rad-nas-new.php')
+        # Keep the historical PEAR page on its matching lock helper, not the candidate.
+        legacy=run('git','show','2753c9d1c2fb922e64cf978d889f49626042c25b:app/operators/include/management/nasImportExport.php')
+        (root/'app/operators/include/management/nasImportExportLegacy.php').write_text(legacy+'\n')
+        old=old.replace("'nasImportExport.php'","'nasImportExportLegacy.php'")
         (root/'app/operators/mng-rad-nas-new.php').write_text(old+'\n')
         if BASELINE:
             old=run('git','show',BASE_COMMIT+':app/operators/mng-rad-nas-import.php')
