@@ -35,7 +35,8 @@ claim that historical counts are still current after each commit.
 | R22a–c | Implemented and validated; eight widget blocks and three producers PDO-only | RES-207/208/209/210/212/213/214/215 user-portal widgets | [R22 report](residual-r22-user-portal-widgets.md), 802 native comparisons, ownership/errors and five regressions |
 | R23a–b | Implemented and validated; signup/receipt PDO-only, callback unchanged | RES-223/227 Chilli Portal1 PayPal signup and success | [R23 report](residual-r23-portal1-paypal-signup.md), nine paired comparisons, full pending-write rollback, observed allocation contention, actual checkout/IPN local TLS and three regressions |
 | R24a–b | Implemented and validated; pending signup/receipt PDO-only, callback unchanged | RES-236/240 Chilli Portal2 PayPal signup and success | [R24 report](residual-r24-portal2-paypal-signup.md), thirteen paired comparisons, three-row rollback, session-bound resume, observed allocation contention, ordinary/subscription checkout via local HTTPS and four regressions |
-| R25–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
+| R25a–b | Implemented and validated; pending signup/receipt PDO-only, callback unchanged | RES-244/248 Chilli Portal3 PayPal signup and success | [R25 report](residual-r25-portal3-paypal-signup.md), fifteen paired comparisons, two-row/silent-mode rollback, observed allocation contention, actual local HTTPS callback and five regressions |
+| R26–R27 | Pending | Functional read/write consumers from `finalization-lots.csv` | Split according to the original commit slices and test equivalent fixtures |
 | R28 | Pending | Helpers without proven callers and obsolete compatibility branches | Recheck function names, includes/callbacks, tests and known external usages before removing |
 | R29 | Blocked by remaining consumers | Legacy providers, PEAR DB package and installation paths | Remove only after a fresh tokenized inventory finds no active/indirect PEAR consumers |
 
@@ -76,6 +77,7 @@ claim that historical counts are still current after each commit.
 - [x] R22a–c: all five portal widget/provider files (eight inventoried blocks) and three actual graph producers migrated; 802 native PEAR/PDO HTML/JSON comparisons, distinct session/backend identity, bounded tables/capped graphs, complete tied pagination, SELECT-only reads, borrowed transaction preservation, native later errors, no-legacy tripwires and five regressions passed; explicit historical R14 PEAR fixture retained, R21 widget exemptions removed, CRLF and fixture cleanup verified.
 - [x] R23a–b: both Portal1 residual consumers migrated; pending signup uses one checked owned PDO transaction, receipt uses bound read-only PDO; native paired projections, first/later rollback, fresh CSRF, configured capacities/engines, actual allocation waits, alternate/read-only/borrowed contexts and signup-produced unchanged callback with local HTTPS verification passed; three adjacent regressions and cleanup verified.
 - [x] R24a–b: both Portal2 consumers migrated; one owned connection/transaction provisions info/billing/merchant rows with exact numeric plan key, percentage-tax and stored-value verification; session-bound pending resume, read-only multi-event receipts, all insert rollback, configured/borrowed/SELECT-only contexts, native lock waits, unchanged callback ordinary/subscription flows and four regressions passed; isolated resources removed.
+- [x] R25a–b: both Portal3 consumers migrated; logical planId, PASSWORD_LENGTH, required controls, historical two-row projection and flat-tax checkout preserved; same-handle owned transaction/exact storage, native late/silent rollback and lock waits, read-only/borrowed/configured receipts, repaired currency control and actual unchanged callback via local HTTPS passed; five regressions and fixture cleanup verified.
 - [ ] Entire migration: refreshed residual inventory after all functional slices.
 - [ ] Entire migration: dependency removal, installer/Docker validation and transverse tests.
 - [ ] Entire migration: installed external legacy cron callers verified before deployment.
@@ -83,7 +85,7 @@ claim that historical counts are still current after each commit.
 
 R01a, R01b1, the R01b2 operator editor and R01c are complete here. The three user-portal message
 consumers use PDO following R21. The explicit message PEAR compatibility branch
-remains pending R29. R22 has migrated the independent user-portal widgets; R23 has migrated Portal1 pending PayPal signup and receipt without changing its callback; R24 has migrated Portal2 pending signup/resume and payment-history receipts, retaining its callback;
+remains pending R29. R22 has migrated the independent user-portal widgets; R23 has migrated Portal1 pending PayPal signup and receipt without changing its callback; R24 has migrated Portal2 pending signup/resume and payment-history receipts, retaining its callback; R25 has migrated Portal3 pending signup and legacy payment receipt, retaining its callback;
 other active PEAR consumers and compatibility still prevent dependency removal. In particular,
 permission-bootstrap migration does not
 mean every calling page is entirely PDO: its own remaining provider/reads must still
