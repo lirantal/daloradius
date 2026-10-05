@@ -149,7 +149,7 @@ def main():
                 print('PASS: native baseline SDK accepts changed unsigned order/plan/payment fields')
                 print('PASS: unmodified baseline HTTP 500 at missing SDK log path; state unchanged, not a successful payment baseline')
             else:
-                routes=['2co_ipn.php','2co_start.php','index.php','include/common/provisionUser.php','include/common/retired.php']
+                routes=['2co_ipn.php','2co_start.php','index.php','success.php','include/common/provisionUser.php','include/common/retired.php']
                 def retired(path,method='POST',data=fields,content_type='application/x-www-form-urlencoded'):
                     status,body,headers=request(base,root+path,method,data,content_type)
                     assert status==410 and (body==MESSAGE or method=='HEAD' and body==b'')
@@ -169,7 +169,7 @@ def main():
                 with concurrent.futures.ThreadPoolExecutor(4) as pool:
                     list(pool.map(lambda _:retired('2co_ipn.php'),range(8)))
                 print('PASS: all entry points HTTP 410; signed/invalid/malformed/Unicode/oversized/concurrent inputs leave all tables unchanged')
-                # Configuration must be unreachable, including the untouched old index code.
+                # Configuration must be unreachable, including the historical receipt after R26.
                 (family/'library/config_read.php').write_text("<?php throw new RuntimeException('Fixture configuration must not be loaded');")
                 for route in routes:retired(route)
                 # Prove retirement still works without DB, provider, SDK or configuration.

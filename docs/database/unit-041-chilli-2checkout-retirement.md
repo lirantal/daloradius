@@ -1,5 +1,9 @@
 # UNIT-041 — retire legacy Portal2 2Checkout callbacks
 
+> Follow-up: [R26](residual-r26-2checkout-retirement.md) retires the historical
+> public receipt and removes the unreachable signup tail. The original UNIT-041
+> security decision and pinned evidence remain historical below.
+
 ## Disposition and scope
 
 UNIT-041 takes the inventory's **deprecate**, not **migrate**, disposition, explicitly selected by the user after the local authentication audit. This is a deliberate breaking change: this legacy 2Checkout signup path no longer accepts payments or activates accounts. It is not a PDO payment implementation and has no replacement payment provider, new database table or schema migration.
@@ -8,7 +12,7 @@ Affected family: `contrib/chilli/portal2/signup-2checkout/`.
 
 - `2co_ipn.php` is an HTTP 410 retirement endpoint, not a payment acknowledgement.
 - `2co_start.php` is HTTP 410 and cannot emit a gateway purchase form or redirect.
-- `index.php` returns HTTP 410 **before** configuration, signup processing or any database access. Its previous implementation is retained below the unconditional return; those signup SQL blocks are not represented as PDO-migrated.
+- `index.php` returns HTTP 410 **before** configuration, signup processing or any database access. At UNIT-041 its previous implementation was retained below the unconditional return. R26 removes that unreachable tail; neither disposition is represented as PDO-migrated SQL.
 - `include/common/retired.php` emits one fixed, untrusted-input-independent plain-text response with `Cache-Control: no-store` and `X-Content-Type-Options: nosniff`.
 - `include/common/provisionUser.php` removes the dependent PEAR mutations. Its old function name/signature is retained as a fail-fast compatibility tombstone: `provisionUser(...)` throws `LogicException` before touching its supplied connection. Direct HTTP access is also 410.
 - `include/merchant/TwoCo.php::validateIpn()` throws `LogicException` before copying, logging or accepting any notification. Its form-building SDK surface remains historical code, not a supported replacement integration.
@@ -30,7 +34,7 @@ Atomic PDO writes or an event-deduplication table alone cannot authenticate whic
 - GET, POST, HEAD and other methods return 410; no redirect, session cookie, credentials or request values are returned.
 - The initial signup and checkout producer are also blocked so users cannot create new pending accounts or pay through a return endpoint that can no longer activate them.
 - Existing accounts, billing records and group mappings are **not** deleted, disabled, migrated or otherwise changed. Existing authentication records remain intact.
-- `success.php` remains the existing historical read path for previously completed records. It is outside this retirement's mutation scope and is not an authorization primitive or new payment confirmation.
+- `success.php` was left as the historical read path at UNIT-041, outside its mutation scope. R26 deliberately retires that public route with HTTP 410, without changing stored records or adding payment confirmation.
 - Before deploying, withdraw public signup links to this retired family and coordinate disabling its merchant callback/checkout configuration with the responsible operator. Returning 410 is intentional, not a provider-specific successful acknowledgement; provider retry behavior is not tested.
 - Pending or partially processed historical orders require operator reconciliation against authoritative payment records. This unit performs no automatic activation, refund, failure marking or replay of historical data.
 - Re-enabling this path requires a separately reviewed authenticated replacement, not removal of the guard or reinstatement of MD5 validation.
@@ -52,7 +56,7 @@ The test uses isolated Docker containers running real PHP HTTP and MariaDB on an
 - native baseline verifier accepts the altered unsigned fields;
 - unmodified baseline HTTP failure is characterized separately;
 - candidate validator and provisioning shim reject calls explicitly, with zero use of the supplied socket;
-- all five retired routes return the fixed 410 response;
+- the original five retired routes, plus the historical receipt after R26, return the fixed 410 response;
 - signed, invalid, empty, array/malformed, Unicode, oversized and JSON payloads are refused;
 - concurrent callbacks leave `billing_merchant`, `userbillinfo`, `userinfo`, `radcheck`, `radusergroup` and `billing_history` unchanged, including existing active accounts and mappings;
 - configuration tripwires are never loaded; the retired routes still work after removing configuration/SDK files and stopping the fixture database;
