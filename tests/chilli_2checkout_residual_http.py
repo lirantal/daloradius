@@ -68,7 +68,10 @@ def main():
             run('docker','network','create','--internal',NET)
             run('docker','run','-d','--name',DB,'--network',NET,'--tmpfs','/var/lib/mysql',
                 '-e','MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1','-e','MARIADB_DATABASE=fixture','mariadb:11.8')
-            wait(lambda:sql('SELECT 1')=='1')
+            # The entrypoint's temporary bootstrap server uses the Unix socket;
+            # require TCP readiness so its shutdown cannot race schema imports.
+            wait(lambda:run('docker','exec',DB,'mariadb','-h127.0.0.1','-uroot',
+                            '-N','-B','fixture','-e','SELECT 1',check=False).returncode==0)
             for name in ('fr3-mariadb-freeradius.sql','mariadb-daloradius.sql'):sql((ROOT/'contrib/db'/name).read_text())
             sql('RENAME TABLE billing_merchant TO history_merchant;')
             for status in ('Pending','Completed','Denied','Failed',''):
@@ -89,7 +92,10 @@ def main():
                 common=fixture/version/'app/common/includes';common.mkdir(parents=True)
                 shutil.copy2(ROOT/'app/common/includes/pdo_connection.php',common/'pdo_connection.php')
                 if version=='base':
-                    for name in ('index.php','success.php'):
+                    # Keep historical receipt and its PEAR loader dependencies coherent.
+                    provider='contrib/chilli/common/database.php'
+                    (fixture/version/provider).write_text(run('git','show',BASE+':'+provider).stdout)
+                    for name in ('index.php','success.php','library/opendb.php','library/closedb.php','library/config_read.php'):
                         (family/name).write_text(run('git','show',BASE+':'+FAMILY+'/'+name).stdout)
                 # Only ephemeral settings; never read/copy the repository's actual config.
                 (family/'library/daloradius.conf.php').write_text("""<?php

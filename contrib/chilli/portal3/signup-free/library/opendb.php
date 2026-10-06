@@ -23,8 +23,8 @@
 include __DIR__ . '/config_read.php';
 require_once dirname(__DIR__, 3) . '/common/database.php';
 try {
-    // Keep this legacy handle PEAR until the entire calling workflow migrates.
-    $dbSocket = dalo_chilli_pear_open($configValues, false);
+    // PDO-only; retain this wrapper's historical port policy and exported handle.
+    $dbSocket = dalo_chilli_pdo_open(dalo_chilli_database_settings($configValues, false));
 } catch (Throwable $error) {
     die('<b>Database connection error</b><br/>');
 }

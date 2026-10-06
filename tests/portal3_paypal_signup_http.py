@@ -102,7 +102,10 @@ def main():
                 common=f/v/'app/common/includes';common.mkdir(parents=True)
                 shutil.copy2(ROOT/'app/common/includes/pdo_connection.php',common/'pdo_connection.php')
                 if v=='base':
-                    for page in ('index.php','success.php'):
+                    # Pin PEAR wrapper/provider dependencies with the historical pages.
+                    provider='contrib/chilli/common/database.php'
+                    (f/v/provider).write_bytes(subprocess.check_output(['git','show',BASE+':'+provider],cwd=ROOT))
+                    for page in ('index.php','success.php','library/opendb.php','library/closedb.php','library/config_read.php'):
                         path='contrib/chilli/portal3/signup-paypal/'+page
                         (f/v/path).write_bytes(subprocess.check_output(['git','show',BASE+':'+path],cwd=ROOT))
                 else:

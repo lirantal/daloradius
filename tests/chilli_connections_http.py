@@ -43,8 +43,7 @@ include $lib.'config_read.php';
 try {
     if ($action==='failed') {
         $configValues['CONFIG_DB_NAME']='missing-u38';
-        if (($_GET['client'] ?? '')==='pear') { $p=dalo_chilli_pear_open($configValues,true); }
-        else { $p=dalo_chilli_pdo_open($configValues); }
+        $p=dalo_chilli_pdo_open($configValues);
         throw new LogicException('Unexpected connection');
     }
     if ($action==='invalid') {
@@ -53,9 +52,10 @@ try {
         throw new LogicException('Unexpected connection');
     }
     if ($action==='query_error') {
-        $p=dalo_chilli_pear_open($configValues,true);
-        ob_start();$r=$p->query("SELECT 'sensitive-bound-marker' FROM missing_u38");$text=ob_get_clean();
-        $ok=DB::isError($r) && $text==='<br/><b>Database error</b><br>';
+        $p=dalo_chilli_pdo_open($configValues);
+        $ok=false;
+        try { $p->query("SELECT 'sensitive-bound-marker' FROM missing_u38"); }
+        catch (PDOException $error) { $ok=true; }
         dalo_chilli_database_close($p);echo json_encode(array('ok'=>$ok));exit;
     }
     $p=dalo_chilli_pdo_open($configValues);
@@ -91,6 +91,109 @@ try {
 '''
 
 
+# Current wrappers are PDO-only; the pinned historical endpoint stays PEAR.
+PDO_WRAPPER_BLOCK = '''if (in_array($action,array('legacy','wrapper_rollback','wrapper_close','wrapper_close_error','wrapper_isolation'),true)) {
+    include $lib.'opendb.php';
+    if (function_exists('dalo_chilli_pear_open') || function_exists('dalo_chilli_database_error') ||
+        stream_resolve_include_path('DB.php')!==false || class_exists('DB',false)) {
+        throw new LogicException('PEAR boundary remains available');
+    }
+    if (!($dbSocket instanceof PDO) || $dbSocket->inTransaction() ||
+        $dbSocket->getAttribute(PDO::ATTR_ERRMODE)!==PDO::ERRMODE_EXCEPTION ||
+        $dbSocket->getAttribute(PDO::ATTR_DEFAULT_FETCH_MODE)!==PDO::FETCH_ASSOC ||
+        $dbSocket->getAttribute(PDO::ATTR_EMULATE_PREPARES) ||
+        $dbSocket->getAttribute(PDO::ATTR_PERSISTENT) ||
+        $dbSocket->query('SELECT @@character_set_connection')->fetchColumn()!=='utf8mb4' ||
+        $dbSocket->query('SELECT @@sql_mode')->fetchColumn()!=='') {
+        throw new LogicException('Wrong wrapper connection contract');
+    }
+    foreach (get_included_files() as $included) {
+        if (basename($included)==='DB.php') { throw new LogicException('Wrapper loaded PEAR'); }
+    }
+    if ($action==='wrapper_close') {
+        $alias=$dbSocket;
+        include $lib.'closedb.php';
+        include $lib.'closedb.php';
+        $ok=$dbSocket===null && !$alias->inTransaction() &&
+            $alias->query('SELECT 1')->fetchColumn()==1;
+        unset($alias);
+        include $lib.'opendb.php';
+        $dbSocket->beginTransaction();
+        $statement=$dbSocket->prepare('INSERT INTO u38_rows (value) VALUES (?)');
+        $statement->execute(array('explicitly-committed'));
+        $dbSocket->commit();
+        include $lib.'closedb.php';
+        include $lib.'opendb.php';
+        $ok=$ok && $dbSocket->query("SELECT COUNT(*) FROM u38_rows WHERE value='explicitly-committed'")->fetchColumn()==1;
+        include $lib.'closedb.php';
+        foreach(get_included_files() as $included) {
+            if(basename($included)==='DB.php') { $ok=false; }
+        }
+        echo json_encode(array('ok'=>$ok && $dbSocket===null));exit;
+    }
+    if ($action==='wrapper_close_error') {
+        include $lib.'closedb.php';
+        class FixtureCloseFailure extends PDO {
+            public function __construct() {}
+            public function inTransaction(): bool { return true; }
+            public function rollBack(): bool { throw new RuntimeException('sensitive-bound-marker'); }
+        }
+        $dbSocket=new FixtureCloseFailure();
+        register_shutdown_function(function() use (&$dbSocket) {
+            echo $dbSocket===null ? '|cleared' : '|not-cleared';
+        });
+        include $lib.'closedb.php';
+        throw new LogicException('Close unexpectedly succeeded');
+    }
+    if ($action==='wrapper_rollback') {
+        $before=$dbSocket->query('SELECT id,value FROM u38_rows ORDER BY id')->fetchAll();
+        $dbSocket->beginTransaction();
+        $statement=$dbSocket->prepare('INSERT INTO u38_rows (value) VALUES (?)');
+        $statement->execute(array('wrapper-uncommitted'));
+        $alias=$dbSocket;
+        include $lib.'closedb.php';
+        $null=$dbSocket===null && !$alias->inTransaction();
+        include $lib.'opendb.php';
+        $after=$dbSocket->query('SELECT id,value FROM u38_rows ORDER BY id')->fetchAll();
+        include $lib.'closedb.php';
+        echo json_encode(array('ok'=>$null && $dbSocket===null && $before===$after));exit;
+    }
+    if ($action==='wrapper_isolation') {
+        $other=dalo_chilli_pdo_open($configValues);
+        $other->beginTransaction();
+        $otherStatement=$other->prepare('INSERT INTO u38_rows (value) VALUES (?)');
+        $otherStatement->execute(array('independent-committed'));
+        $dbSocket->beginTransaction();
+        $statement=$dbSocket->prepare('INSERT INTO u38_rows (value) VALUES (?)');
+        $statement->execute(array('isolated-rollback'));
+        include $lib.'closedb.php';
+        $ok=$dbSocket===null && $other->inTransaction() &&
+            $other->query("SELECT COUNT(*) FROM u38_rows WHERE value='independent-committed'")->fetchColumn()==1;
+        $other->commit();
+        dalo_chilli_database_close($other);
+        include $lib.'opendb.php';
+        $ok=$ok && $dbSocket->query("SELECT COUNT(*) FROM u38_rows WHERE value='independent-committed'")->fetchColumn()==1 &&
+            $dbSocket->query("SELECT COUNT(*) FROM u38_rows WHERE value='isolated-rollback'")->fetchColumn()==0;
+        include $lib.'closedb.php';
+        echo json_encode(array('ok'=>$ok && $dbSocket===null && $other===null));exit;
+    }
+    $statement=$dbSocket->prepare('INSERT INTO u38_rows (value) VALUES (?)');
+    $statement->execute(array("sample-'-%"));
+    $rows=$dbSocket->query('SELECT value FROM u38_rows ORDER BY id')->fetchAll(PDO::FETCH_COLUMN);
+    unset($statement); include $lib.'closedb.php';
+    if ($dbSocket!==null) { throw new LogicException('Wrapper did not clear handle'); }
+    include $lib.'opendb.php';
+    $count=(int)$dbSocket->query('SELECT COUNT(*) FROM u38_rows')->fetchColumn();
+    include $lib.'closedb.php';
+    echo json_encode(array('rows'=>$rows,'count'=>$count));exit;
+}
+'''
+PDO_ENDPOINT = ENDPOINT.replace(
+    ENDPOINT[ENDPOINT.index("if ($action==='legacy') {"):ENDPOINT.index("require_once '/fixtures/contrib/chilli/common/database.php';")],
+    PDO_WRAPPER_BLOCK,
+    1,
+)
+
 def sql(query, database=DB):
     result = subprocess.run(['docker','exec','-i',database,'mariadb','-uroot','-N','-B','radius'],
                             input=query,text=True,capture_output=True,timeout=30)
@@ -110,12 +213,14 @@ def main():
                 source='contrib/chilli/'+family+'/library/'+name
                 content=run('git','show',BASE+':'+source) if BASELINE else (ROOT/source).read_text()
                 (target/name).write_text(content+'\n')
-            (target.parent/'probe.php').write_text(ENDPOINT.replace('__FAMILY__',quote(family)))
+            endpoint = ENDPOINT if BASELINE else PDO_ENDPOINT
+            (target.parent/'probe.php').write_text(endpoint.replace('__FAMILY__',quote(family)))
         if not BASELINE:
             target=fixture/'contrib/chilli/common';target.mkdir()
             shutil.copy2(ROOT/'contrib/chilli/common/database.php',target/'database.php')
         common=fixture/'app/common/includes';common.mkdir(parents=True)
         shutil.copy2(ROOT/'app/common/includes/pdo_connection.php',common/'pdo_connection.php')
+        (fixture/'contrib/chilli/log_probe.php').write_text("<?php error_log('chilli-connection-log-probe'); echo 'ok';")
         try:
             run('docker','network','create','--internal',NETWORK)
             run('docker','run','-d','--name',DB,'--network',NETWORK,'--tmpfs','/var/lib/mysql',
@@ -135,6 +240,18 @@ def main():
             run('docker','run','-d','--name',WEB,'--network',NETWORK,'-v',f'{fixture}:/fixtures',
                 '--entrypoint','php','lirantal/daloradius','-d','display_errors=0',
                 '-S','0.0.0.0:8080','-t','/fixtures/contrib/chilli')
+            if not BASELINE:
+                # Remove only the PEAR DB entrypoint in this disposable image layer.
+                # Historical baselines keep their own unmodified runtime.
+                code="""$path=stream_resolve_include_path('DB.php');
+if($path!==false && (!is_file($path) || !unlink($path))){exit(1);}
+if(stream_resolve_include_path('DB.php')!==false || class_exists('DB',false)){exit(1);}
+require '/fixtures/contrib/chilli/common/database.php';
+if(function_exists('dalo_chilli_pear_open') || function_exists('dalo_chilli_database_error') ||
+ !function_exists('dalo_chilli_pdo_open') || !function_exists('dalo_chilli_database_close')){exit(1);}
+echo 'ok';"""
+                assert run('docker','exec',WEB,'php','-r',code)=='ok'
+                print('PASS: PEAR factory/callback absent; DB.php unavailable in disposable candidate runtime')
             ip=run('docker','inspect','-f','{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}',WEB)
             base='http://'+ip+':8080/'
             def fetch(path):
@@ -148,25 +265,72 @@ def main():
                 assert json.loads(body)=={'rows':["sample-'-%"],'count':1}
                 assert sql('SELECT value FROM u38_rows')=="sample-'-%"
                 if not BASELINE:
+                    assert json.loads(fetch(family+'/probe.php?action=wrapper_rollback')[1])=={'ok':True}
+                    assert json.loads(fetch(family+'/probe.php?action=wrapper_close')[1])=={'ok':True}
+                    close_response=fetch(family+'/probe.php?action=wrapper_close_error')
+                    assert close_response[0]==200 and close_response[1].strip()=='<b>Database close error</b><br/>|cleared'
+                    sql("DELETE FROM u38_rows WHERE value='explicitly-committed'")
+                    assert json.loads(fetch(family+'/probe.php?action=wrapper_isolation')[1])=={'ok':True}
+                    sql("DELETE FROM u38_rows WHERE value='independent-committed'")
                     status,body=fetch(family+'/probe.php?action=pdo');assert status==200
                     assert json.loads(body)=={'ok':True,'rows':["sample-'-%","unicode-é-%-'",'dependent']}
                     assert json.loads(fetch(family+'/probe.php?action=rollback')[1])=={'ok':True}
-                    for action in ('failed&client=pear','failed&client=pdo','invalid'):
+                    for action in ('failed','invalid'):
                         status,body=fetch(family+'/probe.php?action='+action);assert status==200
                         assert json.loads(body)=={'error':'Database connection failed','previous':False}
                         assert password not in body and username not in body
                     assert json.loads(fetch(family+'/probe.php?action=query_error')[1])=={'ok':True}
-                print('PASS:',family,'PEAR open/query/close/reopen'+(' and opt-in PDO commit/close/rollback/redaction' if not BASELINE else ' (pinned baseline)'))
+                print('PASS:',family,'PEAR open/query/close/reopen (pinned baseline)' if BASELINE else 'PDO wrapper open/query/close/reopen/rollback, no PEAR load; provider commit/rollback/redaction; double close, committed state, retained references, close failure, independent transaction isolation')
             if not BASELINE:
                 assert fetch('common/database.php')[0]==404
                 sequence=''
                 for family in FAMILIES:
                     lib='/fixtures/contrib/chilli/'+family+'/library/'
                     sequence += 'include '+quote(lib+'opendb.php')+';'
-                    sequence += "$r=$dbSocket->query('SELECT 1');if(DB::isError($r)||$r->fetchRow()[0]!=1){exit(1);}$r->free();"
+                    sequence += "if(!($dbSocket instanceof PDO)||$dbSocket->query('SELECT 1')->fetchColumn()!=1){exit(1);}"
                     sequence += 'include '+quote(lib+'closedb.php')+';if($dbSocket!==null){exit(1);}'
                 assert run('docker','exec',WEB,'php','-r',sequence+"echo 'ok';")=='ok'
                 print('PASS: all six wrappers coexist in one PHP process without callback redeclaration')
+                # Synthetic PDO failure injection supplements, not replaces, native rollback tests.
+                code="""require '/fixtures/contrib/chilli/common/database.php';
+class FixturePDO extends PDO {
+ public $mode;
+ public $commits=0;
+ public function __construct($mode) {$this->mode=$mode;}
+ public function inTransaction(): bool {
+  if($this->mode==='state-throws'){throw new RuntimeException('sensitive-bound-marker');}
+  return true;
+ }
+ public function rollBack(): bool {
+  if($this->mode==='rollback-throws'){throw new RuntimeException('sensitive-bound-marker');}
+  return false;
+ }
+ public function commit(): bool {$this->commits++;return true;}
+}
+class FixtureNonPDO {
+ public $disconnects=0;
+ public function disconnect() {$this->disconnects++;}
+}
+foreach(array('state-throws','rollback-throws','rollback-false') as $mode) {
+ $p=new FixturePDO($mode);$alias=$p;$ok=false;
+ try {dalo_chilli_database_close($p);} catch(RuntimeException $e) {
+  $ok=$e->getMessage()==='Database close failed' && $e->getPrevious()===null;
+ }
+ if(!$ok || $p!==null || $alias->commits!==0){exit(1);}
+ dalo_chilli_database_close($p);
+}
+foreach(array(new FixtureNonPDO(),false,42,'invalid',array()) as $value) {
+ $p=$value;$ok=false;
+ try {dalo_chilli_database_close($p);} catch(RuntimeException $e) {
+  $ok=$e->getMessage()==='Database close failed' && $e->getPrevious()===null;
+ }
+ if(!$ok || $p!==null || (is_object($value) && $value->disconnects!==0)){exit(1);}
+}
+$p=null;dalo_chilli_database_close($p);
+if(class_exists('DB',false)){exit(1);}echo 'ok';"""
+                assert run('docker','exec',WEB,'php','-r',code)=='ok'
+                print('PASS: synthetic rollback/state failures redacted, handles cleared, non-PDO rejected without disconnect or PEAR load')
+
                 # Defaults, invalid configuration and array-DSN special credentials are checked without logging them.
                 code='''require '/fixtures/contrib/chilli/common/database.php';
 $c=array('CONFIG_DB_ENGINE'=>'mysqli','CONFIG_DB_HOST'=>'localhost','CONFIG_DB_NAME'=>'radius',
@@ -217,10 +381,14 @@ if(!$failed){exit(1);}echo 'ok';'''
                     status,body=fetch(family+'/probe.php?action=pdo');assert status==200
                     expected=["sample-'-%"] if family in ('portal2/signup-free','portal2/signup-paypal') else []
                     assert json.loads(body)=={'ok':True,'rows':expected+["unicode-é-%-'",'dependent']}
-                print('PASS: actual port 3307 routing and delimiter-bearing credentials on PEAR/PDO')
+                print('PASS: PDO wrappers preserve two configured-port and four omitted-port policies; provider uses port 3307')
+            assert fetch('log_probe.php')==(200,'ok')
             logs=subprocess.run(['docker','logs',WEB],capture_output=True,text=True,timeout=30)
             text=logs.stdout+logs.stderr
-            assert password not in text and 'sensitive-bound-marker' not in text
+            assert 'chilli-connection-log-probe' in text, 'PHP log collection was not exercised'
+            assert username not in text and password not in text and 'sensitive-bound-marker' not in text
+            if not BASELINE:
+                assert special_user not in text and special_password not in text
             assert 'PHP Warning' not in text and 'PHP Fatal error' not in text
             print('PASS: clean PHP logs, no leaked fixture credentials or query values')
         finally:
