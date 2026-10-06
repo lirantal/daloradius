@@ -38,10 +38,11 @@ RUN apt-get update \
   php-ldap \
   php-mail \
   php-mail-mime \
+  php-net-smtp \
   php-mbstring \
-  php-db \
   php-mysql \
   mariadb-client \
+  && php -r 'exit(class_exists("PDO") && in_array("mysql", PDO::getAvailableDrivers(), true) ? 0 : 1);' \
   && rm -rf /var/lib/apt/lists/*
 
 COPY contrib/docker/operators.conf /etc/apache2/sites-available/operators.conf

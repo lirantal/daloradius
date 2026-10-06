@@ -132,11 +132,7 @@ check('fresh schema reserves 255 characters for password hashes',
 
 $_SERVER['PHP_SELF'] = '/cli/tests';
 require_once $root . '/app/common/includes/layout.php';
-include_once 'DB.php';
 require_once $root . '/app/operators/include/management/functions.php';
-if (!defined('PEAR_ERROR_RETURN')) {
-    define('PEAR_ERROR_RETURN', 2);
-}
 $configValues['CONFIG_DB_PASSWORD_MIN_LENGTH'] = 8;
 $configValues['CONFIG_DB_PASSWORD_MAX_LENGTH'] = 14;
 
