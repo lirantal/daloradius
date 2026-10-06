@@ -159,6 +159,14 @@ def main():
             for page,query in [('library/ajax/json_api.php',{'datatype':'usernames','action':'list','username':'sta'}),('library/ajax/user_info.php',{'username':'standard'})]:
                 status,body=req(page,query=query);assert status==200;data=json.loads(body)
                 assert data==json.loads(req(page,version='base',query=query)[1])
+            # The empty SUM case does not call toxbyte(), and missed its deleted
+            # include during R03. Exercise real nonempty accounting through both
+            # endpoints, with an unrelated row proving username filtering.
+            for version in ('base','candidate'):
+                db("INSERT INTO radacct(acctsessionid,acctuniqueid,username,acctinputoctets,acctoutputoctets) VALUES ('info-standard','info-standard','standard',1024,2048),('info-other','info-other','other-user',8192,16384)",version)
+                status,body=req('library/ajax/user_info.php',version=version,query={'username':'standard'})
+                assert status==200 and json.loads(body)=={'upload':'1 KB','download':'2 KB'},(version,'nonempty accounting JSON regression')
+            print('PASS native nonempty accounting AJAX: exact byte formatting, username filtering and pinned PEAR/PDO parity')
             assert req('library/ajax/json_api.php',query={'datatype[]':'bad'})[0]==200
             assert req('library/ajax/user_info.php',query={'username[]':'bad'})[0]==400
             db('RENAME TABLE radacct TO absent_radacct')

@@ -32,6 +32,7 @@ include('../check_operator_perm.php');
 $value = dalo_info_parameter('username');
 require_once '../../../common/includes/pdo_connection.php';
 require_once '../../include/management/read_helpers_pdo.php';
+require_once __DIR__ . '/../../include/management/pages_common.php';
 try {
     $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
     $table = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
