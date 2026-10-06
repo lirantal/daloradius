@@ -169,22 +169,12 @@ function dalo_portal_password_verify($password, $stored_password) {
     return $result;
 }
 
-function dalo_portal_db_sensitive_call($dbSocket, $callback) {
-    // PDO has no PEAR error-mode stack. Suppress potentially sensitive SQL
+function dalo_portal_db_sensitive_call(PDO $dbSocket, $callback) {
+    // Suppress potentially sensitive SQL
     // details from PDOException; preserve all non-database callback failures.
-    if ($dbSocket instanceof PDO) {
-        try {
-            return $callback();
-        } catch (PDOException $exception) {
-            throw new RuntimeException('Database operation failed');
-        }
-    }
-
-    $dbSocket->pushErrorHandling(PEAR_ERROR_RETURN);
-
     try {
         return $callback();
-    } finally {
-        $dbSocket->popErrorHandling();
+    } catch (PDOException $exception) {
+        throw new RuntimeException('Database operation failed');
     }
 }

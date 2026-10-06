@@ -2,6 +2,7 @@
 """R03: disposable native PHP/HTTP/MariaDB differential and rollback tests."""
 import concurrent.futures, hashlib, json, os, re, secrets, shutil, subprocess, tempfile, urllib.parse, urllib.request, urllib.error
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
 from acct_maintenance_http import Forms
 ROOT=Path(__file__).resolve().parents[1]
@@ -17,7 +18,10 @@ def main():
         for version in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/version/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if version=='base':
-                for rel in PAGES+['include/management/functions.php','include/management/groups.php','include/management/attributes.php']:
+                restore_pear_bootstrap((f / version / 'app').parent, BASE)
+                rel='app/common/includes/portal_password.php'
+                (f/version/rel).write_bytes(subprocess.check_output(['git','show',BASE+':'+rel],cwd=ROOT))
+                for rel in PAGES+['include/management/functions.php','include/management/groups.php','include/management/attributes.php','library/attributes.php']:
                     (f/version/'app/operators'/rel).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+rel],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')
             for key,value in {'CONFIG_DB_HOST':h.DB,'CONFIG_DB_USER':'root','CONFIG_DB_PASS':'','CONFIG_DB_NAME':version}.items():
@@ -197,7 +201,7 @@ def main():
             assert 'located-standard' in req('mng-edit.php',query={'username':'located-standard'},session_id=location_sid)[1]
             (f/'probe.php').write_text('<?php\n$_SERVER[\'PHP_SELF\']=\'probe.php\';\nrequire \'/fixtures/candidate/app/common/includes/config_read.php\';\nrequire \'/fixtures/candidate/app/operators/include/management/functions.php\';\nrequire \'/fixtures/candidate/app/operators/library/user_create.php\';\n$pdo=dalo_pdo_connect($configValues);$pdo->beginTransaction();\n$pdo->exec("INSERT INTO radcheck(username,attribute,op,value) VALUES (\'borrowed\',\'Auth-Type\',\':=\',\'Accept\')");\nassert(add_user_info($pdo,\'borrowed\',array(\'firstname\'=>\'Zero\',\'enableportallogin\'=>\'0\'))===true);\nassert(update_user_info($pdo,\'borrowed\',array(\'firstname\'=>\'Updated\'))===true);\nassert(insert_single_attribute($pdo,\'borrowed\',\'Reply-Message\',\':=\',\'0\',\'CONFIG_DB_TBL_RADREPLY\')===true);\n$arr=prepare_fields_and_values($pdo,\'borrowed\',array(\'firstname\'=>"O\'Reilly"),array(\'firstname\'),array(),\'CONFIG_DB_TBL_DALOUSERINFO\');\nassert($arr[\'values\']===array("O\'Reilly"));\nassert($pdo->inTransaction());$pdo->rollBack();\nassert($pdo->query("SELECT COUNT(*) FROM radcheck WHERE username=\'borrowed\'")->fetchColumn()==0);\nassert($pdo->query("SELECT COUNT(*) FROM userinfo WHERE username=\'borrowed\'")->fetchColumn()==0);\necho \'BORROWED_PASS\';\n')
             assert run('docker','exec',h.WEB,'php','-d','zend.assertions=1','-d','assert.exception=1','/fixtures/probe.php')=='BORROWED_PASS'
-            (f/'legacy-probe.php').write_text('<?php\n$_SERVER[\'PHP_SELF\']=\'probe.php\';\nrequire \'/fixtures/candidate/app/common/includes/db_open.php\';\nrequire \'/fixtures/candidate/app/operators/include/management/functions.php\';\n$dbSocket->query(\'START TRANSACTION\');\n$dbSocket->query("INSERT INTO radcheck(username,attribute,op,value) VALUES (\'legacy-borrowed\',\'Auth-Type\',\':=\',\'Accept\')");\nassert(add_user_info($dbSocket,\'legacy-borrowed\',array(\'firstname\'=>\'Before\'))===true);\nassert(update_user_info($dbSocket,\'legacy-borrowed\',array(\'firstname\'=>\'After\'))===true);\nassert(insert_single_attribute($dbSocket,\'legacy-borrowed\',\'Reply-Message\',\':=\',\'0\')===true);\n$dbSocket->query(\'ROLLBACK\');\nassert(!user_exists($dbSocket,\'legacy-borrowed\'));\necho \'LEGACY_PASS\';\n')
+            (f/'legacy-probe.php').write_text('<?php\n$_SERVER[\'PHP_SELF\']=\'probe.php\';\nrequire \'/fixtures/base/app/common/includes/db_open.php\';\nrequire \'/fixtures/base/app/operators/include/management/functions.php\';\n$dbSocket->query(\'START TRANSACTION\');\n$dbSocket->query("INSERT INTO radcheck(username,attribute,op,value) VALUES (\'legacy-borrowed\',\'Auth-Type\',\':=\',\'Accept\')");\nassert(add_user_info($dbSocket,\'legacy-borrowed\',array(\'firstname\'=>\'Before\'))===true);\nassert(update_user_info($dbSocket,\'legacy-borrowed\',array(\'firstname\'=>\'After\'))===true);\nassert(insert_single_attribute($dbSocket,\'legacy-borrowed\',\'Reply-Message\',\':=\',\'0\')===true);\n$dbSocket->query(\'ROLLBACK\');\nassert(!user_exists($dbSocket,\'legacy-borrowed\'));\necho \'LEGACY_PASS\';\n')
             assert run('docker','exec','-w','/fixtures/candidate/app/operators',h.WEB,'php','-d','zend.assertions=1','-d','assert.exception=1','/fixtures/legacy-probe.php')=='LEGACY_PASS'
             # Configured non-default table names for creation and AJAX.
             configfile=f/'candidate/app/common/includes/daloradius.conf.php'

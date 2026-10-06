@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import secrets
 import shutil
 import subprocess
@@ -39,8 +40,10 @@ try {
             $pdo->beginTransaction();
         }
     } else {
-        require '/fixtures/app/common/includes/db_open.php';
-        $handle=$dbSocket;
+        if (__BASELINE__) {
+            require '/fixtures/app/common/includes/db_open.php';
+            $handle=$dbSocket;
+        } else { $handle=new stdClass(); }
     }
     if (($req['operation'] ?? 'mutate')==='lookup') {
         $found=is_attribute_already_present($handle,$req['table'],$req['param'],
@@ -72,12 +75,13 @@ def main():
     scratch.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryDirectory(dir=scratch,prefix='dalo-attribute-engine-') as tmp:
         fixture=Path(tmp)
-        shutil.copytree(ROOT/'app',fixture/'app',symlinks=True)
+        shutil.copytree(ROOT/'app',fixture/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
+            restore_pear_bootstrap((fixture / 'app').parent, 'd73639c1d')
             old=subprocess.check_output(['git','show',
                 'd73639c1d:app/operators/library/attributes.php'],cwd=ROOT)
             (fixture/'app/operators/library/attributes.php').write_bytes(old)
-        (fixture/'driver.php').write_text(DRIVER)
+        (fixture/'driver.php').write_text(DRIVER.replace('__BASELINE__','true' if BASELINE else 'false'))
         try:
             run('docker','network','create','--internal',NETWORK)
             run('docker','run','-d','--name',DB,'--network',NETWORK,
@@ -151,11 +155,8 @@ def main():
                 print('PASS UNIT-023 PEAR baseline',file=sys.stderr)
             else:
                 if ref: assert json.loads(Path(ref).read_text())==persisted
-                legacy=invoke({'legacy':['Legacy-Attr','x',':=','check']},
-                              connection='pear',subject='gold',user_or_group='group')
-                assert legacy['ok'] and legacy['count']==1
-                assert 'gold\tLegacy-Attr\t:=\tx' in state()['groupcheck']
-                print('PASS unchanged PEAR caller path remains usable',file=sys.stderr)
+                assert invoke(connection='pear', **lookup)=={'ok':False,'error':'TypeError'}
+                print('PASS PDO-only candidate rejects legacy connection mode',file=sys.stderr)
                 synthetic=secrets.token_hex(16)
                 hashed=invoke({'password':['MD5-Password',synthetic,':=','check']})
                 assert hashed['ok'] and hashed['count']==1

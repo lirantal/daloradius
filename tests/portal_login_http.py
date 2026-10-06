@@ -9,6 +9,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 
 import operator_login_http as fixture_helpers
 from operator_login_http import FormParser, NoRedirect, hash_password, quote, run, sql, wait_for
@@ -372,8 +373,9 @@ def main():
     names['special'] = "é'" + secrets.token_hex(4)
     with tempfile.TemporaryDirectory(prefix='dalo-portal-login-', dir=scratch) as directory:
         root = Path(directory)
-        shutil.copytree(ROOT / 'app', root / 'app', symlinks=True)
+        shutil.copytree(ROOT / 'app', root / 'app', symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
+            restore_pear_bootstrap((root / 'app').parent, BASE_COMMIT)
             old = run('git','show',BASE_COMMIT + ':app/users/dologin.php')
             (root/'app/users/dologin.php').write_text(old + '\n')
         if CHANGE_BASELINE:

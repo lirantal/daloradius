@@ -1,0 +1,130 @@
+{
+  "base": "cb766c2315e1d2cefe7bf077eeeef16f01814b2d",
+  "entries": [
+    {
+      "file": "app/common/includes/chart.php",
+      "function": "dalo_chart_overall_user_statistics",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/common/includes/functions.php",
+      "function": "get_message",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/common/includes/portal_password.php",
+      "function": "dalo_portal_db_sensitive_call",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "get_table_column_names",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "insert_single_attribute",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "hotspots_exists",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "user_exists",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "group_exists",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "insert_single_user_group_mapping",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "get_user_group_mappings",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "insert_multiple_user_group_mappings",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "prepare_fields_and_values",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "update_info",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "add_info",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "user_portal_password_is_set",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "count_sql",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/functions.php",
+      "function": "get_numrows",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/library/attributes.php",
+      "function": "is_attribute_already_present",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/library/attributes.php",
+      "function": "handleAttributes",
+      "disposition": "retain PDO contract; remove legacy branch; require PDO handle"
+    },
+    {
+      "file": "app/operators/include/management/groups.php",
+      "function": "__top_level__",
+      "disposition": "retain PDO query/rendering; remove legacy else; reject non-PDO"
+    },
+    {
+      "file": "app/common/includes/db_open.php",
+      "function": "__top_level__",
+      "disposition": "remove obsolete bootstrap/callback; no current production caller"
+    },
+    {
+      "file": "app/common/includes/db_close.php",
+      "function": "__top_level__",
+      "disposition": "remove obsolete bootstrap/callback; no current production caller"
+    },
+    {
+      "file": "app/common/includes/db_error_handler.php",
+      "function": "__top_level__",
+      "disposition": "remove obsolete bootstrap/callback; no current production caller"
+    }
+  ],
+  "forwarding_wrappers": [
+    "get_accounting_custom_query_options",
+    "update_user_info",
+    "add_user_info",
+    "update_user_billing_info",
+    "add_user_billing_info",
+    "count_users",
+    "count_hotspots",
+    "count_nas"
+  ]
+}

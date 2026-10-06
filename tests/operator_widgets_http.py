@@ -5,6 +5,7 @@ No live database, browser or RADIUS server is used. Fixture sessions are synthet
 import concurrent.futures,csv,io,json,os,re,secrets,shutil,subprocess,tempfile,time,urllib.parse,urllib.request,urllib.error
 from html.parser import HTMLParser
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
 ROOT=Path(__file__).resolve().parents[1]
 BASE='d0a8a9d20016130e56ff723350004d395a64eddd'
@@ -51,12 +52,13 @@ def main():
         for version in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/version/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if version=='base':
-                for source in ['app/common/includes/chart.php', 'app/operators/home-main.php', 'app/operators/library/graphs/alltime_users_data.php', 'app/operators/library/graphs/logged_users.php', 'app/operators/library/graphs/new_users.php', 'app/operators/library/graphs/online_nas.php', 'app/operators/library/graphs/online_users.php', 'app/operators/library/graphs/overall_users_data.php', 'app/operators/library/graphs/total_users.php', 'app/operators/library/tables/alltime_users_login.php', 'app/operators/library/tables/overall_users_download.php', 'app/operators/library/tables/overall_users_login.php', 'app/operators/library/tables/overall_users_upload.php', 'app/operators/graphs-alltime_logins.php', 'app/operators/graphs-overall_logins.php', 'app/operators/graphs-overall_upload.php', 'app/operators/graphs-overall_download.php']:
+                restore_pear_bootstrap((f / version / 'app').parent, BASE)
+                for source in ['app/common/includes/chart.php', 'app/operators/include/management/functions.php', 'app/operators/home-main.php', 'app/operators/library/graphs/alltime_users_data.php', 'app/operators/library/graphs/logged_users.php', 'app/operators/library/graphs/new_users.php', 'app/operators/library/graphs/online_nas.php', 'app/operators/library/graphs/online_users.php', 'app/operators/library/graphs/overall_users_data.php', 'app/operators/library/graphs/total_users.php', 'app/operators/library/tables/alltime_users_login.php', 'app/operators/library/tables/overall_users_download.php', 'app/operators/library/tables/overall_users_login.php', 'app/operators/library/tables/overall_users_upload.php', 'app/operators/graphs-alltime_logins.php', 'app/operators/graphs-overall_logins.php', 'app/operators/graphs-overall_upload.php', 'app/operators/graphs-overall_download.php']:
                     (f/version/source).write_bytes(subprocess.check_output(['git','show',BASE+':'+source],cwd=ROOT))
-            # Pin the pre-R22 portal consumer in both copies to exercise the
-            # shared PEAR dispatch explicitly; production portal now uses PDO.
-            (f/version/'app/users/library/graphs/overall_users_data.php').write_bytes(
-                subprocess.check_output(['git','show', '41b2b0ee4c3a930aeb298adda53cad020a86ba46:app/users/library/graphs/overall_users_data.php'],cwd=ROOT))
+            # Historical PEAR consumer belongs only to the baseline source tree.
+            if version=='base':
+                (f/version/'app/users/library/graphs/overall_users_data.php').write_bytes(
+                    subprocess.check_output(['git','show', BASE+':app/users/library/graphs/overall_users_data.php'],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')
             for key,value in {'CONFIG_DB_HOST':h.DB,'CONFIG_DB_USER':'root','CONFIG_DB_PASS':'','CONFIG_DB_NAME':version,'CONFIG_IFACE_TABLES_LISTING':'2','CONFIG_DB_TBL_RADACCT':'custom_acct','CONFIG_DB_TBL_DALOHOTSPOTS':'custom_hs','CONFIG_DB_TBL_RADCHECK':'custom_check','CONFIG_DB_TBL_DALOUSERBILLINFO':'custom_bill','CONFIG_DB_TBL_DALOBILLINGPLANS':'custom_plans','CONFIG_DB_TBL_DALOUSERINFO':'custom_info','CONFIG_DB_TBL_RADREPLY':'custom_reply','CONFIG_DB_TBL_RADUSERGROUP':'custom_groups','CONFIG_DB_TBL_RADPOSTAUTH':'custom_postauth','CONFIG_DB_TBL_RADNAS':'custom_nas','CONFIG_DB_TBL_DALOBATCHHISTORY':'custom_batches','CONFIG_DB_TBL_DALONODE':'custom_node','CONFIG_DB_TBL_DALOPROXYS':'custom_proxy','CONFIG_DB_TBL_DALOREALMS':'custom_realms','CONFIG_DB_TBL_DALOBILLINGINVOICE':'custom_invoice','CONFIG_DB_TBL_DALOPAYMENTS':'custom_payments','CONFIG_IFACE_PASSWORD_HIDDEN':'yes','CONFIG_IFACE_DEBUG':'0'}.items():
                 conf+='\n$configValues['+repr(key)+']='+repr(value)+';\n'
@@ -64,7 +66,8 @@ def main():
             configs[version]=conf;(f/version/'app/common/includes/daloradius.conf.php').write_text(conf)
             # Freeze SQL NOW() only in copied fixtures: R20 live summaries vary by second.
             old=f/version/'app/common/includes/db_open.php'
-            old.write_text(old.read_text()+"\n$dbSocket->query('SET timestamp=1700000000');\n")
+            if version=='base':
+                old.write_text(old.read_text()+"\n$dbSocket->query('SET timestamp=1700000000');\n")
             pc=f/version/'app/common/includes/pdo_connection.php'
             pc.write_text(pc.read_text().replace("$pdo->exec(\"SET SESSION sql_mode = ''\");","$pdo->exec(\"SET SESSION sql_mode = ''\"); $pdo->exec('SET timestamp=1700000000');"))
         (f/'session.php').write_text("<?php session_name('daloradius_operator_sid');session_id($argv[1]);session_start();$_SESSION=['daloradius_logged_in'=>true,'operator_id'=>(int)($argv[3]??9001),'operator_user'=>bin2hex(random_bytes(12)),'location_name'=>($argv[2]??'default'),'time'=>time()];session_write_close();")
@@ -250,13 +253,13 @@ def main():
             duplicate=int(db('SELECT MAX(id) FROM operators_acl'))
             assert req('library/graphs/overall_users_data.php',{'user':'Alice','category':'download'},session=denied)[0]==403
             db('DELETE FROM operators_acl WHERE id='+str(duplicate))
-            # Pinned pre-R22 portal consumer of the retained shared PEAR branch.
+            # Historical PEAR portal producer versus current PDO-only shared chart.
             portal=secrets.token_hex(16);run('docker','exec',h.WEB,'php','/fixtures/portal-session.php',portal)
             portal_outputs=[]
             for version in ('base','candidate'):
                 request=urllib.request.Request('http://'+ip+':8080/'+version+'/app/users/library/graphs/overall_users_data.php?category=upload&type=monthly',headers={'Cookie':'daloradius_user_sid='+portal})
                 with urllib.request.urlopen(request,timeout=15) as response:portal_outputs.append(json.loads(response.read()))
-            assert portal_outputs[0]==portal_outputs[1] and portal_outputs[1]['data']['labels'],'pinned PEAR portal compatibility'
+            assert portal_outputs[0]==portal_outputs[1] and portal_outputs[1]['data']['labels'],'historical PEAR/current PDO portal chart parity'
             # Direct extension/provider guards are still effective.
             for page in ['library/tables/'+Path(p).name for p in ['app/operators/library/tables/alltime_users_login.php', 'app/operators/library/tables/overall_users_download.php', 'app/operators/library/tables/overall_users_login.php', 'app/operators/library/tables/overall_users_upload.php']]+['library/widget_reads_pdo.php']:
                 assert req(page)[0] in (302,404),(page,'direct access guard')
@@ -311,7 +314,7 @@ def main():
             assert not bad,'Candidate PHP diagnostics (details suppressed)'
             assert 'SQLSTATE' not in logs
             print('PASS '+str(comparisons)+' pinned PEAR/PDO complete JSON/HTML comparisons: periods, categories, units, every table sort/pagination, capped and empty results, and all dashboard sections',flush=True)
-            print('PASS exact canvas/sort links, raw special identities, scalar/injection/ACL, configured/named reads, SELECT-only grants, pinned historical portal PEAR dispatch, native later failures and no-legacy tripwires',flush=True)
+            print('PASS exact canvas/sort links, raw special identities, scalar/injection/ACL, configured/named reads, SELECT-only grants, historical PEAR/current PDO portal parity, native later failures and no-legacy tripwires',flush=True)
         finally:
             run('docker','rm','-f',h.WEB,h.DB,check=False);run('docker','network','rm',h.NETWORK,check=False)
             subprocess.run(['sudo','-n','chown','-R',str(os.getuid())+':'+str(os.getgid()),str(f)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)

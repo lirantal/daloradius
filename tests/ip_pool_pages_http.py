@@ -3,6 +3,7 @@
 import concurrent.futures,hashlib,json,os,re,secrets,shutil,subprocess,tempfile,time,urllib.parse,urllib.request,urllib.error
 from html.parser import HTMLParser
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
 from acct_maintenance_http import Forms
 ROOT=Path(__file__).resolve().parents[1]
@@ -38,6 +39,7 @@ def main():
         for version in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/version/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if version=='base':
+                restore_pear_bootstrap((f / version / 'app').parent, BASE)
                 for rel in PAGES:
                     (f/version/'app/operators'/rel).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+rel],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')

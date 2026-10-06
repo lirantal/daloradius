@@ -5,6 +5,7 @@ No live config/data. Captured documents and generated cards stay in memory.
 import concurrent.futures, email, email.policy, json, os, re, secrets, shutil, socketserver
 import subprocess, tempfile, threading, urllib.parse, urllib.request, urllib.error
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
 ROOT=Path(__file__).resolve().parents[1]
 BASE="9c2cd027308391b11c8d58b2ab35068f8e7323ef"
@@ -121,6 +122,7 @@ session_write_close();
         for v in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/v/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if v=='base':
+                restore_pear_bootstrap((f / v / 'app').parent, BASE)
                 for p in FILES:(f/v/'app/operators'/p).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+p],cwd=ROOT))
             (f/v/'app/operators/probe.php').write_text(probe)
         try:

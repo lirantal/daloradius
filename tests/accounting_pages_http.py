@@ -5,6 +5,7 @@ No live database, browser or RADIUS server is used. Fixture sessions are synthet
 import csv,io,json,os,re,secrets,shutil,subprocess,tempfile,urllib.parse,urllib.request,urllib.error
 from html.parser import HTMLParser
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
 ROOT=Path(__file__).resolve().parents[1]
 BASE='1160e4bfb6f1744c6eb5c3b8ac0fae8d154dc898'
@@ -41,6 +42,7 @@ def main():
         for version in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/version/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if version=='base':
+                restore_pear_bootstrap((f / version / 'app').parent, BASE)
                 for page in PAGES:
                     (f/version/'app/operators'/page).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+page],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')

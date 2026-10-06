@@ -5,6 +5,7 @@ State, SQL projections and session values remain only in runtime memory.
 import concurrent.futures, csv, html, io, json, re, secrets, shutil, subprocess, tempfile, time
 import urllib.error, urllib.parse, urllib.request
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 from html.parser import HTMLParser
 import user_actions_http as h
 ROOT = Path(__file__).resolve().parents[1]
@@ -147,6 +148,9 @@ echo dalo_csrf_token();session_write_close();
             for v in ('base','candidate'):
                 shutil.copytree(ROOT/'app',f/v/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
                 if v=='base':
+                    restore_pear_bootstrap((f / v / 'app').parent, BASE)
+                    source='app/common/includes/chart.php'
+                    (f/v/source).write_bytes(subprocess.check_output(['git','show',BASE+':'+source],cwd=ROOT))
                     for p in FILES:(f/v/'app/users'/p).write_bytes(subprocess.check_output(['git','show',BASE+':app/users/'+p],cwd=ROOT))
                 conf=sample
                 values=dict(tables,CONFIG_DB_HOST=h.DB,CONFIG_DB_USER='root',CONFIG_DB_PASS='',CONFIG_DB_NAME=v,

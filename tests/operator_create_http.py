@@ -7,6 +7,7 @@ No real credentials or password hashes are written to logs or test snapshots.
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import secrets
 import shutil
 import subprocess
@@ -32,8 +33,9 @@ def main():
     scratch.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='dalo-op-create-', dir=scratch) as directory:
         fixture = Path(directory)
-        shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True)
+        shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
+            restore_pear_bootstrap((fixture / 'app').parent, BASE_COMMIT)
             old = run('git', 'show', BASE_COMMIT + ':app/operators/config-operators-new.php')
             (fixture / 'app/operators/config-operators-new.php').write_text(old + '\n')
         try:

@@ -3,6 +3,7 @@
 import concurrent.futures, json, os, re, secrets, shutil, subprocess, tempfile, urllib.parse, urllib.request, urllib.error
 from html.parser import HTMLParser
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
 from acct_maintenance_http import Forms
 ROOT=Path(__file__).resolve().parents[1]
@@ -37,6 +38,7 @@ def main():
         for version in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/version/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if version=='base':
+                restore_pear_bootstrap((f / version / 'app').parent, BASE)
                 for rel in PAGES+['include/management/functions.php','include/management/groups.php']:
                     (f/version/'app/operators'/rel).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+rel],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')
@@ -46,7 +48,7 @@ def main():
             (f/version/'app/common/includes/daloradius.conf.php').write_text(conf)
         for version in ('base','candidate'):
             (f/version/'app/operators/widget.php').write_text("<?php\ninclude 'library/checklogin.php';\ninclude_once '../common/includes/config_read.php';\ninclude_once 'lang/main.php';\ninclude_once '../common/includes/validation.php';\ninclude_once '../common/includes/layout.php';\ninclude_once 'include/management/functions.php';\n$username=is_string($_GET['username']??null)?$_GET['username']:'';\n$logDebugSQL='';\nif (__BASE__) { include '../common/includes/db_open.php'; }\nelse { require_once '../common/includes/pdo_connection.php'; $dbSocket=dalo_pdo_connect($configValues,$_SESSION['location_name']??'default'); }\ninclude 'include/management/groups.php';\nif (__BASE__) { include '../common/includes/db_close.php'; }\n".replace('__BASE__','true' if version=='base' else 'false'))
-        (f/'base/app/operators/compat_widget.php').write_text("<?php\ninclude 'library/checklogin.php';\ninclude_once '../common/includes/config_read.php';\ninclude_once 'lang/main.php';\ninclude_once '../common/includes/validation.php';\ninclude_once '../common/includes/layout.php';\ninclude_once 'include/management/functions.php';\n$username=is_string($_GET['username']??null)?$_GET['username']:'';\n$logDebugSQL='';\nif (true) { include '../common/includes/db_open.php'; }\nelse { require_once '../common/includes/pdo_connection.php'; $dbSocket=dalo_pdo_connect($configValues,$_SESSION['location_name']??'default'); }\ninclude '/fixtures/candidate/app/operators/include/management/groups.php';\nif (true) { include '../common/includes/db_close.php'; }\n")
+        (f/'base/app/operators/compat_widget.php').write_text("<?php\ninclude 'library/checklogin.php';\ninclude_once '../common/includes/config_read.php';\ninclude_once 'lang/main.php';\ninclude_once '../common/includes/validation.php';\ninclude_once '../common/includes/layout.php';\ninclude_once 'include/management/functions.php';\n$username=is_string($_GET['username']??null)?$_GET['username']:'';\n$logDebugSQL='';\nif (true) { include '../common/includes/db_open.php'; }\nelse { require_once '../common/includes/pdo_connection.php'; $dbSocket=dalo_pdo_connect($configValues,$_SESSION['location_name']??'default'); }\ntry { include '/fixtures/candidate/app/operators/include/management/groups.php'; } catch (InvalidArgumentException $error) { echo 'PDO_REQUIRED'; }\nif (true) { include '../common/includes/db_close.php'; }\n")
         (f/'candidate/app/operators/borrowed.php').write_text('<?php\ninclude \'library/checklogin.php\';include_once \'../common/includes/config_read.php\';\ninclude_once \'lang/main.php\';include_once \'../common/includes/layout.php\';\ninclude_once \'include/management/functions.php\';require_once \'../common/includes/pdo_connection.php\';\n$logDebugSQL=\'\';$dbSocket=dalo_pdo_connect($configValues,$_SESSION[\'location_name\']??\'default\');\n$dbSocket->beginTransaction();$username=\'alice\';\n$dbSocket->exec("INSERT INTO radreply(username,attribute,op,value) VALUES (\'owned-caller\',\'Class\',\':=\',\'sentinel\')");\nif (($_GET[\'action\']??\'\')===\'delete\') { $ok=delete_user_group_mappings($dbSocket,$username); }\nelse { ob_start();include \'include/management/groups.php\';ob_end_clean();$ok=true; }\n$active=$dbSocket->inTransaction();$dbSocket->rollBack();\necho json_encode(array(\'ok\'=>$ok,\'active\'=>$active));\n')
         (f/'session.php').write_text("<?php session_name('daloradius_operator_sid');session_id($argv[1]);session_start();$_SESSION=['daloradius_logged_in'=>true,'operator_id'=>(int)($argv[3]??9001),'operator_user'=>'fixture','location_name'=>($argv[2]??'default'),'time'=>time()];session_write_close();")
         try:
@@ -119,7 +121,7 @@ def main():
             assert [(x.get('username'),x.get('current_group'),x.get('priority')) for x in base_form]==[(x.get('username'),x.get('current_group'),x.get('priority')) for x in candidate_form]
             # Native widget parity, then preserve a real caller write/transaction through widget and provider.
             assert Forms(req('widget.php',version='base',query={'username':'alice'})[1]).forms==Forms(req('widget.php',query={'username':'alice'})[1]).forms
-            assert Forms(req('compat_widget.php',version='base',query={'username':'alice'})[1]).forms==Forms(req('widget.php',query={'username':'alice'})[1]).forms
+            assert 'PDO_REQUIRED' in req('compat_widget.php',version='base',query={'username':'alice'})[1], 'Retired PEAR group handle was accepted'
             before=state()
             for action in ('widget','delete'):
                 status,html=req('borrowed.php',query={'action':action});assert status==200

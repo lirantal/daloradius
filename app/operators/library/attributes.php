@@ -83,7 +83,7 @@ function hashPasswordAttribute($attribute, $value) {
 /**
  * Checks if a specific attribute is already present in the database table.
  *
- * @param DB $dbSocket The DB database connection object.
+ * @param PDO $dbSocket The PDO database connection.
  * @param string $table The name of the database table to query.
  * @param string $param The parameter to compare in the database table.
  * @param string $subject The subject to match in the database table.
@@ -92,28 +92,12 @@ function hashPasswordAttribute($attribute, $value) {
  * @param string $value The value to match in the database table.
  * @return bool True if the attribute is already present, otherwise false.
  */
-function is_attribute_already_present($dbSocket, $table, $param, $subject, $attribute, $op, $value) {
+function is_attribute_already_present(PDO $dbSocket, $table, $param, $subject, $attribute, $op, $value) {
     global $logDebugSQL, $configValues;
 
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/attributes_pdo.php';
-        return dalo_attribute_exists_pdo($dbSocket, $configValues, $table, $param,
-                                         $subject, $attribute, $op, $value);
-    }
-
-    // Construct the SQL query
-    $sql = sprintf("SELECT COUNT(`id`) FROM `%s` WHERE `%s`='%s' AND `attribute`='%s' AND `op`='%s' AND `value`='%s'",
-                    $table, $param, $dbSocket->escapeSimple($subject), $dbSocket->escapeSimple($attribute),
-                    $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($value));
-
-    // Execute the query
-    $res = $dbSocket->query($sql);
-
-    // Log the SQL query for debugging purposes
-    $logDebugSQL .= "$sql;\n";
-
-    // Return true if the attribute is already present, otherwise false
-    return $res->fetchrow()[0] > 0;
+    require_once __DIR__ . '/attributes_pdo.php';
+    return dalo_attribute_exists_pdo($dbSocket, $configValues, $table, $param,
+                                     $subject, $attribute, $op, $value);
 }
 
 /**
@@ -149,147 +133,10 @@ function get_table_name($user_or_group, $table) {
 
 //
 // returns an array of prepared attributes
-function handleAttributes($dbSocket, $subject, $skipList, $insert_only=true, $user_or_group='user') {
+function handleAttributes(PDO $dbSocket, $subject, $skipList, $insert_only=true, $user_or_group='user') {
     global $configValues, $valid_ops, $logDebugSQL;
 
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/attributes_pdo.php';
-        return dalo_handle_attributes_pdo($dbSocket, $configValues, $_POST, $subject,
-                                          $skipList, $valid_ops, $insert_only, $user_or_group);
-    }
-
-    $param = (is_group($user_or_group)) ? 'groupname' : 'username';
-    $counter = 0;
-
-    foreach ($_POST as $element => $field) {
-
-        // we skip several attributes (contained in the $skipList array)
-        // which we do not wish to process (ie: do any sql related stuff in the db)
-        if (in_array($element, $skipList)) {
-            continue;
-        }
-
-        // we need each $field to be exactly a 4-elements array:
-        // $attribute, $value, $op, $table
-        if (!is_array($field) || count($field) != 4) {
-            continue;
-        }
-
-        // we trim all array values
-        foreach ($field as $i => $v) {
-            $field[$i] = trim($v);
-        }
-
-        // we assign all the elements
-        list($id__attribute, $value, $op, $table) = $field;
-
-        if (preg_match("/__/", $id__attribute) === 1) {
-
-            list($columnId, $attribute) = explode("__", $id__attribute);
-
-            $attribute = trim($attribute);
-
-            // if $insert_only is set to true,
-            // we ignore updates, so force $columnId(s) to 0
-            $columnId = intval(trim($columnId));
-            if ($insert_only || $columnId < 0) {
-                $columnId = 0;
-            }
-
-        } else {
-            $columnId = 0;      // we need to set a non-existent column id so that the attribute would
-                                // not match in the database (as it is added from the Attributes tab)
-                                // and the if/else check will result in an INSERT instead of an UPDATE for the
-                                // the last attribute
-            $attribute = $id__attribute;
-        }
-
-        // value and attribute are required
-        if (empty($value) || empty($attribute)) {
-                continue;
-        }
-
-        // we only accept valid ops
-        if (!in_array($op, $valid_ops)) {
-            continue;
-        }
-
-        // we determine the appropriate table name based on
-        // the user or group parameter and adjust the input table accordingly
-        $table = get_table_name($user_or_group, $table);
-
-        // we have to prepare the "value".
-        // we distinguish between password and non-password attributes
-        if (is_passwordlike_attribute($attribute)) {
-            if (!dalo_cleartext_password_allowed() &&
-                in_array($attribute, dalo_cleartext_password_attributes(), true)) {
-                continue;
-            }
-
-            // before we proceed we need to understand if the password should be updated or skipped
-
-            if (!$insert_only) {
-
-                // if we find the exact same password attribute, we skip password-update
-                $sql = sprintf("SELECT `value`, `op` FROM `%s` WHERE `id`=%s", $table, $columnId);
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                list($old_value, $old_op) = $res->fetchrow();
-
-                // If the new value matches the old value, check if the operator has changed.
-                // If so, update the operator and continue iterating.
-                // This helps maintain consistency when updating records.
-                if ($old_value === $value) {
-                    if ($old_op !== $op) {
-                        // Update the operator in the database
-                        $sql = sprintf("UPDATE `%s` SET `op`='%s' WHERE `id`=%s", $table,
-                                       $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($columnId));
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-                    }
-                    continue;
-                }
-
-            }
-
-            // here we can safely prepare the hashed value
-            $value = hashPasswordAttribute($attribute, $value);
-
-        }
-
-        // before we continue we check if this attribute already exists
-        // so we can insert/update only if the exact same attribute is not already present in the db
-        $already_present = is_attribute_already_present($dbSocket, $table, $param, $subject, $attribute, $op, $value);
-
-        if ($already_present) {
-            continue;
-        }
-
-        // here we decide if we have to insert or update
-        // if $columnId is 0 we have to insert, otherwise we have to update
-        if ($columnId == 0) {
-            // insert
-            $sql = sprintf("INSERT INTO `%s` (`id`, `%s`, `attribute`, `op`, `value`) VALUES (0, '%s', '%s', '%s', '%s')",
-                           $table, $param, $dbSocket->escapeSimple($subject), $dbSocket->escapeSimple($attribute),
-                           $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($value));
-        } else {
-            // update
-            $sql = sprintf("UPDATE `%s` SET `value`='%s', `op`='%s' WHERE `%s`='%s' AND `attribute`='%s' AND `id`=%s",
-                           $table, $dbSocket->escapeSimple($value), $dbSocket->escapeSimple($op),
-                           $param, $dbSocket->escapeSimple($subject), $dbSocket->escapeSimple($attribute),
-                           $dbSocket->escapeSimple($columnId));
-        }
-
-
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        if (!DB::isError($res)) {
-            $counter++;
-        }
-
-    } // end foreach
-
-    return $counter;
+    require_once __DIR__ . '/attributes_pdo.php';
+    return dalo_handle_attributes_pdo($dbSocket, $configValues, $_POST, $subject,
+                                      $skipList, $valid_ops, $insert_only, $user_or_group);
 }

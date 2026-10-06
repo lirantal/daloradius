@@ -8,6 +8,7 @@ import concurrent.futures
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import re
 import secrets
 import shutil
@@ -168,8 +169,10 @@ def main():
         common = fixture / 'app/common/includes'
         common.mkdir(parents=True)
         for name in ('config_read.php', 'version.php', 'pdo_connection.php', 'portal_password.php',
-                     'db_open.php', 'db_close.php', 'db_table_conventions.php', 'db_error_handler.php'):
+                     'db_table_conventions.php'):
             shutil.copy2(ROOT / 'app/common/includes' / name, common / name)
+        if BASELINE:
+            restore_pear_bootstrap(fixture, BASE)
         original_helper = (common / 'portal_password.php').read_text()
         hook = 'function dalo_portal_password_hash($password) {'
         assert original_helper.count(hook) == 1

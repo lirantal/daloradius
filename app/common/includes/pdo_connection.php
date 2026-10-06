@@ -1,7 +1,6 @@
 <?php
 /*
- * Optional PDO connection for the staged migration away from PEAR DB.
- * Do not replace the legacy $dbSocket until every caller has been migrated.
+ * Shared PDO connection provider for application and maintenance callers.
  */
 
 if (strpos($_SERVER['PHP_SELF'] ?? '', '/common/includes/pdo_connection.php') !== false) {
@@ -9,7 +8,7 @@ if (strpos($_SERVER['PHP_SELF'] ?? '', '/common/includes/pdo_connection.php') !=
     exit;
 }
 
-/** Resolve the same default/location credentials used by db_open.php. */
+/** Resolve configured default/location connection settings. */
 function dalo_pdo_settings($configValues, $locationName = 'default') {
     $settings = array(
         'engine' => $configValues['CONFIG_DB_ENGINE'],

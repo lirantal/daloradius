@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 
 import operator_login_http as login_fixture
 from operator_login_http import Client, FormParser, add_operator, hash_password, login, quote, run, sql, wait_for
@@ -62,8 +63,9 @@ def main():
     secret = None
     with tempfile.TemporaryDirectory(prefix='dalo-op-otp-', dir=scratch) as directory:
         fixture = Path(directory)
-        shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True)
+        shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
+            restore_pear_bootstrap((fixture / 'app').parent, BASE_COMMIT)
             old = run('git', 'show', BASE_COMMIT + ':app/operators/login-otp.php')
             (fixture / 'app/operators/login-otp.php').write_text(old + '\n')
         (fixture / 'app/operators/session_probe.php').write_text('''<?php

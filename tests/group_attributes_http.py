@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 
 import operator_login_http as auth
 from operator_login_http import Client, FormParser, add_operator, hash_password, login, quote, run, sql, wait_for
@@ -85,8 +86,9 @@ def main():
     percent_group = 'u36-%-' + secrets.token_hex(5)
     with tempfile.TemporaryDirectory(prefix='dalo-group-attributes-', dir=scratch) as directory:
         fixture = Path(directory)
-        shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True)
+        shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
+            restore_pear_bootstrap((fixture / 'app').parent, BASE_COMMIT)
             for filename in ('mng-rad-groupcheck-new.php', 'mng-rad-groupcheck-edit.php',
                              'mng-rad-groupreply-new.php', 'mng-rad-groupreply-edit.php'):
                 old = run('git', 'show', BASE_COMMIT + ':app/operators/' + filename)

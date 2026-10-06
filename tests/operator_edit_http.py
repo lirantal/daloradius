@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import secrets
 import shutil
 import subprocess
@@ -41,8 +42,9 @@ def main():
     scratch.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='dalo-op-edit-', dir=scratch) as directory:
         fixture = Path(directory)
-        shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True)
+        shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
+            restore_pear_bootstrap((fixture / 'app').parent, BASE_COMMIT)
             original = run('git', 'show', BASE_COMMIT + ':app/operators/config-operators-edit.php')
             (fixture / 'app/operators/config-operators-edit.php').write_text(original + '\n')
         try:

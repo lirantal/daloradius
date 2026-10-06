@@ -9,6 +9,7 @@ import tempfile
 import time
 import urllib.parse
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 
 import operator_login_http as auth
 from operator_login_http import Client, FormParser, hash_password, login, quote, run, sql, wait_for
@@ -87,10 +88,11 @@ def main():
     realm_secret=secrets.token_urlsafe(24)
     proxy='proxy-'+secrets.token_hex(4);realm='realm-'+secrets.token_hex(4)
     with tempfile.TemporaryDirectory(prefix='dalo-realm-proxy-',dir=scratch) as directory:
-        root=Path(directory);shutil.copytree(ROOT/'app',root/'app',symlinks=True)
+        root=Path(directory);shutil.copytree(ROOT/'app',root/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         configfile=root/'proxy.conf';configfile.write_text('# daloradius - initial\n\n')
         initial_stat=configfile.stat()
         if BASELINE:
+            restore_pear_bootstrap((root / 'app').parent, BASE_COMMIT)
             for filename in ['mng-rad-'+kind+'-'+action+'.php' for kind in ('proxys','realms')
                              for action in ('new','edit','del')]:
                 old=run('git','show',BASE_COMMIT+':app/operators/'+filename)

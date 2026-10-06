@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import re
 import secrets
 import shutil
@@ -57,14 +58,18 @@ def main():
         fixture=Path(directory)
         shutil.copytree(ROOT/'app',fixture/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
+            restore_pear_bootstrap((fixture / 'app').parent, BASE)
             for path in ('app/operators/config-messages.php','app/common/includes/functions.php',
                          'app/users/login.php','app/users/help-main.php'):
                 (fixture/path).write_text(run('git','show',BASE+':'+path)+'\n')
-        else:
-            legacy=fixture/'app/common/includes/db_open.php'
-            legacy.write_text("<?php if (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'config-messages.php' || "
-                              "in_array($_SERVER['SCRIPT_NAME'] ?? '', array('/users/login.php','/users/help-main.php'), true)) "
-                              "{throw new RuntimeException('Legacy provider tripwire');} ?>\n"+legacy.read_text())
+        restore_pear_bootstrap(fixture / 'legacy', BASE)
+        for name in ('functions.php', 'portal_password.php'):
+            rel = 'app/common/includes/' + name
+            (fixture/'legacy'/rel).write_text(run('git','show',BASE+':'+rel)+'\n')
+        for name in ('config_read.php', 'db_table_conventions.php', 'pdo_connection.php'):
+            (fixture/'legacy/app/common/includes'/name).write_text("<?php require_once '/fixtures/app/common/includes/"+name+"';")
+        # Historical message purification resolves vendor files relative to this tree.
+        (fixture/'legacy/app/common/library').symlink_to('../../../app/common/library', target_is_directory=True)
         (fixture/'session.php').write_text('''<?php
 $p=json_decode(stream_get_contents(STDIN),true); session_name($p['user']?'daloradius_user_sid':'daloradius_operator_sid');
 session_id($p['sid']);session_start();$_SESSION=array('time'=>time());
@@ -74,9 +79,9 @@ session_write_close();
 ''')
         (fixture/'app/operators/messages-legacy.php').write_text('''<?php
 include 'library/checklogin.php';include '../common/includes/config_read.php';include 'lang/main.php';
-include '../common/includes/validation.php';include '../common/includes/functions.php';
-include '../common/includes/db_open.php';echo json_encode(get_message($dbSocket,$_GET['type'] ?? 'dashboard'));
-include '../common/includes/db_close.php';
+include '../common/includes/validation.php';include '../../legacy/app/common/includes/functions.php';
+include '../../legacy/app/common/includes/db_open.php';echo json_encode(get_message($dbSocket,$_GET['type'] ?? 'dashboard'));
+include '../../legacy/app/common/includes/db_close.php';
 ''')
         (fixture/'app/operators/log-channel.php').write_text("<?php error_log('FIXTURE_LOG_CHANNEL'); echo 'ok';")
         try:

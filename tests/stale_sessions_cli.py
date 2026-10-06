@@ -8,6 +8,7 @@ import concurrent.futures
 from datetime import datetime, timezone
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import secrets
 import shutil
 import tempfile
@@ -100,9 +101,11 @@ def main():
         script.write_text(run('git', 'show', BASE + ':' + PATH).stdout) if BASELINE else shutil.copy2(ROOT / PATH, script)
         common = fixture / 'app/common/includes'
         common.mkdir(parents=True)
-        for name in ('config_read.php', 'version.php', 'db_open.php', 'db_close.php',
-                     'db_table_conventions.php', 'db_error_handler.php', 'pdo_connection.php'):
+        for name in ('config_read.php', 'version.php',
+                     'db_table_conventions.php', 'pdo_connection.php'):
             shutil.copy2(ROOT / 'app/common/includes' / name, common / name)
+        if BASELINE:
+            restore_pear_bootstrap(fixture, BASE)
         (fixture / 'health.php').write_text('<?php echo "ready";')
         user, password = 'fixture_' + secrets.token_hex(5), secrets.token_hex(32)
         config(common)

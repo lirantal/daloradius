@@ -40,51 +40,28 @@ function quote_sql_identifier($identifier) {
     return sprintf('`%s`', $identifier);
 }
 
-function get_table_column_names($dbSocket, $table_name, $fallback_columns=array()) {
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/read_helpers_pdo.php';
-        try {
-            $quoted = dalo_read_identifier($dbSocket, $table_name);
-            if ($dbSocket->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
-                $columns = dalo_read_statement($dbSocket, "SHOW COLUMNS FROM $quoted")->fetchAll(PDO::FETCH_COLUMN);
-            } else {
-                $columns = dalo_read_statement($dbSocket,
-                    'SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name=? ORDER BY ordinal_position',
-                    array($table_name))->fetchAll(PDO::FETCH_COLUMN);
-            }
-            $columns = array_values(array_filter($columns, function ($column) {
-                return is_string($column) && preg_match('/^[A-Za-z0-9_]+$/', $column);
-            }));
-            return $columns ?: $fallback_columns;
-        } catch (Throwable $error) {
-            error_log('Column read failed: ' . get_class($error));
-            return $fallback_columns;
+function get_table_column_names(PDO $dbSocket, $table_name, $fallback_columns=array()) {
+    require_once __DIR__ . '/read_helpers_pdo.php';
+    try {
+        $quoted = dalo_read_identifier($dbSocket, $table_name);
+        if ($dbSocket->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+            $columns = dalo_read_statement($dbSocket, "SHOW COLUMNS FROM $quoted")->fetchAll(PDO::FETCH_COLUMN);
+        } else {
+            $columns = dalo_read_statement($dbSocket,
+                'SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name=? ORDER BY ordinal_position',
+                array($table_name))->fetchAll(PDO::FETCH_COLUMN);
         }
-    }
-
-    $quoted_table_name = quote_sql_identifier($table_name);
-    if (empty($quoted_table_name)) {
+        $columns = array_values(array_filter($columns, function ($column) {
+            return is_string($column) && preg_match('/^[A-Za-z0-9_]+$/', $column);
+        }));
+        return $columns ?: $fallback_columns;
+    } catch (Throwable $error) {
+        error_log('Column read failed: ' . get_class($error));
         return $fallback_columns;
     }
-
-    $sql = sprintf('SHOW COLUMNS FROM %s', $quoted_table_name);
-    $columns = $dbSocket->getCol($sql);
-
-    if (!is_array($columns) || count($columns) == 0) {
-        return $fallback_columns;
-    }
-
-    $valid_columns = array();
-    foreach ($columns as $column) {
-        if (is_string($column) && preg_match('/^[A-Za-z0-9_]+$/', $column)) {
-            $valid_columns[] = $column;
-        }
-    }
-
-    return (count($valid_columns) > 0) ? $valid_columns : $fallback_columns;
 }
 
-function get_accounting_custom_query_options($dbSocket, $radacct_table, $fallback_all, $fallback_default) {
+function get_accounting_custom_query_options(PDO $dbSocket, $radacct_table, $fallback_all, $fallback_default) {
     $all = get_table_column_names($dbSocket, $radacct_table, $fallback_all);
     $default = array_values(array_intersect($fallback_default, $all));
 
@@ -97,52 +74,20 @@ function get_accounting_custom_query_options($dbSocket, $radacct_table, $fallbac
 
 
 
-function insert_single_attribute($dbSocket, $subject, $attribute, $op, $value, $table_index='CONFIG_DB_TBL_RADCHECK') {
+function insert_single_attribute(PDO $dbSocket, $subject, $attribute, $op, $value, $table_index='CONFIG_DB_TBL_RADCHECK') {
     global $configValues, $logDebugSQL;
 
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/../../library/user_create.php';
-        return dalo_create_attribute($dbSocket,$configValues,$subject,$attribute,$op,$value,$table_index);
-    }
-
-    $subject = trim($subject);
-
-    if (preg_match('/^CONFIG_DB_TBL/', $table_index) !== false &&
-        array_key_exists($table_index, $configValues)) {
-
-        $param = (preg_match('/GROUP/', $table_index)) ? "groupname" : "username";
-
-        $sql = sprintf("INSERT INTO %s (id, `%s`, `attribute`, `op`, `value`) VALUES (0, '%s', '%s', '%s', '%s')",
-                       $configValues[$table_index], $param, $dbSocket->escapeSimple($subject),
-                       $dbSocket->escapeSimple($attribute), $dbSocket->escapeSimple($op),
-                       $dbSocket->escapeSimple($value));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        return $res == 1;
-
-    }
-
-    return false;
+    require_once __DIR__ . '/../../library/user_create.php';
+    return dalo_create_attribute($dbSocket,$configValues,$subject,$attribute,$op,$value,$table_index);
 }
 
-function hotspots_exists($dbSocket, $hotspot_name) {
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/read_helpers_pdo.php';
-        global $configValues, $logDebugSQL;
-        $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_DALOHOTSPOTS');
-        $sql = "SELECT COUNT(DISTINCT(id)) FROM $table WHERE name=?";
-        $logDebugSQL .= "$sql;\n";
-        return dalo_read_statement($dbSocket, $sql, array($hotspot_name))->fetchColumn() > 0;
-    }
-
+function hotspots_exists(PDO $dbSocket, $hotspot_name) {
+    require_once __DIR__ . '/read_helpers_pdo.php';
     global $configValues, $logDebugSQL;
-    $sql = sprintf("SELECT COUNT(DISTINCT(`id`)) FROM %s WHERE `name` = '%s'",
-                   $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'], $dbSocket->escapeSimple($hotspot_name));
-    $res = $dbSocket->query($sql);
+    $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_DALOHOTSPOTS');
+    $sql = "SELECT COUNT(DISTINCT(id)) FROM $table WHERE name=?";
     $logDebugSQL .= "$sql;\n";
-
-    return $res->fetchrow()[0] > 0;
+    return dalo_read_statement($dbSocket, $sql, array($hotspot_name))->fetchColumn() > 0;
 }
 
 
@@ -151,72 +96,23 @@ function hotspots_exists($dbSocket, $hotspot_name) {
 // in the radcheck table, if $table_index is not provided
 // otherwise in the table associated with $table_index
 // in the $convigValues array
-function user_exists($dbSocket, $username, $table_index='CONFIG_DB_TBL_RADCHECK') {
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/read_helpers_pdo.php';
-        global $configValues, $logDebugSQL;
-        $table = dalo_read_table($dbSocket, $configValues, $table_index);
-        $sql = "SELECT COUNT(DISTINCT(username)) FROM $table WHERE username=?";
-        $logDebugSQL .= "$sql;\n";
-        return dalo_read_statement($dbSocket, $sql, array(trim($username)))->fetchColumn() > 0;
-    }
-
+function user_exists(PDO $dbSocket, $username, $table_index='CONFIG_DB_TBL_RADCHECK') {
+    require_once __DIR__ . '/read_helpers_pdo.php';
     global $configValues, $logDebugSQL;
-
-    $username = trim($username);
-
-    if (preg_match('/^CONFIG_DB_TBL/', $table_index) !== false &&
-        array_key_exists($table_index, $configValues)) {
-
-        // check if user exists in radcheck
-        $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
-                       $configValues[$table_index], $dbSocket->escapeSimple($username));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        return $res->fetchrow()[0] > 0;
-    }
+    $table = dalo_read_table($dbSocket, $configValues, $table_index);
+    $sql = "SELECT COUNT(DISTINCT(username)) FROM $table WHERE username=?";
+    $logDebugSQL .= "$sql;\n";
+    return dalo_read_statement($dbSocket, $sql, array(trim($username)))->fetchColumn() > 0;
 }
 
 // give an open $dbSocket and a $groupname,
 // returns true if the provided groupname is found
 // in the radgroupcheck and/or radgroupreply tables
-function group_exists($dbSocket, $groupname) {
+function group_exists(PDO $dbSocket, $groupname) {
     global $configValues, $logDebugSQL;
 
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/groupMappingsPdo.php';
-        return dalo_mapping_group_exists($dbSocket, $configValues, $groupname);
-    }
-
-    $groupname = trim($groupname);
-
-    $tables = array(
-                     $configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
-                     $configValues['CONFIG_DB_TBL_RADGROUPREPLY']
-                   );
-
-
-    foreach ($tables as $table) {
-        if (!is_string($table) || !preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $table)) {
-            return false;
-        }
-        // Count this group, not every group in the database (legacy predicate bug).
-        $sql = sprintf("SELECT COUNT(DISTINCT(groupname)) FROM `%s` WHERE groupname=?", $table);
-        $prep = $dbSocket->prepare($sql);
-        if (DB::isError($prep)) { return false; }
-        $res = $dbSocket->execute($prep, array($groupname));
-        $dbSocket->freePrepared($prep);
-        $logDebugSQL .= "$sql;\n";
-        if (DB::isError($res)) { return false; }
-        $row = $res->fetchRow();
-        if ($row && $row[0] > 0) {
-            return true;
-        }
-    }
-
-    return false;
-
+    require_once __DIR__ . '/groupMappingsPdo.php';
+    return dalo_mapping_group_exists($dbSocket, $configValues, $groupname);
 }
 
 if (!defined('DALO_DISABLED_USERS_GROUP')) {
@@ -248,31 +144,11 @@ function update_user_group_mapping_priority(PDO $dbSocket, $username, $groupname
 // give an open $dbSocket, an $username and $groupname
 // inserts (if possible) an user-group mapping with the
 // provided $priority (default: 0)
-function insert_single_user_group_mapping($dbSocket, $username, $groupname, $priority=0) {
+function insert_single_user_group_mapping(PDO $dbSocket, $username, $groupname, $priority=0) {
     global $configValues, $logDebugSQL;
 
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/groupMappingsPdo.php';
-        return dalo_mapping_insert_single($dbSocket, $configValues, $username, $groupname, $priority);
-    }
-
-    $username = trim($username);
-    $groupname = trim($groupname);
-
-
-    if (!user_exists($dbSocket, $username) || !group_exists($dbSocket, $groupname)) {
-        return false;
-    }
-
-    $priority = normalize_user_group_priority($groupname, $priority);
-
-    $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
-                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
-                   $dbSocket->escapeSimple($groupname), $priority);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    return $res == 1;
+    require_once __DIR__ . '/groupMappingsPdo.php';
+    return dalo_mapping_insert_single($dbSocket, $configValues, $username, $groupname, $priority);
 }
 
 
@@ -284,39 +160,18 @@ function delete_user_group_mappings(PDO $dbSocket, $username) {
 }
 
 // returns all groups associated with a provided $username
-function get_user_group_mappings($dbSocket, $username) {
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/read_helpers_pdo.php';
-        global $configValues, $logDebugSQL;
-        try {
-            $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_RADUSERGROUP');
-            $sql = "SELECT DISTINCT(groupname) FROM $table WHERE username=? ORDER BY groupname ASC";
-            $logDebugSQL .= "$sql;\n";
-            return dalo_read_statement($dbSocket, $sql, array(trim($username)))->fetchAll(PDO::FETCH_COLUMN);
-        } catch (Throwable $error) {
-            error_log('Group list read failed: ' . get_class($error));
-            return array();
-        }
-    }
-
+function get_user_group_mappings(PDO $dbSocket, $username) {
+    require_once __DIR__ . '/read_helpers_pdo.php';
     global $configValues, $logDebugSQL;
-
-    $username = trim($username);
-    $result = array();
-
-    $sql = sprintf("SELECT DISTINCT(groupname) FROM %s WHERE username='%s' ORDER BY groupname ASC",
-                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username));
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    if (!DB::isError($res)) {
-        while ($row = $res->fetchRow()) {
-            $result[] = $row[0];
-        }
+    try {
+        $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_RADUSERGROUP');
+        $sql = "SELECT DISTINCT(groupname) FROM $table WHERE username=? ORDER BY groupname ASC";
+        $logDebugSQL .= "$sql;\n";
+        return dalo_read_statement($dbSocket, $sql, array(trim($username)))->fetchAll(PDO::FETCH_COLUMN);
+    } catch (Throwable $error) {
+        error_log('Group list read failed: ' . get_class($error));
+        return array();
     }
-
-    return $result;
-
 }
 
 // give an open $dbSocket, a $planName and an array of groupnames
@@ -329,94 +184,21 @@ function insert_multiple_plan_group_mappings(PDO $dbSocket, $planName, $groupnam
 
 // give an open $dbSocket, an $username and an array of groupnames
 // inserts (if possible) an user-group mapping for each groupname
-function insert_multiple_user_group_mappings($dbSocket, $username, $groupnames) {
+function insert_multiple_user_group_mappings(PDO $dbSocket, $username, $groupnames) {
     global $configValues, $logDebugSQL;
 
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/groupMappingsPdo.php';
-        return dalo_mapping_insert_many($dbSocket, $configValues, $username, $groupnames);
-    }
-
-    if (!is_array($groupnames)) {
-        return false;
-    }
-
-    $groupnames = array_unique($groupnames);
-
-    if (count($groupnames) == 0) {
-        return false;
-    }
-
-    if (!user_exists($dbSocket, $username)) {
-        return false;
-    }
-
-    $counter = 0;
-    foreach ($groupnames as $groupname) {
-        $groupname = trim($groupname);
-
-        if (empty($groupname)) {
-            continue;
-        }
-
-        // check if group exists
-        if (!group_exists($dbSocket, $groupname)) {
-            continue;
-        }
-
-        // insert user-group mapping with default priority 0, except reserved disabled users group
-        $priority = normalize_user_group_priority($groupname, 0);
-        $sql = sprintf("INSERT INTO %s (username, groupname, priority) VALUES ('%s', '%s', %d)",
-                       $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                       $dbSocket->escapeSimple($username),
-                       $dbSocket->escapeSimple($groupname), $priority);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        if (!DB::isError($res)) {
-            $counter++;
-        }
-    }
-
-    return $counter;
-
+    require_once __DIR__ . '/groupMappingsPdo.php';
+    return dalo_mapping_insert_many($dbSocket, $configValues, $username, $groupnames);
 }
 
-function prepare_fields_and_values($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index) {
-    if ($dbSocket instanceof PDO) {
-        $fields=array(); $values=array();
-        foreach ($params as $field=>$value) {
-            if (!in_array($field,$allowedFields,true) || in_array($field,$skipFields,true)) { continue; }
-            if (!is_string($value) && !is_int($value)) { throw new InvalidArgumentException('Invalid information field'); }
-            $fields[]=$field; $values[]=trim((string)$value);
-        }
-        return $fields ? array('fields'=>$fields,'values'=>$values) : null;
+function prepare_fields_and_values(PDO $dbSocket, $username, $params, $allowedFields, $skipFields, $table_index) {
+    $fields=array(); $values=array();
+    foreach ($params as $field=>$value) {
+        if (!in_array($field,$allowedFields,true) || in_array($field,$skipFields,true)) { continue; }
+        if (!is_string($value) && !is_int($value)) { throw new InvalidArgumentException('Invalid information field'); }
+        $fields[]=$field; $values[]=trim((string)$value);
     }
-
-
-    $fields = array();
-    $values = array();
-    foreach ($params as $field => $value) {
-        $value = trim($value);
-        $field = trim($field);
-
-        // validate $field
-        if (empty($field) || in_array($field, $skipFields) || !in_array($field, $allowedFields)) {
-            continue;
-        }
-
-        $fields[] = $field;
-        
-        // validate (and set) $value
-        // empty returns true even if $value is "0", but "0" could be a valid value
-        $values[] = ($value !== "0" && empty($value)) ? "" : $dbSocket->escapeSimple($value);
-    }
-
-    if (count($fields) == 0) {
-        return null;
-    }
-
-    return array( "fields" => $fields, "values" => $values );
+    return $fields ? array('fields'=>$fields,'values'=>$values) : null;
 }
 
 function make_insert_query($table, $escaped_username, $fields, $values) {
@@ -457,46 +239,15 @@ function redact_sensitive_values($fields, $values, $sensitiveFields) {
     return $redacted;
 }
 
-function update_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index,
+function update_info(PDO $dbSocket, $username, $params, $allowedFields, $skipFields, $table_index,
                      $sensitiveFields = array()) {
     global $configValues, $logDebugSQL;
 
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/../../library/user_create.php';
-        return dalo_create_info($dbSocket,$configValues,$username,$params,$allowedFields,$skipFields,$table_index,true);
-    }
-
-    // if info do not exist for this user we return false
-    if (!user_exists($dbSocket, $username, $table_index)) {
-        return false;
-    }
-
-    $arr = prepare_fields_and_values($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index);
-
-    if (!is_array($arr)) {
-        return null;
-    }
-
-    $sql = make_update_query($configValues[$table_index], $dbSocket->escapeSimple($username),
-                             $arr["fields"], $arr["values"]);
-    $has_sensitive_fields = count(array_intersect($arr["fields"], $sensitiveFields)) > 0;
-    $res = $has_sensitive_fields
-         ? dalo_portal_db_sensitive_call($dbSocket, function() use ($dbSocket, $sql) {
-               return $dbSocket->query($sql);
-           })
-         : $dbSocket->query($sql);
-
-    $logged_values = $has_sensitive_fields
-                   ? redact_sensitive_values($arr["fields"], $arr["values"], $sensitiveFields)
-                   : $arr["values"];
-    $logged_sql = make_update_query($configValues[$table_index], $dbSocket->escapeSimple($username),
-                                    $arr["fields"], $logged_values);
-    $logDebugSQL .= "$logged_sql;\n";
-
-    return !DB::isError($res) && $res === DB_OK;
+    require_once __DIR__ . '/../../library/user_create.php';
+    return dalo_create_info($dbSocket,$configValues,$username,$params,$allowedFields,$skipFields,$table_index,true);
 }
 
-function update_user_info($dbSocket, $username, $params) {
+function update_user_info(PDO $dbSocket, $username, $params) {
 
     $allowedFields = array(
                             "id", "username", "firstname", "lastname", "email", "department", "company", "workphone",
@@ -513,8 +264,7 @@ function update_user_info($dbSocket, $username, $params) {
         } else {
             $params['portalloginpassword'] = dalo_portal_password_hash($params['portalloginpassword']);
             if ($params['portalloginpassword'] === false) {
-                if ($dbSocket instanceof PDO) { throw new RuntimeException('Could not hash portal password'); }
-                return false;
+                throw new RuntimeException('Could not hash portal password');
             }
         }
     }
@@ -523,7 +273,7 @@ function update_user_info($dbSocket, $username, $params) {
                        'CONFIG_DB_TBL_DALOUSERINFO', array('portalloginpassword'));
 }
 
-function update_user_billing_info($dbSocket, $username, $params) {
+function update_user_billing_info(PDO $dbSocket, $username, $params) {
     $allowedFields = array(
                             "id", "username", "planName", "hotspot_id", "hotspotlocation", "contactperson", "company",
                             "email", "phone", "address", "city", "state", "country", "zip", "paymentmethod", "cash",
@@ -538,46 +288,15 @@ function update_user_billing_info($dbSocket, $username, $params) {
     return update_info($dbSocket, $username, $params, $allowedFields, $skipFields, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
 }
 
-function add_info($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index,
+function add_info(PDO $dbSocket, $username, $params, $allowedFields, $skipFields, $table_index,
                   $sensitiveFields = array()) {
     global $configValues, $logDebugSQL;
 
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/../../library/user_create.php';
-        return dalo_create_info($dbSocket,$configValues,$username,$params,$allowedFields,$skipFields,$table_index,false);
-    }
-
-    // if info do not exist for this user we return false
-    if (user_exists($dbSocket, $username, $table_index)) {
-        return false;
-    }
-
-    $arr = prepare_fields_and_values($dbSocket, $username, $params, $allowedFields, $skipFields, $table_index);
-
-    if (!is_array($arr)) {
-        return null;
-    }
-
-    $sql = make_insert_query($configValues[$table_index], $dbSocket->escapeSimple($username),
-                             $arr["fields"], $arr["values"]);
-    $has_sensitive_fields = count(array_intersect($arr["fields"], $sensitiveFields)) > 0;
-    $res = $has_sensitive_fields
-         ? dalo_portal_db_sensitive_call($dbSocket, function() use ($dbSocket, $sql) {
-               return $dbSocket->query($sql);
-           })
-         : $dbSocket->query($sql);
-
-    $logged_values = $has_sensitive_fields
-                   ? redact_sensitive_values($arr["fields"], $arr["values"], $sensitiveFields)
-                   : $arr["values"];
-    $logged_sql = make_insert_query($configValues[$table_index], $dbSocket->escapeSimple($username),
-                                    $arr["fields"], $logged_values);
-    $logDebugSQL .= "$logged_sql;\n";
-
-    return !DB::isError($res) && $res === DB_OK;
+    require_once __DIR__ . '/../../library/user_create.php';
+    return dalo_create_info($dbSocket,$configValues,$username,$params,$allowedFields,$skipFields,$table_index,false);
 }
 
-function add_user_info($dbSocket, $username, $params) {
+function add_user_info(PDO $dbSocket, $username, $params) {
     $allowedFields = array(
                             "id", "username", "firstname", "lastname", "email", "department", "company", "workphone",
                             "homephone", "mobilephone", "address", "city", "state", "country", "zip", "notes",
@@ -593,8 +312,7 @@ function add_user_info($dbSocket, $username, $params) {
         } else {
             $params['portalloginpassword'] = dalo_portal_password_hash($params['portalloginpassword']);
             if ($params['portalloginpassword'] === false) {
-                if ($dbSocket instanceof PDO) { throw new RuntimeException('Could not hash portal password'); }
-                return false;
+                throw new RuntimeException('Could not hash portal password');
             }
         }
     }
@@ -603,38 +321,20 @@ function add_user_info($dbSocket, $username, $params) {
                     'CONFIG_DB_TBL_DALOUSERINFO', array('portalloginpassword'));
 }
 
-function user_portal_password_is_set($dbSocket, $username) {
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/read_helpers_pdo.php';
-        global $configValues;
-        try {
-            $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_DALOUSERINFO');
-            $sql = "SELECT COUNT(id) FROM $table WHERE username=? AND portalloginpassword IS NOT NULL AND portalloginpassword<>''";
-            return (int) dalo_read_statement($dbSocket, $sql, array($username))->fetchColumn() === 1;
-        } catch (Throwable $error) {
-            error_log('Portal presence read failed: ' . get_class($error));
-            return false;
-        }
-    }
-
+function user_portal_password_is_set(PDO $dbSocket, $username) {
+    require_once __DIR__ . '/read_helpers_pdo.php';
     global $configValues;
-
-    $sql = sprintf(
-        "SELECT COUNT(id) FROM %s WHERE username=? AND portalloginpassword IS NOT NULL AND portalloginpassword<>''",
-        $configValues['CONFIG_DB_TBL_DALOUSERINFO']
-    );
-    $stmt = $dbSocket->prepare($sql);
-    $res = $dbSocket->execute($stmt, array($username));
-    $dbSocket->freePrepared($stmt);
-
-    if (DB::isError($res)) {
+    try {
+        $table = dalo_read_table($dbSocket, $configValues, 'CONFIG_DB_TBL_DALOUSERINFO');
+        $sql = "SELECT COUNT(id) FROM $table WHERE username=? AND portalloginpassword IS NOT NULL AND portalloginpassword<>''";
+        return (int) dalo_read_statement($dbSocket, $sql, array($username))->fetchColumn() === 1;
+    } catch (Throwable $error) {
+        error_log('Portal presence read failed: ' . get_class($error));
         return false;
     }
-
-    return intval($res->fetchRow()[0]) === 1;
 }
 
-function add_user_billing_info($dbSocket, $username, $params) {
+function add_user_billing_info(PDO $dbSocket, $username, $params) {
     $allowedFields = array(
                             "id", "username", "planName", "hotspot_id", "hotspotlocation", "contactperson", "company",
                             "email", "phone", "address", "city", "state", "country", "zip", "paymentmethod", "cash",
@@ -656,14 +356,9 @@ function add_user_billing_info($dbSocket, $username, $params) {
  * @param string $sql The SQL query to be executed.
  * @return int The number of records returned by the query.
  */
-function count_sql($dbSocket, $sql) {
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/read_helpers_pdo.php';
-        return (int) dalo_read_statement($dbSocket, $sql)->fetchColumn();
-    }
-
-    $res = $dbSocket->query($sql);
-    return intval($res->fetchrow()[0]);
+function count_sql(PDO $dbSocket, $sql) {
+    require_once __DIR__ . '/read_helpers_pdo.php';
+    return (int) dalo_read_statement($dbSocket, $sql)->fetchColumn();
 }
 
 /**
@@ -672,7 +367,7 @@ function count_sql($dbSocket, $sql) {
  * @param object $dbSocket The database connection object with a query() method.
  * @return int The number of distinct users.
  */
-function count_users($dbSocket) {
+function count_users(PDO $dbSocket) {
     global $configValues;
 
     $sql = sprintf("SELECT COUNT(DISTINCT `ui`.`username`) FROM %s AS `rc`, %s AS `ui`
@@ -687,7 +382,7 @@ function count_users($dbSocket) {
  * @param object $dbSocket The database connection object with a query() method.
  * @return int The number of hotspots.
  */
-function count_hotspots($dbSocket) {
+function count_hotspots(PDO $dbSocket) {
     global $configValues;
     $sql = sprintf("SELECT COUNT(`id`) FROM %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
     return count_sql($dbSocket, $sql);
@@ -699,7 +394,7 @@ function count_hotspots($dbSocket) {
  * @param object $dbSocket The database connection object with a query() method.
  * @return int The number of NAS devices.
  */
-function count_nas($dbSocket) {
+function count_nas(PDO $dbSocket) {
     global $configValues;
     $sql = sprintf("SELECT COUNT(`id`) FROM %s", $configValues['CONFIG_DB_TBL_RADNAS']);
     return count_sql($dbSocket, $sql);  
@@ -710,7 +405,7 @@ function count_nas($dbSocket) {
  *
  * This function executes a SQL COUNT query and returns the result as an integer.
  *
- * @param DB $dbSocket The database connection object.
+ * @param PDO $dbSocket The database connection object.
  * @param string $query The SQL query string. It should be in the form of "SELECT COUNT(...) FROM ...".
  *
  * @return int The number of rows returned by the COUNT query.
@@ -719,11 +414,7 @@ function count_nas($dbSocket) {
  * @note The query should return only one column with the count result.
  *       Queries returning multiple columns or rows may lead to unexpected results.
  */
-function get_numrows($dbSocket, $query) {
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/read_helpers_pdo.php';
-        return dalo_read_statement($dbSocket, $query)->fetchColumn();
-    }
-
-    return $dbSocket->query($query)->fetchrow()[0];
+function get_numrows(PDO $dbSocket, $query) {
+    require_once __DIR__ . '/read_helpers_pdo.php';
+    return dalo_read_statement($dbSocket, $query)->fetchColumn();
 }

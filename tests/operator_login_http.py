@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import secrets
 import shutil
 import subprocess
@@ -127,8 +128,9 @@ def main():
     location = 'fixture-location-' + secrets.token_hex(6)
     old_lastlogin = '2000-01-01 00:00:00'
     with tempfile.TemporaryDirectory(prefix='dalo-op-login-', dir=scratch) as directory:
-        fixture = Path(directory); shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True)
+        fixture = Path(directory); shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
+            restore_pear_bootstrap((fixture / 'app').parent, BASE_COMMIT)
             old = run_harness('git', 'show', BASE_COMMIT + ':app/operators/dologin.php')
             (fixture / 'app/operators/dologin.php').write_text(old + '\n')
         (fixture / 'app/operators/session_probe.php').write_text('''<?php

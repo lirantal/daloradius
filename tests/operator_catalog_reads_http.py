@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import secrets
 import shutil
 import subprocess
@@ -57,6 +58,7 @@ def main():
             shutil.copytree(ROOT/'app',dest/'app',symlinks=True,
                             ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if version=='base':
+                restore_pear_bootstrap((dest / 'app').parent, BASE)
                 for rel in ('app/operators/config-operators-list.php','app/operators/library/ajax/user_actions.php',
                             'app/operators/include/management/populate_selectbox.php'):
                     (dest/rel).write_text(run('git','show',BASE+':'+rel)+'\n')

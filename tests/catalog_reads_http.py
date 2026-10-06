@@ -5,6 +5,7 @@ No live configuration, data, credential snapshots or persistent services.
 import json,os,re,secrets,shutil,subprocess,tempfile,urllib.parse,urllib.request,urllib.error
 from html.parser import HTMLParser
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
 from operator_reports_http import Rows
 from acct_maintenance_http import Forms
@@ -48,7 +49,8 @@ def main():
         for v in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/v/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if v=='base':
-                for p in PAGES+['include/management/userBilling.php','include/management/userReports.php']:(f/v/'app/operators'/p).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+p],cwd=ROOT))
+                restore_pear_bootstrap((f / v / 'app').parent, BASE)
+                for p in PAGES+['include/management/userBilling.php','include/management/userReports.php','include/management/functions.php','include/management/groups.php']:(f/v/'app/operators'/p).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+p],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')
             for k,value in dict(tables,CONFIG_DB_HOST=h.DB,CONFIG_DB_USER='root',CONFIG_DB_PASS='',CONFIG_DB_NAME=v,CONFIG_IFACE_TABLES_LISTING='2',CONFIG_IFACE_PASSWORD_HIDDEN='yes',CONFIG_IFACE_DEBUG='0',CONFIG_MAIL_ENABLED='no').items():conf+='\n$configValues['+repr(k)+']='+repr(value)+';\n'
             conf+="\n$configValues['CONFIG_LOCATIONS']['other']=array('Engine'=>'mysqli','Hostname'=>'"+h.DB+"','Username'=>'root','Password'=>'','Database'=>'"+v+"_other','Port'=>'3306');\n"
@@ -236,8 +238,8 @@ def main():
             assert json.loads(req('borrowed.php')[1])==[True,True]
             assert db('SELECT planId FROM custom_plans WHERE id=40')=='P0'
             # R20 completes the POS edit's shared summaries: all eight paths are PDO-only.
-            legacy=f/'candidate/app/common/includes/db_open.php';legacy_text=legacy.read_text()
-            close=f/'candidate/app/common/includes/db_close.php';close_text=close.read_text()
+            legacy=f/'candidate/app/common/includes/db_open.php';legacy_text=legacy.read_text() if legacy.exists() else "<?php throw new RuntimeException('Legacy provider removed');"
+            close=f/'candidate/app/common/includes/db_close.php';close_text=close.read_text() if close.exists() else "<?php throw new RuntimeException('Legacy provider removed');"
             for file in (legacy,close):file.write_text("<?php throw new RuntimeException('Legacy connection tripwire');")
             for p in PAGES:
                 status,text,_=req(p,DEFAULT.get(p))

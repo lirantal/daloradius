@@ -67,5 +67,5 @@ def main():
  code+="if(!function_exists('userInvoiceAdd')||function_exists('add_invoice_items'))exit(5);if(nas_import_is_duplicate_error(new RuntimeException('duplicate entry')))exit(6);$e=new PDOException('fixture');(new ReflectionProperty(Exception::class,'code'))->setValue($e,'23000');$e->errorInfo=array('23000',1062,'fixture');if(!nas_import_is_duplicate_error($e))exit(7);echo 'providers-pass';"
  assert php(code)=='providers-pass'
  print('PASS: 35 original R28 dispositions, removed declarations/calls/strings, exact retained symbol sets, native includes/reflection and duplicate-error predicate')
- print('PASS: userInvoiceAdd provider byte-identical to R27; no provider or PEAR package removed')
+ print('PASS: userInvoiceAdd provider byte-identical to R27; R28 retained-provider contracts unchanged; installation packages outside this audit')
 if __name__=='__main__':main()

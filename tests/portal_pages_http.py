@@ -5,6 +5,7 @@ Documents, state, and session/CSRF values remain only in runtime memory.
 import concurrent.futures, csv, html, io, json, re, secrets, shutil, subprocess, tempfile, time
 import urllib.error, urllib.parse, urllib.request
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 from html.parser import HTMLParser
 import user_actions_http as h
 ROOT = Path(__file__).resolve().parents[1]
@@ -148,6 +149,7 @@ echo json_encode([$before,$failed,$owned,$changed,$rolled]);
             for v in ('base','candidate'):
                 shutil.copytree(ROOT/'app',f/v/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
                 if v=='base':
+                    restore_pear_bootstrap((f / v / 'app').parent, BASE)
                     for p in FILES:(f/v/'app/users'/p).write_bytes(subprocess.check_output(['git','show',BASE+':app/users/'+p],cwd=ROOT))
                     for p in ('app/common/includes/functions.php','app/users/include/management/userReports.php'):
                         (f/v/p).write_bytes(subprocess.check_output(['git','show',BASE+':'+p],cwd=ROOT))

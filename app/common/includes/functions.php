@@ -77,7 +77,7 @@ function update_message(PDO $dbSocket, $type, $content = null) {
 // The above function updates the message of the given type in the database
 // with the filtered content and sets the modified time and operator details.
 
-function get_message($dbSocket, $type) {
+function get_message(PDO $dbSocket, $type) {
     global $valid_message_types, $purifier, $configValues, $logDebugSQL;
 
     // Check if the given message type is valid.
@@ -85,23 +85,8 @@ function get_message($dbSocket, $type) {
         return "";
     }
 
-    if ($dbSocket instanceof PDO) {
-        require_once __DIR__ . '/messages_pdo.php';
-        return dalo_messages_read($dbSocket, $configValues, $type, $purifier);
-    }
-    // R21 portal message consumers now use PDO. Keep the explicit PEAR
-    // compatibility branch until the separately scheduled R29 dependency cleanup.
-    // SQL query to retrieve the message content from the database for the given type.
-    $sql = sprintf("SELECT content, modified_on, modified_by, created_on, created_by FROM %s WHERE `type`='%s' ORDER BY id ASC LIMIT 1",
-                   $configValues['CONFIG_DB_TBL_DALOMESSAGES'], $dbSocket->escapeSimple($type));
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    // Fetch the message data from the query result in an associative array and filter the content using HTMLPurifier.
-    $data = $res->fetchRow(DB_FETCHMODE_ASSOC);
-    $data["content"] = $purifier->purify($data["content"]);
-
-    return $data;
+    require_once __DIR__ . '/messages_pdo.php';
+    return dalo_messages_read($dbSocket, $configValues, $type, $purifier);
 }
 
 // The above function retrieves the message data for the given type

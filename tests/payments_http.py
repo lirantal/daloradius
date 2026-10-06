@@ -5,6 +5,7 @@ No live configuration, data, credential snapshots or persistent services.
 import json,os,re,secrets,shutil,subprocess,tempfile,urllib.parse,urllib.request,urllib.error
 from html.parser import HTMLParser
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
 from operator_reports_http import Rows
 from acct_maintenance_http import Forms
@@ -49,6 +50,7 @@ def main():
         for v in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/v/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if v=='base':
+                restore_pear_bootstrap((f / v / 'app').parent, BASE)
                 for p in PAGES:
                     raw=subprocess.check_output(['git','show',BASE+':app/operators/'+p],cwd=ROOT)
                     # Baseline PHP 8 sidebar trim(array) fatals before the selector.

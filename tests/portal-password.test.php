@@ -109,63 +109,21 @@ check('edge NUL passwords fail before portal writes',
           'portalLoginPassword' => "ab\0",
       )) === false);
 
-if (!defined('PEAR_ERROR_RETURN')) {
-    define('PEAR_ERROR_RETURN', 1);
-}
-if (!defined('PEAR_ERROR_CALLBACK')) {
-    define('PEAR_ERROR_CALLBACK', 16);
-}
-
-class PortalPasswordFakeDb {
-    public $mode = PEAR_ERROR_CALLBACK;
-    public $option = null;
-    private $error_stack = array();
-
-    public function pushErrorHandling($mode, $option = null) {
-        $this->error_stack[] = array($this->mode, $this->option);
-        $this->mode = $mode;
-        $this->option = $option;
-    }
-
-    public function popErrorHandling() {
-        list($this->mode, $this->option) = array_pop($this->error_stack);
-    }
-
-    public function failWithDebugInfo($secret) {
-        if ($this->mode === PEAR_ERROR_CALLBACK) {
-            print "debug SQL contains $secret";
-        }
-        return false;
-    }
-}
-
-$fake_db = new PortalPasswordFakeDb();
-$restored_handler = function() {};
-$fake_db->option = $restored_handler;
-$secret = 'portal-db-error-secret';
-ob_start();
-$result = dalo_portal_db_sensitive_call(
-    $fake_db,
-    function() use ($fake_db, $secret) {
-        return $fake_db->failWithDebugInfo($secret);
-    }
-);
-$output = ob_get_clean();
-check('sensitive DB errors cannot emit interpolated credentials',
-      $result === false && strpos($output, $secret) === false);
-check('sensitive DB calls restore the application error callback',
-      $fake_db->mode === PEAR_ERROR_CALLBACK && $fake_db->option === $restored_handler);
-
-$exception_restored = false;
-try {
-    dalo_portal_db_sensitive_call($fake_db, function() {
-        throw new RuntimeException('expected test exception');
-    });
-} catch (RuntimeException $exception) {
-    $exception_restored = $fake_db->mode === PEAR_ERROR_CALLBACK
-                       && $fake_db->option === $restored_handler;
-}
-check('sensitive DB calls restore error handling after exceptions', $exception_restored);
+class PortalPasswordTestPdo extends PDO { public function __construct() {} }
+$pdo = new PortalPasswordTestPdo();
+check('sensitive PDO calls retain callback result', dalo_portal_db_sensitive_call($pdo, function() { return 42; }) === 42);
+$masked = false;
+try { dalo_portal_db_sensitive_call($pdo, function() { throw new PDOException('fixture SQL detail'); }); }
+catch (RuntimeException $error) { $masked = $error->getMessage() === 'Database operation failed' && $error->getPrevious() === null; }
+check('sensitive PDO failures discard raw SQL and exception chain', $masked);
+$propagates = false;
+try { dalo_portal_db_sensitive_call($pdo, function() { throw new LogicException('callback sentinel'); }); }
+catch (LogicException $error) { $propagates = $error->getMessage() === 'callback sentinel'; }
+check('non-database callback exceptions propagate', $propagates);
+$rejected = false; $called = false;
+try { dalo_portal_db_sensitive_call(new stdClass(), function() use (&$called) { $called = true; }); }
+catch (TypeError $error) { $rejected = true; }
+check('legacy handles rejected before callback execution', $rejected && !$called);
 
 printf("\n%s\n", $failures === 0 ? 'ALL PASSED' : sprintf('%d FAILURE(S)', $failures));
 exit($failures === 0 ? 0 : 1);

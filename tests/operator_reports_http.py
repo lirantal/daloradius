@@ -5,6 +5,7 @@ No live database, browser or RADIUS server is used. Fixture sessions are synthet
 import concurrent.futures,csv,io,json,os,re,secrets,shutil,subprocess,tempfile,time,urllib.parse,urllib.request,urllib.error
 from html.parser import HTMLParser
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
 ROOT=Path(__file__).resolve().parents[1]
 BASE='9ca89687a94f4fd2a8392585d23f78be2495b915'
@@ -51,6 +52,7 @@ def main():
         for version in ('base','candidate'):
             shutil.copytree(ROOT/'app',f/version/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if version=='base':
+                restore_pear_bootstrap((f / version / 'app').parent, BASE)
                 for page in PAGES:
                     (f/version/'app/operators'/page).write_bytes(subprocess.check_output(['git','show',BASE+':app/operators/'+page],cwd=ROOT))
             conf=(ROOT/'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>','')
@@ -60,7 +62,8 @@ def main():
             configs[version]=conf;(f/version/'app/common/includes/daloradius.conf.php').write_text(conf)
             # Freeze SQL NOW() only in copied fixtures: R20 live summaries vary by second.
             old=f/version/'app/common/includes/db_open.php'
-            old.write_text(old.read_text()+"\n$dbSocket->query('SET timestamp=1700000000');\n")
+            if version=='base':
+                old.write_text(old.read_text()+"\n$dbSocket->query('SET timestamp=1700000000');\n")
             pc=f/version/'app/common/includes/pdo_connection.php'
             pc.write_text(pc.read_text().replace("$pdo->exec(\"SET SESSION sql_mode = ''\");","$pdo->exec(\"SET SESSION sql_mode = ''\"); $pdo->exec('SET timestamp=1700000000');"))
         (f/'session.php').write_text("<?php session_name('daloradius_operator_sid');session_id($argv[1]);session_start();$_SESSION=['daloradius_logged_in'=>true,'operator_id'=>(int)($argv[3]??9001),'operator_user'=>bin2hex(random_bytes(12)),'location_name'=>($argv[2]??'default'),'time'=>time()];session_write_close();")

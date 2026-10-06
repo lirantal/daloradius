@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import re
 import secrets
 import shutil
@@ -44,6 +45,7 @@ def main():
             dest=fixture/version
             shutil.copytree(ROOT/'app',dest/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if version=='base':
+                restore_pear_bootstrap((dest / 'app').parent, BASE)
                 rel='app/operators/include/management/functions.php'
                 (dest/rel).write_text(run('git','show',BASE+':'+rel)+'\n')
 
@@ -56,7 +58,7 @@ $configValues['CONFIG_LOCATIONS']['other']=array('Engine'=>'mysqli','Hostname'=>
             for key,value in mapping.items():conf+="$configValues['"+key+"']='"+value+"';\n"
             conf+="if(isset($_GET['bad_table'])){$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']='selector_bad; DROP TABLE selector_bad';}\n"
             (dest/'app/common/includes/daloradius.conf.php').write_text(conf)
-            (dest/'app/operators/selector-fixture.php').write_text('<?php\ninclude \'library/checklogin.php\';include \'../common/includes/config_read.php\';include \'lang/main.php\';\n$operator_perm_file=\'selector_fixture\';include \'library/check_operator_perm.php\';\ninclude \'include/management/functions.php\';require_once \'../common/includes/pdo_connection.php\';\n$mode=$_GET[\'mode\'] ?? \'pear\';\nif($mode===\'pdo\'){$dbSocket=dalo_pdo_connect($configValues,$_SESSION[\'location_name\'] ?? \'default\');$dbSocket->beginTransaction();}\nelse {include \'../common/includes/db_open.php\';$dbSocket->autoCommit(false);}\n$id=spl_object_id($dbSocket);$dbSocket->query(\'INSERT INTO read_probe(id) VALUES(1)\');\n$name=$_GET[\'fn\'];$logDebugSQL=\'\';$value=null;$error=null;\ntry {\n switch($name) {\n case \'count_sql\':$value=count_sql($dbSocket,\'SELECT COUNT(*) FROM \'.$configValues[\'CONFIG_DB_TBL_RADUSERGROUP\']);break;\n case \'get_numrows\':$value=(int)get_numrows($dbSocket,\'SELECT COUNT(*) FROM \'.$configValues[\'CONFIG_DB_TBL_RADUSERGROUP\']);break;\n case \'get_table_column_names\':$value=get_table_column_names($dbSocket,isset($_GET[\'invalid\'])?\'bad;table\':$configValues[\'CONFIG_DB_TBL_RADCHECK\'],array(\'fallback\'));break;\n case \'get_user_group_mappings\':$value=get_user_group_mappings($dbSocket,\' mapped \');break;\n case \'hotspots_exists\':$value=hotspots_exists($dbSocket,\'site A\');break;\n case \'user_exists\':$value=user_exists($dbSocket," account O\'Reilly%+ ",isset($_GET[\'invalid\'])?\'not-a-table\':\'CONFIG_DB_TBL_RADCHECK\');break;\n case \'user_portal_password_is_set\':$value=user_portal_password_is_set($dbSocket,\'info-only\');break;\n default:throw new InvalidArgumentException(\'Unknown fixture read\');\n }\n} catch(Throwable $e){$error=get_class($e);}\n$same=spl_object_id($dbSocket)===$id;$pdo=$dbSocket instanceof PDO;\n$res=$dbSocket->query(\'SELECT COUNT(*) FROM read_probe\');$visible=$pdo?$res->fetchColumn():$res->fetchRow()[0];\n$kept=$same && $visible==1 && (!$pdo || $dbSocket->inTransaction());\nif($pdo){$dbSocket->rollBack();}else{$dbSocket->rollback();}\nheader(\'Content-Type: application/json\');echo json_encode(array(\'value\'=>$value,\'error\'=>$error,\'caller_kept\'=>$kept,\'redacted\'=>strpos($logDebugSQL,\'Reilly\')===false));\n')
+            (dest/'app/operators/selector-fixture.php').write_text('<?php\ninclude \'library/checklogin.php\';include \'../common/includes/config_read.php\';include \'lang/main.php\';\n$operator_perm_file=\'selector_fixture\';include \'library/check_operator_perm.php\';\ninclude \'include/management/functions.php\';require_once \'../common/includes/pdo_connection.php\';\n$mode=$_GET[\'mode\'] ?? \'pdo\';\nif($mode===\'pdo\'){$dbSocket=dalo_pdo_connect($configValues,$_SESSION[\'location_name\'] ?? \'default\');$dbSocket->beginTransaction();}\nelse {include \'../common/includes/db_open.php\';$dbSocket->autoCommit(false);}\n$id=spl_object_id($dbSocket);$dbSocket->query(\'INSERT INTO read_probe(id) VALUES(1)\');\n$name=$_GET[\'fn\'];$logDebugSQL=\'\';$value=null;$error=null;\ntry {\n switch($name) {\n case \'sensitive_error\':$value=dalo_portal_db_sensitive_call($dbSocket,function() use($dbSocket){return $dbSocket->query(\'SELECT * FROM fixture_missing_sensitive_table\');});break;\n case \'count_sql\':$value=count_sql($dbSocket,\'SELECT COUNT(*) FROM \'.$configValues[\'CONFIG_DB_TBL_RADUSERGROUP\']);break;\n case \'get_numrows\':$value=(int)get_numrows($dbSocket,\'SELECT COUNT(*) FROM \'.$configValues[\'CONFIG_DB_TBL_RADUSERGROUP\']);break;\n case \'get_table_column_names\':$value=get_table_column_names($dbSocket,isset($_GET[\'invalid\'])?\'bad;table\':$configValues[\'CONFIG_DB_TBL_RADCHECK\'],array(\'fallback\'));break;\n case \'get_user_group_mappings\':$value=get_user_group_mappings($dbSocket,\' mapped \');break;\n case \'hotspots_exists\':$value=hotspots_exists($dbSocket,\'site A\');break;\n case \'user_exists\':$value=user_exists($dbSocket," account O\'Reilly%+ ",isset($_GET[\'invalid\'])?\'not-a-table\':\'CONFIG_DB_TBL_RADCHECK\');break;\n case \'user_portal_password_is_set\':$value=user_portal_password_is_set($dbSocket,\'info-only\');break;\n default:throw new InvalidArgumentException(\'Unknown fixture read\');\n }\n} catch(Throwable $e){$error=get_class($e);if($name===\'sensitive_error\'){$value=$e->getMessage()===\'Database operation failed\' && $e->getPrevious()===null;}}\n$same=spl_object_id($dbSocket)===$id;$pdo=$dbSocket instanceof PDO;\n$res=$dbSocket->query(\'SELECT COUNT(*) FROM read_probe\');$visible=$pdo?$res->fetchColumn():$res->fetchRow()[0];\n$kept=$same && $visible==1 && (!$pdo || $dbSocket->inTransaction());\nif($pdo){$dbSocket->rollBack();}else{$dbSocket->rollback();}\nheader(\'Content-Type: application/json\');echo json_encode(array(\'value\'=>$value,\'error\'=>$error,\'caller_kept\'=>$kept,\'redacted\'=>strpos($logDebugSQL,\'Reilly\')===false));\n')
             (dest/'app/operators/log-channel.php').write_text("<?php error_log('SELECTOR_LOG_CHANNEL');echo 'ok';")
         (fixture/'session.php').write_text('''<?php
 $p=json_decode(stream_get_contents(STDIN),true);session_name('daloradius_operator_sid');session_id($p['sid']);session_start();
@@ -124,10 +126,12 @@ $_SESSION=array('time'=>time(),'daloradius_logged_in'=>true,'operator_id'=>$p['i
                 old,current=client('base',location),client(location=location)
                 for name in FUNCTIONS:
                     a=request(old,name)
-                    for mode in ('pear','pdo'):
+                    for mode in ('pdo',):
                         b=request(current,name,mode)
                         assert a['value']==b['value'] and a['error']==b['error'],'Read parity failed: '+name
                         if mode=='pdo':assert b['redacted'],'Bound data appears in SQL diagnostics'
+            sensitive=request(candidate,'sensitive_error','pdo')
+            assert sensitive['error']=='RuntimeException' and sensitive['value'] is True, 'Real PDO driver failure was not expurgated'
             assert request(candidate,'user_exists','pdo')['value'] is True
             assert request(candidate,'get_user_group_mappings','pdo')['value']==['both','mapped-only']
             assert request(candidate,'hotspots_exists','pdo')['value'] is True
@@ -152,7 +156,7 @@ $_SESSION=array('time'=>time(),'daloradius_logged_in'=>true,'operator_id'=>$p['i
             assert sql('CHECKSUM TABLE '+','.join(mapping.values()))==frozen,'Reads changed non-probe tables'
             assert Client(origin+'candidate/app/operators/').request('selector-fixture.php?fn=count_sql')[0]==302
             assert client(identity=9002).request('selector-fixture.php?fn=count_sql')[0]==302
-            print('PASS: seven borrowed-handle readers match pinned PEAR and retained PEAR dispatch on default/named locations; literal identities, columns, distinct mappings and portal NULL/empty/set states')
+            print('PASS: seven borrowed-handle readers match pinned PEAR on default/named locations; literal identities, columns, distinct mappings and portal NULL/empty/set states')
             print('PASS: actual caller INSERT remains uncommitted and is rolled back by caller; invalid metadata fallback, later SQL failures redacted, no extra connection or implicit commit')
             assert candidate.request('log-channel.php')[0]==200
             logs=run('docker','logs',WEB)

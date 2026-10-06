@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import re
 import secrets
 import shutil
@@ -72,6 +73,7 @@ def main():
         shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True,
                         ignore=shutil.ignore_patterns('daloradius.conf.php'))
         if BASELINE:
+            restore_pear_bootstrap((fixture / 'app').parent, BASE)
             (fixture / 'app/operators/config-operator-2fa.php').write_text(
                 run('git', 'show', BASE + ':app/operators/config-operator-2fa.php') + '\n')
         else:

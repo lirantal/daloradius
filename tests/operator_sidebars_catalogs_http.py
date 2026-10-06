@@ -5,6 +5,7 @@ from urllib.parse import urlencode
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import re
 import secrets
 import shutil
@@ -71,6 +72,7 @@ def main():
             dest=fixture/version
             shutil.copytree(ROOT/'app',dest/'app',symlinks=True,ignore=shutil.ignore_patterns('daloradius.conf.php'))
             if version=='base':
+                restore_pear_bootstrap((dest / 'app').parent, BASE)
                 rel='app/operators/include/management/populate_selectbox.php'
                 (dest/rel).write_text(run('git','show',BASE+':'+rel)+'\n')
                 for rel in ('app/operators/mng-rad-proxys-list.php','app/operators/mng-rad-realms-list.php','app/operators/include/menu/sidebar/bill/invoice.php','app/operators/include/menu/sidebar/mng/rad-groups.php'):

@@ -9,6 +9,7 @@ from email.parser import BytesParser
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import secrets
 import shutil
 import socketserver
@@ -200,8 +201,10 @@ def main():
         common = fixture / 'app/common/includes'
         common.mkdir(parents=True)
         for name in ('config_read.php', 'version.php', 'pdo_connection.php', 'mail.php',
-                     'db_open.php', 'db_close.php', 'db_error_handler.php', 'db_table_conventions.php'):
+                     'db_table_conventions.php'):
             shutil.copy2(ROOT / 'app/common/includes' / name, common / name)
+        if BASELINE:
+            restore_pear_bootstrap(fixture, BASE)
         library = fixture / 'app/common/library/phpmailer'
         library.mkdir(parents=True)
         for name in ('Exception.php', 'SMTP.php', 'PHPMailer.php'):

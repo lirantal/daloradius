@@ -4,6 +4,7 @@ import collections
 import json
 import os
 from pathlib import Path
+from pear_baseline_fixture import restore_pear_bootstrap
 import re
 import secrets
 import shutil
@@ -86,6 +87,7 @@ def main():
                 shutil.copytree(ROOT / 'app', dest / 'app', symlinks=True,
                                 ignore=shutil.ignore_patterns('daloradius.conf.php'))
                 if version == 'base':
+                    restore_pear_bootstrap((dest / 'app').parent, BASE)
                     for rel in ('app/operators/library/check_operator_perm.php',
                                 'app/operators/include/management/operator_acls.php'):
                         (dest / rel).write_text(run('git', 'show', BASE + ':' + rel) + '\n')
