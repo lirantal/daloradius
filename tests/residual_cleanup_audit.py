@@ -38,7 +38,7 @@ def main():
  paths=[p for p in subprocess.check_output(['git','ls-files','app','contrib'],cwd=ROOT,text=True).splitlines()
   if p.endswith('.php') and (ROOT/p).exists() and '/vendor/' not in p and '/library/pear/' not in p and '/library/phpmailer/' not in p]
  data=json.loads(php(TOKENIZER,json.dumps(paths)))
- manifest=json.loads((ROOT/'docs/database/residual-r28-dispositions.json').read_text())
+ manifest=json.loads((ROOT/'tests/fixtures/database/residual-r28-dispositions.json').read_text())
  entries=manifest['entries'];assert len(entries)==manifest['inventory_entries']==35
  assert len({r['id'] for r in entries})==35
  removed=set(POPULATORS+['add_invoice_items'])

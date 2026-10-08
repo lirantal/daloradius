@@ -45,7 +45,7 @@ def main():
  prod = [p for p in paths if p.startswith(('app/','contrib/')) and '/library/phpmailer/' not in p and '/library/pear/' not in p]
  check = r'''$p=json_decode(stream_get_contents(STDIN),true);$bad=array();foreach($p as $f){$t=token_get_all(file_get_contents('/code/'.$f));foreach($t as $i=>$v){if(!is_array($v))continue;if($v[0]===T_STRING&&in_array(strtolower($v[1]),array('escapesimple','fetchrow','numrows','freeprepared','getcol','pusherrorhandling','poperrorhandling','seterrorhandling','getdebuginfo','db_error','pear_error','pear_error_callback','pear_error_return','db_ok','db_fetchmode_assoc','db_fetchmode_ordered'))) $bad[]=array($f,$v[2],$v[1]);if($v[0]===T_STRING&&$v[1]==='DB')$bad[]=array($f,$v[2],'DB');if($v[0]===T_CONSTANT_ENCAPSED_STRING&&preg_match('~(?:^|/)(?:DB|db_open|db_close|db_error_handler)\.php$~',substr($v[1],1,-1)))$bad[]=array($f,$v[2],'retired-provider');}}echo json_encode($bad);'''
  assert json.loads(php(check,json.dumps(prod))) == []
- manifest = json.loads((ROOT/'docs/database/pdo-lot3-dispositions.json').read_text())
+ manifest = json.loads((ROOT/'tests/fixtures/database/pdo-lot3-dispositions.json').read_text())
  assert len(manifest['entries']) == sum(map(len,TARGETS.values()))+1+len(REMOVED)
  assert len({(v['file'],v['function']) for v in manifest['entries']}) == len(manifest['entries'])
  print('PASS lot 3: '+str(len(manifest['entries']))+' dispositions, exact retained function inventories, native PDO reflection/include contracts and rejected non-PDO group handle')
