@@ -7,7 +7,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from pear_baseline_fixture import restore_pear_bootstrap
 import user_actions_http as h
-from operator_reports_http import Rows
+from report_html_rows import Rows
 from acct_maintenance_http import Forms
 ROOT=Path(__file__).resolve().parents[1]
 BASE='f4c7aa4a941fcaa4c77d2235bece06ede89b62db'
