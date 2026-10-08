@@ -7,6 +7,7 @@ Uses a disposable internal network/database, synthetic sessions and minimal
 fixtures; never reads live credentials or changes live accounting data.
 """
 from html.parser import HTMLParser
+import json
 import os
 import re
 from pathlib import Path
@@ -45,6 +46,7 @@ class Forms(HTMLParser):
 
 
 def main():
+    trace = {}
     with tempfile.TemporaryDirectory(prefix='dalo-maintenance-') as directory:
         fixture = Path(directory)
         shutil.copytree(ROOT / 'app', fixture / 'app', symlinks=True)
@@ -60,6 +62,9 @@ def main():
             config = (ROOT / 'app/common/includes/daloradius.conf.php.sample').read_text().replace('?>', '')
             for key, value in {'CONFIG_DB_HOST': DB, 'CONFIG_DB_USER': 'root', 'CONFIG_DB_PASS': '', 'CONFIG_DB_NAME': 'radius', 'CONFIG_LANG': 'fr'}.items():
                 config += '\n$configValues[' + repr(key) + '] = ' + repr(value) + ';\n'
+            config += ("\n$configValues['CONFIG_LOCATIONS']['test-location'] = ["
+                       f"'Engine'=>'mysqli', 'Hostname'=>{DB!r}, 'Port'=>'3306', "
+                       "'Database'=>'radius', 'Username'=>'root', 'Password'=>''];\n")
             (fixture / 'app/common/includes/daloradius.conf.php').write_text(config)
             (fixture / 'session.php').write_text('''<?php
 session_name('daloradius_operator_sid'); session_id($argv[1]); session_start();
@@ -101,6 +106,17 @@ session_write_close();
             def reset():
                 sql('DELETE FROM radacct')  # This database is disposable, never the live lab.
 
+            def state():
+                # Normalize random IDs and NOW() while preserving accounting data.
+                return sql('''SELECT username,
+                    CASE WHEN acctstoptime IS NULL THEN 'NULL'
+                         WHEN acctstoptime='0000-00-00 00:00:00' THEN 'ZERO'
+                         WHEN acctterminatecause='Admin-Reset' THEN 'CLOSED'
+                         ELSE 'OTHER' END,
+                    acctsessiontime, acctinputoctets, acctoutputoctets,
+                    COALESCE(acctterminatecause,'')
+                    FROM radacct ORDER BY radacctid''')
+
             assert request(operator=None)[0].endswith('/login.php')
             assert request(operator=9002)[0].endswith('/home-error.php')
             row = insert()
@@ -135,6 +151,32 @@ session_write_close();
             assert '1 actually affected' in response, 'Confirmation result: ' + re.findall(r'<div class="alert alert-info" role="status">(.*?)</div>', response).__repr__()
             print('PASS: GET prefill is read-only, special characters, new English fallback with French configured')
 
+            reset()
+            injection = "fixture' OR 1=1 --"
+            insert(username=injection)
+            insert(username='untouched')
+            html, confirm = preview('delete', 'username', injection)
+            assert '1 matching records' in html and confirm
+            assert '1 actually affected' in request(confirm)[1]
+            assert sql('SELECT COUNT(*) FROM radacct WHERE username=\'untouched\'') == '1'
+            trace['bound-username-delete'] = state()
+            print('PASS: SQL-looking username is bound as data; unrelated record survives')
+
+            (fixture / 'location.php').write_text("""<?php
+session_name('daloradius_operator_sid'); session_id($argv[1]); session_start();
+$_SESSION['location_name'] = $argv[2]; session_write_close();
+""")
+            run('docker', 'exec', WEB, 'php', '/fixtures/location.php', sessions[9001], 'test-location')
+            reset()
+            insert(username='named-location-user')
+            html, confirm = preview('close', 'username', 'named-location-user')
+            assert '1 matching records' in html and confirm
+            assert '1 actually affected' in request(confirm)[1]
+            assert sql("SELECT COUNT(*) FROM radacct WHERE username='named-location-user' AND acctterminatecause='Admin-Reset'") == '1'
+            trace['named-location'] = state()
+            run('docker', 'exec', WEB, 'php', '/fixtures/location.php', sessions[9001], 'default')
+            print('PASS: named CONFIG_LOCATIONS resolves the same accounting backend')
+
             for action in ['close', 'delete']:
                 for scope in ['username', 'date']:
                     reset()
@@ -155,6 +197,7 @@ session_write_close();
                     assert before_closed == sql(f'SELECT * FROM radacct WHERE radacctid={closed}')
                     assert before_boundary == sql(f'SELECT * FROM radacct WHERE radacctid={boundary}')
                     assert 'Invalid request' in request(confirm)[1]
+                    trace[action + '-' + scope] = state()
             print('PASS: close/delete × username/date; NULL/zero stops, exclusive midnight boundary, closed rows and counters retained, replay rejected')
 
             for action in ['close', 'delete']:
@@ -174,6 +217,7 @@ session_write_close();
                 _, confirm = preview(action)
                 request()  # GET invalidates prior preview.
                 assert 'Invalid request' in request(confirm)[1]
+                trace[action + '-concurrency'] = state()
             print('PASS: concurrent Interim/Stop skip, new rows excluded, filter mismatch and GET invalidate confirmation')
 
             reset()
@@ -185,6 +229,7 @@ session_write_close();
             assert '101 matching records' in html and '100 records in this preview' in html
             assert '100 actually affected' in request(confirm)[1]
             assert sql('SELECT COUNT(*) FROM radacct') == '1'
+            trace['bounded-preview'] = state()
             _, confirm = preview()
             (fixture / 'expire.php').write_text("<?php session_name('daloradius_operator_sid'); session_id($argv[1]); session_start(); $_SESSION['acct_maintenance_preview']['created']=0; session_write_close();")
             run('docker', 'exec', WEB, 'php', '/fixtures/expire.php', sessions[9001])
@@ -197,12 +242,29 @@ session_write_close();
             finally:
                 sql('RENAME TABLE radacct_unavailable TO radacct')
             assert sql('SELECT COUNT(*) FROM radacct') == '1'
+            trace['database-error'] = state()
             print('PASS: SQL failure reports actual zero affected and one failed, retaining data')
+            if os.environ.get('MAINTENANCE_EXPECT_PDO'):
+                reset()
+                insert()
+                insert()
+                _, confirm = preview('delete')
+                (fixture / 'tamper.php').write_text("""<?php
+session_name('daloradius_operator_sid'); session_id($argv[1]); session_start();
+$_SESSION['acct_maintenance_preview']['rows'][1]['not_a_schema_column'] = 'x';
+session_write_close();
+""")
+                run('docker', 'exec', WEB, 'php', '/fixtures/tamper.php', sessions[9001])
+                assert 'Invalid request' in request(confirm)[1]
+                assert sql('SELECT COUNT(*) FROM radacct') == '2'
+                print('PASS: tampered second-row identifier rejected before first-row mutation')
             import subprocess
             result = subprocess.run(['docker', 'logs', WEB], capture_output=True, text=True, check=True)
             logs = result.stdout + result.stderr
             assert 'PHP Fatal error' not in logs and 'PHP Warning' not in logs, logs[-2000:]
             print('PASS: no PHP warnings or fatal errors')
+            if os.environ.get('MAINTENANCE_AB_TRACE'):
+                Path(os.environ['MAINTENANCE_AB_TRACE']).write_text(json.dumps(trace, sort_keys=True))
         finally:
             for container in [WEB, DB]:
                 run('docker', 'rm', '-f', '-v', container, check=False)

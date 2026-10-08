@@ -30,6 +30,8 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
 
+    require_once __DIR__ . '/library/hotspot_pages_pdo.php';
+
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
@@ -52,13 +54,8 @@
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
 
     // whenever possible we use a whitelist approach
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
-             ? $_GET['orderBy'] : array_keys($param_cols)[0];
-
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "asc";
+    $orderBy=isset($_GET['orderBy']) && is_string($_GET['orderBy']) && in_array($_GET['orderBy'],array_keys($param_cols),true) ? $_GET['orderBy'] : 'id';
+    $orderType=isset($_GET['orderType']) && is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']),array('asc','desc'),true) ? strtolower($_GET['orderType']) : 'asc';
 
     // print HTML prologue
     $extra_js = array(
@@ -75,28 +72,25 @@
     print_title_and_help($title, $help);
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(`id`) FROM `%s`", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-    $numrows = get_numrows($dbSocket, $sql);
+    $numrows=0;
+    try {
+        $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');$table=dalo_hotspot_table($configValues);
+        $numrows=(int)dalo_hotspot_query($pdo,"SELECT COUNT(id) FROM $table")->fetchColumn();
+    } catch (Throwable $e) { $failureMsg='Unable to load hotspots'; }
 
     if ($numrows > 0) {
         // when $numrows is set, $maxPage is calculated inside this include file
-        // must be included after opendb because it needs to read
-        // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+        // Uses the already loaded listing configuration.
         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
         
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
 
-        // we execute and log the actual query
-        $sql = "SELECT id, name, owner, company, type FROM %s ORDER BY %s %s LIMIT %s, %s";
-        $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'], $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
-
-        $per_page_numrows = $res->numRows();
+        $rows=array();
+        try {
+            $rows=dalo_hotspot_query($pdo,"SELECT id,name,owner,company,type FROM $table ORDER BY $orderBy $orderType LIMIT ?,?",array((int)$offset,(int)$rowsPerPage))->fetchAll(PDO::FETCH_NUM);
+        } catch (Throwable $e) { $failureMsg='Unable to load hotspots'; }
+        $per_page_numrows=count($rows);
 
         // this can be passed as form attribute and
         // printTableFormControls function parameter
@@ -139,18 +133,19 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($rows as $row) {
+            $raw_name=(string)$row[1];
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)$row[$i], ENT_QUOTES, 'UTF-8');
             }
 
             list($id, $name, $owner, $company, $type) = $row;
 
             $ajax_id = "divContainerHotspotInfo" . $count;
-            $param = sprintf('hotspot=%s', urlencode($name));
+            $param = sprintf('hotspot=%s', rawurlencode($raw_name));
             $onclick = "daloInfo.hotspot('$ajax_id','$param')";
             $tooltip = array(
                                 'subject' => $name,
@@ -158,14 +153,14 @@
                                 'ajax_id' => $ajax_id,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($name) ), 'label' => t('Tooltip','HotspotEdit'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', rawurlencode($raw_name) ), 'label' => t('Tooltip','HotspotEdit'), );
             $tooltip['actions'][] = array( 'href' => 'acct-hotspot-compare.php', 'label' => t('all','Compare'), );
 
             // create tooltip
             $tooltip = get_tooltip_list_str($tooltip);
 
             // create checkbox
-            $d = array( 'name' => 'name[]', 'value' => $name, 'label' => $id );
+            $d = array( 'name' => 'name[]', 'value' => $raw_name, 'label' => $id );
             $checkbox = get_checkbox_str($d);
 
             // define table row
@@ -195,10 +190,10 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    if (isset($failureMsg)) { include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]); }
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();

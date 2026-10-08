@@ -31,6 +31,7 @@
     include_once("../common/includes/validation.php");
     include("../common/includes/layout.php");
     include("include/management/functions.php");
+    require_once("library/invoice_create.php");
     include_once("include/management/populate_selectbox.php");
     
     // init logging variables
@@ -38,97 +39,112 @@
     $logAction = "";
     $logDebugSQL = "";
     
+    require_once __DIR__.'/library/invoice_reads_pdo.php';
+    $invoiceReadPDO=null; $inline_extra_js=''; $username=''; $invoice_id='';
+    $invoice_status_id='';
+    $invoice_type_id=''; $invoice_date=''; $invoice_notes='';
+    $this_amount=''; $this_tax_amount=''; $this_notes='';
+    try {
+    $invoiceReadPDO=dalo_invoice_read_open($configValues);
     // get valid statuses
-    $valid_statuses = get_invoice_status_id();
+    $valid_statuses = array();
+    $statusTable=dalo_invoice_read_table($configValues,'CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS');
+    foreach(dalo_invoice_read_rows($invoiceReadPDO, "SELECT id,value FROM $statusTable ORDER BY value ASC") as $statusRow) { $valid_statuses[(int)$statusRow[0]]=$statusRow[1]; }
 
-    include('../common/includes/db_open.php');
-    
-    
     // get valid types
-    $sql = sprintf("SELECT id, value FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE']);
-    $res = $dbSocket->query($sql);
+    $readBindings = array();
+    $sql = sprintf("SELECT id, value FROM %s", dalo_invoice_read_table($configValues, 'CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'));
+    $res = dalo_invoice_read_rows($invoiceReadPDO, $sql, $readBindings);
     $logDebugSQL .= "$sql;\n";
     
     $valid_types = array();
-    while ($row = $res->fetchrow()) {
+    foreach ($res as $row) {
         list($id, $value) = $row;
         
         $valid_types[$id] = $value;
     }
     
     // get valid users
-    $sql = sprintf("SELECT id, username FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
-    $res = $dbSocket->query($sql);
+    $readBindings = array();
+    $sql = sprintf("SELECT id, username FROM %s ORDER BY username ASC", dalo_invoice_read_table($configValues, 'CONFIG_DB_TBL_DALOUSERINFO'));
+    $res = dalo_invoice_read_rows($invoiceReadPDO, $sql, $readBindings);
     $logDebugSQL .= "$sql;\n";
 
     $valid_users = array();
-    while ($row = $res->fetchrow()) {
+    foreach ($res as $row) {
         list($id, $value) = $row;
         $id = intval($id);
         
         $valid_users[$id] = $value;
     }
-    
-    
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
                 
                 // required later
                 $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $operator;
                         
-                $user_id = (array_key_exists('user_id', $_POST) && !empty(trim($_POST['user_id'])) &&
+                $invalidHeader = false;
+                foreach (array('user_id', 'invoice_type_id', 'invoice_status_id',
+                               'invoice_date', 'invoice_notes') as $field) {
+                    if (array_key_exists($field, $_POST) && !is_string($_POST[$field])) {
+                        $invalidHeader = true;
+                    }
+                }
+                $user_id = (isset($_POST['user_id']) && is_string($_POST['user_id']) &&
                             in_array(trim($_POST['user_id']), array_keys($valid_users)))
-                         ? intval(trim($_POST['user_id'])) : "";
-                
-                $invoice_type_id = (array_key_exists('invoice_type_id', $_POST) && !empty(trim($_POST['invoice_type_id'])) &&
-                                    in_array(trim($_POST['invoice_type_id']), array_keys($valid_types)))
-                                 ? intval(trim($_POST['invoice_type_id'])) : "";
+                         ? intval(trim($_POST['user_id'])) : 0;
 
-                $invoice_status_id = (array_key_exists('invoice_status_id', $_POST) && !empty(trim($_POST['invoice_status_id'])) &&
+                $invoice_type_id = (isset($_POST['invoice_type_id']) && is_string($_POST['invoice_type_id']) &&
+                                    in_array(trim($_POST['invoice_type_id']), array_keys($valid_types)))
+                                 ? intval(trim($_POST['invoice_type_id'])) : 0;
+
+                $invoice_status_id = (isset($_POST['invoice_status_id']) && is_string($_POST['invoice_status_id']) &&
                                       in_array(trim($_POST['invoice_status_id']), array_keys($valid_statuses)))
                                    ? intval(trim($_POST['invoice_status_id'])) : 1;
-            
-                $invoice_date = (
-                                    array_key_exists('invoice_date', $_POST) &&
-                                    !empty(trim($_POST['invoice_date'])) &&
-                                    preg_match(DATE_REGEX, trim($_POST['invoice_date']), $m) !== false &&
-                                    checkdate($m[2], $m[3], $m[1])
-                                ) ? trim($_POST['invoice_date']) : date('Y-m-d');
+                if (isset($_POST['invoice_status_id']) && is_string($_POST['invoice_status_id']) &&
+                    trim($_POST['invoice_status_id']) !== '' &&
+                    !in_array(trim($_POST['invoice_status_id']), array_keys($valid_statuses))) {
+                    $invalidHeader = true;
+                }
 
-                $invoice_notes = (array_key_exists('invoice_notes', $_POST) && !empty(trim($_POST['invoice_notes'])))
+                $validDate = isset($_POST['invoice_date']) && is_string($_POST['invoice_date']) &&
+                             trim($_POST['invoice_date']) !== '' &&
+                             preg_match(DATE_REGEX, trim($_POST['invoice_date']), $m) === 1 &&
+                             checkdate((int) $m[2], (int) $m[3], (int) $m[1]);
+                if (isset($_POST['invoice_date']) && is_string($_POST['invoice_date']) &&
+                    trim($_POST['invoice_date']) !== '' && !$validDate) {
+                    $invalidHeader = true;
+                }
+                $invoice_date = $validDate ? trim($_POST['invoice_date']) : date('Y-m-d');
+
+                $invoice_notes = (isset($_POST['invoice_notes']) && is_string($_POST['invoice_notes']))
                                ? trim($_POST['invoice_notes']) : "";
 
-                
-                if (empty($user_id)) {
-                    // required/invalid
-                    $failureMsg = sprintf("The required field '%s' is empty or invalid", t('all','UserId'));
+                if ($invalidHeader || $user_id === 0 || $invoice_type_id === 0) {
+                    $failureMsg = "Required invoice fields are empty or invalid";
                     $logAction .= "$failureMsg on page: ";
                 } else {
-                    $sql = sprintf("INSERT INTO %s (id, user_id, date, status_id, type_id, notes,
-                                                    creationdate, creationby, updatedate, updateby)
-                                            VALUES (0, %d, '%s', %d, %d, '%s', '%s', '%s', NULL, NULL)",
-                                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id, $invoice_date,
-                                   $invoice_status_id, $invoice_type_id, $dbSocket->escapeSimple($invoice_notes),
-                                   $current_datetime, $currBy);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    if (!DB::isError($res)) {
-                        // retrieve invoice id
-                        $sql = sprintf("SELECT LAST_INSERT_ID() FROM %s",
-                                       $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']);
-                        $invoice_id = $dbSocket->getOne($sql);
-                        
-                        $items = add_invoice_items($dbSocket, $invoice_id, false);
+                    try {
+                        // Parse every item before the first write. Both the header and
+                        // all children must use this one PDO handle and transaction.
+                        $submittedItems = dalo_invoice_items_from_post($_POST);
+                        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                        list($invoice_id, $items) = dalo_create_invoice($pdo, $configValues,
+                            array('user_id' => $user_id, 'date' => $invoice_date,
+                                  'status_id' => $invoice_status_id, 'type_id' => $invoice_type_id,
+                                  'notes' => $invoice_notes, 'created' => $current_datetime,
+                                  'creator' => $currBy), $submittedItems);
                         $successMsg = sprintf("Successfully added new invoice (id: #<strong>%d</strong>) with %d item(s)",
                                               $invoice_id, $items);
                         $logAction .= sprintf("Successfully added new invoice [id: #%d, items: %d] on page: ",
                                               $invoice_id, $items);
-                    } else {
-                        $failureMsg = sprintf("Failed to add new invoice (id: #<strong>%d</strong>)", $invoice_id);
-                        $logAction .= sprintf("Failed to add new invoice [id: #%d] on page: ", $payment_id);
+                    } catch (Throwable $error) {
+                        // Never echo SQL, connection details or input in the HTTP error.
+                        $failureMsg = "Failed to add new invoice or its items";
+                        $logAction .= "$failureMsg on page: ";
                     }
                 }
 
@@ -139,16 +155,14 @@
         }
         
     } else {
-        $user_id = (array_key_exists('user_id', $_GET) && !empty(trim($_GET['user_id'])) &&
+        $user_id = (array_key_exists('user_id', $_GET) && is_string($_GET['user_id']) && !empty(trim($_GET['user_id'])) &&
                     in_array(trim($_GET['user_id']), array_keys($valid_users)))
                  ? intval(trim($_GET['user_id'])) : "";
     }
-    
-    
+
     $username = (!empty($user_id)) ? $valid_users[$user_id] : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
-    
+
     $inline_extra_js = "";
     // with an invalid user_id we get an invalid username
     // if the username is invalid we cannot procede
@@ -160,21 +174,22 @@
         
         // select for active plans
         $planSelect = '<select class="form-select" name="itemXXXXXXX[plan]">';
-        
-        
+
+        $readBindings = array();
         $sql = sprintf("SELECT DISTINCT(planName), id
                           FROM %s WHERE planActive = 'yes'
-                         ORDER BY planName ASC", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
-        $res = $dbSocket->query($sql);
+                         ORDER BY planName ASC", dalo_invoice_read_table($configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS'));
+        $res = dalo_invoice_read_rows($invoiceReadPDO, $sql, $readBindings);
 
-        while ($row = $res->fetchRow()) {
+        foreach ($res as $row) {
             list($planName, $id) = $row;
             
             $planSelect .= sprintf('<option value="%d">%s</option>',
-                                   intval($id), htmlspecialchars($planName, ENT_QUOTES, 'UTF-8'));
+                                   intval($id), htmlspecialchars((string)($planName ?? ''), ENT_QUOTES, 'UTF-8'));
         }
         
         $planSelect .= '</select>';
+        $planSelectJS=json_encode($planSelect, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT);
         
         $inline_extra_js = <<<EOF
 
@@ -184,7 +199,7 @@ function addTableRow() {
         num = parseInt(counter.value) + 1,
         trContainer = document.createElement('tr'),
         trIdName = 'itemsRow' + num,
-        plansSelect = '$planSelect',
+        plansSelect = $planSelectJS,
         td1_name = `item\${num}[plan]`,
         td2_name = `item\${num}[amount]`,
         td3_name = `item\${num}[tax]`,
@@ -224,16 +239,31 @@ function removeTableRow(rowId) {
 EOF;
 
     }
-    
-    include('../common/includes/db_close.php');
-    
+
+    if ($username !== '') {
+        $readBindings = array();
+        $sql = sprintf("SELECT contactperson, city, state FROM %s WHERE id=:invoice_id",
+                       dalo_invoice_read_table($configValues, 'CONFIG_DB_TBL_DALOUSERBILLINFO'));
+        $readBindings = array(':invoice_id'=>$user_id);
+        $res = dalo_invoice_read_rows($invoiceReadPDO, $sql, $readBindings);
+        $logDebugSQL .= "$sql;\n";
+
+        $row = $res[0] ?? null;
+        if ($row === null) { throw new RuntimeException('Missing invoice billing contact'); }
+        list( $contactperson, $city, $state ) = $row;
+
+    }
+    } catch (Throwable $error) {
+        dalo_invoice_read_failure($error);
+        $invoice_id=''; $username=''; $inline_extra_js='';
+    }
+    unset($invoiceReadPDO);
     // print HTML prologue
     $extra_css = array();
     
     $extra_js = array(
     );
 
-    
     $title = t('Intro','billinvoicenew.php');
     $help = t('helpPage','billinvoicenew');
     
@@ -248,21 +278,10 @@ EOF;
     include_once('include/management/actionMessages.php');
     
     if (!empty($username)) {
-        include('../common/includes/db_open.php');
-        
-        $sql = sprintf("SELECT contactperson, city, state FROM %s WHERE id=%d",
-                       $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $user_id);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $row = $res->fetchRow();
-        list( $contactperson, $city, $state ) = $row;
-        
-        include('../common/includes/db_close.php');
-        
+
         // print customer info
         printf('<div><strong>Customer</strong>: <a href="bill-pos-edit.php?username=%s">%s</a><br>',
-               $username_enc, htmlspecialchars($contactperson, ENT_QUOTES, 'UTF-8'));
+               urlencode($username), htmlspecialchars((string)($contactperson ?? ''), ENT_QUOTES, 'UTF-8'));
         
         $arr = array();
         
@@ -363,8 +382,7 @@ EOF;
         $fieldset1_descriptor = array( "title" => t('title','Items') );
         
         open_fieldset($fieldset1_descriptor);
-    
-        
+
         $input_descriptors1 = array();
         $input_descriptors1[] = array(
                                         "type" => "button",
@@ -417,11 +435,11 @@ EOF;
         
         foreach ($input_name_value as $name => $value) {
             printf('<td><input type="number" class="form-control" min="0" step=".01" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
-                   $this_id, $name, $this_id, $name, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
+                   $this_id, $name, $this_id, $name, htmlspecialchars((string)($value ?? ''), ENT_QUOTES, 'UTF-8'));
         }
         
         printf('<td><input type="text" class="form-control" id="item%d_%s" name="item%d[%s]" value="%s"></td>',
-               $this_id, "notes", $this_id, "notes", htmlspecialchars($this_notes, ENT_QUOTES, 'UTF-8'));
+               $this_id, "notes", $this_id, "notes", htmlspecialchars((string)($this_notes ?? ''), ENT_QUOTES, 'UTF-8'));
         
         $onclick = sprintf("removeTableRow('%s')", $itemRowId);
         printf('<td><button type="button" name="remove" onclick="%s" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Remove Item</button></td>', $onclick);

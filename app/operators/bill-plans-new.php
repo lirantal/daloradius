@@ -31,11 +31,44 @@
     include_once("../common/includes/validation.php");
     include("../common/includes/layout.php");
     include("include/management/functions.php");
+    require_once("../common/includes/pdo_connection.php");
+    require_once("library/plan_create.php");
     
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
+
+    // Guard the old form-value normalization against nested POST fields.
+    $invalidRequest = false;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        foreach (array('planName', 'planId', 'planType', 'planTimeType',
+                       'planTimeBank', 'planTimeRefillCost', 'planBandwidthUp',
+                       'planBandwidthDown', 'planTrafficTotal', 'planTrafficDown',
+                       'planTrafficUp', 'planTrafficRefillCost', 'planRecurring',
+                       'planRecurringPeriod', 'planRecurringBillingSchedule',
+                       'planActive', 'planCost', 'planSetupCost', 'planTax',
+                       'planCurrency', 'planGroup') as $field) {
+            if (array_key_exists($field, $_POST) && !is_string($_POST[$field])) {
+                $invalidRequest = true;
+                $_POST[$field] = '';
+            }
+        }
+        if (array_key_exists('groups', $_POST)) {
+            if (!is_array($_POST['groups'])) {
+                $invalidRequest = true;
+                $_POST['groups'] = array();
+            } else {
+                foreach ($_POST['groups'] as $group) {
+                    if (!is_string($group)) {
+                        $invalidRequest = true;
+                        $_POST['groups'] = array();
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     $planName = (array_key_exists('planName', $_POST) && !empty(trim($_POST['planName']))) ? trim($_POST['planName']) : "";
     $planName_enc = (!empty($planName)) ? htmlspecialchars($planName, ENT_QUOTES, 'UTF-8') : "";
@@ -85,69 +118,49 @@
     
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
     
-            if (empty($planName)) {                
-                // required/invalid
-                $failureMsg = sprintf("The required field '%s' is empty or invalid", t('all','PlanName'));
+            if ($invalidRequest || empty($planName)) {
+                $failureMsg = "The plan name or another submitted field is empty or invalid";
                 $logAction .= "$failureMsg on page: ";
             } else {
-            
-                include('../common/includes/db_open.php');
-            
-                $sql = sprintf("SELECT COUNT(DISTINCT(planName)) FROM %s WHERE planName='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($planName));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-            
-                $exists = intval($res->fetchrow()[0]) > 0;
-                
-                if ($exists) {
-                    // already exists                    
+                try {
+                    $profiles = dalo_plan_profiles_from_post($groups);
+                    $values = array(
+                        'planName' => $planName, 'planId' => $planId,
+                        'planType' => $planType, 'planTimeBank' => $planTimeBank,
+                        'planTimeType' => $planTimeType,
+                        'planTimeRefillCost' => $planTimeRefillCost,
+                        'planBandwidthUp' => $planBandwidthUp,
+                        'planBandwidthDown' => $planBandwidthDown,
+                        'planTrafficTotal' => $planTrafficTotal,
+                        'planTrafficUp' => $planTrafficUp,
+                        'planTrafficDown' => $planTrafficDown,
+                        'planTrafficRefillCost' => $planTrafficRefillCost,
+                        'planRecurring' => $planRecurring,
+                        'planRecurringPeriod' => $planRecurringPeriod,
+                        'planRecurringBillingSchedule' => $planRecurringBillingSchedule,
+                        'planCost' => $planCost, 'planSetupCost' => $planSetupCost,
+                        'planTax' => $planTax, 'planCurrency' => $planCurrency,
+                        'planGroup' => $planGroup, 'planActive' => $planActive,
+                    );
+                    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                    $groupsCount = dalo_create_billing_plan($pdo, $configValues, $values,
+                                                             $profiles, date('Y-m-d H:i:s'), $operator);
+                    $format = "A new %s named %s has been successfully added to database. %d %s have been associated to this %s";
+                    $successMsg = sprintf($format . ' [<a href="bill-plans-edit.php?planName=%s" title="Edit">Edit</a>]',
+                                          t('all','PlanName'), $planName_enc, $groupsCount,
+                                          t('title','Profiles'), t('all','PlanName'), urlencode($planName));
+                    $logAction .= sprintf("$format on page: ", t('all','PlanName'),
+                                          $planName, $groupsCount, t('title','Profiles'), t('all','PlanName'));
+                } catch (DomainException $error) {
                     $failureMsg = sprintf("A plan with the chosen '%s' already exists in the database", t('all','PlanName'));
                     $logAction .= "$failureMsg on page: ";
-                } else {
-                    // required later
-                    $current_datetime = date('Y-m-d H:i:s');
-                    $currBy = $operator;
-                    
-                    $sql = sprintf("INSERT INTO %s (id, planName, planId, planType, planTimeBank, planTimeType,
-                                                    planTimeRefillCost, planBandwidthUp, planBandwidthDown, planTrafficTotal,
-                                                    planTrafficUp, planTrafficDown, planTrafficRefillCost, planRecurring,
-                                                    planRecurringPeriod, planRecurringBillingSchedule, planCost,
-                                                    planSetupCost, planTax, planCurrency, planGroup, planActive,
-                                                    creationdate, creationby, updatedate, updateby)
-                                            VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-                                                    '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', NULL, NULL)",
-                                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($planName),
-                                   $dbSocket->escapeSimple($planId), $dbSocket->escapeSimple($planType),
-                                   $dbSocket->escapeSimple($planTimeBank), $dbSocket->escapeSimple($planTimeType),
-                                   $dbSocket->escapeSimple($planTimeRefillCost), $dbSocket->escapeSimple($planBandwidthUp),
-                                   $dbSocket->escapeSimple($planBandwidthDown), $dbSocket->escapeSimple($planTrafficTotal),
-                                   $dbSocket->escapeSimple($planTrafficUp), $dbSocket->escapeSimple($planTrafficDown),
-                                   $dbSocket->escapeSimple($planTrafficRefillCost), $dbSocket->escapeSimple($planRecurring),
-                                   $dbSocket->escapeSimple($planRecurringPeriod), $dbSocket->escapeSimple($planRecurringBillingSchedule),
-                                   $dbSocket->escapeSimple($planCost), $dbSocket->escapeSimple($planSetupCost),
-                                   $dbSocket->escapeSimple($planTax), $dbSocket->escapeSimple($planCurrency),
-                                   $dbSocket->escapeSimple($planGroup), $dbSocket->escapeSimple($planActive), $current_datetime, $currBy);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    // add the profiles associated with this billing plan to the
-                    // billing_plans_profiles table for later on
-                    $groupsCount = insert_multiple_plan_group_mappings($dbSocket, $planName, $groups);
-                    
-                    if (!DB::isError($res)) {
-                        $format = "A new %s named %s has been successfully added to database. %d %s have been associated to this %s";
-                        $successMsg = sprintf($format . ' [<a href="bill-plans-edit.php?planName=%s" title="Edit">Edit</a>]', t('all','PlanName'),
-                                              $planName_enc, $groupsCount, t('title','Profiles'), t('all','PlanName'), urlencode($planName_enc));
-                        $logAction .= sprintf("$format on page: ", t('all','PlanName'), $planName, $groupsCount, t('title','Profiles'), t('all','PlanName'));
-                    } else {
-                        $failureMsg = "Failed to insert a new plan to database";
-                        $logAction .= "$failureMsg on page: ";
-                    }
-
+                } catch (InvalidArgumentException $error) {
+                    $failureMsg = "Invalid plan or profile selection";
+                    $logAction .= "$failureMsg on page: ";
+                } catch (Throwable $error) {
+                    $failureMsg = "Failed to insert a new plan and its profiles";
+                    $logAction .= "$failureMsg on page: ";
                 }
-                
-                include('../common/includes/db_close.php');
             }
     
         } else {
@@ -217,7 +230,7 @@
                                         "type" => "select",
                                         "options" => array( "yes", "no" ),
                                         "caption" => t('all','PlanActive'),
-                                        "name" => "planRecurring",
+                                        "name" => "planActive",
                                         "selected_value" => $planActive,
                                      );
 

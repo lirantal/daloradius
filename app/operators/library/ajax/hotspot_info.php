@@ -29,33 +29,16 @@ $operator_perm_file = 'acct_hotspot_accounting';
 $operator_perm_deny_http_status = 403;
 include('../check_operator_perm.php');
 
-$value = dalo_info_parameter('hotspot');
-include('../../../common/includes/db_open.php');
-// The default PEAR callback prints HTML, which would corrupt the JSON response.
-$dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
+require_once dirname(__DIR__) . '/hotspot_pages_pdo.php';
+if ($_SERVER['REQUEST_METHOD']!=='GET') { header('Allow: GET');dalo_info_response(['error'=>'Method not allowed.'],405); }
+try { $value=dalo_hotspot_name($_GET['hotspot'] ?? null); }
+catch (Throwable $e) { dalo_info_response(['error'=>'Missing or invalid parameter.'],400); }
 include_once('../../include/management/pages_common.php');
-
-$sql = sprintf("SELECT COUNT(ra.radacctid) AS totalhits,
-                       SUM(ra.AcctInputOctets) AS sumInputOctets,
-                       SUM(ra.AcctOutputOctets) AS sumOutputOctets
-                  FROM %s AS ra JOIN %s AS hs ON ra.calledstationid=hs.mac
-                 WHERE hs.name='%s'
-                 GROUP BY hs.name",
-               $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-               $dbSocket->escapeSimple($value));
-$res = $dbSocket->query($sql);
-if (DB::isError($res)) {
-    dalo_info_response(['error' => 'Unable to load hotspot information.'], 500);
-}
-$row = $res->fetchRow();
-if (DB::isError($row)) {
-    dalo_info_response(['error' => 'Unable to load hotspot information.'], 500);
-}
-$data = [
-    'upload' => dalo_info_bytes($row[1] ?? null),
-    'download' => dalo_info_bytes($row[2] ?? null),
-    'hits' => empty($row[0]) ? '(n/a)' : intval($row[0]),
-];
-
-include('../../../common/includes/db_close.php');
+try {
+    $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+    $acct=dalo_hotspot_table($configValues,'CONFIG_DB_TBL_RADACCT');$hs=dalo_hotspot_table($configValues);
+    $row=dalo_hotspot_query($pdo,"SELECT COUNT(ra.radacctid),SUM(ra.AcctInputOctets),SUM(ra.AcctOutputOctets)
+                              FROM $acct AS ra JOIN $hs AS hs ON ra.calledstationid=hs.mac WHERE hs.name=? GROUP BY hs.name",array($value))->fetch(PDO::FETCH_NUM);
+    $data=['upload'=>dalo_info_bytes($row[1] ?? null),'download'=>dalo_info_bytes($row[2] ?? null),'hits'=>empty($row[0]) ? '(n/a)' : intval($row[0])];
+} catch (Throwable $e) { dalo_info_response(['error'=>'Unable to load hotspot information.'],500); }
 dalo_info_response($data);

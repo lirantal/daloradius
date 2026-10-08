@@ -26,6 +26,8 @@
     
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
+    require_once('../common/includes/pdo_connection.php');
+    require_once('library/invoice_delete.php');
     
     // init logging variables
     $log = "visited page: ";
@@ -33,42 +35,28 @@
     $logDebugSQL = "";
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            $invoice_id = array();
-        
-            if (array_key_exists('invoice_id', $_POST) && !empty($_POST['invoice_id'])) {
-                $tmparr = (!is_array($_POST['invoice_id'])) ? array( $_POST['invoice_id'] ) : $_POST['invoice_id'];
-                
-                foreach ($tmparr as $tmp_id) {
-                    $tmp_id = intval(trim($tmp_id));
-                    if (!in_array($tmp_id, $invoice_id)) {
-                        $invoice_id[] = intval($tmp_id);
-                    }
-                }
-            }
-            
-            if (count($invoice_id) > 0) {
-                include('../common/includes/db_open.php');
-                
-                // remove invoice id(s)
-                $sql = sprintf("DELETE FROM %s WHERE id IN ('%s')",
-                               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], implode(", ", $invoice_id));
-                $removed_invoice_ids = intval($dbSocket->query($sql));
-                $logDebugSQL .= "$sql;\n";
-                
-                // remove invoice items associated with this invoice id(s)
-                $sql = sprintf("DELETE FROM %s WHERE invoice_id IN ('%s')",
-                               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'], implode(", ", $invoice_id));
-                $removed_invoice_items = intval($dbSocket->query($sql));
-                $logDebugSQL .= "$sql;\n";
-                
-                $successMsg = sprintf("Deleted %d invoice id(s) and %d item(s)", $removed_invoice_ids, $removed_invoice_items);
-                $logAction .= sprintf("Successfully %s on page: ", $successMsg);
-                
-                include('../common/includes/db_close.php');
-            } else {
+        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            $invoice_id = null;
+            try {
+                // Validate the full selection before opening the write transaction.
+                $invoice_id = dalo_invoice_ids_from_post($_POST['invoice_id'] ?? array());
+            } catch (InvalidArgumentException $error) {
                 $failureMsg = "Empty or invalid invoice id(s)";
                 $logAction .= sprintf("Failed deleting invoice(s) [%s] on page: ", $failureMsg);
+            }
+            if (isset($invoice_id)) {
+                try {
+                    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                    list($removed_invoice_ids, $removed_invoice_items, $removed_payments) =
+                        dalo_delete_invoices($pdo, $configValues, $invoice_id);
+                    $successMsg = sprintf("Deleted %d invoice id(s), %d item(s) and %d payment(s)",
+                                          $removed_invoice_ids, $removed_invoice_items, $removed_payments);
+                    $logAction .= sprintf("Successfully %s on page: ", $successMsg);
+                } catch (Throwable $error) {
+                    // Do not expose driver errors, credentials or SQL to the page/log.
+                    $failureMsg = "Failed to delete invoice(s) and dependent records";
+                    $logAction .= sprintf("Failed deleting invoice(s) [%s] on page: ", $failureMsg);
+                }
             }
             
         } else {
@@ -98,21 +86,30 @@
 
     print_title_and_help($title, $help);
 
-    include_once('include/management/actionMessages.php');
     
+    require_once __DIR__.'/library/invoice_reads_pdo.php';
+    $options = array();
+    try {
+    $invoiceReadPDO=dalo_invoice_read_open($configValues);
     // load options
-    include('../common/includes/db_open.php');
-    $sql = sprintf("SELECT id FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']);
-    $res = $dbSocket->query($sql);
+
+    $readBindings = array();
+    $sql = sprintf("SELECT id FROM %s", dalo_invoice_read_table($configValues, 'CONFIG_DB_TBL_DALOBILLINGINVOICE'));
+    $res = dalo_invoice_read_rows($invoiceReadPDO, $sql, $readBindings);
     $logDebugSQL .= "$sql;\n";
     
     $options = array();
-    while ($row = $res->fetchrow()) {
+    foreach ($res as $row) {
         $id = intval($row[0]);
         $options[$id] = $id;
     }
-    include('../common/includes/db_close.php');
     
+
+    } catch (Throwable $error) {
+        $options=array(); dalo_invoice_read_failure($error);
+    }
+    unset($invoiceReadPDO);
+    include_once 'include/management/actionMessages.php';
     $input_descriptors1 = array();
 
     $input_descriptors1[] = array(

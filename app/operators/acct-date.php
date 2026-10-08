@@ -29,24 +29,27 @@
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    require_once __DIR__ . '/library/accounting_pages_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+    } catch (Throwable $exception) {
+        http_response_code(400);
+        exit('Invalid accounting filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
 
     // validate this parameter before including menu
-    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
-              ? str_replace("%", "", trim($_GET['username'])) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    $username = dalo_accounting_scalar($_GET, 'username');
+    $username_enc = ($username !== '') ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
     $date_default = date_range_default('current_month');
 
-    $startdate = (array_key_exists('startdate', $_GET) && !empty(trim($_GET['startdate'])) &&
-                  preg_match(DATE_REGEX, trim($_GET['startdate']), $m) !== false &&
-                  checkdate($m[2], $m[3], $m[1]))
-               ? trim($_GET['startdate']) : $date_default['start'];
+    $startdate = dalo_accounting_date($_GET, 'startdate', $date_default['start']);
 
-    $enddate = (array_key_exists('enddate', $_GET) && !empty(trim($_GET['enddate'])) &&
-                preg_match(DATE_REGEX, trim($_GET['enddate']), $m) !== false &&
-                checkdate($m[2], $m[3], $m[1]))
-             ? trim($_GET['enddate']) : $date_default['end'];
+    $enddate = dalo_accounting_date($_GET, 'enddate', $date_default['end']);
 
     $cols = array(
                 "radacctid" => t('all','ID'),
@@ -92,42 +95,45 @@
 
     print_title_and_help($title, $help);
 
-    // we can only use the $dbSocket after we have included '../common/includes/db_open.php' which initialzes the connection and the $dbSocket object
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
-    $sql_WHERE = array();
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery']);
+    $_SESSION['reportType'] = "accountingGeneric";
+    $_SESSION['reportExport'] = array(
+        'source' => 'acct-date',
+        'type' => 'accountingGeneric',
+        'filters' => array(
+            'startdate' => $startdate,
+            'enddate' => $enddate,
+            'username' => $username,
+        ),
+    );
+    unset($_SESSION['reportTable'], $_SESSION['reportQuery']);
+
     $partial_query_params = array();
 
     if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("AcctStartTime >= '%s'", $dbSocket->escapeSimple($startdate));
         $partial_query_params[] = sprintf("startdate=%s", $startdate);
     }
 
     if (!empty($enddate)) {
         // inclusive end date: match the whole $enddate day
-        $sql_WHERE[] = sprintf("AcctStartTime < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
         $partial_query_params[] = sprintf("enddate=%s", $enddate);
     }
 
-    if (!empty($username)) {
-        $sql_WHERE[] = sprintf("username='%s'", $dbSocket->escapeSimple($username));
-        $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
+    if ($username !== '') {
+        $partial_query_params[] = sprintf("username=%s", urlencode($username));
 
-        // setup php session variables for exporting
-        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = (count($sql_WHERE) > 0) ? " WHERE " . implode(" AND ", $sql_WHERE) : "";
-        $_SESSION['reportType'] = "accountingGeneric";
-
-
-        $sql = sprintf("SELECT COUNT(radacctid) FROM %s", $configValues['CONFIG_DB_TBL_RADACCT']);
-        if (count($sql_WHERE) > 0) {
-            $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
+        $accountingPDO = null;
+        $accountingRows = array();
+        $numrows = 0;
+        try {
+            $accountingPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+            list($accountingSQL, $accountingBindings) = dalo_accounting_query('acct-date', array('startdate'=>$startdate,'enddate'=>$enddate,'username'=>$username), $configValues);
+            $numrows = dalo_accounting_count($accountingPDO, $accountingSQL, $accountingBindings, $configValues);
+        } catch (Throwable $exception) {
+            dalo_accounting_failure($exception);
         }
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        $numrows = $res->fetchrow()[0];
 
         if ($numrows > 0) {
             // when $numrows is set, $maxPage is calculated inside this include file
@@ -138,21 +144,13 @@
             // here we decide if page numbers should be shown
             $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
 
-            $sql = sprintf("SELECT ra.RadAcctId, dhs.name AS hotspot, ra.username, ra.FramedIPAddress, ra.AcctStartTime,
-                                   ra.AcctStopTime, ra.AcctSessionTime, ra.AcctInputOctets, ra.AcctOutputOctets,
-                                   CASE WHEN ra.AcctTerminateCause = '0' THEN 'Unknown' ELSE ra.AcctTerminateCause END AS AcctTerminateCause,
-                                   ra.NASIPAddress
-                              FROM %s AS ra LEFT JOIN %s AS dhs ON ra.calledstationid=dhs.mac",
-                           $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-            if (count($sql_WHERE) > 0) {
-                $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
+            try {
+                $accountingRows = dalo_accounting_rows($accountingPDO, $accountingSQL, $accountingBindings,
+                    'acct-date', $orderBy, $orderType, $offset, $rowsPerPage);
+            } catch (Throwable $exception) {
+                dalo_accounting_failure($exception);
             }
-
-            $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-
-            $per_page_numrows = $res->numRows();
+            $per_page_numrows = count($accountingRows);
 
             $partial_query_string = (count($partial_query_params) > 0)
                                   ? ("&" . implode("&", $partial_query_params)) : "";
@@ -171,7 +169,7 @@
 
 
             $descriptors['end'] = array();
-            $descriptors['end'][] = get_csv_export_control();
+            if (!isset($failureMsg)) { $descriptors['end'][] = get_csv_export_control(); }
             print_table_prologue($descriptors);
 
             // print table top
@@ -185,12 +183,14 @@
 
             // table content
             $count = 0;
-            while ($row = $res->fetchRow()) {
+            foreach ($accountingRows as $row) {
+            $rawUsername = (string)($row[2] ?? '');
+            $rawHotspot = (string)($row[1] ?? '');
                 $rowlen = count($row);
 
                 // escape row elements
                 for ($i = 0; $i < $rowlen; $i++) {
-                    $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                    $row[$i] = htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
                 }
 
                 list($radAcctId, $hotspot, $username, $framedIPAddress, $acctStartTime, $acctStopTime,
@@ -200,9 +200,9 @@
                 $acctInputOctets = toxbyte($acctInputOctets);
                 $acctOutputOctets = toxbyte($acctOutputOctets);
 
-                if (hotspots_exists($dbSocket, $hotspot)) {
+                if (dalo_accounting_exists($accountingPDO, $rawHotspot, 'CONFIG_DB_TBL_DALOHOTSPOTS')) {
                     $ajax_id = "divContainerHotspotInfo_" . $count;
-                    $param = sprintf('hotspot=%s', urlencode($hotspot));
+                    $param = sprintf('hotspot=%s', urlencode($rawHotspot));
                     $onclick = "daloInfo.hotspot('$ajax_id','$param')";
     
                     $tooltip1 = [
@@ -211,7 +211,7 @@
                                     'ajax_id' => $ajax_id,
                                     'actions' => array(),
                                 ];
-                    $tooltip1['actions'][] = [ 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ),
+                    $tooltip1['actions'][] = [ 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($rawHotspot), ),
                                                'label' => t('Tooltip','HotspotEdit'), ];
                     $tooltip1['actions'][] = [ 'href' => 'acct-hotspot-compare.php',
                                                'label' => t('all','Compare'), ];
@@ -221,9 +221,9 @@
                     $tooltip1 = (!empty($hotspot)) ? $hotspot : "(n/a)";
                 }
 
-                if (!empty($username)) {
+                if ($username !== '') {
                     $ajax_id = "divContainerUserInfo_" . $count;
-                    $param = sprintf('username=%s', urlencode($username));
+                    $param = sprintf('username=%s', urlencode($rawUsername));
                     $onclick = "daloInfo.user('$ajax_id','$param')";
                 
                     $tooltip2 = [
@@ -232,12 +232,12 @@
                                     'ajax_id' => $ajax_id,
                                     'actions' => array(),
                                 ];
-                    if (user_exists($dbSocket, $username, 'CONFIG_DB_TBL_RADACCT')) {
-                        $tooltip2['actions'][] = [ 'href' => sprintf('acct-username.php?username=%s', urlencode($username), ),
+                    if (dalo_accounting_exists($accountingPDO, $rawUsername, 'CONFIG_DB_TBL_RADACCT')) {
+                        $tooltip2['actions'][] = [ 'href' => sprintf('acct-username.php?username=%s', urlencode($rawUsername), ),
                                                    'label' => t('button','UserAccounting'), ];
                     }
-                    if (user_exists($dbSocket, $username, 'CONFIG_DB_TBL_RADCHECK')) {
-                        $tooltip2['actions'][] = [ 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ),
+                    if (dalo_accounting_exists($accountingPDO, $rawUsername, 'CONFIG_DB_TBL_RADCHECK')) {
+                        $tooltip2['actions'][] = [ 'href' => sprintf('mng-edit.php?username=%s', urlencode($rawUsername), ),
                                                    'label' => t('Tooltip','UserEdit'), ];
                     }
                     
@@ -264,7 +264,7 @@
                         'subject' => $nasIPAddress,
                         'actions' => array(),
                     ];
-                    $tooltip4['actions'][] = [  'href' => sprintf('acct-nasipaddress.php?ipaddress=%s', urlencode($nasIPAddress), ),
+                    $tooltip4['actions'][] = [  'href' => sprintf('acct-nasipaddress.php?nasipaddress=%s', urlencode($nasIPAddress), ),
                                                 'label' => t('button','NASIPAccounting'), ];
                     
                     $tooltip4 = get_tooltip_list_str($tooltip4);
@@ -300,7 +300,7 @@
             printLinks($links, $drawNumberLinks);
 
         } else {
-            $failureMsg = "Nothing to display";
+            $failureMsg = $failureMsg ?? "Nothing to display";
         }
 
         // main accordion
@@ -322,7 +322,10 @@
     }
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
+    if (empty($numrows) || isset($failureMsg)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($accountingRows, $accountingPDO);
     print_footer_and_html_epilogue();
 

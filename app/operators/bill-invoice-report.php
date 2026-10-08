@@ -27,6 +27,8 @@
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
 
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery']);
+
     include_once("lang/main.php");
     include_once("../common/includes/validation.php");
     include("../common/includes/layout.php");
@@ -40,26 +42,28 @@
     //setting values for the order by and order type variables
     // and in other cases we partially strip some character,
     // and leave validation/escaping to other functions used later in the script
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? trim(str_replace("%", "", $_GET['username'])) : "";
+    $username = (array_key_exists('username', $_GET) && is_string($_GET['username']))
+              ? trim($_GET['username']) : "";
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
     
     // in other cases we just check that syntax is ok
     $date_default = date_range_default('previous_month');
 
-    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
+    $startdate = (array_key_exists('startdate', $_GET) && is_string($_GET['startdate']) &&
+                  preg_match(DATE_REGEX, $_GET['startdate'], $m) === 1 &&
                   checkdate($m[2], $m[3], $m[1]))
                ? $_GET['startdate'] : $date_default['start'];
 
-    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
+    $enddate = (array_key_exists('enddate', $_GET) && is_string($_GET['enddate']) &&
+                preg_match(DATE_REGEX, $_GET['enddate'], $m) === 1 &&
                 checkdate($m[2], $m[3], $m[1]))
              ? $_GET['enddate'] : $date_default['end'];
     
-    $invoice_status = (array_key_exists('invoice_status', $_GET) && isset($_GET['invoice_status']))
+    $invoice_status = (array_key_exists('invoice_status', $_GET) && is_string($_GET['invoice_status']))
                     ? trim($_GET['invoice_status']) : "";
     
+    $invoice_status = $invoice_status !== '' ? $invoice_status : (is_string($_GET['invoice_status_id'] ?? null) ? $_GET['invoice_status_id'] : '');
+    $invoice_status_id=$invoice_status;
     $cols = array(
                     "selected",
                     "id" => t('all','Invoice'),
@@ -81,7 +85,7 @@
                 in_array($_GET['orderBy'], array_keys($param_cols)))
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+    $orderType = (array_key_exists('orderType', $_GET) && is_string($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
     
@@ -101,56 +105,21 @@
     print_title_and_help($title, $help);
     
     
-    include('../common/includes/db_open.php');
+    require_once __DIR__.'/library/invoice_reads_pdo.php';
+    $invoiceReadPDO=null;
+    try {
+    dalo_invoice_read_inputs($_GET, array('username','startdate','enddate','invoice_status','invoice_status_id','orderBy','orderType'));
+    $invoiceReadPDO=dalo_invoice_read_open($configValues);
     include('include/management/pages_common.php');
-
-    
-    $sql_WHERE = array();
-    $partial_query_params = array();
-    
-    if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("a.date >= '%s'", $dbSocket->escapeSimple($startdate));
-        $partial_query_params[] = sprintf("startdate=%s", $startdate);
+    $invoiceDescriptor=array('source'=>'bill-invoice-report','type'=>'reportsInvoiceList',
+        'filters'=>array('startdate'=>$startdate,'enddate'=>$enddate,'username'=>$username,'invoice_status'=>$invoice_status));
+    list($sql,$readBindings)=dalo_export_query($invoiceDescriptor,$configValues);
+    $partial_query_params=array();
+    foreach($invoiceDescriptor['filters'] as $key=>$value) {
+        if ($value !== '') { $partial_query_params[]=urlencode($key).'='.urlencode($value); }
     }
-    
-    if (!empty($enddate)) {
-        $sql_WHERE[] = sprintf("a.date <= '%s'", $dbSocket->escapeSimple($enddate));
-        $partial_query_params[] = sprintf("enddate=%s", $enddate);
-    }
-    
-    if (!empty($username)) {
-        $sql_WHERE[] = sprintf("b.username LIKE '%%%s%%'", $dbSocket->escapeSimple($username));
-        $partial_query_params[] = sprintf("username=%s", $username_enc);
-    }
-    
-    if (!empty($invoice_status)) {
-        $sql_WHERE[] = sprintf("a.status_id = '%s'", $dbSocket->escapeSimple($invoice_status));
-        $partial_query_params[] = sprintf("invoice_status=%s", htmlspecialchars($invoice_status, ENT_QUOTES, 'UTF-8'));
-    }
-    
-    $sql = sprintf("SELECT a.id, a.date, a.status_id, a.type_id, b.contactperson, b.username, c.value AS status,
-                           COALESCE(e2.totalpayed, 0) AS totalpayed, COALESCE(d2.totalbilled, 0) AS totalbilled
-                      FROM %s AS a INNER JOIN %s AS b ON a.user_id=b.id
-                                   INNER JOIN %s AS c ON a.status_id=c.id
-                                    LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) AS totalbilled, invoice_id
-                                                 FROM %s AS d GROUP BY d.invoice_id) AS d2 ON d2.invoice_id=a.id
-                                    LEFT JOIN (SELECT SUM(e.amount) AS totalpayed, invoice_id
-                                                 FROM %s AS e GROUP BY e.invoice_id) AS e2 ON e2.invoice_id=a.id",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'], $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
-                   $configValues['CONFIG_DB_TBL_DALOPAYMENTS']);
-    if (count($sql_WHERE) > 0) {
-        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-    }
-    $sql .= " GROUP BY a.id";
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();        
-    
-    // setup php session variables for exporting
-    $_SESSION['reportTable'] = '';
-    $_SESSION['reportQuery'] = $sql;
-    $_SESSION['reportType'] = "reportsInvoiceList";
-    
+    $countRows=dalo_invoice_read_rows($invoiceReadPDO,'SELECT COUNT(*) FROM ('.$sql.') AS invoice_count',$readBindings);
+    $numrows=(int)$countRows[0][0];
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
         
@@ -164,15 +133,15 @@
         /* END */
                      
         // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
+        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, (int)$offset, (int)$rowsPerPage);
+        $res = dalo_invoice_read_rows($invoiceReadPDO,$sql,$readBindings);
         $logDebugSQL = "$sql;\n";
 
-        $per_page_numrows = $res->numRows();
+        $per_page_numrows = count($res);
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = implode("&", $partial_query_params);
+        $partial_query_string = '&' . implode("&", $partial_query_params);
         
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
@@ -194,6 +163,8 @@
 
 
         $descriptors['end'] = array();
+        $_SESSION['reportType']='reportsInvoiceList';
+        $_SESSION['reportExport']=$invoiceDescriptor;
         $descriptors['end'][] = get_csv_export_control();
         print_table_prologue($descriptors);
 
@@ -210,13 +181,14 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($res as $row) {
             
+            $rawUsername=$row[5];
             $rowlen = count($row);
         
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
             }
             
             list($id, $date, $status_id, $type_id, $contactperson, $username, $status, $totalpayed, $totalbilled) = $row;
@@ -234,7 +206,7 @@
                                 'subject' => $username,
                                 'actions' => array(),
                              );
-            $tooltip2['actions'][] = array( 'href' => sprintf('bill-pos-edit.php?username=%s', $username, ), 'label' => t('Tooltip','UserEdit'), );
+            $tooltip2['actions'][] = array( 'href' => sprintf('bill-pos-edit.php?username=%s', urlencode((string)$rawUsername), ), 'label' => t('Tooltip','UserEdit'), );
         
             // create balance
             $balance = $totalpayed - $totalbilled;
@@ -284,7 +256,11 @@
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');    
+    } catch (Throwable $error) {
+        dalo_invoice_read_failure($error);
+        include 'include/management/actionMessages.php';
+    }
+    unset($invoiceReadPDO);
 
     include('include/config/logging.php');
     

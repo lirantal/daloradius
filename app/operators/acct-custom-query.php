@@ -36,21 +36,31 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-    list($acct_custom_query_options_all, $acct_custom_query_options_default) = get_accounting_custom_query_options(
-        $dbSocket,
-        $configValues['CONFIG_DB_TBL_RADACCT'],
-        $acct_custom_query_options_all,
-        $acct_custom_query_options_default
-    );
+    require_once __DIR__ . '/library/accounting_advanced_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    $accountingPDO = null;
+    try {
+        dalo_accounting_validate_request($_GET);
+        foreach (array('where_value','where_field','where_operator') as $key) {
+            if (isset($_GET[$key])) { dalo_accounting_scalar($_GET, $key); }
+        }
+        $accountingPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        list($acct_custom_query_options_all, $acct_custom_query_options_default) = get_accounting_custom_query_options(
+            $accountingPDO, $configValues['CONFIG_DB_TBL_RADACCT'],
+            $acct_custom_query_options_all, $acct_custom_query_options_default);
+        $sqlfields = dalo_advanced_columns($_GET['sqlfields'] ?? null,
+            $acct_custom_query_options_all, $acct_custom_query_options_default);
+    } catch (InvalidArgumentException $exception) {
+        http_response_code(400);
+        exit('Invalid accounting filters');
+    } catch (Throwable $exception) {
+        dalo_accounting_failure($exception);
+        $sqlfields = $acct_custom_query_options_default;
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
 
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
-
-    $sqlfields = (array_key_exists('sqlfields', $_GET) && !empty($_GET['sqlfields']) && is_array($_GET['sqlfields']) &&
-                  array_intersect($_GET['sqlfields'], $acct_custom_query_options_all) == $_GET['sqlfields'])
-               ? $_GET['sqlfields'] : $acct_custom_query_options_default;
 
     $cols = [];
     foreach ($sqlfields as $sqlfield) {
@@ -69,15 +79,9 @@
 
     $date_default = date_range_default('current_month');
 
-    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
-                  checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : $date_default['start'];
+    $startdate = dalo_accounting_date($_GET, 'startdate', $date_default['start']);
 
-    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
-                checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : $date_default['end'];
+    $enddate = dalo_accounting_date($_GET, 'enddate', $date_default['end']);
 
     $valid_operators = array("equals" => "=", "contains" => "LIKE");
     $where_operator = (array_key_exists('where_operator', $_GET) && !empty($_GET['where_operator']) &&
@@ -88,10 +92,9 @@
                     in_array($_GET['where_field'], $acct_custom_query_options_all))
                  ? $_GET['where_field'] : "";
 
-    $where_value = (array_key_exists('where_value', $_GET) && !empty(str_replace("%", "", trim($_GET['where_value']))))
-                 ? str_replace("%", "", trim($_GET['where_value'])) : "";
+    $where_value = dalo_accounting_scalar($_GET, 'where_value');
 
-    $where_value_enc = (!empty($where_value)) ? htmlspecialchars($where_value, ENT_QUOTES, 'UTF-8') : "";
+    $where_value_enc = ($where_value !== '') ? htmlspecialchars($where_value, ENT_QUOTES, 'UTF-8') : "";
 
     //feed the sidebar variables
     $accounting_custom_startdate = $startdate;
@@ -110,54 +113,23 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
     // preparing the custom query
 
-    $sql_WHERE = [];
-    $partial_query_string_pieces = [];
-
-    foreach ($sqlfields as $sqlfield) {
-        $partial_query_string_pieces[] = sprintf("sqlfields[]=%s", $sqlfield);
+    $partial_query_string_pieces = array();
+    foreach ($sqlfields as $sqlfield) { $partial_query_string_pieces[] = 'sqlfields[]=' . rawurlencode($sqlfield); }
+    foreach (array('startdate'=>$startdate,'enddate'=>$enddate,'where_field'=>$where_field,
+                   'where_operator'=>$where_operator,'where_value'=>$where_value) as $key=>$value) {
+        if ($value !== '') { $partial_query_string_pieces[] = $key . '=' . rawurlencode($value); }
     }
-
-    if (!empty($startdate)) {
-        $sql_WHERE[] = sprintf("acctstarttime > '%s'", $dbSocket->escapeSimple($startdate));
-        $partial_query_string_pieces[] = sprintf("startdate=%s", $startdate);
+    $numrows = 0;
+    $accountingRows = array();
+    if (!isset($failureMsg)) {
+        try {
+            list($accountingSQL, $accountingBindings) = dalo_advanced_custom_query($configValues, $sqlfields,
+                $acct_custom_query_options_all, $startdate, $enddate, $where_field, $where_operator, $where_value);
+            $numrows = dalo_accounting_count($accountingPDO, $accountingSQL, $accountingBindings, $configValues);
+        } catch (InvalidArgumentException $exception) {
+            $failureMsg = 'Invalid accounting predicate';
+        } catch (Throwable $exception) { dalo_accounting_failure($exception); }
     }
-
-    if (!empty($enddate)) {
-        $sql_WHERE[] = sprintf("acctstarttime < '%s'", $dbSocket->escapeSimple($enddate));
-        $partial_query_string_pieces[] = sprintf("enddate=%s", $enddate);
-    }
-
-    if (!empty($where_value)) {
-        // get the operator
-        $op = $valid_operators[$where_operator];
-
-        // if the op is LIKE then the SQL syntax uses % for pattern matching
-        // and we sorround the $value with % as a wildcard
-        $where_value = $dbSocket->escapeSimple($where_value);
-
-        if ($op == "LIKE") {
-            $where_value = "%" . $where_value . "%";
-        }
-
-        $sql_WHERE[] = sprintf("%s %s '%s'", quote_sql_identifier($where_field), $op, $where_value);
-
-        $partial_query_string_pieces[] = sprintf("where_field=%s", $where_field);
-        $partial_query_string_pieces[] = sprintf("where_operator=%s", $where_operator);
-        $partial_query_string_pieces[] = sprintf("where_value=%s", $where_value_enc);
-    }
-
-    // executing the custom query
-
-    $sql = sprintf("SELECT `%s` FROM %s", implode("`, `", $sqlfields), $configValues['CONFIG_DB_TBL_RADACCT']);
-
-    if (count($sql_WHERE) > 0) {
-        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-    }
-
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    $numrows = $res->numRows();
 
     if ($numrows > 0) {
         // when $numrows is set, $maxPage is calculated inside this include file
@@ -168,12 +140,11 @@
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
 
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", quote_sql_identifier($orderBy), $orderType, $offset, $rowsPerPage);
-
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        $per_page_numrows = $res->numRows();
+        try {
+            $accountingRows = dalo_advanced_rows($accountingPDO, $accountingSQL, $accountingBindings,
+                $orderBy, $orderType, $acct_custom_query_options_all, $offset, $rowsPerPage, true);
+        } catch (Throwable $exception) { dalo_accounting_failure($exception); }
+        $per_page_numrows = count($accountingRows);
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
@@ -205,7 +176,7 @@
 
         // table content
         $count = 0;
-        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+        foreach ($accountingRows as $row) {
             printf('<tr id="row-%d">', $count);
             foreach ($sqlfields as $field) {
 
@@ -220,17 +191,17 @@
                         break;
 
                     case 'acctterminatecause':
-                        $value = ($row[$field] == "0") ? 'Unknown' : htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8');
+                        $value = ($row[$field] == "0") ? 'Unknown' : htmlspecialchars((string)($row[$field] ?? ''), ENT_QUOTES, 'UTF-8');
                         break;
 
                     case 'username':
-                        if (!empty($row[$field])) {
+                        if (isset($row[$field]) && (string)$row[$field] !== '') {
                             $ajax_id = "divContainerUserInfo_" . $count;
                             $param = sprintf('username=%s', urlencode($row[$field]));
                             $onclick = "daloInfo.user('$ajax_id','$param')";
 
                             $value = [
-                                        'subject' => $row[$field],
+                                        'subject' => htmlspecialchars((string)($row[$field] ?? ''), ENT_QUOTES, 'UTF-8'),
                                         'onclick' => $onclick,
                                         'ajax_id' => $ajax_id,
                                         'actions' => [],
@@ -239,7 +210,7 @@
                             $value['actions'][] = [ 'href' => sprintf('acct-username.php?username=%s', urlencode($row[$field]), ),
                                                     'label' => t('button','UserAccounting'), ];
 
-                            if (user_exists($dbSocket, $row[$field], 'CONFIG_DB_TBL_RADCHECK')) {
+                            if (dalo_accounting_exists($accountingPDO, (string)($row[$field] ?? ''), 'CONFIG_DB_TBL_RADCHECK')) {
                                 $value['actions'][] = [ 'href' => sprintf('mng-edit.php?username=%s', urlencode($row[$field]), ),
                                                         'label' => t('Tooltip','UserEdit'), ];
                             }
@@ -259,7 +230,7 @@
                     case 'framedipaddress':
                     case 'framedipv6address':
 
-                        if (!empty($row[$field])) {
+                        if (isset($row[$field]) && (string)$row[$field] !== '') {
                             $filtered_query_string_pieces = [];
 
                             foreach ($partial_query_string_pieces as $query_piece) {
@@ -270,10 +241,10 @@
 
                             $filtered_query_string_pieces[] = sprintf("where_field=%s", $field);
                             $filtered_query_string_pieces[] =
-                                sprintf("where_value=%s", urlencode(htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8')));
+                                sprintf("where_value=%s", urlencode((string)($row[$field] ?? '')));
 
                             $value = [
-                                'subject' => $row[$field],
+                                'subject' => htmlspecialchars((string)($row[$field] ?? ''), ENT_QUOTES, 'UTF-8'),
                                 'actions' => []
                             ];
 
@@ -287,13 +258,13 @@
 
                             $value = get_tooltip_list_str($value);
                         } else {
-                            $value = (!empty($row[$field])) ? $row[$field] : "(n/a)";
+                            $value = (isset($row[$field]) && (string)$row[$field] !== '') ? $row[$field] : "(n/a)";
                         }
                         break;
 
 
                     default:
-                        $value = htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8');
+                        $value = htmlspecialchars((string)($row[$field] ?? ''), ENT_QUOTES, 'UTF-8');
                         break;
 
                 }
@@ -320,10 +291,13 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
+    if (isset($failureMsg) && $numrows > 0) {
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+    }
+    unset($accountingPDO, $accountingRows);
     print_footer_and_html_epilogue();

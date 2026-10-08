@@ -37,67 +37,31 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    include('../common/includes/db_open.php');
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            
-            $paymentname = (array_key_exists('paymentname', $_POST) && !empty(trim($_POST['paymentname'])))
-                     ? trim($_POST['paymentname']) : "";
-            $paymentname_enc = (!empty($paymentname)) ? htmlspecialchars($paymentname, ENT_QUOTES, 'UTF-8') : "";
-            
-            $paymentnotes = (array_key_exists('paymentnotes', $_POST) && !empty(trim($_POST['paymentnotes'])))
-                          ? trim($_POST['paymentnotes']) : "";
-                          
-            
-            if (empty($paymentname)) {
-                // required
+    require_once('library/payment_types_pdo.php');
+    $paymentname = ''; $paymentname_enc = ''; $edit_paymentname = ''; $paymentnotes = ''; $type_pdo = null;
+    try {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+                $failureMsg = 'CSRF token error';
             } else {
-                // check if this payment name exists
-                $sql = sprintf("SELECT COUNT(id) FROM %s WHERE value='%s'", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'],
-                                                                          $dbSocket->escapeSimple($paymentname));
-                $res = $dbSocket->query($sql);
-                
-                $exists = intval($res->fetchrow()[0]) == 1;
-
-                if ($exists) {
-                    // invalid
-                } else {
-                    // required later
-                    $current_datetime = date('Y-m-d H:i:s');
-                    $currBy = $operator;
-                    
-                    // insert apyment type info
-                    $sql = sprintf("INSERT INTO %s (id, value, notes, creationdate, creationby, updatedate, updateby)
-                                            VALUES (0, '%s', '%s', '%s', '%s', NULL, NULL)",
-                                   $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $dbSocket->escapeSimple($paymentname),
-                                   $dbSocket->escapeSimple($paymentnotes), $current_datetime, $currBy);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    if (!DB::isError($res)) {
-                        $successMsg = sprintf('Successfully inserted new payment type (<strong>%s</strong>) '
-                                            . '[<a href="bill-payment-types-edit.php?paymentname=%s" title="Edit">Edit</a>]',
-                                              $paymentname_enc, urlencode($paymentname_enc));
-                        $logAction .= "Successfully inserted new payment type [$paymentname] on page: ";
-                    } else {
-                        $failureMsg = "Failed to insert new payment type (<strong>$paymentname_enc</strong>)";
-                        $logAction .= "Failed to insert new payment type [$paymentname] on page: ";
-                    }
-                }
+                $paymentname = dalo_payment_type_text(dalo_payment_scalar($_POST,'paymentname'),32,true);
+                $paymentnotes = dalo_payment_type_text(dalo_payment_scalar($_POST,'paymentnotes'),128);
+                $type_pdo = dalo_payment_open($configValues);
+                dalo_payment_type_mutate($type_pdo,$configValues,'new',$paymentname,$paymentnotes,$operator);
+                $paymentname_enc = htmlspecialchars($paymentname, ENT_QUOTES, 'UTF-8');
+                $successMsg = sprintf('Successfully inserted new payment type (<strong>%s</strong>) [<a href="bill-payment-types-edit.php?paymentname=%s" title="Edit">Edit</a>]',
+                    $paymentname_enc, htmlspecialchars(urlencode($paymentname), ENT_QUOTES, 'UTF-8'));
+                $logAction .= 'Successful payment type mutation on page: ';
+                $logDebugSQL .= 'Payment type mutation (PDO transaction, bound values);\n';
             }
-            
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
         }
-    }
+    } catch (Throwable $error) {
+        $failureMsg = 'Failed to insert payment type; verify its state before retrying';
+        $logAction .= 'Payment type mutation failed [' . get_class($error) . '] on page: ';
+    } finally { $type_pdo = null; }
+    $paymentname_enc = $paymentname !== '' ? htmlspecialchars($paymentname, ENT_QUOTES, 'UTF-8') : '';
+    $edit_paymentname = $paymentname;
 
-    include('../common/includes/db_close.php');
-
-    
     // print HTML prologue
     $title = t('Intro','paymenttypesnew.php');
     $help = t('helpPage','paymenttypesnew');

@@ -31,69 +31,32 @@ if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
     exit;
 }
 
-// validating type and username
-$type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
-         in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
-      ? strtolower($_GET['type']) : "daily";
-
+require_once __DIR__ . '/../portal_widgets_pdo.php';
 $username = $_SESSION['login_user'];
-$username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-// whenever possible we use a whitelist approach
-$orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-              in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-           ? strtolower($_GET['orderType']) : "asc";
-
-// used for presentation purpose
-$label_param = array();
-$label_param['day'] = "Day of month";
-$label_param['month'] = "Month of year";
-$label_param['year'] = "Year";
-
-
-include('../common/includes/db_open.php');
-include('include/management/pages_common.php');
-
-switch ($type) {
-    case "yearly":
-        $selected_param = "year";
-        $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                    in_array(strtolower($_GET['orderBy']), array( "logins", "year" )))
-                 ? strtolower($_GET['orderBy']) : "year";
-
-        $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(AcctStartTime) AS logins
-                  FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY year";
-        break;
-
-    case "monthly":
-        $selected_param = "month";
-        $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                    in_array(strtolower($_GET['orderBy']), array( "logins", "month" )))
-                 ? strtolower($_GET['orderBy']) : "month";
-
-        $sql = "SELECT CONCAT(MONTHNAME(AcctStartTime), ' (', YEAR(AcctStartTime), ')'),
-                       COUNT(AcctStartTime) AS logins,
-                       CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
-                  FROM %s WHERE username='%s' AND AcctStopTime>0 GROUP BY month";
-        break;
-
-    default:
-    case "daily":
-        $selected_param = "day";
-        $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                    in_array(strtolower($_GET['orderBy']), array( "logins", "day" )))
-                 ? strtolower($_GET['orderBy']) : "day";
-        $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(AcctStartTime) AS logins
-                  FROM %s WHERE username='%s' AND AcctStopTime>0
-                 GROUP BY day";
-        break;
-}
-
-$sql = sprintf($sql . " ORDER BY %s %s", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                         $dbSocket->escapeSimple($username), $orderBy, $orderType);
-$res = $dbSocket->query($sql);
-
-$numrows = $res->numRows();
+$username_enc = htmlspecialchars((string) $username, ENT_QUOTES, 'UTF-8');
+$type = dalo_portal_widget_choice($_GET, 'type', array('daily', 'monthly', 'yearly'), 'daily');
+$size = dalo_portal_widget_choice($_GET, 'size', array('gigabytes', 'megabytes'), 'megabytes');
+$orderType = dalo_portal_widget_choice($_GET, 'orderType', array('desc', 'asc'), 'asc', true);
+$selected_param = array('daily' => 'day', 'monthly' => 'month', 'yearly' => 'year')[$type];
+$orderBy = dalo_portal_widget_choice($_GET, 'orderBy', array('logins', $selected_param), $selected_param);
+$label_param = array('day' => 'Day of month', 'month' => 'Month of year', 'year' => 'Year');
+$size_division = array('gigabytes' => 1073741824, 'megabytes' => 1048576);
+$short_size = array('gigabytes' => 'GBs', 'megabytes' => 'MBs');
+include_once('include/management/pages_common.php');
+$widgetPdo = null;
+$numrows = 0;
+try {
+    $widgetPdo = dalo_portal_handle($configValues);
+    $allRows = dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'login', $type, $orderBy, $orderType);
+    $numrows = count($allRows);
+    include_once('include/management/pages_numbering.php');
+    $total_data = 0;
+    foreach ($allRows as $row) { $total_data += intval($row[1]); }
+    $pageRows = $numrows ? dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'login', $type, $orderBy, $orderType, (int) $offset, (int) $rowsPerPage) : array();
+} catch (Throwable $exception) {
+    $numrows = 0;
+    $failureMsg = 'Portal statistics unavailable';
+} finally { $widgetPdo = null; }
 
 if ($numrows > 0) {
     // $cols is needed only if $numwrows > 0
@@ -104,28 +67,8 @@ if ($numrows > 0) {
     $colspan = count($cols);
     $half_colspan = intval($colspan / 2);
 
-    /* START - Related to pages_numbering.php */
-
-    // when $numrows is set, $maxPage is calculated inside this include file
-    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                          // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-    // here we decide if page numbers should be shown
-    $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-
-    /* END */
-
-
-    $total_data = 0;
-    while ($row = $res->fetchRow()) {
-        $total_data += intval($row[1]);
-    }
-
-    $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL = "$sql;\n";
-
-    $per_page_numrows = $res->numRows();
+    $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+    $per_page_numrows = count($pageRows);
 
     // the partial query is built starting from user input
     // and for being passed to setupNumbering and setupLinks functions
@@ -133,7 +76,7 @@ if ($numrows > 0) {
 
     echo '<div class="my-3 text-center">';
     printf('<h4>Your %s login/hit statistics</h4>', $type);
-    
+
     $descriptors = array();
 
     $params = array(
@@ -159,7 +102,7 @@ if ($numrows > 0) {
 
     // table content
     $per_page_data = 0;
-    while ($row = $res->fetchRow()) {
+    foreach ($pageRows as $row) {
         $data = intval($row[1]);
 
         echo "<tr>"
@@ -168,7 +111,7 @@ if ($numrows > 0) {
            . "</tr>";
         $per_page_data += $data;
     }
-    
+
     // close tbody,
     // print tfoot
     // and close table + form (if any)
@@ -185,18 +128,18 @@ if ($numrows > 0) {
     // get and print "links"
     $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
     printLinks($links, $drawNumberLinks);
-    
+
     echo '</div>';
 
 } else {
     // $numrows <= 0
-    $failureMsg = "No login(s) found";
+    $failureMsg = $failureMsg ?? "No login(s) found";
 }
 
 if (!empty($failureMsg)) {
     include_once("include/management/actionMessages.php");
 }
 
-include('../common/includes/db_close.php');
+
 
 ?>

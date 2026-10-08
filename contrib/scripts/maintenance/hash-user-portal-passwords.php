@@ -1,6 +1,6 @@
 <?php
 /*
- * Hash legacy plaintext user portal passwords.
+ * Hash legacy plaintext user portal passwords using PDO and per-row CAS.
  *
  * Usage:
  *   php hash-user-portal-passwords.php --dry-run
@@ -25,24 +25,29 @@ if ($batch_size < 1 || $batch_size > 1000) {
     exit(2);
 }
 
-$root = dirname(__DIR__, 3);
-include_once $root . '/app/common/includes/config_read.php';
-include_once $root . '/app/common/includes/portal_password.php';
-$db_connect_error_handler = function() {
+$includes = dirname(__DIR__, 3) . '/app/common/includes';
+try {
+    foreach (array('config_read.php', 'daloradius.conf.php', 'portal_password.php', 'pdo_connection.php') as $file) {
+        if (!is_file($includes . '/' . $file) || !is_readable($includes . '/' . $file)) {
+            throw new RuntimeException('Migration configuration is unavailable');
+        }
+    }
+    require_once $includes . '/config_read.php';
+    require_once $includes . '/portal_password.php';
+    require_once $includes . '/pdo_connection.php';
+} catch (Throwable $error) {
+    fwrite(STDERR, "Unable to initialize password migration.\n");
+    exit(1);
+}
+
+try {
+    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+} catch (Throwable $error) {
+    // Never expose a PDO exception, SQL template, binding or connection value.
     fwrite(STDERR, "Unable to connect to the database.\n");
     exit(1);
-};
-$db_error_handler = function() {
-    // Keep db_open.php's best-effort session initialization silent in CLI
-    // mode. PEAR still returns the error object to the query caller.
-};
-include $root . '/app/common/includes/db_open.php';
+}
 
-// PEAR DB interpolates prepared parameters in error debug information. Never
-// invoke the application's verbose callback while credentials are in a query.
-$dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-
-$table = $configValues['CONFIG_DB_TBL_DALOUSERINFO'];
 $last_id = 0;
 $counts = array(
     'scanned' => 0,
@@ -53,51 +58,88 @@ $counts = array(
     'failed' => 0,
 );
 
-while (true) {
-    $sql = sprintf(
-        "SELECT id, portalloginpassword FROM %s WHERE id > ? ORDER BY id ASC LIMIT %d",
-        $table,
-        $batch_size
-    );
-    $stmt = $dbSocket->prepare($sql);
-    if (DB::isError($stmt)) {
+$migration_ready = false;
+try {
+    $table = $configValues['CONFIG_DB_TBL_DALOUSERINFO'] ?? null;
+    if (!is_string($table) || strlen($table) > 64 || !preg_match('/\A[A-Za-z0-9_]+\z/D', $table)) {
+        throw new InvalidArgumentException('Invalid user information table');
+    }
+    $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+    if (!in_array($driver, array('mysql', 'pgsql'), true)) {
+        throw new RuntimeException('Unsupported migration driver');
+    }
+    $quote = $driver === 'mysql' ? '`' : '"';
+    $quoted_table = $quote . $table . $quote;
+    $schema = $driver === 'mysql' ? 'DATABASE()' : 'current_schema()';
+
+    // The existing schema migration must precede password conversion. Without
+    // this preflight, permissive SQL mode can silently truncate a stored hash.
+    $metadata = $pdo->prepare("SELECT t.TABLE_TYPE AS kind, c.DATA_TYPE AS type,
+                                      c.CHARACTER_MAXIMUM_LENGTH AS capacity
+                                FROM information_schema.TABLES t
+                                JOIN information_schema.COLUMNS c
+                                  ON c.TABLE_SCHEMA=t.TABLE_SCHEMA AND c.TABLE_NAME=t.TABLE_NAME
+                               WHERE t.TABLE_SCHEMA=$schema AND t.TABLE_NAME=?
+                                 AND c.COLUMN_NAME='portalloginpassword'");
+    $metadata->execute(array($table));
+    $column = $metadata->fetch();
+    $metadata->closeCursor();
+    if (!$column || $column['kind'] !== 'BASE TABLE' ||
+        !in_array(strtolower($column['type']), array('varchar', 'character varying', 'text', 'tinytext', 'mediumtext', 'longtext'), true) ||
+        ($column['capacity'] !== null && (int) $column['capacity'] < 255)) {
+        throw new RuntimeException('Password storage requires the existing schema upgrade');
+    }
+    // TABLE_CONSTRAINTS can hide rows from SELECT-only accounts. Read the
+    // visible key columns directly so --dry-run does not require write grants.
+    $primary_condition = $driver === 'mysql'
+        ? "k.CONSTRAINT_NAME='PRIMARY'"
+        : "k.CONSTRAINT_NAME=(SELECT conname FROM pg_constraint WHERE conrelid=to_regclass(?) AND contype='p')";
+    $metadata = $pdo->prepare("SELECT k.COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE k
+                               WHERE k.TABLE_SCHEMA=$schema AND k.TABLE_NAME=? AND $primary_condition
+                               ORDER BY k.ORDINAL_POSITION");
+    $primary_parameters = array($table);
+    if ($driver === 'pgsql') {
+        $primary_parameters[] = $quoted_table;
+    }
+    $metadata->execute($primary_parameters);
+    if ($metadata->fetchAll(PDO::FETCH_COLUMN) !== array('id')) {
+        throw new RuntimeException('User information requires a unique primary ID');
+    }
+    $metadata->closeCursor();
+    $metadata = null;
+    $match_condition = dalo_portal_password_match_condition($driver);
+    $migration_ready = true;
+} catch (Throwable $error) {
+    $counts['failed']++;
+}
+
+// Autocommit is intentional: each bytewise conditional UPDATE stands alone.
+// Earlier successful rows remain migrated if a later row fails or conflicts.
+while ($migration_ready) {
+    try {
+        $select = $pdo->prepare("SELECT id, portalloginpassword FROM $quoted_table
+                                 WHERE id > ? ORDER BY id ASC LIMIT ?");
+        $select->bindValue(1, $last_id, PDO::PARAM_INT);
+        $select->bindValue(2, $batch_size, PDO::PARAM_INT);
+        $select->execute();
+        $rows = $select->fetchAll(PDO::FETCH_ASSOC);
+        $select->closeCursor();
+        $select = null;
+    } catch (Throwable $error) {
         $counts['failed']++;
         break;
     }
-    $res = $dbSocket->execute($stmt, array($last_id));
-    $dbSocket->freePrepared($stmt);
-
-    if (DB::isError($res)) {
-        $counts['failed']++;
-        break;
-    }
-
-    $rows = array();
-    $fetch_failed = false;
-    while (true) {
-        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-        if (DB::isError($row) || ($row !== null && !is_array($row))) {
-            $counts['failed']++;
-            $fetch_failed = true;
-            break;
-        }
-        if ($row === null) {
-            break;
-        }
-        $rows[] = $row;
-    }
-    $res->free();
-
-    if ($fetch_failed) {
-        break;
-    }
-
     if (count($rows) === 0) {
         break;
     }
 
     foreach ($rows as $row) {
-        $id = intval($row['id']);
+        $id = filter_var($row['id'], FILTER_VALIDATE_INT, array('options' => array('min_range' => 1)));
+        if ($id === false || $id <= $last_id) {
+            // Prevent a nonrepresentable ID from trapping the keyset scan.
+            $counts['failed']++;
+            break 2;
+        }
         $stored_password = (string) $row['portalloginpassword'];
         $last_id = $id;
         $counts['scanned']++;
@@ -106,54 +148,40 @@ while (true) {
             $counts['empty']++;
             continue;
         }
-
         if (dalo_portal_password_is_hash($stored_password)) {
             $counts['already_hashed']++;
             continue;
         }
-
         if ($dry_run) {
             $counts['migrated']++;
             continue;
         }
-
         $hash = dalo_portal_password_hash($stored_password);
         if ($hash === false) {
             $counts['failed']++;
             continue;
         }
 
-        $sql = sprintf(
-            "UPDATE %s SET portalloginpassword=? WHERE id=? AND %s",
-            $table,
-            dalo_portal_password_match_condition($configValues['CONFIG_DB_ENGINE'])
-        );
-        $stmt = $dbSocket->prepare($sql);
-        if (DB::isError($stmt)) {
+        try {
+            $update = $pdo->prepare("UPDATE $quoted_table SET portalloginpassword=? WHERE id=? AND $match_condition");
+            $update->execute(array($hash, $id, $stored_password));
+            $affected_rows = $update->rowCount();
+            $update->closeCursor();
+            $update = null;
+            if ($affected_rows === 1) {
+                $counts['migrated']++;
+            } else {
+                $counts['conflicted']++;
+            }
+        } catch (Throwable $error) {
             $counts['failed']++;
-            continue;
-        }
-        $update = $dbSocket->execute($stmt, array($hash, $id, $stored_password));
-        $dbSocket->freePrepared($stmt);
-
-        if (DB::isError($update)) {
-            $counts['failed']++;
-            continue;
-        }
-
-        $affected_rows = $dbSocket->affectedRows();
-        if (DB::isError($affected_rows)) {
-            $counts['failed']++;
-        } else if ($affected_rows === 1) {
-            $counts['migrated']++;
-        } else {
-            $counts['conflicted']++;
         }
     }
 }
 
-include $root . '/app/common/includes/db_close.php';
-
+// Release buffered credential batches/statements; no value is ever logged.
+$rows = $row = $stored_password = $hash = $select = $update = $metadata = null;
+$pdo = null;
 fwrite(STDOUT, sprintf(
     "%s: scanned=%d empty=%d already_hashed=%d %s=%d conflicted=%d failed=%d\n",
     $dry_run ? 'DRY RUN' : 'COMPLETE',
@@ -165,5 +193,4 @@ fwrite(STDOUT, sprintf(
     $counts['conflicted'],
     $counts['failed']
 ));
-
 exit($counts['failed'] === 0 ? 0 : 1);

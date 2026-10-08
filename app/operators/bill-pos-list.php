@@ -27,6 +27,7 @@
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
     include_once("lang/main.php");
+    include_once("../common/includes/validation.php");
     include("../common/includes/layout.php");
 
     // init logging variables
@@ -57,7 +58,7 @@
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
 
@@ -72,16 +73,15 @@
     
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    // we partially strip some character and
-    // leave validation/escaping to other functions used later in the script
-    $planname = (array_key_exists('planname', $_GET) && isset($_GET['planname']))
-              ? str_replace("%", "", $_GET['planname']) : "";
+    // Keep the raw filter identity; bind it in SQL and escape it only for display.
+    $planname = (array_key_exists('planname', $_GET) && is_string($_GET['planname']))
+              ? $_GET['planname'] : '';
     
-    $planname_enc = (!empty($planname))
+    $planname_enc = ($planname !== '')
                   ? htmlspecialchars($planname, ENT_QUOTES, 'UTF-8')
                   : "";
 
-    if (!empty($planname_enc)) {
+    if ($planname_enc !== '') {
         $title .=  " :: " . $planname_enc;
     }
 
@@ -90,53 +90,34 @@
     echo '<div id="returnMessages"></div>';
 
 
-    include('../common/includes/db_open.php');
+    require_once('library/catalog_reads_pdo.php');
     include('include/management/pages_common.php');
 
-    $sql_WHERE = array();
-    $sql_WHERE[] = "rc.username = ui.username";
-    $sql_WHERE[] = "(rc.attribute LIKE '%-Password' OR rc.attribute = 'Auth-Type')";
-    
-    if (!empty($planname)) {
-        $sql_WHERE[] = sprintf("ubi.planname LIKE '%%%s%%' ", $dbSocket->escapeSimple($planname));
-    }
-
-    $sql = sprintf("SELECT DISTINCT(rc.username) AS username, rc.id, rc.value, rc.attribute, ubi.contactperson,
-                           ubi.billstatus, ubi.planname, ubi.company, ui.firstname, IFNULL(rug.username, 0) AS disabled
-                      FROM %s AS ui, %s AS rc
-                      LEFT JOIN %s AS ubi ON rc.username=ubi.username
-                      LEFT JOIN %s AS rug ON rug.username=rc.username AND rug.groupname='daloRADIUS-Disabled-Users'",
-                   $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                   $configValues['CONFIG_DB_TBL_RADCHECK'],
-                   $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'])
-         . " WHERE " . implode(" AND ", $sql_WHERE) . "GROUP BY username";
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+    $catalog_pdo = null; $numrows = 0; $rows = array(); $values = array();
+    try {
+        dalo_catalog_read_inputs($_GET, array('orderBy', 'orderType', 'planname'));
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        list($sql, $values) = dalo_catalog_pos_query($catalog_pdo, $configValues, $planname);
+        $numrows = (int)dalo_catalog_read_rows($catalog_pdo, "SELECT COUNT(*) FROM ($sql) AS catalog_count", $values)[0][0];
+        if ($numrows > 0) {
+            include('include/management/pages_numbering.php');
+            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+            $sql .= " ORDER BY $orderBy $orderType LIMIT :offset, :limit";
+            $values[':offset'] = (int)$offset; $values[':limit'] = (int)$rowsPerPage;
+            $rows = dalo_catalog_read_rows($catalog_pdo, $sql, $values);
+            $logDebugSQL .= "$sql;\n";
+        }
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error); $numrows = 0; $rows = array();
+    } finally { $catalog_pdo = null; }
 
     if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
-        
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
-        /* END */
-                     
-        // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
-        
+        $per_page_numrows = count($rows);
+
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = (!empty($planname_enc))
-                              ? sprintf("&vendor=%s", urlencode($planname_enc)) : "";
+        $partial_query_string = ($planname_enc !== '')
+                              ? sprintf("&planname=%s", urlencode($planname)) : "";
                               
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
@@ -177,6 +158,7 @@
                             'page_num' => $pageNum,
                             'order_by' => $orderBy,
                             'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string,
                         );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
@@ -196,18 +178,19 @@
         // table content
         $count = 0;
         $td_format = '<td>%s</td>';
-        while ($row = $res->fetchRow()) {
+        foreach ($rows as $row) {
+            $raw_identity = (string)$row[0];
             $rowlen = count($row);
         
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)$row[$i], ENT_QUOTES, 'UTF-8');
             }
             
             list($username, $id, $value, $attribute, $contactperson, $billstatus, $planname, $company, $firstname, $disabled) = $row;
             
             // we try to get the type of this user
-            if ($attribute == 'Auth-Type' && $row['auth'] == 'Accept') {
+            if ($attribute == 'Auth-Type' && $value == 'Accept') {
                 if (preg_match(MACADDR_REGEX, $username) || preg_match(IP_REGEX, $username)) {
                     $type = 'MAC';
                 } else {
@@ -246,7 +229,7 @@
                   ? "[Password is hidden]" : $value;
             
             $ajax_id = "divContainerUserInfo_" . $count;
-            $param = sprintf('username=%s', urlencode($username));
+            $param = sprintf('username=%s', urlencode($raw_identity));
             $onclick = "daloInfo.user('$ajax_id','$param')";
             $tooltip = array(
                                 'subject' => sprintf('%s%s<span class="badge bg-primary ms-1">%s</span>', $img, $badge, $username),
@@ -254,7 +237,7 @@
                                 'ajax_id' => $ajax_id,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('bill-pos-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-pos-edit.php?username=%s', urlencode($raw_identity), ), 'label' => t('Tooltip','UserEdit'), );
             
             // create tooltip
             $tooltip = get_tooltip_list_str($tooltip);
@@ -289,11 +272,11 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        if (!isset($failureMsg)) { $failureMsg = "Nothing to display"; }
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');
+
 
     include('include/config/logging.php');
     

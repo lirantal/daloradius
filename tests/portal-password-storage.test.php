@@ -26,7 +26,7 @@ $functions = file_get_contents($root . '/app/operators/include/management/functi
 $import = file_get_contents($root . '/app/operators/mng-import-users.php');
 $config = file_get_contents($root . '/app/operators/config-user.php');
 $migration = file_get_contents($root . '/contrib/scripts/maintenance/hash-user-portal-passwords.php');
-$db_open = file_get_contents($root . '/app/common/includes/db_open.php');
+$create_provider = file_get_contents($root . '/app/operators/library/user_create.php');
 $schema = file_get_contents($root . '/contrib/db/mariadb-daloradius.sql');
 $operator_flows = array(
     'mng-new' => file_get_contents($root . '/app/operators/mng-new.php'),
@@ -72,11 +72,18 @@ check('common create and update paths redact password logs',
       strpos($functions, 'redact_sensitive_values') !== false
       && strpos($functions, "array('portalloginpassword')") !== false
       && strpos($functions, '[portal password redacted]') === false);
-check('all sensitive password writes disable verbose PEAR DB errors',
-      strpos($login, 'dalo_portal_db_sensitive_call') !== false
-      && strpos($change, 'dalo_portal_db_sensitive_call') !== false
-      && substr_count($functions, 'dalo_portal_db_sensitive_call') >= 2
-      && strpos($migration, 'setErrorHandling(PEAR_ERROR_RETURN)') !== false);
+check('sensitive login rehash uses PDO without verbose PEAR errors',
+      strpos($login, 'dalo_portal_login_rehash') !== false
+      && strpos($login, 'dalo_portal_password_match_condition') !== false
+      && strpos($login, '$dbSocket') === false
+      && strpos($change, 'dalo_portal_password_update') !== false
+      && strpos($change, '$dbSocket') === false
+      && substr_count($functions, 'dalo_create_info') >= 2
+      && strpos($create_provider, '$stmt->execute($values)') !== false
+      && strpos($create_provider, '$logDebugSQL .= "$sql;') !== false
+      && strpos($migration, 'dalo_pdo_connect') !== false
+      && strpos($migration, 'catch (Throwable $error)') !== false
+      && strpos($migration, '$dbSocket') === false);
 check('empty edit preserves the existing portal credential',
       strpos($functions, 'unset($params[\'portalloginpassword\'])') !== false);
 check('CSV portal login is independent from cleartext RADIUS setting',
@@ -98,30 +105,34 @@ check('self-service validates NUL before trimming password fields',
 check('self-service distinguishes database and concurrent failures',
       strpos($change, '$lookup_error') !== false
       && strpos($change, '[concurrent update]') !== false
-      && strpos($change, 'dalo_portal_password_match_condition') !== false);
+      && strpos($change, 'dalo_portal_password_update') !== false
+      && strpos($change, 'dalo_portal_password_match_condition') === false);
 check('portal password tooltip uses the English fallback dictionary',
       strpos($form, "t('Tooltip', 'portalPasswordKeepTooltip')") !== false
       && strpos($language_en, "['portalPasswordKeepTooltip']") !== false);
-check('migration CLI handles connection, fetch, and bytewise-guard failures',
-      strpos($migration, '$db_connect_error_handler = function') !== false
-      && strpos($migration, 'DB::isError($row)') !== false
-      && strpos($migration, 'dalo_portal_password_match_condition') !== false);
-check('migration uses distinct connection and silent startup-query handlers',
-      strpos($db_open, 'isset($db_connect_error_handler)') !== false
-      && strpos($db_open, "\$error_handler = (isset(\$db_error_handler)") !== false
-      && strpos($migration, '$db_connect_error_handler = function') !== false
-      && strpos($migration, '$db_error_handler = function') !== false
-      && strpos($migration, "PEAR still returns the error object") !== false);
+check('migration CLI handles connection, batch fetch, and bytewise-guard failures',
+      strpos($migration, 'dalo_pdo_connect') !== false
+      && strpos($migration, 'fetchAll(PDO::FETCH_ASSOC)') !== false
+      && strpos($migration, 'catch (Throwable $error)') !== false
+      && strpos($migration, 'dalo_portal_password_match_condition($driver)') !== false);
+check('legacy bootstrap removed while migration uses PDO autocommit directly',
+      !file_exists($root . '/app/common/includes/db_open.php')
+      && !file_exists($root . '/app/common/includes/db_close.php')
+      && !file_exists($root . '/app/common/includes/db_error_handler.php')
+      && strpos($migration, 'db_open.php') === false
+      && strpos($migration, 'db_close.php') === false
+      && strpos($migration, 'beginTransaction') === false);
+check('migration binds keyset limits and requires adequate password capacity',
+      strpos($migration, '$last_id, PDO::PARAM_INT') !== false
+      && strpos($migration, '$batch_size, PDO::PARAM_INT') !== false
+      && strpos($migration, '(int) $column[\'capacity\'] < 255') !== false
+      && strpos($migration, '$update->rowCount()') !== false);
 check('fresh schema reserves 255 characters for password hashes',
       strpos($schema, '`portalloginpassword` VARCHAR(255)') !== false);
 
 $_SERVER['PHP_SELF'] = '/cli/tests';
 require_once $root . '/app/common/includes/layout.php';
-include_once 'DB.php';
 require_once $root . '/app/operators/include/management/functions.php';
-if (!defined('PEAR_ERROR_RETURN')) {
-    define('PEAR_ERROR_RETURN', 2);
-}
 $configValues['CONFIG_DB_PASSWORD_MIN_LENGTH'] = 8;
 $configValues['CONFIG_DB_PASSWORD_MAX_LENGTH'] = 14;
 
@@ -164,123 +175,50 @@ check('redacted SQL keeps non-sensitive fields without exposing the hash',
       && strpos($redacted_sql, "`portalloginpassword`='[redacted]'") !== false
       && strpos($redacted_sql, 'secret-hash-value') === false);
 
-class PortalPasswordStorageResult {
-    private $count;
-
-    function __construct($count) {
-        $this->count = $count;
-    }
-
-    function fetchrow() {
-        return array($this->count);
+// Synthetic PDO contracts complement the native SQL/rollback integration suite.
+class PortalPasswordStoragePdo extends PDO {
+    public $exists; public $fail_write; public $templates = array();
+    public function __construct($exists, $fail_write = false) { $this->exists = $exists; $this->fail_write = $fail_write; }
+    public function inTransaction(): bool { return true; }
+    public function prepare(string $query, array $options = array()): PDOStatement|false {
+        return new PortalPasswordStorageStatement($this, $query);
     }
 }
-
-class PortalPasswordStorageDb {
-    public $exists;
-    public $fail_write;
-    public $mode = 'application-callback';
-    public $queries = array();
-    private $modes = array();
-
-    function __construct($exists, $fail_write = false) {
-        $this->exists = $exists;
-        $this->fail_write = $fail_write;
+class PortalPasswordStorageStatement extends PDOStatement {
+    private $owner; private $sql;
+    public function __construct($owner, $sql) { $this->owner = $owner; $this->sql = $sql; }
+    public function execute(?array $params = null): bool {
+        $this->owner->templates[] = $this->sql;
+        if ($this->owner->fail_write && strpos($this->sql, 'UPDATE ') === 0) { throw new PDOException('fixture write failure'); }
+        return true;
     }
-
-    function escapeSimple($value) {
-        return addslashes($value);
-    }
-
-    function query($sql) {
-        $this->queries[] = array($sql, $this->mode);
-        if (strpos($sql, 'SELECT COUNT') === 0) {
-            return new PortalPasswordStorageResult($this->exists ? 1 : 0);
-        }
-
-        return $this->fail_write ? PEAR::raiseError('synthetic write failure') : DB_OK;
-    }
-
-    function pushErrorHandling($mode) {
-        $this->modes[] = $this->mode;
-        $this->mode = $mode;
-    }
-
-    function popErrorHandling() {
-        $this->mode = array_pop($this->modes);
-    }
+    public function fetchColumn(int $column = 0): mixed { return $this->owner->exists ? 1 : false; }
+    public function closeCursor(): bool { return true; }
+    public function fetchAll(int $mode = PDO::FETCH_DEFAULT, mixed ...$args): array { return array('firstname'=>255,'portalloginpassword'=>255); }
 }
-
 $configValues['CONFIG_DB_TBL_DALOUSERINFO'] = 'userinfo';
 $allowed_fields = array('firstname', 'portalloginpassword');
-$logDebugSQL = '';
-$sensitive_db = new PortalPasswordStorageDb(true);
-$sensitive_result = update_info(
-    $sensitive_db,
-    'user1',
-    array('firstname' => 'Alice', 'portalloginpassword' => 'secret-hash-value'),
-    $allowed_fields,
-    array(),
-    'CONFIG_DB_TBL_DALOUSERINFO',
-    array('portalloginpassword')
-);
-check('only the password-bearing write suppresses verbose DB errors',
-      $sensitive_result === true
-      && count($sensitive_db->queries) === 2
-      && $sensitive_db->queries[0][1] === 'application-callback'
-      && $sensitive_db->queries[1][1] === PEAR_ERROR_RETURN
-      && $sensitive_db->mode === 'application-callback');
-check('password-bearing writes log only redacted SQL after a real query',
-      strpos($logDebugSQL, "`firstname`='Alice'") !== false
-      && strpos($logDebugSQL, "`portalloginpassword`='[redacted]'") !== false
-      && strpos($logDebugSQL, 'secret-hash-value') === false);
-
-$logDebugSQL = '';
-$ordinary_db = new PortalPasswordStorageDb(true);
-update_info(
-    $ordinary_db,
-    'user1',
-    array('firstname' => 'Bob'),
-    $allowed_fields,
-    array(),
-    'CONFIG_DB_TBL_DALOUSERINFO',
-    array('portalloginpassword')
-);
-check('ordinary userinfo writes retain the application DB error mode',
-      $ordinary_db->queries[1][1] === 'application-callback');
-
-$logDebugSQL = '';
-$missing_db = new PortalPasswordStorageDb(false);
-$missing_result = update_info(
-    $missing_db,
-    'missing-user',
-    array('portalloginpassword' => 'secret-hash-value'),
-    $allowed_fields,
-    array(),
-    'CONFIG_DB_TBL_DALOUSERINFO',
-    array('portalloginpassword')
-);
-check('missing users do not produce a synthetic password update log',
-      $missing_result === false
-      && count($missing_db->queries) === 1
-      && strpos($logDebugSQL, 'UPDATE ') === false
-      && strpos($logDebugSQL, 'secret-hash-value') === false);
-
-$logDebugSQL = '';
-$failed_db = new PortalPasswordStorageDb(true, true);
-$failed_result = update_info(
-    $failed_db,
-    'user1',
-    array('portalloginpassword' => 'secret-hash-value'),
-    $allowed_fields,
-    array(),
-    'CONFIG_DB_TBL_DALOUSERINFO',
-    array('portalloginpassword')
-);
-check('a returned PEAR DB error cannot compare as a successful write',
-      $failed_result === false
-      && $failed_db->mode === 'application-callback'
-      && strpos($logDebugSQL, 'secret-hash-value') === false);
+foreach (array(true, false) as $sensitive) {
+    $db = new PortalPasswordStoragePdo(true); $logDebugSQL = '';
+    $params = $sensitive ? array('firstname'=>'Alice','portalloginpassword'=>'fixture-bound-value') : array('firstname'=>'Bob');
+    $result = update_info($db, 'user1', $params, $allowed_fields, array(), 'CONFIG_DB_TBL_DALOUSERINFO', array('portalloginpassword'));
+    check($sensitive ? 'password writes bind values and retain caller transaction' : 'ordinary writes bind values and retain caller transaction',
+          $result === true && $db->inTransaction() && count($db->templates) === 3
+          && strpos($logDebugSQL, 'UPDATE ') !== false && strpos($logDebugSQL, '?') !== false
+          && strpos($logDebugSQL, 'fixture-bound-value') === false && strpos($logDebugSQL, 'Alice') === false && strpos($logDebugSQL, 'Bob') === false);
+}
+$db = new PortalPasswordStoragePdo(false); $logDebugSQL = '';
+check('missing user does not produce a write or sensitive log',
+      update_info($db, 'missing-user', array('portalloginpassword'=>'fixture-bound-value'), $allowed_fields, array(), 'CONFIG_DB_TBL_DALOUSERINFO') === false
+      && count($db->templates) === 1 && $logDebugSQL === '');
+$db = new PortalPasswordStoragePdo(true, true); $logDebugSQL = ''; $failed = false;
+try { update_info($db, 'user1', array('portalloginpassword'=>'fixture-bound-value'), $allowed_fields, array(), 'CONFIG_DB_TBL_DALOUSERINFO'); }
+catch (PDOException $error) { $failed = true; }
+check('write failures propagate for caller rollback without bound-value logs', $failed && $db->inTransaction() && $logDebugSQL === '');
+$rejected = false;
+try { update_info(new stdClass(), 'user1', array(), $allowed_fields, array(), 'CONFIG_DB_TBL_DALOUSERINFO'); }
+catch (TypeError $error) { $rejected = true; }
+check('legacy information handles are rejected', $rejected);
 
 printf("\n%s\n", $failures === 0 ? 'ALL PASSED' : sprintf('%d FAILURE(S)', $failures));
 exit($failures === 0 ? 0 : 1);

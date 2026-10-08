@@ -27,6 +27,8 @@
 
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
+    require_once('../common/includes/pdo_connection.php');
+    require_once('library/pos_delete.php');
     
     // init logging variables
     $logAction = "";
@@ -35,85 +37,25 @@
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            $username = (array_key_exists('username', $_POST) && !empty(str_replace("%", "", trim($_POST['username']))))
-                      ? str_replace("%", "", trim($_POST['username'])) : "";
-            
-            if (!empty($username)) {
-            
-                $delradacct = (array_key_exists('delradacct', $_POST) && strtolower(trim($_POST['delradacct'])) == 'yes');
-            
-                $tables = array(
-                                    $configValues['CONFIG_DB_TBL_RADCHECK'],
-                                    $configValues['CONFIG_DB_TBL_RADREPLY'],
-                                    $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                                    $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                               );
-                               
-                if ($delradacct) {
-                    $tables[] = $configValues['CONFIG_DB_TBL_RADACCT'];
-                }
-            
-                include('../common/includes/db_open.php');
-            
-                $format = "DELETE FROM %s WHERE username='%s'";
-                foreach ($tables as $table) {
-                    $sql = sprintf($format, $table, $dbSocket->escapeSimple($username));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                }
-                
-                // get user id from userbillinfo table 
-                $sql = sprintf("SELECT id FROM %s WHERE username='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $dbSocket->escapeSimple($username));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                $row = $res->fetchrow();
-                $user_id = ($row && isset($row[0])) ? intval($row[0]) : 0;
-                
-                // to remove all invoices and payments we need to get the invoices_id
-                if ($user_id > 0) {
-                    $sql = sprintf("SELECT id FROM %s WHERE user_id=%d",
-                                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    $invoice_id = array();
-                    while ($row = $res->fetchrow()) {
-                        $invoice_id[] = intval($row[0]);
-                    }
-                } else {
-                    $invoice_id = array();
-                }
-                
-                $tables = array(
-                                    $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
-                                    $configValues['CONFIG_DB_TBL_DALOPAYMENTS']
-                               );
-                
-                $format = "DELETE FROM %s WHERE invoice_id IN (%s)";
-                
-                // delete all invoice items and all payment items only if there are invoice IDs
-                if (!empty($invoice_id)) {
-                    foreach ($tables as $table) {
-                        $sql = sprintf($format, $table, implode(", ", $invoice_id));
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";  
-                    }
-                }
+            $usernameInput = $_POST['username'] ?? '';
+            $username = is_string($usernameInput) ? trim($usernameInput) : '';
+            $accountingInput = $_POST['delradacct'] ?? '';
 
-                // remove all invoices by this user only if user_id is valid
-                if ($user_id > 0) {
-                    $sql = sprintf("DELETE FROM %s WHERE user_id=%d",
-                                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $user_id);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
+            if ($username !== '' && is_string($accountingInput) &&
+                in_array(strtolower(trim($accountingInput)), array('', 'yes', 'no'), true)) {
+                try {
+                    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                    $counts = dalo_delete_pos_user($pdo, $configValues, $username,
+                                                   strtolower(trim($accountingInput)) === 'yes');
+                    $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+                    $successMsg = "Deleted user: <strong>$username_enc</strong>";
+                    $logAction .= "Successfully deleted user [$username] on page: ";
+                    $logDebugSQL .= "POS user and dependent billing/RADIUS deletion (PDO transaction);\n";
+                } catch (Throwable $error) {
+                    $failureMsg = 'Failed to delete user';
+                    $logAction .= 'Failed POS user deletion on page: ';
+                    error_log('POS deletion failed (' . get_class($error) . ')');
                 }
-                
-                include('../common/includes/db_close.php');
-            
-                $successMsg = "Deleted user: <strong>$username_enc</strong>";
-                $logAction .= "Successfully deleted user [$username] on page: ";
             } else {
                 $failureMsg = "Empty or invalid username";
                 $logAction .= sprintf("Failed deleting user [%s] on page: ", $failureMsg);
@@ -124,8 +66,8 @@
             $logAction .= "$failureMsg on page: ";
         }
     } else {
-        $username = (array_key_exists('username', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['username']))))
-                  ? str_replace("%", "", trim($_REQUEST['username'])) : "";
+        $usernameInput = $_GET['username'] ?? '';
+        $username = is_string($usernameInput) ? trim($usernameInput) : '';
     }
     
     $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
@@ -151,18 +93,16 @@
     include_once('include/management/actionMessages.php');
     
     // load options
-    include('../common/includes/db_open.php');
-    
-    $sql = sprintf("SELECT DISTINCT(username) FROM %s", $configValues['CONFIG_DB_TBL_RADCHECK']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    $options = array( "" );
-    while ($row = $res->fetchrow()) {
-        $options[] = $row[0];
-    }
-    
-    include('../common/includes/db_close.php');
+    require_once('library/catalog_reads_pdo.php');
+    $options = array('');
+    $catalog_pdo = null;
+    try {
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $options = array_merge($options, dalo_catalog_read_options($catalog_pdo, $configValues, 'CONFIG_DB_TBL_RADCHECK', 'username'));
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error);
+        include('include/management/actionMessages.php');
+    } finally { $catalog_pdo = null; }
 
     $input_descriptors1 = array();
 

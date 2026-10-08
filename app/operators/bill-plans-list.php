@@ -55,7 +55,7 @@
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
 
@@ -71,33 +71,31 @@
     // start printing content
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
+    require_once('library/catalog_reads_pdo.php');
     include('include/management/pages_common.php');
 
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(DISTINCT(planName)) FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
-    
+    $catalog_pdo = null; $numrows = 0; $rows = array(); $values = array();
+    try {
+        dalo_catalog_read_inputs($_GET, array('orderBy', 'orderType', 'planname'));
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $table = dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS');
+        $sql = "SELECT id, planName, planType, planActive FROM $table";
+        $numrows = (int)dalo_catalog_read_rows($catalog_pdo, "SELECT COUNT(*) FROM $table")[0][0];
+        if ($numrows > 0) {
+            include('include/management/pages_numbering.php');
+            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+            $sql .= " ORDER BY $orderBy $orderType LIMIT :offset, :limit";
+            $values[':offset'] = (int)$offset; $values[':limit'] = (int)$rowsPerPage;
+            $rows = dalo_catalog_read_rows($catalog_pdo, $sql, $values);
+            $logDebugSQL .= "$sql;\n";
+        }
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error); $numrows = 0; $rows = array();
+    } finally { $catalog_pdo = null; }
+
     if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
-        
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
-        /* END */
-        
-        $sql = sprintf("SELECT id, planName, planType, planActive FROM %s ORDER BY %s %s LIMIT %s, %s",
-                       $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
-        
+        $per_page_numrows = count($rows);
+
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "bill-plans-del.php";
@@ -129,12 +127,13 @@
         
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($rows as $row) {
+            $raw_identity = (string)$row[1];
             $rowlen = count($row);
             
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)$row[$i], ENT_QUOTES, 'UTF-8');
             }
         
             list($id, $planName, $planType, $planActive) = $row;
@@ -143,8 +142,8 @@
                                 'subject' => $planName,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('bill-plans-edit.php?planName=%s', urlencode($planName), ), 'label' => t('button','EditPlan'), );
-            $tooltip['actions'][] = array( 'href' => sprintf('bill-plans-del.php?planName=%s', urlencode($planName), ), 'label' => t('button','RemovePlan'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-plans-edit.php?planName=%s', urlencode($raw_identity), ), 'label' => t('button','EditPlan'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-plans-del.php?planName=%s', urlencode($raw_identity), ), 'label' => t('button','RemovePlan'), );
 
             // create tooltip
             $tooltip = get_tooltip_list_str($tooltip);
@@ -180,11 +179,11 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        if (!isset($failureMsg)) { $failureMsg = "Nothing to display"; }
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');
+
     
     include('include/config/logging.php');
     

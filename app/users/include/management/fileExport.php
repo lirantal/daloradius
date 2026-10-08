@@ -1,69 +1,62 @@
 <?php
 /*
- *********************************************************************************************************
  * daloRADIUS - RADIUS Web Platform
  * Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- *********************************************************************************************************
- *
- *  Description:   the purpose of this extension is to handle CSV exports to the user's desktop.
- *
- * Authors:        Liran Tal <liran@lirantal.com>
- *                 Filippo Lauria <filippo.lauria@iit.cnr.it>
- *
- *********************************************************************************************************
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License, version 2 or later.
+ * User portal CSV export: fixed PDO queries, no session-supplied SQL.
  */
 
-include('../../library/checklogin.php');
+include __DIR__ . '/../../library/checklogin.php';
+include_once __DIR__ . '/../../../common/includes/config_read.php';
+require_once __DIR__ . '/../../../common/includes/pdo_connection.php';
+require_once __DIR__ . '/../../library/user_report_export.php';
 
-if (isset($_SESSION['export_items']) && isset($_SESSION['export_query'])) {
-    $output = "";
+// The old exporter consumed export state on each request; do not replay it.
+$descriptor = $_SESSION['userReportExport'] ?? null;
+unset($_SESSION['userReportExport'], $_SESSION['export_query'],
+      $_SESSION['export_items'], $_SESSION['export_title']);
 
-    include_once('../../../common/includes/db_open.php');
-
-    $sql = $_SESSION['export_query'];
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
-
-    if ($numrows > 0) {
-
-        // this is the output title and header
-        if (isset($_SESSION['export_title']) && !empty(trim($_SESSION['export_title']))) {
-            $output .= sprintf("# %s\n", trim($_SESSION['export_title']));
-
-            // once used we unset it
-            unset($_SESSION['export_title']);
-
-        }
-
-        $output .= implode(", ", $_SESSION['export_items']) . "\n";
-
-        // this is the remaining part of the output content
-        while($row = $res->fetchRow()) {
-            $output .= implode(",", $row) . "\n";
-        }
+try {
+    [$sql, $bindings, $header, $numericColumns] = dalo_user_export_query(
+        $descriptor, $_SESSION['login_user'] ?? null, $configValues
+    );
+    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+    $statement = $pdo->prepare($sql);
+    foreach ($bindings as $name => $value) {
+        $statement->bindValue($name, $value, PDO::PARAM_STR);
+    }
+    $statement->execute();
+    $first = $statement->fetch(PDO::FETCH_NUM);
+    if ($first === false) {
+        // Legacy behavior: an empty report has no attachment or CSV header.
+        exit;
     }
 
-    include_once('../../../common/includes/db_close.php');
-
-
-    if (!empty($output)) {
-        header("Content-type: text/csv");
-        header(sprintf("Content-disposition: attachment; filename=daloradius__%s.csv; size=%s", date("Ymd"), strlen($output)));
-        print $output;
+    $csv = fopen('php://temp', 'w+');
+    if ($csv === false) {
+        throw new RuntimeException('Cannot prepare export');
     }
-
-    // once finished we unset them
-    unset($_SESSION['export_items']);
-    unset($_SESSION['export_query']);
-
+    fputcsv($csv, $header, ',', '"', '');
+    fputcsv($csv, dalo_user_export_csv_row($first, $numericColumns), ',', '"', '');
+    while ($row = $statement->fetch(PDO::FETCH_NUM)) {
+        fputcsv($csv, dalo_user_export_csv_row($row, $numericColumns), ',', '"', '');
+    }
+    rewind($csv);
+    $output = stream_get_contents($csv);
+    fclose($csv);
+    $pdo = null;
+} catch (InvalidArgumentException $exception) {
+    http_response_code(400);
+    exit;
+} catch (Throwable $exception) {
+    // Never expose PDO errors, SQL, connection names or credentials.
+    http_response_code(500);
+    exit;
 }
+
+header('Content-type: text/csv');
+header(sprintf('Content-disposition: attachment; filename=daloradius__%s.csv; size=%s',
+               date('Ymd'), strlen($output)));
+print $output;

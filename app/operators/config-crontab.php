@@ -97,8 +97,8 @@ EOF;
 
                 $jobs = [
                     'CONFIG_FIX_STALE_ENABLED' => ['file' => 'maintenance/fix-stale-sessions.php', 'interval' => '*/1'],
-                    'CONFIG_NODE_STATUS_MONITOR_ENABLED' => ['file' => 'monitor/node-status-monitor.php', 'interval' => '*/5'],
-                    'CONFIG_USER_TRAFFIC_MONITOR_ENABLED' => ['file' => 'monitor/user-traffic-monitor.php', 'interval' => '*/20']
+                    'CONFIG_NODE_STATUS_MONITOR_ENABLED' => ['file' => 'maintenance/monitor/node-status-monitor.php', 'interval' => '*/5'],
+                    'CONFIG_USER_TRAFFIC_MONITOR_ENABLED' => ['file' => 'maintenance/monitor/user-traffic-monitor.php', 'interval' => '*/20']
                 ];
 
                 foreach ($jobs as $key => $job) {

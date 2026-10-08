@@ -58,29 +58,26 @@ function should_update_message($type) {
 // The above function checks if the message of the given type should be updated based on the operator's input in the form.
 
 // updates the message
-function update_message($dbSocket, $type) {
-    global $_SESSION, $_POST, $purifier, $configValues, $logDebugSQL;
-
-    // Define the message associative label in the $_POST array.
-    $message_label = $type . "_message";
-
-    // Filter the message using HTMLPurifier to remove any unsafe HTML content.
-    $content = $purifier->purify($_POST[$message_label]);
-
-    // SQL query to update the message in the database with the filtered content, modified time, and operator details.
-    $sql = sprintf("UPDATE %s SET content='%s', modified_on=NOW(), modified_by='%s' WHERE `type`='%s'",
-                   $configValues['CONFIG_DB_TBL_DALOMESSAGES'], $dbSocket->escapeSimple($content),
-                   $dbSocket->escapeSimple($_SESSION['operator_user']), $dbSocket->escapeSimple($type));
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    return $res;
+function update_message(PDO $dbSocket, $type, $content = null) {
+    global $_SESSION, $_POST, $purifier, $configValues, $valid_message_types;
+    if (!is_string($type) || !in_array($type, $valid_message_types, true)) {
+        throw new InvalidArgumentException('Invalid message type');
+    }
+    require_once __DIR__ . '/messages_pdo.php';
+    if ($content === null) {
+        $raw = $_POST[$type . '_message'] ?? null;
+        if (!is_string($raw)) {
+            throw new InvalidArgumentException('Invalid message content');
+        }
+        $content = $purifier->purify($raw);
+    }
+    return dalo_messages_update($dbSocket, $configValues, $type, $content, $_SESSION['operator_user']);
 }
 
 // The above function updates the message of the given type in the database
 // with the filtered content and sets the modified time and operator details.
 
-function get_message($dbSocket, $type) {
+function get_message(PDO $dbSocket, $type) {
     global $valid_message_types, $purifier, $configValues, $logDebugSQL;
 
     // Check if the given message type is valid.
@@ -88,17 +85,8 @@ function get_message($dbSocket, $type) {
         return "";
     }
 
-    // SQL query to retrieve the message content from the database for the given type.
-    $sql = sprintf("SELECT content, modified_on, modified_by, created_on, created_by FROM %s WHERE `type`='%s' ORDER BY id ASC LIMIT 1",
-                   $configValues['CONFIG_DB_TBL_DALOMESSAGES'], $dbSocket->escapeSimple($type));
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    // Fetch the message data from the query result in an associative array and filter the content using HTMLPurifier.
-    $data = $res->fetchRow(DB_FETCHMODE_ASSOC);
-    $data["content"] = $purifier->purify($data["content"]);
-
-    return $data;
+    require_once __DIR__ . '/messages_pdo.php';
+    return dalo_messages_read($dbSocket, $configValues, $type, $purifier);
 }
 
 // The above function retrieves the message data for the given type

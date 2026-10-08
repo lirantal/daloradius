@@ -27,90 +27,58 @@
 
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
+    require_once('../common/includes/pdo_connection.php');
+    require_once('library/plan_delete.php');
     
     // init logging variables
     $logAction = "";
     $logDebugSQL = "";
     $log = "visited page: ";
 
-    include('../common/includes/db_open.php');
+    require_once('library/catalog_reads_pdo.php');
+    $valid_planNames = array(); $catalog_pdo = null;
+    try {
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $valid_planNames = dalo_catalog_read_options($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS', 'planName', true);
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error);
+    } finally { $catalog_pdo = null; }
 
-    $valid_planNames = array();
-    
-    $sql = sprintf("SELECT DISTINCT(planName) FROM %s ORDER BY planName ASC",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    while ($row = $res->fetchrow()) {
-        if (!in_array($row[0], $valid_planNames)) {
-            $valid_planNames[] = $row[0];
-        }
-    }
-    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            if (array_key_exists('planName', $_POST) && !empty($_POST['planName'])) {
-                $planName = array();
-            
-                $tmparr = (!is_array($_POST['planName'])) ? array( $_POST['planName'] ) : $_POST['planName'];
-                
-                foreach ($tmparr as $tmp_name) {
-                    $tmp_name = trim($tmp_name);
-                    if (!in_array($tmp_name, $valid_planNames)) {
-                        continue;
-                    }
-                
-                    $tmp_name = $dbSocket->escapeSimple($tmp_name);
-                    if (!in_array($tmp_name, $planName)) {
-                        $planName[] = $tmp_name;
-                    }
-                }
-                
-                if (count($planName) > 0) {
-                
-                    
-                    $tables = array(
-                                        "planName" => $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
-                                        "plan_name" => $configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'],
-                                   );
-                                   
-                    $format = "DELETE FROM %s WHERE %s IN ('%s')";
-                    foreach ($tables as $field => $table) {
-                        $sql = sprintf($format, $table, $field, implode("', '", $planName));
-                        $count = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-                    }
-                    
-                    $successMsg = sprintf("Deleted %d plan(s)", intval($count));
-                    $logAction .= "$successMsg on page: ";
-                
-                } else {
-                    $failureMsg = "Empty or invalid plan name(s)";
-                    $logAction .= sprintf("Failed deleting plan(s) [%s] on page: ", $failureMsg);
-                }
-            } else {
-                // invalid
-                $failureMsg = "Empty or invalid plan name(s)";
-                $logAction .= sprintf("Failed deleting plan(s) [%s] on page: ", $failureMsg);
+        if (isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) &&
+            dalo_check_csrf_token($_POST['csrf_token'])) {
+            $planName = array();
+            try {
+                $planName = dalo_plan_names_from_post($_POST['planName'] ?? array());
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                list($deletedPlans, $deletedMappings) = dalo_delete_billing_plans($pdo, $configValues, $planName);
+                $successMsg = sprintf('Deleted %d plan(s) and %d profile association(s)',
+                                      $deletedPlans, $deletedMappings);
+                $logAction .= "$successMsg on page: ";
+            } catch (InvalidArgumentException $error) {
+                $failureMsg = 'Empty or invalid plan name(s)';
+                $logAction .= sprintf('Failed deleting plan(s) [%s] on page: ', $failureMsg);
+            } catch (DomainException $error) {
+                $failureMsg = 'Selected plan no longer exists';
+                $logAction .= sprintf('Failed deleting plan(s) [%s] on page: ', $failureMsg);
+            } catch (Throwable $error) {
+                $failureMsg = 'Failed to delete plan(s) and profile associations';
+                $logAction .= sprintf('Failed deleting plan(s) [%s] on page: ', $failureMsg);
             }
-                
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
+            $failureMsg = 'CSRF token error';
             $logAction .= "$failureMsg on page: ";
         }
     } else {
-        // !POST
-        $planName = (array_key_exists('planName', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['planName']))))
-                     ? str_replace("%", "", trim($_REQUEST['planName'])) : "";
-        
-        if (empty($planName) || !in_array($planName, $valid_planNames)) {
-            $planName = "";
+        // Preserve the exact plan name shown on the list, including percent signs.
+        $planName = isset($_GET['planName']) && is_string($_GET['planName'])
+                  ? trim($_GET['planName']) : '';
+        if ($planName === '' || !in_array($planName, $valid_planNames, true)) {
+            $planName = '';
         }
     }
 
-    include('../common/includes/db_close.php');
+
 
     include_once("lang/main.php");
     include("../common/includes/layout.php");

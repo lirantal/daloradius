@@ -37,62 +37,31 @@
     include("../common/includes/layout.php");
     include("include/management/functions.php");
 
-    // declaring variables
-    $username = (array_key_exists('username', $_POST) && isset($_POST['username']))
-              ? trim(str_replace("%", "", $_POST['username'])) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
-    $groupname = (array_key_exists('group', $_POST) && isset($_POST['group']))
-               ? trim(str_replace("%", "", $_POST['group'])) : "";
-    $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
-    
-    $priority = (array_key_exists('priority', $_POST) && isset($_POST['priority']))
-              ? normalize_user_group_priority($groupname, $_POST['priority'])
-              : normalize_user_group_priority($groupname, 0);
-    
+    require_once __DIR__ . '/library/user_group_pages_pdo.php';
+    $username = is_string($_POST['username'] ?? null) ? trim($_POST['username']) : '';
+    $groupname = is_string($_POST['group'] ?? null) ? trim($_POST['group']) : '';
+    $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+    $groupname_enc = htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8');
+    $priority = normalize_user_group_priority($groupname, is_scalar($_POST['priority'] ?? null) ? $_POST['priority'] : 0);
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-    
-            if (empty($username) || empty($groupname)) {
-                // username and groupname are required
-                $failureMsg = "Username and groupname are required.";
-                $logAction .= "Failed adding user-group mapping (username and/or groupname missing): ";
-            } else {
-                include('../common/includes/db_open.php');
-            
-                // check if this mapping is already in place
-                $user_group_mappings = get_user_group_mappings($dbSocket, $username);
-                $exists = in_array($groupname, $user_group_mappings);
-                
-                if ($exists) {
-                    // this user mapping is already in place
-                    $failureMsg = "The chosen user mapping ($username_enc &isin; $groupname_enc) is already in place.";
-                    $logAction .= "Failed adding user-group mapping [$username_enc < $groupname_enc already in place]: ";
-                } else {
-                    // insert usergroup details
-                    $success = insert_single_user_group_mapping($dbSocket, $username, $groupname, $priority);
-                    
-                    if ($success) {
-                        $successMsg = sprintf('Added new user-group mapping (%s &isin; %s) '
-                                            . '[<a href="mng-rad-usergroup-edit.php?username=%s&current_group=%s">Edit</a>]',
-                                              $username_enc, $groupname_enc, urlencode($username_enc), urlencode($groupname_enc));
-                        $logAction .= "Added new user-group mapping [$username < $groupname]: ";
-                    } else {
-                        $failureMsg = "DB Error when adding the chosen user mapping ($username_enc &isin; $groupname_enc)";
-                        $logAction .= "Failed adding user-group mapping [$username < $groupname, db error]: ";
-                    }
-                }
-                
-                include('../common/includes/db_close.php');
-            }
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            $pdo = null;
+            try {
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                dalo_usergroup_create($pdo, $configValues, $_POST['username'] ?? null,
+                                     $_POST['group'] ?? null, $_POST['priority'] ?? 0);
+                $successMsg = sprintf('Added new user-group mapping (%s &isin; %s) '
+                    . '[<a href="mng-rad-usergroup-edit.php?username=%s&current_group=%s">Edit</a>]',
+                    $username_enc, $groupname_enc, urlencode($username), urlencode($groupname));
+                $logAction = 'Added user-group mapping on page: ';
+            } catch (Throwable $error) {
+                $failureMsg = 'Unable to create user-group mapping: invalid input, existing mapping or database operation failed';
+                $logAction = 'User-group creation failed on page: ';
+            } finally { $pdo = null; }
         }
     }
-
 
     $title = t('Intro','mngradusergroupnew.php');
     $help = t('helpPage','mngradusergroupnew');

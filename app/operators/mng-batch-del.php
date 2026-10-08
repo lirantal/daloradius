@@ -26,140 +26,54 @@
 
     include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
+    require_once('../common/includes/pdo_connection.php');
+    require_once('library/batch_delete.php');
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    $batch_id = array();
-    if (isset($_POST['batch_id']) && !empty($_POST['batch_id'])) {
-        $batch_id = (is_array($_POST['batch_id'])) ? $_POST['batch_id'] : array( $_POST['batch_id'] );
-    }
-
-    $batch_ids = array();
-    foreach ($batch_id as $id) {
-        $id = intval(trim($id));
-
-        if (in_array($id, $batch_ids)) {
-            continue;
-        }
-
-        $batch_ids[] = $id;
-    }
-
+    $batch_name = '';
     $deleted_batches = 0;
 
-    include('../common/includes/db_open.php');
-
-    $valid_batch_names = array();
-    $sql = sprintf("SELECT DISTINCT(batch_name) FROM %s ORDER BY batch_name ASC", $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    while ($row = $res->fetchrow()) {
-        $valid_batch_names[] = $row[0];
-    }
+    require_once('library/catalog_reads_pdo.php');
+    $valid_batch_names = array(); $catalog_pdo = null;
+    try {
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $valid_batch_names = dalo_catalog_read_options($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOBATCHHISTORY', 'batch_name', true);
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error);
+    } finally { $catalog_pdo = null; }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            if (array_key_exists('batch_name', $_POST) && !empty(trim(str_replace("%", "", $_POST['batch_name'])))) {
-                $batch_name = trim(str_replace("%", "", $_POST['batch_name']));
-
-                $sql = sprintf("SELECT id FROM %s WHERE batch_name='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
-                               $dbSocket->escapeSimple($batch_name));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                $id = intval($res->fetchrow()[0]);
-                if (!in_array($id, $batch_ids)) {
-                    $batch_ids[] = $id;
+        if (isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            try {
+                $inputName = $_POST['batch_name'] ?? '';
+                if (!is_string($inputName)) {
+                    throw new InvalidArgumentException('Invalid batch name');
                 }
-            }
-
-            $deleted_usernames = 0;
-            if (count($batch_ids) > 0) {
-
-                foreach ($batch_ids as $bid) {
-
-                    // delete batch history
-                    $sql0 = sprintf("DELETE FROM %s WHERE id = %d",
-                                   $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'], $bid);
-                    $res0 = $dbSocket->query($sql0);
-                    $logDebugSQL .= "$sql0;\n";
-
-                    // we grab all users which are associated with this batch_id
-                    $sql1 = sprintf("SELECT username FROM %s WHERE batch_id = %d",
-                                   $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $bid);
-                    $res1 = $dbSocket->query($sql1);
-                    $logDebugSQL .= "$sql1;\n";
-
-                    $usernames = array();
-                    while ($row = $res1->fetchrow()) {
-                        $usernames[] = $dbSocket->escapeSimple($row[0]);
-                    }
-
-                    // setting table-related parameters first
-                    switch($configValues['FREERADIUS_VERSION']) {
-                        case '1' :
-                            $tableSetting['postauth']['user'] = 'user';
-                            $tableSetting['postauth']['date'] = 'date';
-                            break;
-                        case '2' :
-                            // down
-                        case '3' :
-                            // down
-                        default  :
-                            $tableSetting['postauth']['user'] = 'username';
-                            $tableSetting['postauth']['date'] = 'authdate';
-                            break;
-                    }
-
-
-
-                    $sql_format = "DELETE FROM %s WHERE %s IN ('%s')";
-
-                    $sql = sprintf($sql_format, $configValues['CONFIG_DB_TBL_RADPOSTAUTH'],
-                                                $tableSetting['postauth']['user'],
-                                                implode("', '", $usernames));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    $tables = array(
-                                        $configValues['CONFIG_DB_TBL_RADCHECK'],
-                                        $configValues['CONFIG_DB_TBL_RADREPLY'],
-                                        $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                                        $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                                        $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                        $configValues['CONFIG_DB_TBL_RADACCT']
-                                   );
-
-                    foreach ($tables as $table) {
-                        $sql = sprintf($sql_format, $table, 'username', implode("', '", $usernames));
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-                    }
-
-                    $deleted_usernames += count($usernames);
-                    $deleted_batches++;
-                }
-
-                $successMsg = sprintf("Successfully deleted %d batch(es) [%d user(s)]", $deleted_batches, $deleted_usernames);
+                $batch_name = trim($inputName);
+                $ids = dalo_batch_delete_ids($_POST['batch_id'] ?? null);
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                list($deleted_batches, $deleted_usernames) = dalo_delete_user_batches(
+                    $pdo, $configValues, $ids, $batch_name);
+                $successMsg = sprintf('Successfully deleted %d batch(es) [%d user(s)]',
+                                      $deleted_batches, $deleted_usernames);
                 $logAction .= "$successMsg on page: ";
-
-            } else {
-                $failureMsg = "You have provided an empty or invalid batch list";
-                $logAction = "Provided an empty or invalid batch list (batch(es) deletion) on page: ";
+                $logDebugSQL .= "Batch users and dependents deleted (PDO transaction);\n";
+            } catch (Throwable $error) {
+                $failureMsg = 'Failed to delete batch; no rows were deleted';
+                $logAction .= 'Failed atomic batch deletion on page: ';
+                error_log('Batch deletion failed (' . get_class($error) . ')');
             }
-
         } else {
-            $failureMsg = "CSRF token error";
+            $failureMsg = 'CSRF token error';
             $logAction .= "$failureMsg on page: ";
         }
     }
 
 
-    include('../common/includes/db_close.php');
 
 
 

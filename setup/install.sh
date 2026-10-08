@@ -477,13 +477,18 @@ freeradius_enable_restart() {
 # Function to install daloRADIUS and required packages
 daloradius_install_dep() {
     echo -n "[+] Installing daloRADIUS dependencies... "
-    apt --no-install-recommends install apache2 php libapache2-mod-php php-mysql php-mbstring php-common php-curl \
-                                        php-gd php-ldap php-db php-mail php-mail-mime freeradius-utils git rsyslog -y >/dev/null 2>&1 &
+    apt --no-install-recommends install apache2 php php-cli libapache2-mod-php php-mysql php-mbstring php-common php-curl \
+                                        php-gd php-ldap php-mail php-mail-mime php-net-smtp freeradius-utils git rsyslog -y >/dev/null 2>&1 &
     print_spinner $!
     wait $!
     if [ $? -ne 0 ]; then
         print_red "KO"
         print_red "[!] Failed to install daloRADIUS dependencies. Aborting." >&2
+        exit 1
+    fi
+    if ! php -r 'exit(class_exists("PDO") && in_array("mysql", PDO::getAvailableDrivers(), true) ? 0 : 1);' >/dev/null 2>&1; then
+        print_red "KO"
+        print_red "[!] Required PDO MySQL driver is unavailable. Aborting." >&2
         exit 1
     fi
     print_green "OK"

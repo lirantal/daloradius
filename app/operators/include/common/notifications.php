@@ -45,7 +45,8 @@ $session_params = (isset($_SESSION['notification']) && is_array($_SESSION['notif
                 ? $_SESSION['notification'] : array();
 
 // the type may come from the query string or from the session payload
-$type = (string) ($_GET['type'] ?? ($session_params['type'] ?? ''));
+$type = $_GET['type'] ?? ($session_params['type'] ?? '');
+if (!is_string($type)) { http_response_code(400); exit('Invalid notification type.'); }
 if (!array_key_exists($type, $notification_types)) {
     header("Location: $redirect");
     exit;
@@ -53,7 +54,9 @@ if (!array_key_exists($type, $notification_types)) {
 
 // preview streams an inline PDF, download forces an attachment, email mails it
 $allowed_actions = array('preview', 'download', 'email');
-$action = strtolower((string) ($_GET['action'] ?? $_GET['destination'] ?? 'preview'));
+$action = $_GET['action'] ?? $_GET['destination'] ?? 'preview';
+if (!is_string($action)) { http_response_code(400); exit('Invalid notification action.'); }
+$action = strtolower($action);
 if (!in_array($action, $allowed_actions, true)) {
     $action = 'preview';
 }
@@ -64,28 +67,30 @@ include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_NOTIFICATIO
 // query-string parameters win over the session payload
 $params = array_merge($session_params, $_GET);
 
-include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-// this helper endpoint reuses the permission of the page(s) that own the feature
-$operator_id = intval($_SESSION['operator_id'] ?? 0);
-$has_access = false;
-foreach ($notification_types[$type] as $acl_file) {
-    $sql = sprintf("SELECT access FROM %s WHERE operator_id = %d AND file = '%s'",
-                   $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'], $operator_id,
-                   $dbSocket->escapeSimple($acl_file));
-    if (intval($dbSocket->getOne($sql)) === 1) {
-        $has_access = true;
-        break;
+require_once $configValues['OPERATORS_LIBRARY'] . '/operator_acl_read.php';
+$notification_pdo = null;
+try {
+    $notification_pdo = dalo_shared_handle($configValues);
+    $operator_id = $_SESSION['operator_id'] ?? null;
+    $has_access = false;
+    foreach ($notification_types[$type] as $acl_file) {
+        if (dalo_operator_acl_allowed($notification_pdo, $configValues, $operator_id, $acl_file)) {
+            $has_access = true;
+            break;
+        }
     }
+    if (!$has_access) { http_response_code(403); exit; }
+    $notification = notification_build($type, $configValues, $notification_pdo, $params);
+} catch (InvalidArgumentException $error) {
+    http_response_code(400);
+    exit('Invalid notification request.');
+} catch (Throwable $error) {
+    error_log('Notification context failed: ' . get_class($error));
+    http_response_code(503);
+    exit('Unable to load notification data.');
+} finally {
+    $notification_pdo = null;
 }
-if (!$has_access) {
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
-    http_response_code(403);
-    exit;
-}
-
-$notification = notification_build($type, $configValues, $dbSocket, $params);
-include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
 if (!is_array($notification) || empty($notification['html'])) {
     header("Location: $redirect");

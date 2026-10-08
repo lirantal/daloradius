@@ -29,21 +29,24 @@
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    require_once __DIR__ . '/library/accounting_pages_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+    } catch (Throwable $exception) {
+        http_response_code(400);
+        exit('Invalid accounting filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
 
     // validate this parameter before including menu
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-                    ? str_replace("%", "", $_GET['username']) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    $username = dalo_accounting_scalar($_GET, 'username');
+    $username_enc = ($username !== '') ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
-    $startdate = (array_key_exists('startdate', $_GET) && isset($_GET['startdate']) &&
-                  preg_match(DATE_REGEX, $_GET['startdate'], $m) !== false &&
-                  checkdate($m[2], $m[3], $m[1]))
-               ? $_GET['startdate'] : "";
+    $startdate = dalo_accounting_date($_GET, 'startdate', '');
 
-    $enddate = (array_key_exists('enddate', $_GET) && isset($_GET['enddate']) &&
-                preg_match(DATE_REGEX, $_GET['enddate'], $m) !== false &&
-                checkdate($m[2], $m[3], $m[1]))
-             ? $_GET['enddate'] : "";
+    $enddate = dalo_accounting_date($_GET, 'enddate', '');
     
     $cols = array(
                     "username" => t('all','Username'),
@@ -89,18 +92,20 @@
     
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
     $currdate = new DateTime('today');
     
     //orig: used as maethod to get total rows - this is required for the pages_numbering.php page
-    $sql = sprintf("SELECT DISTINCT(ra.username) AS username, rc.attribute AS attribute, rc.value AS maxtimeexpiration,
-                           SUM(ra.AcctSessionTime) AS usedtime
-                      FROM %s AS ra, %s AS rc
-                     WHERE ra.username=rc.username AND rc.attribute IN ('Max-All-Session', 'Expiration')
-                     GROUP BY ra.username", $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_RADCHECK']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+    $accountingPDO = null;
+    $accountingRows = array();
+    $numrows = 0;
+    try {
+        $accountingPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        list($accountingSQL, $accountingBindings) = dalo_accounting_query('acct-active', array(), $configValues);
+        $numrows = dalo_accounting_count($accountingPDO, $accountingSQL, $accountingBindings, $configValues);
+    } catch (Throwable $exception) {
+        dalo_accounting_failure($exception);
+    }
     
     if ($numrows > 0) {
         // when $numrows is set, $maxPage is calculated inside this include file
@@ -110,12 +115,14 @@
         
         // here we decide if page numbers should be shown
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-    
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
+
+        try {
+            $accountingRows = dalo_accounting_rows($accountingPDO, $accountingSQL, $accountingBindings,
+                'acct-active', $orderBy, $orderType, $offset, $rowsPerPage);
+        } catch (Throwable $exception) {
+            dalo_accounting_failure($exception);
+        }
+        $per_page_numrows = count($accountingRows);
         
         $descriptors = array();
 
@@ -139,12 +146,14 @@
         // closes table header, opens table body
         print_table_middle();
         
-        while($row = $res->fetchRow()) {
+        $count = 0;
+        foreach ($accountingRows as $row) {
+            $rawUsername = (string)($row[0] ?? '');
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
             }
             
             list($username, $attribute, $maxtimeexpiration, $usedtime) = $row;
@@ -174,7 +183,7 @@
             }
 
             $ajax_id = "divContainerUserInfo_" . $count;
-            $param = sprintf('username=%s', urlencode($username));
+            $param = sprintf('username=%s', urlencode($rawUsername));
             $onclick = "daloInfo.user('$ajax_id','$param')";
             $tooltip = array(
                                 'subject' => $username,
@@ -182,7 +191,7 @@
                                 'ajax_id' => $ajax_id,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($rawUsername), ), 'label' => t('Tooltip','UserEdit'), );
         
             $tooltip = get_tooltip_list_str($tooltip);
         
@@ -190,6 +199,7 @@
 
             // print table row
             print_table_row($table_row);
+            $count++;
         }
 
         // close tbody,
@@ -210,11 +220,14 @@
         printLinks($links, $drawNumberLinks);
         
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
     }
     
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
+    if (empty($numrows) || isset($failureMsg)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($accountingRows, $accountingPDO);
     print_footer_and_html_epilogue();

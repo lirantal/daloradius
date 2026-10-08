@@ -55,12 +55,63 @@
     
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
+                is_string($_GET['orderBy']) && in_array($_GET['orderBy'], array_keys($param_cols), true))
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array( "desc", "asc" ), true))
                ? strtolower($_GET['orderType']) : "desc";
+
+    // Resolve all reads before emitting a table; never replace a caller-owned handle.
+    require_once '../common/includes/pdo_connection.php';
+    include 'include/management/pages_common.php';
+    $operator_catalog_pdo = null;
+    $catalog_rows = array();
+    $numrows = 0;
+    try {
+        $operator_catalog_pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $table_name = $configValues['CONFIG_DB_TBL_DALOOPERATORS'] ?? null;
+        if (!is_string($table_name) || !preg_match('/\A[A-Za-z_][A-Za-z0-9_]{0,63}\z/', $table_name)) {
+            throw new InvalidArgumentException('Invalid operator catalog table');
+        }
+        $driver = $operator_catalog_pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        if (!in_array($driver, array('mysql', 'pgsql'), true)) {
+            throw new InvalidArgumentException('Unsupported operator catalog driver');
+        }
+        $quote = $driver === 'mysql' ? '`' : '"';
+        $table = $quote . $table_name . $quote;
+        $count_stmt = $operator_catalog_pdo->query("SELECT COUNT(id) FROM $table");
+        $numrows = (int) $count_stmt->fetchColumn();
+        $count_stmt = null;
+        if ($numrows > 0) {
+            if (filter_var($configValues['CONFIG_IFACE_TABLES_LISTING'], FILTER_VALIDATE_INT,
+                           array('options' => array('min_range' => 1))) === false) {
+                throw new InvalidArgumentException('Invalid operator catalog page size');
+            }
+            include 'include/management/pages_numbering.php';
+            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+            $sql = "SELECT id, username, auth_source,
+                           CASE WHEN external_id IS NULL OR external_id='' THEN 'Not linked' ELSE 'Linked' END AS identity_status,
+                           CONCAT(firstname, ' ', lastname) AS fullname, title FROM $table
+                           ORDER BY $orderBy $orderType LIMIT :limit OFFSET :offset";
+            $catalog_stmt = $operator_catalog_pdo->prepare($sql);
+            $catalog_stmt->bindValue(':limit', (int) $rowsPerPage, PDO::PARAM_INT);
+            $catalog_stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+            $catalog_stmt->execute();
+            $catalog_rows = $catalog_stmt->fetchAll(PDO::FETCH_NUM);
+            $catalog_stmt = null;
+            $logDebugSQL .= "$sql;\n";
+            $per_page_numrows = count($catalog_rows);
+        }
+    } catch (Throwable $error) {
+        $numrows = 0;
+        $failureMsg = 'Unable to load operators.';
+        error_log('Operator catalog read failed: ' . get_class($error));
+    } finally {
+        $count_stmt = null;
+        $catalog_stmt = null;
+        $operator_catalog_pdo = null;
+    }
 
     // print HTML prologue    
     $title = t('Intro','configoperatorslist.php');
@@ -72,35 +123,7 @@
     print_title_and_help($title, $help);
     
 
-    include('../common/includes/db_open.php');
-    include('include/management/pages_common.php');
-
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALOOPERATORS']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
-    
-     if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
-        
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
-        /* END */
-        
-        // we execute and log the actual query
-        $sql = sprintf("SELECT id, username, auth_source, CASE WHEN external_id IS NULL OR external_id='' THEN 'Not linked' ELSE 'Linked' END AS identity_status, CONCAT(firstname, ' ', lastname) AS fullname, title
-                          FROM %s", $configValues['CONFIG_DB_TBL_DALOOPERATORS']);
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
-        
+    if ($numrows > 0) {
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "config-operators-del.php";
@@ -132,12 +155,12 @@
    
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($catalog_rows as $row) {
             $rowlen = count($row);
         
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string) ($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
             }
             
             list($id, $username, $auth_source, $identity_status, $fullname, $title) = $row;
@@ -187,11 +210,11 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');
+
     
     include('include/config/logging.php');
     

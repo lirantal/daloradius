@@ -31,6 +31,7 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'nasImportExport.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'nasManagementPdo.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -38,95 +39,65 @@
     $logDebugSQL = "";
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            $nasname = (array_key_exists('nasname', $_POST) && !empty(str_replace("%", "", trim($_POST['nasname']))))
-                     ? str_replace("%", "", trim($_POST['nasname'])) : "";
-            $secret = (array_key_exists('secret', $_POST) && !empty(str_replace("%", "", trim($_POST['secret']))))
-                       ? str_replace("%", "", trim($_POST['secret'])) : "";
-
-            $nasname_enc = (!empty($nasname)) ? htmlspecialchars($nasname, ENT_QUOTES, 'UTF-8') : "";
-
-            $nastype = (array_key_exists('nastype', $_POST) && isset($_POST['nastype']) &&
-                        in_array($_POST['nastype'], $valid_nastypes)) ? $_POST['nastype'] : "other";
-
-            $shortname = (array_key_exists('shortname', $_POST) && !empty(str_replace("%", "", trim($_POST['shortname']))))
-                       ? str_replace("%", "", trim($_POST['shortname'])) : "";
-
-            $ports = (array_key_exists('ports', $_POST) && !empty(trim($_POST['ports'])) &&
-                         intval(trim($_POST['ports'])) >= 0 && intval(trim($_POST['ports'])) <= 99999)
-                      ? intval(trim($_POST['ports'])) : 0;
-
-            $description = (array_key_exists('description', $_POST) && !empty(str_replace("%", "", trim($_POST['description']))))
-                            ? str_replace("%", "", trim($_POST['description'])) : "";
-            $community = (array_key_exists('community', $_POST) && !empty(str_replace("%", "", trim($_POST['community']))))
-                          ? str_replace("%", "", trim($_POST['community'])) : "";
-            $server = (array_key_exists('server', $_POST) && !empty(str_replace("%", "", trim($_POST['server']))))
-                              ? str_replace("%", "", trim($_POST['server'])) : "";
-
-            if (empty($nasname) || empty($secret)) {
-                // required
-                $failureMsg = sprintf("%s and/or %s are empty or invalid", t('all','NasIPHost'), t('all','NasSecret'));
-                $logAction .= "Failed adding (possible empty user/pass) new operator on page: ";
-            } else {
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-                $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-                $nasLock = nas_backup_acquire_lock($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'], 30);
-
-                if (!$nasLock['acquired']) {
-                    $failureMsg = $nasLock['error']
-                        ? 'Unable to coordinate the NAS change; please retry'
-                        : 'Another NAS change is currently running; please retry in a moment';
-                    $logAction .= "Failed adding a new NAS [NAS lock unavailable] on page: ";
-                } else {
-                    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE LOWER(nasname)=LOWER('%s')",
-                                   $configValues['CONFIG_DB_TBL_RADNAS'], $dbSocket->escapeSimple($nasname));
-                    $res = $dbSocket->getOne($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (DB::isError($res)) {
-                        $failureMsg = 'Unable to check whether the NAS already exists';
-                        $logAction .= "Failed adding a new NAS [database lookup failed] on page: ";
-                    } elseif (intval($res) > 0) {
-                        // name already taken
-                        $failureMsg = sprintf("This %s already exists: <b>%s</b>", t('all','NasIPHost'), $nasname_enc);
-                        $logAction .= "Failed adding a new NAS [$nasname already exists] on page: ";
-                    } else {
-
-                        $sql = sprintf("INSERT INTO %s (nasname, shortname, type, ports, secret, server, community, description)
-                                                VALUES ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s')", $configValues['CONFIG_DB_TBL_RADNAS'],
-                                       $dbSocket->escapeSimple($nasname), $dbSocket->escapeSimple($shortname), $dbSocket->escapeSimple($nastype),
-                                       $dbSocket->escapeSimple($ports), $dbSocket->escapeSimple($secret), $dbSocket->escapeSimple($server),
-                                       $dbSocket->escapeSimple($community), $dbSocket->escapeSimple($description));
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-
-                        if (!DB::isError($res)) {
-                            $successMsg = sprintf('Successfully added a new NAS (<strong>%s</strong>) '
-                                                . '<a href="mng-rad-nas-edit.php?nasname=%s" title="Edit">Edit</a>',
-                                                  $nasname_enc, urlencode($nasname_enc));
-                            $successMsg .= '<br><strong>Restart FreeRADIUS for NAS changes to take effect.</strong>';
-                            $logAction .= "Successfully added a new NAS [$nasname] on page: ";
-                        } else {
-                            $f = "Failed to add a new NAS [%s] to database";
-                            $failureMsg = sprintf($f, $nasname_enc);
-                            $logAction .= sprintf($f, $nasname);
-                        }
-                    }
-                }
-
-                if ($nasLock['acquired'] && !nas_backup_release_lock($dbSocket, $nasLock['name'])) {
-                    $logAction .= 'NAS advisory lock release could not be confirmed on page: ';
-                }
-                $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
-
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
-            }
+        $pdo = null;
+        $nasLock = null;
+        $nasname = $secret = $shortname = $server = $community = $description = '';
+        $nastype = 'other';
+        $ports = 0;
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                $fields = nas_management_fields($_POST, $valid_nastypes);
+                $nasname = $fields['nasname'];
+                $shortname = $fields['shortname'];
+                $nastype = $fields['type'];
+                $ports = $fields['ports'];
+                $secret = $fields['secret'];
+                $server = $fields['server'];
+                $community = $fields['community'];
+                $description = $fields['description'];
+                list($pdo, $table) = nas_management_connect($configValues,
+                    $_SESSION['location_name'] ?? 'default', true);
+                $nasLock = nas_management_lock($pdo, $configValues);
+                if (!$pdo->beginTransaction()) { throw new RuntimeException('NAS transaction unavailable'); }
+                $check = $pdo->prepare("SELECT id FROM $table WHERE LOWER(nasname)=LOWER(?) "
+                                      . "OR HEX(nasname)=? LIMIT 1 FOR UPDATE");
+                $check->execute(array($nasname, strtoupper(bin2hex($nasname))));
+                if ($check->fetchColumn() !== false) {
+                    throw new DomainException('NAS name already exists');
+                }
+                $insert = $pdo->prepare("INSERT INTO $table "
+                    . '(nasname,shortname,type,ports,secret,server,community,description) '
+                    . 'VALUES (?,?,?,?,?,?,?,?)');
+                $insert->execute(array($nasname,$shortname,$nastype,$ports,$secret,$server,$community,$description));
+                $id = $pdo->lastInsertId();
+                $stored = nas_management_find($pdo, $table, $nasname, true);
+                if (!nas_management_row_matches($stored, $fields) || (string)$stored['id'] !== (string)$id) {
+                    throw new RuntimeException('NAS insert verification failed');
+                }
+                if (!$pdo->commit()) { throw new RuntimeException('NAS commit failed'); }
+                $nasname_enc = htmlspecialchars($nasname, ENT_QUOTES, 'UTF-8');
+                $successMsg = sprintf('Successfully added a new NAS (<strong>%s</strong>) '
+                    . '<a href="mng-rad-nas-edit.php?nasname=%s" title="Edit">Edit</a>',
+                    $nasname_enc, urlencode($nasname));
+                $successMsg .= '<br><strong>Restart FreeRADIUS for NAS changes to take effect.</strong>';
+                $logAction .= "Successfully added a new NAS [$nasname] on page: ";
+            } catch (Throwable $exception) {
+                error_log('NAS create: ' . get_class($exception));
+                $nasname_enc = htmlspecialchars($nasname, ENT_QUOTES, 'UTF-8');
+                $failureMsg = $exception instanceof DomainException
+                    ? sprintf('This %s already exists: <b>%s</b>', t('all','NasIPHost'), $nasname_enc)
+                    : ($exception instanceof InvalidArgumentException
+                       ? 'NAS fields are empty or invalid' : 'Unable to add NAS; please retry');
+                $logAction .= 'Failed adding a new NAS on page: ';
+            } finally {
+                nas_management_finish($pdo, $nasLock);
+                $pdo = null;
+            }
         }
+        // Never echo a submitted shared secret after an unsuccessful request.
+        if (!isset($successMsg)) { $secret = ''; }
     }
 
 

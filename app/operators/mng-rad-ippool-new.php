@@ -36,77 +36,26 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // load valid ippools
-    $valid_ippools = get_ippools();
-
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            $pool_name = (array_key_exists('pool_name', $_POST) && !empty(str_replace("%", "", trim($_POST['pool_name']))))
-                       ? str_replace("%", "", trim($_POST['pool_name'])) : "";
-
-            $framedipaddress = (array_key_exists('framedipaddress', $_POST) && !empty(trim($_POST['framedipaddress'])) &&
-                                filter_var(trim($_POST['framedipaddress']), FILTER_VALIDATE_IP) !== false)
-                             ? trim($_POST['framedipaddress']) : "";
-
-            if (empty($framedipaddress) || empty($pool_name)) {
-                // required
-                $failureMsg = sprintf("Empty/invalid %s and/or %s", t('all','PoolName'), t('all','IPAddress'));
-                $logAction .= "$failureMsg on page: ";
-            } else {
-
-                $sql = sprintf("SELECT COUNT(id)
-                                  FROM %s
-                                 WHERE framedipaddress=?", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
-                $prep = $dbSocket->prepare($sql);
-                $values = array( $framedipaddress, );
-                $res = $dbSocket->execute($prep, $values);
-                $logDebugSQL .= "$sql;\n";
-
-                $exists = $res->fetchrow()[0] > 0;
-
-                if ($exists) {
-                    // invalid
-                    $failureMsg = sprintf("The chosen %s is already contained in a pool", t('all','IPAddress'));
-                    $logAction .= "$failureMsg on page: ";
-                } else {
-                    $sql = sprintf("INSERT INTO %s (id, pool_name, framedipaddress)
-                                            VALUES (0, ?, ?)", $configValues['CONFIG_DB_TBL_RADIPPOOL']);
-                    $prep = $dbSocket->prepare($sql);
-                    $values = array( $pool_name, $framedipaddress );
-                    $res = $dbSocket->execute($prep, $values);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (!DB::isError($res)) {
-                        // retrieve item id
-                        $sql = sprintf("SELECT CONCAT('ippool-', LAST_INSERT_ID()) FROM %s",
-                                       $configValues['CONFIG_DB_TBL_RADIPPOOL']);
-                        $item_id = $dbSocket->getOne($sql);
-
-                        $successMsg = sprintf("Successfully added a new ippool item (item id: %s)", $item_id)
-                                    . sprintf(' [<a href="mng-rad-ippool-edit.php?item=%s" title="Edit">Edit</a>]',
-                                              urlencode($item_id));
-                        $logAction .= "Successfully added a new ippool item (item id: $item_id) on page: ";
-                    } else {
-                        $failureMsg = "Failed adding a new ippool item (item id: $item_id)";
-                        $logAction .= "$failureMsg on page: ";
-                    }
-                }
-
-            }
-
+    require_once __DIR__ . '/library/ip_pool_pages_pdo.php';
+    $pool_name=$framedipaddress='';
+    if (($_SERVER['REQUEST_METHOD'] ?? '')==='POST') {
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg='CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                $fields=dalo_ippool_fields($_POST);
+                $pool_name=$fields['pool_name']; $framedipaddress=$fields['framedipaddress'];
+                $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+                $item_id=dalo_ippool_save($pdo,$configValues,$fields);
+                if ($item_id===false) { $failureMsg=sprintf('The chosen %s is already contained in a pool',t('all','IPAddress')); }
+                else {
+                    $successMsg=sprintf('Successfully added a new ippool item (item id: %s) [<a href="mng-rad-ippool-edit.php?item=%s" title="Edit">Edit</a>]',
+                                        htmlspecialchars($item_id,ENT_QUOTES,'UTF-8'),rawurlencode($item_id));
+                    $logAction.='Successfully added a new ippool item on page: ';
+                }
+            } catch (Throwable $e) { $failureMsg='Unable to create IP pool item'; }
         }
     }
-
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
-
 
     // print HTML prologue
     $title = t('Intro','mngradippoolnew.php');

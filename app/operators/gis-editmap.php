@@ -36,82 +36,25 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
-        dalo_check_csrf_token($_POST['csrf_token'])) {
-
-        $type = (array_key_exists('type', $_POST) && isset($_POST['type']) &&
-                 in_array(strtolower(trim($_POST['type'])), array("del", "add")))
-              ? strtolower(trim($_POST['type'])) : "";
-
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-        if ($type == "add") {
-            $hotspot_name = (array_key_exists('hotspotname', $_POST) && !empty(trim($_POST['hotspotname'])))
-                          ? trim($_POST['hotspotname']) : "";
-
-            $hotspot_mac = (
-                                array_key_exists('hotspotmac', $_POST) && !empty(trim($_POST['hotspotmac'])) &&
-                                preg_match(MACADDR_REGEX, trim($_POST['hotspotmac']))
-                           ) ? trim($_POST['hotspotmac']) : "";
-
-            $hotspot_geo = (
-                                array_key_exists('hotspotgeo', $_POST) &&
-                                !empty(trim($_POST['hotspotgeo'])) &&
-                                preg_match('/^\d+(\.\d+)?,\d+(\.\d+)?$/', trim($_POST['hotspotgeo'])) !== false
-                           ) ? trim($_POST['hotspotgeo']) : "";
-
-            if (empty($hotspot_name) || empty($hotspot_mac) || empty($hotspot_geo)) {
-                $failureMsg = "Invalid input";
-            } else {
-
-                $current_datetime = date('Y-m-d H:i:s');
-                $currBy = $_SESSION['operator_user'];
-
-                $hotspot_name_enc = htmlspecialchars($hotspot_name, ENT_QUOTES, 'UTF-8');
-
-                $sql = sprintf("INSERT INTO %s (name, mac, geocode, creationdate, creationby, updatedate, updateby)
-                                VALUES (?, ?, ?, ?, ?, NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-                $stmt = $dbSocket->prepare($sql);
-                $data = array($hotspot_name, $hotspot_mac, $hotspot_geo, $current_datetime, $currBy);
-                $res = $dbSocket->execute($stmt, $data);
-                $logDebugSQL .= "$sql;\n";
-
-                $successMsg = sprintf("Added new geolocation information for hotspot <strong>%s</strong>. " .
-                                      '<a href="mng-hs-edit.php?name=%s" title="%s">%s</a>',
-                                      $hotspot_name_enc, urlencode($hotspot_name_enc),
-                                      t('button','EditHotspot'), t('button','EditHotspot'));
-            }
+    require_once __DIR__ . '/library/geo_heartbeat_pdo.php';
+    if (($_SERVER['REQUEST_METHOD'] ?? '')==='POST') {
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) { $failureMsg='CSRF token error'; }
+        else {
+            try {
+                $type=$_POST['type'] ?? null;
+                if (!is_string($type) || !in_array(strtolower(trim($type)),array('add','del'),true)) { throw new InvalidArgumentException('Invalid action'); }
+                $type=strtolower(trim($type));
+                $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+                if ($type==='add') {
+                    $name=dalo_geo_add($pdo,$configValues,$_POST,$operator);
+                    $successMsg=sprintf('Added new geolocation information for hotspot <strong>%s</strong>. <a href="mng-hs-edit.php?name=%s" title="%s">%s</a>',htmlspecialchars($name,ENT_QUOTES,'UTF-8'),rawurlencode($name),t('button','EditHotspot'),t('button','EditHotspot'));
+                } else {
+                    $name=dalo_geo_delete($pdo,$configValues,$_POST['hotspotid'] ?? null);
+                    $successMsg='Deleted geolocation information for hotspot <strong>' . htmlspecialchars($name,ENT_QUOTES,'UTF-8') . '</strong>.';
+                }
+            } catch (Throwable $e) { $failureMsg='Unable to change hotspot location'; }
         }
-
-        if ($type == "del") {
-
-            if (array_key_exists('hotspotid', $_POST) && !empty($_POST['hotspotid']) && intval($_POST['hotspotid']) > 0) {
-                $hotspot_id = intval($_POST['hotspotid']);
-
-                // get name
-                $sql = sprintf("SELECT name FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-                $stmt = $dbSocket->prepare($sql);
-                $res = $dbSocket->execute($stmt, $hotspot_id);
-
-                $hotspot_name = $res->fetchrow()[0];
-                $hotspot_name_enc = htmlspecialchars($hotspot_name, ENT_QUOTES, 'UTF-8');
-
-                $sql = sprintf("DELETE FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-                $stmt = $dbSocket->prepare($sql);
-                $res = $dbSocket->execute($stmt, $hotspot_id);
-                $logDebugSQL .= "$sql;\n";
-
-                $successMsg = sprintf("Deleted geolocation information for hotspot <strong>%s</strong>.", $hotspot_name_enc);
-
-            } else {
-                $failureMsg = "Invalid input";
-            }
-        }
-
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
-
     }
-
 
     // print HTML prologue
     $title = t('Intro','giseditmap.php');
@@ -189,13 +132,14 @@
     $message6 = t('messages','gisedit6');
 
     // retrieve markers (to add via js)
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-    $sql = sprintf("SELECT id, name, mac, geocode
-                      FROM %s
-                     WHERE (geocode <> '' AND geocode IS NOT NULL)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
+    $rows=array();
+    try {
+        $marker_pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+        $rows=dalo_geo_markers($marker_pdo,$configValues);
+    } catch (Throwable $e) {
+        $failureMsg='Unable to load hotspot locations';
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+    }
 
     $markers_js = "";
     $first_lat = null;
@@ -205,15 +149,11 @@
     // flags that make a PHP value safe to embed as a literal inside an inline <script> block
     $json_flags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
 
-    while ($row = $res->fetchRow()) {
-        list($id, $name, $mac, $geocode) = $row;
-
-        // geocode is stored as "lat,lng"; skip anything that doesn't parse cleanly
-        if (!preg_match('/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/', (string) $geocode, $coords)) {
-            continue;
-        }
-        $lat = (float) $coords[1];
-        $lng = (float) $coords[2];
+    foreach ($rows as $row) {
+        list($id,$name,$mac,$geocode)=$row;
+        $coords=dalo_geo_coordinates($geocode);
+        if ($coords===false) { continue; }
+        list($lat,$lng)=$coords;
 
         if ($marker_count === 0) {
             $first_lat = $lat;
@@ -223,12 +163,12 @@
 
         // HTML-escape for display, then JSON-encode for the surrounding JavaScript context
         $name_js = json_encode(htmlspecialchars((string) $name, ENT_QUOTES, 'UTF-8'), $json_flags);
+        $title_js = json_encode((string)$name, $json_flags);
 
-        $markers_js .= sprintf("L.marker(%s, {id: %d, title: %s}).addTo(group).bindTooltip(%s).on('click', remove);\n",
-                               json_encode(array($lat, $lng)), (int) $id, $name_js, $name_js);
+        $markers_js .= sprintf("L.marker(%s, {id: %s, title: %s}).addTo(group).bindTooltip(%s).on('click', remove);\n",
+                               json_encode(array($lat, $lng)), json_encode((string)$id), $title_js, $name_js);
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     // center on the first available hotspot coordinate, otherwise fall back to a
     // default view (Area della Ricerca CNR di Pisa, San Cataldo)

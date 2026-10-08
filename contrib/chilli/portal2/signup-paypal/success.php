@@ -23,41 +23,26 @@
  */
 
 
-        include('library/config_read.php');
-
-        $successMsg = $configValues['CONFIG_MERCHANT_SUCCESS_MSG_PRE'];
-
-        $refresh = true;
-
-        if (isset($_GET['txnId'])) {
-                // txnId variable is set, let's check it against the database
-
-                include('library/opendb.php');
-
-                $txnId = $_GET['txnId'];
-				//$username = $_GET['username'];
-				
-				$sql = "SELECT txnId, username, payment_status FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
-                        " WHERE txnId='".$dbSocket->escapeSimple($txnId)."' AND payment_status != ''";
-				$res = $dbSocket->query($sql);
-                $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-				
-
-                if ( ($row['txnId'] == $txnId) && ($row['payment_status'] == "Completed") ) {
-						$successMsg = "We have successfully validated your payment<br/>";
-                        $successMsg .= "Your user PIN is:<br/>";
-						$successMsg .= "<b>".$row['username']."</b>";
-						$successMsg .= "<br/><br/>".$configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST']."<br/><br/>";
-						$successMsg .= "Click <a href='http://192.168.182.1:3990/prelogin'>here</a> to return to the Login page";
-                        $refresh = false;
-                }
-
-                include('library/closedb.php');
-
+require_once __DIR__.'/library/config_read.php';
+require_once dirname(__DIR__,2).'/common/portal2Paypal.php';
+header('Content-Type: text/html; charset=UTF-8');header('Cache-Control: no-store');header('Referrer-Policy: no-referrer');
+$successMsg=$configValues['CONFIG_MERCHANT_SUCCESS_MSG_PRE'] ?? 'Waiting for payment confirmation';$refresh=true;$pdo=null;
+try {
+    if (array_key_exists('txnId',$_GET)) {
+        dalo_paypal_text($_GET['txnId'],200,true);$pdo=dalo_chilli_pdo_open($configValues);
+        $receipt=dalo_portal2_paypal_receipt($pdo,$configValues,$_GET['txnId']);
+        if ($receipt!==null && $receipt['payment_status']==='Completed') {
+            $successMsg='We have successfully validated your payment<br/>';
+            $successMsg.='Your user PIN is:<br/><b>'.htmlspecialchars((string)$receipt['username'],ENT_QUOTES,'UTF-8').'</b>';
+            $successMsg.='<br/><br/>'.($configValues['CONFIG_MERCHANT_SUCCESS_MSG_POST'] ?? 'Payment confirmed').'<br/><br/>';
+            $successMsg.="Click <a href='http://192.168.182.1:3990/prelogin'>here</a> to return to the Login page";
+            $refresh=false;
         }
-
+    }
+} catch (InvalidArgumentException $error) {http_response_code(400);$refresh=false;$successMsg='Payment receipt unavailable';}
+catch (Throwable $error) {http_response_code(503);$refresh=false;$successMsg='Payment receipt unavailable';}
+finally {if ($pdo instanceof PDO) {dalo_chilli_database_close($pdo);}}
 ?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -65,7 +50,7 @@
         if ($refresh == true)
                 echo '<meta http-equiv="refresh" content="5">';
 ?>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>User Sign-Up</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
@@ -93,7 +78,7 @@
                         <center>
 
         <?php
-                echo "<font color='blue'><b>".$configValues['CONFIG_MERCHANT_SUCCESS_MSG_HEADER']."</b></font>";
+                echo "<font color='blue'><b>".($configValues['CONFIG_MERCHANT_SUCCESS_MSG_HEADER'] ?? '')."</b></font>";
                 echo $successMsg;
         ?>
 
@@ -121,4 +106,3 @@
 
 </body>
 </html>
-

@@ -34,25 +34,18 @@ $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
 global $username, $invoice_status_id, $user_id, $startdate, $enddate;
 
 
-include('../common/includes/db_open.php');
-
-// get valid users
-$sql = sprintf("SELECT id, username FROM %s ORDER BY username ASC", $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
-$res = $dbSocket->query($sql);
-
-$menu_users = array();
-while ($row = $res->fetchrow()) {
-    list($id, $value) = $row;
-    $id = intval($id);
-
-    $menu_users[$id] = $value;
-}
-
-include('../common/includes/db_close.php');
-
-
 include_once("include/management/populate_selectbox.php");
 include_once("../common/includes/validation.php");
+
+$menu_users = array();
+$invoice_user_rows = dalo_selectbox_rows(function (PDO $pdo, $config) {
+    $table = dalo_selectbox_table($pdo, $config, 'CONFIG_DB_TBL_DALOUSERINFO');
+    return "SELECT id, username FROM $table ORDER BY username ASC";
+});
+foreach ($invoice_user_rows as $row) {
+    $menu_users[(int) $row[0]] = $row[1];
+}
+unset($invoice_user_rows);
 
 $menu_invoice_status_id = get_invoice_status_id();
 $menu_invoice_status_id[] = "";

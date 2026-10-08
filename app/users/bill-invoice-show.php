@@ -30,8 +30,10 @@
     include_once("../common/includes/validation.php");
     include("../common/includes/layout.php");
 
-    $invoice_id = (array_key_exists('invoice_id', $_REQUEST) && intval(trim($_REQUEST['invoice_id'])) > 0)
-                    ? intval(trim($_REQUEST['invoice_id'])) : "";
+    require_once __DIR__ . '/library/portal_pages_pdo.php';
+    $invoice_id = '';
+    try { $invoice_id = dalo_portal_id($_REQUEST['invoice_id'] ?? ''); }
+    catch (InvalidArgumentException $exception) { /* Render the historical invalid-id notice. */ }
 
     // init logging variables
     $log = "visited page: ";
@@ -48,54 +50,23 @@
     // invoice details
     if (empty($invoice_id)) {
         $failureMsg = "invalid or empty invoice id, please specify a valid invoice id.";
-        $logAction .= "invalid or empty invoice id on page: ";
+        $logAction = "invalid or empty invoice id on page: ";
     } else {
 
-        include('../common/includes/db_open.php');
-
-        $sql = sprintf("SELECT id FROM %s WHERE username = '%s'",
-                       $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'], $dbSocket->escapeSimple($login_user));
-        $res = $dbSocket->query($sql);
-
-        $numrows = $res->numRows();
-
-        if ($numrows > 0) {
-            $user_id = $res->fetchrow()[0];
-
-            // get invoice details
-            $sql = sprintf("SELECT a.id, a.date, a.status_id, a.type_id, a.user_id, a.notes, b.contactperson, b.username,
-                                   b.city, b.state, f.value AS type, c.value AS status, COALESCE(e2.totalpayed, 0) AS totalpayed,
-                                   COALESCE(d2.totalbilled, 0) AS totalbilled
-                              FROM %s AS a INNER JOIN %s AS b ON a.user_id = b.id
-                                           INNER JOIN %s AS c ON a.status_id = c.id
-                                           INNER JOIN %s AS f ON a.type_id = f.id
-                                            LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) AS totalbilled, invoice_id, amount,
-                                                              tax_amount, notes, plan_id
-                                                         FROM %s AS d GROUP BY d.invoice_id) AS d2 ON d2.invoice_id = a.id
-                                            LEFT JOIN %s AS bp2 ON bp2.id = d2.plan_id
-                                            LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id
-                                                         FROM %s AS e GROUP BY e.invoice_id) AS e2 ON e2.invoice_id = a.id
-                             WHERE a.id=%d AND a.user_id=%d
-                             GROUP BY a.id",
-                           $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'], $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                           $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'], $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'],
-                           $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'], $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
-                           $configValues['CONFIG_DB_TBL_DALOPAYMENTS'], $invoice_id, $user_id);
-
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-
-            $numrows = $res->numRows();
-
-            if ($numrows > 0) {
-
-                $row = $res->fetchRow();
-
-                list(
-                        $invoice_id, $invoice_date, $invoice_status_id, $invoice_type_id, $user_id,
-                        $invoice_notes, $contactperson, $username, $city, $state, $type, $status,
-                        $totalpayed, $totalbilled
-                    ) = $row;
+        $portalPdo = null;
+        try {
+        $portalPdo = dalo_portal_handle($configValues);
+        $portalInvoice = dalo_portal_invoice($portalPdo, $configValues, $login_user, $invoice_id);
+        $portalPdo = null;
+        if ($portalInvoice['customer']) {
+            if ($portalInvoice['header']) {
+                $row = $portalInvoice['header'];
+                $invoice_date = $row['date']; $invoice_status_id = $row['status_id'];
+                $invoice_type_id = $row['type_id']; $user_id = $row['user_id'];
+                $invoice_notes = $row['notes']; $contactperson = $row['contactperson'];
+                $username = $row['username']; $city = $row['city']; $state = $row['state'];
+                $type = $row['type']; $status = $row['status'];
+                $totalpayed = $row['totalpayed']; $totalbilled = $row['totalbilled'];
 
                 // print customer info
                 printf('<div><strong>Customer</strong>: %s',
@@ -220,16 +191,7 @@
 
                 open_fieldset($fieldset1_descriptor);
 
-                $sql = sprintf("SELECT b.planName, a.tax_amount, a.amount, a.notes
-                                  FROM %s a LEFT JOIN %s b ON a.plan_id=b.id
-                                 WHERE a.invoice_id=%d
-                                 ORDER BY a.id ASC", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
-                                                     $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
-                                                     $invoice_id);
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                $numrows = $res->numRows();
+                $numrows = count($portalInvoice['items']);
 
                 if ($numrows > 0) {
 
@@ -250,7 +212,8 @@
 
                     echo '</tr>' . "\n";
 
-                    while($row = $res->fetchRow()) {
+                    foreach ($portalInvoice['items'] as $item) {
+                        $row = array($item['planName'], $item['tax_amount'], $item['amount'], $item['notes']);
                         // print table row
                         print_table_row($row);
                     }
@@ -279,7 +242,9 @@
             $failureMsg = "problems finding your user id";
         }
 
-        include('../common/includes/db_close.php');
+        } catch (Throwable $exception) {
+            $failureMsg = 'Invoice unavailable';
+        } finally { $portalPdo = null; }
 
     }
 

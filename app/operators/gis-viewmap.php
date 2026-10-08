@@ -31,6 +31,8 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
+    require_once __DIR__ . '/library/geo_heartbeat_pdo.php';
+
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
@@ -52,13 +54,14 @@
     // print map div
     echo '<div id="map" style="width: 800px; height: 600px; margin: 20px auto"></div>' . "\n";
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-    $sql = sprintf("SELECT id, name, mac, geocode
-                      FROM %s
-                     WHERE (geocode <> '' AND geocode IS NOT NULL)", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
+    $rows=array();
+    try {
+        $marker_pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+        $rows=dalo_geo_markers($marker_pdo,$configValues);
+    } catch (Throwable $e) {
+        $failureMsg='Unable to load hotspot locations';
+        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+    }
 
     $markers_js = "";
     $first_lat = null;
@@ -68,15 +71,11 @@
     // flags that make a PHP value safe to embed as a literal inside an inline <script> block
     $json_flags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
 
-    while ($row = $res->fetchRow()) {
-        list($id, $name, $mac, $geocode) = $row;
-
-        // geocode is stored as "lat,lng"; skip anything that doesn't parse cleanly
-        if (!preg_match('/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/', (string) $geocode, $coords)) {
-            continue;
-        }
-        $lat = (float) $coords[1];
-        $lng = (float) $coords[2];
+    foreach ($rows as $row) {
+        list($id,$name,$mac,$geocode)=$row;
+        $coords=dalo_geo_coordinates($geocode);
+        if ($coords===false) { continue; }
+        list($lat,$lng)=$coords;
 
         if ($marker_count === 0) {
             $first_lat = $lat;
@@ -108,7 +107,6 @@
                                json_encode($popup, $json_flags));
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     // center on the first available hotspot coordinate, otherwise fall back to a
     // default view (Area della Ricerca CNR di Pisa, San Cataldo)

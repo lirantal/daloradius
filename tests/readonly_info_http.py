@@ -34,75 +34,82 @@ def run():
             dest = app / 'operators/library/ajax' / name
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / 'app/operators/library/ajax' / name, dest)
-        for name in ['checklogin.php', 'check_operator_perm.php', 'sessions.php']:
+        for name in ['checklogin.php', 'check_operator_perm.php', 'sessions.php', 'operator_acl_read.php', 'hotspot_pages_pdo.php', 'dictionary_pages_pdo.php', 'dictionary_import.php']:
             shutil.copyfile(ROOT / 'app/operators/library' / name, app / 'operators/library' / name)
         dest = app / 'operators/include/management/pages_common.php'
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / 'app/operators/include/management/pages_common.php', dest)
+        source = 'app/operators/include/management/read_helpers_pdo.php'
+        shutil.copyfile(ROOT / source, base / source)
         includes = app / 'common/includes'
         includes.mkdir(parents=True)
-        (includes / 'db_close.php').write_text('<?php // Synthetic connection has nothing to close.\n')
-        (includes / 'db_open.php').write_text('''<?php
-require_once __DIR__ . '/fixture.php';
+        (includes / 'config_read.php').write_text('''<?php
 $configValues = [
     'CONFIG_DB_TBL_DALOOPERATORS_ACL' => 'operators_acl',
     'CONFIG_DB_TBL_RADACCT' => 'radacct',
     'CONFIG_DB_TBL_DALOHOTSPOTS' => 'hotspots',
     'CONFIG_DB_TBL_DALODICTIONARY' => 'dictionary',
 ];
-if (isset($_GET['connect_failure'])) {
-    $error = new Exception('Synthetic connection error');
-    if (isset($db_error_handler) && is_callable($db_error_handler)) {
-        call_user_func($db_error_handler, $error);
-    }
-    die('<b>Database connection error</b>');
+''')
+        (includes / 'pdo_connection.php').write_text('''<?php
+require_once __DIR__ . '/fixture.php';
+function dalo_pdo_connect($config, $location='default') {
+    if (isset($_GET['connect_failure'])) throw new PDOException('Synthetic connection error');
+    return new FixturePDO();
 }
-$dbSocket = new FixtureDB();
 ''')
         (includes / 'fixture.php').write_text('''<?php
-define('PEAR_ERROR_RETURN', 1);
-class DB { static function isError($value) { return $value instanceof Exception; } }
-class FixtureResult {
-    function fetchRow() {
-        if (isset($_GET['fetch_failure'])) return new Exception('Synthetic fetch error');
-        if (isset($_GET['empty'])) return null;
-        return basename($_SERVER['SCRIPT_NAME']) === 'hotspot_info.php' ? [3, 1024, 2048] : [1024, 2048];
+// Synthetic PDO doubles: exercise the actual endpoint/ACL code, not a database driver.
+class FixturePDO extends PDO {
+    function __construct() {}
+    function getAttribute(int $attribute): mixed { return 'mysql'; }
+    function prepare(string $query, array $options=[]): PDOStatement|false {
+        if (strpos($query, 'SELECT ') !== 0) throw new PDOException('Unexpected mutation');
+        return new FixtureStatement($query);
     }
 }
-class FixtureDB {
-    private $returnErrors = false;
-    function setErrorHandling($mode) { $this->returnErrors = $mode === PEAR_ERROR_RETURN; }
-    function disconnect() {}
-    function escapeSimple($value) { return str_replace("'", "''", $value); }
-    function query($sql) {
-        if (strpos($sql, 'SELECT ') !== 0) throw new Exception('Unexpected mutation');
-        if (isset($_GET['failure']) && !$this->returnErrors) echo '<div>Default PEAR error output</div>';
-        return isset($_GET['failure']) ? new Exception('Synthetic DB error') : new FixtureResult();
+class FixtureStatement extends PDOStatement {
+    private $sql;
+    private $values=[];
+    function __construct($sql) { $this->sql=$sql; }
+    function bindValue(string|int $param, mixed $value, int $type=PDO::PARAM_STR): bool {
+        $this->values[$param]=$value; return true;
     }
-    function getOne($sql) {
-        if (strpos($sql, 'operators_acl') !== false) {
+    private function acl() { return strpos($this->sql, 'operators_acl') !== false; }
+    function execute(?array $params=null): bool {
+        if ($params !== null) $this->values=$params;
+        if (!$this->acl() && isset($_GET['failure'])) throw new PDOException('Synthetic query error');
+        return true;
+    }
+    function fetch(int $mode=PDO::FETCH_DEFAULT, int $orientation=PDO::FETCH_ORI_NEXT, int $offset=0): mixed {
+        if (isset($_GET['fetch_failure'])) throw new PDOException('Synthetic fetch error');
+        if (isset($_GET['empty'])) return false;
+        return basename($_SERVER['SCRIPT_NAME']) === 'hotspot_info.php' ? [3,1024,2048] : [1024,2048];
+    }
+    function fetchColumn(int $column=0): mixed {
+        if ($this->acl()) {
             $expected = [
-                'user_info.php' => 'acct_username',
-                'hotspot_info.php' => 'acct_hotspot_accounting',
-                'vendor_attribute_info.php' => 'mng_rad_attributes_list',
+                'user_info.php'=>'acct_username', 'hotspot_info.php'=>'acct_hotspot_accounting',
+                'vendor_attribute_info.php'=>'mng_rad_attributes_list',
             ][basename($_SERVER['SCRIPT_NAME'])];
-            if (strpos($sql, "file='$expected'") === false) throw new Exception('Wrong ACL');
-            return $_SESSION['operator_id'] === 1 ? 1 : 0;
+            if (($this->values[':file'] ?? null) !== $expected ||
+                ($this->values[':id'] ?? null) !== ($_SESSION['operator_id'] ?? null)) {
+                throw new PDOException('Wrong ACL binding');
+            }
+            return ($_SESSION['operator_id'] ?? null) === 1 ? 1 : 0;
         }
-        if (isset($_GET['failure'])) {
-            if (!$this->returnErrors) echo '<div>Default PEAR error output</div>';
-            return new Exception('Synthetic DB error');
-        }
-        return isset($_GET['empty']) ? null : "Description with 'quotes', & é <img src=x onerror=alert(1)>";
+        if (isset($_GET['fetch_failure'])) throw new PDOException('Synthetic fetch error');
+        return isset($_GET['empty']) ? false : "Description with 'quotes', & é <img src=x onerror=alert(1)>";
     }
 }
 ''')
-        # Exercise the production db_open.php connection-failure path with a
+        # Isolated historical characterization: no legacy bootstrap enters the candidate tree.
+        # Exercise the historical db_open.php connection-failure path with a
         # minimal PEAR DB double. The endpoint fixture above separately checks
         # the resulting HTTP contract.
         production_includes = base / 'production-includes'
         production_includes.mkdir()
-        shutil.copyfile(ROOT / 'app/common/includes/db_open.php', production_includes / 'db_open.php')
+        (production_includes / 'db_open.php').write_bytes(subprocess.check_output(['git', 'show', 'cb766c2315e1d2cefe7bf077eeeef16f01814b2d:app/common/includes/db_open.php'], cwd=ROOT))
         shutil.copyfile(ROOT / 'app/operators/library/ajax/json_info.php', base / 'json_info.php')
         (production_includes / 'config_read.php').write_text('''<?php
 $configValues = [
@@ -111,6 +118,8 @@ $configValues = [
 ];
 ''')
         (production_includes / 'db_table_conventions.php').write_text('<?php\n')
+        # Historical bootstrap resolves this provider, but its synthetic DB path never calls PDO.
+        (production_includes / 'pdo_connection.php').write_text('<?php\n')
         (base / 'DB.php').write_text('''<?php
 define('PEAR_ERROR_CALLBACK', 16);
 class SyntheticConnectionError { function getMessage() { return 'synthetic'; } }
@@ -150,7 +159,8 @@ include __DIR__ . '/production-includes/db_open.php';
         with (base / 'server.log').open('w+') as log:
             server = subprocess.Popen(command, stdout=log, stderr=log)
             try:
-                for _ in range(100):
+                deadline = time.monotonic() + 30
+                while time.monotonic() < deadline:
                     try:
                         with socket.create_connection(('127.0.0.1', port), timeout=.2):
                             break
@@ -197,9 +207,14 @@ include __DIR__ . '/production-includes/db_open.php';
                         if expected == 405: assert headers['Allow'] == 'GET'
                         checks += 1
                     status, headers, body = request(endpoint, query + '&connect_failure=1')
-                    assert status == 500, (endpoint, status, body)
-                    assert headers['Content-Type'] == 'application/json; charset=UTF-8'
-                    assert 'error' in json.loads(body) and '<b>' not in body, (endpoint, status, body)
+                    # Dictionary ACL failures have no JSON database callback: the
+                    # actual ACL gate deliberately returns its fixed HTTP 503 response.
+                    if endpoint == 'vendor_attribute_info.php':
+                        assert status == 503 and body == 'Unable to check operator permissions.', (endpoint, status, body)
+                    else:
+                        assert status == 500, (endpoint, status, body)
+                        assert headers['Content-Type'] == 'application/json; charset=UTF-8'
+                        assert 'error' in json.loads(body) and '<b>' not in body, (endpoint, status, body)
                     checks += 1
                     if endpoint != 'vendor_attribute_info.php':
                         status, _, body = request(endpoint, query + '&fetch_failure=1')

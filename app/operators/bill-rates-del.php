@@ -33,79 +33,32 @@
     $logDebugSQL = "";
     $log = "visited page: ";
     
-    include('../common/includes/db_open.php');
-
-    $valid_ratenames = array();
-    
-    $sql = sprintf("SELECT DISTINCT(ratename) FROM %s ORDER BY ratename ASC",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGRATES']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    while ($row = $res->fetchrow()) {
-        $valid_ratenames[] = $row[0];
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            if (array_key_exists('ratename', $_POST) && !empty($_POST['ratename'])) {
-                $ratename = array();
-            
-                $tmparr = (!is_array($_POST['ratename'])) ? array( $_POST['ratename'] ) : $_POST['ratename'];
-                
-                foreach ($tmparr as $tmp_name) {
-                    $tmp_name = trim($tmp_name);
-                    if (!in_array($tmp_name, $valid_ratenames)) {
-                        continue;
-                    }
-                
-                    $tmp_name = $dbSocket->escapeSimple($tmp_name);
-                    if (!in_array($tmp_name, $ratename)) {
-                        $ratename[] = $tmp_name;
-                    }
-                }
-                
-                if (count($ratename) > 0) {
-                
-                    $sql = sprintf("DELETE FROM %s WHERE ratename IN ('%s')",
-                                   $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], implode("', '", $ratename));
-                    $count = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    if (!DB::isError($res)) {
-                        $successMsg = sprintf("Deleted %d rate(s)", intval($count));
-                        $logAction .= "$successMsg on page: ";
-                    } else {
-                        $failureMsg = "Failed deleting rate(s)";
-                        $logAction .= sprintf("Failed deleting rate(s) [%s] on page: ", $failureMsg);
-                    }
-                
-                } else {
-                    // invalid
-                    $failureMsg = "Empty or invalid rate name(s)";
-                    $logAction .= sprintf("Failed deleting rate(s) [%s] on page: ", $failureMsg);
-                }
+    require_once 'library/billing_rates_pdo.php';
+    $ratename = isset($_GET['ratename']) && is_string($_GET['ratename']) ? trim($_GET['ratename']) : '';
+    $valid_ratenames = array(); $selected_ratenames = $ratename !== '' ? array($ratename) : array();
+    $pdo = null;
+    try {
+        $pdo = dalo_catalog_read_open($configValues);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+                $failureMsg = 'CSRF token error';
             } else {
-                // invalid
-                $failureMsg = "Empty or invalid rate name(s)";
-                $logAction .= sprintf("Failed deleting rate(s) [%s] on page: ", $failureMsg);
+                try {
+                    $count = dalo_rate_mutate($pdo, $configValues, 'del', $_POST['ratename'] ?? array(), array(), $operator);
+                    $successMsg = sprintf('Deleted %d rate(s)', $count);
+                    $logAction .= 'Deleted rates on page: ';
+                } catch (Throwable $error) {
+                    $failureMsg = 'Failed deleting rate(s); check the selection and current state before retrying';
+                    $logAction .= 'Rate delete failed [' . get_class($error) . '] on page: ';
+                }
             }
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
         }
-    } else {
-        // !POST
-        $ratename = (array_key_exists('ratename', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['ratename']))))
-                     ? str_replace("%", "", trim($_REQUEST['ratename'])) : "";
-        
-        if (empty($ratename) || !in_array($ratename, $valid_ratenames)) {
-            $ratename = "";
-        }
-    }
-
-    include('../common/includes/db_close.php');
+        $table = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGRATES');
+        $valid_ratenames = array_map(function($row) { return (string)$row[0]; },
+            dalo_catalog_read_rows($pdo, "SELECT DISTINCT(rateName) FROM $table ORDER BY rateName ASC"));
+        if (!in_array($ratename, $valid_ratenames, true)) { $ratename = ''; $selected_ratenames = array(); }
+    } catch (Throwable $error) { dalo_rate_failure($error); }
+    finally { $pdo = null; }
 
     include_once("lang/main.php");
     include("../common/includes/layout.php");
@@ -139,7 +92,7 @@
                                     'options' => $valid_ratenames,
                                     'multiple' => true,
                                     'size' => 5,
-                                    'selected_value' => $ratename
+                                    'selected_value' => $selected_ratenames
                                  );
                                  
         $input_descriptors1[] = array(

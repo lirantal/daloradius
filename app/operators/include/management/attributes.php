@@ -27,26 +27,12 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/attributes.php') !== false
     exit;
 }
 
-include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
+include_once __DIR__ . '/populate_selectbox.php';
 $attributes = array();
-if (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) && strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) == "yes") {
-    $sql = sprintf("SELECT DISTINCT(attribute)
-                      FROM %s
-                     WHERE attribute<>'' AND attribute IS NOT NULL
-                     ORDER BY attribute ASC",
-                    $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
-
-    $res = $dbSocket->query($sql);
-    while ($row = $res->fetchRow()) {
-        $attributes[] = $row[0];
-    }
-
+if (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) && strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === 'yes') {
+    $attributes = array_values(array_filter(get_attributes(), function($value) { return $value !== null && $value !== ''; }));
 }
-
 $attributes = dalo_filter_cleartext_password_attributes($attributes);
-
-include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
 $_fieldset0_descriptor = array(
                                 "title" => t('title','Attributes'),

@@ -24,17 +24,30 @@
     include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
-
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    require_once __DIR__ . '/library/operator_reports_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+        foreach (array('batch_name','radiusReply') as $key) {
+            if (isset($_GET[$key])) { dalo_accounting_scalar($_GET, $key); }
+        }
+    } catch (Throwable $exception) {
+        http_response_code(400); exit('Invalid operator report filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
+    // Clear any export state from a previous page before processing this page.
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery']);
+
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
     // we partially strip some character and
     // leave validation/escaping to other functions used later in the script
-    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
-              ? str_replace("%", "", trim($_GET['username'])) : "";
-    $username_enc = (!empty($username))
+    $username = dalo_accounting_scalar($_GET, 'username');
+    $username_enc = ($username !== '')
                   ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8')
                   : "";
 
@@ -44,7 +57,7 @@
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query for ";
-    if (!empty($username)) {
+    if ($username !== '') {
          $logQuery .= sprintf("user(s) related to %s ", $username);
     } else {
         $logQuery .= "all users ";
@@ -70,11 +83,11 @@
 
     print_html_prologue($title, $langCode, array(), $extra_js);
 
-    if (!empty($username_enc)) {
+    if ($username_enc !== '') {
         $title .=  " :: " . $username_enc;
     }
 
-    $help = ((!empty($username_enc))
+    $help = (($username_enc !== '')
           ? sprintf("user(s) related to <em>%s</em>", $username_enc)
           : "all users") . " are shown";
 
@@ -119,57 +132,23 @@
     echo '<div id="returnMessages"></div>';
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
-    // sql where is like: join_condition AND (nested_condition1) AND (nested_condition2)
-
-    // init nested condition 1
-    $nested_condition1 = array( "rc.attribute='Auth-Type'", "rc.attribute LIKE '%%-Password'" );
-
-    // init nested condition 2
-    $nested_condition2 = array();
-    if (!empty($username)) {
-        $arr = array( "username", "firstname", "lastname", "homephone", "workphone", "mobilephone" );
-        $value_prefix = $dbSocket->escapeSimple($username);
-        foreach ($arr as $field_name) {
-            $nested_condition2[] = sprintf("ui.%s LIKE '%%%s%%'", $field_name, $value_prefix);
-        }
-        $nested_condition2[] = sprintf("rr.%s LIKE '%%%s'", "value", $value_prefix);
-    }
-
-    // init SQL WHERE (with join condition already set)
-    $sql_WHERE = array( "rc.username=ui.username" );
-
-    // imploding nested condition 1
-    $sql_WHERE[] = sprintf("(%s)", implode(" OR ", $nested_condition1));
-
-    //imploding nested_condition 2
-    if (count($nested_condition2) > 0) {
-        $sql_WHERE[] = sprintf("(%s)", implode(" OR ", $nested_condition2));
-    }
-
-    // setup php session variables for exporting
-    $_SESSION['reportTable'] = sprintf("%s AS rc LEFT JOIN %s AS ra ON ra.username=rc.username
-                                                 LEFT JOIN %s AS rr ON rr.username=rc.username
-                                                 LEFT JOIN %s AS ui ON ui.username=rc.username",
-                                        $configValues['CONFIG_DB_TBL_RADCHECK'], $configValues['CONFIG_DB_TBL_RADACCT'],
-                                        $configValues['CONFIG_DB_TBL_RADREPLY'], $configValues['CONFIG_DB_TBL_DALOUSERINFO']);
-    $_SESSION['reportQuery'] = " WHERE " . implode(" AND ", $sql_WHERE);
-    $_SESSION['reportType'] = "usernameListGeneric";
-
-    // compute total number of rows matching the query for pagination
-    $sql_count = sprintf("SELECT COUNT(DISTINCT rc.username) AS count FROM %s %s", $_SESSION['reportTable'], $_SESSION['reportQuery']);
-    $res_count = $dbSocket->query($sql_count);
-    $logDebugSQL .= "$sql_count;\n";
-
-    $row_count = $res_count->fetchRow();
-    $numrows = isset($row_count) ? intval($row_count[0]) : 0;
+    $_SESSION['reportType'] = 'usernameListGeneric';
+    $_SESSION['reportExport'] = array('source'=>'mng-search','type'=>'usernameListGeneric','filters'=>array('username'=>$username));
+    $reportPDO = null;
+    $reportRows = array();
+    $numrows = 0;
+    try {
+        $reportPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        list($reportSQL, $reportBindings) = dalo_operator_query('mng-search', array('username'=>$username), $configValues);
+        $numrows = dalo_accounting_count($reportPDO, $reportSQL, $reportBindings, $configValues);
+    } catch (Throwable $exception) { dalo_accounting_failure($exception); }
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
 
         // when $numrows is set, $maxPage is calculated inside this include file
-        // must be included after opendb because it needs to read
+        // must follow configuration initialization because it needs to read
         // the CONFIG_IFACE_TABLES_LISTING variable from the config file
         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
 
@@ -178,26 +157,17 @@
 
         /* END */
 
-        // we execute and log the actual data query
-        $sql = sprintf("SELECT ui.id AS id, rc.username AS username, rc.value AS auth, rc.attribute,
-                               CONCAT(COALESCE(ui.firstname, ''), ' ', COALESCE(ui.lastname, '')) AS fullname,
-                               (SELECT MAX(value) FROM %s WHERE username = rc.username AND attribute = 'Framed-IP-Address') AS framedipaddress,
-                               (SELECT MAX(acctstarttime) FROM %s WHERE username = rc.username) AS lastlogin
-                          FROM %s %s
-                         GROUP BY rc.username",
-                         $configValues['CONFIG_DB_TBL_RADREPLY'],
-                         $configValues['CONFIG_DB_TBL_RADACCT'],
-                         $_SESSION['reportTable'], $_SESSION['reportQuery']);
-
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
+        try {
+            $reportRows = dalo_operator_rows($reportPDO, $reportSQL, $reportBindings, 'mng-search',
+                $orderBy, $orderType, (int)$offset, (int)$rowsPerPage, true);
+        } catch (Throwable $exception) { dalo_accounting_failure($exception); }
+        $per_page_numrows = count($reportRows);
 
         // init $records and $usernamelist arrays
         $records = array();
         $usernamelist = array();
 
-        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+        foreach ($reportRows as $row) {
             // we start storing data...
             // the enable flag is initialized to true
             // and the groups list is empty
@@ -229,23 +199,22 @@
                 'lastlogin' => $row['lastlogin'],
             );
             // in the same pass we init the $usernamelist
-            $usernamelist[] = sprintf("'%s'", $dbSocket->escapeSimple($this_username));
+            $usernamelist[] = (string)$this_username;
         }
 
         $per_page_numrows = count($usernamelist);
 
         if ($per_page_numrows > 0) {
 
-            // with this second query we retrieve user status (enabled/disabled) and user groups list
-            $sql = sprintf("SELECT username, groupname FROM %s WHERE username IN (%s)",
-                           $configValues['CONFIG_DB_TBL_RADUSERGROUP'], implode(", ", $usernamelist));
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
+            $groupRows = array();
+            try { $groupRows = dalo_operator_groups($reportPDO, $usernamelist, $configValues); }
+            catch (Throwable $exception) { dalo_accounting_failure($exception); $records = array(); }
 
             // foreach user we update the enabled flag and the grouplist
-            while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+            foreach ($groupRows as $row) {
                 $this_username = $row['username'];
                 $this_groupname = $row['groupname'];
+                if (!array_key_exists($this_username, $records)) { continue; }
 
                 if ($this_groupname === 'daloRADIUS-Disabled-Users') {
                     $records[$this_username]['enabled'] = false;
@@ -258,7 +227,7 @@
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = (!empty($username_enc) ? "&username=" . urlencode($username_enc) : "");
+        $partial_query_string = ($username_enc !== '' ? "&username=" . urlencode($username) : "");
 
         // this can be passed as form attribute and
         // printTableFormControls function parameter
@@ -309,7 +278,7 @@
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
         $descriptors['end'] = array();
-        $descriptors['end'][] = get_csv_export_control();
+        if (!isset($failureMsg)) { $descriptors['end'][] = get_csv_export_control(); }
         print_table_prologue($descriptors);
 
         $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
@@ -326,7 +295,8 @@
         // table content
         $count = 0;
         foreach ($records as $username => $data) {
-            $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+            $rawRowUsername = (string)$username;
+            $username = htmlspecialchars((string)$username, ENT_QUOTES, 'UTF-8');
             $type = $data['type'];
             $id = intval($data['id']);
 
@@ -355,9 +325,9 @@
             $badge = sprintf('<i class="bi bi-%s me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="%s"></i>',
                              $badge_icon, strtolower($type));
 
-            $auth = htmlspecialchars($data['auth'], ENT_QUOTES, 'UTF-8');
+            $auth = htmlspecialchars((string)($data['auth'] ?? ''), ENT_QUOTES, 'UTF-8');
 
-            $fullname = htmlspecialchars($data['fullname'], ENT_QUOTES, 'UTF-8');
+            $fullname = htmlspecialchars((string)($data['fullname'] ?? ''), ENT_QUOTES, 'UTF-8');
             $framedipaddress = (!empty($data['framedipaddress']))
                             ? htmlspecialchars($data['framedipaddress'], ENT_QUOTES, 'UTF-8') : "(n/a)";
             $lastlogin = (!empty($data['lastlogin']))
@@ -365,7 +335,7 @@
             $grouplist = implode("<br>", $data['groups']);
 
             $ajax_id = "divContainerUserInfo_" . $count;
-            $param = sprintf('username=%s', urlencode($username));
+            $param = sprintf('username=%s', urlencode($rawRowUsername));
             $onclick = "daloInfo.user('$ajax_id','$param')";
 
             // create username tooltip
@@ -376,11 +346,11 @@
                                 'actions' => array(),
                             );
             $tooltip1['actions'][] = array(
-                                            'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ),
+                                            'href' => sprintf('mng-edit.php?username=%s', urlencode($rawRowUsername), ),
                                             'label' => t('Tooltip','UserEdit'),
                                          );
             $tooltip1['actions'][] = array(
-                                            'href' => sprintf('acct-username.php?username=%s', urlencode($username), ),
+                                            'href' => sprintf('acct-username.php?username=%s', urlencode($rawRowUsername), ),
                                             'label' => t('all','Accounting'),
                                          );
 
@@ -439,10 +409,17 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+        $failureMsg = $failureMsg ?? "Nothing to display";
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    if (isset($failureMsg)) {
+        include_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/actionMessages.php';
+    }
+
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
+    if (isset($failureMsg) || empty($numrows)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($reportPDO, $reportRows);
     print_footer_and_html_epilogue();

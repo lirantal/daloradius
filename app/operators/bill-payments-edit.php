@@ -38,144 +38,60 @@
     $logDebugSQL = "";
     
     
-    include('../common/includes/db_open.php');
-
-    // get valid payment types
-    $sql = sprintf("SELECT id, value FROM %s", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    $valid_paymentTypes = array( );
-    while ($row = $res->fetchrow()) {
-        list($id, $value) = $row;
-        
-        $valid_paymentTypes["paymentType-$id"] = $value;
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $payment_id = (array_key_exists('payment_id', $_POST) && intval(trim($_POST['payment_id'])) > 0)
-                    ? intval(trim($_POST['payment_id'])) : "";
-    } else {
-        $payment_id = (array_key_exists('payment_id', $_REQUEST) && intval(trim($_REQUEST['payment_id'])) > 0)
-                    ? intval(trim($_REQUEST['payment_id'])) : "";
-    }
-
-    // check if this payment exists
-    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE id=%d", $configValues['CONFIG_DB_TBL_DALOPAYMENTS'], $payment_id);
-    $res = $dbSocket->query($sql);
-    
-    $exists = intval($res->fetchrow()[0]) == 1;
-
-    if (!$exists) {
-        // we reset the payment if it does not exist
-        $payment_id = "";
-    }
-    
-    //feed the sidebar variables
+    require_once('library/payments_pdo.php');
+    $payment_pdo = null; $valid_paymentTypes = array(); $payment_id = '';
+    $payment_invoice_id = ''; $payment_date = ''; $payment_amount = '';
+    $payment_type_id = ''; $payment_notes = ''; $payment_read_failed = false;
+    try {
+        $payment_pdo = dalo_payment_open($configValues);
+        $valid_paymentTypes = dalo_payment_types($payment_pdo, $configValues);
+        $input = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+        $raw_id = dalo_payment_scalar($input, 'payment_id');
+        if ($raw_id !== '') { $payment_id = dalo_payment_id($raw_id); }
+        $table = dalo_payment_table($payment_pdo, $configValues, 'CONFIG_DB_TBL_DALOPAYMENTS');
+        if ($payment_id !== '' && !dalo_catalog_read_rows($payment_pdo, "SELECT id FROM $table WHERE id=:id", array(':id'=>$payment_id))) { $payment_id = ''; }
+    } catch (Throwable $error) {
+        dalo_payment_read_failure($error); $payment_read_failed = true; $payment_id = '';
+    } finally { $payment_pdo = null; }
     $edit_payment_id = $payment_id;
-    
-    
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
-            if (empty($payment_id)) {
-                // required
-                $failureMsg = "invalid or empty payment id, please specify a valid payment id to edit.";
-                $logAction .= "invalid or empty payment id on page: ";
-            } else {
-                $sql_SET = array();
-                
-                // required later
-                $current_datetime = date('Y-m-d H:i:s');
-                $currBy = $operator;
-            
-                $sql_SET[] = sprintf("updatedate='%s'", $current_datetime);
-                $sql_SET[] = sprintf("updateby='%s'", $currBy);
-            
-                $payment_invoice_id = (array_key_exists('payment_invoice_id', $_POST) && intval(trim($_POST['payment_invoice_id'])) > 0)
-                                    ? intval(trim($_POST['payment_invoice_id'])) : "";
-                if (!empty($payment_invoice_id)) {
-                    $sql_SET[] = sprintf("invoice_id=%d", $payment_invoice_id);
-                }
-                
-                $payment_type_id = (array_key_exists('payment_type_id', $_POST) && !empty(trim($_POST['payment_type_id'])) &&
-                                    in_array(trim($_POST['payment_type_id']), array_keys($valid_paymentTypes)))
-                                 ? intval(str_replace("paymentType-", "", trim($_POST['payment_type_id']))) : "";
-                if (!empty($payment_type_id)) {
-                    $sql_SET[] = sprintf("type_id=%d", $payment_type_id);
-                }
-                
-                $payment_amount = (array_key_exists('payment_amount', $_POST) && is_numeric(trim($_POST['payment_amount'])))
-                                 ? trim($_POST['payment_amount']) : 0;
-                if ($payment_amount > 0) {
-                    $sql_SET[] = sprintf("amount='%s'", $payment_amount);
-                }
 
-                $payment_date = (
-                                    array_key_exists('payment_date', $_POST) &&
-                                    !empty(trim($_POST['payment_date'])) &&
-                                    preg_match(DATE_REGEX, trim($_POST['payment_date']), $m) !== false &&
-                                    checkdate($m[2], $m[3], $m[1])
-                                ) ? trim($_POST['payment_date']) : "";
-                if (!empty($payment_date)) {
-                    $sql_SET[] = sprintf("date='%s'", $payment_date);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$payment_read_failed) {
+        if (isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            try {
+                if ($payment_id === '') { throw new DomainException('Payment no longer exists'); }
+                $values = dalo_payment_fields($_POST, false);
+                foreach (array('invoice_id','amount','date','type_id','notes') as $field) {
+                    if (isset($values[$field])) { ${'payment_' . $field} = $values[$field]; }
                 }
-                                
-                $payment_notes = (array_key_exists('payment_notes', $_POST) && !empty(trim($_POST['payment_notes'])))
-                               ? trim($_POST['payment_notes']) : "";
-                if (!empty($payment_notes)) {
-                    $sql_SET[] = sprintf("notes='%s'", $dbSocket->escapeSimple($payment_notes));
-                }
-                
-                $sql = sprintf("UPDATE %s SET ", $configValues['CONFIG_DB_TBL_DALOPAYMENTS'])
-                     . implode(", ", $sql_SET)
-                     . sprintf(" WHERE id=%d", $payment_id);
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                if (!DB::isError($res)) {
-                    $successMsg = "Successfully updated payment (id: #<strong>$payment_id</strong>)";
-                    $logAction .= "Successfully updated payment [id: #$payment_id] on page: ";
-                } else {
-                    $failureMsg = "Failed to updated payment (id: #<strong>$payment_id</strong>)";
-                    $logAction .= "Failed to updated payment [id: #$payment_id] on page: ";
-                }
-                
-            }
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
-        }
+                $payment_pdo = dalo_payment_open($configValues);
+                $result = dalo_payment_mutate($payment_pdo, $configValues, 'edit', array($payment_id), $values, $operator);
+                $successMsg = "Successfully updated payment (id: #<strong>$payment_id</strong>)";
+                $logAction .= 'Successful payment mutation on page: ';
+                $logDebugSQL .= 'Payment mutation (PDO transaction, bound values);\n';
+            } catch (Throwable $error) {
+                $failureMsg = 'Failed to update payment; verify its state before retrying';
+                $logAction .= 'Payment mutation failed [' . get_class($error) . '] on page: ';
+            } finally { $payment_pdo = null; }
+        } else { $failureMsg = 'CSRF token error'; $logAction .= 'CSRF token error on page: '; }
     }
-    
-        
-    if (empty($payment_id)) {
-        $failureMsg = "invalid or empty payment id entered, please specify a valid payment id to edit.";
-        $logAction .= "$failureMsg on page: ";
+    if ($payment_id === '') {
+        if (!isset($failureMsg)) { $failureMsg = 'invalid or empty payment id entered, please specify a valid payment id to edit.'; }
     } else {
-    
-        $sql = sprintf("SELECT dp.id, dp.invoice_id, dp.amount, dp.date, dp.type_id, dp.notes,
-                               dp.creationdate, dp.creationby, dp.updatedate, dp.updateby, dpt.value
-                          FROM %s AS dp LEFT JOIN %s AS dpt ON dp.type_id = dpt.id
-                         WHERE dp.id=%d", $configValues['CONFIG_DB_TBL_DALOPAYMENTS'],
-                                          $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $payment_id);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-    
-        $row = $res->fetchrow();
-    
-        list(
-                $payment_id, $payment_invoice_id, $payment_amount, $payment_date, $payment_type_id,
-                $payment_notes, $creationdate, $creationby, $updatedate, $updateby, $value
-            ) = $row;
-    
+        try {
+            $payment_pdo = dalo_payment_open($configValues);
+            $table = dalo_payment_table($payment_pdo, $configValues, 'CONFIG_DB_TBL_DALOPAYMENTS');
+            $types = dalo_payment_table($payment_pdo, $configValues, 'CONFIG_DB_TBL_DALOPAYMENTTYPES');
+            $rows = dalo_catalog_read_rows($payment_pdo, "SELECT dp.id, dp.invoice_id, dp.amount, dp.date, dp.type_id, dp.notes,
+                dp.creationdate, dp.creationby, dp.updatedate, dp.updateby, dpt.value
+                FROM $table AS dp LEFT JOIN $types AS dpt ON dp.type_id=dpt.id WHERE dp.id=:id", array(':id'=>$payment_id));
+            if (!$rows) { throw new DomainException('Payment no longer exists'); }
+            list($payment_id,$payment_invoice_id,$payment_amount,$payment_date,$payment_type_id,$payment_notes,
+                $creationdate,$creationby,$updatedate,$updateby,$value) = $rows[0];
+        } catch (Throwable $error) {
+            dalo_payment_read_failure($error); $payment_id = '';
+        } finally { $payment_pdo = null; }
     }
 
-    include('../common/includes/db_close.php');
-
-    
     // print HTML prologue
     $title = t('Intro','paymentsedit.php');
     $help = t('helpPage','paymentsedit');
