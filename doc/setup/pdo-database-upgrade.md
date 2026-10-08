@@ -36,7 +36,7 @@ configuration. The installer CLI check alone does not prove the web SAPI works.
 2. Update the complete application source together, including retained Chilli
    examples' shared PDO provider dependencies. Custom code must use PDO handles;
    the retired common `db_open.php`, `db_close.php` and DB callback are not aliases
-   for the new provider. See the lot-3 compatibility documentation.
+   for the new provider.
 3. Install/enable the PDO MySQL extension and retain the mail dependencies above.
 4. Docker: rebuild the web image and replace only the web container as appropriate
    to the deployment. Updating source alone does not remove packages from an older
@@ -63,9 +63,5 @@ build context:
 ```bash
 docker build -t daloradius-pdo-r29:local .
 ```
-
-No CI gate is introduced: lot 5 was explicitly waived. The global lot-6 fresh
-installations, preserved-data upgrade and cross-domain regression remain separate
-release acceptance work.
 
 Aucune clé, aucun mot de passe, jeton, secret ou identifiant de connexion ne doit être conservé.
