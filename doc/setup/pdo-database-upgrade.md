@@ -55,24 +55,14 @@ older image or packages. A source-only rollback onto this PDO-only runtime is no
 sufficient. Keep historical PEAR regression baselines in a separate legacy test
 runtime, not in the new production image.
 
-## Isolated verification
+## Isolated build
 
 From a clean source checkout/export, with no live configuration or secrets in the
 build context:
 
 ```bash
 docker build -t daloradius-pdo-r29:local .
-python3 tests/installation_pdo_dependencies.py --image daloradius-pdo-r29:local
 ```
-
-The standalone test uses disposable MariaDB data in tmpfs and an internal Docker
-network without published ports. It checks PEAR DB package/entrypoint absence,
-native PDO reads and rollback for both configuration labels, the actual Apache
-accounting endpoint with nonempty totals and a redacted SQL error, and PEAR
-Mail/Mime delivery to an isolated SMTP receiver. Its operator session is seeded;
-this is not a password-login test. Configuration/session values are confined to
-the disposable container and removed with it. No external mailbox, SMTP TLS/auth,
-FreeRADIUS/NAS hardware or live database is involved.
 
 No CI gate is introduced: lot 5 was explicitly waived. The global lot-6 fresh
 installations, preserved-data upgrade and cross-domain regression remain separate
