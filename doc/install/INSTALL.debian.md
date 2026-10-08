@@ -210,7 +210,7 @@ To proceed with the installation of daloRADIUS, execute the following command wh
 ```bash
 apt --no-install-recommends install apache2 php libapache2-mod-php \
                                     php-mysql php-mbstring php-common php-curl \
-                                    php-gd php-db php-mail php-mail-mime \
+                                    php-gd php-ldap php-db php-mail php-mail-mime \
                                     mariadb-client freeradius-utils rsyslog
 ```
 
@@ -382,6 +382,15 @@ a2ensite operators.conf users.conf
 systemctl enable apache2
 systemctl restart apache2
 ```
+
+# Operator LDAP authentication
+
+The PHP `php-ldap` package is included above, but LDAP operator login remains
+local by default. To configure LDAP safely, follow
+[`doc/setup/operator-ldap.md`](../setup/operator-ldap.md). Keep
+`CONFIG_OPERATOR_AUTH_LOCAL_ENABLED=true` and a tested local break-glass
+operator until LDAP login, group authorization, and recovery have been
+verified.
 
 # Testing the Infrastructure
 

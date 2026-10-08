@@ -633,7 +633,9 @@ SET character_set_client = utf8mb4;
 CREATE TABLE `operators` (
   `id` INT(32) NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(32) NOT NULL,
-  `password` VARCHAR(95) NOT NULL,
+  `password` VARCHAR(95) DEFAULT NULL,
+  `auth_source` VARCHAR(16) NOT NULL DEFAULT 'local',
+  `external_id` VARCHAR(255) DEFAULT NULL,
   `firstname` VARCHAR(32) NOT NULL,
   `lastname` VARCHAR(32) NOT NULL,
   `title` VARCHAR(32) NOT NULL,
@@ -657,6 +659,7 @@ CREATE TABLE `operators` (
   `totp_confirmed_at` DATETIME DEFAULT NULL,
   `totp_recovery_codes` TEXT DEFAULT NULL,
   PRIMARY KEY  (`id`),
+  UNIQUE KEY `operators_external_id_uq` (`external_id`),
   KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 SET character_set_client = @saved_cs_client;

@@ -73,10 +73,21 @@ RADIUS authentication and accounting listen on host UDP ports `1812` and `1813`.
 
 MariaDB data remains in `./data/mysql`, FreeRADIUS init state remains in `./data/freeradius`, and daloRADIUS init state remains in `./data/daloradius`.
 
+## Operator LDAP authentication
+
+Operator LDAP configuration, including all environment variables, LDAPS and
+StartTLS, private CA mounts, Active Directory and OpenLDAP examples, operator
+provisioning, and rollout guidance, is documented in
+[`doc/setup/operator-ldap.md`](doc/setup/operator-ldap.md#docker-compose).
 
 ## Database migrations for upgrades
 
 Fresh Docker deployments initialize the database from the bundled schema. When upgrading an existing Docker deployment, check `contrib/db/migrations/` in the updated source tree and apply the relevant SQL migrations before using newly added features.
+
+Operator LDAP authentication requires
+`contrib/db/migrations/2026-09-operator-ldap.sql`; it preserves existing local
+operator passwords and can be applied repeatedly. The current web-container
+entrypoint also applies this migration automatically on startup.
 
 For example, to apply the operator MFA migration from the directory that contains `docker-compose.yml`:
 
@@ -84,6 +95,10 @@ For example, to apply the operator MFA migration from the directory that contain
 docker compose exec -T radius-mysql sh -lc 'mariadb -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' \
   < contrib/db/migrations/2026-06-operator-totp-mfa.sql
 ```
+
+When upgrading a database initialized by daloRADIUS 2.3, apply
+`contrib/db/migrations/2026-09-operator-config-acls.sql` to make the Mail and
+Message Settings permissions available in the operator ACL editor.
 
 For the user portal password hashing upgrade, apply
 `contrib/db/migrations/2026-09-user-portal-password-hashing.sql`, deploy the

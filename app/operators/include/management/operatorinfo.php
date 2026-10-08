@@ -30,7 +30,31 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/operatorinfo.php') !== fal
     exit;
 }
 
+include_once __DIR__ . '/operator_identity.php';
+
 $input_descriptors1 = array();
+$operator_auth_source = operator_normalize_auth_source($operator_auth_source ?? 'local');
+$operator_auth_source = $operator_auth_source === null ? 'local' : $operator_auth_source;
+$operator_external_id = operator_normalize_external_id($operator_external_id ?? null);
+
+$input_descriptors1[] = array(
+                               'name' => 'auth_source',
+                               'caption' => 'Authentication Source',
+                               'type' => 'select',
+                               'options' => operator_auth_source_options(),
+                               'selected_value' => $operator_auth_source,
+                               'onchange' => 'operatorAuthSourceChanged(this)',
+                             );
+$input_descriptors1[] = array( 'name' => 'external_id', 'caption' => 'External ID (optional)', 'type' => 'text',
+                               'value' => $operator_external_id,
+                             );
+if (isset($current_auth_source)) {
+    $input_descriptors1[] = array( 'name' => 'confirm_auth_source_change',
+                                   'caption' => 'Confirm authentication source conversion',
+                                   'type' => 'checkbox',
+                                   'value' => '1',
+                                 );
+}
 
 $input_descriptors1[] = array( 'name' =>'firstname', 'caption' => 'Operator Firstname', 'type' => 'text',
                                'value' => ((isset($operator_firstname)) ? $operator_firstname : ""),
@@ -66,7 +90,7 @@ $input_descriptors1[] = array( 'name' =>'messenger2', 'caption' => 'Operator Mes
                                'value' => ((isset($operator_messenger2)) ? $operator_messenger2 : ""),
                              );
 $input_descriptors1[] = array( 'name' =>'notes', 'caption' => 'Operator Notes', 'type' => 'textarea',
-                               'content' => ((isset($notes)) ? $notes : ""),
+                               'content' => ((isset($operator_notes)) ? $operator_notes : ((isset($notes)) ? $notes : "")),
                              );
                              
 $input_descriptors1[] = array( 'name' => 'operator_lastlogin', 'caption' => 'Operator Last Login', 'disabled' => true,

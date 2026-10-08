@@ -34,6 +34,7 @@
     $logDebugSQL = "";
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'operator_identity.php' ]);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $operator_username = (array_key_exists('operator_username', $_POST) && !empty(trim(str_replace("%", "", $_POST['operator_username']))))
@@ -45,20 +46,21 @@
     $operator_username_enc = (!empty($operator_username)) ? htmlspecialchars($operator_username, ENT_QUOTES, 'UTF-8') : "";
 
 
-    // check if this operator exists
-    $sql = sprintf("SELECT id FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
-                                                            $dbSocket->escapeSimple($operator_username));
+    // Check for one unambiguous operator and retain its current identity source.
+    $sql = sprintf("SELECT id, auth_source, external_id FROM %s WHERE username='%s'",
+                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_username));
     $res = $dbSocket->query($sql);
     $logDebugSQL .= "$sql;\n";
 
-    $exists = ($res->numRows() == 1);
-
+    $exists = (!DB::isError($res) && $res->numRows() == 1);
     if (!$exists) {
-        // we reset the operator username if it does not exist
         $operator_username = "";
     } else {
-        // if the operator exists, we get its current id
-        $curr_operator_id = intval($res->fetchRow()[0]);
+        list($curr_operator_id, $current_auth_source, $current_external_id) = $res->fetchRow();
+        $curr_operator_id = intval($curr_operator_id);
+        $current_auth_source = operator_normalize_auth_source($current_auth_source);
+        $current_auth_source = $current_auth_source === null ? 'local' : $current_auth_source;
+        $current_external_id = operator_normalize_external_id($current_external_id);
     }
 
     //feed the sidebar variables
@@ -74,8 +76,33 @@
                 $current_datetime = date('Y-m-d H:i:s');
                 $currBy = $_SESSION['operator_user'];
 
-                $operator_password = (array_key_exists('operator_password', $_POST) && isset($_POST['operator_password']))
+                $operator_password = (array_key_exists('operator_password', $_POST) && is_string($_POST['operator_password']))
                                    ? trim($_POST['operator_password']) : "";
+                $requested_auth_source = array_key_exists('auth_source', $_POST)
+                                       ? operator_normalize_auth_source($_POST['auth_source'])
+                                       : $current_auth_source;
+                $confirm_source_change = array_key_exists('confirm_auth_source_change', $_POST)
+                                      && $_POST['confirm_auth_source_change'] === '1';
+                $operator_external_id = ($requested_auth_source === 'ldap')
+                                      ? operator_normalize_external_id($_POST['external_id'] ?? null) : null;
+                $identity_snapshot_present = array_key_exists('identity_auth_source', $_POST)
+                                          && array_key_exists('identity_external_id', $_POST);
+                $identity_snapshot_matches = $identity_snapshot_present
+                                          && operator_identity_state_matches(
+                                              $current_auth_source,
+                                              $current_external_id,
+                                              $_POST['identity_auth_source'],
+                                              $_POST['identity_external_id']
+                                          );
+                $identity = $identity_snapshot_matches
+                          ? operator_prepare_update_identity(
+                              $current_auth_source,
+                              $requested_auth_source,
+                              $operator_password,
+                              $confirm_source_change,
+                              $operator_external_id
+                          )
+                          : operator_identity_error('operator identity changed; reload and retry');
 
                 $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? trim($_POST['firstname']) : "";
                 $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? trim($_POST['lastname']) : "";
@@ -90,75 +117,105 @@
                 $messenger2 = (array_key_exists('messenger2', $_POST) && isset($_POST['messenger2'])) ? trim($_POST['messenger2']) : "";
                 $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? trim($_POST['notes']) : "";
 
-                if (empty($operator_password)) {
-                    $sql = sprintf("SELECT password FROM %s WHERE id=%d",
-                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $curr_operator_id);
-                    $operator_password_hash = $dbSocket->getOne($sql);
-                    $logDebugSQL .= "$sql;\n";
+                if (!$identity['ok']) {
+                    $failureMsg = $identity['error'];
+                    $logAction .= "Failed updating operator authentication identity on page: ";
                 } else {
-                    $operator_password_hash = password_hash($operator_password, PASSWORD_DEFAULT);
-                }
-
-                // update operator data into the database
-                $sql = sprintf("UPDATE %s SET password='%s', firstname='%s', lastname='%s', title='%s', department='%s',
-                                              company='%s', phone1='%s', phone2='%s', email1='%s', email2='%s', messenger1='%s',
-                                              messenger2='%s', updatedate='%s', updateby='%s'
-                                 WHERE username='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_password_hash),
-                               $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($title),
-                               $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
-                               $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1), $dbSocket->escapeSimple($email2),
-                               $dbSocket->escapeSimple($messenger1), $dbSocket->escapeSimple($messenger2), $current_datetime,
-                               $dbSocket->escapeSimple($currBy), $dbSocket->escapeSimple($operator_username));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                if (array_key_exists('reset_totp', $_POST) && $_POST['reset_totp'] === '1') {
-                    $sql = sprintf("UPDATE %s SET totp_enabled=0, totp_secret=NULL, totp_last_counter=NULL, totp_confirmed_at=NULL, totp_recovery_codes=NULL, updatedate='%s', updateby='%s' WHERE id=%d",
-                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $current_datetime,
-                                   $dbSocket->escapeSimple($currBy), $curr_operator_id);
-                    $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                }
-
-                // insert operators acl for this operator
-                foreach ($_POST as $field => $access ) {
-
-                    if (!preg_match('/^ACL_/', $field)) {
-                          continue;
-                        }
-
-
-                    $file = substr($field, 4);
-
-                    $sql = sprintf("SELECT id FROM %s WHERE operator_id=%d AND file='%s'",
-                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'],
-                                   $curr_operator_id, $dbSocket->escapeSimple($file));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    $numrows = $res->numRows();
-
-                    if ($numrows > 0) {
-                        $sql = sprintf("UPDATE %s SET access='%s'
-                                         WHERE file='%s' AND operator_id=%d",
-                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'],
-                                       $dbSocket->escapeSimple($access),
-                                       $dbSocket->escapeSimple($file), $curr_operator_id);
+                    if ($identity['password_mode'] === 'clear') {
+                        $password_clause = 'password=NULL';
+                    } elseif ($identity['password_mode'] === 'replace') {
+                        $password_clause = "password='" . $dbSocket->escapeSimple($identity['password_hash']) . "'";
                     } else {
-                        $sql = sprintf("INSERT INTO %s (operator_id, file, access)
-                                                VALUES (%d, '%s', '%s')",
-                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'], $curr_operator_id,
-                                       $dbSocket->escapeSimple($file), $dbSocket->escapeSimple($access));
+                        $password_clause = 'password=password';
+                    }
+                    $operator_external_id = $identity['external_id'];
+                    $external_id_sql = is_null($operator_external_id)
+                                     ? 'NULL' : "'" . $dbSocket->escapeSimple($operator_external_id) . "'";
+
+                    $identity_source_sql = $dbSocket->escapeSimple($current_auth_source);
+                    $identity_external_sql = is_null($current_external_id)
+                                           ? "(external_id IS NULL OR TRIM(external_id)='')"
+                                           : "TRIM(external_id)='" . $dbSocket->escapeSimple($current_external_id) . "'";
+                    $identity_source_predicate = $current_auth_source === 'local'
+                                               ? "(auth_source='local' OR auth_source IS NULL)"
+                                               : "auth_source='" . $identity_source_sql . "'";
+                    $identity_state_predicate = $identity_source_predicate . ' AND ' . $identity_external_sql;
+                    $sql = sprintf("UPDATE %s SET %s, auth_source='%s', external_id=%s, firstname='%s', lastname='%s', title='%s', department='%s',
+                                                  company='%s', phone1='%s', phone2='%s', email1='%s', email2='%s', messenger1='%s',
+                                                  messenger2='%s', notes='%s', updatedate='%s', updateby='%s' WHERE id=%d AND %s",
+                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $password_clause,
+                                   $dbSocket->escapeSimple($identity['auth_source']), $external_id_sql,
+                                   $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($title),
+                                   $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
+                                   $dbSocket->escapeSimple($phone2), $dbSocket->escapeSimple($email1), $dbSocket->escapeSimple($email2),
+                                   $dbSocket->escapeSimple($messenger1), $dbSocket->escapeSimple($messenger2), $dbSocket->escapeSimple($notes),
+                                   $current_datetime, $dbSocket->escapeSimple($currBy), $curr_operator_id, $identity_state_predicate);
+                    $res = $dbSocket->query($sql);
+                    $identity_update_ok = false;
+                    if (!DB::isError($res)) {
+                        $affected_rows = $dbSocket->affectedRows();
+                        if (!DB::isError($affected_rows) && (int) $affected_rows === 1) {
+                            $identity_update_ok = true;
+                        } elseif (!DB::isError($affected_rows) && (int) $affected_rows === 0) {
+                            // MySQL may report no changed rows for an idempotent save.
+                            $verify_sql = sprintf("SELECT auth_source, external_id FROM %s WHERE id=%d",
+                                                   $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $curr_operator_id);
+                            $verify_res = $dbSocket->query($verify_sql);
+                            if (!DB::isError($verify_res) && $verify_res->numRows() === 1) {
+                                $verify_row = $verify_res->fetchRow(DB_FETCHMODE_ASSOC);
+                                $identity_update_ok = operator_identity_state_matches(
+                                    $current_auth_source,
+                                    $current_external_id,
+                                    isset($verify_row['auth_source']) ? $verify_row['auth_source'] : 'local',
+                                    array_key_exists('external_id', $verify_row) ? $verify_row['external_id'] : null
+                                );
+                            }
+                        }
+                    }
+                    // Never put a submitted password or derived hash in debug logs.
+                    $logDebugSQL .= "UPDATE operator identity and profile WHERE id=$curr_operator_id;\n";
+                    if (!$identity_update_ok) {
+                        $failureMsg = "Failed to update this operator identity; reload and retry";
+                        $logAction .= "Failed updating operator identity on page: ";
+                    } else {
+
+                    if (array_key_exists('reset_totp', $_POST) && $_POST['reset_totp'] === '1') {
+                        $sql = sprintf("UPDATE %s SET totp_enabled=0, totp_secret=NULL, totp_last_counter=NULL, totp_confirmed_at=NULL, totp_recovery_codes=NULL, updatedate='%s', updateby='%s' WHERE id=%d",
+                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $current_datetime,
+                                       $dbSocket->escapeSimple($currBy), $curr_operator_id);
+                        $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
                     }
 
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
+                    foreach ($_POST as $field => $access) {
+                        if (!preg_match('/^ACL_/', $field)) {
+                            continue;
+                        }
+                        $file = substr($field, 4);
+                        $sql = sprintf("SELECT id FROM %s WHERE operator_id=%d AND file='%s'",
+                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'],
+                                       $curr_operator_id, $dbSocket->escapeSimple($file));
+                        $acl_res = $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                        if ($acl_res->numRows() > 0) {
+                            $sql = sprintf("UPDATE %s SET access='%s' WHERE file='%s' AND operator_id=%d",
+                                           $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'],
+                                           $dbSocket->escapeSimple($access), $dbSocket->escapeSimple($file), $curr_operator_id);
+                        } else {
+                            $sql = sprintf("INSERT INTO %s (operator_id, file, access) VALUES (%d, '%s', '%s')",
+                                           $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'], $curr_operator_id,
+                                           $dbSocket->escapeSimple($file), $dbSocket->escapeSimple($access));
+                        }
+                        $dbSocket->query($sql);
+                        $logDebugSQL .= "$sql;\n";
+                    }
 
-                } // foreach
-
-                $successMsg = "Updated settings for: <b> $operator_username_enc </b>";
-                $logAction .= "Successfully updated settings for operator user [$operator_username] on page: ";
+                    $current_auth_source = $identity['auth_source'];
+                    $current_external_id = $operator_external_id;
+                    $successMsg = "Updated settings for: <b> $operator_username_enc </b>";
+                    $logAction .= "Successfully updated settings for operator user [$operator_username] on page: ";
+                    }
+                }
             }
 
         } else {
@@ -174,7 +231,7 @@
     } else {
         /* fill-in all the operator settings */
 
-        $sql = sprintf("SELECT id, password, firstname, lastname, title, department, company, phone1, phone2,
+        $sql = sprintf("SELECT id, password, auth_source, external_id, firstname, lastname, title, department, company, phone1, phone2,
                                email1, email2, messenger1, messenger2, notes, lastlogin,
                                creationdate, creationby, updatedate, updateby, totp_enabled, totp_confirmed_at
                           FROM %s
@@ -184,12 +241,16 @@
         $logDebugSQL .= "$sql;\n";
 
         list(
-                $curr_operator_id, $operator_password, $operator_firstname, $operator_lastname,
-                $operator_title, $operator_department, $operator_company, $operator_phone1, $operator_phone2,
+                $curr_operator_id, $operator_password, $operator_auth_source, $operator_external_id,
+                $operator_firstname, $operator_lastname, $operator_title, $operator_department, $operator_company, $operator_phone1, $operator_phone2,
                 $operator_email1, $operator_email2, $operator_messenger1, $operator_messenger2, $operator_notes,
                 $operator_lastlogin, $operator_creationdate, $operator_creationby, $operator_updatedate, $operator_updateby,
                 $operator_totp_enabled, $operator_totp_confirmed_at
             ) = $res->fetchRow();
+        $operator_auth_source = operator_normalize_auth_source($operator_auth_source);
+        $operator_auth_source = $operator_auth_source === null ? 'local' : $operator_auth_source;
+        $current_auth_source = $operator_auth_source;
+        $current_external_id = operator_normalize_external_id($operator_external_id);
     }
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
@@ -245,7 +306,9 @@
                                         "caption" => t('all','Password'),
                                         "type" => $hiddenPassword,
                                         "value" => "",
-                                        "random" => true
+                                        "random" => true,
+                                        "disabled" => $operator_auth_source === 'ldap',
+                                        "required" => false
                                      );
 
         $totp_status = (intval($operator_totp_enabled) === 1)
@@ -315,6 +378,16 @@
 
         $input_descriptors1[] = array(
                                         "type" => "hidden",
+                                        "value" => $current_auth_source,
+                                        "name" => "identity_auth_source"
+                                     );
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
+                                        "value" => $current_external_id ?? "",
+                                        "name" => "identity_external_id"
+                                     );
+        $input_descriptors1[] = array(
+                                        "type" => "hidden",
                                         "value" => dalo_csrf_token(),
                                         "name" => "csrf_token"
                                      );
@@ -335,4 +408,16 @@
     }
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
-    print_footer_and_html_epilogue();
+    $inline_extra_js = <<<'JS'
+function operatorAuthSourceChanged(select) {
+    var password = document.getElementById('operator_password');
+    if (!password) { return; }
+    var isLdap = select && select.value === 'ldap';
+    password.disabled = isLdap;
+    if (isLdap) { password.value = ''; }
+}
+document.addEventListener('DOMContentLoaded', function () {
+    operatorAuthSourceChanged(document.getElementById('auth_source'));
+});
+JS;
+    print_footer_and_html_epilogue($inline_extra_js);

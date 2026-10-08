@@ -30,6 +30,7 @@
 
     include_once("lang/main.php");
     include_once("../common/includes/validation.php");
+    include_once("include/management/operator_identity.php");
     include("../common/includes/layout.php");
     
     // init logging variables
@@ -37,6 +38,8 @@
     $logAction = "";
     $logDebugSQL = "";
 
+    $operator_auth_source = 'local';
+    $operator_external_id = null;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
@@ -46,6 +49,8 @@
                                ? trim(str_replace("%", "", $_POST['operator_username'])) : "";
             $operator_username_enc = (!empty($operator_username)) ? htmlspecialchars($operator_username, ENT_QUOTES, 'UTF-8') : "";
             $operator_password = (array_key_exists('operator_password', $_POST) && isset($_POST['operator_password'])) ? trim($_POST['operator_password']) : "";
+            $operator_auth_source = operator_auth_source_from_post($_POST);
+            $operator_external_id = operator_normalize_external_id($_POST['external_id'] ?? null);
 
             $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? trim($_POST['firstname']) : "";
             $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? trim($_POST['lastname']) : "";
@@ -60,14 +65,13 @@
             $messenger2 = (array_key_exists('messenger2', $_POST) && isset($_POST['messenger2'])) ? trim($_POST['messenger2']) : "";
             $notes = (array_key_exists('notes', $_POST) && isset($_POST['notes'])) ? trim($_POST['notes']) : "";
 
+            $identity = operator_prepare_create_identity($operator_auth_source, $operator_password, $operator_external_id);
+
             include('../common/includes/db_open.php');
 
-            if (empty($operator_username) || empty($operator_password)) {
-                // if statement returns false which means that the user has left an empty field for
-                // either the username or password, or both
-
-                $failureMsg = "username or password are empty";
-                $logAction .= "Failed adding (possible empty user/pass) new operator on page: ";
+            if (empty($operator_username) || !$identity['ok']) {
+                $failureMsg = empty($operator_username) ? "username is empty" : $identity['error'];
+                $logAction .= "Failed adding new operator identity on page: ";
             } else {
                 $sql = sprintf("SELECT COUNT(DISTINCT(username)) FROM %s WHERE username='%s'",
                                $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $dbSocket->escapeSimple($operator_username));
@@ -86,15 +90,22 @@
                     $current_datetime = date('Y-m-d H:i:s');
                     $currBy = $_SESSION['operator_user'];
 
-                    $operator_password_hash = password_hash($operator_password, PASSWORD_DEFAULT);
+                    $password_sql = is_null($identity['password_hash'])
+                                  ? 'NULL'
+                                  : "'" . $dbSocket->escapeSimple($identity['password_hash']) . "'";
+                    $external_id_sql = is_null($identity['external_id'])
+                                     ? 'NULL'
+                                     : "'" . $dbSocket->escapeSimple($identity['external_id']) . "'";
 
-                    // insert username and hashed password of operator into the database
-                    $sql = sprintf("INSERT INTO %s (id, username, password, firstname, lastname, title, department, company,
+                    // LDAP identities deliberately use SQL NULL for password.
+                    // Do not add this statement to debug SQL: local hashes must not be logged.
+                    $sql = sprintf("INSERT INTO %s (id, username, password, auth_source, external_id, firstname, lastname, title, department, company,
                                                     phone1, phone2, email1, email2, messenger1, messenger2, notes, creationdate,
                                                     creationby, updatedate, updateby)
-                                            VALUES (0, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+                                            VALUES (0, '%s', %s, '%s', %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
                                                     '%s', '%s', '%s', '%s', NULL, NULL)", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
-                                   $dbSocket->escapeSimple($operator_username), $dbSocket->escapeSimple($operator_password_hash),
+                                   $dbSocket->escapeSimple($operator_username), $password_sql,
+                                   $dbSocket->escapeSimple($identity['auth_source']), $external_id_sql,
                                    $dbSocket->escapeSimple($firstname), $dbSocket->escapeSimple($lastname),
                                    $dbSocket->escapeSimple($title), $dbSocket->escapeSimple($department),
                                    $dbSocket->escapeSimple($company), $dbSocket->escapeSimple($phone1),
@@ -103,8 +114,12 @@
                                    $dbSocket->escapeSimple($messenger2), $dbSocket->escapeSimple($notes),
                                    $current_datetime, $dbSocket->escapeSimple($currBy));
                     $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
+                    $logDebugSQL .= "INSERT operator identity;\n";
 
+                    if (DB::isError($res)) {
+                        $failureMsg = "Failed to add this operator identity to the database";
+                        $logAction .= "Failed adding new operator identity on page: ";
+                    } else {
                     // lets make sure we've inserted the new operator successfully and grab his operator_id
                     $sql = sprintf("SELECT id FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOOPERATORS'],
                                                                             $dbSocket->escapeSimple($operator_username));
@@ -163,6 +178,7 @@
                         $failureMsg = sprintf($f, $operator_username_enc);
                         $logAction .= sprintf($f, $operator_username);
                     }
+                    }
                 }
                 
             }
@@ -213,8 +229,10 @@
                                         "name" => "operator_password",
                                         "caption" => t('all','Password'),
                                         "type" => $hiddenPassword,
-                                        "value" => ((isset($operator_password)) ? $operator_password : ""),
-                                        "random" => true
+                                        "value" => "",
+                                        "random" => true,
+                                        "disabled" => $operator_auth_source === 'ldap',
+                                        "required" => $operator_auth_source === 'local'
                                      );
         
         // set navbar stuff
@@ -287,5 +305,19 @@
     print_back_to_previous_page();
 
     include('include/config/logging.php');
-    print_footer_and_html_epilogue();
+
+    $inline_extra_js = <<<'JS'
+function operatorAuthSourceChanged(select) {
+    var password = document.getElementById('operator_password');
+    if (!password) { return; }
+    var isLdap = select && select.value === 'ldap';
+    password.disabled = isLdap;
+    password.required = !isLdap;
+    if (isLdap) { password.value = ''; }
+}
+document.addEventListener('DOMContentLoaded', function () {
+    operatorAuthSourceChanged(document.getElementById('auth_source'));
+});
+JS;
+    print_footer_and_html_epilogue($inline_extra_js);
 ?>

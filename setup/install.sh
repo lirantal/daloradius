@@ -478,7 +478,7 @@ freeradius_enable_restart() {
 daloradius_install_dep() {
     echo -n "[+] Installing daloRADIUS dependencies... "
     apt --no-install-recommends install apache2 php libapache2-mod-php php-mysql php-mbstring php-common php-curl \
-                                        php-gd php-db php-mail php-mail-mime freeradius-utils git rsyslog -y >/dev/null 2>&1 &
+                                        php-gd php-ldap php-db php-mail php-mail-mime freeradius-utils git rsyslog -y >/dev/null 2>&1 &
     print_spinner $!
     wait $!
     if [ $? -ne 0 ]; then
