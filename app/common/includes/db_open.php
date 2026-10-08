@@ -47,6 +47,7 @@ if (strpos($_SERVER['PHP_SELF'], '/common/includes/db_open.php') !== false) {
     $mydbHost   = ($location) ? $location['Hostname']   : $configValues['CONFIG_DB_HOST'];
     $mydbPort   = ($location) ? $location['Port']       : $configValues['CONFIG_DB_PORT'];
     $mydbName   = ($location) ? $location['Database']   : $configValues['CONFIG_DB_NAME'];
+    $mydbPass = rawurlencode($mydbPass);
 
     $dbConnectString = sprintf("%s://%s:%s@%s:%s/%s", $mydbEngine, $mydbUser, $mydbPass, $mydbHost, $mydbPort, $mydbName);
 
