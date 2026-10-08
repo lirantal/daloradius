@@ -31,6 +31,7 @@
 - [#773](https://github.com/lirantal/daloradius/pull/773) - Fixes PDF notification workflows and access controls.
 - [#777](https://github.com/lirantal/daloradius/pull/777) - Fixes CSRF handling, rendering, translations, and sorting.
 - [#781](https://github.com/lirantal/daloradius/pull/781) - Fixes new-attribute success links.
+- [#782](https://github.com/lirantal/daloradius/pull/782) - Repairs Mail and Message Settings ACLs on upgraded installations.
 
 ### Changes
 
@@ -78,6 +79,7 @@
 - [#749](https://github.com/lirantal/daloradius/pull/749) - Makes sidebar and dashboard text translatable.
 - [#775](https://github.com/lirantal/daloradius/pull/775) - Adds hashed Users Portal passwords.
 - [#776](https://github.com/lirantal/daloradius/pull/776) - Adds open-session maintenance.
+- [#783](https://github.com/lirantal/daloradius/pull/783) - Adds optional LDAP operator authentication alongside local accounts and TOTP MFA.
 
 ## release 2.3 - 22 May 2026
 
