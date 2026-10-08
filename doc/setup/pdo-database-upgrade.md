@@ -36,7 +36,7 @@ configuration. The installer CLI check alone does not prove the web SAPI works.
 2. Update the complete application source together, including retained Chilli
    examples' shared PDO provider dependencies. Custom code must use PDO handles;
    the retired common `db_open.php`, `db_close.php` and DB callback are not aliases
-   for the new provider. See the lot-3 compatibility documentation.
+   for the new provider.
 3. Install/enable the PDO MySQL extension and retain the mail dependencies above.
 4. Docker: rebuild the web image and replace only the web container as appropriate
    to the deployment. Updating source alone does not remove packages from an older
@@ -55,27 +55,13 @@ older image or packages. A source-only rollback onto this PDO-only runtime is no
 sufficient. Keep historical PEAR regression baselines in a separate legacy test
 runtime, not in the new production image.
 
-## Isolated verification
+## Isolated build
 
 From a clean source checkout/export, with no live configuration or secrets in the
 build context:
 
 ```bash
 docker build -t daloradius-pdo-r29:local .
-python3 tests/installation_pdo_dependencies.py --image daloradius-pdo-r29:local
 ```
-
-The standalone test uses disposable MariaDB data in tmpfs and an internal Docker
-network without published ports. It checks PEAR DB package/entrypoint absence,
-native PDO reads and rollback for both configuration labels, the actual Apache
-accounting endpoint with nonempty totals and a redacted SQL error, and PEAR
-Mail/Mime delivery to an isolated SMTP receiver. Its operator session is seeded;
-this is not a password-login test. Configuration/session values are confined to
-the disposable container and removed with it. No external mailbox, SMTP TLS/auth,
-FreeRADIUS/NAS hardware or live database is involved.
-
-No CI gate is introduced: lot 5 was explicitly waived. The global lot-6 fresh
-installations, preserved-data upgrade and cross-domain regression remain separate
-release acceptance work.
 
 Aucune clé, aucun mot de passe, jeton, secret ou identifiant de connexion ne doit être conservé.
