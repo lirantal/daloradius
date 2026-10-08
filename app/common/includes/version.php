@@ -28,5 +28,5 @@ if (strpos($_SERVER['PHP_SELF'], '/common/includes/version.php') !== false) {
     exit;
 }
 
-$configValues['DALORADIUS_VERSION'] = '2.3';
+$configValues['DALORADIUS_VERSION'] = '2.4';
 $configValues['DALORADIUS_DATE'] = '22 May 2026';
