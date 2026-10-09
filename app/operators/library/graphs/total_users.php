@@ -8,7 +8,8 @@ require_once __DIR__.'/../widget_reads_pdo.php';
 dalo_widget_inputs(true);
 try {
 $widgetPDO=dalo_widget_open();
-dalo_widget_authorize($widgetPDO,array('mng-main','mng-users'));
+// Landing pages have no ACL entries; use the permission for listing users.
+dalo_widget_authorize($widgetPDO,array('mng-list-all'));
 
 $checkTable=dalo_widget_table($configValues,'CONFIG_DB_TBL_RADCHECK');
 $infoTable=dalo_widget_table($configValues,'CONFIG_DB_TBL_DALOUSERINFO');
