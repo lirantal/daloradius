@@ -99,30 +99,6 @@ provisioning, and rollout guidance, is documented in
 
 Fresh Docker deployments initialize the database from the bundled schema. When upgrading an existing Docker deployment, check `contrib/db/migrations/` in the updated source tree and apply the relevant SQL migrations before using newly added features.
 
-### Missing RADIUS attribute dictionary
-
-The web-container entrypoint initializes the `dictionary` table from
-`contrib/db/mariadb-daloradius-dictionaries.sql` if the table is missing. This
-applies both to fresh databases and to already-initialized deployments, even
-when `./data/daloradius/.db_init_done` exists. Existing dictionary tables and
-custom attributes are left unchanged.
-
-Docker installations created without this table can show an incomplete user
-edit page with unresponsive tabs and an HTTP 500 when loading attribute metadata
-on the New User page. After updating the source to a revision containing this
-fix, rebuild and recreate the web container:
-
-```bash
-docker compose up -d --build radius-web
-```
-
-Keep the existing data directories and volumes; do not remove initialization
-markers or reimport the main schema. The missing dictionary is added on startup
-without resetting users, profiles, or operators. Do not import the dictionary
-SQL file manually over an existing table: it contains `DROP TABLE` statements.
-
-### Other migrations
-
 Operator LDAP authentication requires
 `contrib/db/migrations/2026-09-operator-ldap.sql`; it preserves existing local
 operator passwords and can be applied repeatedly. The current web-container
