@@ -518,7 +518,7 @@ EOF;
 
                 $id = $row[5];
                 $id__attribute = sprintf('%s__%s', $id, $row[0]);
-                $name = sprintf('editValues%s[]', $id);
+                $name = sprintf('editValues_radcheck_%s[]', $id);
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
                 $onclick = sprintf("document.getElementById('form-%d-radcheck').submit()", $id);
 
@@ -568,7 +568,7 @@ EOF;
 
                 $id = $row[5];
                 $id__attribute = sprintf('%s__%s', $id, $row[0]);
-                $name = sprintf('editValues%s[]', $id);
+                $name = sprintf('editValues_radreply_%s[]', $id);
                 $type = (preg_match("/-Password$/", $row[0])) ? $hiddenPassword : "text";
                 $onclick = sprintf("document.getElementById('form-%d-radreply').submit()", $id);
 

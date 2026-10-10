@@ -46,6 +46,10 @@ function dalo_user_edit_attributes($post, $skip, $validOps) {
             strlen($attribute) > 128 || strlen($value) > 4096) {
             throw new InvalidArgumentException('Invalid user attribute');
         }
+        // Dynamic dictionary controls submit check/reply; existing rows use radcheck/radreply.
+        if ($table === 'check' || $table === 'reply') {
+            $table = 'rad' . $table;
+        }
         if ($table !== 'radcheck' && $table !== 'radreply') {
             throw new InvalidArgumentException('Invalid attribute table');
         }
