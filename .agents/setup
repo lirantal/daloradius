@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# Prepares an Amp orb (Debian 12) for daloRADIUS development: PHP CLI with the
+# extensions the app uses, a local MariaDB seeded with the FreeRADIUS and
+# daloRADIUS schemas, and a local daloradius.conf.php pointing at it.
+# Must stay non-interactive and idempotent; it reruns on stale snapshots.
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+step() { printf '\n==> %s\n' "$*"; }
+timed() { local start=$SECONDS; "$@"; printf '    (%ss)\n' "$((SECONDS - start))"; }
+
+# Mirrors the runtime packages in Dockerfile, minus Apache (the PHP built-in
+# server is used for local dev).
+packages=(
+  php-cli php-common php-mysql php-gd php-curl php-ldap php-mbstring
+  php-mail php-mail-mime php-net-smtp
+  mariadb-server mariadb-client freeradius-utils
+)
+
+install_packages() {
+  local missing=()
+  for pkg in "${packages[@]}"; do
+    dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q 'install ok installed' || missing+=("$pkg")
+  done
+  if [ "${#missing[@]}" -eq 0 ]; then
+    echo "    all packages already installed"
+    return
+  fi
+  echo "    installing: ${missing[*]}"
+  sudo apt-get update -qq
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends "${missing[@]}"
+}
+
+start_mariadb() {
+  # systemd owns MariaDB, so it survives setup and starts in orbs restored
+  # from the snapshot.
+  sudo systemctl enable --now mariadb >/dev/null 2>&1
+  for _ in $(seq 1 30); do
+    sudo mariadb-admin ping >/dev/null 2>&1 && return
+    sleep 1
+  done
+  echo "MariaDB did not become ready" >&2
+  exit 1
+}
+
+# Credentials match the defaults in daloradius.conf.php.sample.
+seed_database() {
+  sudo mariadb <<'SQL'
+CREATE DATABASE IF NOT EXISTS raddb;
+CREATE USER IF NOT EXISTS 'raduser'@'localhost' IDENTIFIED BY 'radpass';
+GRANT ALL ON raddb.* TO 'raduser'@'localhost';
+FLUSH PRIVILEGES;
+SQL
+
+  if [ "$(sudo mariadb -N -B -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='raddb' AND table_name='operators'")" -gt 0 ]; then
+    echo "    raddb already seeded"
+    return
+  fi
+
+  # Same import order as setup/install.sh (daloradius_load_sql_schema).
+  local db=contrib/db
+  for f in "$db/fr3-mariadb-freeradius.sql" "$db/mariadb-daloradius.sql" \
+           "$db/mariadb-daloradius-dictionaries.sql" "$db"/migrations/*.sql \
+           "$db/update-performance-indexes.sql"; do
+    echo "    importing $f"
+    sudo mariadb raddb < "$f"
+  done
+}
+
+write_config() {
+  local conf=app/common/includes/daloradius.conf.php
+  mkdir -p var/log var/backup
+  if [ -s "$conf" ]; then
+    echo "    $conf already exists"
+    return
+  fi
+  cp -- "$conf.sample" "$conf"
+  sed -i "s|\$configValues\['CONFIG_LOG_FILE'\] = .*;|\$configValues['CONFIG_LOG_FILE'] = '$repo_root/var/log/daloradius.log';|" "$conf"
+}
+
+step "Installing PHP and MariaDB packages"; timed install_packages
+step "Starting MariaDB"; timed start_mariadb
+step "Seeding raddb"; timed seed_database
+step "Writing local daloradius.conf.php"; timed write_config
+step "Toolchain"
+php -v | head -n 1
+php -r 'exit(in_array("mysql", PDO::getAvailableDrivers(), true) ? 0 : 1);'
+echo "    pdo_mysql available"
