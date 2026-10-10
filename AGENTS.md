@@ -11,16 +11,17 @@ daloRADIUS is a PHP web UI for FreeRADIUS. It has no framework, no Composer root
 - `app/operators/`: operators (admin) web root. Each page is a top-level `*.php` file; shared logic lives in `library/` and `include/`; translations live in `lang/` (`en.php` is the fallback).
 - `app/users/`: end-user portal web root.
 - `app/common/includes/`: shared config, PDO connection, validation, layout. `daloradius.conf.php` is generated from `daloradius.conf.php.sample` and is gitignored.
-- `app/common/library/`, `app/common/static/`: vendored third-party code and assets (dompdf, htmlpurifier, Bootstrap, Chart.js, Leaflet). Do not edit or lint them as first-party code.
+- `app/common/library/`: vendored third-party PHP (dompdf, htmlpurifier, phpmailer, php-svg-qrcode, totp-php). Do not edit or lint it as first-party code.
+- `app/common/static/`: shared JS, CSS, and images. The minified Bootstrap and Chart.js bundles (`*.min.*` and their source maps) and `css/icons/` are vendored; the other JS and CSS files (e.g. `request.js`, `dynamic_attributes.js`, `daloradius-responsive.css`) are first-party.
 - `contrib/db/`: base schemas (`fr3-mariadb-freeradius.sql`, `mariadb-daloradius.sql`, dictionaries) and `migrations/` for upgrades.
 - `init.sh`, `Dockerfile`, `docker-compose.yml`: Docker image and runtime upgrade logic. `setup/install.sh`: bare-metal Debian installer.
 - `doc/`: install and setup guides.
 
 ## Local environment
 
-`.agents/setup` prepares a Debian 12 machine (including Amp orbs): PHP 8.2 CLI with the extensions from the `Dockerfile`, a local MariaDB with `raddb` seeded from `contrib/db`, and a local `daloradius.conf.php`. It is idempotent; rerun it after pulling schema changes on a fresh database.
+`.agents/setup` prepares a Debian 12 machine (including Amp orbs): PHP 8.2 CLI with the extensions from the `Dockerfile`, a local MariaDB with `raddb` seeded from `contrib/db`, and a local `daloradius.conf.php`. It is idempotent; rerun it after pulling new migrations.
 
-- DB: `raddb` on `localhost:3306`, user `raduser` / `radpass` (the sample config defaults). Inspect with `sudo mariadb raddb`.
+- DB: `raddb` on `localhost:3306`, user `raduser` / `radpass` (the sample config defaults). Inspect with `sudo mariadb raddb`. Setup records imported SQL files in `orb_setup.applied_sql` and imports new migrations on rerun; to reseed from scratch, `DROP DATABASE raddb` and rerun setup.
 - Operators login: `administrator` / `radius` (local dev seed only).
 - Web: `.amp/services.yaml` serves `app/operators` and `app/users` with `php -S`. In an orb, run `amp orb services ensure`; elsewhere run `php -S 127.0.0.1:8000 -t app/operators`.
 - App log: `var/log/daloradius.log`.
@@ -29,7 +30,7 @@ daloRADIUS is a PHP web UI for FreeRADIUS. It has no framework, no Composer root
 
 There is no automated test suite or CI in this repository. Verify by:
 
-- Linting changed PHP: `php -l <file>`, or all first-party code with `find app -name '*.php' -not -path 'app/common/library/*' -print0 | xargs -0 -n1 -P8 php -l | grep -v '^No syntax errors'`.
+- Linting changed PHP: `php -l <file>`, or all first-party code with `find app -name '*.php' -not -path 'app/common/library/*' -print0 | xargs -0 -n1 -P8 sh -c 'php -l "$0" >/dev/null || exit 1'` (prints only errors; exits non-zero if any file fails).
 - Exercising the affected page against the local MariaDB, signed in as an operator. State-changing requests require the `csrf_token` from the form.
 - Checking the PHP server output for warnings and fatals.
 

@@ -50,22 +50,37 @@ seed_database() {
   sudo mariadb <<'SQL'
 CREATE DATABASE IF NOT EXISTS raddb;
 CREATE USER IF NOT EXISTS 'raduser'@'localhost' IDENTIFIED BY 'radpass';
+ALTER USER 'raduser'@'localhost' IDENTIFIED BY 'radpass';
 GRANT ALL ON raddb.* TO 'raduser'@'localhost';
 FLUSH PRIVILEGES;
+CREATE DATABASE IF NOT EXISTS orb_setup;
+CREATE TABLE IF NOT EXISTS orb_setup.applied_sql (
+  file VARCHAR(255) PRIMARY KEY,
+  applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 SQL
 
-  if [ "$(sudo mariadb -N -B -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='raddb' AND table_name='operators'")" -gt 0 ]; then
-    echo "    raddb already seeded"
-    return
+  # Each file is recorded only after it imports successfully, so an
+  # interrupted run resumes at the failed file and migrations added after a
+  # snapshot are applied when setup reruns on it. Forget the record if raddb
+  # was emptied.
+  if [ "$(sudo mariadb -N -B -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='raddb'")" -eq 0 ]; then
+    sudo mariadb -e "DELETE FROM orb_setup.applied_sql"
   fi
+  local applied
+  applied="$(sudo mariadb -N -B -e "SELECT file FROM orb_setup.applied_sql")"
 
   # Same import order as setup/install.sh (daloradius_load_sql_schema).
   local db=contrib/db
   for f in "$db/fr3-mariadb-freeradius.sql" "$db/mariadb-daloradius.sql" \
            "$db/mariadb-daloradius-dictionaries.sql" "$db"/migrations/*.sql \
            "$db/update-performance-indexes.sql"; do
+    if grep -Fqx -- "$f" <<<"$applied"; then
+      continue
+    fi
     echo "    importing $f"
     sudo mariadb raddb < "$f"
+    sudo mariadb -e "INSERT INTO orb_setup.applied_sql (file) VALUES ('$f')"
   done
 }
 
@@ -77,7 +92,9 @@ write_config() {
     return
   fi
   cp -- "$conf.sample" "$conf"
-  sed -i "s|\$configValues\['CONFIG_LOG_FILE'\] = .*;|\$configValues['CONFIG_LOG_FILE'] = '$repo_root/var/log/daloradius.log';|" "$conf"
+  sed -i \
+    -e "s|\$configValues\['CONFIG_PATH_DALO_VARIABLE_DATA'\] = .*;|\$configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '$repo_root/var';|" \
+    -e "s|\$configValues\['CONFIG_LOG_FILE'\] = .*;|\$configValues['CONFIG_LOG_FILE'] = '$repo_root/var/log/daloradius.log';|" "$conf"
 }
 
 step "Installing PHP and MariaDB packages"; timed install_packages
