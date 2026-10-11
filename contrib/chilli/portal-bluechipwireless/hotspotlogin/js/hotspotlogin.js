@@ -16,7 +16,7 @@ function doTime() {
 		time = mytimeleft - time;
 
 	        if (time <= 0) {
-	          window.location = \"$loginpath?res=popup3&uamip=$uamip&uamport=$uamport\";
+	          window.location = " . dalo_chilli_js($loginpath . '?res=popup3&uamip=' . $uamip . '&uamport=' . $uamport) . ";
 	        }
 	}
 
