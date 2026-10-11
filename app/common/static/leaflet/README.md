@@ -25,8 +25,8 @@ Unminified and ESM builds are not used by daloRADIUS and are not included.
 The operators `static` symlink exposes these shared assets at
 `static/leaflet/`. GIS pages use `?v=1.9.4` for cache versioning; update it
 alongside the distribution when upgrading. Review the upstream release notes,
-replace the distribution assets and license, and run
-`python3 -m unittest discover -s tests -p 'test_leaflet_assets.py'`.
-Also smoke-test marker icons and layer controls in a browser.
+replace the distribution assets and license, and verify relative asset paths.
+Smoke-test marker icons and layer controls in a browser, checking that Leaflet
+assets load locally without CDN requests or missing files.
 
 Only the library is local: OpenStreetMap tiles still require network access.
