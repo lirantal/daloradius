@@ -60,10 +60,10 @@
     $title = t('Intro','giseditmap.php');
     $help = t('helpPage','giseditmap');
 
-    $extra_css = array("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
+    $extra_css = array("static/leaflet/leaflet.css?v=1.9.4");
 
     // loaded at the bottom of the page
-    $extra_js = array("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js");
+    $extra_js = array("static/leaflet/leaflet.js?v=1.9.4");
 
     print_html_prologue($title, $langCode, $extra_css);
 
