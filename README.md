@@ -103,7 +103,7 @@ Would you like to contribute too? Learn how to get started: [How to Contribute](
 
 ### GIS - Geographical Information System
 
-daloRADIUS comes with integrated support for GIS provided by Leaflet and CARTO basemap, enabling the visual location of deployed HotSpots across a map. It allows you to see their status and monitor them visually.
+daloRADIUS comes with integrated support for GIS provided by Leaflet and an OpenStreetMap basemap, enabling the visual location of deployed HotSpots across a map. It allows you to see their status and monitor them visually.
 
 - **View Map**: Monitor deployed HotSpots using the GIS map.
 - **Edit Map**: Add or delete HotSpots directly on the map, without navigating to the HotSpots Management page.
@@ -198,6 +198,7 @@ User portal passwords are separate from FreeRADIUS password attributes. Newly cr
 * dompdf - [https://github.com/dompdf](https://github.com/dompdf)
 * htmlpurifier - [https://github.com/ezyang/htmlpurifier](https://github.com/ezyang/htmlpurifier)
 * Chart.js - [https://www.chartjs.org/](https://www.chartjs.org/)
+* Leaflet - [https://leafletjs.com/](https://leafletjs.com/)
 * phpmailer - [https://github.com/PHPMailer/PHPMailer](https://github.com/PHPMailer/PHPMailer)
 * php-svg-qrcode - [https://github.com/philronan/php-svg-qrcode](https://github.com/philronan/php-svg-qrcode)
 * totp-php - [https://github.com/remotemerge/totp-php](https://github.com/remotemerge/totp-php)
