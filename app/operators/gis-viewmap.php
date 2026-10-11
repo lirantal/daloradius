@@ -42,17 +42,17 @@
     $title = t('Intro','gisviewmap.php');
     $help = t('helpPage','gisviewmap');
 
-    $extra_css = array("static/leaflet/leaflet.css?v=1.9.4");
+    $extra_css = array("static/leaflet/leaflet.css?v=1.9.4", "static/css/gis-map.css?v=1");
 
     // loaded at the bottom of the page
-    $extra_js = array("static/leaflet/leaflet.js?v=1.9.4");
+    $extra_js = array("static/leaflet/leaflet.js?v=1.9.4", "static/js/gis-map.js?v=1");
 
     print_html_prologue($title, $langCode, $extra_css);
 
     print_title_and_help($title, $help);
 
     // print map div
-    echo '<div id="map" style="width: 800px; height: 600px; margin: 20px auto"></div>' . "\n";
+    echo '<div id="map" class="gis-map"></div>' . "\n";
 
     $rows=array();
     try {
@@ -114,7 +114,7 @@
 
     $inline_extra_js = <<<EOF
 window.onload = function() {
-    var map = L.map('map').setView({$map_center}, 16);
+    var map = L.map('map', {trackResize: false}).setView({$map_center}, 16);
     var group = L.featureGroup().addTo(map);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -131,7 +131,7 @@ EOF;
     if ($marker_count > 1) {
         $inline_extra_js .= "\n    map.fitBounds(group.getBounds());\n";
     }
-    $inline_extra_js .= "}\n";
+    $inline_extra_js .= "    daloObserveMapResize(map);\n}\n";
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue($inline_extra_js, $extra_js);
