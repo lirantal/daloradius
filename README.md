@@ -36,6 +36,61 @@ docker compose up -d --build
 
 The primary `Dockerfile` can also run the web interfaces alone against externally managed MariaDB and FreeRADIUS services. See the [Docker usage guide](README.docker.md) for environment variables, ports, persistence, upgrades, and both deployment modes.
 
+## Network access and firewall requirements
+
+Allow only the destinations needed by the features you use. Browser traffic and
+server traffic originate from different machines; allowing Internet access on
+the daloRADIUS server alone does not enable map tiles on an operator workstation.
+
+### Runtime access
+
+| Feature | Connection source | Destination | Protocol / destination port | When needed |
+| --- | --- | --- | --- | --- |
+| GIS map tiles | Operator browser | `a.tile.openstreetmap.org`, `b.tile.openstreetmap.org`, `c.tile.openstreetmap.org` | HTTPS / TCP 443 | Viewing or editing maps |
+| Email notifications | daloRADIUS server | Configured SMTP relay (`CONFIG_MAIL_SMTPADDR`) | TCP / configured `CONFIG_MAIL_SMTPPORT` | Email enabled; commonly 25, 465 or 587, according to relay configuration |
+| Operator LDAP / Active Directory login | daloRADIUS server | Configured directory servers | TCP / configured LDAP port; normally 389 for LDAP/StartTLS or 636 for LDAPS | LDAP authentication enabled |
+| Database | daloRADIUS server | Configured MariaDB host | TCP / configured database port; normally 3306 | Database on another host; local sockets do not require a network rule |
+
+The current GIS pages use
+`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`, with `s` set to `a`, `b` or
+`c`. The XYZ values identify the requested map image. Permit these hostnames in
+the workstation's firewall or web filtering policy; do not pin the service to
+fixed IP addresses. Leaflet, its styles and marker images are served locally by
+daloRADIUS: access to `unpkg.com` is no longer required. If tile access is blocked,
+the basemap may be blank while local map controls and hotspot markers still load.
+Follow the [OpenStreetMap tile usage policy](https://operations.osmfoundation.org/policies/tiles/).
+The attribution link to `www.openstreetmap.org` is a user-activated link, not a
+separate dependency for loading tiles.
+
+The SMTP relay and directory can be internal services; these are not necessarily
+Internet flows. Allow DNS resolution to your approved resolvers wherever a
+configured destination uses a hostname. Ordinary help and credits links do not
+require a blanket Internet allow rule for normal application operation.
+
+### Installation, updates and optional contributed portals
+
+Installation and updates have separate requirements: the documented installer
+uses HTTPS / TCP 443 to `raw.githubusercontent.com` and `github.com`, plus the OS
+package repositories configured on the installation host. Docker image builds
+and pulls also need the selected registry's authentication and image-download
+endpoints. Use the repository/registry provider's current endpoint list rather
+than treating these as permanent runtime requirements.
+
+Contributed captive portals under `contrib/chilli` are optional and have their
+own network requirements. For the shared PayPal integration, browsers submit to
+`www.paypal.com` (or `www.sandbox.paypal.com`) over HTTPS / TCP 443; server-side
+IPN verification uses `ipnpb.paypal.com` (or `ipnpb.sandbox.paypal.com`) over HTTPS /
+TCP 443. PayPal also needs inbound access to the deployed portal's configured IPN
+callback. Other legacy portal templates contain provider-specific external URLs;
+review the exact deployed template and the provider's current requirements before
+allowing them. These are not requirements for the operators or users portal.
+
+This list covers application dependencies, not all infrastructure rules. Keep
+web access to daloRADIUS, NAS-to-FreeRADIUS authentication/accounting, configured
+NAS management or disconnect operations, and host-level DNS/NTP/backup traffic
+in a separate deployment-specific flow matrix. Do not expose the operators
+portal or database to the Internet to enable map tiles.
+
 ## Contributors
 
 Special thanks to these wonderful people for their contributions to daloRADIUS...
