@@ -35,18 +35,41 @@ $loginpath = $_SERVER['PHP_SELF'];
 
 # Escape values reflected into HTML or inline JavaScript. Chilli supplies
 # these on the query string of the pre-auth login page, so they are not trusted.
+if (!function_exists('dalo_chilli_text')) {
+    function dalo_chilli_text($value) {
+        $text = (string) $value;
+        if (!mb_check_encoding($text, 'UTF-8')) {
+            $text = mb_convert_encoding($text, 'UTF-8', 'ISO-8859-1');
+        }
+        $clean = iconv('UTF-8', 'UTF-8//IGNORE', $text);
+        return $clean === false ? '' : $clean;
+    }
+}
 if (!function_exists('dalo_chilli_html')) {
     function dalo_chilli_html($value) {
-        return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        return htmlspecialchars(dalo_chilli_text($value), ENT_QUOTES, 'UTF-8');
     }
 }
 if (!function_exists('dalo_chilli_js')) {
     function dalo_chilli_js($value) {
-        $json = json_encode((string) $value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES);
-        if ($json === false) {
-            return "''";
+        $json = json_encode(dalo_chilli_text($value), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES);
+        return $json === false ? "''" : $json;
+    }
+}
+if (!function_exists('dalo_chilli_http_url')) {
+    function dalo_chilli_http_url($value) {
+        $url = dalo_chilli_text($value);
+        $parts = parse_url($url);
+        if (!is_array($parts) || empty($parts['scheme']) || empty($parts['host'])) {
+            return '';
         }
-        return $json;
+        if (!in_array(strtolower($parts['scheme']), array('http', 'https'), true)) {
+            return '';
+        }
+        if (strpbrk($url, "\r\n\t") !== false) {
+            return '';
+        }
+        return $url;
     }
 }
 
@@ -251,7 +274,7 @@ if ($result == 0) {
 $js_result = (int) $result;
 $js_popup = dalo_chilli_js($loginpath . '?res=popup2&uamip=' . $uamip . '&uamport=' . $uamport . '&userurl=' . $userurl . '&redirurl=' . $redirurl . '&timeleft=' . $timeleft);
 $js_userurl = dalo_chilli_js($userurldecode);
-$js_redirurl = dalo_chilli_js($redirurldecode);
+$js_redirurl = dalo_chilli_js(dalo_chilli_http_url($redirurldecode));
 $js_timeleft = dalo_chilli_js($timeleft);
 echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
 <html>
@@ -259,6 +282,7 @@ echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
   <title>$title</title>
   <meta http-equiv=\"Cache-control\" content=\"no-cache\">
   <meta http-equiv=\"Pragma\" content=\"no-cache\">
+  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
   <SCRIPT LANGUAGE=\"JavaScript\">
     var blur = 0;
     var starttime = new Date();
