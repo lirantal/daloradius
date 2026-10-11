@@ -64,12 +64,18 @@ echo "
 
 
 <?php
+	$form_action = dalo_chilli_html($loginpath);
+	$hidden_challenge = dalo_chilli_html($challenge);
+	$hidden_uamip = dalo_chilli_html($uamip);
+	$hidden_uamport = dalo_chilli_html($uamport);
+	$hidden_userurl = dalo_chilli_html($userurl);
+	$popup_url = dalo_chilli_js($loginpath . '?res=popup1&uamip=' . $uamip . '&uamport=' . $uamport);
 	echo "
-	<form name='form1' method='post' action='$loginpath'>
-		<input type='hidden' name='challenge' value='$challenge'>
-		<input type='hidden' name='uamip' value='$uamip'>
-		<input type='hidden' name='uamport' value='$uamport'>
-		<input type='hidden' name='userurl' value='$userurl'>
+	<form name='form1' method='post' action='$form_action'>
+		<input type='hidden' name='challenge' value='$hidden_challenge'>
+		<input type='hidden' name='uamip' value='$hidden_uamip'>
+		<input type='hidden' name='uamport' value='$hidden_uamport'>
+		<input type='hidden' name='userurl' value='$hidden_userurl'>
 	";
 ?>
 
@@ -93,7 +99,7 @@ echo "
     <td colspan="2" align="right">
 	<input type='hidden' name='button' value='Login'>
       <input class="login_submit" type="button" name="button" value="Login" 
-	  	<?php echo "onClick=\"javascript:popUp('$loginpath?res=popup1&uamip=$uamip&uamport=$uamport')\"" ?> />
+	  	<?php echo "onClick='javascript:popUp($popup_url)'" ?> />
 	
 		<input type="checkbox" name="tos" id="toscheckbox"> 
 			<font size='1'>I agree to the <a href="http://www.bluechipwireless.com/samui_internet_service_terms.html">Terms & Conditions </a> </font>
