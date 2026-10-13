@@ -52,11 +52,11 @@
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
 
     // whenever possible we use a whitelist approach
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+    $orderBy = (array_key_exists('orderBy', $_GET) && is_string($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+    $orderType = (array_key_exists('orderType', $_GET) && is_string($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
@@ -69,123 +69,125 @@
     // start printing content
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
-    include('include/management/pages_common.php');
+    require_once __DIR__ . '/library/group_profiles_pdo.php';
+    $pdo = null;
+    try {
+        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $table = dalo_group_table($configValues, 'CONFIG_DB_TBL_RADGROUPCHECK');
+        include('include/management/pages_common.php');
 
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPCHECK']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
+        $sql_WHERE = '';
+        $values = array();
+        $numrows = (int)dalo_group_query($pdo, "SELECT COUNT(id) FROM $table" . $sql_WHERE, $values)->fetchColumn();
 
-    if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
+        if ($numrows > 0) {
+            /* START - Related to pages_numbering.php */
 
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+            // when $numrows is set, $maxPage is calculated inside this include file
+            include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+                                                                  // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+            // here we decide if page numbers should be shown
+            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
 
-        /* END */
+            /* END */
 
-        // we execute and log the actual query
-        $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPCHECK']);
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
+            $sql = "SELECT id,groupname,attribute,op,value FROM $table" . $sql_WHERE
+                 . " ORDER BY `$orderBy` $orderType LIMIT ?,?";
+            $rows = dalo_group_query($pdo, $sql, array_merge($values, array((int)$offset,(int)$rowsPerPage)))->fetchAll(PDO::FETCH_NUM);
+            $per_page_numrows = count($rows);
 
-        $per_page_numrows = $res->numRows();
+            // this can be passed as form attribute and
+            // printTableFormControls function parameter
+            $action = "mng-rad-groupcheck-del.php";
 
-        // this can be passed as form attribute and
-        // printTableFormControls function parameter
-        $action = "mng-rad-groupcheck-del.php";
+            // we prepare the "controls bar" (aka the table prologue bar)
+            $params = array(
+                                'num_rows' => $numrows,
+                                'rows_per_page' => $rowsPerPage,
+                                'page_num' => $pageNum,
+                                'order_by' => $orderBy,
+                                'order_type' => $orderType,
+                            );
 
-        // we prepare the "controls bar" (aka the table prologue bar)
-        $params = array(
-                            'num_rows' => $numrows,
-                            'rows_per_page' => $rowsPerPage,
-                            'page_num' => $pageNum,
-                            'order_by' => $orderBy,
-                            'order_type' => $orderType,
-                        );
+            $descriptors = array();
+            $descriptors['start'] = array( 'common_controls' => 'record_id[]', );
+            $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
+            print_table_prologue($descriptors);
 
-        $descriptors = array();
-        $descriptors['start'] = array( 'common_controls' => 'record_id[]', );
-        $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
-        print_table_prologue($descriptors);
+            $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
 
-        $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
+            // print table top
+            print_table_top($form_descriptor);
 
-        // print table top
-        print_table_top($form_descriptor);
+            // second line of table header
+            printTableHead($cols, $orderBy, $orderType);
 
-        // second line of table header
-        printTableHead($cols, $orderBy, $orderType);
+            // closes table header, opens table body
+            print_table_middle();
 
-        // closes table header, opens table body
-        print_table_middle();
+            // table content
+            $count = 0;
+            foreach ($rows as $row) {
+                $rowlen = count($row);
 
-        // table content
-        $count = 0;
-        while ($row = $res->fetchRow()) {
-            $rowlen = count($row);
+                // escape row elements
+                for ($i = 0; $i < $rowlen; $i++) {
+                    $row[$i] = htmlspecialchars((string)$row[$i], ENT_QUOTES, 'UTF-8');
+                }
 
-            // escape row elements
-            for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                list($id, $groupname, $attribute, $op, $value) = $row;
+                $id = intval($id);
+
+                $item_id = sprintf("record-%d", $id);
+
+                $tooltip = array(
+                                    'subject' => $id,
+                                    'actions' => array(),
+                                );
+                $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-groupcheck-edit.php?item=groupcheck-%s', $id, ), 'label' => t('button','EditGroupCheck'), );
+
+                // create tooltip
+                $tooltip = get_tooltip_list_str($tooltip);
+
+                // create checkbox
+                $d = array( 'name' => 'record_id[]', 'value' => $item_id );
+                $checkbox = get_checkbox_str($d);
+
+                // build table row
+                $table_row = array( $checkbox, $tooltip, $groupname, $attribute, $op, $value );
+
+                // print table row
+                print_table_row($table_row);
+
+                $count++;
             }
 
-            list($id, $groupname, $attribute, $op, $value) = $row;
-            $id = intval($id);
+            // close tbody,
+            // print tfoot
+            // and close table + form (if any)
+            $table_foot = array(
+                                    'num_rows' => $numrows,
+                                    'rows_per_page' => $per_page_numrows,
+                                    'colspan' => $colspan,
+                                    'multiple_pages' => $drawNumberLinks
+                               );
 
-            $item_id = sprintf("record-%d", $id);
+            $descriptor = array( 'table_foot' => $table_foot );
+            print_table_bottom($descriptor);
 
-            $tooltip = array(
-                                'subject' => $id,
-                                'actions' => array(),
-                            );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-groupcheck-edit.php?item=groupcheck-%s', $id, ), 'label' => t('button','EditGroupCheck'), );
+            // get and print "links"
+            $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+            printLinks($links, $drawNumberLinks);
 
-            // create tooltip
-            $tooltip = get_tooltip_list_str($tooltip);
-
-            // create checkbox
-            $d = array( 'name' => 'record_id[]', 'value' => $item_id );
-            $checkbox = get_checkbox_str($d);
-
-            // build table row
-            $table_row = array( $checkbox, $tooltip, $groupname, $attribute, $op, $value );
-
-            // print table row
-            print_table_row($table_row);
-
-            $count++;
+        } else {
+            $failureMsg = "Nothing to display";
+            include_once("include/management/actionMessages.php");
         }
 
-        // close tbody,
-        // print tfoot
-        // and close table + form (if any)
-        $table_foot = array(
-                                'num_rows' => $numrows,
-                                'rows_per_page' => $per_page_numrows,
-                                'colspan' => $colspan,
-                                'multiple_pages' => $drawNumberLinks
-                           );
-
-        $descriptor = array( 'table_foot' => $table_foot );
-        print_table_bottom($descriptor);
-
-        // get and print "links"
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
-        printLinks($links, $drawNumberLinks);
-
-    } else {
-        $failureMsg = "Nothing to display";
-        include_once("include/management/actionMessages.php");
-    }
-
-    include('../common/includes/db_close.php');
+    } catch (Throwable $error) {
+        echo '<div class="alert alert-danger">Unable to load group attributes.</div>';
+    } finally { $pdo = null; }
 
     include('include/config/logging.php');
 

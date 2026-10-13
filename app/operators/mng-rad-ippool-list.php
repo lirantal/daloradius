@@ -31,16 +31,19 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
 
-    // we partially strip some characters and
-    // leave validation/escaping to other functions used later in the script
-    $pool_name = (array_key_exists('pool_name', $_GET) && !empty(str_replace("%", "", trim($_GET['pool_name']))))
-               ? str_replace("%", "", trim($_GET['pool_name'])) : "";
-    $pool_name_enc = (!empty($pool_name))
-                   ? htmlspecialchars($pool_name, ENT_QUOTES, 'UTF-8')
-                   : "";
-
-    // keep filter when ordering/paginating
-    $partial_query_string = (!empty($pool_name_enc) ? "&pool_name=" . $pool_name_enc : "");
+    require_once __DIR__ . '/library/ip_pool_pages_pdo.php';
+    $pool_name=$pool_name_enc=$partial_query_string='';
+    $filter_invalid=false;
+    try {
+        $value=$_GET['pool_name'] ?? '';
+        if (!is_string($value) || strlen($value)>4096 || strpos($value,"\0")!==false || !preg_match('//u',$value)) {
+            throw new InvalidArgumentException('Invalid pool filter');
+        }
+        // Keep the historical LIKE wildcard policy for search, not stored names.
+        $pool_name=str_replace('%','',trim($value));
+        $pool_name_enc=htmlspecialchars($pool_name,ENT_QUOTES,'UTF-8');
+        $partial_query_string=$pool_name!=='' ? '&pool_name=' . rawurlencode($pool_name) : '';
+    } catch (Throwable $e) { $filter_invalid=true; }
 
     // init logging variables
     $log = "visited page: ";
@@ -68,14 +71,10 @@
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
 
     // whenever possible we use a whitelist approach
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
-             ? $_GET['orderBy'] : array_keys($param_cols)[6];
-
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
-               ? strtolower($_GET['orderType']) : "desc";
-
+    $orderBy=isset($_GET['orderBy']) && is_string($_GET['orderBy']) && in_array($_GET['orderBy'],array_keys($param_cols),true)
+            ? $_GET['orderBy'] : array_keys($param_cols)[6];
+    $orderType=isset($_GET['orderType']) && is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']),array('desc','asc'),true)
+              ? strtolower($_GET['orderType']) : 'desc';
 
     // print HTML prologue
     $extra_js = array(
@@ -84,7 +83,7 @@
     );
 
     $title = t('Intro','mngradippoollist.php');
-    if (!empty($pool_name_enc)) {
+    if ($pool_name_enc!=='') {
         $title .=  " :: " . $pool_name_enc;
     }
 
@@ -96,20 +95,14 @@
     print_title_and_help($title, $help);
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-    // filter on pool_name
-    $sql_WHERE = "";
-    if (!empty($pool_name)) {
-        $value_prefix = $dbSocket->escapeSimple($pool_name);
-        $sql_WHERE = sprintf(" WHERE pool_name LIKE '%%%s%%'", $value_prefix);
-    }
-
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADIPPOOL']) . $sql_WHERE;
-
-    $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
+    $numrows=0; $sql_WHERE=''; $bindings=array();
+    try {
+        if ($filter_invalid) { throw new InvalidArgumentException('Invalid pool filter'); }
+        $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+        $table=dalo_ippool_table($configValues);
+        if ($pool_name!=='') { $sql_WHERE=' WHERE pool_name LIKE ?'; $bindings[]='%' . $pool_name . '%'; }
+        $numrows=(int)dalo_ippool_query($pdo,"SELECT COUNT(id) FROM $table" . $sql_WHERE,$bindings)->fetchColumn();
+    } catch (Throwable $e) { $failureMsg='Unable to load IP pools'; }
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
@@ -124,15 +117,15 @@
 
         /* END */
 
-        // we execute and log the actual query
-        $sql = sprintf("SELECT id, pool_name, framedipaddress, nasipaddress, calledstationid,
-                               callingstationid, expiry_time, username, pool_key
-                          FROM %s", $configValues['CONFIG_DB_TBL_RADIPPOOL']) . $sql_WHERE;
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
-
-        $per_page_numrows = $res->numRows();
+        $rows=array();
+        try {
+            $sql="SELECT id,pool_name,framedipaddress,nasipaddress,calledstationid,
+                         callingstationid,expiry_time,username,pool_key FROM $table" . $sql_WHERE .
+                 " ORDER BY $orderBy $orderType LIMIT ?,?";
+            $values=array_merge($bindings,array((int)$offset,(int)$rowsPerPage));
+            $rows=dalo_ippool_query($pdo,$sql,$values)->fetchAll(PDO::FETCH_NUM);
+        } catch (Throwable $e) { $failureMsg='Unable to load IP pools'; }
+        $per_page_numrows=count($rows);
 
         // this can be passed as form attribute and
         // printTableFormControls function parameter
@@ -159,27 +152,27 @@
         print_table_top($form_descriptor);
 
         // second line of table header
-        printTableHead($cols, $orderBy, $orderType);
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
 
         // closes table header, opens table body
         print_table_middle();
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($rows as $row) {
+            $raw_pool_name=(string)$row[1]; $raw_username=(string)$row[7];
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)$row[$i], ENT_QUOTES, 'UTF-8');
             }
 
             list($id, $pool_name, $framedipaddress, $nasipaddress, $calledstationid,
                  $callingstationid, $expiry_time, $username, $pool_key) = $row;
 
             // preparing checkbox
-            $id = intval($id);
-            $item_id = sprintf("ippool-%d", $id);
+            $item_id = 'ippool-' . $id;
 
             // create checkbox
             $d = array( 'name' => 'item[]', 'value' => $item_id, 'label' => $id );
@@ -190,7 +183,7 @@
                 'subject' => $pool_name,
                 'actions' => [
                     [
-                        'href'  => sprintf('mng-rad-ippool-list.php?pool_name=%s', urlencode($pool_name)),
+                        'href'  => sprintf('mng-rad-ippool-list.php?pool_name=%s', rawurlencode($raw_pool_name)),
                         'label' => 'Apply Filter',
                     ],
                     [
@@ -237,9 +230,9 @@
             }
 
             // username tooltip
-            if (!empty($username)) {
+            if ($raw_username!=='') {
                 $ajax_id = sprintf("divContainerUserInfo_%d", $count);
-                $param = sprintf("username=%s", urlencode($username));
+                $param = sprintf("username=%s", rawurlencode($raw_username));
                 $onclick = sprintf(
                     "daloInfo.user('%s','%s')",
                     $ajax_id, $param
@@ -250,18 +243,14 @@
                     'ajax_id' => $ajax_id,
                     'actions' => [],
                 ];
-                if (user_exists($dbSocket, $username, 'CONFIG_DB_TBL_RADACCT')) {
-                    $tooltip4['actions'][] = [
-                        'href'  => sprintf('acct-username.php?username=%s', urlencode($username)),
-                        'label' => t('button', 'UserAccounting'),
-                    ];
-                }
-                if (user_exists($dbSocket, $username, 'CONFIG_DB_TBL_RADCHECK')) {
-                    $tooltip4['actions'][] = [
-                        'href'  => sprintf('mng-edit.php?username=%s', urlencode($username)),
-                        'label' => t('Tooltip', 'UserEdit'),
-                    ];
-                }
+                try {
+                    if (user_exists($pdo, $raw_username, 'CONFIG_DB_TBL_RADACCT')) {
+                        $tooltip4['actions'][]=array('href'=>'acct-username.php?username=' . rawurlencode($raw_username), 'label'=>t('button','UserAccounting'));
+                    }
+                    if (user_exists($pdo, $raw_username, 'CONFIG_DB_TBL_RADCHECK')) {
+                        $tooltip4['actions'][]=array('href'=>'mng-edit.php?username=' . rawurlencode($raw_username), 'label'=>t('Tooltip','UserEdit'));
+                    }
+                } catch (Throwable $e) { $failureMsg='Unable to load IP pool user links'; }
                 $tooltip4 = get_tooltip_list_str($tooltip4);
             } else {
                 $tooltip4 = t('all','NotAvailable');
@@ -314,11 +303,11 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+        $failureMsg = $failureMsg ?? "Nothing to display";
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    if (isset($failureMsg)) { include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]); }
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
 

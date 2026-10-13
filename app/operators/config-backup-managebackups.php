@@ -40,28 +40,17 @@
     $backup_path_prefix = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] . "/backup";
     $backup_file_suffix = ".sql";
 
-    $file = "";
-    if (array_key_exists('file', $_POST) && !empty(trim($_POST['file']))) {
-        $candidate_backup_file = trim($_POST['file']);
-
-        if (
-                // this ensures that candidate_backup_file does not contain any ".." sequence
-                strpos($candidate_backup_file, "..") === false &&
-
-                // this ensures that candidate_backup_file does not contain any "/" char
-                strpos($candidate_backup_file, "/") === false &&
-
-                // this ensures that candidate_backup_file ends with the backup_file_suffix
-                substr($candidate_backup_file, -strlen($backup_file_suffix)) === $backup_file_suffix
-           ) {
-
-            $file = $candidate_backup_file;
+    $file = '';
+    if (isset($_POST['file']) && is_string($_POST['file'])) {
+        $candidate = trim($_POST['file']);
+        // Permit both older backups and collision-resistant UNIT-016 names.
+        if (preg_match('/^backup-[0-9]{8}-[0-9]{6}(?:-[a-f0-9]{12})?\.sql$/D', $candidate)) {
+            $file = $candidate;
         }
-
     }
-
-    $backupAction = (array_key_exists('action', $_POST) && isset($_POST['action']) &&
-                     in_array($_POST['action'], array_keys($valid_backupActions))) ? $_POST['action'] : "";
+    $backupAction = (isset($_POST['action']) && is_string($_POST['action']) &&
+                     in_array($_POST['action'], array_keys($valid_backupActions), true))
+                  ? $_POST['action'] : '';
 
     $cols = array(
                     t('all', 'CreationDate'),
@@ -89,112 +78,55 @@
     $baseFile = basename($fileName);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            if (!empty($file) && !empty($backupAction) && is_dir($backup_path_prefix) && is_readable($fileName)) {
-
-                $fileContents = file_get_contents($fileName);
-                $fileLen = strlen($fileContents);
-
-                switch($backupAction) {
-
-                    default:
-                    case "download":
-                        if (!empty($fileContents)) {
-                            header("Content-type: application/sql");
-                            header(sprintf("Content-Disposition: attachment; filename=%s; size=%d", $baseFile, $fileLen));
-                            print $fileContents;
-
+        if (isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) &&
+            dalo_check_csrf_token($_POST['csrf_token'])) {
+            if ($file !== '' && $backupAction !== '' && is_dir($backup_path_prefix) &&
+                is_file($fileName) && !is_link($fileName) && is_readable($fileName)) {
+                switch ($backupAction) {
+                    case 'download':
+                        $contents = file_get_contents($fileName);
+                        if ($contents !== false && $contents !== '') {
+                            header('Content-type: application/sql');
+                            header(sprintf('Content-Disposition: attachment; filename=%s; size=%d',
+                                           $baseFile, strlen($contents)));
+                            print $contents;
                             exit;
                         }
-
-                        $failureMsg = sprintf("Cannot %s backup file %s (file is empty)", $backupAction, $baseFile);
+                        $failureMsg = sprintf('Cannot download backup file %s (file is empty or unreadable)', $baseFile);
                         $logAction .= "$failureMsg on page: ";
                         break;
-
-                    case "delete":
-                        unlink($fileName);
-
-                        $successMsg = sprintf("Successfully performed %s action on backup file %s", $backupAction, $baseFile);
-                        $logAction .= "$successMsg on page: ";
-                        break;
-
-                    case "rollback":
-
-                        if (!empty($fileContents)) {
-
-                            include('../common/includes/db_open.php');
-
-                            $rollBackQuery = explode("\n\n\n", $fileContents);
-
-                            $isError = 0;
-                            $tables = array();
-
-                            foreach ($rollBackQuery as $query) {
-                                $query = trim($query);
-
-                                // no need to use the full query, we do some check only on the first 200 chars
-                                $query200 = substr($query, 0, 200);
-
-                                if (!preg_match('/^INSERT\s+INTO\s+.*$/', $query200)) {
-                                    continue;
-                                }
-
-                                // we extract the <table> from the string: INSERT INTO <table>
-                                $table = trim(preg_split('/\s+/', $query200)[2], '`');
-
-                                if (empty($table)) {
-                                    continue;
-                                }
-
-                                $queries = array(
-                                                    sprintf("DELETE FROM `%s`", $table),
-
-                                                    // this is a large SQL query, hopefully database can handle it without overflowing
-                                                    $query
-                                                );
-
-                                // executing delete/insert queries
-                                foreach ($queries as $sql) {
-                                    $res = $dbSocket->query($sql);
-                                    if (DB::isError($res)) {
-                                        $isError++;
-                                        break;
-                                    }
-                                }
-
-                                $tables[] = $table;
-                            }
-
-                            include('../common/includes/db_close.php');
-
-                            if ($isError > 0) {
-                                $failureMsg = sprintf("Cannot %s backup file %s, please check file availability and permissions",
-                                                      $backupAction, $baseFile);
-                                $logAction .= "$failureMsg on page: ";
-                            } else {
-                                $successMsg = sprintf("Successfully performed %s of table(s) [%s] from source file %s",
-                                                      $backupAction, implode(", ", $tables), $baseFile);
-                                $logAction .= "$successMsg on page: ";
-                            }
+                    case 'delete':
+                        if (unlink($fileName)) {
+                            $successMsg = sprintf('Successfully performed delete action on backup file %s', $baseFile);
+                            $logAction .= "$successMsg on page: ";
                         } else {
-                            $failureMsg = sprintf("Cannot %s backup file %s (file is empty)", $backupAction, $baseFile);
+                            $failureMsg = 'Cannot delete backup file';
                             $logAction .= "$failureMsg on page: ";
                         }
-
+                        break;
+                    case 'rollback':
+                        require_once('../common/includes/pdo_connection.php');
+                        require_once('library/backup_restore.php');
+                        try {
+                            $pdo = dalo_pdo_connect($configValues);
+                            $tables = dalo_restore_backup($pdo, $fileName, $configValues);
+                            $successMsg = sprintf('Successfully performed rollback of table(s) [%s] from source file %s',
+                                                  implode(', ', $tables), $baseFile);
+                            $logAction .= "$successMsg on page: ";
+                        } catch (Throwable $error) {
+                            // A file can contain credentials and personal data: no
+                            // SQL, path or driver detail in the HTTP response/log.
+                            $failureMsg = sprintf('Cannot rollback backup file %s; file, schema or database error', $baseFile);
+                            $logAction .= "$failureMsg on page: ";
+                        }
                         break;
                 }
-
             } else {
-                $failureMsg = sprintf("The requested action cannot be performed");
+                $failureMsg = 'The requested action cannot be performed';
                 $logAction .= "$failureMsg on page: ";
             }
-
-
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
+            $failureMsg = 'CSRF token error';
             $logAction .= "$failureMsg on page: ";
         }
     }
@@ -223,7 +155,10 @@
         $skipList = array( ".", "..", ".svn", ".git" );
         foreach ($files as $this_file) {
 
-            if (in_array($this_file, $skipList)) {
+            // Ignore in-progress snapshots: only published .sql files are usable.
+            if (in_array($this_file, $skipList) ||
+                !preg_match('/^backup-[0-9]{8}-[0-9]{6}(?:-[a-f0-9]{12})?\.sql$/D', $this_file) ||
+                !is_file($backup_path_prefix . '/' . $this_file)) {
                 continue;
             }
 

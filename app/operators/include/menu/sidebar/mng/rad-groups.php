@@ -40,22 +40,22 @@ $menu_groups = get_groups();
 // init select components
 function get_select_options($item_table, $item_prefix) {
     global $options_format;
-
-    include('../common/includes/db_open.php');
-
-    $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s ORDER BY groupname, attribute DESC", $item_table);
-    $res = $dbSocket->query($sql);
-
+    $rows = dalo_selectbox_rows(function (PDO $pdo, $config) use ($item_table) {
+        $key = null;
+        foreach (array('CONFIG_DB_TBL_RADGROUPCHECK', 'CONFIG_DB_TBL_RADGROUPREPLY') as $candidate) {
+            if ($item_table === ($config[$candidate] ?? null)) {
+                $key = $candidate;
+                break;
+            }
+        }
+        $table = dalo_selectbox_table($pdo, $config, $key);
+        return "SELECT id, groupname, attribute, op, value FROM $table ORDER BY groupname, attribute DESC";
+    });
     $result = array();
-
-    while ($row = $res->fetchrow()) {
+    foreach ($rows as $row) {
         list($id, $groupname, $attribute, $op, $value) = $row;
-        $key = $item_prefix . $id;
-        $result[$key] = sprintf($options_format, $groupname, $attribute, $op, $value);
+        $result[$item_prefix . $id] = sprintf($options_format, $groupname, $attribute, $op, $value);
     }
-
-    include('../common/includes/db_close.php');
-
     return $result;
 }
 

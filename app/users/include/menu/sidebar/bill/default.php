@@ -27,23 +27,19 @@ if (strpos($_SERVER['PHP_SELF'], '/include/menu/sidebar/bill/default.php') !== f
     exit;
 }
 
-global $invoice_id, $invoice_status_id, $startdate, $enddate;
+global $invoice_id, $invoice_status_id, $startdate, $enddate, $failureMsg;
 
-include('../common/includes/db_open.php');
-
-$sql = sprintf("SELECT id, value FROM %s ORDER BY value ASC",
-               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']);
-$res = $dbSocket->query($sql);
-
-$menu_invoice_status_id = array( "" );
-while($row = $res->fetchRow()) {
-    list($id, $value) = $row;
-    $id = intval($id);
-    
-    $menu_invoice_status_id[$id] = $value;
-}
-
-include('../common/includes/db_close.php');
+require_once dirname(__DIR__, 4) . '/library/portal_pages_pdo.php';
+$menu_invoice_status_id = array("");
+$portalSidebarPdo = null;
+try {
+    $portalSidebarPdo = dalo_portal_handle($configValues);
+    foreach (dalo_portal_statuses($portalSidebarPdo, $configValues) as $row) {
+        $menu_invoice_status_id[(int) $row[0]] = $row[1];
+    }
+} catch (Throwable $exception) {
+    $failureMsg = 'Invoice statuses unavailable';
+} finally { $portalSidebarPdo = null; }
 
 $descriptors1 = array();
 
@@ -68,11 +64,11 @@ $components[] = array(
                      );
 
 $components[] = array(
-                        "name" => "invoice_status_id",
+                        "name" => "invoice_status",
                         "caption" => "Invoice Status",
                         "type" => "select",
                         "options" => $menu_invoice_status_id,
-                        "selected_value" => (isset($invoice_status_id)) ? $invoice_status_id : "",
+                        "selected_value" => (isset($invoice_status_id)) ? (int) $invoice_status_id : "",
                         "tooltipText" => t('Tooltip','invoiceID'),
                         "sidebar" => true,
                         "integer_value" => true,

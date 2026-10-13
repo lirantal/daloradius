@@ -30,151 +30,82 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'nasImportExport.php' ]);
+    include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'nasManagementPdo.php' ]);
 
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-    $nasLock = array('name' => '', 'acquired' => false, 'error' => false);
-    $csrfValid = $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) &&
-                 dalo_check_csrf_token($_POST['csrf_token']);
-    if ($csrfValid) {
-        $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-        $nasLock = nas_backup_acquire_lock($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'], 30);
-        $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
+    $nasname = '';
+    $sourceName = $_SERVER['REQUEST_METHOD'] === 'POST'
+        ? ($_POST['nasname'] ?? null) : ($_GET['nasname'] ?? null);
+    if (is_string($sourceName)) { $nasname = trim($sourceName); }
+    $pdo = null;
+    $nasLock = null;
+    $csrfValid = $_SERVER['REQUEST_METHOD'] === 'POST' &&
+        is_string($_POST['csrf_token'] ?? null) && dalo_check_csrf_token($_POST['csrf_token']);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$csrfValid) {
+        $failureMsg = 'CSRF token error';
     }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $nasname = (array_key_exists('nasname', $_POST) && !empty(str_replace("%", "", trim($_POST['nasname']))))
-                 ? str_replace("%", "", trim($_POST['nasname'])) : "";
-    } else {
-        $nasname = (array_key_exists('nasname', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['nasname']))))
-                 ? str_replace("%", "", trim($_REQUEST['nasname'])) : "";
-    }
-
-    // check if this nas exists
-    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE nasname='%s'", $configValues['CONFIG_DB_TBL_RADNAS'],
-                                                                  $dbSocket->escapeSimple($nasname));
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    $exists = $res->fetchrow()[0] == 1;
-
-    if (!$exists) {
-        // we reset the nasname if it does not exist
-        $nasname = "";
-    }
-
-    // from now on, we can assume that nasname is valid
-    $nasname_enc = (!empty($nasname)) ? htmlspecialchars($nasname, ENT_QUOTES, 'UTF-8') : "";
-
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if ($csrfValid && $nasLock['acquired']) {
-            $secret = (array_key_exists('secret', $_POST) && !empty(str_replace("%", "", trim($_POST['secret']))))
-                    ? str_replace("%", "", trim($_POST['secret'])) : "";
-
-            // allow the current DB type to pass validation even if it is a
-            // legacy/custom value not present in $valid_nastypes, so that
-            // re-submitting the edit form does not silently overwrite it
-            $allowed_types = $valid_nastypes;
-            if (!empty($nasname)) {
-                $sql_cur = sprintf("SELECT type FROM %s WHERE nasname='%s' LIMIT 1",
-                                   $configValues['CONFIG_DB_TBL_RADNAS'],
-                                   $dbSocket->escapeSimple($nasname));
-                $res_cur = $dbSocket->query($sql_cur);
-                $logDebugSQL .= "$sql_cur;\n";
-                $row_cur = $res_cur->fetchrow();
-                if ($row_cur && !empty($row_cur[0])) {
-                    $allowed_types[] = $row_cur[0];
-                    $allowed_types = array_unique($allowed_types);
-                }
+    try {
+        list($pdo, $table) = nas_management_connect($configValues,
+            $_SESSION['location_name'] ?? 'default', $csrfValid);
+        if ($csrfValid) {
+            $nasLock = nas_management_lock($pdo, $configValues);
+            if (!$pdo->beginTransaction()) { throw new RuntimeException('NAS transaction unavailable'); }
+            $current = $nasname !== '' ? nas_management_find($pdo, $table, $nasname, true) : null;
+            if ($current === null) { throw new InvalidArgumentException('NAS missing'); }
+            $fields = nas_management_fields($_POST, $valid_nastypes, $current['type']);
+            if ($fields['nasname'] !== $current['nasname']) {
+                throw new InvalidArgumentException('NAS name changed');
             }
-
-            $type = (array_key_exists('type', $_POST) && isset($_POST['type']) &&
-                     in_array($_POST['type'], $allowed_types)) ? $_POST['type'] : "other";
-
-            $shortname = (array_key_exists('shortname', $_POST) && !empty(str_replace("%", "", trim($_POST['shortname']))))
-                       ? str_replace("%", "", trim($_POST['shortname'])) : "";
-
-            $ports = (array_key_exists('ports', $_POST) && !empty(trim($_POST['ports'])) &&
-                         intval(trim($_POST['ports'])) >= 0 && intval(trim($_POST['ports'])) <= 99999)
-                      ? intval(trim($_POST['ports'])) : 0;
-
-            $description = (array_key_exists('description', $_POST) && !empty(str_replace("%", "", trim($_POST['description']))))
-                         ? str_replace("%", "", trim($_POST['description'])) : "";
-
-            $community = (array_key_exists('community', $_POST) && !empty(str_replace("%", "", trim($_POST['community']))))
-                       ? str_replace("%", "", trim($_POST['community'])) : "";
-
-            $server = (array_key_exists('server', $_POST) && !empty(str_replace("%", "", trim($_POST['server']))))
-                           ? str_replace("%", "", trim($_POST['server'])) : "";
-
-            if (empty($nasname) || empty($secret)) {
-                // required
-                $failureMsg = sprintf("%s and/or %s are empty or invalid", t('all','NasIPHost'), t('all','NasSecret'));
-                $logAction .= sprintf("Failed editing NAS (%s) on page: ", $failureMsg);
-            } else {
-
-                $sql = sprintf("UPDATE %s SET shortname='%s', type='%s', ports=%d, secret='%s',
-                                                  server='%s', community='%s', description='%s'
-                                 WHERE nasname='%s'", $configValues['CONFIG_DB_TBL_RADNAS'],
-                               $dbSocket->escapeSimple($shortname), $dbSocket->escapeSimple($type), $ports,
-                               $dbSocket->escapeSimple($secret), $dbSocket->escapeSimple($server),
-                               $dbSocket->escapeSimple($community), $dbSocket->escapeSimple($description),
-                               $dbSocket->escapeSimple($nasname));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                if (!DB::isError($res)) {
-                    $successMsg = sprintf("Edited NAS: <strong>%s</strong>", $nasname_enc);
-                    $successMsg .= '<br><strong>Restart FreeRADIUS for NAS changes to take effect.</strong>';
-                    $logAction .= sprintf("Successfully edited NAS [%s] on page: ", $nasname);
-                } else {
-                    // it seems that operator could not be added
-                    $f = "Failed to add edit NAS [%s] to database";
-                    $failureMsg = sprintf($f, $nasname_enc);
-                    $logAction .= sprintf($f, $nasname);
-                }
-
+            $update = $pdo->prepare("UPDATE $table SET shortname=?,type=?,ports=?,secret=?,server=?,"
+                                    . 'community=?,description=? WHERE id=? AND HEX(nasname)=?');
+            $update->execute(array($fields['shortname'],$fields['type'],$fields['ports'],
+                $fields['secret'],$fields['server'],$fields['community'],$fields['description'],
+                $current['id'],strtoupper(bin2hex($current['nasname']))));
+            // A no-op update changes zero rows; verify the complete locked row instead.
+            $stored = nas_management_find($pdo, $table, $nasname, true);
+            if (!nas_management_row_matches($stored, $fields) ||
+                (string)$stored['id'] !== (string)$current['id']) {
+                throw new RuntimeException('NAS update verification failed');
             }
-
+            if (!$pdo->commit()) { throw new RuntimeException('NAS commit failed'); }
+            $nasname_enc = htmlspecialchars($nasname, ENT_QUOTES, 'UTF-8');
+            $successMsg = sprintf('Edited NAS: <strong>%s</strong>', $nasname_enc);
+            $successMsg .= '<br><strong>Restart FreeRADIUS for NAS changes to take effect.</strong>';
+            $logAction .= "Successfully edited NAS [$nasname] on page: ";
+        }
+        $row = $nasname !== '' ? nas_management_find($pdo, $table, $nasname) : null;
+        if ($row !== null) {
+            foreach (array('nasname','shortname','type','ports','secret','server','community','description') as $field) {
+                $$field = $row[$field];
+            }
+            $nasname_enc = htmlspecialchars($nasname, ENT_QUOTES, 'UTF-8');
         } else {
-            $failureMsg = $csrfValid
-                ? ($nasLock['error'] ? 'Unable to coordinate the NAS change; please retry'
-                                     : 'Another NAS change is currently running; please retry in a moment')
-                : 'CSRF token error';
-            $logAction .= "$failureMsg on page: ";
+            $nasname = '';
+            if (!isset($failureMsg)) { $failureMsg = sprintf("%s is invalid", t('all','NasIPHost')); }
         }
+    } catch (Throwable $exception) {
+        error_log('NAS edit: ' . get_class($exception));
+        $failureMsg = $exception instanceof InvalidArgumentException
+            ? 'NAS fields or hostname are invalid' : 'Unable to edit NAS; please retry';
+        // Read the row for the form after a failed mutation, not from untrusted POST data.
+        try {
+            if ($pdo instanceof PDO && $pdo->inTransaction()) { $pdo->rollBack(); }
+            $row = $nasname !== '' && $pdo instanceof PDO ? nas_management_find($pdo, $table, $nasname) : null;
+            if ($row !== null) {
+                foreach (array('nasname','shortname','type','ports','secret','server','community','description') as $field) {
+                    $$field = $row[$field];
+                }
+                $nasname_enc = htmlspecialchars($nasname, ENT_QUOTES, 'UTF-8');
+            } else { $nasname = ''; }
+        } catch (Throwable $ignored) { $nasname = ''; }
+    } finally {
+        nas_management_finish($pdo, $nasLock);
+        $pdo = null;
     }
-
-
-    if (!empty($nasname)) {
-        $sql = sprintf("SELECT nasname, shortname, type, ports, secret, server, community, description
-                          FROM %s WHERE nasname='%s' LIMIT 1", $configValues['CONFIG_DB_TBL_RADNAS'],
-                                                               $dbSocket->escapeSimple($nasname));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        $row = $res->fetchrow();
-
-        list($nasname, $shortname, $type, $ports, $secret, $server, $community, $description) = $row;
-
-    } else {
-        $failureMsg = sprintf("%s is invalid", t('all','NasIPHost'));
-        $logAction .= sprintf("Requested editing invalid NAS (%s) on page: ", $failureMsg);
-    }
-
-    if ($nasLock['acquired']) {
-        $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-        if (!nas_backup_release_lock($dbSocket, $nasLock['name'])) {
-            $logAction .= 'NAS advisory lock release could not be confirmed on page: ';
-        }
-        $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
-    }
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
     // print HTML prologue
     $title = t('Intro','mngradnasedit.php');

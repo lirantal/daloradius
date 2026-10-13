@@ -34,77 +34,35 @@
     $log = "visited page: ";
 
 
-    include('../common/includes/db_open.php');
-
+    require_once('library/payment_types_pdo.php');
+    $paymentname = ''; $selected_names = array(); $options = array(); $type_pdo = null;
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            if (array_key_exists('paymentname', $_POST) && !empty($_POST['paymentname'])) {
-                $paymentname = array();
-            
-                $tmparr = (!is_array($_POST['paymentname'])) ? array( $_POST['paymentname'] ) : $_POST['paymentname'];
-                
-                foreach ($tmparr as $tmp_name) {
-                    $tmp_name = $dbSocket->escapeSimple(trim($tmp_name));
-                    if (!in_array($tmp_name, $paymentname)) {
-                        $paymentname[] = intval($tmp_name);
-                    }
-                }
-                
-                if (count($paymentname) > 0) {
-                    // delete all payment types 
-                    $sql = sprintf("DELETE FROM %s WHERE value IN ('%s')",
-                                   $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], implode("', '", $paymentname));
-                    $count = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    $successMsg = sprintf("Deleted %d payment type(s)", intval($count));
-                    $logAction .= "$successMsg on page: ";
-                    
-                } else {
-                    // invalid
-                    $failureMsg = "Empty or invalid payment name(s)";
-                    $logAction .= sprintf("Failed deleting payment type(s) [%s] on page: ", $failureMsg);
-                }
-                
-                
-                
-            } else {
-                $failureMsg = "Empty or invalid payment name(s)";
-                $logAction .= sprintf("Failed deleting payment type(s) [%s] on page: ", $failureMsg);
-            }
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
-        }
-    } else {
-        $paymentname = (array_key_exists('paymentname', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['paymentname']))))
-                     ? str_replace("%", "", trim($_REQUEST['paymentname'])) : "";
-        
-        if (!empty($paymentname)) {
-            $sql = sprintf("SELECT COUNT(DISTINCT(value)) FROM %s WHERE value = '%s'",
-                           $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $dbSocket->escapeSimple($paymentname));
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-            $exists = $res->fetchrow()[0] > 0;
-            
-            if (!$exists) {
-                $paymentname = "";
+        if (isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            try {
+                $selected_names = dalo_payment_type_names($_POST['paymentname'] ?? array());
+                $type_pdo = dalo_payment_open($configValues);
+                $count = dalo_payment_type_mutate($type_pdo,$configValues,'del',$selected_names,'',$operator);
+                $successMsg = sprintf('Deleted %d payment type(s)',$count);
+                $logAction .= 'Successful payment type deletion on page: ';
+            } catch (Throwable $error) {
+                $failureMsg = 'Failed to delete payment types: invalid, missing, ambiguous or referenced selection; verify its state before retrying';
+                $logAction .= 'Payment type deletion failed [' . get_class($error) . '] on page: ';
+            } finally { $type_pdo = null; }
+        } else { $failureMsg = 'CSRF token error'; }
+    }
+    try {
+        $type_pdo = dalo_payment_open($configValues);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $paymentname = dalo_payment_type_text(dalo_payment_scalar($_GET,'paymentname'),32);
+            if ($paymentname !== '') {
+                try { dalo_payment_type_read($type_pdo,$configValues,$paymentname); }
+                catch (DomainException $error) { $paymentname = ''; }
             }
         }
-    }
-
-    // (re)load options
-    $sql = sprintf("SELECT DISTINCT(value) FROM %s", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    $options = array();
-    while ($row = $res->fetchrow()) {
-        $options[] = $row[0];
-    }
-    
-    include('../common/includes/db_close.php');
+        $table = dalo_payment_table($type_pdo,$configValues,'CONFIG_DB_TBL_DALOPAYMENTTYPES');
+        foreach (dalo_catalog_read_rows($type_pdo,"SELECT DISTINCT(value) FROM $table") as $row) { $options[] = (string)$row[0]; }
+    } catch (Throwable $error) { dalo_payment_type_read_failure($error); $paymentname = ''; }
+    finally { $type_pdo = null; }
 
     include_once("lang/main.php");
     include("../common/includes/layout.php");
@@ -137,7 +95,7 @@
                                 'options' => $options,
                                 'multiple' => true,
                                 'size' => 5,
-                                'selected_value' => ((!isset($successMsg) && !empty($paymentname)) ? $paymentname : "")
+                                'selected_value' => ((!isset($successMsg) && $paymentname !== '') ? array($paymentname) : array())
                              );
                              
     $input_descriptors1[] = array(

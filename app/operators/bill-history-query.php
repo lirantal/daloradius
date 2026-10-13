@@ -31,6 +31,7 @@
     include("../common/includes/validation.php");
     include("../common/includes/layout.php");
 
+    require_once 'library/billing_rates_pdo.php';
     // init loggin variables
     $log = "visited page: ";
     $logQuery = "performed query for listing of records on page: ";
@@ -39,38 +40,27 @@
     // set session's page variable
     $_SESSION['PREV_LIST_PAGE'] = $_SERVER['REQUEST_URI'];
 
-    $sqlfields = (array_key_exists('sqlfields', $_GET) && !empty($_GET['sqlfields']) && is_array($_GET['sqlfields']) &&
-                  array_intersect($_GET['sqlfields'], array_keys($bill_history_query_options_all)) == $_GET['sqlfields'])
-               ? $_GET['sqlfields'] : $bill_history_query_options_default;
-
-    $cols = array();
-    foreach ($sqlfields as $sqlfield) {
-        $cols[$sqlfield] = $bill_history_query_options_all[$sqlfield];
+    $input_error = false;
+    $sqlfields = $bill_history_query_options_default;
+    if (isset($_GET['sqlfields'])) {
+        if (is_array($_GET['sqlfields']) && $_GET['sqlfields'] && count($_GET['sqlfields']) <= count($bill_history_query_options_all) &&
+            count(array_filter($_GET['sqlfields'], 'is_string')) === count($_GET['sqlfields']) &&
+            !array_diff($_GET['sqlfields'], array_keys($bill_history_query_options_all))) { $sqlfields = array_values(array_unique($_GET['sqlfields'])); }
+        else { $input_error = true; }
     }
-    $colspan = count($cols);
-    $half_colspan = intval($colspan / 2);
-
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($bill_history_query_options_all)))
-             ? $_GET['orderBy'] : array_keys($bill_history_query_options_all)[0];
-
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array("asc", "desc")))
-               ? strtolower($_GET['orderType']) : "asc";
-
-    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
-              ? str_replace("%", "", trim($_GET['username'])) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-
-    // avoid inserting "Any" in the SQL query
-    $arr = $valid_billactions;
-    array_shift($arr);
-    $billaction = (isset($_GET['billaction']) && !empty($_GET['billaction']) && in_array($_GET['billaction'], $arr))
-                ? $_GET['billaction'] : "";
-    unset($arr);
-
-    $billaction_enc = (!empty($billaction)) ? htmlspecialchars($billaction, ENT_QUOTES, 'UTF-8') : "";
-
+    $cols = array();
+    foreach ($sqlfields as $field) { $cols[$field] = $bill_history_query_options_all[$field]; }
+    $colspan = count($cols); $half_colspan = intval($colspan / 2);
+    $orderBy = isset($_GET['orderBy']) && is_string($_GET['orderBy']) && array_key_exists($_GET['orderBy'], $bill_history_query_options_all) ? $_GET['orderBy'] : 'id';
+    $orderType = isset($_GET['orderType']) && is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array('asc','desc'), true) ? strtolower($_GET['orderType']) : 'asc';
+    $username = $billaction = '';
+    try {
+        dalo_catalog_read_inputs($_GET, array('username','billaction'));
+        $username = trim($_GET['username'] ?? '');
+        $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+        $billaction = isset($_GET['billaction']) && in_array($_GET['billaction'], array_slice($valid_billactions, 1), true) ? $_GET['billaction'] : '';
+        $billaction_enc = htmlspecialchars($billaction, ENT_QUOTES, 'UTF-8');
+    } catch (Throwable $error) { $input_error = true; }
 
     // print HTML prologue
     $title = t('Intro','billhistoryquery.php');
@@ -80,62 +70,30 @@
 
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
-    include('include/management/pages_common.php');
-
-    // preparing the custom query
-
-    $sql_WHERE = array();
-    $partial_query_string_pieces = array();
-
-    foreach ($sqlfields as $sqlfield) {
-        $partial_query_string_pieces[] = sprintf("sqlfields[]=%s", $sqlfield);
-    }
-
-    if (!empty($username)) {
-        $sql_WHERE[] = sprintf("username LIKE '%%%s%%'", $dbSocket->escapeSimple($username));
-        $partial_query_string_pieces[] = sprintf("username=%s", $username_enc);
-    }
-
-    if (!empty($billaction)) {
-        $sql_WHERE[] = sprintf("billaction LIKE '%%%s%%'", $dbSocket->escapeSimple($billaction));
-        $partial_query_string_pieces[] = sprintf("billaction=%s", $billaction_enc);
-    }
-
-    // executing the custom query
-
-    $sql = sprintf("SELECT %s FROM %s", implode(", ", $sqlfields), $configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY']);
-
-    if (count($sql_WHERE) > 0) {
-        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-    }
-
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    $numrows = $res->numRows();
-
+    include_once('include/management/pages_common.php');
+    $numrows = 0; $billing_rows = array(); $pdo = null;
+    try {
+        if ($input_error) { throw new InvalidArgumentException('Invalid billing report input'); }
+        $pdo = dalo_catalog_read_open($configValues);
+        $table = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGHISTORY');
+        $where = array(); $bind = array();
+        $partial_query_string_pieces = array();
+        foreach ($sqlfields as $field) { $partial_query_string_pieces[] = 'sqlfields[]=' . urlencode($field); }
+        if ($username !== '') { $where[] = 'username LIKE :username'; $bind[':username'] = dalo_billing_like($username); $partial_query_string_pieces[] = 'username=' . urlencode($username); }
+        if ($billaction !== '') { $where[] = 'billaction LIKE :billaction'; $bind[':billaction'] = dalo_billing_like($billaction); $partial_query_string_pieces[] = 'billaction=' . urlencode($billaction); }
+        $sql_where = $where ? ' WHERE ' . implode(' AND ', $where) : '';
+        $numrows = (int)dalo_catalog_read_rows($pdo, "SELECT COUNT(*) FROM $table$sql_where", $bind)[0][0];
+        if ($numrows > 0) {
+            include('include/management/pages_numbering.php');
+            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+            $sql = 'SELECT ' . implode(',', $sqlfields) . " FROM $table$sql_where ORDER BY $orderBy $orderType LIMIT :offset,:limit";
+            $billing_rows = dalo_catalog_read_rows($pdo, $sql, array_merge($bind, array(':offset'=>(int)$offset, ':limit'=>(int)$rowsPerPage)));
+        }
+    } catch (Throwable $error) { $numrows = 0; dalo_rate_failure($error); }
+    finally { $pdo = null; }
     if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
-
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        $per_page_numrows = $res->numRows();
-
-        // the partial query is built starting from user input
-        // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_string = (count($partial_query_string_pieces) > 0)
-                              ? "&" . implode("&", $partial_query_string_pieces) : "";
-
+        $per_page_numrows = count($billing_rows);
+        $partial_query_string = $partial_query_string_pieces ? '&' . implode('&', $partial_query_string_pieces) : '';
         $descriptors = array();
 
         $params = array(
@@ -161,10 +119,10 @@
 
         // inserting the values of each field from the database to the table
         $count = 0;
-        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+        foreach ($billing_rows as $row) {
             printf('<tr id="row-%d">', $count);
-            foreach ($sqlfields as $field) {
-                printf("<td>%s</td>", htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8'));
+            foreach ($sqlfields as $index=>$field) {
+                printf("<td>%s</td>", htmlspecialchars($row[$index] ?? '', ENT_QUOTES, 'UTF-8'));
             }
             echo '</tr>';
             $count++;
@@ -188,11 +146,11 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
 
-    include('../common/includes/db_close.php');
+
 
     include('include/config/logging.php');
     print_footer_and_html_epilogue();

@@ -38,102 +38,40 @@
     $logDebugSQL = "";
 
 
-    include('../common/includes/db_open.php');
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $paymentname = (array_key_exists('paymentname', $_POST) && !empty(str_replace("%", "", trim($_POST['paymentname']))))
-                     ? str_replace("%", "", trim($_POST['paymentname'])) : "";
-    } else {
-        $paymentname = (array_key_exists('paymentname', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['paymentname']))))
-                     ? str_replace("%", "", trim($_REQUEST['paymentname'])) : "";
-    }
-
-
-    // check if this payment name exists
-    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE value='%s'", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'],
-                                                              $dbSocket->escapeSimple($paymentname));
-    $res = $dbSocket->query($sql);
-
-    $exists = intval($res->fetchrow()[0]) == 1;
-
-    if (!$exists) {
-        // we reset the payment name if it does not exist
-        $paymentname = "";
-    }
-
-    $paymentname_enc = (!empty($paymentname)) ? htmlspecialchars($paymentname, ENT_QUOTES, 'UTF-8') : "";
-
-    //feed the sidebar variables
-    $edit_paymentname = $paymentname_enc;
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            if (empty($paymentname)) {
-                // required
-                $failureMsg = "invalid or empty payment type, please specify a valid payment type to edit.";
-                $logAction .= "invalid or empty payment type on page: ";
+    require_once('library/payment_types_pdo.php');
+    $paymentname = ''; $paymentname_enc = ''; $edit_paymentname = ''; $paymentnotes = ''; $type_pdo = null;
+    try {
+        $input = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+        $paymentname = dalo_payment_type_text(dalo_payment_scalar($input,'paymentname'),32,true);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+                $failureMsg = 'CSRF token error';
             } else {
-                $sql_SET = array();
-
-                // required later
-                $current_datetime = date('Y-m-d H:i:s');
-                $currBy = $operator;
-
-                $sql_SET[] = sprintf("updatedate='%s'", $current_datetime);
-                $sql_SET[] = sprintf("updateby='%s'", $currBy);
-
-                $paymentnotes = (array_key_exists('paymentnotes', $_POST) && !empty(trim($_POST['paymentnotes'])))
-                              ? trim($_POST['paymentnotes']) : "";
-                if (!empty($paymentnotes)) {
-                    $sql_SET[] = sprintf("notes='%s'", $dbSocket->escapeSimple($paymentnotes));
-                }
-
-                $sql = sprintf("UPDATE %s SET ", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'])
-                     . implode(", ", $sql_SET)
-                     . sprintf(" WHERE value='%s'", $dbSocket->escapeSimple($paymentname));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                if (!DB::isError($res)) {
-                    $successMsg = "Successfully updated payment type (<strong>$paymentname_enc</strong>)";
-                    $logAction .= "Successfully updated payment type [$paymentname] on page: ";
-                } else {
-                    $failureMsg = "Failed to updated payment type (<strong>$paymentname_enc</strong>)";
-                    $logAction .= "Failed to updated payment type [$paymentname] on page: ";
-                }
+                $paymentnotes = dalo_payment_type_text(dalo_payment_scalar($_POST,'paymentnotes'),128);
+                $type_pdo = dalo_payment_open($configValues);
+                dalo_payment_type_mutate($type_pdo,$configValues,'edit',$paymentname,$paymentnotes,$operator);
+                $paymentname_enc = htmlspecialchars($paymentname, ENT_QUOTES, 'UTF-8');
+                $successMsg = "Successfully updated payment type (<strong>$paymentname_enc</strong>)";
+                $logAction .= 'Successful payment type mutation on page: ';
+                $logDebugSQL .= 'Payment type mutation (PDO transaction, bound values);\n';
             }
-
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
         }
+    } catch (Throwable $error) {
+        $failureMsg = 'Failed to update payment type; verify its state before retrying';
+        $logAction .= 'Payment type mutation failed [' . get_class($error) . '] on page: ';
+    } finally { $type_pdo = null; }
+    if ($paymentname !== '') {
+        try {
+            $type_pdo = dalo_payment_open($configValues);
+            list($id,$paymentname,$paymentnotes,$creationdate,$creationby,$updatedate,$updateby) = dalo_payment_type_read($type_pdo,$configValues,$paymentname);
+        } catch (DomainException $error) {
+            if (!isset($failureMsg)) { $failureMsg = 'invalid or empty payment type entered, please specify a valid payment type to edit.'; }
+            $paymentname = '';
+        } catch (Throwable $error) { dalo_payment_type_read_failure($error); $paymentname = ''; }
+        finally { $type_pdo = null; }
     }
-
-
-    if (empty($paymentname)) {
-        $failureMsg = "invalid or empty payment type entered, please specify a valid payment type to edit.";
-        $logAction .= "$failureMsg on page: ";
-    } else {
-
-        $sql = sprintf("SELECT id, notes, creationdate, creationby, updatedate, updateby FROM %s WHERE value='%s'",
-                       $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'], $dbSocket->escapeSimple($paymentname));
-
-
-
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        $row = $res->fetchrow();
-
-        list( $id, $notes, $creationdate, $creationby, $updatedate, $updateby ) = $row;
-
-    }
-
-    include('../common/includes/db_close.php');
-
+    $paymentname_enc = $paymentname !== '' ? htmlspecialchars($paymentname, ENT_QUOTES, 'UTF-8') : '';
+    $edit_paymentname = $paymentname;
 
     // print HTML prologue
     $extra_css = array();
@@ -146,7 +84,7 @@
 
     print_html_prologue($title, $langCode, $extra_css, $extra_js);
 
-    if (!empty($paymentname)) {
+    if ($paymentname !== '') {
         $title .= ":: $paymentname_enc";
     }
 
@@ -154,7 +92,7 @@
 
     include_once('include/management/actionMessages.php');
 
-    if (!empty($paymentname)) {
+    if ($paymentname !== '') {
         // descriptors 0
         $input_descriptors0 = array();
 

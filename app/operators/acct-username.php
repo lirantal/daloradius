@@ -29,12 +29,21 @@
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
+    require_once __DIR__ . '/library/accounting_pages_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+    } catch (Throwable $exception) {
+        http_response_code(400);
+        exit('Invalid accounting filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
  
     // validate this parameter before including menu
-    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
-              ? str_replace("%", "", trim($_GET['username'])) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    $username = dalo_accounting_scalar($_GET, 'username');
+    $username_enc = ($username !== '') ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
     $cols = array(
                     "radacctid" => t('all','ID'),
@@ -63,7 +72,7 @@
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query ";
-    if (!empty($username)) {
+    if ($username !== '') {
         $logQuery .= "for [$username] ";
     }
     $logQuery .= "on page: ";
@@ -84,25 +93,31 @@
     print_title_and_help($title, $help);
     
     
-    $sql_WHERE = "";
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery']);
     $partial_query_string = "";
-    if (!empty($username)) {
+    if ($username !== '') {
         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
         
-        $sql_WHERE = sprintf(" WHERE username='%s'", $dbSocket->escapeSimple($username));
-        $partial_query_string = sprintf("&username=%s", urlencode($username_enc));
+        $partial_query_string = sprintf("&username=%s", urlencode($username));
 
-        // setup php session variables for exporting
-        $_SESSION['reportTable'] = $configValues['CONFIG_DB_TBL_RADACCT'];
-        $_SESSION['reportQuery'] = $sql_WHERE;
         $_SESSION['reportType'] = "accountingGeneric";
+        $_SESSION['reportExport'] = array(
+            'source' => 'acct-username',
+            'type' => 'accountingGeneric',
+            'filters' => array('username' => $username),
+        );
+        unset($_SESSION['reportTable'], $_SESSION['reportQuery']);
 
-        $sql = sprintf("SELECT COUNT(`radacctid`) FROM %s", $configValues['CONFIG_DB_TBL_RADACCT']) . $sql_WHERE;
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $numrows = $res->fetchrow()[0];
+        $accountingPDO = null;
+        $accountingRows = array();
+        $numrows = 0;
+        try {
+            $accountingPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+            list($accountingSQL, $accountingBindings) = dalo_accounting_query('acct-username', array('username'=>$username), $configValues);
+            $numrows = dalo_accounting_count($accountingPDO, $accountingSQL, $accountingBindings, $configValues);
+        } catch (Throwable $exception) {
+            dalo_accounting_failure($exception);
+        }
         
         if ($numrows > 0) {
             
@@ -113,19 +128,14 @@
             
             // here we decide if page numbers should be shown
             $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-            
-            $sql = sprintf("SELECT ra.RadAcctId, dhs.name AS hotspot, ra.username, ra.FramedIPAddress, ra.AcctStartTime,
-                                   ra.AcctStopTime, ra.AcctSessionTime, ra.AcctInputOctets, ra.AcctOutputOctets,
-                                   CASE WHEN ra.AcctTerminateCause = '0' THEN 'Unknown' ELSE ra.AcctTerminateCause END AS AcctTerminateCause,
-                                   ra.NASIPAddress
-                              FROM %s AS ra LEFT JOIN %s AS dhs ON ra.calledstationid=dhs.mac",
-                           $configValues['CONFIG_DB_TBL_RADACCT'], $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'])
-                 . $sql_WHERE
-                 . sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-            
-            $per_page_numrows = $res->numRows();
+
+            try {
+                $accountingRows = dalo_accounting_rows($accountingPDO, $accountingSQL, $accountingBindings,
+                    'acct-username', $orderBy, $orderType, $offset, $rowsPerPage);
+            } catch (Throwable $exception) {
+                dalo_accounting_failure($exception);
+            }
+            $per_page_numrows = count($accountingRows);
             
             $descriptors = array();
 
@@ -140,7 +150,7 @@
             $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
 
             $descriptors['end'] = array();
-            $descriptors['end'][] = get_csv_export_control();
+            if (!isset($failureMsg)) { $descriptors['end'][] = get_csv_export_control(); }
             print_table_prologue($descriptors);
 
             // print table top
@@ -154,12 +164,14 @@
 
             // table content
             $count = 0;
-            while ($row = $res->fetchRow()) {
+            foreach ($accountingRows as $row) {
+                $rawUsername = (string)($row[2] ?? '');
+                $rawHotspot = (string)($row[1] ?? '');
                 $rowlen = count($row);
 
                 // escape row elements
                 for ($i = 0; $i < $rowlen; $i++) {
-                    $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                    $row[$i] = htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
                 }
                 
                 list($radAcctId, $hotspot, $username, $framedIPAddress, $acctStartTime, $acctStopTime,
@@ -169,9 +181,9 @@
                 $acctInputOctets = toxbyte($acctInputOctets);
                 $acctOutputOctets = toxbyte($acctOutputOctets);
                 
-                if (hotspots_exists($dbSocket, $hotspot)) {
+                if (dalo_accounting_exists($accountingPDO, $rawHotspot, 'CONFIG_DB_TBL_DALOHOTSPOTS')) {
                     $ajax_id = "divContainerHotspotInfo_" . $count;
-                    $param = sprintf('hotspot=%s', urlencode($hotspot));
+                    $param = sprintf('hotspot=%s', urlencode($rawHotspot));
                     $onclick = "daloInfo.hotspot('$ajax_id','$param')";
     
                     $tooltip1 = [
@@ -180,7 +192,7 @@
                                     'ajax_id' => $ajax_id,
                                     'actions' => array(),
                                 ];
-                    $tooltip1['actions'][] = [ 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($hotspot), ),
+                    $tooltip1['actions'][] = [ 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($rawHotspot), ),
                                                'label' => t('Tooltip','HotspotEdit'), ];
                     $tooltip1['actions'][] = [ 'href' => 'acct-hotspot-compare.php',
                                                'label' => t('all','Compare'), ];
@@ -190,9 +202,9 @@
                     $tooltip1 = (!empty($hotspot)) ? $hotspot : "(n/a)";
                 }
                 
-                if (user_exists($dbSocket, $username)) {
+                if (dalo_accounting_exists($accountingPDO, $rawUsername, 'CONFIG_DB_TBL_RADCHECK')) {
                     $ajax_id = "divContainerUserInfo_" . $count;
-                    $param = sprintf('username=%s', urlencode($username));
+                    $param = sprintf('username=%s', urlencode($rawUsername));
                     $onclick = "daloInfo.user('$ajax_id','$param')";
                 
                     $tooltip2 = [
@@ -201,13 +213,13 @@
                                     'ajax_id' => $ajax_id,
                                     'actions' => array(),
                                 ];
-                    $tooltip2['actions'][] = [ 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ),
+                    $tooltip2['actions'][] = [ 'href' => sprintf('mng-edit.php?username=%s', urlencode($rawUsername), ),
                                                'label' => t('Tooltip','UserEdit'), ];
                     
                     
                     $tooltip2 = get_tooltip_list_str($tooltip2);
                 } else {
-                    $tooltip2 = (!empty($username)) ? $username : "(n/a)";
+                    $tooltip2 = ($username !== '') ? $username : "(n/a)";
                 }
 
                 if (preg_match(LOOSE_IP_REGEX, $framedIPAddress, $m) !== false) {
@@ -228,7 +240,7 @@
                         'subject' => $nasIPAddress,
                         'actions' => array(),
                     ];
-                    $tooltip4['actions'][] = [  'href' => sprintf('acct-nasipaddress.php?ipaddress=%s', urlencode($nasIPAddress), ),
+                    $tooltip4['actions'][] = [  'href' => sprintf('acct-nasipaddress.php?nasipaddress=%s', urlencode($nasIPAddress), ),
                                                 'label' => t('button','NASIPAccounting'), ];
                     
                     $tooltip4 = get_tooltip_list_str($tooltip4);
@@ -265,7 +277,7 @@
             printLinks($links, $drawNumberLinks);
             
         } else {
-            $failureMsg = "Nothing to display";
+            $failureMsg = $failureMsg ?? "Nothing to display";
         }
     
         echo '<div class="accordion m-2" id="accordion-parent">';
@@ -280,9 +292,12 @@
     }
     
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     
     $inline_extra_js = "window.onload = function() { setupAccordion() };";
     
+    if (empty($numrows) || isset($failureMsg)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($accountingRows, $accountingPDO);
     print_footer_and_html_epilogue($inline_extra_js);

@@ -29,28 +29,30 @@ if (strpos($_SERVER['PHP_SELF'], '/notifications/context.php') !== false) {
     exit;
 }
 
+require_once dirname(__DIR__) . '/library/shared_context_pdo.php';
+
 /**
  * Build a notification document.
  *
  * @param string $type         one of the supported notification types
  * @param array  $configValues
- * @param object $dbSocket      open PEAR DB connection
+ * @param PDO    $pdo          borrowed selected-location PDO connection
  * @param array  $params        request parameters (GET merged over session)
  *
  * @return array|false On success an array with keys:
  *                     html, filename, recipient_name, recipient_email, subject, body.
  *                     false when the notification cannot be built.
  */
-function notification_build($type, $configValues, $dbSocket, array $params) {
+function notification_build($type, $configValues, PDO $pdo, array $params) {
     switch ($type) {
         case 'user-welcome':
-            return notification_build_user_welcome($configValues, $dbSocket, $params);
+            return notification_build_user_welcome($configValues, $pdo, $params);
 
         case 'batch-details':
-            return notification_build_batch_details($configValues, $dbSocket, $params);
+            return notification_build_batch_details($configValues, $pdo, $params);
 
         case 'user-invoice':
-            return notification_build_user_invoice($configValues, $dbSocket, $params);
+            return notification_build_user_invoice($configValues, $pdo, $params);
     }
 
     return false;
@@ -89,20 +91,20 @@ function notification_filename_slug($value) {
 /**
  * "user-welcome" - a welcome letter for a freshly created user.
  */
-function notification_build_user_welcome($configValues, $dbSocket, array $params) {
-    $username = isset($params['username']) ? str_replace('%', '', trim((string) $params['username'])) : '';
+function notification_build_user_welcome($configValues, PDO $pdo, array $params) {
+    $username = isset($params['username']) ? trim(dalo_shared_text($params['username'])) : '';
     if ($username === '') {
         return false;
     }
 
-    $sql = sprintf("SELECT firstname, lastname, email, address, city, state, zip,
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOUSERINFO');
+    $sql = "SELECT firstname, lastname, email, address, city, state, zip,
                            mobilephone, workphone, homephone
-                      FROM %s WHERE username = '%s' LIMIT 1",
-                   $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                   $dbSocket->escapeSimple($username));
+                      FROM {$daloTable0} WHERE username = :value1 LIMIT 1";
+    $query_params = array(':value1' => $username);
 
-    $res = $dbSocket->query($sql);
-    $row = (!DB::isError($res)) ? $res->fetchRow(DB_FETCHMODE_ASSOC) : null;
+    $rows = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC);
+    $row = ($rows[0] ?? null);
     if (!is_array($row)) {
         $row = array();
     }
@@ -150,35 +152,33 @@ function notification_build_user_welcome($configValues, $dbSocket, array $params
 /**
  * "batch-details" - a summary sheet for a pre-paid user batch and its hotspot.
  */
-function notification_build_batch_details($configValues, $dbSocket, array $params) {
-    $batch_name = isset($params['batch_name']) ? str_replace('%', '', trim((string) $params['batch_name'])) : '';
+function notification_build_batch_details($configValues, PDO $pdo, array $params) {
+    $batch_name = isset($params['batch_name']) ? trim(dalo_shared_text($params['batch_name'])) : '';
     if ($batch_name === '') {
         return false;
     }
 
-    $escaped = $dbSocket->escapeSimple($batch_name);
-
     // batch overview (one row)
-    $sql = sprintf("SELECT dbh.id AS batch_id, dbh.batch_name, dbh.batch_status,
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBATCHHISTORY');
+    $daloTable1 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
+    $daloTable2 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS');
+    $daloTable3 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOHOTSPOTS');
+    $daloTable4 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT dbh.id AS batch_id, dbh.batch_name, dbh.batch_status,
                            COUNT(DISTINCT ubi.id) AS total_users,
                            COUNT(DISTINCT ra.username) AS active_users,
                            ubi.planName AS plan_name, dbp.planCost AS plan_cost,
                            dhs.name AS hotspot_name, dbh.creationdate, dbh.creationby
-                      FROM %s AS dbh LEFT JOIN %s AS ubi ON dbh.id = ubi.batch_id
-                                    LEFT JOIN %s AS dbp ON dbp.planName = ubi.planName
-                                    LEFT JOIN %s AS dhs ON dbh.hotspot_id = dhs.id
-                                    LEFT JOIN %s AS ra  ON ra.username = ubi.username
-                     WHERE dbh.batch_name = '%s'
-                     GROUP BY dbh.id",
-                   $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
-                   $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
-                   $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                   $configValues['CONFIG_DB_TBL_RADACCT'],
-                   $escaped);
+                      FROM {$daloTable0} AS dbh LEFT JOIN {$daloTable1} AS ubi ON dbh.id = ubi.batch_id
+                                    LEFT JOIN {$daloTable2} AS dbp ON dbp.planName = ubi.planName
+                                    LEFT JOIN {$daloTable3} AS dhs ON dbh.hotspot_id = dhs.id
+                                    LEFT JOIN {$daloTable4} AS ra  ON ra.username = ubi.username
+                     WHERE dbh.batch_name = :value5
+                     GROUP BY dbh.id";
+    $query_params = array(':value5' => $batch_name);
 
-    $res = $dbSocket->query($sql);
-    $batch = (!DB::isError($res)) ? $res->fetchRow(DB_FETCHMODE_ASSOC) : null;
+    $rows = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC);
+    $batch = ($rows[0] ?? null);
     if (!is_array($batch)) {
         return false;
     }
@@ -200,11 +200,12 @@ function notification_build_batch_details($configValues, $dbSocket, array $param
     // service plan detail
     $plan_table = '';
     if ($plan_name !== '') {
-        $sql = sprintf("SELECT planName, planRecurringPeriod, planCost, planSetupCost, planTax, planCurrency
-                          FROM %s WHERE planName = '%s' LIMIT 1",
-                       $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $dbSocket->escapeSimple($plan_name));
-        $res = $dbSocket->query($sql);
-        $plan = (!DB::isError($res)) ? $res->fetchRow(DB_FETCHMODE_ASSOC) : null;
+        $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS');
+        $sql = "SELECT planName, planRecurringPeriod, planCost, planSetupCost, planTax, planCurrency
+                          FROM {$daloTable0} WHERE planName = :value1 LIMIT 1";
+        $query_params = array(':value1' => $plan_name);
+        $rows = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC);
+        $plan = ($rows[0] ?? null);
         if (is_array($plan)) {
             $rows = array();
             foreach ($plan as $key => $value) {
@@ -218,30 +219,30 @@ function notification_build_batch_details($configValues, $dbSocket, array $param
     $business = array('name' => '', 'owner' => '', 'address' => '', 'companyphone' => '',
                       'companyemail' => '', 'companywebsite' => '');
     if ($hotspot_name !== '') {
-        $sql = sprintf("SELECT name, owner, address, companyphone, companyemail, companywebsite
-                          FROM %s WHERE name = '%s' LIMIT 1",
-                       $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'], $dbSocket->escapeSimple($hotspot_name));
-        $res = $dbSocket->query($sql);
-        $row = (!DB::isError($res)) ? $res->fetchRow(DB_FETCHMODE_ASSOC) : null;
+        $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOHOTSPOTS');
+        $sql = "SELECT name, owner, address, companyphone, companyemail, companywebsite
+                          FROM {$daloTable0} WHERE name = :value1 LIMIT 1";
+        $query_params = array(':value1' => $hotspot_name);
+        $rows = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC);
+        $row = ($rows[0] ?? null);
         if (is_array($row)) {
             $business = array_merge($business, $row);
         }
     }
 
     // active users of this batch
-    $sql = sprintf("SELECT ubi.username, MIN(ra.acctstarttime) AS acctstarttime
-                      FROM %s AS ubi INNER JOIN %s AS ra ON ra.username = ubi.username
-                     WHERE ubi.batch_id = %d
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
+    $daloTable1 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT ubi.username, MIN(ra.acctstarttime) AS acctstarttime
+                      FROM {$daloTable0} AS ubi INNER JOIN {$daloTable1} AS ra ON ra.username = ubi.username
+                     WHERE ubi.batch_id = :value2
                      GROUP BY ubi.username
-                     ORDER BY ubi.username ASC",
-                   $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                   $configValues['CONFIG_DB_TBL_RADACCT'], $batch_id);
-    $res = $dbSocket->query($sql);
+                     ORDER BY ubi.username ASC";
+    $query_params = array(':value2' => $batch_id);
+    $rows = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC);
     $active_rows = array();
-    if (!DB::isError($res)) {
-        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-            $active_rows[] = array($row['username'], $row['acctstarttime']);
-        }
+    foreach ($rows as $row) {
+        $active_rows[] = array($row['username'], $row['acctstarttime']);
     }
     $active_users_table = notification_html_table(
         array(t('all', 'Username'), t('all', 'StartTime')), $active_rows);
@@ -324,41 +325,41 @@ function notification_invoice_templates($configValues) {
 /**
  * "user-invoice" - a billing invoice for a single customer.
  */
-function notification_build_user_invoice($configValues, $dbSocket, array $params) {
-    $invoice_id = isset($params['invoice_id']) ? intval($params['invoice_id']) : 0;
+function notification_build_user_invoice($configValues, PDO $pdo, array $params) {
+    $invoice_id = isset($params['invoice_id']) ? dalo_shared_id($params['invoice_id']) : 0;
     if ($invoice_id <= 0) {
         return false;
     }
 
-    $sql = sprintf("SELECT a.id, a.date, a.user_id, a.notes,
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGINVOICE');
+    $daloTable1 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
+    $daloTable2 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS');
+    $daloTable3 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGINVOICETYPE');
+    $daloTable4 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS');
+    $daloTable5 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOPAYMENTS');
+    $sql = "SELECT a.id, a.date, a.user_id, a.notes,
                            b.contactperson, b.company, b.city, b.state, b.country, b.zip, b.address,
                            b.email, b.emailinvoice, b.phone,
                            f.value AS type, c.value AS status,
                            COALESCE(e2.totalpayed, 0) AS totalpayed,
                            COALESCE(d2.totalbilled, 0) AS totalbilled
-                      FROM %s AS a INNER JOIN %s AS b ON a.user_id = b.id
-                                   INNER JOIN %s AS c ON a.status_id = c.id
-                                   INNER JOIN %s AS f ON a.type_id = f.id
+                      FROM {$daloTable0} AS a INNER JOIN {$daloTable1} AS b ON a.user_id = b.id
+                                   INNER JOIN {$daloTable2} AS c ON a.status_id = c.id
+                                   INNER JOIN {$daloTable3} AS f ON a.type_id = f.id
                                    LEFT JOIN (
                                        SELECT invoice_id, SUM(amount + tax_amount) AS totalbilled
-                                         FROM %s GROUP BY invoice_id
+                                         FROM {$daloTable4} GROUP BY invoice_id
                                    ) AS d2 ON d2.invoice_id = a.id
                                    LEFT JOIN (
                                        SELECT invoice_id, SUM(amount) AS totalpayed
-                                         FROM %s GROUP BY invoice_id
+                                         FROM {$daloTable5} GROUP BY invoice_id
                                    ) AS e2 ON e2.invoice_id = a.id
-                     WHERE a.id = %d
-                     GROUP BY a.id",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'],
-                   $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'],
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'],
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
-                   $configValues['CONFIG_DB_TBL_DALOPAYMENTS'],
-                   $invoice_id);
+                     WHERE a.id = :value6
+                     GROUP BY a.id";
+    $query_params = array(':value6' => $invoice_id);
 
-    $res = $dbSocket->query($sql);
-    $invoice = (!DB::isError($res)) ? $res->fetchRow(DB_FETCHMODE_ASSOC) : null;
+    $rows = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC);
+    $invoice = ($rows[0] ?? null);
     if (!is_array($invoice)) {
         return false;
     }
@@ -373,12 +374,13 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
     $due = -$balance; // amount still owed = billed - paid
 
     // invoice line items - the currency comes from the billing plan behind each item
-    $sql = sprintf("SELECT i.amount, i.tax_amount, i.notes, p.planName, p.planCurrency
-                      FROM %s AS i LEFT JOIN %s AS p ON i.plan_id = p.id
-                     WHERE i.invoice_id = %d ORDER BY i.id ASC",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $invoice_id);
-    $res = $dbSocket->query($sql);
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS');
+    $daloTable1 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS');
+    $sql = "SELECT i.amount, i.tax_amount, i.notes, p.planName, p.planCurrency
+                      FROM {$daloTable0} AS i LEFT JOIN {$daloTable1} AS p ON i.plan_id = p.id
+                     WHERE i.invoice_id = :value2 ORDER BY i.id ASC";
+    $query_params = array(':value2' => $invoice_id);
+    $rows = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC);
 
     $items = array();
     $total_amount = 0.0;
@@ -386,28 +388,26 @@ function notification_build_user_invoice($configValues, $dbSocket, array $params
     $currencies = array();        // distinct currency codes seen across the line items
     $has_uncoded_item = false;    // at least one line item has no currency at all
     $number = 1;
-    if (!DB::isError($res)) {
-        while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
-            $amount = floatval($row['amount']);
-            $tax = floatval($row['tax_amount']);
-            $item_currency = empty($row['planCurrency']) ? '' : strtoupper(trim((string) $row['planCurrency']));
-            if ($item_currency !== '') {
-                $currencies[$item_currency] = true;
-            } else {
-                $has_uncoded_item = true;
-            }
-            $items[] = array(
-                'number'   => sprintf('%02d', $number++),
-                'plan'     => (string) $row['planName'],
-                'notes'    => (string) $row['notes'],
-                'amount'   => $amount,
-                'tax'      => $tax,
-                'total'    => $amount + $tax,
-                'currency' => $item_currency,
-            );
-            $total_amount += $amount;
-            $total_tax += $tax;
+    foreach ($rows as $row) {
+        $amount = floatval($row['amount']);
+        $tax = floatval($row['tax_amount']);
+        $item_currency = empty($row['planCurrency']) ? '' : strtoupper(trim((string) $row['planCurrency']));
+        if ($item_currency !== '') {
+            $currencies[$item_currency] = true;
+        } else {
+            $has_uncoded_item = true;
         }
+        $items[] = array(
+            'number'   => sprintf('%02d', $number++),
+            'plan'     => (string) $row['planName'],
+            'notes'    => (string) $row['notes'],
+            'amount'   => $amount,
+            'tax'      => $tax,
+            'total'    => $amount + $tax,
+            'currency' => $item_currency,
+        );
+        $total_amount += $amount;
+        $total_tax += $tax;
     }
 
     // a currency code is put on the invoice-wide totals only when every line item

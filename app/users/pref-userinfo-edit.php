@@ -35,90 +35,35 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    function can_change_userinfo($dbSocket, $username) {
-        global $configValues, $logDebugSQL;
-
-        $sql = sprintf("SELECT changeuserinfo FROM %s WHERE username='%s'",
-                       $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($username));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        return intval($res->fetchrow()[0]) === 1;
-    }
-
-    include('../common/includes/db_open.php');
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            if (can_change_userinfo($dbSocket, $login_user)) {
-
-                $firstname = (array_key_exists('firstname', $_POST) && isset($_POST['firstname'])) ? $_POST['firstname'] : "";
-                $lastname = (array_key_exists('lastname', $_POST) && isset($_POST['lastname'])) ? $_POST['lastname'] : "";
-                $email = (array_key_exists('email', $_POST) && isset($_POST['email'])) ? $_POST['email'] : "";
-                $department = (array_key_exists('department', $_POST) && isset($_POST['department'])) ? $_POST['department'] : "";
-                $company = (array_key_exists('company', $_POST) && isset($_POST['company'])) ? $_POST['company'] : "";
-                $workphone = (array_key_exists('workphone', $_POST) && isset($_POST['workphone'])) ? $_POST['workphone'] : "";
-                $homephone = (array_key_exists('homephone', $_POST) && isset($_POST['homephone'])) ? $_POST['homephone'] : "";
-                $mobilephone = (array_key_exists('mobilephone', $_POST) && isset($_POST['mobilephone'])) ? $_POST['mobilephone'] : "";
-                $address = (array_key_exists('address', $_POST) && isset($_POST['address'])) ? $_POST['address'] : "";
-                $city = (array_key_exists('city', $_POST) && isset($_POST['city'])) ? $_POST['city'] : "";
-                $state = (array_key_exists('state', $_POST) && isset($_POST['state'])) ? $_POST['state'] : "";
-                $country = (array_key_exists('country', $_POST) && isset($_POST['country'])) ? $_POST['country'] : "";
-                $zip = (array_key_exists('zip', $_POST) && isset($_POST['zip'])) ? $_POST['zip'] : "";
-
-                // update user information table
-                $sql = sprintf("UPDATE %s SET firstname='%s', lastname='%s', email='%s', department='%s', company='%s', workphone='%s',
-                                              homephone='%s', mobilephone='%s', address='%s', city='%s', state='%s', country='%s',
-                                              zip='%s' WHERE username='%s'",
-                               $configValues['CONFIG_DB_TBL_DALOUSERINFO'], $dbSocket->escapeSimple($firstname),
-                               $dbSocket->escapeSimple($lastname), $dbSocket->escapeSimple($email),
-                               $dbSocket->escapeSimple($department), $dbSocket->escapeSimple($company),
-                               $dbSocket->escapeSimple($workphone), $dbSocket->escapeSimple($homephone),
-                               $dbSocket->escapeSimple($mobilephone), $dbSocket->escapeSimple($address),
-                               $dbSocket->escapeSimple($city), $dbSocket->escapeSimple($state),
-                               $dbSocket->escapeSimple($country), $dbSocket->escapeSimple($zip),
-                               $dbSocket->escapeSimple($login_user));
-
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                if (!DB::isError($res)) {
-                    // success
-                    $successMsg = "User info have been updated";
-                    $logAction = "User $login_user has updated their user info";
-                } else {
-                    // failed
-                    $failureMsg = "Something went wrong while attempting to update your user info";
-                    $logAction = "User $login_user failed to update their user info [db error]";
-                }
-
+    require_once __DIR__ . '/library/portal_pages_pdo.php';
+    $portalPdo = null;
+    $portalInfo = array_fill(0, count(dalo_portal_fields()), '');
+    try {
+        $portalPdo = dalo_portal_handle($configValues);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $token = $_POST['csrf_token'] ?? null;
+            if (!is_string($token) || !dalo_check_csrf_token($token)) {
+                $failureMsg = "CSRF token error";
             } else {
-                // err
-                $failureMsg = "You are not allowed to update your user info";
-                $logAction = "User $login_user failed to update their user info [not allowed]";
+                try {
+                    dalo_portal_update_userinfo($portalPdo, $configValues, $login_user, $_POST);
+                    $successMsg = "User info have been updated";
+                    $logAction = "User has updated their user info";
+                } catch (DomainException $exception) {
+                    $failureMsg = "You are not allowed to update your user info";
+                }
             }
-
-
-
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
         }
-    }
+        $portalInfo = dalo_portal_userinfo($portalPdo, $configValues, $login_user);
 
-    $sql = sprintf("SELECT firstname, lastname, email, department, company, workphone, homephone, mobilephone,
-                           address, city, state, country, zip
-                      FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_DALOUSERINFO'],
-                                                    $dbSocket->escapeSimple($login_user));
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    list( $ui_firstname, $ui_lastname, $ui_email, $ui_department, $ui_company, $ui_workphone, $ui_homephone,
-          $ui_mobilephone, $ui_address, $ui_city, $ui_state, $ui_country, $ui_zip ) = $res->fetchRow();
-
-    include('../common/includes/db_close.php');
+    } catch (Throwable $exception) {
+        // A committed write and failed subsequent display are not a rolled-back write.
+        $failureMsg = isset($successMsg) ? "User info updated; display is unavailable" :
+            "Something went wrong while attempting to update your user info";
+        $logAction = 'Portal information unavailable [' . get_class($exception) . ']';
+    } finally { $portalPdo = null; }
+    list($ui_firstname, $ui_lastname, $ui_email, $ui_department, $ui_company, $ui_workphone,
+         $ui_homephone, $ui_mobilephone, $ui_address, $ui_city, $ui_state, $ui_country, $ui_zip) = $portalInfo;
 
     // print HTML prologue
     $title = t('Intro','prefuserinfoedit.php');

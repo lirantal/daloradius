@@ -26,6 +26,8 @@
 
     include_once('../common/includes/config_read.php');
     include('library/check_operator_perm.php');
+    require_once __DIR__.'/library/widget_reads_pdo.php';
+    dalo_widget_inputs();
 
     include_once("lang/main.php");
     include("../common/includes/layout.php");

@@ -21,8 +21,11 @@
  *
  *********************************************************************************************************
  */
- 
-	$dbSocket->disconnect();
 
-?>
-
+require_once dirname(__DIR__, 3) . '/common/database.php';
+try {
+    // PDO-only: rollback pending work, never commit, and clear the exported handle.
+    dalo_chilli_database_close($dbSocket);
+} catch (Throwable $error) {
+    die('<b>Database close error</b><br/>');
+}

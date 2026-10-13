@@ -26,6 +26,8 @@
 
     include_once('../common/includes/config_read.php');
     include('library/check_operator_perm.php');
+    require_once __DIR__.'/library/widget_reads_pdo.php';
+    dalo_widget_inputs();
 
     include_once("lang/main.php");
     include("../common/includes/layout.php");
@@ -38,8 +40,8 @@
           ? strtolower($_GET['type']) : "daily";
 
     $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? str_replace('%', '', $_GET['username']) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+              ? $_GET['username'] : "";
+    $username_enc = ($username !== '') ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
     //feed the sidebar variables
     $overall_logins_username = $username_enc;
@@ -47,7 +49,7 @@
 
     // init logging variables
     $log = "visited page: ";
-    if (!empty($username)) {
+    if ($username !== '') {
         $logQuery = "performed query for user [$username] of type [$type] on page: ";
     }
 
@@ -61,7 +63,7 @@
     print_title_and_help($title, $help);
 
     $inline_extra_js = "";
-    if (!empty($username)) {
+    if ($username !== '') {
 
         // set navbar stuff
         $navkeys = array(
@@ -79,7 +81,7 @@
         open_tab($navkeys, 0, true);
 
         $img_format = '<div class="my-3 text-center" style="height:384px"><canvas data-chart-source="%s" aria-label="%s" role="img"></canvas></div>';
-        $src = sprintf("library/graphs/overall_users_data.php?category=login&type=%s&user=%s", $type, $username_enc);
+        $src = sprintf("library/graphs/overall_users_data.php?category=login&type=%s&user=%s", $type, htmlspecialchars(urlencode($username), ENT_QUOTES, 'UTF-8'));
         $alt = sprintf("%s login/hit statistics for user %s", ucfirst($type), $username_enc);
         printf($img_format, $src, $alt);
 

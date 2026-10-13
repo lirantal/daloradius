@@ -17,7 +17,7 @@
  *
  * Description:          daloRADIUS Version File
  *
- * Modification Date:    Fri May 22 12:00:00 CET 2026
+ * Modification Date:    Thu Oct 8 2026
  *
  *********************************************************************************************************
  */
@@ -28,5 +28,5 @@ if (strpos($_SERVER['PHP_SELF'], '/common/includes/version.php') !== false) {
     exit;
 }
 
-$configValues['DALORADIUS_VERSION'] = '2.3';
-$configValues['DALORADIUS_DATE'] = '22 May 2026';
+$configValues['DALORADIUS_VERSION'] = '2.4';
+$configValues['DALORADIUS_DATE'] = '8 October 2026';

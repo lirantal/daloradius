@@ -36,58 +36,27 @@
     include("../common/includes/validation.php");
     include("../common/includes/layout.php");
 
+    require_once __DIR__ . '/library/group_profiles_pdo.php';
+    $profile = '';
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            $profile = (array_key_exists('profile', $_POST) && !empty(str_replace("%", "", trim($_POST['profile']))))
-                     ? str_replace("%", "", trim($_POST['profile'])) : "";
-            $profile_enc = (!empty($profile)) ? htmlspecialchars($profile, ENT_QUOTES, 'UTF-8') : "";
-
-            if (empty($profile)) {
-                // profile required
-                $failureMsg = "The specified profile name is empty or invalid";
-                $logAction .= "Failed creating profile [empty or invalid profile name] on page: ";
-            } else {
-
-                include_once('include/management/populate_selectbox.php');
-                $groups = array_keys(get_groups());
-                include('../common/includes/db_open.php');
-
-                if (in_array($profile, $groups)) {
-                    // invalid profile name
-                    $failureMsg = "This profile name [<strong>$profile_enc</strong>] is already in use";
-                    $logAction .= "Failed creating profile [$profile, name already in use] on page: ";
-                } else {
-
-                    include("library/attributes.php");
-                    $skipList = array( "profile", "submit", "csrf_token" );
-                    $count = handleAttributes($dbSocket, $profile, $skipList, true, 'group');
-
-                    if ($count > 0) {
-                        $successMsg = sprintf("Successfully added a new profile (<strong>%s</strong>)", $profile_enc)
-                                    . sprintf(' [<a href="mng-rad-profiles-edit.php?profile_name=%s" title="Edit">Edit</a>]',
-                                              urlencode($profile_enc));
-                        $logAction .= "Successfully added a new profile ($profile) on page: ";
-                    } else {
-                        $failureMsg = "Failed adding a new profile (<strong>$profile_enc</strong>), invalid or empty attributes list";
-                        $logAction .= "Failed adding a new profile ($profile) [invalid or empty attributes list] on page: ";
-                    }
-
-                } // profile non-existent
-
-                include('../common/includes/db_close.php');
-
-            } // profile name not empty
-
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            $pdo = null;
+            try {
+                $profile = is_string($_POST['profile'] ?? null) ? trim($_POST['profile']) : '';
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                dalo_profile_write($pdo, $configValues, $profile, $_POST, $valid_ops, true);
+                $profile_enc = htmlspecialchars($profile, ENT_QUOTES, 'UTF-8');
+                $successMsg = sprintf('Successfully added a new profile (<strong>%s</strong>)', $profile_enc)
+                    . sprintf(' [<a href="mng-rad-profiles-edit.php?profile_name=%s" title="Edit">Edit</a>]', urlencode($profile));
+                $logAction = 'Successfully added profile on page: ';
+            } catch (Throwable $error) {
+                $failureMsg = 'Unable to create profile: invalid input, existing name or database operation failed';
+                $logAction = 'Profile creation failed on page: ';
+            } finally { $pdo = null; }
         }
-
     }
-
 
     // print HTML prologue
     $extra_css = array();

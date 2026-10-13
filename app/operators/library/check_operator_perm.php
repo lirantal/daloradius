@@ -29,35 +29,44 @@ if (strpos($_SERVER['PHP_SELF'], '/library/check_operator_perm.php') !== false) 
     exit;
 }
 
-// we format the php script file in the following manner:
-// we replace every instance of the - symbol with _ and we completely
-// remove the .php extension
-// this formatting is done to match the exact entry for the page as it
-// appears in the operators_acl table.
-//
-// AJAX endpoints may serve as helpers for existing ACL-protected pages, so
-// they can set $operator_perm_file before including this file.
-$file = (isset($operator_perm_file) && !empty($operator_perm_file))
-      ? $operator_perm_file
-      : str_replace("-", "_", basename($_SERVER['SCRIPT_NAME'], ".php"));
+// The permission read is independent of any caller-owned business transaction.
+// Keep its handle local and do not close/replace a caller's $pdo or $dbSocket.
+$operator_acl_pdo = null;
+$operator_acl_failure = false;
+try {
+    include dirname(__DIR__, 2) . '/common/includes/config_read.php';
+    require_once dirname(__DIR__, 2) . '/common/includes/pdo_connection.php';
+    require_once __DIR__ . '/operator_acl_read.php';
+    $file = (isset($operator_perm_file) && !empty($operator_perm_file))
+          ? $operator_perm_file
+          : str_replace('-', '_', basename($_SERVER['SCRIPT_NAME'], '.php'));
+    $operator_acl_pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+    $access = dalo_operator_acl_allowed($operator_acl_pdo, $configValues,
+                                      $_SESSION['operator_id'] ?? null, $file);
+} catch (InvalidArgumentException $error) {
+    // Invalid identity/page/configuration is never permission to proceed.
+    $access = false;
+} catch (Throwable $error) {
+    // Do not pass raw PDO errors to a renderer: they may contain SQL or connection values.
+    error_log('Operator permission lookup failed: ' . get_class($error));
+    $operator_acl_failure = true;
+} finally {
+    $operator_acl_pdo = null;
+}
 
-include(implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', 'common', 'includes', 'db_open.php' ]));
+if ($operator_acl_failure) {
+    if (isset($db_error_handler) && is_callable($db_error_handler)) {
+        call_user_func($db_error_handler, new RuntimeException('Operator permission lookup failed'));
+    }
+    http_response_code(503);
+    exit('Unable to check operator permissions.');
+}
 
-$sql = sprintf("SELECT access FROM %s WHERE operator_id=%d AND file='%s'",
-               $configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'], $_SESSION['operator_id'], $file);
-$access = intval($dbSocket->getOne($sql)) === 1;
-
-include(implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', '..', 'common', 'includes', 'db_close.php' ]));
-
-// we finally check if the access to the requested page could be granted
 if (!$access) {
     if (isset($operator_perm_deny_http_status)) {
         http_response_code(intval($operator_perm_deny_http_status));
         exit;
     }
-
     header('Location: home-error.php');
     exit;
 }
-
-?>

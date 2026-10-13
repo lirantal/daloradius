@@ -32,6 +32,7 @@
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
+    $logAction = "";
     $logDebugSQL = "";
 
     // set session's page variable
@@ -56,7 +57,7 @@
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
     // print HTML prologue
@@ -69,34 +70,26 @@
     print_title_and_help($title, $help);
     
 
-    include('../common/includes/db_open.php');
+    require_once('library/payment_types_pdo.php');
     include('include/management/pages_common.php');
-
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
-
+    $numrows = 0; $rows = array(); $type_pdo = null;
+    try {
+        foreach (array('orderBy','orderType') as $field) { dalo_payment_scalar($_GET,$field); }
+        $type_pdo = dalo_payment_open($configValues);
+        $table = dalo_payment_table($type_pdo,$configValues,'CONFIG_DB_TBL_DALOPAYMENTTYPES');
+        $numrows = (int)dalo_catalog_read_rows($type_pdo,"SELECT COUNT(id) FROM $table")[0][0];
+        if ($numrows > 0) {
+            include('include/management/pages_numbering.php');
+            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+            $sql = "SELECT id,value AS paymentName,notes FROM $table ORDER BY $orderBy $orderType LIMIT :offset,:limit";
+            $rows = dalo_catalog_read_rows($type_pdo,$sql,array(':offset'=>(int)$offset,':limit'=>(int)$rowsPerPage));
+            $logDebugSQL .= "$sql;\n";
+        }
+    } catch (Throwable $error) { dalo_payment_type_read_failure($error); $numrows = 0; $rows = array(); }
+    finally { $type_pdo = null; }
     if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
-        
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
-        /* END */
-        
-        // we execute and log the actual query
-        $sql = sprintf("SELECT id, value AS paymentName, notes FROM %s", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
-        
+        $per_page_numrows = count($rows);
+
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "bill-payment-types-del.php";
@@ -128,12 +121,13 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($rows as $row) {
+            $rawPaymentName = (string)$row[1];
             $rowlen = count($row);
         
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)$row[$i], ENT_QUOTES, 'UTF-8');
             }
             
             list($id, $paymentName, $notes) = $row;
@@ -142,14 +136,14 @@
                                 'subject' => $id,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('bill-payment-types-edit.php?paymentname=%s', urlencode($paymentName), ), 'label' => t('Tooltip','EditPayType'), );
-            $tooltip['actions'][] = array( 'href' => sprintf('bill-payment-types-del.php?paymentname=%s', urlencode($paymentName), ), 'label' => t('Tooltip','RemovePayType'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-payment-types-edit.php?paymentname=%s', urlencode($rawPaymentName), ), 'label' => t('Tooltip','EditPayType'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-payment-types-del.php?paymentname=%s', urlencode($rawPaymentName), ), 'label' => t('Tooltip','RemovePayType'), );
             
             // create tooltip
             $tooltip = get_tooltip_list_str($tooltip);
 
             // create checkbox
-            $d = array( 'name' => 'paymentname[]', 'value' => $paymentName );
+            $d = array( 'name' => 'paymentname[]', 'value' => $rawPaymentName );
             $checkbox = get_checkbox_str($d);
 
             // build table row
@@ -180,11 +174,11 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        if (!isset($failureMsg)) { $failureMsg = "Nothing to display"; }
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');
+
 
     include('include/config/logging.php');
     

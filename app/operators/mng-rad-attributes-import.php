@@ -41,165 +41,49 @@
                                         "only_insert_new" => "only insert new attributes"
                                    );
 
+    require_once('library/dictionary_import.php');
+    include_once('../common/includes/pdo_connection.php');
+
+    $importStrategy = 'insert_or_update';
+    $detectVendor = true;
+    $vendor = '';
+    $dictionary = '';
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $importStrategy = (array_key_exists('importStrategy', $_POST) && isset($_POST['importStrategy']) &&
-                           in_array($_POST['importStrategy'], array_keys($valid_importStrategies)))
-                        ? $_POST['importStrategy'] : array_keys($valid_importStrategies)[0];
+        $submittedStrategy = isset($_POST['importStrategy']) ? $_POST['importStrategy'] : null;
+        $submittedVendor = isset($_POST['vendor']) ? $_POST['vendor'] : '';
+        $submittedDictionary = isset($_POST['dictionary']) ? $_POST['dictionary'] : '';
+        $importStrategy = (is_string($submittedStrategy) &&
+                           isset($valid_importStrategies[$submittedStrategy]))
+                        ? $submittedStrategy : 'insert_or_update';
+        $detectVendor = isset($_POST['detectVendor']);
+        $vendor = is_string($submittedVendor) ? trim($submittedVendor) : '';
+        $dictionary = is_string($submittedDictionary) ? $submittedDictionary : '';
 
-        $detectVendor = (array_key_exists('detectVendor', $_POST) && isset($_POST['detectVendor']));
-        
-        $vendor = (!$detectVendor && array_key_exists('vendor', $_POST) && !empty(str_replace("%", "", trim($_POST['vendor']))))
-                ? str_replace("%", "", trim($_POST['vendor'])) : "";
-        $vendor_enc = (!empty($vendor)) ? htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8') : "";
-
-        $dictionary = (array_key_exists('dictionary', $_POST) && !empty($_POST['dictionary']))
-                    ? $_POST['dictionary'] : "";
-        
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            
-            if (empty($dictionary) || (!$detectVendor && empty($vendor))) {
-                if (empty($dictionary)) {
-                    // dictionary cannot be empty
-                    $failureMsg = "dictionary cannot be empty";
-                } else {
-                    // vendor cannot be empty when auto detect is turned off
-                    $failureMsg = "vendor cannot be empty when auto-detection is turned off";
-                }
-                $logAction .= "$failureMsg on page: ";
-                
-            } else {
-                // we break the POST variable (continous string) into an array
-                $myDictionary = explode("\n", $dictionary);
-                
-                $split_regex = '/\t+|\s+/';
-                $this_attributes = array();
-                $this_vendor = (!$detectVendor && !empty($vendor)) ? $vendor : "";
-
-                foreach ($myDictionary as $line) {
-                    $arr = preg_split($split_regex, trim($line));
-                    $arrlen = count($arr);
-                    
-                    // we need at least two elements
-                    // minimum arrlen == 2
-                    // maximum unknown (because we could have comments)
-                    if ($arrlen < 2) {
-                        continue;
-                    }
-                    
-                    if ($detectVendor && $arr[0] === "VENDOR") {
-                        // VENDOR       TestVendor1    1    # this could be a comment
-                        $this_vendor = $arr[1];
-                        continue;
-                    }
-                    
-                    if ($arr[0] === "ATTRIBUTE") {
-                        // example: ATTRIBUTE    TestAttr2      2    string    # this could be a comment
-                        $attr = $arr[1];
-                        $type = ($arrlen >= 4) ? $arr[3] : null;
-                            
-                        if (!in_array($attr, $this_attributes)) {
-                            $this_attributes[$attr] = $type;
-                        } else {
-                            if ($this_attributes[$attr] == null && $type != null) {
-                                $this_attributes[$attr] = $type;
-                            }
-                        }
-
-                        continue;
-                    }
-                }
-                
-                
-                if (empty($this_vendor)) {
-                    // cannot detect vendor
-                    $failureMsg = "vendor cannot be auto-detected from dictionary";
-                    $logAction .= "$failureMsg on page: ";
-                } else {
-                    include('../common/includes/db_open.php');
-                    
-                    $deleted = 0;
-                    $updated = 0;
-                    $inserted = 0;
-                    
-                    if ($importStrategy == "delete_then_insert") {
-                        // delete all, attributes will be inserted later
-                        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE Vendor='%s'",
-                                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                       $dbSocket->escapeSimple($this_vendor));
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-                        
-                        $deleted = intval($res->fetchrow()[0]);
-                        
-                        
-                        $sql = sprintf("DELETE FROM %s WHERE Vendor='%s'",
-                                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                       $dbSocket->escapeSimple($this_vendor));
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-                    }
-                    
-                    foreach ($this_attributes as $this_attribute => $this_type) {
-                        $this_type = ($this_type == null) ? "NULL" : sprintf("'%s'", $dbSocket->escapeSimple($this_type));
-                        
-                        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE Vendor='%s' AND Attribute='%s'",
-                                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                       $dbSocket->escapeSimple($this_vendor), $dbSocket->escapeSimple($this_attribute));
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-                        
-                        $exists = $res->fetchrow()[0] > 0;
-                        
-                        if ($exists) {
-                            // if it exists and the strategy is insert_or_update we update and then continue
-                            if ($importStrategy == "insert_or_update") {
-                                $sql = sprintf("UPDATE %s SET Type=%s WHERE Vendor='%s' AND Attribute='%s'",
-                                               $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $this_type,
-                                               $dbSocket->escapeSimple($this_vendor),
-                                               $dbSocket->escapeSimple($this_attribute));
-                                $res = $dbSocket->query($sql);
-                                $logDebugSQL .= "$sql;\n";
-                                
-                                $updated++;
-                            }
-                            
-                            continue;
-                        }
-                        
-                        // we are here:
-                        // if the attribute does not exist hence needs to be inserted or 
-                        // if it used to exist but it has been previously deleted
-                        // because of the delete_then_insert strategy
-                        $sql = sprintf("INSERT INTO %s (Id, Type, Vendor, Attribute)
-                                                VALUES (0, %s, '%s', '%s')",
-                                        $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                        $this_type,
-                                        $dbSocket->escapeSimple($this_vendor),
-                                        $dbSocket->escapeSimple($this_attribute));
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-                        
-                        $inserted++;
-                        
-                    }
-                    
-                    include('../common/includes/db_close.php');
-                    
-                    $count = count($this_attributes);
-                    $format = "processed: %d, deleted: %d, inserted: %d, updated: %d attributes for vendor %s";
-                    $successMsg = sprintf($format, $count, $deleted, $inserted, $updated,
-                                          htmlspecialchars($this_vendor, ENT_QUOTES, 'UTF-8'));
-                    $logAction .= sprintf("$format on page: ", $count, $deleted, $inserted, $updated, $this_vendor);
-                }
-
-            }
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) ||
+            !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
+            $logAction .= 'CSRF token error on page: ';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                list($selectedVendor, $attributes) = dalo_dictionary_import_text(
+                    $submittedDictionary, $detectVendor, $submittedVendor);
+                $pdo = dalo_pdo_connect($configValues, isset($_SESSION['location_name'])
+                                                       ? $_SESSION['location_name'] : 'default');
+                $counts = dalo_dictionary_import($pdo, $configValues, $submittedStrategy,
+                                                 $selectedVendor, $attributes);
+                $successMsg = sprintf(
+                    'processed: %d, deleted: %d, inserted: %d, updated: %d attributes for vendor %s',
+                    $counts['processed'], $counts['deleted'], $counts['inserted'],
+                    $counts['updated'], htmlspecialchars($selectedVendor, ENT_QUOTES, 'UTF-8'));
+                $logAction .= 'Successfully imported vendor dictionary on page: ';
+                $logDebugSQL .= "DELETE/UPDATE/INSERT configured dictionary with bound values;\n";
+            } catch (Throwable $exception) {
+                // No partial counts or bound values are logged or displayed on failure.
+                $failureMsg = 'Cannot import dictionary: invalid input or database operation';
+                $logAction .= 'Failed importing vendor dictionary on page: ';
+            }
         }
     }
-    
 
     // print HTML prologue
     $title = t('Intro','mngradattributesimport.php');

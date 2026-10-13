@@ -33,122 +33,49 @@
     $logAction = "";
     $logDebugSQL = "";
 
+    require_once __DIR__ . '/library/user_group_pages_pdo.php';
+    $input = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+    $username = is_string($input['username'] ?? null) ? trim($input['username']) : '';
+    $current_groupname = is_string($input['current_group'] ?? null) ? trim($input['current_group']) : '';
+    $groupname = is_string($input['group'] ?? null) ? trim($input['group']) : '';
+    $this_username = $this_groupname = '';
+    $this_priority = 0;
+    $pdo = null;
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // declaring variables
-        $username = (array_key_exists('username', $_POST) && !empty(str_replace("%", "", trim($_POST['username']))))
-                  ? str_replace("%", "", trim($_POST['username'])) : "";
-        $groupname = (array_key_exists('group', $_POST) && !empty(str_replace("%", "", trim($_POST['group']))))
-                   ? str_replace("%", "", trim($_POST['group'])) : "";
-        $groupname_enc = (!empty($groupname)) ? htmlspecialchars($groupname, ENT_QUOTES, 'UTF-8') : "";
-
-        $current_groupname = (array_key_exists('current_group', $_POST) && !empty(str_replace("%", "", trim($_POST['current_group']))))
-                      ? str_replace("%", "", trim($_POST['current_group'])) : "";
-
-        $priority = (array_key_exists('priority', $_POST) && isset($_POST['priority']))
-                  ? normalize_user_group_priority($groupname, $_POST['priority'])
-                  : normalize_user_group_priority($groupname, 0);
-    } else {
-        // declaring variables
-        $username = (array_key_exists('username', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['username']))))
-                  ? str_replace("%", "", trim($_REQUEST['username'])) : "";
-        $current_groupname = (array_key_exists('current_group', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['current_group']))))
-                      ? str_replace("%", "", trim($_REQUEST['current_group'])) : "";
-    }
-
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    $current_groupname_enc = (!empty($current_groupname)) ? htmlspecialchars($current_groupname, ENT_QUOTES, 'UTF-8') : "";
-
-    // feed the sidebar
-    $usernameList = $username_enc;
-
-    include('../common/includes/db_open.php');
-
-    $mapping_check_format = "SELECT COUNT(*) FROM %s WHERE username='%s' AND groupname='%s'";
-
-    // check if the old mapping is already in place
-    $sql = sprintf($mapping_check_format, $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                          $dbSocket->escapeSimple($username),
-                                          $dbSocket->escapeSimple($current_groupname));
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    $old_mapping_inplace = intval($res->fetchrow()[0]) > 0;
-
-    if (!$old_mapping_inplace) {
-        // if the mapping is not in place we reset user and group
-        $username = "";
-        $current_groupname = "";
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            if (empty($username) || empty($groupname) || empty($current_groupname)) {
-                // username and groupname are required
-                $failureMsg = "Username and groupname are required.";
-                $logAction .= "Failed updating user-group mapping (username and/or groupname missing or invalid): ";
-            } else {
-                // check if the new mapping is already in place
-                $sql = sprintf($mapping_check_format, $configValues['CONFIG_DB_TBL_RADUSERGROUP'],
-                                                      $dbSocket->escapeSimple($username),
-                                                      $dbSocket->escapeSimple($groupname));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                $new_mapping_inplace = intval($res->fetchrow()[0]) > 0;
-
-                if ($new_mapping_inplace && $groupname !== $current_groupname) {
-                    // error
-                    $failureMsg = "The chosen user mapping ($username_enc - $groupname_enc) is already in place.";
-                    $logAction .= "Failed updating user-group mapping [$username - $groupname already in place]: ";
-                } else {
-                    $priority = normalize_user_group_priority($groupname, $priority);
-                    $sql = sprintf("UPDATE %s SET groupname='%s', priority=%d WHERE username='%s' AND groupname='%s'",
-                                   $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($groupname),
-                                   $priority, $dbSocket->escapeSimple($username),
-                                   $dbSocket->escapeSimple($current_groupname));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (!DB::isError($res)) {
-                        $successMsg = "Updated user-group mapping [$username_enc, from $current_groupname_enc to $groupname_enc]";
-                        $logAction .= "Updated user-group mapping [$username, from $current_groupname to $groupname]: ";
-
-                        // reset variables
-                        $current_groupname = $groupname;
-                        $groupname = "";
-                        $groupname_enc = "";
-
-                    } else {
-                        $failureMsg = "DB Error when updating the chosen user mapping ($username_enc, from $current_groupname_enc to $groupname_enc)";
-                        $logAction .= "Failed updating user-group mapping [$username, from $current_groupname to $groupname, db error]: ";
-                    }
-                }
-            }
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                dalo_usergroup_edit($pdo, $configValues, $_POST['username'] ?? null,
+                                   $_POST['current_group'] ?? null, $_POST['group'] ?? null,
+                                   $_POST['priority'] ?? 0);
+                $successMsg = 'Updated user-group mapping';
+                $logAction = 'Updated user-group mapping on page: ';
+                $current_groupname = $groupname;
+            } catch (Throwable $error) {
+                $failureMsg = 'Unable to update user-group mapping: invalid or stale selection or database operation failed';
+                $logAction = 'User-group update failed on page: ';
+            } finally { $pdo = null; }
         }
     }
-
-    if (empty($username) || empty($current_groupname)) {
-        $failureMsg = "the user-group you have specified is empty or invalid";
-        $logAction .= "Failed updating user-group [empty or invalid user-group] on page: ";
-    } else {
-        // retrieve mapping from database
-        $sql = sprintf("SELECT username, groupname, priority FROM %s WHERE username='%s' AND groupname='%s'",
-                       $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $dbSocket->escapeSimple($username),
-                       $dbSocket->escapeSimple($current_groupname));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        list($this_username, $this_groupname, $this_priority) = $res->fetchRow();
-    }
-
-    include('../common/includes/db_close.php');
-
+    try {
+        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $table = dalo_usergroup_table($configValues, 'CONFIG_DB_TBL_RADUSERGROUP');
+        $row = dalo_usergroup_query($pdo, "SELECT username,groupname,priority FROM $table WHERE username=? AND groupname=? ORDER BY id LIMIT 1",
+                                   array($username, $current_groupname))->fetch(PDO::FETCH_NUM);
+        if ($row) { list($this_username, $this_groupname, $this_priority) = $row; }
+        else {
+            $username = $current_groupname = '';
+            if (!isset($failureMsg)) { $failureMsg = 'The user-group mapping is empty or invalid'; }
+        }
+    } catch (Throwable $error) {
+        $username = $current_groupname = '';
+        if (!isset($failureMsg)) { $failureMsg = 'Unable to load user-group mapping'; }
+    } finally { $pdo = null; }
+    $username_enc = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+    $current_groupname_enc = htmlspecialchars($current_groupname, ENT_QUOTES, 'UTF-8');
+    $usernameList = $username_enc;
 
     include_once("lang/main.php");
 
@@ -174,7 +101,7 @@
 
     include_once('include/management/actionMessages.php');
 
-    if (!empty($username) && !empty($current_groupname)) {
+    if ($username !== '' && $current_groupname !== '') {
         include_once('include/management/populate_selectbox.php');
 
         $input_descriptors0 = array();

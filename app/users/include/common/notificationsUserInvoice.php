@@ -21,87 +21,47 @@
  */
 
 	require_once(dirname(__FILE__)."/../../library/checklogin.php");
-	require_once(dirname(__FILE__)."/../../notifications/processNotificationUserInvoice.php");
-	require_once(dirname(__FILE__)."/../../../common/includes/config_read.php");
-	
-	$invoice_id = (array_key_exists('invoice_id', $_GET) && intval(trim($_GET['invoice_id'])) > 0)
-	            ? intval(trim($_GET['invoice_id'])) : "";
-	isset($_GET['destination']) ? $destination = $_GET['destination'] : $destination = "download";
-	
-	$login = $_SESSION['login_user'];
-	$username = $login;
-	
-	if (!$username)
-		return false;
-		
-	if ($invoice_id != "") {
-		$customerInfo = @getInvoiceDetails($invoice_id, $username);
-		
-		$pdfDocument = @createNotification($customerInfo);
-		
-		if ($destination == "download") {
-			header("Content-type: application/pdf");
-			header("Content-Disposition: attachment; filename=notification_user_invoice_" . date("Ymd") . ".pdf; size=" . strlen($pdfDocument));
-			print $pdfDocument;
-		}
-		
-	}
-	
-	
+    require_once dirname(__DIR__, 3) . '/common/includes/config_read.php';
+    require_once dirname(__DIR__, 2) . '/library/portal_pages_pdo.php';
+    $username = $_SESSION['login_user'] ?? null;
+    try {
+        dalo_portal_username($username);
+        $invoice_id = dalo_portal_id($_GET['invoice_id'] ?? '');
+        $destination = $_GET['destination'] ?? 'download';
+        if (!is_string($destination) || $destination !== 'download') {
+            throw new InvalidArgumentException('Invalid invoice destination');
+        }
+    } catch (InvalidArgumentException $exception) {
+        http_response_code(400); exit('Invalid invoice request');
+    }
+    try {
+        $customerInfo = getInvoiceDetails($invoice_id, $username);
+        if ($customerInfo === false) { http_response_code(404); exit('Invoice not found'); }
+        // Loading the PDF processor is deferred until authorization and all SQL reads succeed.
+        require_once dirname(__DIR__, 2) . '/notifications/processNotificationUserInvoice.php';
+        $pdfDocument = createNotification($customerInfo);
+    } catch (Throwable $exception) {
+        http_response_code(503); exit('Invoice unavailable');
+    }
+    header('Content-type: application/pdf');
+    header('Content-Disposition: attachment; filename=notification_user_invoice_' . date('Ymd') .
+        '.pdf; size=' . strlen($pdfDocument));
+    print $pdfDocument;
+
 	function getInvoiceDetails($invoice_id, $username) {
 		
-		require(dirname(__FILE__)."/../../../common/includes/db_open.php");
-		require_once(dirname(__FILE__)."/../../lang/main.php");
-		
-		global $configValues, $logDebugSQL;
+        global $configValues, $logDebugSQL;
+        require_once dirname(__DIR__, 2) . '/lang/main.php';
+        $pdo = null;
+        try {
+            $pdo = dalo_portal_handle($configValues);
+            $invoice = dalo_portal_invoice($pdo, $configValues, $username, $invoice_id);
+        } finally { $pdo = null; }
+        $invoiceDetails = $invoice['header'];
+        if (!$invoiceDetails) { return false; }
+        $tableTags = "width='580px' ";
+        $tableTrTags = "bgcolor='#ECE5B6'";
 
-		if (!isset($logDebugSQL))
-			$logDebugSQL = "";
-		
-
-		$sql = "SELECT id, contactperson, city, state, username FROM ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-		" WHERE username = '".$dbSocket->escapeSimple($username)."'";
-		$res = $dbSocket->query($sql);
-		$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-		$user_id = ($row && array_key_exists('id', $row)) ? $row['id'] : null;
-		
-		if (!$user_id) {
-			require(dirname(__FILE__)."/../../../common/includes/db_close.php");
-			return false;
-		}
-		
-		if ($invoice_id == NULL || empty($invoice_id))
-			exit;
-			
-
-		$tableTags = "width='580px' ";
-		$tableTrTags = "bgcolor='#ECE5B6'";
-		
-		
-		// get invoice details
-		$sql = "SELECT a.id, a.date, a.status_id, a.type_id, a.user_id, a.notes, b.contactperson, b.username, ".
-				" b.city, b.state, b.address, b.email, b.emailinvoice, b.phone, f.value as type, ".
-				" c.value AS status, COALESCE(e2.totalpayed, 0) as totalpayed, COALESCE(d2.totalbilled, 0) as totalbilled ".
-				" FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']." AS a".
-				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO']." AS b ON (a.user_id = b.id) ".
-				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS']." AS c ON (a.status_id = c.id) ".
-				" INNER JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE']." AS f ON (a.type_id = f.id) ".
-				" LEFT JOIN (SELECT SUM(d.amount + d.tax_amount) ".
-					" as totalbilled, invoice_id, amount, tax_amount, notes, plan_id FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS']." AS d ".
-					" GROUP BY d.invoice_id) AS d2 ON (d2.invoice_id = a.id) ".
-				" LEFT JOIN ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." AS bp2 ON (bp2.id = d2.plan_id) ".
-				" LEFT JOIN (SELECT SUM(e.amount) as totalpayed, invoice_id FROM ". 
-				$configValues['CONFIG_DB_TBL_DALOPAYMENTS']." AS e GROUP BY e.invoice_id) AS e2 ON (e2.invoice_id = a.id) ".
-				" WHERE a.id = '".$dbSocket->escapeSimple($invoice_id)."'".
-				" AND a.user_id = ".$dbSocket->escapeSimple($user_id).
-				" GROUP BY a.id ";
-		$res = $dbSocket->query($sql);	
-		$invoiceDetails = $res->fetchRow(DB_FETCHMODE_ASSOC);
-
-		if (!$invoiceDetails)
-			return false;
-
-			
 		if (empty($invoiceDetails['email']))
 			$customer_email = $invoiceDetails['emailinvoice'];
 		else
@@ -138,16 +98,7 @@
 			</tr>
 			";
 
-		// get all invoice items
-		$sql = sprintf("SELECT a.id, a.plan_id, a.amount, a.tax_amount, a.notes, b.planName
-		                  FROM %s a LEFT JOIN %s b ON a.plan_id = b.id
-		                 WHERE a.invoice_id = %d ORDER BY a.id ASC",
-		               $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'],
-		               $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $invoice_id);
-		$res = $dbSocket->query($sql);
-		$logDebugSQL .= $sql . "\n";
-		
-		while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+		foreach ($invoice['items'] as $row) {
 
 			$invoice_items .= "". 
 				"<tr>".
@@ -163,7 +114,7 @@
 		
 		$customerInfo['invoice_items'] = $invoice_items;
 		
-		require(dirname(__FILE__)."/../../../common/includes/db_close.php");
+
 		
 		
 		return $customerInfo;

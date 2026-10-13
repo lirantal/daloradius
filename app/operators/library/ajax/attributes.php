@@ -19,6 +19,11 @@ include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'chec
 
 $attribute_parent_permissions = [
     'mng-new' => 'mng_new',
+    'mng-rad-groupreply-edit' => 'mng_rad_groupreply_edit',
+    'mng-rad-groupcheck-edit' => 'mng_rad_groupcheck_edit',
+    'bill-pos-new' => 'bill_pos_new',
+    'mng-import-users' => 'mng_import_users',
+    'mng-new-quick' => 'mng_new_quick',
     'mng-edit' => 'mng_edit',
     'mng-batch-add' => 'mng_batch_add',
     'mng-rad-profiles-new' => 'mng_rad_profiles_new',
@@ -41,17 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     dalo_info_response([ 'error' => 'Method not allowed.' ], 405);
 }
 
-$dalo_info_database_error_message = 'Unable to load attribute information.';
-$db_error_handler = 'dalo_info_database_error';
-include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-// The default PEAR callback prints HTML and would corrupt the JSON response.
-$dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-
-function dalo_attribute_query_error($result) {
-    if (DB::isError($result)) {
-        dalo_info_response([ 'error' => 'Unable to load attribute information.' ], 500);
-    }
-}
+require_once dirname(__DIR__) . '/dictionary_pages_pdo.php';
 
 function dalo_attribute_options($helper) {
     switch ($helper) {
@@ -138,30 +133,30 @@ function dalo_attribute_helper($helper, $dynamic_options) {
     return [ 'name' => $helper, 'type' => 'none', 'options' => [], 'initialValue' => null ];
 }
 
+try {
+$pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+$dictionaryTable = dalo_dictionary_table($configValues);
+
 if (isset($_GET['vendorAttributes'])) {
     if (!is_string($_GET['vendorAttributes'])) {
         dalo_info_response([ 'error' => 'Missing or invalid parameter.' ], 400);
     }
     $vendor = trim($_GET['vendorAttributes']);
     if ($vendor === '') {
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
         dalo_info_response([ 'vendor' => '', 'attributes' => [] ]);
     }
 
-    $sql = sprintf("SELECT DISTINCT `attribute` FROM %s WHERE `Vendor`='%s' ORDER BY `attribute` ASC",
-                   $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($vendor));
-    $res = $dbSocket->query($sql);
-    dalo_attribute_query_error($res);
+    dalo_dictionary_text($vendor, 32, true);
+    $res = $pdo->prepare("SELECT DISTINCT Attribute FROM $dictionaryTable WHERE Vendor=:vendor ORDER BY Attribute ASC");
+    $res->execute(array(':vendor'=>$vendor));
     $attributes = [];
-    while ($row = $res->fetchRow()) {
-        if (DB::isError($row)) {
-            dalo_info_response([ 'error' => 'Unable to load attribute information.' ], 500);
-        }
+    while ($row = $res->fetch(PDO::FETCH_NUM)) {
         $attributes[] = trim($row[0]);
     }
     $attributes = dalo_filter_cleartext_password_attributes($attributes);
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
     dalo_info_response([ 'vendor' => $vendor, 'attributes' => array_values($attributes) ]);
 }
 
@@ -171,17 +166,11 @@ if (isset($_GET['getValuesForAttribute'])) {
     }
     $attribute = trim($_GET['getValuesForAttribute']);
 
-    $sql = sprintf("SELECT `recommendedOP`, `recommendedTable`, `recommendedTooltip`, `type`, `recommendedHelper`
-                      FROM %s
-                     WHERE `attribute`='%s' AND (`Value` = '' OR `Value` IS NULL)
-                     ORDER BY `id` ASC LIMIT 1",
-                   $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($attribute));
-    $res = $dbSocket->query($sql);
-    dalo_attribute_query_error($res);
-    $row = $res->fetchRow();
-    if (DB::isError($row)) {
-        dalo_info_response([ 'error' => 'Unable to load attribute information.' ], 500);
-    }
+    dalo_dictionary_text($attribute, 64, true);
+    $res = $pdo->prepare("SELECT RecommendedOP, RecommendedTable, RecommendedTooltip, Type, RecommendedHelper
+                          FROM $dictionaryTable WHERE Attribute=:attribute AND (Value='' OR Value IS NULL) ORDER BY id ASC LIMIT 1");
+    $res->execute(array(':attribute'=>$attribute));
+    $row = $res->fetch(PDO::FETCH_NUM);
 
     $found = is_array($row);
     $recommended_op = $found ? trim($row[0] ?? '') : '';
@@ -193,16 +182,10 @@ if (isset($_GET['getValuesForAttribute'])) {
 
     if ($found && empty(dalo_attribute_options($recommended_helper)) &&
         !in_array($recommended_helper, [ 'datetime', 'date' ], true)) {
-        $sql = sprintf("SELECT DISTINCT `Value` FROM %s
-                         WHERE `attribute`='%s' AND `Value` <> '' AND `Value` IS NOT NULL
-                         ORDER BY `Value` ASC",
-                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($attribute));
-        $values_res = $dbSocket->query($sql);
-        dalo_attribute_query_error($values_res);
-        while ($value_row = $values_res->fetchRow()) {
-            if (DB::isError($value_row)) {
-                dalo_info_response([ 'error' => 'Unable to load attribute information.' ], 500);
-            }
+        $values_res = $pdo->prepare("SELECT DISTINCT Value FROM $dictionaryTable
+                                     WHERE Attribute=:attribute AND Value<>'' AND Value IS NOT NULL ORDER BY Value ASC");
+        $values_res->execute(array(':attribute'=>$attribute));
+        while ($value_row = $values_res->fetch(PDO::FETCH_NUM)) {
             $dynamic_options[] = trim($value_row[0]);
         }
     }
@@ -219,22 +202,21 @@ if (isset($_GET['getValuesForAttribute'])) {
         'helper' => dalo_attribute_helper($recommended_helper, $dynamic_options),
     ];
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
     dalo_info_response($data);
 }
 
-$sql = sprintf("SELECT DISTINCT `Vendor` FROM %s
-                 WHERE `Vendor` <> '' AND `Vendor` IS NOT NULL ORDER BY `Vendor` ASC",
-               $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
-$res = $dbSocket->query($sql);
-dalo_attribute_query_error($res);
+$res = $pdo->query("SELECT DISTINCT Vendor FROM $dictionaryTable WHERE Vendor<>'' AND Vendor IS NOT NULL ORDER BY Vendor ASC");
 $vendors = [];
-while ($row = $res->fetchRow()) {
-    if (DB::isError($row)) {
-        dalo_info_response([ 'error' => 'Unable to load attribute information.' ], 500);
-    }
+while ($row = $res->fetch(PDO::FETCH_NUM)) {
     $vendors[] = trim($row[0]);
 }
 
-include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
 dalo_info_response([ 'vendors' => $vendors ]);
+
+} catch (InvalidArgumentException $e) {
+    dalo_info_response([ 'error' => 'Missing or invalid parameter.' ], 400);
+} catch (Throwable $e) {
+    dalo_info_response([ 'error' => 'Unable to load attribute information.' ], 500);
+}

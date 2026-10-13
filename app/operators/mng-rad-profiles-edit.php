@@ -21,11 +21,12 @@
  *********************************************************************************************************
  */
 
+    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
+
     include implode(DIRECTORY_SEPARATOR, [ __DIR__, 'library', 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
-    include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -37,46 +38,43 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
 
 
-    // process the profile name here for presentation purpose
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $profile_name = (array_key_exists('profile_name', $_POST) && !empty(str_replace("%", "", trim($_POST['profile_name']))))
-                      ? str_replace("%", "", trim($_POST['profile_name'])) : "";
-    } else {
-        $profile_name = (array_key_exists('profile_name', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['profile_name']))))
-                      ? str_replace("%", "", trim($_REQUEST['profile_name'])) : "";
-    }
-
+    require_once __DIR__ . '/library/group_profiles_pdo.php';
+    $raw_name = $_SERVER['REQUEST_METHOD'] === 'POST' ? ($_POST['profile_name'] ?? null) : ($_REQUEST['profile_name'] ?? null);
+    $profile_name = is_string($raw_name) ? trim($raw_name) : '';
 
     // we check if the profile name is valid
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
-    $groups = array_keys(get_groups());
+    $groups = array_map('strval', array_keys(get_groups()));
 
-    $exists = in_array($profile_name, $groups);
+    $exists = in_array($profile_name, $groups, true);
 
     if (!$exists) {
         // we empty the profile name if it does not exist
         $profile_name = "";
     }
 
-    $profile_name_enc = (!empty($profile_name)) ? htmlspecialchars($profile_name, ENT_QUOTES, 'UTF-8') : "";
+    $profile_name_enc = ($profile_name !== '') ? htmlspecialchars($profile_name, ENT_QUOTES, 'UTF-8') : "";
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        if (array_key_exists('csrf_token', $_POST) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
 
-            if (empty($profile_name)) {
+            if ($profile_name === '') {
                 $failureMsg = "You have specified an empty or invalid profile name";
                 $logAction .= "Failed updating profile (possible empty or invalid profile name) on page: ";
             } else {
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-                include("library/attributes.php");
-                $skipList = array( "profile_name", "submit", "csrf_token" );
-                $count = handleAttributes($dbSocket, $profile_name, $skipList, false, 'group');
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+                $pdo = null;
+                try {
+                    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                    $count = dalo_profile_write($pdo, $configValues, $profile_name, $_POST, $valid_ops, false);
+                    $successMsg = "Updated attributes for: <b> $profile_name_enc </b>";
+                    $logAction = 'Successfully updated profile on page: ';
+                } catch (Throwable $error) {
+                    $failureMsg = 'Unable to update profile: invalid or stale selection or database operation failed';
+                    $logAction = 'Profile update failed on page: ';
+                } finally { $pdo = null; }
 
-                $successMsg = "Updated attributes for: <b> $profile_name_enc </b>";
-                $logAction .= "Successfully updates attributes for profile [$profile_name] on page:";
             }
 
         } else {
@@ -89,24 +87,22 @@
     function print_edit_form($dbSocket, $profile_name, $table_name, $no_attributes_message) {
         global $configValues, $logDebugSQL;
 
-        $sql = sprintf("SELECT rad.attribute, rad.op, rad.value, dd.type, dd.recommendedTooltip, rad.id
-                      FROM %s AS rad LEFT JOIN %s AS dd ON rad.attribute = dd.attribute AND dd.value IS NULL
-                     WHERE rad.groupname='%s'", $table_name,
-                                                $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                                $dbSocket->escapeSimple($profile_name));
-
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        $numrows = $res->numRows();
+        $table = dalo_attribute_pdo_table($configValues, $table_name, 'groupname');
+        $dict = dalo_group_table($configValues, 'CONFIG_DB_TBL_DALODICTIONARY');
+        $sql = "SELECT rad.attribute,rad.op,rad.value,dd.type,dd.recommendedTooltip,rad.id
+                  FROM $table AS rad LEFT JOIN $dict AS dd ON rad.attribute=dd.attribute AND dd.value IS NULL
+                 WHERE rad.groupname=?";
+        $rows = dalo_group_query($dbSocket, $sql, array($profile_name))->fetchAll(PDO::FETCH_NUM);
+        $numrows = count($rows);
 
         echo '<div class="container">';
 
         if ($numrows > 0) {
 
-            while ($row = $res->fetchRow()) {
+            foreach ($rows as $row) {
 
                 foreach ($row as $i => $v) {
-                    $row[$i] = htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+                    $row[$i] = htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
                 }
 
                 $id = intval($row[5]);
@@ -117,7 +113,7 @@
                       ? "password" : "text";
 
                 $onclick = sprintf("location.href='mng-rad-profiles-del.php?profile_name=%s&id=%d&tablename=%s'",
-                                   urlencode(htmlspecialchars($profile_name, ENT_QUOTES, 'UTF-8')), $id, $table_name);
+                                   urlencode($profile_name), $id, $table_name);
 
                 $descriptor = array( 'onclick' => $onclick, 'attribute' => $row[0], 'select_name' => $name, 'selected_option' => $row[1],
                                      'id__attribute' => $id__attribute, 'type' => $type, 'value' => $row[2], 'name' => $name,
@@ -165,14 +161,14 @@
     print_title_and_help($title, $help);
 
 
-    if (empty($profile_name)) {
+    if ($profile_name === '') {
         $failureMsg = "You have specified an empty or invalid profile name";
         $logAction .= "Failed updating profile (possible empty or invalid profile name) on page: ";
     }
 
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
-    if (!empty($profile_name)) {
+    if ($profile_name !== '') {
 
         $input_descriptors0 = array();
 
@@ -201,46 +197,49 @@
         print_tab_header($navkeys);
 
 
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
+        try {
+            $dbSocket = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+            include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
 
-        $fieldset0_descriptor = array(
-                                        "title" => t('title','RADIUSCheck'),
-                                     );
+            $fieldset0_descriptor = array(
+                                            "title" => t('title','RADIUSCheck'),
+                                         );
 
-        open_form();
+            open_form();
 
-        // open tab wrapper
-        open_tab_wrapper();
+            // open tab wrapper
+            open_tab_wrapper();
 
-        // tab 0
-        open_tab($navkeys, 0, true);
+            // tab 0
+            open_tab($navkeys, 0, true);
 
-        open_fieldset($fieldset0_descriptor);
+            open_fieldset($fieldset0_descriptor);
 
-        print_edit_form($dbSocket, $profile_name, $configValues['CONFIG_DB_TBL_RADGROUPCHECK'], t('messages','noCheckAttributesForGroup'));
+            print_edit_form($dbSocket, $profile_name, $configValues['CONFIG_DB_TBL_RADGROUPCHECK'], t('messages','noCheckAttributesForGroup'));
 
-        close_fieldset();
+            close_fieldset();
 
-        close_tab($navkeys, 0);
+            close_tab($navkeys, 0);
 
 
-        // tab 1
-        open_tab($navkeys, 1);
+            // tab 1
+            open_tab($navkeys, 1);
 
-        $fieldset1_descriptor = array(
-                                        "title" => t('title','RADIUSReply'),
-                                     );
+            $fieldset1_descriptor = array(
+                                            "title" => t('title','RADIUSReply'),
+                                         );
 
-        open_fieldset($fieldset1_descriptor);
+            open_fieldset($fieldset1_descriptor);
 
-        print_edit_form($dbSocket, $profile_name, $configValues['CONFIG_DB_TBL_RADGROUPREPLY'], t('messages','noReplyAttributesForGroup'));
+            print_edit_form($dbSocket, $profile_name, $configValues['CONFIG_DB_TBL_RADGROUPREPLY'], t('messages','noReplyAttributesForGroup'));
 
-        close_fieldset();
+            close_fieldset();
 
-        close_tab($navkeys, 1);
+            close_tab($navkeys, 1);
 
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+        } catch (Throwable $error) {
+            echo '<div class="alert alert-danger">Unable to load profile attributes.</div>';
+        } finally { $dbSocket = null; }
 
         // tab 2
         open_tab($navkeys, 2);

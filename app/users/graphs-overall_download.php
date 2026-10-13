@@ -31,11 +31,11 @@
     // validate (or pre-validate) parameters
     $goto_stats = (array_key_exists('goto_stats', $_GET) && isset($_GET['goto_stats']));
 
-    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) &&
+    $type = (array_key_exists('type', $_GET) && isset($_GET['type']) && is_string($_GET['type']) &&
              in_array(strtolower($_GET['type']), array( "daily", "monthly", "yearly" )))
           ? strtolower($_GET['type']) : "daily";
 
-    $size = (array_key_exists('size', $_GET) && isset($_GET['size']) &&
+    $size = (array_key_exists('size', $_GET) && isset($_GET['size']) && is_string($_GET['size']) &&
              in_array(strtolower($_GET['size']), array( "gigabytes", "megabytes" )))
           ? strtolower($_GET['size']) : "megabytes";
 

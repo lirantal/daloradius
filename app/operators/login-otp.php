@@ -32,6 +32,78 @@ function dalo_operator_auth_otp_finalize_session(array &$session)
     unset($session['operator_2fa_pending'], $session['operator_2fa_id'], $session['operator_2fa_user'], $session['operator_2fa_auth_source'], $session['operator_2fa_external_id'], $session['operator_2fa_attempts']);
 }
 
+/** Consume one TOTP counter or recovery code on the same locked PDO row. */
+function dalo_operator_auth_otp_consume(PDO $pdo, $table, array $session, $code)
+{
+    if (!$pdo->beginTransaction()) {
+        return false;
+    }
+    try {
+        $id = (int) $session['operator_2fa_id'];
+        $username = $session['operator_2fa_user'];
+        $source = $session['operator_2fa_auth_source'];
+        $select = "SELECT id, username, auth_source, external_id, totp_secret, "
+                . "totp_last_counter, totp_recovery_codes FROM $table "
+                . "WHERE id=? AND username=? AND totp_enabled=1 FOR UPDATE";
+        try {
+            $stmt = $pdo->prepare($select);
+            $stmt->execute(array($id, $username));
+        } catch (PDOException $exception) {
+            // Pre-provider-migration local sessions could already be pending MFA.
+            // Only a genuinely missing column permits the legacy local projection.
+            if ($source !== 'local' || (int) ($exception->errorInfo[1] ?? 0) !== 1054) {
+                throw $exception;
+            }
+            $stmt = $pdo->prepare("SELECT id, username, totp_secret, totp_last_counter, "
+                . "totp_recovery_codes FROM $table WHERE id=? AND username=? "
+                . "AND totp_enabled=1 FOR UPDATE");
+            $stmt->execute(array($id, $username));
+        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($rows) !== 1 || !hash_equals($username, (string) $rows[0]['username'])) {
+            $pdo->rollBack();
+            return false;
+        }
+        $row = $rows[0];
+        $rowSource = isset($row['auth_source']) ? (string) $row['auth_source'] : 'local';
+        if (!hash_equals($source, $rowSource)
+            || !dalo_operator_auth_otp_identity_matches($source, $row, $session)) {
+            $pdo->rollBack();
+            return false;
+        }
+        $counter = dalo_totp_verify_once(
+            $row['totp_secret'], $code,
+            isset($row['totp_last_counter']) ? (int) $row['totp_last_counter'] : null
+        );
+        $now = date('Y-m-d H:i:s');
+        if ($counter !== null) {
+            $update = $pdo->prepare("UPDATE $table SET lastlogin=?, totp_last_counter=? WHERE id=?");
+            $updated = $update->execute(array($now, $counter, $id)) && $update->rowCount() === 1;
+        } else {
+            list($recoveryOk, $remaining) = dalo_totp_verify_recovery_code($row['totp_recovery_codes'], $code);
+            if (!$recoveryOk) {
+                $pdo->rollBack();
+                return false;
+            }
+            $update = $pdo->prepare("UPDATE $table SET lastlogin=?, totp_recovery_codes=? WHERE id=?");
+            $updated = $update->execute(array($now, $remaining, $id)) && $update->rowCount() === 1;
+        }
+        if (!$updated) {
+            $pdo->rollBack();
+            return false;
+        }
+        if (!$pdo->commit()) {
+            throw new RuntimeException('OTP commit failed');
+        }
+        return true;
+    } catch (Throwable $exception) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $exception;
+    }
+}
+
 dalo_session_start();
 
 /* Pending sessions created before provider-aware authentication were local. */
@@ -52,106 +124,40 @@ include("lang/main.php");
 $failureMsg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!array_key_exists('csrf_token', $_POST) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+    if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token'])
+        || !dalo_check_csrf_token($_POST['csrf_token'])) {
         $failureMsg = 'CSRF token error';
     } else {
-        $otp_code = (array_key_exists('otp_code', $_POST) && isset($_POST['otp_code'])) ? trim($_POST['otp_code']) : '';
-        $_SESSION['operator_2fa_attempts'] = intval($_SESSION['operator_2fa_attempts'] ?? 0) + 1;
-
-        include('../common/includes/db_open.php');
-        $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-        $operator_id = intval($_SESSION['operator_2fa_id']);
-        $operator_user = $dbSocket->escapeSimple($_SESSION['operator_2fa_user']);
-        $operator_auth_source = $_SESSION['operator_2fa_auth_source'];
+        $otpCode = isset($_POST['otp_code']) && is_string($_POST['otp_code'])
+            ? trim($_POST['otp_code']) : '';
+        $_SESSION['operator_2fa_attempts'] = (int) ($_SESSION['operator_2fa_attempts'] ?? 0) + 1;
         $authenticated = false;
-        $transactionStarted = false;
-
-        $transaction = $dbSocket->autoCommit(false);
-        if (!DB::isError($transaction)) {
-            $transactionStarted = true;
-            $sql = sprintf(
-                "SELECT id, username, auth_source, external_id, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1 FOR UPDATE",
-                $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user
-            );
-            $res = $dbSocket->query($sql);
-            if (DB::isError($res) && $operator_auth_source === 'local') {
-                /* Permit an already-pending pre-upgrade local MFA session to finish
-                 * before the LDAP schema migration is applied. */
-                $sql = sprintf(
-                    "SELECT id, username, totp_secret, totp_last_counter, totp_recovery_codes FROM %s WHERE id=%d AND username='%s' AND totp_enabled=1 FOR UPDATE",
-                    $configValues['CONFIG_DB_TBL_DALOOPERATORS'], $operator_id, $operator_user
-                );
-                $res = $dbSocket->query($sql);
+        try {
+            require_once __DIR__ . '/../common/includes/pdo_connection.php';
+            require_once __DIR__ . '/library/operator_create.php';
+            $table = dalo_operator_create_table($configValues, 'CONFIG_DB_TBL_DALOOPERATORS');
+            $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+            dalo_operator_create_innodb($pdo, array($table));
+            if ($otpCode !== '' && strlen($otpCode) <= 128) {
+                $authenticated = dalo_operator_auth_otp_consume($pdo, $table, $_SESSION, $otpCode);
             }
-
-            if (!DB::isError($res) && $res->numRows() === 1) {
-                $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-                $row_auth_source = isset($row['auth_source']) ? (string) $row['auth_source'] : 'local';
-                $externalIdMatches = dalo_operator_auth_otp_identity_matches(
-                    $operator_auth_source,
-                    $row,
-                    $_SESSION
-                );
-                if (hash_equals((string) $operator_auth_source, $row_auth_source) && $externalIdMatches) {
-                    $matched_counter = dalo_totp_verify_once(
-                        $row['totp_secret'],
-                        $otp_code,
-                        isset($row['totp_last_counter']) ? intval($row['totp_last_counter']) : null
-                    );
-                    $stateUpdated = false;
-
-                    if ($matched_counter !== null) {
-                        $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_last_counter=%d WHERE id=%d",
-                                       $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'), $matched_counter, $operator_id);
-                        $updateResult = $dbSocket->query($sql);
-                        $affectedRows = !DB::isError($updateResult) ? $dbSocket->affectedRows() : null;
-                        $stateUpdated = !DB::isError($updateResult)
-                            && !DB::isError($affectedRows)
-                            && (int) $affectedRows === 1;
-                    } else {
-                        list($recovery_ok, $new_recovery_codes) = dalo_totp_verify_recovery_code($row['totp_recovery_codes'], $otp_code);
-                        if ($recovery_ok) {
-                            $sql = sprintf("UPDATE %s SET lastlogin='%s', totp_recovery_codes='%s' WHERE id=%d",
-                                           $configValues['CONFIG_DB_TBL_DALOOPERATORS'], date('Y-m-d H:i:s'),
-                                           $dbSocket->escapeSimple($new_recovery_codes), $operator_id);
-                            $updateResult = $dbSocket->query($sql);
-                            $affectedRows = !DB::isError($updateResult) ? $dbSocket->affectedRows() : null;
-                            $stateUpdated = !DB::isError($updateResult)
-                                && !DB::isError($affectedRows)
-                                && (int) $affectedRows === 1;
-                        }
-                    }
-
-                    if ($stateUpdated) {
-                        $commit = $dbSocket->commit();
-                        if (!DB::isError($commit)) {
-                            $authenticated = true;
-                            $transactionStarted = false;
-                        }
-                    }
-                }
-            }
-
-            if ($transactionStarted) {
-                $rollback = $dbSocket->rollback();
-                $transactionStarted = false;
-                if (DB::isError($rollback)) {
-                    $authenticated = false;
-                }
-            }
+        } catch (Throwable $exception) {
+            // Neither the response nor the log may contain bound OTP/recovery data.
+            error_log('Operator OTP failure: ' . get_class($exception));
+        } finally {
+            $pdo = null;
         }
 
         if ($authenticated) {
-            include('../common/includes/db_close.php');
             session_regenerate_id(true);
             dalo_operator_auth_otp_finalize_session($_SESSION);
             header('Location: index.php');
             exit;
         }
-
-        include('../common/includes/db_close.php');
-        if (intval($_SESSION['operator_2fa_attempts']) >= 5) {
-            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'], $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_auth_source'], $_SESSION['operator_2fa_external_id'], $_SESSION['operator_2fa_attempts']);
+        if ((int) $_SESSION['operator_2fa_attempts'] >= 5) {
+            unset($_SESSION['operator_2fa_pending'], $_SESSION['operator_2fa_id'],
+                  $_SESSION['operator_2fa_user'], $_SESSION['operator_2fa_auth_source'],
+                  $_SESSION['operator_2fa_external_id'], $_SESSION['operator_2fa_attempts']);
             $_SESSION['operator_login_error'] = true;
             header('Location: login.php');
             exit;

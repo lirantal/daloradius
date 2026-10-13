@@ -24,6 +24,8 @@
  *********************************************************************************************************
  */
 
+require_once dirname(__DIR__, 2) . '/library/shared_context_pdo.php';
+
 // prevent this file to be directly accessed
 if (strpos($_SERVER['PHP_SELF'], '/include/management/userReports.php') !== false) {
     header('Location: ../../index.php');
@@ -81,12 +83,16 @@ function close_accordion_table_wrapper() {
  * Max-Monthly-Session, Max-Daily-Session, Expiration attribute, etc...
  *********************************************************************************************************
  */
-function userSubscriptionAnalysis($username, $drawTable) {
+function userSubscriptionAnalysis($username, $drawTable, ?PDO $pdo = null) {
+    global $configValues;
+    $buffer_level = ob_get_level();
+    ob_start();
+    try {
+        $pdo = dalo_shared_handle($configValues, $pdo);
 
     include_once('include/management/pages_common.php');
-    include('../common/includes/db_open.php');
 
-    $username = $dbSocket->escapeSimple($username);
+    $username = dalo_shared_text($username);
 
     $keys = array("Logins", "SUMSession", "SUMDownload", "SUMUpload", "SUMTraffic", );
 
@@ -103,13 +109,13 @@ function userSubscriptionAnalysis($username, $drawTable) {
      * Global (Max-All-Session) Limit calculations
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
                            SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
                            SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
-                      FROM %s WHERE UserName='%s' AND acctstoptime>0",
-                   $configValues['CONFIG_DB_TBL_RADACCT'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0} WHERE UserName=:value1 AND acctstoptime>0";
+    $query_params = array(':value1' => $username);
+    $row = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC)[0] ?? array();
 
     foreach ($keys as $key) {
         $value = "(n/a)";
@@ -137,15 +143,15 @@ function userSubscriptionAnalysis($username, $drawTable) {
     $currMonth = date("Y-m-01");
     $nextMonth = date("Y-m-01", mktime(0, 0, 0, date("m")+ 1, date("d"), date("Y")));
 
-    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
                            SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
                            SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
-                      FROM %s
-                     WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
-                       AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                                              $nextMonth, $currMonth, $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0}
+                     WHERE AcctStartTime<:value1 AND AcctStartTime>=:value2
+                       AND UserName=:value3 AND acctstoptime>0";
+    $query_params = array(':value1' => $nextMonth, ':value2' => $currMonth, ':value3' => $username);
+    $row = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC)[0] ?? array();
 
     foreach ($keys as $key) {
         $value = "(n/a)";
@@ -172,15 +178,15 @@ function userSubscriptionAnalysis($username, $drawTable) {
      */
     $currDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')));
     $nextDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')."7"));
-    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
                            SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
                            SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
-                      FROM %s
-                     WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
-                       AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                                              $nextDay, $currDay, $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0}
+                     WHERE AcctStartTime<:value1 AND AcctStartTime>=:value2
+                       AND UserName=:value3 AND acctstoptime>0";
+    $query_params = array(':value1' => $nextDay, ':value2' => $currDay, ':value3' => $username);
+    $row = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC)[0] ?? array();
 
     foreach ($keys as $key) {
         $value = "(n/a)";
@@ -207,15 +213,15 @@ function userSubscriptionAnalysis($username, $drawTable) {
      */
     $currDay = date("Y-m-d");
     $nextDay = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
-    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
                            SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
                            SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
-                      FROM %s
-                     WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
-                       AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                                              $nextDay, $currDay, $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0}
+                     WHERE AcctStartTime<:value1 AND AcctStartTime>=:value2
+                       AND UserName=:value3 AND acctstoptime>0";
+    $query_params = array(':value1' => $nextDay, ':value2' => $currDay, ':value3' => $username);
+    $row = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC)[0] ?? array();
 
     if ($row) {
         foreach ($keys as $key) {
@@ -248,10 +254,10 @@ function userSubscriptionAnalysis($username, $drawTable) {
      * Expiration calculations
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT Value AS 'Expiration' FROM %s WHERE UserName='%s' AND Attribute='Expiration'",
-                   $configValues['CONFIG_DB_TBL_RADCHECK'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADCHECK');
+    $sql = "SELECT Value AS 'Expiration' FROM {$daloTable0} WHERE UserName=:value1 AND Attribute='Expiration'";
+    $query_params = array(':value1' => $username);
+    $row = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC)[0] ?? array();
 
     if (isset($row['Expiration'])) {
         $data2["Expiration"] = $row['Expiration'];
@@ -262,10 +268,10 @@ function userSubscriptionAnalysis($username, $drawTable) {
      * Session-Timeout calculations
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT Value AS 'Session-Timeout' FROM %s WHERE UserName='%s' AND Attribute='Session-Timeout'",
-                   $configValues['CONFIG_DB_TBL_RADREPLY'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADREPLY');
+    $sql = "SELECT Value AS 'Session-Timeout' FROM {$daloTable0} WHERE UserName=:value1 AND Attribute='Session-Timeout'";
+    $query_params = array(':value1' => $username);
+    $row = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC)[0] ?? array();
 
     if (isset($row['Session-Timeout'])) {
         $data2["Session-Timeout"] = $row['Session-Timeout'];
@@ -276,22 +282,22 @@ function userSubscriptionAnalysis($username, $drawTable) {
      * Idle-Timeout calculations
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT Value AS 'Idle-Timeout' FROM %s AS rr WHERE UserName='%s' AND Attribute='Idle-Timeout'
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADREPLY');
+    $daloTable2 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADGROUPREPLY');
+    $daloTable3 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADUSERGROUP');
+    $sql = "SELECT Value AS 'Idle-Timeout' FROM {$daloTable0} AS rr WHERE UserName=:value1 AND Attribute='Idle-Timeout'
                      UNION
-                    SELECT Value AS 'Idle-Timeout' FROM %s AS rgr
+                    SELECT Value AS 'Idle-Timeout' FROM {$daloTable2} AS rgr
                      WHERE Attribute='Idle-Timeout'
-                       AND GroupName IN (SELECT groupname FROM %s rug WHERE username='%s' ORDER BY priority)
-                     LIMIT 1",
-                    $configValues['CONFIG_DB_TBL_RADREPLY'], $username, $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
-                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                       AND GroupName IN (SELECT groupname FROM {$daloTable3} rug WHERE username=:value4 ORDER BY priority)
+                     LIMIT 1";
+    $query_params = array(':value1' => $username, ':value4' => $username);
+    $row = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC)[0] ?? array();
 
     if (isset($row['Idle-Timeout'])) {
         $data2["Idle-Timeout"] = $row['Idle-Timeout'];
     }
 
-    include('../common/includes/db_close.php');
 
     if ($drawTable == 1) {
 
@@ -349,6 +355,14 @@ function userSubscriptionAnalysis($username, $drawTable) {
 
         close_accordion_item();
     }
+    } catch (Throwable $error) {
+        while (ob_get_level() > $buffer_level) { ob_end_clean(); }
+        error_log('Shared user report failed: ' . get_class($error));
+        if ($drawTable == 1) { echo '<div class="failure">Unable to load user summary.</div>'; }
+        return false;
+    } finally {
+        if (ob_get_level() > $buffer_level) { ob_end_flush(); }
+    }
 }
 
 
@@ -362,26 +376,30 @@ function userSubscriptionAnalysis($username, $drawTable) {
  *
  *********************************************************************************************************
  */
-function userPlanInformation($username, $drawTable) {
+function userPlanInformation($username, $drawTable, ?PDO $pdo = null) {
+    global $configValues;
+    $buffer_level = ob_get_level();
+    ob_start();
+    try {
+        $pdo = dalo_shared_handle($configValues, $pdo);
 
     include_once('include/management/pages_common.php');
-    include('../common/includes/db_open.php');
 
-    $username = $dbSocket->escapeSimple($username);
+    $username = dalo_shared_text($username);
 
     /*
      *********************************************************************************************************
      * check which kind of subscription does the user have
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT bp.planTimeType, bp.planName, bp.planTimeBank, bp.planBandwidthUp, bp.planBandwidthDown,
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS');
+    $daloTable1 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
+    $sql = "SELECT bp.planTimeType, bp.planName, bp.planTimeBank, bp.planBandwidthUp, bp.planBandwidthDown,
                            bp.planTrafficTotal, bp.planTrafficUp, bp.planTrafficDown, bp.planRecurringPeriod
-                      FROM %s AS bp, %s AS ubi
-                     WHERE bp.planname = ubi.planname AND ubi.username = '%s'",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                   $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0} AS bp, {$daloTable1} AS ubi
+                     WHERE bp.planname = ubi.planname AND ubi.username = :value2";
+    $query_params = array(':value2' => $username);
+    $row = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC)[0] ?? array();
 
     $data2 = array(
                     "planName" => array( "Label" => t('all','PlanName'), "Value" => "(n/a)", ),
@@ -408,10 +426,12 @@ function userPlanInformation($username, $drawTable) {
     $userLimitAccessPeriod = (isset($row['Access-Period'])) ? time2str($row['Access-Period']) : "none";
 
 
-    $sql = sprintf("SELECT SUM(AcctSessionTime), SUM(AcctOutputOctets), SUM(AcctInputOctets)
-                      FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow();
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime), SUM(AcctOutputOctets), SUM(AcctInputOctets)
+                      FROM {$daloTable0} WHERE username=:value1";
+    $query_params = array(':value1' => $username);
+    $rows = dalo_shared_rows($pdo, $sql, $query_params);
+    $row = $rows[0] ?? array();
     $totalTimeUsed = isset($row[0]) ? intval($row[0]) : 0;
     $totalTrafficDown = isset($row[1]) ? intval($row[1]) : 0;
     $totalTrafficUp = isset($row[2]) ? intval($row[2]) : 0;
@@ -429,7 +449,6 @@ function userPlanInformation($username, $drawTable) {
                             array( "Session Upload", toxbyte($planTrafficUp), toxbyte($totalTrafficUp), toxbyte($trafficUpDiff), ),
                        );
 
-    include('../common/includes/db_close.php');
 
     /*
      *********************************************************************************************************
@@ -484,6 +503,14 @@ function userPlanInformation($username, $drawTable) {
 
         close_accordion_item();
     }
+    } catch (Throwable $error) {
+        while (ob_get_level() > $buffer_level) { ob_end_clean(); }
+        error_log('Shared user report failed: ' . get_class($error));
+        if ($drawTable == 1) { echo '<div class="failure">Unable to load user summary.</div>'; }
+        return false;
+    } finally {
+        if (ob_get_level() > $buffer_level) { ob_end_flush(); }
+    }
 }
 
 
@@ -498,28 +525,32 @@ function userPlanInformation($username, $drawTable) {
  *
  *********************************************************************************************************
  */
-function userConnectionStatus($username, $drawTable) {
+function userConnectionStatus($username, $drawTable, ?PDO $pdo = null) {
+    global $configValues;
+    $buffer_level = ob_get_level();
+    ob_start();
+    try {
+        $pdo = dalo_shared_handle($configValues, $pdo);
 
-    $userStatus = checkUserOnline($username);
+    $userStatus = dalo_check_user_online($username, $pdo, $configValues);
 
     include_once('include/management/pages_common.php');
-    include('../common/includes/db_open.php');
 
     // sanitize variable for sql statement
-    $username = $dbSocket->escapeSimple($username);
+    $username = dalo_shared_text($username);
 
-    $sql = sprintf("SELECT AcctStartTime,
+    $daloTable2 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT AcctStartTime,
                            CASE WHEN AcctStopTime IS NULL THEN timestampdiff(SECOND,AcctStartTime,NOW())
                                 ELSE AcctSessionTime
                             END AS AcctSessionTime, AcctInputOctets, AcctOutputOctets,
-                           CONCAT(NASIPAddress, ' / %s: ', CalledStationId) AS NAS_IP_ID,
-                           CONCAT(FramedIPAddress, ' / %s: ', CallingStationId) AS User_IP_ID
-                      FROM %s WHERE Username='%s'
-                     ORDER BY RadAcctId DESC LIMIT 1",
-                    "Station ID", "Station ID", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
+                           CONCAT(NASIPAddress, ' / Station ID: ', CalledStationId) AS NAS_IP_ID,
+                           CONCAT(FramedIPAddress, ' / Station ID: ', CallingStationId) AS User_IP_ID
+                      FROM {$daloTable2} WHERE Username=:value3
+                     ORDER BY RadAcctId DESC LIMIT 1";
+    $query_params = array(':value3' => $username);
 
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    $row = dalo_shared_rows($pdo, $sql, $query_params, PDO::FETCH_ASSOC)[0] ?? array();
 
     $data = array(
                     "userStatus" => array( "Label" => "User Status", "Value" => $userStatus, ),
@@ -550,7 +581,6 @@ function userConnectionStatus($username, $drawTable) {
         }
     }
 
-    include('../common/includes/db_close.php');
 
     if ($drawTable == 1) {
         // accordion
@@ -572,6 +602,14 @@ function userConnectionStatus($username, $drawTable) {
 
         close_accordion_item();
     }
+    } catch (Throwable $error) {
+        while (ob_get_level() > $buffer_level) { ob_end_clean(); }
+        error_log('Shared user report failed: ' . get_class($error));
+        if ($drawTable == 1) { echo '<div class="failure">Unable to load user summary.</div>'; }
+        return false;
+    } finally {
+        if (ob_get_level() > $buffer_level) { ob_end_flush(); }
+    }
 }
 
 
@@ -583,21 +621,30 @@ function userConnectionStatus($username, $drawTable) {
  *
  *********************************************************************************************************
  */
-function checkUserOnline($username) {
+function checkUserOnline($username, ?PDO $pdo = null) {
+    global $configValues;
+    try {
+        return dalo_check_user_online($username, dalo_shared_handle($configValues, $pdo), $configValues);
+    } catch (Throwable $error) {
+        error_log('User online lookup failed: ' . get_class($error));
+        return 'User status unavailable';
+    }
+}
 
-    include('../common/includes/db_open.php');
+function dalo_check_user_online($username, PDO $pdo, $configValues) {
 
-    $username = $dbSocket->escapeSimple($username);
 
-    $sql = sprintf("SELECT COUNT(username) FROM %s
-                     WHERE AcctStopTime IS NULL AND Username='%s'
-                        OR AcctStopTime = '0000-00-00 00:00:00' AND Username='%s'",
-                   $configValues['CONFIG_DB_TBL_RADACCT'], $username, $username);
-    $res = $dbSocket->query($sql);
+    $username = dalo_shared_text($username);
 
-    $numrows = intval($res->fetchRow()[0]);
+    $daloTable0 = dalo_shared_table($pdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT COUNT(username) FROM {$daloTable0}
+                     WHERE AcctStopTime IS NULL AND Username=:value1
+                        OR AcctStopTime = '0000-00-00 00:00:00' AND Username=:value2";
+    $query_params = array(':value1' => $username, ':value2' => $username);
+    $rows = dalo_shared_rows($pdo, $sql, $query_params);
 
-    include('../common/includes/db_close.php');
+    $numrows = intval(($rows[0][0] ?? 0));
+
 
     return "User is " . (($numrows > 0) ? "online" : "offline");
 }

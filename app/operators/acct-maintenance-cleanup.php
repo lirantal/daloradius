@@ -34,12 +34,16 @@ $preview = null;
 $notice = '';
 $active = 'close';
 $filter = ['action' => 'close', 'scope' => 'username', 'value' => ''];
-include('../common/includes/db_open.php');
-$dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-// Bind confirmation to the operator and actual accounting backend, not only IDs.
-$context = hash('sha256', serialize([$_SESSION['operator_id'], $mydbHost, $mydbPort,
-                                   $mydbName, $configValues['CONFIG_DB_TBL_RADACCT']]));
+include('../common/includes/config_read.php');
+require_once('../common/includes/pdo_connection.php');
 try {
+    $locationName = $_SESSION['location_name'] ?? 'default';
+    $settings = dalo_pdo_settings($configValues, $locationName);
+    // Bind confirmation to the operator and actual accounting backend, not only IDs.
+    $context = hash('sha256', serialize([$_SESSION['operator_id'], $settings['host'],
+                                        $settings['port'], $settings['database'],
+                                        $configValues['CONFIG_DB_TBL_RADACCT']]));
+    $pdo = dalo_pdo_connect($configValues, $locationName);
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!is_string($_POST['csrf_token'] ?? null) || !is_string($_SESSION['csrf_token'] ?? null) ||
             !dalo_check_csrf_token($_POST['csrf_token'])) {
@@ -50,7 +54,7 @@ try {
         $step = $_POST['step'] ?? null;
         if ($step === 'preview') {
             unset($_SESSION['acct_maintenance_preview']);
-            $preview = dalo_maintenance_preview($dbSocket, $configValues['CONFIG_DB_TBL_RADACCT'], $filter, $logDebugSQL);
+            $preview = dalo_maintenance_preview($pdo, $configValues['CONFIG_DB_TBL_RADACCT'], $filter, $logDebugSQL);
             $preview['context'] = $context;
             $_SESSION['acct_maintenance_preview'] = $preview;
             if (!$preview['rows']) {
@@ -65,7 +69,7 @@ try {
                 !hash_equals($stored['token'], $_POST['confirmation'])) {
                 throw new InvalidArgumentException('Confirmation');
             }
-            $result = dalo_maintenance_apply($dbSocket, $configValues['CONFIG_DB_TBL_RADACCT'], $stored, $logDebugSQL);
+            $result = dalo_maintenance_apply($pdo, $configValues['CONFIG_DB_TBL_RADACCT'], $stored, $logDebugSQL);
             $notice = sprintf(t('maintenance', 'result'), t('maintenance', $active),
                               $result['affected'], $result['skipped'], $result['failed']);
             $logAction = sprintf('Open-session maintenance action=%s scope=%s value=%s affected=%d skipped=%d failed=%d on page: ',
@@ -89,7 +93,7 @@ try {
     unset($_SESSION['acct_maintenance_preview']);
     $failureMsg = t('maintenance', 'error');
 }
-include('../common/includes/db_close.php');
+$pdo = null;
 function maintenance_escape($value) {
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }

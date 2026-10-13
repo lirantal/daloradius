@@ -24,89 +24,31 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
     
-    include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
+    include('library/check_operator_perm.php');
     
     // init logging variables
     $log = "visited page: ";
     $logAction = "";
     $logDebugSQL = "";
 
-    include('../common/includes/db_open.php');
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            
-            $arr = array();
-            
-            if (array_key_exists('vendor__attribute', $_POST) && !empty($_POST['vendor__attribute'])) {
-                $arr = (!is_array($_POST['vendor__attribute']))
-                     ? array( $_POST['vendor__attribute'] ) : $_POST['vendor__attribute'];
-            }
-            
-            if (count($arr) > 0) {
-                
-                $deleted = 0;
-                foreach ($arr as $arr_elem) {
-                    $tmp = explode("__", $arr_elem);
-                    if (count($tmp) != 2) {
-                        continue;
-                    }
-                    
-                    list($vendor, $attribute) = $tmp;
-                    $vendor = str_replace("%", "", trim($vendor));
-                    $attribute = str_replace("%", "", trim($attribute));
-                    
-                    if (empty($vendor) || empty($attribute)) {
-                        continue;
-                    }
-                    
-                    $sql_WHERE = array();
-                    $sql_WHERE[] = sprintf("vendor='%s'", $dbSocket->escapeSimple($vendor));
-                    $sql_WHERE[] = sprintf("attribute='%s'", $dbSocket->escapeSimple($attribute));
-                    
-                    
-                    // check if attribute exists
-                    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY'])
-                         . " WHERE " . implode(" AND ", $sql_WHERE);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    $exists = $res->fetchrow()[0] == 1;
-                    
-                    if (!$exists) {
-                        continue;
-                    }
-                    
-                    $sql = sprintf("DELETE FROM %s", $configValues['CONFIG_DB_TBL_DALODICTIONARY'])
-                         . " WHERE " . implode(" AND ", $sql_WHERE);
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    if (!DB::isError($res)) {
-                        $deleted++;
-                    }
-                }
-                
-                if ($deleted > 0) {                
-                    $successMsg = sprintf("Deleted %s vendor/attribute(s)", $deleted);
-                    $logAction .= "$successMsg on page: ";
-                } else {
-                    // invalid
-                    $failureMsg = "Empty or invalid vendor/attribute list";
-                    $logAction .= sprintf("Failed deleting vendor/attribute(s) [%s] on page: ", $failureMsg);
-                }
-                
-            } else {
-                // invalid
-                $failureMsg = "Empty or invalid vendor/attribute list";
-                $logAction .= sprintf("Failed deleting vendor/attribute(s) [%s] on page: ", $failureMsg);
-            }
-            
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+    require_once __DIR__ . '/library/dictionary_pages_pdo.php';
+    $valid_csrf = isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']);
+    if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+        if (!$valid_csrf) { $failureMsg = 'CSRF token error'; }
+        else {
+            try {
+                $limit=(int)ini_get('max_input_vars');
+                if ($limit>0 && count($_POST, COUNT_RECURSIVE)>=$limit) { throw new InvalidArgumentException('Truncated selection'); }
+                $selection=$_POST['vendor__attribute'] ?? null;
+                if (is_string($selection)) { $selection=array($selection); }
+                $pairs = dalo_dictionary_selection($selection);
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                $deleted = dalo_dictionary_delete($pdo, $configValues, $pairs);
+                $successMsg = sprintf('Deleted %s dictionary row(s) in %s vendor/attribute(s)', $deleted, count($pairs));
+                $logAction .= 'Deleted dictionary selection on page: ';
+                $logDebugSQL = 'DELETE FROM configured dictionary WHERE Vendor=:vendor AND Attribute=:attribute;';
+            } catch (Throwable $e) { $failureMsg = 'Could not delete dictionary selection'; }
         }
     }
 
@@ -124,23 +66,21 @@
 
     print_title_and_help($title, $help);
 
+
+    // Read options independently from the completed page-owned mutation.
+    $options = array();
+    try {
+        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $dictionaryTable = dalo_dictionary_table($configValues);
+        $rows = $pdo->query("SELECT Vendor, Attribute FROM $dictionaryTable ORDER BY Vendor, Attribute")->fetchAll(PDO::FETCH_NUM);
+        foreach ($rows as $row) {
+            list($vendor, $attribute) = $row;
+            if ($vendor === null || $attribute === null || $vendor === '' || $attribute === '') { continue; }
+            $options[dalo_dictionary_selection_token($vendor, $attribute)] = $vendor . ' - ' . $attribute;
+        }
+    } catch (Throwable $e) { $failureMsg = 'Could not load dictionary selection'; }
     include_once('include/management/actionMessages.php');
 
-    // load options
-    $options = array();
-    
-    $sql = sprintf("SELECT vendor, attribute FROM %s ORDER BY vendor, attribute",
-                   $configValues['CONFIG_DB_TBL_DALODICTIONARY']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    while ($row = $res->fetchrow()) {
-        list($vendor, $attribute) = $row;
-        $value = sprintf("%s__%s", $vendor, $attribute);
-        $caption = sprintf("%s - %s", $vendor, $attribute);
-        $options[$value] = $caption;
-    }
-    
     $input_descriptors1 = array();
 
     $input_descriptors1[] = array(

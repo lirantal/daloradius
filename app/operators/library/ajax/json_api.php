@@ -33,10 +33,10 @@ $whitelist["usernames"] = array( "list" );
 $data = array();
 
 
-if (isset($_GET['datatype']) && in_array(strtolower(trim($_GET['datatype'])), array_keys($whitelist))) {
+if (isset($_GET['datatype']) && is_string($_GET['datatype']) && in_array(strtolower(trim($_GET['datatype'])), array_keys($whitelist))) {
     $datatype = strtolower(trim($_GET['datatype']));
     
-    if (isset($_GET['action']) && in_array(strtolower(trim($_GET['action'])), $whitelist[$datatype])) {
+    if (isset($_GET['action']) && is_string($_GET['action']) && in_array(strtolower(trim($_GET['action'])), $whitelist[$datatype])) {
     
         $action = strtolower(trim($_GET['action']));
         
@@ -51,28 +51,30 @@ if (isset($_GET['datatype']) && in_array(strtolower(trim($_GET['datatype'])), ar
 
                     default:
                     case "list":
-                        if (isset($_GET['username']) && strlen(trim($_GET['username'])) >= 3) {
+                        if (isset($_GET['username']) && is_string($_GET['username']) && strlen(trim($_GET['username'])) >= 3) {
 
-                            include('../../../common/includes/db_open.php');
+                            require_once '../../../common/includes/pdo_connection.php';
+                            require_once '../../include/management/read_helpers_pdo.php';
+                            try {
+                                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
 
-                            // init username
-                            $username = trim($_GET['username']);
+                                // init username
+                                $username = trim($_GET['username']);
 
-                            // init table
-                            $key = (isset($_GET['table']) && in_array(strtoupper(trim($_GET['table'])), $allowed_tables))
-                                 ? strtoupper(trim($_GET['table'])) : $allowed_tables[0];
+                                // init table
+                                $key = (isset($_GET['table']) && is_string($_GET['table']) && in_array(strtoupper(trim($_GET['table'])), $allowed_tables))
+                                     ? strtoupper(trim($_GET['table'])) : $allowed_tables[0];
                             
-                            $table = $configValues[$key];
-
-                            // perform query
-                            $sql = sprintf("SELECT DISTINCT(username) FROM %s WHERE username LIKE '%%%s%%' ORDER BY username ASC",
-                                           $table, $dbSocket->escapeSimple($username));
-                            $res = $dbSocket->query($sql);
-                            while ( $row = $res->fetchrow() ) {
-                                $data[] = $row[0];
+                                $table = dalo_read_table($pdo, $configValues, $key);
+                                $stmt = $pdo->prepare("SELECT DISTINCT(username) FROM $table WHERE username LIKE ? ORDER BY username ASC");
+                                $stmt->execute(array('%' . $username . '%'));
+                                $data = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                                $pdo = null;
+                            } catch (Throwable $error) {
+                                http_response_code(500);
+                                $data = array('error' => 'Unable to load usernames.');
                             }
 
-                            include('../../../common/includes/db_close.php');
                         }
 
                         break; // case "list"

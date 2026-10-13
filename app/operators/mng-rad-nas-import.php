@@ -38,22 +38,29 @@ function nas_import_name_key($nasname) {
     return function_exists('mb_strtolower') ? mb_strtolower($nasname, 'UTF-8') : strtolower($nasname);
 }
 
-function nas_import_existing_names($dbSocket, $table) {
-    $sql = sprintf('SELECT HEX(nasname) FROM %s', $table);
-    $res = $dbSocket->query($sql);
-    if (DB::isError($res)) {
+function nas_import_table(array $config) {
+    $name = $config['CONFIG_DB_TBL_RADNAS'] ?? null;
+    if (!is_string($name) || !preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $name)) {
+        throw new InvalidArgumentException('Invalid NAS table');
+    }
+    return '`' . $name . '`';
+}
+
+function nas_import_existing_names(PDO $pdo, $table) {
+    try {
+        $res = $pdo->query("SELECT HEX(nasname) FROM $table");
+        $names = array();
+        while (($value = $res->fetchColumn()) !== false) {
+            $nasname = nas_backup_decode_database_hex($value);
+            if ($nasname === false) {
+                return false;
+            }
+            $names[nas_import_name_key($nasname)] = true;
+        }
+        return $names;
+    } catch (Throwable $exception) {
         return false;
     }
-
-    $names = array();
-    while ($row = $res->fetchRow()) {
-        $nasname = nas_backup_decode_database_hex($row[0]);
-        if ($nasname === false) {
-            return false;
-        }
-        $names[nas_import_name_key($nasname)] = true;
-    }
-    return $names;
 }
 
 function nas_import_hex_value($value) {
@@ -69,6 +76,154 @@ function nas_import_row_matches($stored, $entry) {
 
     $storedPorts = ($stored['ports'] === null) ? null : intval($stored['ports']);
     return $storedPorts === $entry['ports'];
+}
+
+function nas_import_validate_entries($entries, $excludedRows) {
+    if (!is_array($entries) || !is_array($excludedRows) ||
+        count($entries) + count($excludedRows) > NAS_BACKUP_MAX_ENTRIES) {
+        throw new InvalidArgumentException('Invalid NAS import preview');
+    }
+    $numbers = array();
+    $names = array();
+    foreach ($entries as $candidate) {
+        if (!is_array($candidate) || !is_int($candidate['row_number'] ?? null) ||
+            $candidate['row_number'] < 1 || !is_array($candidate['data'] ?? null)) {
+            throw new InvalidArgumentException('Invalid NAS import row');
+        }
+        $number = $candidate['row_number'];
+        $data = $candidate['data'];
+        if (isset($numbers[$number]) || !is_string($data['nasname'] ?? null) ||
+            $data['nasname'] === '' || !is_string($data['secret'] ?? null) ||
+            $data['secret'] === '' ||
+            !array_key_exists('ports', $data) ||
+            ($data['ports'] !== null && (!is_int($data['ports']) ||
+                $data['ports'] < 0 || $data['ports'] > 99999))) {
+            throw new InvalidArgumentException('Invalid NAS import data');
+        }
+        foreach (array('shortname', 'type', 'server', 'community', 'description') as $field) {
+            if (!array_key_exists($field, $data) ||
+                ($data[$field] !== null && !is_string($data[$field]))) {
+                throw new InvalidArgumentException('Invalid NAS import field');
+            }
+        }
+        $nameKey = nas_import_name_key($data['nasname']);
+        if (isset($names[$nameKey])) {
+            throw new InvalidArgumentException('Duplicate NAS import entry');
+        }
+        $numbers[$number] = true;
+        $names[$nameKey] = true;
+    }
+}
+
+function nas_import_name_exists(PDO $pdo, $table, $nasname) {
+    $hex = nas_import_hex_value($nasname);
+    $isText = nas_backup_is_valid_utf8($nasname) && !preg_match('/[\x00-\x1F\x7F]/', $nasname);
+    $sql = $isText
+        ? "SELECT id FROM $table WHERE LOWER(nasname)=LOWER(CONVERT(UNHEX(?) USING utf8mb4)) "
+          . "OR HEX(nasname)=? LIMIT 1 FOR UPDATE"
+        : "SELECT id FROM $table WHERE HEX(nasname)=? LIMIT 1 FOR UPDATE";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($isText ? array($hex, $hex) : array($hex));
+    return $stmt->fetchColumn() !== false;
+}
+
+function nas_import_apply(array $config, $location, $entries, $excludedRows) {
+    $result = array('status' => 'error', 'lock_error' => true, 'lock_acquired' => false,
+                    'release_failed' => false, 'inserted' => array(), 'skipped' => array());
+    $pdo = null;
+    $lock = null;
+    try {
+        nas_import_validate_entries($entries, $excludedRows);
+        require_once $config['COMMON_INCLUDES'] . '/pdo_connection.php';
+        $table = nas_import_table($config);
+        $pdo = dalo_pdo_connect($config, $location);
+        $engine = $pdo->prepare('SELECT ENGINE FROM INFORMATION_SCHEMA.TABLES '
+                              . 'WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?');
+        $engine->execute(array($config['CONFIG_DB_TBL_RADNAS']));
+        if (strcasecmp((string)$engine->fetchColumn(), 'InnoDB') !== 0) {
+            throw new RuntimeException('NAS import requires InnoDB');
+        }
+        $lock = nas_backup_acquire_lock($pdo, $config['CONFIG_DB_TBL_RADNAS'], 30);
+        $result['lock_error'] = $lock['error'];
+        $result['lock_acquired'] = $lock['acquired'];
+        if (!$lock['acquired']) {
+            $result['status'] = 'lock';
+            return $result;
+        }
+        if (!$pdo->beginTransaction()) {
+            throw new RuntimeException('NAS import transaction unavailable');
+        }
+        $existing = nas_import_existing_names($pdo, $table);
+        if ($existing === false) {
+            throw new RuntimeException('NAS import name lookup failed');
+        }
+        $insert = $pdo->prepare("INSERT INTO $table (nasname,shortname,type,ports,secret,server,community,description) "
+                              . 'VALUES (UNHEX(?),UNHEX(?),UNHEX(?),?,UNHEX(?),UNHEX(?),UNHEX(?),UNHEX(?))');
+        $verify = $pdo->prepare("SELECT HEX(nasname) AS nasname_hex, HEX(shortname) AS shortname_hex, "
+                              . "HEX(type) AS type_hex, ports, HEX(secret) AS secret_hex, "
+                              . "HEX(server) AS server_hex, HEX(community) AS community_hex, "
+                              . "HEX(description) AS description_hex FROM $table WHERE id=?");
+        foreach ($entries as $candidate) {
+            $entry = $candidate['data'];
+            $number = $candidate['row_number'];
+            $key = nas_import_name_key($entry['nasname']);
+            if (isset($existing[$key]) || nas_import_name_exists($pdo, $table, $entry['nasname'])) {
+                $existing[$key] = true;
+                $result['skipped'][] = array('row_number' => $number, 'data' => $entry,
+                    'status' => 'skipped',
+                    'information' => 'NAS name was added after the preview and already exists');
+                continue;
+            }
+            try {
+                $insert->execute(array(nas_import_hex_value($entry['nasname']),
+                    nas_import_hex_value($entry['shortname']), nas_import_hex_value($entry['type']),
+                    $entry['ports'], nas_import_hex_value($entry['secret']),
+                    nas_import_hex_value($entry['server']), nas_import_hex_value($entry['community']),
+                    nas_import_hex_value($entry['description'])));
+            } catch (PDOException $exception) {
+                if (!nas_import_is_duplicate_error($exception) ||
+                    !nas_import_name_exists($pdo, $table, $entry['nasname'])) {
+                    throw $exception;
+                }
+                $existing[$key] = true;
+                $result['skipped'][] = array('row_number' => $number, 'data' => $entry,
+                    'status' => 'skipped',
+                    'information' => 'NAS name was added after the preview and already exists');
+                continue;
+            }
+            $insertedId = $pdo->lastInsertId();
+            $verify->execute(array($insertedId));
+            $stored = $verify->fetch(PDO::FETCH_ASSOC);
+            if (!is_array($stored) || !nas_import_row_matches($stored, $entry)) {
+                throw new RuntimeException('NAS insert verification failed');
+            }
+            $result['inserted'][] = array('row_number' => $number, 'data' => $entry,
+                'status' => 'imported', 'information' => 'NAS added successfully');
+            $existing[$key] = true;
+        }
+        if (!$pdo->commit()) {
+            $result['status'] = 'commit_failed';
+            throw new RuntimeException('NAS import commit failed');
+        }
+        $result['status'] = 'success';
+    } catch (Throwable $exception) {
+        if ($pdo instanceof PDO && $pdo->inTransaction()) {
+            try {
+                $pdo->rollBack();
+            } catch (Throwable $rollbackException) {
+                error_log('NAS import rollback failure: ' . get_class($rollbackException));
+            }
+        }
+        // The driver message can contain a NAS name or secret; log class only.
+        error_log('NAS import failure: ' . get_class($exception));
+    } finally {
+        if ($lock !== null && $lock['acquired'] && $pdo instanceof PDO &&
+            !nas_backup_release_lock($pdo, $lock['name'])) {
+            $result['release_failed'] = true;
+        }
+        $pdo = null; // nonpersistent connection also releases a stranded lock
+    }
+    return $result;
 }
 
 function nas_import_badge($status) {
@@ -137,7 +292,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $csrfValid = isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']);
+    $csrfValid = isset($_POST['csrf_token']) && is_string($_POST['csrf_token'])
+        && dalo_check_csrf_token($_POST['csrf_token']);
     $action = $_POST['nas_import_action'] ?? '';
 
     if (!$csrfValid) {
@@ -161,9 +317,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (count($parsed['errors']) > 0) {
                 $failureMsg = implode('; ', $parsed['errors']);
             } else {
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-                $existingNames = nas_import_existing_names($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS']);
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+                $existingNames = false;
+                $pdo = null;
+                try {
+                    require_once $configValues['COMMON_INCLUDES'] . '/pdo_connection.php';
+                    $table = nas_import_table($configValues);
+                    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                    $existingNames = nas_import_existing_names($pdo, $table);
+                } catch (Throwable $exception) {
+                    // Driver errors can include connection or bound details.
+                    error_log('NAS preview lookup failure: ' . get_class($exception));
+                } finally {
+                    $pdo = null;
+                }
 
                 if ($existingNames === false) {
                     $failureMsg = 'Unable to read the current NAS list';
@@ -232,7 +398,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $preview = $_SESSION['nas_import_preview'] ?? null;
         $submittedToken = $_POST['preview_token'] ?? '';
 
-        if (!is_array($preview) || !hash_equals((string)($preview['token'] ?? ''), (string)$submittedToken)) {
+        if (!is_array($preview) || !is_string($submittedToken) ||
+            !is_string($preview['token'] ?? null) ||
+            !hash_equals($preview['token'], $submittedToken)) {
             $failureMsg = 'The NAS import preview is missing or no longer valid';
         } elseif (time() - intval($preview['created_at'] ?? 0) > 1800) {
             unset($_SESSION['nas_import_preview']);
@@ -240,151 +408,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $entries = $preview['entries'] ?? array();
             $excludedRows = $preview['excluded_rows'] ?? array();
-            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-            $dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-
-            $importLock = nas_backup_acquire_lock($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'], 30);
-            $importLockAcquired = $importLock['acquired'];
-            $transaction = $importLockAcquired ? $dbSocket->query('START TRANSACTION') : false;
-            $confirmExistingNames = ($importLockAcquired && !DB::isError($transaction))
-                ? nas_import_existing_names($dbSocket, $configValues['CONFIG_DB_TBL_RADNAS'])
-                : false;
-            $importError = $importLockAcquired &&
-                (DB::isError($transaction) || $confirmExistingNames === false);
-            $insertedRows = array();
-            $skippedRows = array();
-
-            $insertSql = sprintf(
-                'INSERT INTO %s (nasname, shortname, type, ports, secret, server, community, description)
-                 VALUES (UNHEX(?), UNHEX(?), UNHEX(?), ?, UNHEX(?), UNHEX(?), UNHEX(?), UNHEX(?))',
-                $configValues['CONFIG_DB_TBL_RADNAS']
-            );
-            $prepared = ($importLockAcquired && !$importError) ? $dbSocket->prepare($insertSql) : false;
-            if ($importLockAcquired && DB::isError($prepared)) {
-                $importError = true;
+            $operation = nas_import_apply($configValues, $_SESSION['location_name'] ?? 'default',
+                                          $entries, $excludedRows);
+            $importLockAcquired = $operation['lock_acquired'];
+            if ($operation['release_failed']) {
+                $logAction .= 'NAS import advisory lock release could not be confirmed on page: ';
             }
 
-            foreach ($entries as $index => $candidate) {
-                if (!$importLockAcquired || $importError) {
-                    break;
-                }
-
-                $entry = $candidate['data'];
-                $rowNumber = intval($candidate['row_number']);
-                $nasnameKey = nas_import_name_key($entry['nasname']);
-
-                if (isset($confirmExistingNames[$nasnameKey])) {
-                    $skippedRows[] = array(
-                        'row_number' => $rowNumber,
-                        'data' => $entry,
-                        'status' => 'skipped',
-                        'information' => 'NAS name was added after the preview and already exists',
-                    );
-                    continue;
-                }
-
-                $nasnameHex = nas_import_hex_value($entry['nasname']);
-                $nasnameIsText = nas_backup_is_valid_utf8($entry['nasname']) &&
-                                 !preg_match('/[\x00-\x1F\x7F]/', $entry['nasname']);
-                if ($nasnameIsText) {
-                    $existsSql = sprintf(
-                        'SELECT COUNT(id) FROM %s
-                          WHERE LOWER(nasname)=LOWER(CONVERT(UNHEX(?) USING utf8mb4))
-                             OR HEX(nasname)=?',
-                        $configValues['CONFIG_DB_TBL_RADNAS']
-                    );
-                    $existsParams = array($nasnameHex, $nasnameHex);
-                } else {
-                    $existsSql = sprintf(
-                        'SELECT COUNT(id) FROM %s WHERE HEX(nasname)=?',
-                        $configValues['CONFIG_DB_TBL_RADNAS']
-                    );
-                    $existsParams = array($nasnameHex);
-                }
-                $exists = $dbSocket->getOne($existsSql, $existsParams);
-
-                if (DB::isError($exists)) {
-                    $importError = true;
-                    break;
-                }
-
-                if (intval($exists) > 0) {
-                    $confirmExistingNames[$nasnameKey] = true;
-                    $skippedRows[] = array(
-                        'row_number' => $rowNumber,
-                        'data' => $entry,
-                        'status' => 'skipped',
-                        'information' => 'NAS name was added after the preview and already exists',
-                    );
-                    continue;
-                }
-
-                $res = $dbSocket->execute($prepared, array(
-                    nas_import_hex_value($entry['nasname']),
-                    nas_import_hex_value($entry['shortname']),
-                    nas_import_hex_value($entry['type']),
-                    $entry['ports'],
-                    nas_import_hex_value($entry['secret']),
-                    nas_import_hex_value($entry['server']),
-                    nas_import_hex_value($entry['community']),
-                    nas_import_hex_value($entry['description']),
-                ));
-
-                if (nas_import_is_duplicate_error($res)) {
-                    $skippedRows[] = array(
-                        'row_number' => $rowNumber,
-                        'data' => $entry,
-                        'status' => 'skipped',
-                        'information' => 'NAS name was added after the preview and already exists',
-                    );
-                    continue;
-                }
-
-                if (DB::isError($res)) {
-                    $importError = true;
-                    break;
-                }
-
-                $insertedId = $dbSocket->getOne('SELECT LAST_INSERT_ID()');
-                if (DB::isError($insertedId)) {
-                    $importError = true;
-                    break;
-                }
-                $verifySql = sprintf(
-                    'SELECT HEX(nasname) AS nasname_hex, HEX(shortname) AS shortname_hex,
-                            HEX(type) AS type_hex, ports, HEX(secret) AS secret_hex,
-                            HEX(server) AS server_hex, HEX(community) AS community_hex,
-                            HEX(description) AS description_hex
-                       FROM %s WHERE id=%d',
-                    $configValues['CONFIG_DB_TBL_RADNAS'],
-                    intval($insertedId)
-                );
-                $stored = $dbSocket->getRow($verifySql, array(), DB_FETCHMODE_ASSOC);
-                if (DB::isError($stored) || !is_array($stored) || !nas_import_row_matches($stored, $entry)) {
-                    $importError = true;
-                    break;
-                }
-
-                $insertedRows[] = array(
-                    'row_number' => $rowNumber,
-                    'data' => $entry,
-                    'status' => 'imported',
-                    'information' => 'NAS added successfully',
-                );
-                $confirmExistingNames[$nasnameKey] = true;
-            }
-
-            if (!$importLockAcquired) {
-                $failureMsg = $importLock['error']
+            if ($operation['status'] === 'lock') {
+                $failureMsg = $operation['lock_error']
                     ? 'Unable to acquire the NAS import lock; please retry the import'
                     : 'Another NAS import is currently running; please retry in a moment';
                 $logAction .= 'NAS import lock was unavailable on page: ';
-
-                $readyCount = count($entries);
+                $readyCount = is_array($entries) ? count($entries) : 0;
                 $previewToken = (string)($preview['token'] ?? '');
                 foreach ($entries as $candidate) {
                     $previewRows[] = array(
-                        'row_number' => intval($candidate['row_number']),
+                        'row_number' => (int)$candidate['row_number'],
                         'data' => $candidate['data'],
                         'errors' => array(),
                         'status' => 'ready',
@@ -400,69 +440,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
                 usort($previewRows, function ($a, $b) {
-                    return intval($a['row_number']) <=> intval($b['row_number']);
+                    return (int)$a['row_number'] <=> (int)$b['row_number'];
                 });
-            } elseif ($importError) {
-                $dbSocket->query('ROLLBACK');
-                $failureMsg = 'The NAS import failed and all new rows were rolled back';
-                foreach ($entries as $candidate) {
-                    $resultRows[] = array(
-                        'row_number' => intval($candidate['row_number']),
-                        'data' => $candidate['data'],
-                        'status' => 'invalid',
-                        'information' => 'Not imported because the transaction was rolled back',
-                    );
+            } elseif ($operation['status'] !== 'success') {
+                $failureMsg = $operation['status'] === 'commit_failed'
+                    ? 'The NAS import could not be committed'
+                    : 'The NAS import failed and all new rows were rolled back';
+                if (is_array($entries)) {
+                    foreach ($entries as $candidate) {
+                        if (is_array($candidate) && isset($candidate['row_number'], $candidate['data'])) {
+                            $resultRows[] = array(
+                                'row_number' => (int)$candidate['row_number'],
+                                'data' => $candidate['data'],
+                                'status' => 'invalid',
+                                'information' => 'Not imported because the transaction was rolled back',
+                            );
+                        }
+                    }
                 }
                 $logAction .= 'NAS import failed and was rolled back on page: ';
             } else {
-                $commit = $dbSocket->query('COMMIT');
-                if (DB::isError($commit)) {
-                    $dbSocket->query('ROLLBACK');
-                    $failureMsg = 'The NAS import could not be committed';
-                    $logAction .= 'NAS import commit failed on page: ';
-                } else {
-                    $resultRows = array_merge($insertedRows, $skippedRows, $excludedRows);
-                    usort($resultRows, function ($a, $b) {
-                        return intval($a['row_number']) <=> intval($b['row_number']);
-                    });
-                    $previewSkippedCount = 0;
-                    $previewInvalidCount = 0;
-                    foreach ($excludedRows as $excludedRow) {
-                        if (($excludedRow['status'] ?? '') === 'skipped') {
-                            $previewSkippedCount++;
-                        } elseif (($excludedRow['status'] ?? '') === 'invalid') {
-                            $previewInvalidCount++;
-                        }
+                $insertedRows = $operation['inserted'];
+                $skippedRows = $operation['skipped'];
+                $resultRows = array_merge($insertedRows, $skippedRows, $excludedRows);
+                usort($resultRows, function ($a, $b) {
+                    return (int)$a['row_number'] <=> (int)$b['row_number'];
+                });
+                $previewSkippedCount = 0;
+                $previewInvalidCount = 0;
+                foreach ($excludedRows as $excludedRow) {
+                    if (($excludedRow['status'] ?? '') === 'skipped') {
+                        $previewSkippedCount++;
+                    } elseif (($excludedRow['status'] ?? '') === 'invalid') {
+                        $previewInvalidCount++;
                     }
-                    $totalSkipped = count($skippedRows) + $previewSkippedCount;
-                    $successMsg = sprintf(
-                        'Imported %d NAS entr%s; skipped %d duplicate or existing entr%s; rejected %d invalid entr%s. Restart or reload FreeRADIUS for the changes to take effect.',
-                        count($insertedRows),
-                        count($insertedRows) === 1 ? 'y' : 'ies',
-                        $totalSkipped,
-                        $totalSkipped === 1 ? 'y' : 'ies',
-                        $previewInvalidCount,
-                        $previewInvalidCount === 1 ? 'y' : 'ies'
-                    );
-                    $logAction .= sprintf(
-                        'Imported %d NAS entries, skipped %d duplicate or existing entries and rejected %d invalid entries on page: ',
-                        count($insertedRows),
-                        $totalSkipped,
-                        $previewInvalidCount
-                    );
                 }
+                $totalSkipped = count($skippedRows) + $previewSkippedCount;
+                $successMsg = sprintf(
+                    'Imported %d NAS entr%s; skipped %d duplicate or existing entr%s; rejected %d invalid entr%s. Restart or reload FreeRADIUS for the changes to take effect.',
+                    count($insertedRows),
+                    count($insertedRows) === 1 ? 'y' : 'ies',
+                    $totalSkipped,
+                    $totalSkipped === 1 ? 'y' : 'ies',
+                    $previewInvalidCount,
+                    $previewInvalidCount === 1 ? 'y' : 'ies'
+                );
+                $logAction .= sprintf(
+                    'Imported %d NAS entries, skipped %d duplicate or existing entries and rejected %d invalid entries on page: ',
+                    count($insertedRows), $totalSkipped, $previewInvalidCount
+                );
             }
-
-            if ($prepared !== false && !DB::isError($prepared)) {
-                $dbSocket->freePrepared($prepared);
-            }
-            if ($importLockAcquired) {
-                if (!nas_backup_release_lock($dbSocket, $importLock['name'])) {
-                    $logAction .= 'NAS import advisory lock release could not be confirmed on page: ';
-                }
-            }
-            $dbSocket->setErrorHandling(PEAR_ERROR_CALLBACK, 'errorHandler');
-            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
             if ($importLockAcquired) {
                 unset($_SESSION['nas_import_preview']);
             }

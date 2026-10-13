@@ -30,6 +30,10 @@ if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
     exit;
 }
 
+require_once __DIR__.'/../widget_reads_pdo.php';
+dalo_widget_inputs();
+$widgetPDO=null;$res=array();
+try {
 $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
               in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
            ? strtolower($_GET['orderType']) : "asc";
@@ -44,7 +48,7 @@ $label_param['day'] = "Day of month";
 $label_param['month'] = "Month of year";
 $label_param['year'] = "Year";
 
-include('../common/includes/db_open.php');
+$widgetPDO=dalo_widget_open();
 include('include/management/pages_common.php');
 
 
@@ -80,10 +84,10 @@ switch ($type) {
         break;
 }
 
-$sql = sprintf($sql, $configValues['CONFIG_DB_TBL_RADACCT'], $orderBy, $orderType);
-$res = $dbSocket->query($sql);
+$sql = sprintf($sql, dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'), $orderBy, $orderType);
+$res = dalo_widget_rows($widgetPDO,$sql,array());
 
-$numrows = $res->numRows();
+$numrows = count($res);
 
 if ($numrows > 0) {
     // $cols is needed only if $numwrows > 0
@@ -97,7 +101,7 @@ if ($numrows > 0) {
     /* START - Related to pages_numbering.php */
 
     // when $numrows is set, $maxPage is calculated inside this include file
-    include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+    include('include/management/pages_numbering.php');    // must follow configuration initialization because it needs to read
                                                           // the CONFIG_IFACE_TABLES_LISTING variable from the config file
 
     // here we decide if page numbers should be shown
@@ -107,15 +111,15 @@ if ($numrows > 0) {
 
 
     $total_data = 0;
-    while ($row = $res->fetchRow()) {
+    foreach ($res as $row) {
         $total_data += intval($row[1]);
     }
 
-    $sql .= sprintf(" LIMIT %s, %s", $offset, $rowsPerPage);
-    $res = $dbSocket->query($sql);
+    $sql .= sprintf(" LIMIT %s, %s", (int)$offset, (int)$rowsPerPage);
+    $res = dalo_widget_rows($widgetPDO,$sql,array());
     $logDebugSQL = "$sql;\n";
 
-    $per_page_numrows = $res->numRows();
+    $per_page_numrows = count($res);
 
     // the partial query is built starting from user input
     // and for being passed to setupNumbering and setupLinks functions
@@ -147,11 +151,11 @@ if ($numrows > 0) {
     print_table_middle();
         
     $per_page_data = 0;
-    while ($row = $res->fetchRow()) {
+    foreach ($res as $row) {
         $data = intval($row[1]);
 
         echo "<tr>"
-           . "<td>" . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . "</td>"
+           . "<td>" . htmlspecialchars((string)($row[0] ?? ''), ENT_QUOTES, 'UTF-8') . "</td>"
            . "<td>" . $data . "</td>"
            . "</tr>";
         $per_page_data += $data;
@@ -182,5 +186,9 @@ if ($numrows > 0) {
     include_once("include/management/actionMessages.php");
 }
 
-include('../common/includes/db_close.php');
+} catch (Throwable $exception) {
+    dalo_widget_failure($exception);
+    include $configValues['OPERATORS_INCLUDE_MANAGEMENT'].'/actionMessages.php';
+}
+unset($widgetPDO,$res);
 ?>

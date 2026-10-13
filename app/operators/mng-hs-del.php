@@ -35,75 +35,30 @@
     $logDebugSQL = "";
     $log = "visited page: ";
 
-    include('../common/includes/db_open.php');
-
-    // init field_name and values (all, valid and to delete)
-    $field_name = 'name';
-
-    $valid_values = array();
-
-    $sql = sprintf("SELECT DISTINCT(%s) FROM %s", $field_name, $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    while ($row = $res->fetchRow()) {
-        $valid_values[] = $row[0];
+    require_once __DIR__ . '/library/hotspot_pages_pdo.php';
+    $field_name='name';$valid_values=$values=array();$success=false;
+    if (($_SERVER['REQUEST_METHOD'] ?? '')==='POST') {
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) { $failureMsg='CSRF token error'; }
+        else {
+            try {
+                $limit=(int)ini_get('max_input_vars');
+                if ($limit>0 && count($_POST,COUNT_RECURSIVE)>=$limit) { throw new InvalidArgumentException('Truncated hotspot selection'); }
+                $values=dalo_hotspot_selection($_POST['name'] ?? null);
+                $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+                $deleted=dalo_hotspot_delete($pdo,$configValues,$values);
+                $escaped=array_map(function ($v) { return htmlspecialchars($v,ENT_QUOTES,'UTF-8'); },$deleted);
+                $successMsg='Deleted hotspot(s): <strong>' . implode(', ',$escaped) . '</strong>';$success=true;
+                $logAction.='Successfully deleted hotspots on page: ';
+            } catch (Throwable $e) { $failureMsg='Unable to delete hotspot selection'; }
+        }
+    } elseif (isset($_GET['name'])) {
+        try { $values=dalo_hotspot_selection($_GET['name']); }
+        catch (Throwable $e) { $failureMsg='Invalid hotspot selection'; }
     }
-
-    if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-        $values = array();
-        $deleted_values = array();
-
-        // validate values
-        if (array_key_exists($field_name, $_POST) && isset($_POST[$field_name])) {
-
-            $tmp = (!is_array($_POST[$field_name])) ? array($_POST[$field_name]) : $_POST[$field_name];
-            foreach ($tmp as $value) {
-                if (in_array($value, $valid_values)) {
-                    $values[] = $value;
-                }
-            }
-        }
-
-        // use valid values for updating db,
-        // update deleted_values as a valid value has been removed
-        if (count($values) > 0) {
-            foreach ($values as $value) {
-                $sql = sprintf("DELETE FROM %s WHERE %s='%s'", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                                                               $field_name, $dbSocket->escapeSimple($value));
-                $result = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                if ($result > 0) {
-                    $deleted_values[] = $value;
-                }
-            }
-        }
-
-        $success = $_SERVER['REQUEST_METHOD'] == 'POST' && count($values) > 0 && count($deleted_values) > 0;
-
-        // present results
-        if ($success) {
-            $tmp = array();
-            foreach ($deleted_values as $deleted_value) {
-                $tmp[] = htmlspecialchars($deleted_value, ENT_QUOTES, 'UTF-8');
-            }
-
-            $successMsg = sprintf("Deleted hotspot(s): <strong>%s</strong>", implode(", ", $tmp));
-            $logAction .= sprintf("Successfully deleted hotspot(s) [%s] on page: ", implode(", ", $deleted_values));
-        } else {
-            $failureMsg = "no hotspot or invalid hotspot was entered, please specify a valid hotspot name to remove from database";
-            $logAction .= sprintf("Failed deleting hotspot(s) [%s] on page: ", implode(", ", $valid_values));
-        }
-    } else {
-        $success = false;
-        $failureMsg = "CSRF token error";
-        $logAction .= "$failureMsg on page: ";
-    }
-
-    include('../common/includes/db_close.php');
-
+    try {
+        $options_pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+        $valid_values=dalo_hotspot_options($options_pdo,$configValues);
+    } catch (Throwable $e) { $failureMsg='Unable to load hotspot options'; }
 
     // print HTML prologue
     $title = t('Intro','mnghsdel.php');
@@ -113,7 +68,7 @@
 
      print_title_and_help($title, $help);
 
-    if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+    if (isset($failureMsg) || isset($successMsg)) {
         include_once('include/management/actionMessages.php');
     }
 
@@ -129,6 +84,7 @@
                                         'caption' => t('all','HotSpotName'),
                                         'options' => $options,
                                         'multiple' => true,
+                                        'selected_value' => $values,
                                         'size' => 5
                                      );
 

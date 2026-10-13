@@ -21,11 +21,26 @@
  *********************************************************************************************************
  */
 
+    include_once('../common/includes/config_read.php');
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-
     include('library/check_operator_perm.php');
+    require_once __DIR__ . '/library/operator_reports_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+        foreach (array('batch_name','radiusReply') as $key) {
+            if (isset($_GET[$key])) { dalo_accounting_scalar($_GET, $key); }
+        }
+    } catch (Throwable $exception) {
+        http_response_code(400); exit('Invalid operator report filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
     include_once('../common/includes/config_read.php');
+
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery']);
+
     include_once("lang/main.php");
     include("../common/includes/layout.php");
 
@@ -64,6 +79,13 @@
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
 
+    $_SESSION['reportType'] = "reportsBatchList";
+    $_SESSION['reportExport'] = array(
+        'source' => 'mng-batch-list',
+        'type' => 'reportsBatchList',
+        'filters' => array(),
+    );
+
 
     // print HTML prologue    
     $title = t('Intro','mngbatchlist.php');
@@ -74,40 +96,23 @@
     // start printing content
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
     include('include/management/pages_common.php');
     
-    // setup php session variables for exporting
-    $_SESSION['reportTable'] = "";
-    
-    //reportQuery is assigned below to the SQL statement  in $sql
-    $_SESSION['reportQuery'] = "";
-    $_SESSION['reportType'] = "reportsBatchList";
-    
     //orig: used as method to get total rows - this is required for the pages_numbering.php page
-    $sql = "SELECT bh.id AS bid, bh.batch_name, bh.batch_description, bh.batch_status, COUNT(DISTINCT(ubi.id)) AS total_users,
-                   ubi.planname, bp.plancost, bp.plancurrency, hs.name AS HotspotName, bh.creationdate, bh.creationby,
-                   bh.updatedate, bh.updateby
-              FROM %s AS bh LEFT JOIN %s AS ubi ON bh.id = ubi.batch_id
-                           LEFT JOIN %s AS bp ON bp.planname = ubi.planname
-                           LEFT JOIN %s AS hs ON bh.hotspot_id = hs.id
-             GROUP BY bh.batch_name";
-    $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
-                         $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                         $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
-                         $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
+    $reportPDO = null;
+    $reportRows = array();
+    $numrows = 0;
+    try {
+        $reportPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        list($reportSQL, $reportBindings) = dalo_operator_query('mng-batch-list', array(), $configValues);
+        $numrows = dalo_accounting_count($reportPDO, $reportSQL, $reportBindings, $configValues);
+    } catch (Throwable $exception) { dalo_accounting_failure($exception); }
 
-    // set the session variable for report query (export)
-    $_SESSION['reportQuery'] = $sql;
-    
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
-    
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
         
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+        include('include/management/pages_numbering.php');    // must follow configuration initialization because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
         
         // here we decide if page numbers should be shown
@@ -116,11 +121,13 @@
         /* END */
                      
         // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
+        try {
+            $reportRows = dalo_operator_rows($reportPDO, $reportSQL, $reportBindings, 'mng-batch-list',
+                $orderBy, $orderType, (int)$offset, (int)$rowsPerPage, false);
+        } catch (Throwable $exception) { dalo_accounting_failure($exception); }
+        $per_page_numrows = count($reportRows);
+
+
         
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
@@ -147,7 +154,7 @@
         $descriptors['start'] = array( 'common_controls' => 'batch_id[]', 'additional_controls' => $additional_controls );
         $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
         $descriptors['end'] = array();
-        $descriptors['end'][] = get_csv_export_control();
+        if (!isset($failureMsg)) { $descriptors['end'][] = get_csv_export_control(); }
         print_table_prologue($descriptors);
         
         $form_descriptor = array( 'form' => array( 'action' => $action, 'method' => 'POST', 'name' => 'listall' ), );
@@ -163,7 +170,7 @@
         
         // table content
         $count = 0;
-        while($row = $res->fetchRow()) {
+        foreach ($reportRows as $row) {
 
             // bh.id AS bid, bh.batch_name, bh.batch_description, bh.batch_status, COUNT(DISTINCT(ubi.id)) AS total_users,
             // ubi.planname, bp.plancost, bp.plancurrency, hs.name AS HotspotName, bh.creationdate, bh.creationby,
@@ -172,7 +179,7 @@
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
             }
 
             
@@ -240,13 +247,20 @@
         printLinks($links, $drawNumberLinks);
     
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');
+
+    if (isset($failureMsg)) {
+        include_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/actionMessages.php';
+    }
 
     include('include/config/logging.php');
 
+    if (isset($failureMsg) || empty($numrows)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($reportPDO, $reportRows);
     print_footer_and_html_epilogue();
 ?>

@@ -1,8 +1,12 @@
 <?php
-include('../checklogin.php');
-include('../../lang/main.php');
+include_once __DIR__.'/../../../common/includes/config_read.php';
+include __DIR__.'/../checklogin.php';
+include_once $configValues['OPERATORS_LANG'].'/main.php';
 include_once implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', '..', '..', 'common', 'includes', 'validation.php'));
-include('../../../common/includes/chart.php');
+require_once __DIR__.'/../../../common/includes/chart.php';
+require_once __DIR__.'/../widget_reads_pdo.php';
+dalo_widget_inputs(true);
+
 
 $startdate = isset($_GET['startdate']) && preg_match(DATE_REGEX, trim($_GET['startdate']), $m) && checkdate($m[2], $m[3], $m[1])
     ? trim($_GET['startdate'])
@@ -11,26 +15,29 @@ $enddate = isset($_GET['enddate']) && preg_match(DATE_REGEX, trim($_GET['enddate
     ? trim($_GET['enddate'])
     : '';
 
-include('../../../common/includes/db_open.php');
-$where = array();
+try {
+$widgetPDO=dalo_widget_open();
+dalo_widget_authorize($widgetPDO,array('rep-newusers'));
+$where = array();$bindings=array();
 if ($startdate !== '') {
-    $where[] = "CreationDate >= '" . $dbSocket->escapeSimple($startdate) . "'";
+    $where[] = "CreationDate >= :startdate"; $bindings[':startdate']=$startdate;
 }
 if ($enddate !== '') {
     // inclusive end date: match the whole $enddate day
-    $where[] = "CreationDate < ('" . $dbSocket->escapeSimple($enddate) . "' + INTERVAL 1 DAY)";
+    $where[] = "CreationDate < (:enddate + INTERVAL 1 DAY)"; $bindings[':enddate']=$enddate;
 }
-$sql = sprintf("SELECT COUNT(*), CONCAT(YEAR(CreationDate), ' ', LEFT(MONTHNAME(CreationDate), 3)) FROM %s", $configValues['CONFIG_DB_TBL_DALOUSERINFO'])
+$sql = sprintf("SELECT COUNT(*), CONCAT(YEAR(CreationDate), ' ', LEFT(MONTHNAME(CreationDate), 3)) FROM %s", dalo_widget_table($configValues,'CONFIG_DB_TBL_DALOUSERINFO'))
     . (count($where) ? ' WHERE ' . implode(' AND ', $where) : '')
     . ' GROUP BY YEAR(CreationDate), MONTH(CreationDate) ORDER BY YEAR(CreationDate), MONTH(CreationDate)';
-$res = $dbSocket->query($sql);
+$res = dalo_widget_rows($widgetPDO,$sql,$bindings);
 $labels = array();
 $values = array();
-while ($row = $res->fetchRow()) {
+foreach ($res as $row) {
     $values[] = intval($row[0]);
     $labels[] = strval($row[1]);
 }
-include('../../../common/includes/db_close.php');
+unset($widgetPDO);
+} catch (Throwable $exception) {dalo_widget_failure($exception,true);}
 
 $dataset = array(
     'label' => 'users',

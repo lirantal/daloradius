@@ -24,8 +24,8 @@
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
 
-    include('library/check_operator_perm.php');
     include_once('../common/includes/config_read.php');
+    include('library/check_operator_perm.php');
 
     // init logging variables
     $log = "visited page: ";
@@ -36,100 +36,31 @@
     include("../common/includes/validation.php");
     include("../common/includes/layout.php");
 
-    // custom validation structures
-    $valid_tables = array("check", "reply");
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            $vendor = (array_key_exists('vendor', $_POST) && !empty(str_replace("%", "", trim($_POST['vendor']))))
-                    ? str_replace("%", "", trim($_POST['vendor'])) : "";
-            $vendor_enc = (!empty($vendor)) ? htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8') : "";
-
-            $attribute = (array_key_exists('attribute', $_POST) && !empty(str_replace("%", "", trim($_POST['attribute']))))
-                       ? str_replace("%", "", trim($_POST['attribute'])) : "";
-            $attribute_enc = (!empty($attribute)) ? htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8') : "";
-
-            // Validate attribute type: compare the pure type (without encrypt= flags or # comments) but keep the original value
-            $rawType = array_key_exists('type', $_POST) ? trim($_POST['type']) : "";
-            $baseType = strtolower(strtok($rawType, " \t#"));
-            $type = (!empty($rawType) && in_array($baseType, $valid_attributeTypes, true)) ? $rawType : "";
-
-            $op = (array_key_exists('RecommendedOP', $_POST) && isset($_POST['RecommendedOP']) &&
-                   in_array($_POST['RecommendedOP'], $valid_ops))
-                ? $_POST['RecommendedOP'] : "";
-
-            $table = (array_key_exists('RecommendedTable', $_POST) && isset($_POST['RecommendedTable']) &&
-                      in_array($_POST['RecommendedTable'], $valid_tables))
-                   ? $_POST['RecommendedTable'] : "";
-
-            $helper = (array_key_exists('RecommendedHelper', $_POST) && isset($_POST['RecommendedHelper']) &&
-                       in_array($_POST['RecommendedHelper'], $valid_recommendedHelpers))
-                    ? $_POST['RecommendedHelper'] : "";
-
-            $tooltip = (array_key_exists('RecommendedTooltip', $_POST) &&
-                        !empty(str_replace("%", "", trim($_POST['RecommendedTooltip']))))
-                     ? str_replace("%", "", trim($_POST['RecommendedTooltip'])) : "";
-
-            if (empty($vendor) || empty($attribute)) {
-                // vendor and attribute are required
-                $failureMsg = "vendor and/or attribute are empty or invalid";
-                $logAction .= "Failed adding new attribute [$attribute] (possible empty/invalid vendor and/or attribute) on page: ";
-            } else {
-                include('../common/includes/db_open.php');
-
-                $sql = sprintf("SELECT DISTINCT(Vendor) FROM %s WHERE attribute='%s'",
-                               $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($attribute));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-
-                $vendors = array();
-                while ($row = $res->fetchrow()) {
-                    $vendors[] = $row[0];
-                }
-
-                if (count($vendors) > 0) {
-                    // already present
-                    $format = "An attribute with the same name is already present in another dictionary (attribute: %s, vendor(s): %s)";
-                    $failureMsg = sprintf($format, $attribute_enc, htmlspecialchars(implode(", ", $vendors), ENT_QUOTES, 'UTF-8'));
-                    $logAction .= sprintf("Failed to add an attribute [$format] on page: ", $attribute, implode(", ", $vendors));
-
-                } else {
-
-                    $sql = sprintf("INSERT INTO %s (id, Type, Attribute, Value, Format, Vendor, RecommendedOP,
-                                                    RecommendedTable, RecommendedHelper, RecommendedTooltip)
-                                            VALUES (0, '%s', '%s', '', '', '%s', '%s', '%s', '%s', '%s')",
-                                   $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                                   $dbSocket->escapeSimple($type), $dbSocket->escapeSimple($attribute),
-                                   $dbSocket->escapeSimple($vendor), $dbSocket->escapeSimple($op),
-                                   $dbSocket->escapeSimple($table), $dbSocket->escapeSimple($helper),
-                                   $dbSocket->escapeSimple($tooltip));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (!DB::isError($res)) {
-                        $format = "The new attribute has been inserted in the dictionary (attribute: %s, vendor: %s)";
-                        $successMsg = sprintf($format, $attribute_enc, $vendor_enc)
-                                    . sprintf(' [<a href="mng-rad-attributes-edit.php?vendor=%s&attribute=%s" title="Edit">%s</a>]',
-                                              urlencode($vendor), urlencode($attribute), $attribute_enc);
-                        $logAction .= sprintf("$format on page: ", $attribute, $vendor);
-                    } else {
-                        $format = "An error occurred when adding the new attribute to a dictionary (attribute: %s, vendor: %s)";
-                        $failureMsg = sprintf($format, $attribute_enc, $vendor_enc);
-                        $logAction .= sprintf("Failed to add an attribute [$format] on page: ", $attribute, $vendor);
-                    }
-                }
-
-                include('../common/includes/db_close.php');
-            }
-
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+    require_once __DIR__ . '/library/dictionary_pages_pdo.php';
+    $valid_tables = array('check', 'reply');
+    $vendor = $attribute = $type = $op = $table = $helper = $tooltip = '';
+    $valid_csrf = isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']);
+    if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+        if (!$valid_csrf) { $failureMsg = 'CSRF token error'; }
+        else {
+            try {
+                $fields = dalo_dictionary_fields($_POST, $valid_attributeTypes, $valid_ops, $valid_recommendedHelpers);
+                $vendor=$fields['vendor']; $attribute=$fields['attribute']; $type=$fields['type'];
+                $op=$fields['recommendedOP']; $table=$fields['recommendedTable'];
+                $helper=$fields['recommendedHelper']; $tooltip=$fields['recommendedTooltip'];
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                if (dalo_dictionary_create($pdo, $configValues, $fields)) {
+                    $url = 'mng-rad-attributes-edit.php?' . http_build_query(array('vendor'=>$vendor,'attribute'=>$attribute), '', '&', PHP_QUERY_RFC3986);
+                    $vendor_enc=htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8');
+                    $attribute_enc=htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8');
+                    $successMsg = sprintf('The new attribute has been inserted in the dictionary (attribute: %s, vendor: %s) [<a href="%s" title="Edit">%s</a>]',
+                                          $attribute_enc, $vendor_enc, htmlspecialchars($url, ENT_QUOTES, 'UTF-8'), $attribute_enc);
+                    $logAction .= 'Added dictionary attribute on page: ';
+                } else { $failureMsg = 'An attribute with the same name is already present in the dictionary'; }
+                $logDebugSQL = 'dictionary existence check; INSERT INTO configured dictionary (bound values);';
+            } catch (Throwable $e) { $failureMsg = 'Could not add dictionary attribute'; }
         }
     }
-
 
     // print HTML prologue
     $title = t('Intro','mngradattributesnew.php');
@@ -210,7 +141,7 @@
                                         "caption" => t('all','RecommendedTooltip'),
                                         "type" => "textarea",
                                         "tooltipText" => t('Tooltip','RecommendedTooltipTooltip'),
-                                        "value" => (isset($tooltip) ? $tooltip : "")
+                                        "content" => (isset($tooltip) ? $tooltip : "")
                                      );
 
         $input_descriptors0[] = array(

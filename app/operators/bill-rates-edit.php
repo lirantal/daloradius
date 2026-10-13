@@ -37,110 +37,38 @@
     $logDebugSQL = "";
 
 
-    include('../common/includes/db_open.php');
-    
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $ratename = (array_key_exists('ratename', $_POST) && !empty(str_replace("%", "", trim($_POST['ratename']))))
-                  ? str_replace("%", "", trim($_POST['ratename'])) : "";
-    } else {
-        $ratename = (array_key_exists('ratename', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['ratename']))))
-                  ? str_replace("%", "", trim($_REQUEST['ratename'])) : "";
-    }
-
-
-    // check if this rate exists
-    $sql = sprintf("SELECT COUNT(id) FROM %s WHERE rateName='%s'", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'],
-                                                                   $dbSocket->escapeSimple($ratename));
-    $res = $dbSocket->query($sql);
-    
-    $exists = intval($res->fetchrow()[0]) == 1;
-
-    if (!$exists) {
-        // we reset the rate if it does not exist
-        $ratename = "";
-    }
-
-    $ratename_enc = (!empty($ratename)) ? htmlspecialchars($ratename, ENT_QUOTES, 'UTF-8') : "";
-    
-    //feed the sidebar variables
-    $edit_ratename = $ratename_enc;
-
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
-            if (empty($ratename)) {
-                // required
-                $failureMsg = "invalid or empty rate name, please specify a valid rate name to edit.";
-                $logAction .= "invalid or empty rate name on page: ";
+    require_once 'library/billing_rates_pdo.php';
+    $source = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+    $ratename = isset($source['ratename']) && is_string($source['ratename']) ? trim($source['ratename']) : '';
+    $ratename_enc = htmlspecialchars($ratename, ENT_QUOTES, 'UTF-8');
+    $edit_ratename = $ratename;
+    $pdo = null; $exists = false;
+    try {
+        $pdo = dalo_catalog_read_open($configValues);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+                $failureMsg = 'CSRF token error';
             } else {
-                $sql_SET = array();
-                
-                // required later
-                $current_datetime = date('Y-m-d H:i:s');
-                $currBy = $operator;
-            
-                $sql_SET[] = sprintf("updatedate='%s'", $current_datetime);
-                $sql_SET[] = sprintf("updateby='%s'", $currBy);
-                
-                $ratecost = (array_key_exists('ratecost', $_POST) && intval(trim($_POST['ratecost'])) > 0)
-                          ? intval(trim($_POST['ratecost'])) : "";
-                if (!empty($ratecost)) {
-                    $sql_SET[] = sprintf("rateCost=%d", $ratecost);
-                }
-                
-                $ratetypenum = (array_key_exists('ratetypenum', $_POST) && intval(trim($_POST['ratetypenum'])) > 0)
-                          ? intval(trim($_POST['ratetypenum'])) : 1;
-                
-                $ratetypetime = (array_key_exists('ratetypetime', $_POST) && !empty(trim($_POST['ratetypetime'])) &&
-                                 in_array(trim($_POST['ratetypetime']), $valid_timeUnits))
-                              ? trim($_POST['ratetypetime']) : "";
-                
-                if (!empty($ratetypetime)) {
-                    $sql_SET[] = sprintf("rateType='%d/%s'", $ratetypenum, $ratetypetime);
-                }
-                
-                $sql = sprintf("UPDATE %s SET ", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'])
-                     . implode(", ", $sql_SET)
-                     . sprintf(" WHERE rateName='%s'", $dbSocket->escapeSimple($ratename));
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                if (!DB::isError($res)) {
+                try {
+                    dalo_rate_mutate($pdo, $configValues, 'edit', $_POST['ratename'] ?? '', $_POST, $operator);
                     $successMsg = "Successfully updated rate (<strong>$ratename_enc</strong>)";
-                    $logAction .= "Successfully updated rate [$ratename] on page: ";
-                } else {
-                    $failureMsg = "Failed to updated rate (<strong>$ratename_enc</strong>)";
-                    $logAction .= "Failed to updated rate [$ratename] on page: ";
+                    $logAction .= 'Successfully updated rate on page: ';
+                } catch (Throwable $error) {
+                    $failureMsg = 'Failed to update rate; check the fields and current state before retrying';
+                    $logAction .= 'Rate edit failed [' . get_class($error) . '] on page: ';
                 }
             }
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
         }
-    }
-
-    if (empty($ratename)) {
-        $failureMsg = "invalid or empty rate name entered, please specify a valid rate name to edit.";
-        $logAction .= "$failureMsg on page: ";
-    } else {
-    
-        $sql = sprintf("SELECT id, rateType, rateCost, creationdate, creationby, updatedate, updateby FROM %s WHERE rateName='%s'",
-                       $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'], $dbSocket->escapeSimple($ratename));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-    
-        $row = $res->fetchrow();
-    
-        list( $id, $ratetype, $ratecost, $creationdate, $creationby, $updatedate, $updateby ) = $row;
-        list( $ratetypenum, $ratetypetime ) = explode("/", $ratetype);
-    
-    }
-
-    include('../common/includes/db_close.php');
-
+        if ($ratename !== '') {
+            $row = dalo_rate_read($pdo, $configValues, $ratename);
+            list($id, $stored_name, $ratetype, $ratecost, $creationdate, $creationby, $updatedate, $updateby) = $row;
+            list($ratetypenum, $ratetypetime) = array_pad(explode('/', $ratetype, 2), 2, '');
+            $exists = true;
+        } elseif (!isset($failureMsg)) { $failureMsg = 'invalid or empty rate name entered, please specify a valid rate name to edit.'; }
+    } catch (DomainException $error) {
+        if (!isset($failureMsg)) { $failureMsg = 'invalid or empty rate name entered, please specify a valid rate name to edit.'; }
+    } catch (Throwable $error) { dalo_rate_failure($error); }
+    finally { $pdo = null; }
 
     // print HTML prologue
     $title = t('Intro','billratesedit.php');
@@ -159,7 +87,7 @@
     
     include_once('include/management/actionMessages.php');
     
-    if (!empty($ratename)) {
+    if ($exists) {
         // descriptors 0
         $input_descriptors0 = array();
         

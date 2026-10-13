@@ -51,11 +51,11 @@
     foreach ($cols as $k => $v) { if (!is_int($k)) { $param_cols[$k] = $v; } }
     
     // whenever possible we use a whitelist approach
-    $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
+    $orderBy = (array_key_exists('orderBy', $_GET) && is_string($_GET['orderBy']) &&
                 in_array($_GET['orderBy'], array_keys($param_cols)))
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
-    $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
+    $orderType = (array_key_exists('orderType', $_GET) && is_string($_GET['orderType']) &&
                   in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
@@ -68,35 +68,24 @@
     // start printing content
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
+    require_once 'library/billing_rates_pdo.php';
     include('include/management/pages_common.php');
-
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALOBILLINGRATES']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->fetchrow()[0];
-
+    $numrows = 0; $rate_rows = array(); $pdo = null;
+    try {
+        $pdo = dalo_catalog_read_open($configValues);
+        $table = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGRATES');
+        $numrows = (int)dalo_catalog_read_rows($pdo, "SELECT COUNT(id) FROM $table")[0][0];
+        if ($numrows > 0) {
+            include('include/management/pages_numbering.php');
+            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+            $rate_rows = dalo_catalog_read_rows($pdo, "SELECT id,rateName,rateType,rateCost FROM $table ORDER BY $orderBy $orderType LIMIT :offset,:limit",
+                array(':offset'=>(int)$offset, ':limit'=>(int)$rowsPerPage));
+        }
+    } catch (Throwable $error) { $numrows = 0; dalo_rate_failure($error); }
+    finally { $pdo = null; }
     if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
-        
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
-        /* END */
-                     
-        // we execute and log the actual query
-        $sql = "SELECT id, rateName, rateType, rateCost FROM %s ORDER BY %s %s LIMIT %s, %s";
-        $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_DALOBILLINGRATES'],
-                             $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
-        
+        $per_page_numrows = count($rate_rows);
+
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "bill-rates-del.php";
@@ -128,12 +117,13 @@
    
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($rate_rows as $row) {
+            $raw_rate_name = (string)$row[1];
             $rowlen = count($row);
         
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars($row[$i] ?? '', ENT_QUOTES, 'UTF-8');
             }
             
             list($id, $rateName, $rateType, $rateCost) = $row;
@@ -142,14 +132,14 @@
                                 'subject' => $rateName,
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-rates-edit.php?ratename=%s', urlencode($rateName), ), 'label' => t('button','EditRate'), );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-rad-rates-del.php?ratename=%s', urlencode($rateName), ), 'label' => t('button','RemoveRate'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-rates-edit.php?ratename=%s', urlencode($raw_rate_name), ), 'label' => t('button','EditRate'), );
+            $tooltip['actions'][] = array( 'href' => sprintf('bill-rates-del.php?ratename=%s', urlencode($raw_rate_name), ), 'label' => t('button','RemoveRate'), );
             
             // create tooltip
             $tooltip = get_tooltip_list_str($tooltip);
 
             // create checkbox
-            $d = array( 'name' => 'ratename[]', 'value' => $item_id, 'label' => $id );
+            $d = array( 'name' => 'ratename[]', 'value' => $raw_rate_name, 'label' => $id );
             $checkbox = get_checkbox_str($d);
 
             // build table row
@@ -180,11 +170,11 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');
+
     
     include('include/config/logging.php');
     

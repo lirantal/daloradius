@@ -28,9 +28,17 @@
     include("../common/includes/layout.php");
 
     include('../common/includes/functions.php');
-    include('../common/includes/db_open.php');
-    $message = get_message($dbSocket, "support")["content"];
-    include('../common/includes/db_close.php');
+    require_once __DIR__ . '/library/portal_pages_pdo.php';
+    include_once('../common/includes/config_read.php');
+    $message = '';
+    $portalPdo = null;
+    try {
+        $portalPdo = dalo_portal_handle($configValues);
+        $message = get_message($portalPdo, "support")["content"];
+    } catch (Throwable $exception) {
+        http_response_code(503);
+        $message = '<p>Portal message unavailable</p>';
+    } finally { $portalPdo = null; }
     
     // print HTML prologue
     $title = "Help";

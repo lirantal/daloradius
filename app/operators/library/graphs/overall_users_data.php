@@ -1,6 +1,10 @@
 <?php
-include('../checklogin.php');
-include('../../../common/includes/chart.php');
+include_once __DIR__.'/../../../common/includes/config_read.php';
+include __DIR__.'/../checklogin.php';
+require_once __DIR__.'/../../../common/includes/chart.php';
+require_once __DIR__.'/../widget_reads_pdo.php';
+dalo_widget_inputs(true);
+
 
 $category = (isset($_GET['category']) && in_array(strtolower(trim($_GET['category'])), array('upload', 'download', 'login')))
     ? strtolower(trim($_GET['category']))
@@ -11,11 +15,13 @@ $type = (isset($_GET['type']) && in_array(strtolower($_GET['type']), array('dail
 $size = (isset($_GET['size']) && in_array(strtolower($_GET['size']), array('gigabytes', 'megabytes')))
     ? strtolower($_GET['size'])
     : 'megabytes';
-$username = isset($_GET['user']) ? str_replace('%', '', $_GET['user']) : '';
+$username = isset($_GET['user']) ? $_GET['user'] : '';
 
-include('../../../common/includes/db_open.php');
+try {
+$widgetPDO=dalo_widget_open();
+dalo_widget_authorize($widgetPDO,array('graphs-overall_'.($category==='login'?'logins':$category)));
 $statistics = dalo_chart_overall_user_statistics(
-    $dbSocket,
+    $widgetPDO,
     $configValues['CONFIG_DB_TBL_RADACCT'],
     $username,
     $category,
@@ -24,7 +30,8 @@ $statistics = dalo_chart_overall_user_statistics(
     'traffic %sed by user %s',
     true
 );
-include('../../../common/includes/db_close.php');
+unset($widgetPDO);
+} catch (Throwable $exception) {dalo_widget_failure($exception,true);}
 
 dalo_chart_response(
     'bar',

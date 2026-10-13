@@ -8,6 +8,21 @@ The Compose setup in `docker-compose.yml` starts a complete local daloRADIUS sta
 
 The primary `Dockerfile` also supports a web-only container connected to MariaDB and FreeRADIUS services managed outside this repository.
 
+## PHP database and mail dependencies
+
+The web image uses native PDO with `pdo_mysql` (provided by `php-mysql`) for
+MariaDB. The build checks that the driver is available and does not install PEAR DB
+(`php-db`). The legacy configuration labels `mysql` and `mysqli` both select PDO
+MySQL; they do not select a PEAR connection.
+
+PEAR Mail, Mail_Mime and the Net_SMTP transport remain installed for notification delivery. Removing the
+PEAR DB requirement is **not** removal of all PEAR packages.
+
+For an existing deployment, rebuild the web image from this source revision; a
+source-only update does not uninstall packages from an older image. Do not remove
+volumes or database files. A rollback to older PEAR-based application code requires
+its matching older image/dependencies, not just a source checkout.
+
 ## Full Compose stack
 
 Create an environment file from the template:

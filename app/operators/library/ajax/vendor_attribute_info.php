@@ -23,25 +23,22 @@
 
 require_once __DIR__ . '/json_info.php';
 include('../checklogin.php');
-$dalo_info_database_error_message = 'Unable to load attribute information.';
-$db_error_handler = 'dalo_info_database_error';
+include_once dirname(__DIR__, 3) . '/common/includes/config_read.php';
 $operator_perm_file = 'mng_rad_attributes_list';
 $operator_perm_deny_http_status = 403;
 include('../check_operator_perm.php');
-
+require_once dirname(__DIR__) . '/dictionary_pages_pdo.php';
 $value = dalo_info_parameter('attribute');
-include('../../../common/includes/db_open.php');
-// The default PEAR callback prints HTML, which would corrupt the JSON response.
-$dbSocket->setErrorHandling(PEAR_ERROR_RETURN);
-
-$sql = sprintf("SELECT RecommendedTooltip FROM %s WHERE Attribute='%s'",
-               $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($value));
-$tooltip = $dbSocket->getOne($sql);
-if (DB::isError($tooltip)) {
+try {
+    dalo_dictionary_text($value, 64, true);
+    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+    $table = dalo_dictionary_table($configValues);
+    $stmt = $pdo->prepare("SELECT RecommendedTooltip FROM $table WHERE Attribute=:attribute LIMIT 1");
+    $stmt->execute(array(':attribute'=>$value));
+    $tooltip = trim((string)$stmt->fetchColumn());
+    dalo_info_response(['description' => $tooltip === '' ? '(n/a)' : $tooltip]);
+} catch (InvalidArgumentException $e) {
+    dalo_info_response(['error' => 'Missing or invalid parameter.'], 400);
+} catch (Throwable $e) {
     dalo_info_response(['error' => 'Unable to load attribute information.'], 500);
 }
-$tooltip = trim($tooltip ?? '');
-$data = ['description' => empty($tooltip) ? '(n/a)' : $tooltip];
-
-include('../../../common/includes/db_close.php');
-dalo_info_response($data);

@@ -20,214 +20,75 @@
  *********************************************************************************************************
  */
 
-	include('library/opendb.php');
-	include_once('include/common/common.php');
-	$txnId = createPassword(64, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);			
-							// to be used for setting up the return url (success.php page)
-							// for later retreiving of the transaction details
-
-	$stage2 = false;
-	$errorMissingFields = false;
-	$userPIN = "";
-
-	if (isset($_POST['submit'])) {
-
-		if (isset($_POST['firstName']))
-			$firstName = $_POST['firstName'];
-
-		if (isset($_POST['lastName']))
-			$lastName = $_POST['lastName'];
-
-		if (isset($_POST['address']))
-			$address = $_POST['address'];
-
-		if (isset($_POST['city']))
-			$city = $_POST['city'];
-
-		if (isset($_POST['state']))
-			$state = $_POST['state'];
-
-		if (isset($_POST['planId']))
-			$planId = $_POST['planId'];
-
-		if ( (isset($firstName)) && (isset($lastName)) && (isset($address)) && (isset($city)) && (isset($state)) && (isset($planId)) ) {
-
-			// all paramteres have been set, save it in the database
-			$current_datetime = date('Y-m-d H:i:s');
-			$currBy = "paypal-webinterface";
-
-			// lets create some random data for user pin
-			$userPIN = createPassword(8, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-			
-
-
-			$planId = $dbSocket->escapeSimple($planId);
-
-			// grab information about a plan from the table
-			$sql = "SELECT planId,planName,planCost,planTax,planCurrency FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-				" WHERE (planType='PayPal') AND (planId='$planId') ";
-			$res = $dbSocket->query($sql);
-			$row = $res->fetchRow();
-			$planId = $row[0];
-			$planName = $row[1];
-			$planCost = $row[2];
-			$planTax = $row[3];
-			$planCurrency = $row[4];
-
-			// lets add user information to the database
-	                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-				" (id, username, firstname, lastname, creationdate, creationby)".
-                                " VALUES (0,'$userPIN','".$dbSocket->escapeSimple($firstName)."','".$dbSocket->escapeSimple($lastName)."',".
-				"'$current_datetime','$currBy'".
-				")";
-	                $res = $dbSocket->query($sql);
-
-			// lets add user billing information to the database
-	                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'].
-				" (id, username, txnId, planName, planId)".
-                                " VALUES (0,'$userPIN','$txnId','$planName','$planId'".
-				")";
-	                $res = $dbSocket->query($sql);
-
-			$stage2 = true;
-
-			include('library/closedb.php');	
-
-		} else {
-
-			// if the paramteres haven't been set, we alert the user that these are required
-			$errorMissingFields = true;
-		}
-
-
-	}
-
-?>
-
-<html>
-<title> Online Registration  </title>
-<script src="library/javascript/common.js" type="text/javascript"></script>
-<body>
-
-<br/>
-<br/>
-
-
-	<form name="newuser" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-
-Select your plan:
-<br/>
-	<select id="planId" name="planId">
-<?php
-	include('library/opendb.php');
-
-		$sql = "SELECT planId,planName,planCost,planTax,planCurrency FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS']." WHERE planType='PayPal'";
-		$res = $dbSocket->query($sql);
-		while ($row = $res->fetchRow()) {
-			echo "<option value=\"$row[0]\">$row[1] - Cost $row[2] $row[4] </option>";
-		}
-
-	include('library/closedb.php');
-
-?>
-	</select>
-
-<br/>
-
-<br/>
-<b>Personal Details:</b>
-<br/><br/>
-
-	First Name <br/>
-    <input name="firstName" value="<?php if (isset($firstName)) echo $firstName ?>" />
-	<br/>
-	Last Name <br/>
-    <input name="lastName" value="<?php if (isset($lastName)) echo $lastName ?>" />
-	<br/>
-	Address <br/>
-    <input name="address" value="<?php if (isset($address)) echo $address ?>" />
-	<br/>
-	City <br/>
-    <input name="city" value="<?php if (isset($city)) echo $city ?>" />
-	<br/>
-	State <br/>
-    <input name="state" value="<?php if (isset($state)) echo $state ?>" />
-
-	<br/><br/>
-    <input type="submit" value="submit" name="submit">
-	<br/><br/>
-
-	</form>
-
-<br/>
-<br/>
-
-
-
-
-<?php
-
-if ( (isset($errorMissingFields)) && ($errorMissingFields == true) ) {
-
-	printq('
-		<br/>
-			<b> Missing fields, please fill out all fields! </b>
-		<br/>
-		');
+require_once __DIR__ . '/library/config_read.php';
+require_once dirname(__DIR__, 2) . '/common/portal1Paypal.php';
+header('Content-Type: text/html; charset=UTF-8');
+header('Cache-Control: no-store');
+header('Referrer-Policy: no-referrer');
+ini_set('session.use_strict_mode', '1');
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_samesite', 'Lax');
+session_cache_limiter('');
+session_start();
+if (!isset($_SESSION['portal1_paypal_csrf']) || !is_string($_SESSION['portal1_paypal_csrf'])) {
+    $_SESSION['portal1_paypal_csrf'] = bin2hex(random_bytes(32));
 }
-
-
-
-if ( (isset($stage2)) && ($stage2 == true) ) {
-	printq('
-
-		<br/>
-			Thank you... this is your user PIN: <b>');
-	echo $userPIN;
-
-	echo'</b>
-		<br/>
-			Please write it down, you will need to enter it at the login page.
-		<br/>
-		<br/>
-			Your account has been created but it will only be active after you complete your payment
-		<br/>
-			through Paypal, please click the Buy Now button below to complete your payment.
-
-		<br/><br/>
-
-		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-			<input type="hidden" name="cmd" value="_xclick" />
-			<input type="hidden" name="business" value="liran_1217096095_biz@enginx.com" />
-	
-			<input type="hidden" name="return" value="http://84.95.241.193/paypal/success.php?txnId='.$txnId.'" />
-			<input type="hidden" name="cancel_return" value="http://84.95.241.193/paypal/cancelled.php" />
-			<input type="hidden" name="notify_url" value="http://84.95.241.193/paypal/paypal-ipn.php" />
-		
-			<input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
-			<input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
-			<input type="hidden" name="quantity" value="1" />
-			<input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
-			<input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
-	
-			<input type="hidden" name="no_note" value="1">
-			<input type="hidden" id="currency_code" "name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
-			<input type="hidden" name="lc" value="US">
-
-			<input type="hidden" name="on0" value="Transaction ID" />
-			<input type="hidden" name="os0" value="'.$txnId.'" />
-
-			<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but23.gif" border="0" name="submit" 
-			alt="Make payments with PayPal - its fast, free and secure!">
-		</form>	
-		';
-
-
-}
-
+function portal1_paypal_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
+$plans = array(); $registered = null; $failureMsg = ''; $pdo = null;
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+try {
+    if (!in_array($method, array('GET', 'POST'), true)) { http_response_code(405); throw new DomainException('Unsupported method'); }
+    if ($method === 'POST') {
+        $csrf = $_POST['csrf_token'] ?? null;
+        if (!is_string($_POST['submit'] ?? null) || !is_string($csrf) || !hash_equals($_SESSION['portal1_paypal_csrf'], $csrf)) {
+            http_response_code(403); throw new DomainException('Invalid registration request');
+        }
+        // A successful/rejected submitted form cannot be replayed with its old token.
+        $_SESSION['portal1_paypal_csrf'] = bin2hex(random_bytes(32));
+    }
+    $pdo = dalo_chilli_pdo_open($configValues);
+    $plans = dalo_portal1_paypal_plans($pdo, $configValues);
+    if ($method === 'POST') { $registered = dalo_portal1_paypal_register($pdo, $configValues, $_POST); }
+} catch (DomainException $error) { $failureMsg = 'Registration request rejected'; }
+catch (InvalidArgumentException $error) { http_response_code(400); $failureMsg = 'Missing or invalid registration fields'; }
+catch (Throwable $error) { http_response_code(503); $failureMsg = 'Registration could not be completed'; }
+finally { if ($pdo instanceof PDO) { dalo_chilli_database_close($pdo); } }
 ?>
-
-
-</body>
-</html>
-
+<!doctype html>
+<html><head><meta charset="UTF-8"><title>Online Registration</title></head><body>
+<form name="newuser" action="index.php" method="post">
+<input type="hidden" name="csrf_token" value="<?= portal1_paypal_html($_SESSION['portal1_paypal_csrf']) ?>">
+Select your plan:<br>
+<select id="planId" name="planId">
+<?php foreach ($plans as $plan): ?>
+<option value="<?= portal1_paypal_html($plan['planId']) ?>"><?= portal1_paypal_html($plan['planName']) ?> - Cost <?= portal1_paypal_html($plan['planCost']) ?> <?= portal1_paypal_html($plan['planCurrency']) ?> </option>
+<?php endforeach; ?>
+</select><br><br><b>Personal Details:</b><br><br>
+<?php foreach (array('firstName'=>'First Name','lastName'=>'Last Name','address'=>'Address','city'=>'City','state'=>'State') as $field=>$label): ?>
+<?= $label ?><br>
+<input name="<?= $field ?>" value="<?= portal1_paypal_html(is_string($_POST[$field] ?? null) ? $_POST[$field] : '') ?>"><br>
+<?php endforeach; ?>
+<br><input type="submit" value="submit" name="submit">
+</form>
+<?php if ($failureMsg !== ''): ?><p role="alert"><?= portal1_paypal_html($failureMsg) ?></p><?php endif; ?>
+<?php if ($registered !== null):
+    $plan = $registered['plan']; $checkout = $registered['checkout'];
+    $fields = array('cmd'=>'_xclick', 'business'=>$checkout['business'],
+        'return'=>$checkout['base'].'/success.php?txnId='.rawurlencode($registered['correlation']),
+        'cancel_return'=>$checkout['base'].'/index.php', 'notify_url'=>$checkout['base'].'/paypal-ipn.php',
+        'amount'=>$plan['planCost'], 'item_name'=>$plan['planName'], 'quantity'=>'1',
+        'tax'=>($plan['planTax'] ?? '') === '' ? '0' : $plan['planTax'], 'item_number'=>$plan['planId'],
+        'no_note'=>'1', 'currency_code'=>$plan['planCurrency'], 'lc'=>'US',
+        'on0'=>'Transaction ID', 'os0'=>$registered['correlation']);
+?>
+<p>Thank you... this is your user PIN: <b><?= portal1_paypal_html($registered['pin']) ?></b></p>
+<p>Please write it down, you will need to enter it at the login page.</p>
+<p>Your account has been created but it will only be active after you complete your payment through PayPal.</p>
+<form action="<?= portal1_paypal_html($checkout['action']) ?>" method="post">
+<?php foreach ($fields as $name=>$value): ?>
+<input type="hidden" name="<?= $name ?>" value="<?= portal1_paypal_html($value) ?>">
+<?php endforeach; ?>
+<button type="submit">Buy Now</button>
+</form>
+<?php endif; ?>
+</body></html>

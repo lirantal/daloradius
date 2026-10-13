@@ -37,71 +37,35 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // load valid huntgroups
-    $valid_huntgroups = get_huntgroups();
-
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $item = (array_key_exists('item', $_POST) && !empty($_POST['item'])) ? $_POST['item'] : "";
-    } else {
-        $item = (array_key_exists('item', $_REQUEST) && !empty($_REQUEST['item'])) ? $_REQUEST['item'] : "";
-    }
-
-    $arr = array();
-    $tmp = (!is_array($item)) ? array( $item ) : $item;
-    foreach ($tmp as $tmp_item) {
-        if (!in_array($tmp_item, array_keys($valid_huntgroups))) {
-            continue;
-        }
-
-        $arr[] = $tmp_item;
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            if (count($arr) == 0) {
-                // invalid
-                $failureMsg = "Empty or invalid huntgroup(s)";
-                $logAction .= sprintf("Failed deleting huntgroup(s) [%s] on page: ", $failureMsg);
-            } else {
-                include('../common/includes/db_open.php');
-
-                $deleted = 0;
-                foreach ($arr as $arr_item) {
-
-                    $internal_id = intval(str_replace("huntgroup-", "", $arr_item));
-
-                    $sql = sprintf("DELETE FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_RADHG']);
-                    $prep = $dbSocket->prepare($sql);
-                    $values = array( $internal_id, );
-                    $res = $dbSocket->execute($prep, $values);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (!DB::isError($res)) {
-                        $deleted++;
-                    }
-                }
-
-                if ($deleted > 0) {
-                    $successMsg = sprintf("Deleted %s huntgroup(s)", $deleted);
-                    $logAction .= "$successMsg on page: ";
-                } else {
-                    // invalid
-                    $failureMsg = "Empty or invalid huntgroup(s)";
-                    $logAction .= sprintf("Failed deleting huntgroup(s) [%s] on page: ", $failureMsg);
-                }
-
-                include('../common/includes/db_close.php');
-            }
-
+    require_once __DIR__ . '/library/huntgroup_pages_pdo.php';
+    $arr=$valid_huntgroups=array();
+    $is_post=($_SERVER['REQUEST_METHOD'] ?? '')==='POST';
+    if ($is_post) {
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg='CSRF token error';
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+            try {
+                $limit=(int)ini_get('max_input_vars');
+                if ($limit>0 && count($_POST,COUNT_RECURSIVE)>=$limit) { throw new InvalidArgumentException('Truncated Huntgroup selection'); }
+                $ids=dalo_hunt_selection($_POST['item'] ?? null);
+                $arr=array_map(function ($id) { return 'huntgroup-' . $id; },$ids);
+                $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+                $deleted=dalo_hunt_delete($pdo,$configValues,$ids);
+                $successMsg=sprintf('Deleted %d huntgroup(s)',$deleted);
+                $logAction.='Deleted Huntgroup selection on page: ';
+            } catch (Throwable $e) { $failureMsg='Unable to delete Huntgroup selection'; }
         }
+    } elseif (isset($_GET['item'])) {
+        try { $ids=dalo_hunt_selection($_GET['item']); $arr=array_map(function ($id) { return 'huntgroup-' . $id; },$ids); }
+        catch (Throwable $e) { $failureMsg='Invalid Huntgroup selection'; }
     }
-
+    // Independent PDO selector, after the completed write transaction.
+    try {
+        $options_pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+        $valid_huntgroups=dalo_hunt_options($options_pdo,$configValues);
+        $arr=array_values(array_intersect($arr,array_keys($valid_huntgroups)));
+    }
+    catch (Throwable $e) { $failureMsg='Unable to load Huntgroup options'; }
 
     // print HTML prologue
     $title = t('Intro','mngradhuntdel.php');

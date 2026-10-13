@@ -32,6 +32,7 @@
     // init logging variables
     $log = "visited page: ";
     $logQuery = "performed query on page: ";
+    $logAction = "";
     $logDebugSQL = "";
 
     // set session's page variable
@@ -58,21 +59,26 @@
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "desc";
 
-    $invoice_id = (array_key_exists('invoice_id', $_GET) && isset($_GET['invoice_id']) &&
-                   preg_match('/^[0-9]+$/', $_GET['invoice_id']) !== false)
-                ? $_GET['invoice_id'] : "";
-    
-    $user_id = (array_key_exists('user_id', $_GET) && isset($_GET['user_id']) &&
-                preg_match('/^[0-9]+$/', $_GET['user_id']) !== false)
-             ? $_GET['user_id'] : "";
+    $filters = array(); $partial_query_string = '';
+    require_once('library/payments_pdo.php');
+    try {
+        foreach (array('username','invoice_id','user_id','orderBy','orderType') as $field) {
+            $filters[$field] = dalo_payment_scalar($_GET, $field);
+        }
+        foreach (array('invoice_id','user_id') as $field) {
+            if ($filters[$field] !== '' && !preg_match('/\A[0-9]+\z/', $filters[$field])) { throw new InvalidArgumentException('Invalid payment filter'); }
+        }
+        $query_filters = array_filter(array_intersect_key($filters, array_flip(array('username','invoice_id','user_id'))), function ($value) { return $value !== ''; });
+        if ($query_filters) { $partial_query_string = '&' . http_build_query($query_filters); }
+    } catch (Throwable $error) { dalo_payment_read_failure($error); }
 
-    $username = (array_key_exists('username', $_GET) && isset($_GET['username']))
-              ? str_replace('%', '', $_GET['username']) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
-    
+    $invoice_id = $filters['invoice_id'] ?? ''; $user_id = $filters['user_id'] ?? '';
+    $username = $filters['username'] ?? '';
+    $username_enc = $username !== '' ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : '';
+
     // print HTML prologue    
     $title = t('Intro','paymentslist.php');
     $help = t('helpPage','paymentslist');
@@ -83,67 +89,27 @@
     print_title_and_help($title, $help);
     
 
-    include('../common/includes/db_open.php');
     include('include/management/pages_common.php');
-
-
-    // if provided username, we'll need to turn that into the userbillinfo user id
-    if (!empty($username)) {
-        $sql = sprintf("SELECT id FROM %s WHERE username='%s'",
-                       $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                       $dbSocket->escapeSimple($username));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $row = $res->fetchRow();
-        $user_id = intval($row[0]);
+    $numrows = 0; $rows = array(); $payment_pdo = null;
+    if (!isset($failureMsg)) {
+        try {
+            $payment_pdo = dalo_payment_open($configValues);
+            list($sql,$bindings) = dalo_payment_list_query($payment_pdo,$configValues,$filters);
+            $numrows = (int)dalo_catalog_read_rows($payment_pdo, "SELECT COUNT(*) FROM ($sql) AS payment_count", $bindings)[0][0];
+            if ($numrows > 0) {
+                include('include/management/pages_numbering.php');
+                $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
+                $sql .= " ORDER BY p.$orderBy $orderType LIMIT :offset, :limit";
+                $bindings[':offset'] = (int)$offset; $bindings[':limit'] = (int)$rowsPerPage;
+                $rows = dalo_catalog_read_rows($payment_pdo,$sql,$bindings);
+                $logDebugSQL .= "$sql;\n";
+            }
+        } catch (Throwable $error) { dalo_payment_read_failure($error); $numrows = 0; $rows = array(); }
+        finally { $payment_pdo = null; }
     }
-    
-    $sql_WHERE = array();
-    $sql_JOIN = "";
-    
-    // if invoice_id then we need to lookup specific invoices
-    if (!empty($invoice_id)) {
-        $sql_WHERE[] = sprintf("p.invoice_id = %s", $dbSocket->escapeSimple($invoice_id));
-    }
-    
-    // if we did get a user id let's make the sql query specific to payments by this user 
-    if (isset($user_id) && !empty($user_id)) {
-        $sql_JOIN = sprintf("JOIN %s AS bi ON bi.id=p.invoice_id", $configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE']);
-        $sql_WHERE[] = sprintf("bi.user_id = %s", $dbSocket->escapeSimple($user_id));
-    }
-    
-    
-    $sql = sprintf("SELECT p.id, p.invoice_id, p.amount, p.date, pt.value, p.notes
-                      FROM %s AS p %s LEFT JOIN %s AS pt ON p.type_id=pt.id", $configValues['CONFIG_DB_TBL_DALOPAYMENTS'],
-                                                                              $sql_JOIN,
-                                                                              $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
-    if (count($sql_WHERE) > 0) {
-        $sql .= " WHERE " . implode(" AND ", $sql_WHERE);
-    }
-    
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
-
     if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
-        
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-        
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-        
-        /* END */
-        
-        // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        $per_page_numrows = $res->numRows();
-        
+        $per_page_numrows = count($rows);
+
         // this can be passed as form attribute and 
         // printTableFormControls function parameter
         $action = "bill-payments-del.php";
@@ -155,6 +121,7 @@
                             'page_num' => $pageNum,
                             'order_by' => $orderBy,
                             'order_type' => $orderType,
+                            'partial_query_string' => $partial_query_string,
                         );
         
         $descriptors = array();
@@ -168,19 +135,19 @@
         print_table_top($form_descriptor);
 
         // second line of table header
-        printTableHead($cols, $orderBy, $orderType);
+        printTableHead($cols, $orderBy, $orderType, $partial_query_string);
 
         // closes table header, opens table body
         print_table_middle();
    
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($rows as $row) {
             $rowlen = count($row);
         
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)$row[$i], ENT_QUOTES, 'UTF-8');
             }
         
             list($payment_id, $invoice_id, $amount, $date, $value, $notes) = $row;
@@ -205,7 +172,7 @@
             $tooltip2 = get_tooltip_list_str($tooltip2);
         
             // create checkbox
-            $d = array( 'name' => 'payment_id[]', 'value' => $item_id );
+            $d = array( 'name' => 'payment_id[]', 'value' => $payment_id );
             $checkbox = get_checkbox_str($d);
         
             // build table row
@@ -231,15 +198,15 @@
         print_table_bottom($descriptor);
 
         // get and print "links"
-        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType);
+        $links = setupLinks_str($pageNum, $maxPage, $orderBy, $orderType, $partial_query_string);
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        if (!isset($failureMsg)) { $failureMsg = "Nothing to display"; }
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');
+
     
     include('include/config/logging.php');
     

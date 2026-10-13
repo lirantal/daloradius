@@ -22,120 +22,45 @@
  *********************************************************************************************************
  */
 
-	include_once('include/common/common.php');
-	include_once('library/config_read.php');
-	$txnId = createPassword(64, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']); 
-                   // to be used for setting up the return url (success.php page)
-				   // for later retreiving of the transaction details
-
-	$status = "firstload";
-	$errorMissingFields = false;
-	$userPIN = "";
-
-	if (isset($_POST['submit'])) {
-
-		(isset($_POST['firstName'])) ? $firstName = $_POST['firstName'] : $firstName = "";
-		(isset($_POST['lastName'])) ? $lastName = $_POST['lastName'] : $lastName =  "";
-		(isset($_POST['address'])) ? $address = $_POST['address'] : $address = "";
-		(isset($_POST['city'])) ? $city = $_POST['city'] : $city = "";
-		(isset($_POST['state'])) ? $state = $_POST['state'] : $state = "";
-		(isset($_POST['planId'])) ? $planId = $_POST['planId'] : $planId = "";
-
-		if ( ($firstName != "") && ($lastName != "") && ($address != "") && ($city != "") && ($state != "") && ($planId != "") ) {
-
-			// all paramteres have been set, save it in the database
-			include('library/opendb.php');
-
-			$current_datetime = date('Y-m-d H:i:s');
-			$currBy = "paypal-webinterface";
-
-			// lets create some random data for user pin
-			while (true) {
-				
-				// generate the pin for the user
-				$userPIN = createPassword($configValues['CONFIG_USERNAME_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-				
-				// check if this pin, although random, may be used before
-				$sql = "SELECT * FROM ".$configValues['CONFIG_DB_TBL_RADCHECK']." WHERE UserName='".
-					$dbSocket->escapeSimple($userPIN)."'";
-				$res = $dbSocket->query($sql);
-	
-				// if it wasn't used then we break out of the loop, otherwise we continue to 
-				// generate pins and check them
-				if ($res->numRows() == 0)
-					break;
-			}
-			
-			
-			$planId = $dbSocket->escapeSimple($planId);
-
-			// grab information about a plan from the table
-			$sql = "SELECT id AS planId,planName,planCost,planTax,planCurrency,planRecurring,planRecurringPeriod FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-					" WHERE (planType='PayPal') AND (id=$planId) ";
-			$res = $dbSocket->query($sql);
-			$row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-			$planId = $row['planId'];
-			$planName = $row['planName'];
-			$planCost = $row['planCost'];
-			$planTax = $row['planTax'];
-			$planRecurring = $row['planRecurring'];
-			$planRecurringPeriod = $row['planRecurringPeriod'];
-			
-			// the tax is a relative percentage amount of the price, thus we need to
-			// calculate the tax amount
-			$planTax = (($planTax/100)*$planCost);
-
-			$planCurrency = $row['planCurrency'];
-
-            $planTax = number_format($planTax, 2, '.', '');
-            $planCost = number_format($planCost, 2, '.', '');
-
-			// lets add user information to the database
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO'].
-					" (id, username, firstname, lastname, address, city, state, creationdate, creationby)".
-					" VALUES (0,'$userPIN','".$dbSocket->escapeSimple($firstName)."','".$dbSocket->escapeSimple($lastName)."', '".
-					$dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($city)."','".$dbSocket->escapeSimple($state)."', ".
-					"'$current_datetime','$currBy'".
-					")";
-			$res = $dbSocket->query($sql);
-			
-			// lets add user billing information to the database
-			$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'].
-					" (id, username, planname, contactperson, address, city, state, creationdate, creationby) ".
-					" VALUES (0, '$userPIN', '$planName', '".$dbSocket->escapeSimple($firstName)." ".$dbSocket->escapeSimple($lastName)."', '".
-					$dbSocket->escapeSimple($address)."','".$dbSocket->escapeSimple($city)."','".$dbSocket->escapeSimple($state)."', ".
-					" '$current_datetime', '$currBy'".
-					")";
-			$res = $dbSocket->query($sql);
-			
-			//if ($planRecurring == "No") {
-				// lets add user billing information to the database
-				$sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'].
-						" (id, username, txnId, planId, vendor_type, payment_date)".
-						" VALUES (0,'$userPIN','$txnId', $planId, 'PayPal', '$current_datetime'".
-						")";
-				$res = $dbSocket->query($sql);
-			//}
-			
-			$status = "paypal";
-
-			include('library/closedb.php');
-
-		} else {
-
-			// if the paramteres haven't been set, we alert the user that these are required
-			$errorMissingFields = true;
-		}
-
-	}
-
+require_once __DIR__.'/library/config_read.php';
+require_once dirname(__DIR__,2).'/common/portal2Paypal.php';
+header('Content-Type: text/html; charset=UTF-8');header('Cache-Control: no-store');header('Referrer-Policy: no-referrer');
+ini_set('session.use_strict_mode','1');ini_set('session.cookie_httponly','1');ini_set('session.cookie_samesite','Lax');
+session_cache_limiter('');session_start();
+if (!is_string($_SESSION['portal2_paypal_csrf'] ?? null)) {$_SESSION['portal2_paypal_csrf']=bin2hex(random_bytes(32));}
+function portal2_paypal_html($value) {return htmlspecialchars((string)$value,ENT_QUOTES,'UTF-8');}
+$plans=array();$registered=null;$failureMsg='';$pdo=null;$method=$_SERVER['REQUEST_METHOD'] ?? 'GET';
+try {
+    if (!in_array($method,array('GET','POST'),true)) {http_response_code(405);throw new DomainException('Invalid method');}
+    if ($method==='POST') {
+        $csrf=$_POST['csrf_token'] ?? null;
+        if (!is_string($_POST['submit'] ?? null) || !is_string($csrf) || !hash_equals($_SESSION['portal2_paypal_csrf'],$csrf)) {
+            http_response_code(403);throw new DomainException('Invalid request');
+        }
+        $_SESSION['portal2_paypal_csrf']=bin2hex(random_bytes(32));
+    }
+    $pdo=dalo_chilli_pdo_open($configValues);
+    $pending=$_SESSION['portal2_paypal_pending'] ?? null;
+    if (is_array($pending) && is_string($pending['correlation'] ?? null) && ($pending['expires'] ?? 0)>time()) {
+        $registered=dalo_portal2_paypal_resume($pdo,$configValues,$pending['correlation']);
+    }
+    if ($registered===null) {
+        unset($_SESSION['portal2_paypal_pending']);
+        $plans=dalo_portal2_paypal_plans($pdo,$configValues);
+        if ($method==='POST') {
+            $registered=dalo_portal2_paypal_register($pdo,$configValues,$_POST);
+            $_SESSION['portal2_paypal_pending']=array('correlation'=>$registered['correlation'],'expires'=>time()+1800);
+        }
+    }
+} catch (DomainException $error) {$failureMsg='Registration request rejected';}
+catch (InvalidArgumentException $error) {http_response_code(400);$failureMsg='Missing or invalid registration fields';}
+catch (Throwable $error) {http_response_code(503);$failureMsg='Registration could not be completed';}
+finally {if ($pdo instanceof PDO) {dalo_chilli_database_close($pdo);}}
 ?>
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>User Sign-Up</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
@@ -162,204 +87,30 @@
                 <p>
                         <center>
 
-	<?php
-
-                /*************************************************************************************************************************************************
-                 *
-                 * switch case for status of the sign-up process, whether it's the first time the user accesses it, or rather he already submitted
-                 * the form with either successful or errornous result
-                 *
-                 *************************************************************************************************************************************************/
-
-                if ( (isset($errorMissingFields)) && ($errorMissingFields == true) ) {
-
-                        printq('
-                                <br/>
-                                        <font color="red"><b> Missing fields, please fill out all fields! </b></font>
-                                <br/><br/>
-                                ');
-                }
-
-
-                switch ($status) {
-                        case "firstload":
-
-                                echo "
-                                        We allow our customers to sign-up for Internet access plans using their PayPal accounts.<br/>
-                                        Complete the form and click the Apply button to register in our database, shortly after you will see<br/>
-                                        a Buy Now button, click it to redirect to your PayPal homepage and confirm the transaction.
-
-                                        <form name='newuser' action='".$_SERVER['PHP_SELF']."' method='post'>
-
-					<table>
-                                        <tr><td>Select your plan:</td>
-                                        	<td><select id='planId' name='planId'>
-                                        ";
-
-                                include('library/opendb.php');
-
-                                $sql = "SELECT id AS planId,planName,planCost,planTax,planCurrency FROM ".$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'].
-                                        " WHERE planType='PayPal'";
-                                $res = $dbSocket->query($sql);
-                                while ($row = $res->fetchRow()) {
-                                        echo "<option value=\"$row[0]\">$row[1] - Cost $row[2] $row[4] </option>";
-                                }
-
-                                include('library/closedb.php');
-
-                                echo "
-                                        </td></select></tr>
-
-                                        <br/><br/>
-
-                                        <tr><td>First name:</td>
-                                            <td> <input name='firstName' value='"; if (isset($firstName)) echo $firstName; echo "' /> </td></tr>
-                                        <tr><td>Last name:</td>
-                                            <td> <input name='lastName' value='"; if (isset($lastName)) echo $lastName; echo "' /> </td></tr>
-                                        <tr><td>Address:</td>
-                                            <td> <input name='address' value='"; if (isset($address)) echo $address; echo "' /> </td></tr>
-                                        <tr><td>City:</td>
-                                            <td> <input name='city' value='"; if (isset($city)) echo $city; echo "' /> </td></tr>
-                                        <tr><td>State:</td>
-                                            <td> <input name='state' value='"; if (isset($state)) echo $state; echo "' /> </td></tr>
-
-					</table><br/><br/>
-                                            <input type='submit' value='Submit' name='submit'>
-
-                                        </form>
-                                        ";
-
-                                break;
-
-
-                        case "paypal":
-                                printq('
-
-                                        <font color="blue"><b>Thank you...</b></font>
-                                        <br/><br/>
-
-                                        Your PIN code has been created but it will only be activated after you complete and confirm<br/>
-                                        your payment through PayPal. Following is your PIN code, which you will need in-order to access<br/>
-                                        our Hotspot services.<br/><br/>
-
-                                        <table><tr><td>PIN Code:</td><td> <b>
-                                        ');
-
-                                echo $userPIN;
-								
-                                echo '
-                                        </b></td></tr></table>
-                                        <br/>
-										';
-										
-								if ($planRecurring == "No") {
-								
-									echo '
-                                        <form action="'.$configValues['CONFIG_MERCHANT_WEB_PAYMENT'].'" method="post">
-                                                <input type="hidden" name="cmd" value="_xclick" />
-                                                <input type="hidden" name="business" value="'.$configValues['CONFIG_MERCHANT_BUSINESS_ID'].'" />
-
-                                                <input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
-																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
-																								'?txnId='.$txnId.'&username='.$userPIN.'" />
-                                                <input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
-																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
-                                                <input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
-																										$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'].'" />
-
-                                                <input type="hidden" id="amount" name="amount" value="'; if (isset($planCost)) echo $planCost; echo '" />
-                                                <input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
-                                                <input type="hidden" name="quantity" value="1" />
-                                                <input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
-                                                <input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
-
-                                                <input type="hidden" name="no_note" value="1">
-                                                <input type="hidden" id="currency_code" name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
-												<input type="hidden" name="no_shipping" value="1">
-                                                <input type="hidden" name="lc" value="US">
-
-                                                <input type="hidden" name="on0" value="Transaction ID" />
-                                                <input type="hidden" name="os0" value="'.$txnId.'" />
-
-                                                <input type="hidden" name="on1" value="Username" />
-                                                <input type="hidden" name="os1" value="'.$userPIN.'" />
-												
-                                                <input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but23.gif" border="0" name="submit"
-                                                alt="Make payments with PayPal - its fast, free and secure!">
-                                        </form>
-										';
-								
-								} else if ($planRecurring == "Yes") {
-								
-									//$t3 = billing cycle period
-									
-									$t3 = "M"; //billing cycle period
-									$p3 = "1"; //billing cycle length
-									if ($planRecurringPeriod == "Daily")
-										$t3 = "D";
-									
-									if ($planRecurringPeriod == "Weekly")
-										$t3 = "W";
-									
-									if ($planRecurringPeriod == "Monthly")
-										$t3 = "M";
-									
-									if ($planRecurringPeriod == "Yearly")
-										$t3 = "Y";
-									
-									echo '
-										<form name="_xclick" action="'.$configValues['CONFIG_MERCHANT_WEB_PAYMENT'].'" method="post">
-										<input type="hidden" name="cmd" value="_xclick-subscriptions">
-										<input type="hidden" name="business" value="'.$configValues['CONFIG_MERCHANT_BUSINESS_ID'].'">
-										<input type="hidden" name="no_shipping" value="1">
-										<input type="hidden" name="return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
-																						$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_SUCCESS'].
-																						'?txnId='.$txnId.'" />
-										<input type="hidden" name="cancel_return" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
-																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_FAILURE'].'" />
-										<input type="hidden" name="notify_url" value="'.$configValues['CONFIG_MERCHANT_IPN_URL_ROOT'].'/'.
-																								$configValues['CONFIG_MERCHANT_IPN_URL_RELATIVE_DIR'].'" />
-										<input type="hidden" id="currency_code" name="currency_code" value="'; if (isset($planCurrency)) echo $planCurrency; echo '">
-										<input type="hidden" name="lc" value="US">
-										
-										<input type="hidden" name="on0" value="Transaction ID" />
-										<input type="hidden" name="os0" value="'.$txnId.'" />
-										<input type="hidden" name="on1" value="Username" />
-										<input type="hidden" name="os1" value="'.$userPIN.'" />
-										
-										<input type="hidden" id="item_name" name="item_name" value="'; if (isset($planName)) echo $planName; echo '" />
-										<input type="hidden" name="quantity" value="1" />
-										<input type="hidden" id="tax" name="tax" value="'; if (isset($planTax)) echo $planTax; echo '" />
-										<input type="hidden" id="item_number" name="item_number" value="'; if (isset($planId)) echo $planId; echo '" />
-
-										<input type="hidden" name="no_note" value="1">
-										
-										<input type="hidden" id="a3" name="a3" value="'; if (isset($planCost)) echo $planCost; echo '" />
-										<input type="hidden" name="p3" value="'.$p3.'">
-										<input type="hidden" name="t3" value="'.$t3.'">
-										<input type="hidden" name="src" value="1">
-										<input type="hidden" name="sra" value="1">
-										
-										<input type="hidden" name="custom" value="'.$userPIN.'" />
-										
-										<input type="image" src="http://www.paypal.com/en_US/i/btn/btn_subscribe_LG.gif" border="0" name="submit" alt="Make payments with PayPal - its fast, free and secure!">
-										</form>
-									';
-								}
-
-								echo '
-									<br/>
-									<b>It is recommended that you will write it down now in-case of a failure.</b><br/><br/>
-									<br/><br/>
-									 ';
-
-
-                                break;
-
-                }
-
-
-        ?>
+<?php if ($failureMsg!==''): ?><p role="alert"><?= portal2_paypal_html($failureMsg) ?></p><?php endif; ?>
+<?php if ($registered===null): ?>
+We allow our customers to sign-up for Internet access plans using their PayPal accounts.<br/>
+Complete the form and click the Apply button to register in our database.<br/>
+<form name="newuser" action="index.php" method="post">
+<input type="hidden" name="csrf_token" value="<?= portal2_paypal_html($_SESSION['portal2_paypal_csrf']) ?>">
+<table><tr><td>Select your plan:</td><td><select id="planId" name="planId">
+<?php foreach ($plans as $plan): ?><option value="<?= portal2_paypal_html($plan['planId']) ?>"><?= portal2_paypal_html($plan['planName']) ?> - Cost <?= portal2_paypal_html($plan['planCost']) ?> <?= portal2_paypal_html($plan['planCurrency']) ?> </option><?php endforeach; ?>
+</select></td></tr>
+<?php foreach (array('firstName'=>'First name','lastName'=>'Last name','address'=>'Address','city'=>'City','state'=>'State') as $field=>$label): ?>
+<tr><td><?= $label ?>:</td><td><input name="<?= $field ?>" value="<?= portal2_paypal_html(is_string($_POST[$field] ?? null)?$_POST[$field]:'') ?>"></td></tr>
+<?php endforeach; ?></table><br><input type="submit" value="Submit" name="submit"></form>
+<?php else: ?>
+<font color="blue"><b>Thank you...</b></font><br><br>
+Your PIN code has been created but it will only be activated after you complete and confirm<br>
+your payment through PayPal. Following is your PIN code, which you will need in-order to access<br>
+our Hotspot services.<br><br>
+<table><tr><td>PIN Code:</td><td><b><?= portal2_paypal_html($registered['pin']) ?></b></td></tr></table>
+<form action="<?= portal2_paypal_html($registered['checkout']['action']) ?>" method="post">
+<?php foreach (dalo_portal2_paypal_fields($registered) as $name=>$value): ?>
+<input type="hidden" id="<?= $name ?>" name="<?= $name ?>" value="<?= portal2_paypal_html($value) ?>">
+<?php endforeach; ?><button type="submit"><?= $registered['plan']['planRecurring']==='Yes'?'Subscribe':'Buy Now' ?></button></form>
+<br><b>It is recommended that you will write it down now in-case of a failure.</b><br><br>
+<?php endif; ?>
 
 
                         </center>
@@ -384,4 +135,3 @@
 
 </body>
 </html>
-

@@ -30,6 +30,8 @@ if (strpos($_SERVER['PHP_SELF'], '/include/management/userReports.php') !== fals
     exit;
 }
 
+require_once dirname(__DIR__, 2) . '/library/portal_widgets_pdo.php';
+
 // "key", "label", "parent_id", "open"
 function open_accordion_item($descriptor) {
     $label = $descriptor['label'];
@@ -79,12 +81,14 @@ function close_accordion_table_wrapper() {
  * Max-Monthly-Session, Max-Daily-Session, Expiration attribute, etc...
  *********************************************************************************************************
  */
-function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
+function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false, $widgetPdo=null) {
+    try {
 
     include_once('include/management/pages_common.php');
-    include('../common/includes/db_open.php');
+    global $configValues;
+    $widgetPdo = $widgetPdo ?? dalo_portal_handle($configValues);
+    $username = dalo_portal_widget_identity($username);
 
-    $username = $dbSocket->escapeSimple($username);
 
     $keys = array("Logins", "SUMSession", "SUMDownload", "SUMUpload", "SUMTraffic", );
 
@@ -101,13 +105,14 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
      * Global (Max-All-Session) Limit calculations
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
                            SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
                            SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
-                      FROM %s WHERE UserName='%s' AND acctstoptime>0",
-                   $configValues['CONFIG_DB_TBL_RADACCT'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0} WHERE UserName=:widget1 AND acctstoptime>0";
+    $bindings = array(':widget1' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = $widgetRows[0] ?? array();
 
     foreach ($keys as $key) {
         $value = "(n/a)";
@@ -135,15 +140,16 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
     $currMonth = date("Y-m-01");
     $nextMonth = date("Y-m-01", mktime(0, 0, 0, date("m")+ 1, date("d"), date("Y")));
 
-    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
                            SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
                            SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
-                      FROM %s
-                     WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
-                       AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                                              $nextMonth, $currMonth, $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0}
+                     WHERE AcctStartTime<:widget1 AND AcctStartTime>=:widget2
+                       AND UserName=:widget3 AND acctstoptime>0";
+    $bindings = array(':widget1' => $nextMonth, ':widget2' => $currMonth, ':widget3' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = $widgetRows[0] ?? array();
 
     foreach ($keys as $key) {
         $value = "(n/a)";
@@ -170,15 +176,16 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
      */
     $currDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')));
     $nextDay = date("Y-m-d", strtotime(date("Y").'W'.date('W')."7"));
-    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
                            SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
                            SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
-                      FROM %s
-                     WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
-                       AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                                              $nextDay, $currDay, $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0}
+                     WHERE AcctStartTime<:widget1 AND AcctStartTime>=:widget2
+                       AND UserName=:widget3 AND acctstoptime>0";
+    $bindings = array(':widget1' => $nextDay, ':widget2' => $currDay, ':widget3' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = $widgetRows[0] ?? array();
 
     foreach ($keys as $key) {
         $value = "(n/a)";
@@ -205,15 +212,16 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
      */
     $currDay = date("Y-m-d");
     $nextDay = date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
-    $sql = sprintf("SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime) AS 'SUMSession', SUM(AcctOutputOctets) AS 'SUMDownload',
                            SUM(AcctInputOctets) AS 'SUMUpload', COUNT(DISTINCT AcctSessionID) AS 'Logins',
                            SUM(AcctInputOctets)+SUM(AcctOutputOctets) AS 'SUMTraffic'
-                      FROM %s
-                     WHERE AcctStartTime<'%s' AND AcctStartTime>='%s'
-                       AND UserName='%s' AND acctstoptime>0", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                                              $nextDay, $currDay, $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0}
+                     WHERE AcctStartTime<:widget1 AND AcctStartTime>=:widget2
+                       AND UserName=:widget3 AND acctstoptime>0";
+    $bindings = array(':widget1' => $nextDay, ':widget2' => $currDay, ':widget3' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = $widgetRows[0] ?? array();
 
     if ($row) {
         foreach ($keys as $key) {
@@ -246,10 +254,11 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
      * Expiration calculations
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT Value AS 'Expiration' FROM %s WHERE UserName='%s' AND Attribute='Expiration'",
-                   $configValues['CONFIG_DB_TBL_RADCHECK'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADCHECK');
+    $sql = "SELECT Value AS 'Expiration' FROM {$daloTable0} WHERE UserName=:widget1 AND Attribute='Expiration'";
+    $bindings = array(':widget1' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = $widgetRows[0] ?? array();
 
     if (isset($row['Expiration'])) {
         $data2["Expiration"] = $row['Expiration'];
@@ -260,10 +269,11 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
      * Session-Timeout calculations
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT Value AS 'Session-Timeout' FROM %s WHERE UserName='%s' AND Attribute='Session-Timeout'",
-                   $configValues['CONFIG_DB_TBL_RADREPLY'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADREPLY');
+    $sql = "SELECT Value AS 'Session-Timeout' FROM {$daloTable0} WHERE UserName=:widget1 AND Attribute='Session-Timeout'";
+    $bindings = array(':widget1' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = $widgetRows[0] ?? array();
 
     if (isset($row['Session-Timeout'])) {
         $data2["Session-Timeout"] = $row['Session-Timeout'];
@@ -274,22 +284,29 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
      * Idle-Timeout calculations
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT Value AS 'Idle-Timeout' FROM %s AS rr WHERE UserName='%s' AND Attribute='Idle-Timeout'
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADREPLY');
+    $daloTable2 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADGROUPREPLY');
+    $daloTable3 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADUSERGROUP');
+    $sql = "SELECT Value AS 'Idle-Timeout' FROM {$daloTable0} AS rr WHERE UserName=:widget1 AND Attribute='Idle-Timeout'
                      UNION
-                    SELECT Value AS 'Idle-Timeout' FROM %s AS rgr
+                    SELECT Value AS 'Idle-Timeout' FROM {$daloTable2} AS rgr
                      WHERE Attribute='Idle-Timeout'
-                       AND GroupName IN (SELECT groupname FROM %s rug WHERE username='%s' ORDER BY priority)
-                     LIMIT 1",
-                    $configValues['CONFIG_DB_TBL_RADREPLY'], $username, $configValues['CONFIG_DB_TBL_RADGROUPREPLY'],
-                    $configValues['CONFIG_DB_TBL_RADUSERGROUP'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                       AND GroupName IN (SELECT groupname FROM {$daloTable3} rug WHERE username=:widget4 ORDER BY priority)
+                     LIMIT 1";
+    $bindings = array(':widget1' => $username, ':widget4' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = $widgetRows[0] ?? array();
 
     if (isset($row['Idle-Timeout'])) {
         $data2["Idle-Timeout"] = $row['Idle-Timeout'];
     }
 
-    include('../common/includes/db_close.php');
+
+
+    } catch (Throwable $exception) {
+        dalo_portal_widget_failure();
+        return;
+    }
 
     if ($drawTable == 1) {
 
@@ -323,7 +340,7 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
             printf('<th style="width: 25%%;">%s</th>', $arr["Label"]);
             for ($i = 1; $i < count($labels); $i++) {
                 $label = $labels[$i];
-                printf('<td>%s</td>', htmlspecialchars($arr[$label], ENT_QUOTES, 'UTF-8'));
+                printf('<td>%s</td>', htmlspecialchars((string) $arr[$label], ENT_QUOTES, 'UTF-8'));
             }
 
             echo '</tr>';
@@ -338,7 +355,7 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
 
         foreach ($data2 as $label => $value) {
             $label = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
-            $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            $value = htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
             printf('<tr><th style="width: 25%%;text-align: right">%s</th><td style="text-align: left">%s</td></tr>', $label, $value);
         }
 
@@ -360,26 +377,29 @@ function userSubscriptionAnalysis($username, $drawTable, $openAccordion=false) {
  *
  *********************************************************************************************************
  */
-function userPlanInformation($username, $drawTable, $openAccordion=false) {
+function userPlanInformation($username, $drawTable, $openAccordion=false, $widgetPdo=null) {
+    try {
 
     include_once('include/management/pages_common.php');
-    include('../common/includes/db_open.php');
+    global $configValues;
+    $widgetPdo = $widgetPdo ?? dalo_portal_handle($configValues);
+    $username = dalo_portal_widget_identity($username);
 
-    $username = $dbSocket->escapeSimple($username);
 
     /*
      *********************************************************************************************************
      * check which kind of subscription does the user have
      *********************************************************************************************************
      */
-    $sql = sprintf("SELECT bp.planTimeType, bp.planName, bp.planTimeBank, bp.planBandwidthUp, bp.planBandwidthDown,
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_DALOBILLINGPLANS');
+    $daloTable1 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_DALOUSERBILLINFO');
+    $sql = "SELECT bp.planTimeType, bp.planName, bp.planTimeBank, bp.planBandwidthUp, bp.planBandwidthDown,
                            bp.planTrafficTotal, bp.planTrafficUp, bp.planTrafficDown, bp.planRecurringPeriod
-                      FROM %s AS bp, %s AS ubi
-                     WHERE bp.planname = ubi.planname AND ubi.username = '%s'",
-                   $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'], $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                   $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+                      FROM {$daloTable0} AS bp, {$daloTable1} AS ubi
+                     WHERE bp.planname = ubi.planname AND ubi.username = :widget2";
+    $bindings = array(':widget2' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = $widgetRows[0] ?? array();
 
     $data2 = array(
                     "planName" => array( "Label" => "Plan Name", "Value" => "(n/a)", ),
@@ -406,10 +426,12 @@ function userPlanInformation($username, $drawTable, $openAccordion=false) {
     $userLimitAccessPeriod = (isset($row['Access-Period'])) ? time2str($row['Access-Period']) : "none";
 
 
-    $sql = sprintf("SELECT SUM(AcctSessionTime), SUM(AcctOutputOctets), SUM(AcctInputOctets)
-                      FROM %s WHERE username='%s'", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow();
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT SUM(AcctSessionTime), SUM(AcctOutputOctets), SUM(AcctInputOctets)
+                      FROM {$daloTable0} WHERE username=:widget1";
+    $bindings = array(':widget1' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = array_values($widgetRows[0] ?? array());
     $totalTimeUsed = isset($row[0]) ? intval($row[0]) : 0;
     $totalTrafficDown = isset($row[1]) ? intval($row[1]) : 0;
     $totalTrafficUp = isset($row[2]) ? intval($row[2]) : 0;
@@ -427,13 +449,18 @@ function userPlanInformation($username, $drawTable, $openAccordion=false) {
                             array( "Session Upload", toxbyte($planTrafficUp), toxbyte($totalTrafficUp), toxbyte($trafficUpDiff), ),
                        );
 
-    include('../common/includes/db_close.php');
+
 
     /*
      *********************************************************************************************************
      * Plan Usage calculations
      *********************************************************************************************************
      */
+
+    } catch (Throwable $exception) {
+        dalo_portal_widget_failure();
+        return;
+    }
 
     if ($drawTable == 1) {
         // accordion
@@ -457,7 +484,7 @@ function userPlanInformation($username, $drawTable, $openAccordion=false) {
         foreach ($table_body as $arr) {
             echo '<tr>';
             foreach ($arr as $value) {
-                $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                $value = htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
                 printf('<td style="width: 25%%">%s</td>', $value);
             }
             echo '</tr>';
@@ -496,28 +523,31 @@ function userPlanInformation($username, $drawTable, $openAccordion=false) {
  *
  *********************************************************************************************************
  */
-function userConnectionStatus($username, $drawTable, $openAccordion=false) {
+function userConnectionStatus($username, $drawTable, $openAccordion=false, $widgetPdo=null) {
+    try {
 
-    $userStatus = checkUserOnline($username);
+
 
     include_once('include/management/pages_common.php');
-    include('../common/includes/db_open.php');
+    global $configValues;
+    $widgetPdo = $widgetPdo ?? dalo_portal_handle($configValues);
+    $username = dalo_portal_widget_identity($username);
+    $userStatus = checkUserOnline($username, $widgetPdo);
 
-    // sanitize variable for sql statement
-    $username = $dbSocket->escapeSimple($username);
 
-    $sql = sprintf("SELECT AcctStartTime,
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT AcctStartTime,
                            CASE WHEN AcctStopTime IS NULL THEN timestampdiff(SECOND,AcctStartTime,NOW())
                                 ELSE AcctSessionTime
                             END AS AcctSessionTime, AcctInputOctets, AcctOutputOctets,
-                           CONCAT(NASIPAddress, ' / %s: ', CalledStationId) AS NAS_IP_ID,
-                           CONCAT(FramedIPAddress, ' / %s: ', CallingStationId) AS User_IP_ID
-                      FROM %s WHERE Username='%s'
-                     ORDER BY RadAcctId DESC LIMIT 1",
-                    "Station ID", "Station ID", $configValues['CONFIG_DB_TBL_RADACCT'], $username);
+                           CONCAT(NASIPAddress, ' / Station ID: ', CalledStationId) AS NAS_IP_ID,
+                           CONCAT(FramedIPAddress, ' / Station ID: ', CallingStationId) AS User_IP_ID
+                      FROM {$daloTable0} WHERE Username=:widget1
+                     ORDER BY RadAcctId DESC LIMIT 1";
+    $bindings = array(':widget1' => $username);
 
-    $res = $dbSocket->query($sql);
-    $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
+    $row = $widgetRows[0] ?? array();
 
     $data = array(
                     "userStatus" => array( "Label" => "User Status", "Value" => $userStatus, ),
@@ -548,7 +578,12 @@ function userConnectionStatus($username, $drawTable, $openAccordion=false) {
         }
     }
 
-    include('../common/includes/db_close.php');
+
+
+    } catch (Throwable $exception) {
+        dalo_portal_widget_failure();
+        return;
+    }
 
     if ($drawTable == 1) {
         // accordion
@@ -581,21 +616,26 @@ function userConnectionStatus($username, $drawTable, $openAccordion=false) {
  *
  *********************************************************************************************************
  */
-function checkUserOnline($username) {
+function checkUserOnline($username, $widgetPdo=null) {
+    try {
 
-    include('../common/includes/db_open.php');
+    global $configValues;
+    $widgetPdo = $widgetPdo ?? dalo_portal_handle($configValues);
+    $username = dalo_portal_widget_identity($username);
 
-    $username = $dbSocket->escapeSimple($username);
 
-    $sql = sprintf("SELECT COUNT(username) FROM %s
-                     WHERE AcctStopTime IS NULL AND Username='%s'
-                        OR AcctStopTime = '0000-00-00 00:00:00' AND Username='%s'",
-                   $configValues['CONFIG_DB_TBL_RADACCT'], $username, $username);
-    $res = $dbSocket->query($sql);
+    $daloTable0 = dalo_portal_widget_table($widgetPdo, $configValues, 'CONFIG_DB_TBL_RADACCT');
+    $sql = "SELECT COUNT(username) FROM {$daloTable0}
+                     WHERE AcctStopTime IS NULL AND Username=:widget1
+                        OR AcctStopTime = '0000-00-00 00:00:00' AND Username=:widget2";
+    $bindings = array(':widget1' => $username, ':widget2' => $username);
+    $widgetRows = dalo_portal_rows($widgetPdo, $sql, $bindings, PDO::FETCH_ASSOC);
 
-    $numrows = intval($res->fetchRow()[0]);
+    $numrows = intval(array_values($widgetRows[0] ?? array(0))[0]);
 
-    include('../common/includes/db_close.php');
+
+
+    } catch (Throwable $exception) { throw new RuntimeException('Portal statistics unavailable'); }
 
     return "User is " . (($numrows > 0) ? "online" : "offline");
 }

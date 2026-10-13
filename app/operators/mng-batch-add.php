@@ -32,6 +32,8 @@
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
+    require_once implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'pdo_connection.php' ]);
+    require_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'batch_create.php' ]);
 
     // init logging variables
     $log = "visited page: ";
@@ -40,7 +42,7 @@
 
     $valid_passwordTypes = dalo_filter_password_types($valid_passwordTypes);
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+
 
     // init valid account type
     $valid_accountTypes = array(
@@ -49,17 +51,23 @@
                             "random_pincode_no_password" => "random PIN code (no password)"
                         );
 
-    // get valid hotspots
-    $sql = sprintf("SELECT id, name FROM %s", $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    $valid_hotspots = array( );
-    while ($row = $res->fetchrow()) {
-        list($id, $name) = $row;
-
-        $valid_hotspots["hotspot-$id"] = $name;
-    }
+    require_once('library/catalog_reads_pdo.php');
+    $valid_hotspots = array(); $catalog_pdo = null; $catalog_read_failed = false;
+    $batch_name = ''; $batch_description = ''; $hotspot_id = '';
+    $accountType = ''; $group = ''; $group_priority = '';
+    $length_pass = ''; $length_user = ''; $number = '';
+    $passwordType = ''; $planName = ''; $startingIndex = ''; $username_prefix = '';
+    try {
+        $catalog_pdo = dalo_catalog_read_open($configValues);
+        $table = dalo_read_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOHOTSPOTS');
+        $sql = "SELECT id, name FROM $table";
+        foreach (dalo_catalog_read_rows($catalog_pdo, $sql) as $row) {
+            $valid_hotspots['hotspot-' . $row[0]] = $row[1];
+        }
+        $logDebugSQL .= "$sql;\n";
+    } catch (Throwable $error) {
+        dalo_catalog_read_failure($error); $catalog_read_failed = true;
+    } finally { $catalog_pdo = null; }
 
     // get valid groups and plan names
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
@@ -67,39 +75,6 @@
     $valid_planNames = get_plans();
 
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-
-
-    function addUserBatchHistory($dbSocket) {
-
-        global $batch_name;
-        global $batch_description;
-        global $hotspot_id;
-        global $logDebugSQL;
-        global $configValues;
-
-        // the returned id of last insert batch_history record
-        $batch_id = 0;
-
-        $currDate = date('Y-m-d H:i:s');
-        $currBy = $_SESSION['operator_user'];
-
-        $sql = sprintf("INSERT INTO %s (id, batch_name, batch_description, hotspot_id, creationdate, creationby, updatedate, updateby)
-                                VALUES (0, '%s', '%s', '%s', '%s', '%s', NULL, NULL)",
-                       $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
-                       $dbSocket->escapeSimple($batch_name), $dbSocket->escapeSimple($batch_description),
-                       $dbSocket->escapeSimple($hotspot_id), $currDate, $currBy);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        $sql = sprintf("SELECT id FROM %s WHERE batch_name = '%s'",
-                       $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'], $dbSocket->escapeSimple($batch_name));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        // if the INSERT to the batch_history table was succesful and there exist
-        // only 1 record (meaning, we don't have a duplicate) then we return the id
-        return ($res->numRows() == 1) ? intval($res->fetchRow()[0]) : 0;
-    }
 
 
     // print HTML prologue
@@ -122,12 +97,32 @@
     $exportForm = "";
     $detailedInfo = array();
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!$catalog_read_failed && $_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            $invalidBatchField = false;
+            $scalarInputs = array('batch_name','batch_description','hotspot_id',
+                'accountType','username_prefix','number','length_pass','length_user',
+                'passwordType','group','group_priority','planName','startingIndex',
+                'firstname','lastname','email','department','company','workphone',
+                'homephone','mobilephone','address','city','state','country','zip',
+                'notes','portalLoginPassword','changeUserInfo','enableUserPortalLogin',
+                'bi_contactperson','bi_company','bi_email','bi_phone','bi_address',
+                'bi_city','bi_state','bi_country','bi_zip','bi_paymentmethod','bi_cash',
+                'bi_creditcardname','bi_creditcardnumber','bi_creditcardverification',
+                'bi_creditcardtype','bi_creditcardexp','bi_notes','bi_lead','bi_coupon',
+                'bi_ordertaker','bi_billstatus','bi_lastbill','bi_nextbill',
+                'bi_nextinvoicedue','bi_billdue','bi_postalinvoice','bi_faxinvoice',
+                'bi_emailinvoice','bi_changeuserbillinfo');
+            foreach ($scalarInputs as $field) {
+                if (isset($_POST[$field]) && !is_string($_POST[$field])) {
+                    $invalidBatchField = true;
+                    $_POST[$field] = '';
+                }
+            }
 
             /* variables for batch_history */
             $batch_name = (array_key_exists('batch_name', $_POST) && !empty(trim($_POST['batch_name'])) &&
-                           preg_match("/^[\w\-. ]+$/", trim($_POST['batch_name']) !== false)) ? trim($_POST['batch_name']) : "";
+                           preg_match("/^[\w\-. ]+$/uD", trim($_POST['batch_name']))) ? trim($_POST['batch_name']) : "";
 
             if (empty($batch_name)) {
                 // batch name required
@@ -243,184 +238,115 @@
                 $currBy = $_SESSION['operator_user'];
 
 
-                // before looping through all generated batch users we create the batch_history entry
-                // to associate the created users with a batch_history entry
+                // Generate first, then commit the complete batch and all dependent rows together.
                 if (!$portal_access_valid) {
                     $failureMsg = "A portal password is required before portal access can be enabled";
                     $logAction .= "Failure creating batch because portal access requires a password on page: ";
-                    $sql_batch_id = 0;
                 } else {
-                    $sql_batch_id = addUserBatchHistory($dbSocket);
-                }
-
-                if ($sql_batch_id == 0) {
-                    // 0 may be returned in the case of failure in adding the batch_history record due
-                    // to SQL related issues or in case where there is a duplicate record of the batch_history,
-                    // meaning, the same batch_name is used to identify the batch entry
-                    if ($portal_access_valid) {
-                        $failureMsg = "Failure creating batch users due to an error or possible duplicate entry: <b> $batch_name </b>";
-                        $logAction .= "Failure creating a batch_history entry on page: ";
-                    }
-                } else {
-
-                    $actionMsgBadUsernames = "";
-                    $actionMsgGoodUsernames = "";
-
-                    $exportCSV = "Username,Password||";
-
-                    $inserted_usernames = array( "Username" );
-                    $inserted_passwords = array( "Password" );
-
-                    if ($number > 0) {
+                    try {
+                        if ($invalidBatchField ||
+                            (isset($_POST['group']) && $_POST['group'] !== '' &&
+                             !in_array($_POST['group'], $valid_groups, true)) ||
+                            (isset($_POST['planName']) && $_POST['planName'] !== '' &&
+                             !in_array($_POST['planName'], $valid_planNames, true)) ||
+                            (isset($_POST['hotspot_id']) && $_POST['hotspot_id'] !== '' &&
+                             !array_key_exists($_POST['hotspot_id'], $valid_hotspots)) ||
+                            (isset($_POST['accountType']) && $_POST['accountType'] !== '' &&
+                             !array_key_exists(strtolower(trim($_POST['accountType'])), $valid_accountTypes)) ||
+                            (isset($_POST['passwordType']) && $_POST['passwordType'] !== '' &&
+                             !in_array(trim($_POST['passwordType']), $valid_passwordTypes, true))) {
+                            throw new InvalidArgumentException('Invalid batch selection or field');
+                        }
+                        if ($number < 1 || $number > 1000) {
+                            throw new InvalidArgumentException('Invalid number of accounts');
+                        }
+                        $userInfo = array(
+                            'firstname' => $firstname, 'lastname' => $lastname, 'email' => $email,
+                            'department' => $department, 'company' => $company,
+                            'workphone' => $workphone, 'homephone' => $homephone,
+                            'mobilephone' => $mobilephone, 'address' => $address,
+                            'city' => $city, 'state' => $state, 'country' => $country,
+                            'zip' => $zip, 'notes' => $notes,
+                            'changeuserinfo' => $ui_changeuserinfo,
+                            'enableportallogin' => $ui_enableUserPortalLogin,
+                            'portalloginpassword' => $ui_PortalLoginPassword,
+                        );
+                        $billInfo = array(
+                            'contactperson' => $bi_contactperson, 'company' => $bi_company,
+                            'email' => $bi_email, 'phone' => $bi_phone,
+                            'address' => $bi_address, 'city' => $bi_city,
+                            'state' => $bi_state, 'country' => $bi_country,
+                            'zip' => $bi_zip, 'paymentmethod' => $bi_paymentmethod,
+                            'cash' => $bi_cash, 'creditcardname' => $bi_creditcardname,
+                            'creditcardnumber' => $bi_creditcardnumber,
+                            'creditcardexp' => $bi_creditcardexp,
+                            'creditcardverification' => $bi_creditcardverification,
+                            'creditcardtype' => $bi_creditcardtype, 'notes' => $bi_notes,
+                            'lead' => $bi_lead, 'coupon' => $bi_coupon,
+                            'ordertaker' => $bi_ordertaker, 'billstatus' => $bi_billstatus,
+                            'lastbill' => $bi_lastbill, 'nextbill' => $bi_nextbill,
+                            'postalinvoice' => $bi_postalinvoice,
+                            'faxinvoice' => $bi_faxinvoice,
+                            'emailinvoice' => $bi_emailinvoice,
+                            'changeuserbillinfo' => $bi_changeuserbillinfo,
+                        );
+                        $skipList = array('username_prefix','passwordType','length_pass',
+                            'length_user','number','plan','planName','submit','group',
+                            'group_priority','startingIndex','accountType',
+                            'firstname','lastname','email','department','company',
+                            'workphone','homephone','mobilephone','address','city',
+                            'state','country','zip','notes','bi_contactperson',
+                            'bi_company','bi_email','bi_phone','bi_address','bi_city',
+                            'bi_state','bi_country','bi_zip','bi_paymentmethod',
+                            'bi_cash','bi_creditcardname','bi_creditcardnumber',
+                            'bi_creditcardverification','bi_creditcardtype',
+                            'bi_creditcardexp','bi_notes','bi_lead','bi_coupon',
+                            'bi_ordertaker','bi_billstatus','bi_lastbill','bi_nextbill',
+                            'bi_nextinvoicedue','bi_billdue','bi_postalinvoice',
+                            'bi_faxinvoice','bi_emailinvoice','bi_batch_id',
+                            'bi_changeuserbillinfo','changeUserInfo',
+                            'batch_description','batch_name','hotspot','hotspot_id',
+                            'copycontact','enableUserPortalLogin',
+                            'portalLoginPassword','csrf_token');
+                        $attributes = dalo_pos_attributes_from_post($_POST, $skipList, $valid_ops);
+                        $records = array();
                         for ($i = 0; $i < $number; $i++) {
-
-                            // create the username/pincode
                             switch ($accountType) {
                                 default:
-                                case "random_pincode_no_password":
-                                    $username_suffix = createPassword($length_user, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-                                    $password = "(empty)";
-
+                                case 'random_pincode_no_password':
+                                    $suffix = createPassword($length_user, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
+                                    $password = '(empty)';
                                     $attribute = 'Auth-Type';
                                     $value = 'Accept';
                                     break;
-
-                                case "random_user_random_password":
-                                    $username_suffix = createPassword($length_user, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
+                                case 'random_user_random_password':
+                                    $suffix = createPassword($length_user, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
                                     $password = createPassword($length_pass, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-
-                                    $value = hashPasswordAttribute($passwordType, $password);
                                     $attribute = $passwordType;
+                                    $value = hashPasswordAttribute($passwordType, $password);
                                     break;
-
-                                case "incremental_user_random_password":
-                                    $username_suffix = $startingIndex + $i;
+                                case 'incremental_user_random_password':
+                                    $suffix = $startingIndex + $i;
                                     $password = createPassword($length_pass, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-
-                                    $value = hashPasswordAttribute($passwordType, $password);
                                     $attribute = $passwordType;
+                                    $value = hashPasswordAttribute($passwordType, $password);
                                     break;
                             }
-
-                            $username = $username_prefix . $username_suffix;
-
-                            if (user_exists($dbSocket, $username)) {
-                                // $username skipped
-                                $detailedInfo[] = sprintf("cannot insert username %s, username exists",
-                                                          htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
-                                continue;
-                            }
-
-                            if (!insert_single_attribute($dbSocket, $username, $attribute, ':=', $value)) {
-                                // if we fail to insert this user, we skip other queries
-                                $detailedInfo[] = sprintf("cannot insert username %s, db error",
-                                                          htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
-                                continue;
-                            }
-
-                            // if a group was defined to add the user to in the form let's add it to the database
-                            if (!empty($group)) {
-                                if (!insert_single_user_group_mapping($dbSocket, $username, $group, $group_priority)) {
-                                    $detailedInfo[] = sprintf("cannot insert user-group mapping %s-%s",
-                                                          htmlspecialchars($username, ENT_QUOTES, 'UTF-8'),
-                                                          htmlspecialchars($group, ENT_QUOTES, 'UTF-8'));
-                                }
-                            }
-
-                            // adding user info
-                            $params = array(
-                                                "firstname" => $firstname,
-                                                "lastname" => $lastname,
-                                                "email" => $email,
-                                                "department" => $department,
-                                                "company" => $company,
-                                                "workphone" => $workphone,
-                                                "homephone" => $homephone,
-                                                "mobilephone" => $mobilephone,
-                                                "address" => $address,
-                                                "city" => $city,
-                                                "state" => $state,
-                                                "country" => $country,
-                                                "zip" => $zip,
-                                                "notes" => $notes,
-                                                "changeuserinfo" => $ui_changeuserinfo,
-                                                "enableportallogin" => $ui_enableUserPortalLogin,
-                                                "portalloginpassword" => $ui_PortalLoginPassword,
-                                                "creationdate" => $current_datetime,
-                                                "creationby" => $currBy,
-                                           );
-
-                            if (add_user_info($dbSocket, $username, $params) === false) {
-                                $detailedInfo[] = sprintf("cannot insert userinfo for user %s",
-                                                          htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
-                            }
-
-
-                            // adding billing info
-                            $params = array(
-                                                "contactperson" => $bi_contactperson,
-                                                "company" => $bi_company,
-                                                "email" => $bi_email,
-                                                "phone" => $bi_phone,
-                                                "address" => $bi_address,
-                                                "city" => $bi_city,
-                                                "state" => $bi_state,
-                                                "country" => $bi_country,
-                                                "zip" => $bi_zip,
-                                                "paymentmethod" => $bi_paymentmethod,
-                                                "cash" => $bi_cash,
-                                                "creditcardname" => $bi_creditcardname,
-                                                "creditcardnumber" => $bi_creditcardnumber,
-                                                "creditcardexp" => $bi_creditcardexp,
-                                                "creditcardverification" => $bi_creditcardverification,
-                                                "creditcardtype" => $bi_creditcardtype,
-                                                "notes" => $bi_notes,
-                                                "lead" => $bi_lead,
-                                                "coupon" => $bi_coupon,
-                                                "ordertaker" => $bi_ordertaker,
-                                                "billstatus" => $bi_billstatus,
-                                                "lastbill" => $bi_lastbill,
-                                                "nextbill" => $bi_nextbill,
-                                                "postalinvoice" => $bi_postalinvoice,
-                                                "faxinvoice" => $bi_faxinvoice,
-                                                "emailinvoice" => $bi_emailinvoice,
-                                                "changeuserbillinfo" => $bi_changeuserbillinfo,
-                                                "planName" => $planName,
-                                                "hotspot_id" => $hotspot_id,
-                                                "batch_id" => $sql_batch_id,
-                                                "creationdate" => $current_datetime,
-                                                "creationby" => $currBy
-                                           );
-
-                            if (add_user_billing_info($dbSocket, $username, $params) === false) {
-                                $detailedInfo[] = sprintf("cannot insert billing info for user %s",
-                                                          htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
-                            }
-
-                            // adding attributes
-                            $skipList = array(
-                                               "username_prefix", "passwordType", "length_pass", "length_user", "number", "plan",
-                                               "submit", "group", "group_priority", "startingIndex", "accountType",
-                                               "firstname", "lastname", "email", "department", "company", "workphone", "homephone",
-                                               "mobilephone", "address", "city", "state", "country", "zip", "notes", "bi_contactperson",
-                                               "bi_company", "bi_email", "bi_phone", "bi_address", "bi_city", "bi_state", "bi_country",
-                                               "bi_zip", "bi_paymentmethod", "bi_cash", "bi_creditcardname", "bi_creditcardnumber",
-                                               "bi_creditcardverification", "bi_creditcardtype", "bi_creditcardexp", "bi_notes", "bi_lead",
-                                               "bi_coupon", "bi_ordertaker", "bi_billstatus", "bi_lastbill", "bi_nextbill", "bi_postalinvoice",
-                                               "bi_faxinvoice", "bi_emailinvoice", "bi_batch_id", "bi_changeuserbillinfo", "changeUserInfo",
-                                               "batch_description", "batch_name", "hotspot", "hotspot_id", "copycontact",
-                                               "enableUserPortalLogin", "portalLoginPassword", "csrf_token"
-                                             );
-
-                            $count = handleAttributes($dbSocket, $username, $skipList);
-
-                            $inserted_usernames[] = $username;
-                            $inserted_passwords[] = $password;
-
-                            $exportCSV .= "$username,$password||";
-
-                        } // end for
-
+                            $records[] = array('username' => $username_prefix . $suffix,
+                                'password' => $password, 'attribute' => $attribute,
+                                'value' => $value);
+                        }
+                        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                        $sql_batch_id = dalo_create_user_batch($pdo, $configValues,
+                            $batch_name, $batch_description, $hotspot_id, $planName,
+                            $group, $group_priority, $records, $userInfo, $billInfo,
+                            $attributes, $current_datetime, $currBy);
+                        $inserted_usernames = array('Username');
+                        $inserted_passwords = array('Password');
+                        foreach ($records as $record) {
+                            $inserted_usernames[] = $record['username'];
+                            $inserted_passwords[] = $record['password'];
+                        }
                         $form_id = "export-users-form";
                         $exportForm .= sprintf('<form target="_blank" id="%s" ', $form_id) . 'method="POST">'
                                      . sprintf('<input style="display: none" type="hidden" name="batch_name" value="%s">',
@@ -458,20 +384,23 @@
                         $exportForm .= sprintf('<button class="btn btn-secondary m-1" type="button" onclick="%s"><i class="bi bi-filetype-pdf me-2"></i>Printable Tickets</button>', $onclick);
 
                         // -1 because of the header
-                        $successMsg = sprintf("Created %d user(s) (batch name: <strong>%s</strong>)", count($inserted_usernames)-1, $batch_name);
+                        $successMsg = sprintf("Created %d user(s) (batch name: <strong>%s</strong>)", count($inserted_usernames)-1, htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8'));
                         $logAction .= sprintf("Successfully added to database new users [%s] with prefix [%s] on page: ",
                                               implode(", ", $inserted_usernames), $username_prefix);
 
-                    } else { // $number > 0
-                        $failureMsg = "specify a valid number of accounts";
-                        $logAction = "specified an invalid number of accounts on page: ";
+                    } catch (Throwable $error) {
+                        $failureMsg = 'Failure creating batch users; no accounts were created';
+                        $logAction .= 'Failed atomic batch creation on page: ';
+                        $exportForm = '';
+                        error_log('Batch creation failed (' . get_class($error) . ')');
                     }
                 }
+
             }
         }
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
 
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 

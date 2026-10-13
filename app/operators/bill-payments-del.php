@@ -33,44 +33,21 @@
     $logDebugSQL = "";
     $log = "visited page: ";
 
-    $payment_id = array();
-    
+    require_once('library/payments_pdo.php');
+    $payment_id = ''; $selected_payment_ids = array(); $payment_pdo = null;
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            if (array_key_exists('payment_id', $_POST) && !empty($_POST['payment_id'])) {
-                $tmparr = (!is_array($_POST['payment_id'])) ? array( $_POST['payment_id'] ) : $_POST['payment_id'];
-                
-                foreach ($tmparr as $tmp_id) {
-                    $tmp_id = intval(trim($tmp_id));
-                    if (!in_array($tmp_id, $payment_id)) {
-                        $payment_id[] = intval($tmp_id);
-                    }
-                }
-            }
-            
-            if (count($payment_id) > 0) {
-                include('../common/includes/db_open.php');
-                
-                // remove payment(s)
-                $sql = sprintf("DELETE FROM %s WHERE id IN ('%s')",
-                               $configValues['CONFIG_DB_TBL_DALOPAYMENTS'], implode(", ", $payment_id));
-                $removed_payment_ids = intval($dbSocket->query($sql));
-                $logDebugSQL .= "$sql;\n";
-                
-                $successMsg = sprintf("Deleted %d payment(s)", $removed_payment_ids);
-                $logAction .= sprintf("Successfully %s on page: ", $successMsg);
-                
-                include('../common/includes/db_close.php');
-            } else {
-                $failureMsg = "Empty or invalid payment id(s)";
-                $logAction .= sprintf("Failed deleting payment(s) [%s] on page: ", $failureMsg);
-            }
-            
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
-        }
+        if (isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            try {
+                $selected_payment_ids = dalo_payment_ids($_POST['payment_id'] ?? array());
+                $payment_pdo = dalo_payment_open($configValues);
+                $removed_payment_ids = dalo_payment_mutate($payment_pdo, $configValues, 'del', $selected_payment_ids, array(), $operator);
+                $successMsg = sprintf('Deleted %d payment(s)', $removed_payment_ids);
+                $logAction .= 'Successful payment deletion on page: ';
+            } catch (Throwable $error) {
+                $failureMsg = 'Failed to delete payments; verify the selected rows before retrying';
+                $logAction .= 'Payment deletion failed [' . get_class($error) . '] on page: ';
+            } finally { $payment_pdo = null; }
+        } else { $failureMsg = 'CSRF token error'; }
     }
 
     include_once("lang/main.php");
@@ -95,17 +72,18 @@
     include_once('include/management/actionMessages.php');
     
     // load options
-    include('../common/includes/db_open.php');
-    $sql = sprintf("SELECT id FROM %s", $configValues['CONFIG_DB_TBL_DALOPAYMENTS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
     $options = array();
-    while ($row = $res->fetchrow()) {
-        $id = intval($row[0]);
-        $options[$id] = $id;
-    }
-    include('../common/includes/db_close.php');
+    try {
+        $payment_pdo = dalo_payment_open($configValues);
+        $table = dalo_payment_table($payment_pdo, $configValues, 'CONFIG_DB_TBL_DALOPAYMENTS');
+        foreach (dalo_catalog_read_rows($payment_pdo, "SELECT id FROM $table") as $row) {
+            $id = (int)$row[0]; $options[$id] = $id;
+        }
+    } catch (Throwable $error) {
+        dalo_payment_read_failure($error);
+        include('include/management/actionMessages.php');
+    } finally { $payment_pdo = null; }
+
 
     $input_descriptors1 = array();
 

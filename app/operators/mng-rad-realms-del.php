@@ -26,89 +26,44 @@
 
     include('library/check_operator_perm.php');
 
-    // init logging variables
-    $logAction = "";
-    $logDebugSQL = "";
-    $log = "visited page: ";
-
-    include('../common/includes/db_open.php');
-    
-    // init field_name and values (all, valid and to delete)
+    include_once('../common/includes/config_read.php');
+    include_once('include/management/realmProxyPdo.php');
+    $logAction = '';
+    $logDebugSQL = '';
+    $log = 'visited page: ';
     $field_name = 'realmname';
-    
+    $success = false;
     $valid_values = array();
-    
-    $sql = sprintf("SELECT DISTINCT(%s) FROM %s", $field_name, $configValues['CONFIG_DB_TBL_DALOREALMS']);
-    $res = $dbSocket->query($sql);
-    
-    while ($row = $res->fetchRow()) {
-        $valid_values[] = $row[0];
-    }
-    
-    if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-    
-        $values = array();
-        $deleted_values = array();
-        
-        // validate values
-        if (array_key_exists($field_name, $_POST) && isset($_POST[$field_name])) {
-            
-            $tmp = (!is_array($_POST[$field_name])) ? array($_POST[$field_name]) : $_POST[$field_name];
-            foreach ($tmp as $value) {
-                if (in_array($value, $valid_values)) {
-                    $values[] = $value;
-                }
-            }
-        }
-        
-        // use valid values for updating db,
-        // update deleted_values as a valid value has been removed
-        if (count($values) > 0) {
-            $flag = (array_key_exists('CONFIG_FILE_RADIUS_PROXY', $configValues) &&
-                     isset($configValues['CONFIG_FILE_RADIUS_PROXY']));
-                     
-            $filenameRealmsProxys = ($flag) ? $configValues['CONFIG_FILE_RADIUS_PROXY'] : "";
-            $fileFlag = ($flag) ? 1 : 0;
-            
-            foreach ($values as $value) {
-                $sql = sprintf("DELETE FROM %s WHERE %s='%s'", $configValues['CONFIG_DB_TBL_DALOREALMS'],
-                                                               $field_name, $dbSocket->escapeSimple($value));
-                $result = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                if ($result > 0) {
-                    $deleted_values[] = $value;
-                }
-            }
-            
-            /*******************************************************************/
-            /* enumerate from database all realm entries */
-            include_once('include/management/saveRealmsProxys.php');
-            /*******************************************************************/
-        }
-
-        $success = $_SERVER['REQUEST_METHOD'] == 'POST' && count($values) > 0 && count($deleted_values) > 0;
-
-        // present results
-        if ($success) {
-            $tmp = array();
-            foreach ($deleted_values as $deleted_value) {
-                $tmp[] = htmlspecialchars($deleted_value, ENT_QUOTES, 'UTF-8');
-            }
-            
-            $successMsg = sprintf("Deleted realm(s): <strong>%s</strong>", implode(", ", $tmp));
-            $logAction .= sprintf("Successfully deleted realm(s) [%s] on page: ", implode(", ", $deleted_values));
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
         } else {
-            $failureMsg = "no realm or invalid realm was entered, please specify a valid realm name to remove from database";
-            $logAction .= sprintf("Failed deleting realm(s) [%s] on page: ", implode(", ", $valid_values));
+            try {
+                $raw = $_POST[$field_name] ?? array();
+                if (is_string($raw)) { $raw = array($raw); }
+                $result = realm_proxy_mutate($configValues, $_SESSION['location_name'] ?? 'default',
+                                             $operator, 'realm', 'delete', $raw);
+                $success = true;
+                $escaped = array_map(static function($v) { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); },
+                                     $result['names']);
+                $successMsg = 'Deleted realm(s): <strong>' . implode(', ', $escaped) . '</strong>';
+                $logAction .= 'Successfully deleted realm(s) on page: ';
+            } catch (Throwable $exception) {
+                error_log('Realm delete page: ' . get_class($exception));
+                $failureMsg = $exception instanceof RealmProxyUncertainException
+                    ? 'Realm/proxy state uncertain; verify file and database before retrying'
+                    : 'Unable to delete realm(s) and update configuration; no change applied';
+            }
         }
-    } else {
-        $success = false;
-        $failureMsg = "CSRF token error";
-        $logAction .= "$failureMsg on page: ";
     }
-    
-    include('../common/includes/db_close.php');
+    try {
+        list($pdo, $tables) = realm_proxy_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $stmt = $pdo->query("SELECT DISTINCT($field_name) FROM {$tables['realm']} ORDER BY $field_name");
+        $valid_values = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    } catch (Throwable $exception) {
+        error_log('Realm delete lookup: ' . get_class($exception));
+        $failureMsg = 'Unable to read realm(s)';
+    } finally { $pdo = null; }
 
     include_once('../common/includes/config_read.php');
     include_once("lang/main.php");

@@ -23,8 +23,19 @@
 
     include ("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-
     include('library/check_operator_perm.php');
+    require_once __DIR__ . '/library/operator_reports_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+        foreach (array('batch_name','radiusReply') as $key) {
+            if (isset($_GET[$key])) { dalo_accounting_scalar($_GET, $key); }
+        }
+    } catch (Throwable $exception) {
+        http_response_code(400); exit('Invalid operator report filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
     include_once('../common/includes/config_read.php');
     
     include_once("lang/main.php");
@@ -81,24 +92,23 @@
     
     print_title_and_help($title, $help);
     
-    include('../common/includes/db_open.php');
     include('include/management/pages_common.php');
 
 
-    $sql = sprintf("SELECT hs.name AS hotspotname, no.wan_iface, no.wan_ip, no.wan_mac, no.wan_gateway, no.wifi_iface,
-                           no.wifi_ip, no.wifi_mac, no.wifi_ssid, no.wifi_key, no.wifi_channel, no.lan_iface,
-                           no.lan_mac, no.lan_ip, no.uptime, no.memfree, no.cpu, no.wan_bup, no.wan_bdown, no.firmware,
-                           no.firmware_revision, no.mac, no.time
-                      FROM %s AS no LEFT JOIN %s AS hs ON hs.mac=no.mac", $configValues['CONFIG_DB_TBL_DALONODE'],
-                                                                          $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+    $reportPDO = null;
+    $reportRows = array();
+    $numrows = 0;
+    try {
+        $reportPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        list($reportSQL, $reportBindings) = dalo_operator_query('rep-hb-dashboard', array(), $configValues);
+        $numrows = dalo_accounting_count($reportPDO, $reportSQL, $reportBindings, $configValues);
+    } catch (Throwable $exception) { dalo_accounting_failure($exception); }
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
         
         // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
+        include('include/management/pages_numbering.php');    // must follow configuration initialization because it needs to read
                                                               // the CONFIG_IFACE_TABLES_LISTING variable from the config file
         
         // here we decide if page numbers should be shown
@@ -107,12 +117,16 @@
         /* END */
                      
         // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY hs.%s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
+        try {
+            $reportRows = dalo_operator_rows($reportPDO, $reportSQL, $reportBindings, 'rep-hb-dashboard',
+                $orderBy, $orderType, (int)$offset, (int)$rowsPerPage, true);
+        } catch (Throwable $exception) { dalo_accounting_failure($exception); }
+        $per_page_numrows = count($reportRows);
+
+
         
-        $per_page_numrows = $res->numRows();
-        
+        $partial_query_string = '';
+
         $descriptors = array();
 
         $params = array(
@@ -136,12 +150,13 @@
         // closes table header, opens table body
         print_table_middle();
         
-        while($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+        foreach ($reportRows as $row) {
+            $rawHotspotName = (string)($row['hotspotname'] ?? '');
             $rowlen = count($row);
             
             // escape row elements
             foreach ($row as $field => $value) {
-                $row[$field] = htmlspecialchars($row[$field], ENT_QUOTES, 'UTF-8');
+                $row[$field] = htmlspecialchars((string)($row[$field] ?? ''), ENT_QUOTES, 'UTF-8');
             }
 
             $content = array();
@@ -153,7 +168,7 @@
                                 'subject' => $row['hotspotname'],
                                 'actions' => array(),
                             );
-            $tooltip['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($row['hotspotname']), ),
+            $tooltip['actions'][] = array( 'href' => sprintf('mng-hs-edit.php?name=%s', urlencode($rawHotspotName), ),
                                            'label' => t('Tooltip','HotspotEdit'), );
         
             $tooltip['content'] = sprintf($format, t('all','NASMAC'), $row['mac']);
@@ -256,13 +271,20 @@
         printLinks($links, $drawNumberLinks);
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
     
-    include('../common/includes/db_close.php');
+
+    if (isset($failureMsg)) {
+        include_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/actionMessages.php';
+    }
 
     include('include/config/logging.php');
     
+    if (isset($failureMsg) || empty($numrows)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($reportPDO, $reportRows);
     print_footer_and_html_epilogue();
 ?>

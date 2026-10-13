@@ -29,9 +29,19 @@
     include("../common/includes/layout.php");
 
     include('../common/includes/functions.php');
-    include('../common/includes/db_open.php');
-    $message = get_message($dbSocket, "dashboard")["content"];
-    include('../common/includes/db_close.php');
+    require_once __DIR__ . '/library/portal_pages_pdo.php';
+    include_once('../common/includes/config_read.php');
+    $message = '';
+    $portalMessageFailed = false;
+    $portalPdo = null;
+    try {
+        $portalPdo = dalo_portal_handle($configValues);
+        $message = get_message($portalPdo, "dashboard")["content"];
+    } catch (Throwable $exception) {
+        $portalMessageFailed = true;
+        http_response_code(503);
+        $message = '<p>Portal message unavailable</p>';
+    } finally { $portalPdo = null; }
     
     if (!empty($message)) {
         $help = $message;
@@ -46,6 +56,7 @@
     $title = "Welcome to the daloRADIUS User Portal";
     print_title_and_help($title, $help);
 
+    if (!$portalMessageFailed) {
     // main accordion
     echo '<div class="accordion m-2" id="accordion-parent">';
 
@@ -61,6 +72,8 @@
     userSubscriptionAnalysis($login_user, 1);
 
     echo '</div>';
+
+    }
 
     include('include/config/logging.php');
 

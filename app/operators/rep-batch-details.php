@@ -21,11 +21,23 @@
  *********************************************************************************************************
  */
 
+    include_once('../common/includes/config_read.php');
     include("library/checklogin.php");
     $operator = $_SESSION['operator_user'];
-
-    include('../common/includes/config_read.php');
     include('library/check_operator_perm.php');
+    require_once __DIR__ . '/library/operator_reports_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+        foreach (array('batch_name','radiusReply') as $key) {
+            if (isset($_GET[$key])) { dalo_accounting_scalar($_GET, $key); }
+        }
+    } catch (Throwable $exception) {
+        http_response_code(400); exit('Invalid operator report filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery']);
     
     include_once("lang/main.php");
     include("../common/includes/validation.php");
@@ -33,13 +45,11 @@
     include_once("include/management/functions.php");
 
     // validate this parameter before including menu
-    $batch_name = (array_key_exists('batch_name', $_GET) && !empty(str_replace("%", "", trim($_GET['batch_name']))))
-                ? str_replace("%", "", trim($_GET['batch_name'])) : "";
-    $batch_name_enc = (!empty($batch_name)) ? htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8') : "";
+    $batch_name = dalo_accounting_scalar($_GET, 'batch_name');
+    $batch_name_enc = ($batch_name !== '') ? htmlspecialchars($batch_name, ENT_QUOTES, 'UTF-8') : "";
 
-    $username = (array_key_exists('username', $_GET) && !empty(str_replace("%", "", trim($_GET['username']))))
-              ? str_replace("%", "", trim($_GET['username'])) : "";
-    $username_enc = (!empty($username)) ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
+    $username = dalo_accounting_scalar($_GET, 'username');
+    $username_enc = ($username !== '') ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : "";
 
     // table1
     $cols1 = array(
@@ -102,49 +112,61 @@
     print_title_and_help($title, $help);
     echo '<div id="returnMessages"></div>';
 
-    include('../common/includes/db_open.php');
     include('include/management/pages_common.php');
 
     // get $batch_id
     $batch_id = -1;
 
-    if ($batch_name) {
-        $sql = sprintf("SELECT bh.id FROM %s AS bh WHERE bh.batch_name='%s' LIMIT 1",
-                       $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'], $dbSocket->escapeSimple($batch_name));
-        $res = $dbSocket->query($sql);
-        $numrows = $res->numRows();
-        $logDebugSQL .= "$sql;\n";
-
-        if ($numrows > 0) {
-            $row = $res->fetchRow();
-            $batch_id = intval($row[0]);
+    $reportPDO = null; $reportRows = array(); $summaryRows = array(); $batch_id = 0; $numrows = 0;
+    try {
+        $reportPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        if ($batch_name !== '') {
+            $table = dalo_export_table($configValues,'CONFIG_DB_TBL_DALOBATCHHISTORY');
+            $batch_id = (int)dalo_accounting_execute($reportPDO, "SELECT id FROM $table WHERE batch_name=:batch_name LIMIT 1",
+                array(':batch_name'=>$batch_name))->fetchColumn();
         }
-    }
+    } catch (Throwable $exception) { dalo_accounting_failure($exception); }
 
     if ($batch_id > 0) {
 
         $_SESSION['reportParams']['batch_id'] = $batch_id;
+        $_SESSION['reportType'] = "reportsBatchActiveUsers";
+        $_SESSION['reportExport'] = array(
+            'source' => 'rep-batch-details',
+            'type' => 'reportsBatchActiveUsers',
+            'filters' => array(
+                'batch_id' => $batch_id,
+                'username' => $username,
+            ),
+        );
 
-        $sql = "SELECT bh.id, bh.batch_name, bh.batch_description, bh.batch_status, COUNT(DISTINCT(ubi.id)) AS total_users,
-                       COUNT(DISTINCT(ra.username)) AS active_users, ubi.planname, bp.plancost, bp.plancurrency,
-                       hs.name AS HotspotName, bh.creationdate, bh.creationby, bh.updatedate, bh.updateby
-                  FROM %s AS bh LEFT JOIN %s AS ubi ON bh.id = ubi.batch_id
-                                LEFT JOIN %s AS bp ON bp.planname = ubi.planname
-                                LEFT JOIN %s AS hs ON bh.hotspot_id = hs.id
-                                LEFT JOIN %s AS ra ON ra.username = ubi.username
-                 WHERE bh.batch_name = '%s'
-                 GROUP BY bh.batch_name";
-        $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
-                             $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                             $configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'],
-                             $configValues['CONFIG_DB_TBL_DALOHOTSPOTS'],
-                             $configValues['CONFIG_DB_TBL_RADACCT'],
-                             $dbSocket->escapeSimple($batch_name));
+        try {
+            list($summarySQL,$summaryBindings) = dalo_operator_query('batch-summary',array('batch_name'=>$batch_name),$configValues);
+            $summaryRows = dalo_accounting_execute($reportPDO,$summarySQL,$summaryBindings)->fetchAll(PDO::FETCH_NUM);
+        } catch (Throwable $exception) { dalo_accounting_failure($exception); }
 
 
+        $numrows = 0;
+        if (!isset($failureMsg)) {
+            try {
+                list($reportSQL,$reportBindings) = dalo_operator_query('rep-batch-details',
+                    array('batch_id'=>$batch_id,'username'=>$username),$configValues);
+                $numrows = dalo_accounting_count($reportPDO,$reportSQL,$reportBindings,$configValues);
+            } catch (Throwable $exception) { dalo_accounting_failure($exception); }
+        }
 
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
+        $batchGroupMap = array();
+        if ($numrows > 0 && !isset($failureMsg)) {
+            include('include/management/pages_numbering.php');
+            try {
+                $reportRows = dalo_operator_rows($reportPDO,$reportSQL,$reportBindings,'rep-batch-details',
+                    $orderBy,$orderType,(int)$offset,(int)$rowsPerPage);
+                foreach (dalo_operator_groups($reportPDO,array_column($reportRows,0),$configValues) as $mapping) {
+                    $batchGroupMap[$mapping['username']][] = $mapping['groupname'];
+                }
+            } catch (Throwable $exception) { dalo_accounting_failure($exception); $reportRows = array(); }
+        }
+        $per_page_numrows = count($reportRows);
 
         $additional_controls = array();
         $notification_url = sprintf("include/common/notifications.php?type=batch-details&batch_name=%s",
@@ -164,7 +186,7 @@
                                         'label' => 'Email PDF to Business/Hotspot',
                                         'class' => 'btn-light',
                                       );
-        $additional_controls[] = get_csv_export_control('reportType=reportsBatchTotalUsers');
+        if (!isset($failureMsg)) { $additional_controls[] = get_csv_export_control('reportType=reportsBatchTotalUsers'); }
 
         $descriptors = array( 'end' => $additional_controls );
 
@@ -182,12 +204,12 @@
 
         // table1 content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($summaryRows as $row) {
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
             }
         
         
@@ -234,39 +256,10 @@
 
         print_table_bottom();
 
-        // setup php session variables for exporting
-        $_SESSION['reportTable'] = "";
-        //reportQuery is assigned below to the SQL statement  in $sql
-        $_SESSION['reportQuery'] = "";
-        $_SESSION['reportType'] = "reportsBatchActiveUsers";
-
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
-        $partial_query_params = array( sprintf('batch_name=%s', urlencode($batch_name_enc)) );
-
-        $sql_WHERE = array( "ubi.batch_id=bh.id" );
-        $sql_WHERE[] = sprintf("ubi.batch_id=%d", $batch_id);
-        
-        if (!empty($username)) {
-            $sql_WHERE[] = sprintf("ubi.username LIKE '%%s%%'", $dbSocket->escapeSimple($username));
-            $partial_query_params[] = sprintf("username=%s", urlencode($username_enc));
-        }
-
-        $sql = "SELECT ubi.username, IFNULL(ra.acctstarttime, '0') AS status, MIN(ra.acctstarttime)
-                  FROM %s AS ubi LEFT JOIN %s AS ra ON ubi.username=ra.username, %s AS bh 
-                 WHERE %s GROUP BY ubi.username";
-
-        $sql = sprintf($sql, $configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'],
-                             $configValues['CONFIG_DB_TBL_RADACCT'],
-                             $configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'],
-                             implode(" AND ", $sql_WHERE));
-
-        // assigning the session reportQuery
-        $_SESSION['reportQuery'] = $sql;
-
-        $res = $dbSocket->query($sql);
-        $numrows = $res->numRows();
-        $logDebugSQL .= "$sql;\n";
+        $partial_query_params = array( sprintf('batch_name=%s', urlencode($batch_name)) );
+        if ($username !== '') { $partial_query_params[] = sprintf('username=%s',urlencode($username)); }
 
         echo "<h4>Users in this batch</h4>";
         
@@ -318,8 +311,7 @@
             /* START - Related to pages_numbering.php */
 
             // when $numrows is set, $maxPage is calculated inside this include file
-            include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                                  // the CONFIG_IFACE_TABLES_LISTING variable from the config file
+            // Pagination was computed before rendering the summary.
 
             // here we decide if page numbers should be shown
             $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
@@ -327,12 +319,6 @@
             /* END */
 
             // we execute and log the actual query
-            $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-            $res = $dbSocket->query($sql);
-            $logDebugSQL .= "$sql;\n";
-
-            $per_page_numrows = $res->numRows();
-
             // the partial query is built starting from user input
             // and for being passed to setupNumbering and setupLinks functions
             $partial_query_string = ((count($partial_query_params) > 0) ? "&" . implode("&", $partial_query_params)  : "");
@@ -376,7 +362,7 @@
             $descriptors['center'] = array( 'draw' => $drawNumberLinks, 'params' => $params );
             
             $descriptors['end'] = array();
-            $descriptors['end'][] = get_csv_export_control('', 'Active Users CSV Export');
+            if (!isset($failureMsg)) { $descriptors['end'][] = get_csv_export_control('', 'Active Users CSV Export'); }
 
             print_table_prologue($descriptors);
 
@@ -393,12 +379,13 @@
 
             // table2 content
             $count = 0;
-            while ($row = $res->fetchRow()) {
+            foreach ($reportRows as $row) {
+                $rawRowUsername = (string)($row[0] ?? '');
                 $rowlen = count($row);
 
                 // escape row elements
                 for ($i = 0; $i < $rowlen; $i++) {
-                    $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                    $row[$i] = htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
                 }
 
                 list($username, $active, $datetime) = $row;
@@ -411,7 +398,7 @@
                 
                 // check if user is disabled
                 $disabled = in_array('daloRADIUS-Disabled-Users',
-                                     get_user_group_mappings($dbSocket, $username));
+                                     ($batchGroupMap[$rawRowUsername] ?? array()));
                 
                 $img_format = '<i class="bi bi-%s-circle-fill text-%s me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="%s"></i>';
 
@@ -420,7 +407,7 @@
                      : sprintf($img_format, 'check', 'success', 'enabled');
                 
                 $ajax_id = "divContainerUserInfo_" . $count;
-                $param = sprintf('username=%s', urlencode($username));
+                $param = sprintf('username=%s', urlencode($rawRowUsername));
                 $onclick = "daloInfo.user('$ajax_id','$param')";
                 $tooltip = array(
                                     'subject' => $img . $username,
@@ -428,9 +415,9 @@
                                     'ajax_id' => $ajax_id,
                                     'actions' => array(),
                                 );
-                $tooltip['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($username), ), 'label' => t('Tooltip','UserEdit'), );
+                $tooltip['actions'][] = array( 'href' => sprintf('mng-edit.php?username=%s', urlencode($rawRowUsername), ), 'label' => t('Tooltip','UserEdit'), );
                 if ($active !== '0') {
-                    $tooltip['actions'][] = array( 'href' => sprintf('acct-username.php?username=%s', urlencode($username), ), 'label' => t('all','Accounting'), );
+                    $tooltip['actions'][] = array( 'href' => sprintf('acct-username.php?username=%s', urlencode($rawRowUsername), ), 'label' => t('all','Accounting'), );
                 }
                 
                 // create tooltip
@@ -466,18 +453,28 @@
             printLinks($links, $drawNumberLinks);
 
         } else {
-            $failureMsg = "No active users in this batch";
+            $failureMsg = $failureMsg ?? "No active users in this batch";
         }
 
     } else {
-        $failureMsg = "Batch name not valid";
+        $failureMsg = $failureMsg ?? "Batch name not valid";
     }
 
     include_once("include/management/actionMessages.php");
 
-    include('../common/includes/db_close.php');
+
+    if (isset($failureMsg)) {
+        include_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/actionMessages.php';
+    }
 
     include('include/config/logging.php');
 
+    // Keep the established ActiveUsers descriptor for the authorized summary's
+    // TotalUsers override, even when the user-filtered table is empty.
+    $validEmptyBatch = !empty($summaryRows) && ($failureMsg ?? '') === 'No active users in this batch';
+    if (!$validEmptyBatch && (isset($failureMsg) || empty($numrows))) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($reportPDO, $reportRows);
     print_footer_and_html_epilogue();
 ?>

@@ -38,105 +38,43 @@
     $logDebugSQL = "";
 
 
-    include('../common/includes/db_open.php');
-    
-    // get valid payment types
-    $sql = sprintf("SELECT id, value FROM %s", $configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    $valid_paymentTypes = array( );
-    while ($row = $res->fetchrow()) {
-        list($id, $value) = $row;
-        
-        $valid_paymentTypes["paymentType-$id"] = $value;
-    }
-
-    
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
-            // required later
-            $current_datetime = date('Y-m-d H:i:s');
-            $currBy = $operator;
-        
-            $required_fields = array();
-        
-            $payment_invoice_id = (array_key_exists('payment_invoice_id', $_POST) && intval(trim($_POST['payment_invoice_id'])) > 0)
-                                ? intval(trim($_POST['payment_invoice_id'])) : "";
-            if (empty($payment_invoice_id)) {
-                $required_fields['payment_invoice_id'] = t('all','PaymentInvoiceID');
-            }
-            
-            $payment_type_id = (array_key_exists('payment_type_id', $_POST) && !empty(trim($_POST['payment_type_id'])) &&
-                                in_array(trim($_POST['payment_type_id']), array_keys($valid_paymentTypes)))
-                             ? intval(str_replace("paymentType-", "", trim($_POST['payment_type_id']))) : "";
-            
-            $payment_amount = (array_key_exists('payment_amount', $_POST) && is_numeric(trim($_POST['payment_amount'])))
-                             ? trim($_POST['payment_amount']) : 0;
-            if (empty($payment_amount)) {
-                $required_fields['payment_amount'] = t('all','PaymentAmount');
-            }
-            
-            $payment_date = (
-                                array_key_exists('payment_date', $_POST) &&
-                                !empty(trim($_POST['payment_date'])) &&
-                                preg_match(DATE_REGEX, trim($_POST['payment_date']), $m) !== false &&
-                                checkdate($m[2], $m[3], $m[1])
-                            ) ? trim($_POST['payment_date']) : date('Y-m-d');
-            if (empty($payment_date)) {
-                $required_fields['payment_date'] = t('all','PaymentDate');
-            }
-            
-            $payment_notes = (array_key_exists('payment_notes', $_POST) && !empty(trim($_POST['payment_notes'])))
-                           ? trim($_POST['payment_notes']) : "";
-            
-            if (count($required_fields) > 0) {
-                // required/invalid
-                $failureMsg = sprintf("Empty or invalid required field(s) [%s]", implode(", ", array_values($required_fields)));
-                $logAction .= "$failureMsg on page: ";
-            } else {
-                $sql = sprintf("INSERT INTO %s (id, invoice_id, amount, date, type_id, notes,
-                                                creationdate, creationby, updatedate, updateby)
-                                        VALUES (0, %d, %s, '%s', %d, '%s', '%s', '%s', NULL, NULL)",
-                               $configValues['CONFIG_DB_TBL_DALOPAYMENTS'], $payment_invoice_id, $payment_amount,
-                               $payment_date, $payment_type_id, $dbSocket->escapeSimple($payment_notes), $current_datetime, $currBy);
-                               
-                $res = $dbSocket->query($sql);
-                $logDebugSQL .= "$sql;\n";
-                
-                if (!DB::isError($res)) {
-                    $successMsg = sprintf("Inserted new payment for invoice: #<strong>%d</strong><br>", $payment_invoice_id)
-                                . sprintf('<a href="bill-invoice-edit.php?invoice_id=%d" title="Edit">edit invoice #%d</a>',
-                                          $payment_invoice_id, $payment_invoice_id);
-                    $logAction .= "Successfully inserted new payment for invoice [#$payment_invoice_id] on page: ";
-                } else {
-                    $failureMsg = "Failed to insert new payment for invoice: #<strong>$payment_invoice_id</strong>";
-                    $logAction .= "Failed to insert new payment for invoice [#$payment_invoice_id] on page: ";
-                }
-            }
-
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
+    require_once('library/payments_pdo.php');
+    $payment_pdo = null; $valid_paymentTypes = array(); $payment_id = '';
+    $payment_invoice_id = ''; $payment_date = ''; $payment_amount = '';
+    $payment_type_id = ''; $payment_notes = ''; $payment_read_failed = false;
+    try {
+        $payment_pdo = dalo_payment_open($configValues);
+        $valid_paymentTypes = dalo_payment_types($payment_pdo, $configValues);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $raw_id = dalo_payment_scalar($_GET, 'payment_invoice_id');
+            if ($raw_id !== '') { $payment_invoice_id = dalo_payment_id($raw_id); }
+            $raw_date = dalo_payment_scalar($_GET, 'payment_date');
+            if ($raw_date !== '') { $payment_date = dalo_payment_date($raw_date); }
         }
-    } else {
-        $payment_invoice_id = (array_key_exists('payment_invoice_id', $_REQUEST) && intval(trim($_REQUEST['payment_invoice_id'])) > 0)
-                            ? intval(trim($_REQUEST['payment_invoice_id'])) : "";
-        
-        $payment_date = (
-                            array_key_exists('payment_date', $_REQUEST) &&
-                            !empty(trim($_REQUEST['payment_date'])) &&
-                            preg_match(DATE_REGEX, trim($_REQUEST['payment_date']), $m) !== false &&
-                            checkdate($m[2], $m[3], $m[1])
-                        ) ? trim($_REQUEST['payment_date']) : "";
+    } catch (Throwable $error) {
+        dalo_payment_read_failure($error); $payment_read_failed = true; $payment_id = '';
+    } finally { $payment_pdo = null; }
+    $edit_payment_id = $payment_id;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$payment_read_failed) {
+        if (isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            try {
+                $values = dalo_payment_fields($_POST, true);
+                foreach (array('invoice_id','amount','date','type_id','notes') as $field) {
+                    if (isset($values[$field])) { ${'payment_' . $field} = $values[$field]; }
+                }
+                $payment_pdo = dalo_payment_open($configValues);
+                $result = dalo_payment_mutate($payment_pdo, $configValues, 'new', array(), $values, $operator);
+                $successMsg = sprintf("Inserted new payment for invoice: #<strong>%d</strong><br>", $payment_invoice_id)
+                            . sprintf('<a href="bill-invoice-edit.php?invoice_id=%d" title="Edit">edit invoice #%d</a>', $payment_invoice_id, $payment_invoice_id);
+                $logAction .= 'Successful payment mutation on page: ';
+                $logDebugSQL .= 'Payment mutation (PDO transaction, bound values);\n';
+            } catch (Throwable $error) {
+                $failureMsg = 'Failed to insert payment; verify its state before retrying';
+                $logAction .= 'Payment mutation failed [' . get_class($error) . '] on page: ';
+            } finally { $payment_pdo = null; }
+        } else { $failureMsg = 'CSRF token error'; $logAction .= 'CSRF token error on page: '; }
     }
-
-
-    include('../common/includes/db_close.php');
-
     // print HTML prologue   
     $title = t('Intro','paymentsnew.php');
     $help = t('helpPage','paymentsnew');

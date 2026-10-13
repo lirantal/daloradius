@@ -44,98 +44,45 @@
     
     print_title_and_help($title, $help);
     
-    // we use get_groups() to check for the existance of new and old profile
-    include_once('include/management/populate_selectbox.php');
-    
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) &&
-            dalo_check_csrf_token($_POST['csrf_token'])) {
-        
-            include('../common/includes/db_open.php');
-            
-            $sourceProfile = (array_key_exists('sourceProfile', $_REQUEST) && isset($_REQUEST['sourceProfile']))
-                           ? trim(str_replace("%", "", $_REQUEST['sourceProfile'])) : "";
-            $sourceProfile_enc = (!empty($sourceProfile)) ? htmlspecialchars($sourceProfile, ENT_QUOTES, 'UTF-8') : "";
-            
-            $targetProfile = (array_key_exists('targetProfile', $_REQUEST) && isset($_REQUEST['targetProfile']))
-                           ? trim(str_replace("%", "", $_REQUEST['targetProfile'])) : "";
-            $targetProfile_enc = (!empty($targetProfile)) ? htmlspecialchars($targetProfile, ENT_QUOTES, 'UTF-8') : "";
-        
-            if (empty($sourceProfile) || empty($targetProfile)) {
-                // profiles are required
-                $failureMsg = "Source and target profile names are required";
-                $logAction .= "Failed duplicating profile [$failureMsg] on page: ";
-            } else {
-            
-                $groups = get_groups();
-            
-                if (!in_array($sourceProfile, $groups)) {
-                    // source profile non-existent
-                    $failureMsg = "Invalid source profile name";
-                    $logAction .= "Failed duplicating profile [$failureMsg] on page: ";
-                } else {
-                    if (in_array($targetProfile, $groups)) {
-                        // target profile already inplace
-                        $failureMsg = "Invalid target profile name";
-                        $logAction .= "Failed duplicating profile [$failureMsg] on page: ";
-                    } else {
-                        
-                        // we duplicate group attributes which are present in these two tables
-                        $tables = array(
-                                          $configValues['CONFIG_DB_TBL_RADGROUPCHECK'],
-                                          $configValues['CONFIG_DB_TBL_RADGROUPREPLY']
-                                       );
-                        
-                        // this are the query used
-                        $sql_select_format = "SELECT '%s', attribute, op, value FROM %s WHERE groupname='%s'";
-                        $sql_insert_format = "INSERT INTO %s (groupname, attribute, op, value)";
-                        
-                        $counter = 0;
-                        foreach ($tables as $table) {
-                            $sql_select = sprintf($sql_select_format, $dbSocket->escapeSimple($targetProfile),
-                                                                      $table,
-                                                                      $dbSocket->escapeSimple($sourceProfile));
-                            $sql_insert = sprintf($sql_insert_format, $table, $sql_select);
-                            
-                            $sql = $sql_insert . " " . $sql_select;
-                            $res = $dbSocket->query($sql);
-                            $logDebugSQL .= "$sql;\n";
-                            
-                            if (!DB::isError($res)) {
-                                $counter += $res;
-                            }
-                        }
-                        
-                        if ($counter > 0) {
-                            $successMsg = sprintf("Profile <strong>%s</strong> has been successfully cloned into <strong>%s</strong>",
-                                                  $sourceProfile_enc, $targetProfile_enc);
-                            $logAction .= "Successfully cloned profile [$sourceProfile] to new profile name [$targetProfile] on page: ";
-                            
-                            // we empty these two variables for presentation purpose
-                            $sourceProfile = "";
-                            $targetProfile = "";
-                        } else {
-                            $failureMsg = sprintf("Cannot clone profile <strong>%s</strong> into <strong>%s</strong>",
-                                                  $sourceProfile_enc, $targetProfile_enc);
-                            $logAction .= "Failed while cloning profile [$sourceProfile] on page: ";
-                        }
-                        
-                    }
-                }
-            }
-                           
-            include('../common/includes/db_close.php');
+    include_once('../common/includes/pdo_connection.php');
+    require_once('library/profile_duplicate.php');
+    $pdo = dalo_pdo_connect($configValues, isset($_SESSION['location_name'])
+                                          ? $_SESSION['location_name'] : 'default');
+    $tables = dalo_profile_duplicate_tables($configValues);
+    $sourceProfile = '';
+    $targetProfile = '';
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) ||
+            !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
+            $logAction .= 'CSRF token error on page: ';
         } else {
-            $failureMsg = sprintf("CSRF token error");
-            $logAction .= sprintf("CSRF token error on page: ");
+            $submittedSource = isset($_POST['sourceProfile']) ? $_POST['sourceProfile'] : '';
+            $submittedTarget = isset($_POST['targetProfile']) ? $_POST['targetProfile'] : '';
+            $sourceProfile = is_string($submittedSource) ? trim($submittedSource) : '';
+            $targetProfile = is_string($submittedTarget) ? trim($submittedTarget) : '';
+            try {
+                $copied = dalo_profile_duplicate($pdo, $configValues,
+                                                 $submittedSource, $submittedTarget);
+                $successMsg = sprintf('Profile <strong>%s</strong> has been successfully cloned into <strong>%s</strong> (%d attributes)',
+                                      htmlspecialchars($sourceProfile, ENT_QUOTES, 'UTF-8'),
+                                      htmlspecialchars($targetProfile, ENT_QUOTES, 'UTF-8'), $copied);
+                $logAction .= 'Successfully cloned profile on page: ';
+                $logDebugSQL .= "INSERT INTO configured groupcheck/reply SELECT bound profile attributes;\n";
+                $sourceProfile = '';
+                $targetProfile = '';
+            } catch (Throwable $exception) {
+                // Do not expose database errors or submitted values to logs or the page.
+                $failureMsg = 'Cannot clone profile: invalid selection, name, or database operation';
+                $logAction .= 'Failed cloning profile on page: ';
+            }
         }
     }
-    
+
     include_once('include/management/actionMessages.php');
     
-    $options = get_groups();
+    $options = dalo_profile_duplicate_list($pdo, $tables);
     
     $input_descriptors0 = array();
     $input_descriptors0[] = array(

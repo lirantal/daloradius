@@ -56,7 +56,7 @@
             if (
                     array_key_exists('CONFIG_USER_ALLOWEDRANDOMCHARS', $_POST) &&
                     !empty(trim($_POST['CONFIG_USER_ALLOWEDRANDOMCHARS'])) &&
-                    preg_match(ALLOWED_RANDOM_CHARS_REGEX, trim($_POST['CONFIG_USER_ALLOWEDRANDOMCHARS'])) !== false
+                    preg_match(ALLOWED_RANDOM_CHARS_REGEX, trim($_POST['CONFIG_USER_ALLOWEDRANDOMCHARS'])) === 1
                ) {
                 $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = trim($_POST['CONFIG_USER_ALLOWEDRANDOMCHARS']);
             } else {

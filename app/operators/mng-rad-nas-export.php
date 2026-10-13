@@ -17,19 +17,25 @@ $operator_perm_file = 'mng_rad_nas_list';
 $operator_perm_deny_http_status = 403;
 include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
 include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'nasImportExport.php' ]);
-include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+require_once $configValues['COMMON_INCLUDES'] . '/pdo_connection.php';
+require_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/read_helpers_pdo.php';
+$pdo = null;
+try {
+    $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+    $table = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_RADNAS');
 
 $sql = sprintf(
     "SELECT HEX(nasname) AS nasname_hex, HEX(shortname) AS shortname_hex, HEX(type) AS type_hex,
             ports, HEX(secret) AS secret_hex, HEX(server) AS server_hex,
             HEX(community) AS community_hex, HEX(description) AS description_hex
        FROM %s ORDER BY nasname ASC",
-    $configValues['CONFIG_DB_TBL_RADNAS']
+    $table
 );
-$res = $dbSocket->query($sql);
-
-if (DB::isError($res)) {
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+$rows = dalo_read_statement($pdo, $sql)->fetchAll(PDO::FETCH_ASSOC);
+$pdo = null;
+} catch (Throwable $exception) {
+    $pdo = null;
+    error_log('NAS export: ' . get_class($exception));
     http_response_code(500);
     header('Content-Type: application/json; charset=UTF-8');
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
@@ -41,13 +47,12 @@ $nas = array();
 $usesBinaryEncoding = false;
 $encodedFields = array();
 $rowNumber = 0;
-while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
+foreach ($rows as $row) {
     $rowNumber++;
     $decoded = array();
     foreach (array('nasname', 'shortname', 'type', 'secret', 'server', 'community', 'description') as $field) {
         $decoded[$field] = nas_backup_decode_database_hex($row[$field . '_hex']);
         if ($decoded[$field] === false) {
-            include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
             http_response_code(500);
             header('Content-Type: application/json; charset=UTF-8');
             header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
@@ -81,7 +86,6 @@ while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
     $nas[] = $entry;
 }
 
-include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
 
 $document = array(
     'format' => NAS_BACKUP_FORMAT,

@@ -72,158 +72,32 @@
                                 );
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-        
-            $filePrefix = "backup";
-            $fileDate = date("Ymd-His");
-            $filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] . "/backup";
-            $fileName = sprintf("%s/%s-%s.sql", $filePath, $filePrefix, $fileDate);
-
-            // check if backup file can be created
-            $fileError = false;
-
-            if ( is_dir($filePath) && is_writable($filePath) ) {
-                $fh = fopen($fileName, "w");
-                
-                if($fh === false) {
-                    $fileError = true;
-                }
-            } else {
-                $fileError = true;
+        if (isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            require_once('../common/includes/pdo_connection.php');
+            require_once('library/backup_snapshot.php');
+            try {
+                $tables = dalo_backup_tables_from_post($_POST, array_keys($db_tbl_param_label), $configValues);
+                $filePath = $configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] . '/backup';
+                $pdo = dalo_pdo_connect($configValues);
+                list($fileName, $tables) = dalo_create_backup_snapshot($pdo, $tables, $filePath);
+                $successMsg = sprintf('Successfully created backup for %d table(s) [%s]',
+                                      count($tables), implode(', ', $tables));
+                $logAction .= sprintf('Successfully created backup file [%s] on page: ', $fileName);
+            } catch (InvalidArgumentException $error) {
+                $failureMsg = 'Invalid backup selection or destination';
+                $logAction .= "$failureMsg on page: ";
+            } catch (Throwable $error) {
+                // Do not disclose paths, SQL, credentials or row data in HTTP/log output.
+                $failureMsg = 'Failed creating backup; check database and backup directory';
+                $logAction .= "$failureMsg on page: ";
             }
-            
-            
-            if($fileError) {
-                $failureMsg = "Failed creating backup due to directory/file permissions. " 
-                            . sprintf("Check that the webserver user has access to create the following file: %s", $fileName);
-                $logAction .= "Failed creating backup due to directory/file permissions on page: ";
-            } else {
-                // backup file can be create
-                
-                include('../common/includes/db_open.php');
-            
-                $dbError = 0;
-                $tables = array();
-            
-                
-                foreach (array_keys($db_tbl_param_label) as $param) {
-                    
-                    if (array_key_exists($param, $_POST) && !empty(trim($_POST[$param])) && trim($_POST[$param]) === "yes") {
-                        
-                        // get table name from config file
-                        $table = $configValues[$param];
-                        
-                        // first get column fields
-                        $sql = sprintf("SELECT * FROM %s LIMIT 1", $table);
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-
-                        if (DB::isError($res)) {
-                            $dbError++;
-                            break;
-                        }
-                        
-                        $numrows = $res->numRows();
-                        if ($numrows == 0) {
-                            continue;
-                        }
-                    
-                        $row = $res->fetchRow(DB_FETCHMODE_ASSOC);
-                        $columns = array_keys($row);
-                        
-                        $colLength = count($columns);
-                        
-                        if ($colLength == 0) {
-                            continue;
-                        }
-                        
-                        // start building insert query
-                        $sqlTableQuery = "INSERT INTO `$table` (`" . implode("`, `", $columns) . "`) VALUES ";
-                        
-                        // get data
-                        $sql = sprintf("SELECT * FROM %s", $table);
-                        $res = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-
-                        if (DB::isError($res)) {
-                            $dbError++;
-                            break;
-                        }
-                    
-                        $lastRow = $res->numRows() - 1;
-                    
-                        while ($row = $res->fetchRow()) {
-                            $currRow = "(";
-                            
-                            $N = $colLength - 1;
-                            for ($i = 0; $i < $N; $i++) {
-                                $currRow .= sprintf("'%s', ", $dbSocket->escapeSimple($row[$i]));
-                            }
-                            
-                            // add last item
-                            $currRow .= sprintf("'%s')", $dbSocket->escapeSimple($row[$N]));
-                        
-                            if ($lastRow > 0) {
-                                $currRow .= ", ";
-                            }
-                            
-                            $lastRow--;
-                            
-                            $sqlTableQuery .= $currRow;
-                        }
-                        
-                        $sqlTableQuery .= ";\n\n\n";
-                        
-                        // write query to backup file
-                        if(fwrite($fh, $sqlTableQuery) === false) {
-                            $fileError++;
-                            break;
-                        }
-                        
-                        $tables[] = $table;
-                        
-                    }
-                    
-                }
-
-                include('../common/includes/db_close.php');
-
-                // close file
-                if(fclose($fh) === false) {
-                    $fileError = true;
-                }
-                
-                if ($dbError > 0) {
-                    $failureMsg = "Failed creating backup due to database error, check your database settings";
-                    $logAction .= "Failed creating backup due to database error on page: ";
-                } else if ($fileError) {
-                    unlink($fileName);
-                    
-                    $failureMsg = "Failed creating backup due to file write error, check your disk space";
-                    $logAction .= "Failed creating backup due to file write error on page: ";
-                } else {
-                    
-                    $fileSize = filesize($fileName);
-                    if ($fileSize > 0) {
-                        $successMsg = sprintf("Successfully created backup for %d table(s) [%s]", count($tables), implode(", ", $tables));
-                        $logAction .= sprintf("Successfully created backup file [%s] on page: ", $fileName);
-                    } else {
-                        unlink($fileName);
-                        
-                        $failureMsg = "Failed creating backup due to file write error (empty file)";
-                        $logAction .= "Failed creating backup due to file write error (empty file) on page: ";
-                    }
-                }
-            }
-        
         } else {
-            // csrf
-            $failureMsg = "CSRF token error";
+            $failureMsg = 'CSRF token error';
             $logAction .= "$failureMsg on page: ";
         }
     }
-    
-    
+
+
     // print HTML prologue    
     $title = t('Intro','configbackupcreatebackups.php');
     $help = t('helpPage','configbackupcreatebackups');

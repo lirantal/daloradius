@@ -37,117 +37,34 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // load valid huntgroups
-    $valid_huntgroups = get_huntgroups();
-
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $item = (array_key_exists('item', $_POST) && !empty(str_replace("%", "", trim($_POST['item']))))
-              ? str_replace("%", "", trim($_POST['item'])) : "";
-    } else {
-        $item = (array_key_exists('item', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['item']))))
-              ? str_replace("%", "", trim($_REQUEST['item'])) : "";
-    }
-
-    $exists = in_array($item, array_keys($valid_huntgroups));
-
-    if (!$exists) {
-        // we reset the rate if it does not exist
-        $item = "";
-        $internal_id = "";
-    } else {
-        $internal_id = intval(str_replace("huntgroup-", "", $item));
-    }
-
-    //feed the sidebar variables
-    $selected_huntgroup = $item;
-
-
-    include('../common/includes/db_open.php');
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            if (empty($internal_id)) {
-                // required
-                $failureMsg = sprintf("Selected an empty/invalid huntgroup element");
-                $logAction .= "$failureMsg on page: ";
+    require_once __DIR__ . '/library/huntgroup_pages_pdo.php';
+    $item=$selected_huntgroup=$internal_id=$groupname=$nasipaddress=$nasportid='';
+    $exists=false;
+    $is_post=($_SERVER['REQUEST_METHOD'] ?? '')==='POST';
+    try {
+        $source=$is_post ? $_POST : $_GET;
+        $item=$source['item'] ?? '';
+        $internal_id=dalo_hunt_id($item);
+        $selected_huntgroup=$item;
+        $pdo=dalo_pdo_connect($configValues,$_SESSION['location_name'] ?? 'default');
+        $table=dalo_hunt_table($configValues);
+        if ($is_post) {
+            if (!isset($_POST['csrf_token']) || !is_string($_POST['csrf_token']) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+                $failureMsg='CSRF token error';
             } else {
-
-                $nasipaddress = (array_key_exists('nasipaddress', $_POST) && !empty(trim($_POST['nasipaddress'])) &&
-                                 filter_var(trim($_POST['nasipaddress']), FILTER_VALIDATE_IP) !== false)
-                              ? trim($_POST['nasipaddress']) : "";
-
-                $groupname = (array_key_exists('groupname', $_POST) && !empty(str_replace("%", "", trim($_POST['groupname']))))
-                           ? str_replace("%", "", trim($_POST['groupname'])) : "";
-
-                $nasportid = (array_key_exists('nasportid', $_POST) && intval(trim($_POST['nasportid'])) > 0)
-                           ? intval(trim($_POST['nasportid'])) : 0;
-
-                if (empty($nasipaddress) || empty($groupname)) {
-                    // required
-                    $failureMsg = sprintf("Empty/invalid IP address and/or group name");
-                    $logAction .= "$failureMsg on page: ";
-                } else {
-
-                    $sql = sprintf("SELECT COUNT(id)
-                                      FROM %s
-                                     WHERE nasipaddress=? AND nasportid=?", $configValues['CONFIG_DB_TBL_RADHG']);
-                    $prep = $dbSocket->prepare($sql);
-                    $values = array( $nasipaddress, $nasportid, );
-                    $res = $dbSocket->execute($prep, $values);
-                    $logDebugSQL .= "$sql;\n";
-
-                    $exists = $res->fetchrow()[0] > 0;
-
-                    if ($exists) {
-                        // invalid
-                        $failureMsg = sprintf("The chosen %s/%s pair is already contained in a group",
-                                              t('all','HgIPHost'), t('all','HgPortId'));
-                        $logAction .= "$failureMsg on page: ";
-                    } else {
-                        $sql = sprintf("UPDATE %s
-                                           SET groupname=?, nasipaddress=?, nasportid=?
-                                         WHERE id=?", $configValues['CONFIG_DB_TBL_RADHG']);
-                        $prep = $dbSocket->prepare($sql);
-                        $values = array( $groupname, $nasipaddress, $nasportid, $internal_id );
-                        $res = $dbSocket->execute($prep, $values);
-                        $logDebugSQL .= "$sql;\n";
-
-                        if (!DB::isError($res)) {
-                            $successMsg = "Successfully updated huntgroup item";
-                            $logAction .= "Successfully updated huntgroup item [$nasipaddress/$nasportid $groupname] on page: ";
-                        } else {
-                            $failureMsg = "Failed to update huntgroup item";
-                            $logAction .= "Failed to update huntgroup item [$nasipaddress/$nasportid $groupname] on page: ";
-                        }
-                    }
-                }
+                $fields=dalo_hunt_fields($_POST);
+                $saved=dalo_hunt_save($pdo,$configValues,$fields,$internal_id);
+                if ($saved===false) { $failureMsg=sprintf('The chosen %s/%s pair is already contained in a group',t('all','HgIPHost'),t('all','HgPortId')); }
+                else { $successMsg='Successfully updated huntgroup item'; $logAction.='Successfully updated huntgroup item on page: '; }
             }
-
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
         }
+        $row=dalo_hunt_read($pdo,$table,$internal_id);
+        if ($row) { $exists=true; $groupname=$row['groupname']; $nasipaddress=$row['nasipaddress']; $nasportid=$row['nasportid'] ?? ''; }
+        elseif (!isset($failureMsg)) { $failureMsg='Selected an empty/invalid huntgroup element'; }
+    } catch (Throwable $e) {
+        $item=$selected_huntgroup='';
+        $failureMsg=isset($successMsg) ? 'Huntgroup item saved; unable to reload the form' : 'Unable to load or update Huntgroup item';
     }
-
-    if (empty($internal_id)) {
-        $failureMsg = sprintf("Selected an empty/invalid huntgroup item");
-        $logAction .= "Failed updating this huntgroup (possible empty/invalid huntgroup item) on page: ";
-    } else {
-        $sql = sprintf("SELECT groupname, nasipaddress, nasportid FROM %s WHERE id=?", $configValues['CONFIG_DB_TBL_RADHG']);
-        $prep = $dbSocket->prepare($sql);
-        $values = array( $internal_id );
-        $res = $dbSocket->execute($prep, $values);
-        $logDebugSQL .= "$sql;\n";
-
-        list( $groupname, $nasipaddress, $nasportid ) = $res->fetchrow();
-    }
-
-    include('../common/includes/db_close.php');
-
 
     // print HTML prologue
     $title = t('Intro','mngradhuntedit.php');
@@ -162,7 +79,7 @@
 
     include_once('include/management/actionMessages.php');
 
-    if (!empty($internal_id)) {
+    if ($exists) {
 
         // descriptors 0
         $input_descriptors0 = array();
@@ -196,7 +113,7 @@
         $input_descriptors1[] = array(
                                         "name" => "item",
                                         "type" => "hidden",
-                                        "value" => sprintf("huntgroup-%d", $internal_id),
+                                        "value" => 'huntgroup-' . $internal_id,
                                      );
 
         $input_descriptors1[] = array(

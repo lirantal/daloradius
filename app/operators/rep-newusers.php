@@ -25,8 +25,19 @@
     include_once implode(DIRECTORY_SEPARATOR, [ __DIR__, '..', 'common', 'includes', 'config_read.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'checklogin.php' ]);
     $operator = $_SESSION['operator_user'];
-
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'check_operator_perm.php' ]);
+    require_once __DIR__ . '/library/operator_reports_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+        foreach (array('batch_name','radiusReply') as $key) {
+            if (isset($_GET[$key])) { dalo_accounting_scalar($_GET, $key); }
+        }
+    } catch (Throwable $exception) {
+        http_response_code(400); exit('Invalid operator report filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
@@ -34,15 +45,9 @@
     // we validate starting and ending dates
     $date_default = date_range_default('year_to_date');
 
-    $startdate = (array_key_exists('startdate', $_GET) && !empty(trim($_GET['startdate'])) &&
-                  preg_match(DATE_REGEX, trim($_GET['startdate']), $m) !== false &&
-                  checkdate($m[2], $m[3], $m[1]))
-               ? trim($_GET['startdate']) : $date_default['start'];
+    $startdate = dalo_accounting_date($_GET, 'startdate', $date_default['start']);
 
-    $enddate = (array_key_exists('enddate', $_GET) && !empty(trim($_GET['enddate'])) &&
-                preg_match(DATE_REGEX, trim($_GET['enddate']), $m) !== false &&
-                checkdate($m[2], $m[3], $m[1]))
-             ? trim($_GET['enddate']) : $date_default['end'];
+    $enddate = dalo_accounting_date($_GET, 'enddate', $date_default['end']);
 
     // init logging variables
     $log = "visited page: ";
@@ -94,34 +99,21 @@
     print_title_and_help($title, $help);
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
 
-    $sql_WHERE_pieces = array();
-    if (!empty($enddate)) {
-        // inclusive end date: match the whole $enddate day
-        $sql_WHERE_pieces[] = sprintf("CreationDate < ('%s' + INTERVAL 1 DAY)", $dbSocket->escapeSimple($enddate));
-    }
-
-    if (!empty($startdate)) {
-        $sql_WHERE_pieces[] = sprintf("CreationDate >= '%s'", $dbSocket->escapeSimple($startdate));
-    }
-
-    $sql_WHERE = (count($sql_WHERE_pieces) > 0) ? " WHERE " . implode(" AND ", $sql_WHERE_pieces) : "";
-
-    // month is used as a "shadow" parameter for non-lexicographic ordering purpose
-    // period and users are used for presentation purpose
-    $sql = sprintf("SELECT CONCAT(MONTHNAME(CreationDate), ' ', YEAR(CreationDate)) AS period, COUNT(*) As users,
-                           CAST(CONCAT(YEAR(CreationDate), '-', MONTH(CreationDate), '-01') AS DATE) AS month
-                      FROM %s", $configValues['CONFIG_DB_TBL_DALOUSERINFO'])
-         . $sql_WHERE . " GROUP BY month";
-    $res = $dbSocket->query($sql);
-    $numrows = $res->numRows();
+    $reportPDO = null;
+    $reportRows = array();
+    $numrows = 0;
+    try {
+        $reportPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        list($reportSQL, $reportBindings) = dalo_operator_query('rep-newusers', array('startdate'=>$startdate,'enddate'=>$enddate), $configValues);
+        $numrows = dalo_accounting_count($reportPDO, $reportSQL, $reportBindings, $configValues);
+    } catch (Throwable $exception) { dalo_accounting_failure($exception); }
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
 
         // when $numrows is set, $maxPage is calculated inside this include file
-        // must be included after opendb because it needs to read
+        // must follow configuration initialization because it needs to read
         // the CONFIG_IFACE_TABLES_LISTING variable from the config file
         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_numbering.php' ]);
 
@@ -131,11 +123,13 @@
         /* END */
 
         // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $logDebugSQL = "$sql;\n";
-        $res = $dbSocket->query($sql);
+        try {
+            $reportRows = dalo_operator_rows($reportPDO, $reportSQL, $reportBindings, 'rep-newusers',
+                $orderBy, $orderType, (int)$offset, (int)$rowsPerPage, false);
+        } catch (Throwable $exception) { dalo_accounting_failure($exception); }
+        $per_page_numrows = count($reportRows);
 
-        $per_page_numrows = $res->numRows();
+
 
         // the partial query is built starting from user input
         // and for being passed to setupNumbering and setupLinks functions
@@ -185,7 +179,7 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($reportRows as $row) {
 
             // last field is used only for ordering purpose
             $rowlen = count($row) - 1;
@@ -194,7 +188,7 @@
             printf('<tr id="row-%d">', $count);
 
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
                 printf("<td>%s</td>", $row[$i]);
             }
 
@@ -237,11 +231,18 @@
         close_tab_wrapper();
 
     } else {
-        $failureMsg = "Nothing to display";
-        include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
+        $failureMsg = $failureMsg ?? "Nothing to display";
+        include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+
+    if (isset($failureMsg)) {
+        include_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/actionMessages.php';
+    }
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
+    if (isset($failureMsg) || empty($numrows)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($reportPDO, $reportRows);
     print_footer_and_html_epilogue();

@@ -33,6 +33,47 @@ $userpassword=1;
 # Our own path
 $loginpath = $_SERVER['PHP_SELF'];
 
+# Escape values reflected into HTML or inline JavaScript. Chilli supplies
+# these on the query string of the pre-auth login page, so they are not trusted.
+if (!function_exists('dalo_chilli_text')) {
+    function dalo_chilli_text($value) {
+        $text = (string) $value;
+        if (!mb_check_encoding($text, 'UTF-8')) {
+            $text = mb_convert_encoding($text, 'UTF-8', 'ISO-8859-1');
+        }
+        $clean = iconv('UTF-8', 'UTF-8//IGNORE', $text);
+        return $clean === false ? '' : $clean;
+    }
+}
+if (!function_exists('dalo_chilli_html')) {
+    function dalo_chilli_html($value) {
+        return htmlspecialchars(dalo_chilli_text($value), ENT_QUOTES, 'UTF-8');
+    }
+}
+if (!function_exists('dalo_chilli_js')) {
+    function dalo_chilli_js($value) {
+        $json = json_encode(dalo_chilli_text($value), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES);
+        return $json === false ? "''" : $json;
+    }
+}
+if (!function_exists('dalo_chilli_http_url')) {
+    function dalo_chilli_http_url($value) {
+        $url = dalo_chilli_text($value);
+        $parts = parse_url($url);
+        if (!is_array($parts) || empty($parts['scheme']) || empty($parts['host'])) {
+            return '';
+        }
+        if (!in_array(strtolower($parts['scheme']), array('http', 'https'), true)) {
+            return '';
+        }
+        if (strpbrk($url, "\r\n\t") !== false) {
+            return '';
+        }
+        return $url;
+    }
+}
+
+
 $ChilliSpot="ChilliSpot";
 $title="$ChilliSpot Login";
 $centerUsername="Username";
@@ -154,10 +195,15 @@ if ($button == 'Login') {
   <title>$title</title>
   <meta http-equiv=\"Cache-control\" content=\"no-cache\">
   <meta http-equiv=\"Pragma\" content=\"no-cache\">";
+  $uam_host = dalo_chilli_html($uamip);
+  $uam_port = dalo_chilli_html($uamport);
+  $uam_user = dalo_chilli_html($username);
+  $uam_pass = dalo_chilli_html($pappassword);
+  $uam_userurl = dalo_chilli_html($userurl);
   if (isset($uamsecret) && isset($userpassword)) {
-    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uamip:$uamport/logon?username=$username&password=$pappassword\">";
+    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uam_host:$uam_port/logon?username=$uam_user&password=$uam_pass\">";
   } else {
-    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uamip:$uamport/logon?username=$username&response=$response&userurl=$userurl\">";
+    echo "  <meta http-equiv=\"refresh\" content=\"0;url=http://$uam_host:$uam_port/logon?username=$uam_user&response=$response&userurl=$uam_userurl\">";
   }
   echo "</head>
 <body bgColor = '#c0d8f4'>
@@ -176,9 +222,9 @@ if ($button == 'Login') {
 <ResponseCode>201</ResponseCode>
 ";
   if (isset($uamsecret) && isset($userpassword)) {
-    echo "<LoginResultsURL>http://$uamip:$uamport/logon?username=$username&password=$pappassword</LoginResultsURL>";
+    echo "<LoginResultsURL>http://$uam_host:$uam_port/logon?username=$uam_user&password=$uam_pass</LoginResultsURL>";
   } else {
-    echo "<LoginResultsURL>http://$uamip:$uamport/logon?username=$username&response=$response&userurl=$userurl</LoginResultsURL>";
+    echo "<LoginResultsURL>http://$uam_host:$uam_port/logon?username=$uam_user&response=$response&userurl=$uam_userurl</LoginResultsURL>";
   }
   echo "</AuthenticationReply> 
 </WISPAccessGatewayParam>
@@ -225,12 +271,18 @@ if ($result == 0) {
 
 # Generate the output
 #echo "Content-type: text/html\n\n";
+$js_result = (int) $result;
+$js_popup = dalo_chilli_js($loginpath . '?res=popup2&uamip=' . $uamip . '&uamport=' . $uamport . '&userurl=' . $userurl . '&redirurl=' . $redirurl . '&timeleft=' . $timeleft);
+$js_userurl = dalo_chilli_js($userurldecode);
+$js_redirurl = dalo_chilli_js(dalo_chilli_http_url($redirurldecode));
+$js_timeleft = dalo_chilli_js($timeleft);
 echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
 <html>
 <head>
   <title>$title</title>
   <meta http-equiv=\"Cache-control\" content=\"no-cache\">
   <meta http-equiv=\"Pragma\" content=\"no-cache\">
+  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
   <SCRIPT LANGUAGE=\"JavaScript\">
     var blur = 0;
     var starttime = new Date();
@@ -244,7 +296,7 @@ echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
       if (mytimeleft) {
         time = mytimeleft - time;
         if (time <= 0) {
-          window.location = \"$loginpath?res=popup3&uamip=$uamip&uamport=$uamport\";
+          window.location = " . dalo_chilli_js($loginpath . '?res=popup3&uamip=' . $uamip . '&uamport=' . $uamport) . ";
         }
       }
       if (time < 0) time = 0;
@@ -320,7 +372,7 @@ echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
     }
   </script>
 </head>
-<body onLoad=\"javascript:doOnLoad($result, '$loginpath?res=popup2&uamip=$uamip&uamport=$uamport&userurl=$userurl&redirurl=$redirurl&timeleft=$timeleft','$userurldecode', '$redirurldecode', '$timeleft')\" onBlur = 'javascript:doOnBlur($result)' bgColor = '#c0d8f4'>";
+<body onLoad='javascript:doOnLoad($js_result, $js_popup, $js_userurl, $js_redirurl, $js_timeleft)' onBlur = 'javascript:doOnBlur($js_result)' bgColor = '#c0d8f4'>";
 
 /*# begin debugging
   print "<center>THE INPUT (for debugging):<br>";
@@ -334,7 +386,7 @@ if ($result == 2) {
     echo "
   <h1 style=\"text-align: center;\">$h1Failed</h1>";
     if ($reply) {
-    echo "<center> $reply </BR></BR></center>";
+    echo "<center> " . dalo_chilli_html($reply) . " </BR></BR></center>";
     }
 }
 
@@ -344,12 +396,18 @@ if ($result == 5) {
 }
 
 if ($result == 2 || $result == 5) {
+  $form_action = dalo_chilli_html($loginpath);
+  $hidden_challenge = dalo_chilli_html($challenge);
+  $hidden_uamip = dalo_chilli_html($uamip);
+  $hidden_uamport = dalo_chilli_html($uamport);
+  $hidden_userurl = dalo_chilli_html($userurl);
+  $popup_url = dalo_chilli_js($loginpath . '?res=popup1&uamip=' . $uamip . '&uamport=' . $uamport);
   echo "
-  <form name=\"form1\" method=\"post\" action=\"$loginpath\">
-  <input type=\"hidden\" name=\"challenge\" value=\"$challenge\">
-  <input type=\"hidden\" name=\"uamip\" value=\"$uamip\">
-  <input type=\"hidden\" name=\"uamport\" value=\"$uamport\">
-  <input type=\"hidden\" name=\"userurl\" value=\"$userurl\">
+  <form name=\"form1\" method=\"post\" action=\"$form_action\">
+  <input type=\"hidden\" name=\"challenge\" value=\"$hidden_challenge\">
+  <input type=\"hidden\" name=\"uamip\" value=\"$hidden_uamip\">
+  <input type=\"hidden\" name=\"uamport\" value=\"$hidden_uamport\">
+  <input type=\"hidden\" name=\"userurl\" value=\"$hidden_userurl\">
   <center>
   <table border=\"0\" cellpadding=\"5\" cellspacing=\"0\" style=\"width: 217px;\">
     <tbody>
@@ -362,7 +420,7 @@ if ($result == 2 || $result == 5) {
         <td><input style=\"font-family: Arial\" type=\"password\" name=\"Password\" size=\"20\" maxlength=\"128\"></td>
       </tr>
       <tr>
-        <td align=\"center\" colspan=\"2\" height=\"23\"><input type=\"submit\" name=\"button\" value=\"Login\" onClick=\"javascript:popUp('$loginpath?res=popup1&uamip=$uamip&uamport=$uamport')\"></td> 
+        <td align=\"center\" colspan=\"2\" height=\"23\"><input type=\"submit\" name=\"button\" value=\"Login\" onClick='javascript:popUp($popup_url)'></td> 
       </tr>
     </tbody>
   </table>
@@ -377,22 +435,24 @@ if ($result == 1) {
   <h1 style=\"text-align: center;\">$h1Loggedin</h1>";
 
   if ($reply) { 
-      echo "<center> $reply </br></br></center>";
+      echo "<center> " . dalo_chilli_html($reply) . " </br></br></center>";
   }
 
+  $logoff = dalo_chilli_html("http://$uamip:$uamport/logoff");
   echo "
   <center>
-    <a href=\"http://$uamip:$uamport/logoff\">Logout</a>
+    <a href=\"$logoff\">Logout</a>
   </center>
 </body>
 </html>";
 }
 
 if (($result == 4) || ($result == 12)) {
+  $logoff = dalo_chilli_html("http://$uamip:$uamport/logoff");
   echo "
   <h1 style=\"text-align: center;\">$h1Loggedin</h1>
   <center>
-    <a href=\"http://$uamip:$uamport/logoff\">$centerLogout</a>
+    <a href=\"$logoff\">$centerLogout</a>
   </center>
 </body>
 </html>";
@@ -411,10 +471,11 @@ if ($result == 11) {
 
 
 if (($result == 3) || ($result == 13)) {
+  $prelogin_url = dalo_chilli_html("http://$uamip:$uamport/prelogin");
   echo "
   <h1 style=\"text-align: center;\">$h1Loggedout</h1>
   <center>
-    <a href=\"http://$uamip:$uamport/prelogin\">$centerLogin</a>
+    <a href=\"$prelogin_url\">$centerLogin</a>
   </center>
 </body>
 </html>";

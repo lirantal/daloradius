@@ -29,7 +29,7 @@
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LANG'], 'main.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'validation.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'layout.php' ]);
- 
+
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'functions.php' ]);
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
     include_once implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'populate_selectbox.php' ]);
@@ -54,321 +54,358 @@
     $generatedPasswords = array();
     $generatedCredentials = array();
 
+    $authType = array_keys($valid_authTypes)[0];
+    $groups = array();
+    $planName = $csvdata = $simpleList = '';
+    $passwordType = $valid_passwordTypes[0];
+    $enableportallogin = 0;
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+        if (array_key_exists('csrf_token', $_POST) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
+            require_once __DIR__ . '/library/user_create.php';
+            $dbSocket = null;
+            $previousNotification = $_SESSION['notification'] ?? null;
+            try {
+                dalo_create_request($_POST);
 
-            $authType = $_POST['authType'] ?? array_keys($valid_authTypes)[0];
-            $authType = in_array($authType, array_keys($valid_authTypes)) ? $authType : array_keys($valid_authTypes)[0];
+                $authType = $_POST['authType'] ?? array_keys($valid_authTypes)[0];
+                $authType = in_array($authType, array_keys($valid_authTypes)) ? $authType : array_keys($valid_authTypes)[0];
 
-            $planName = $_POST['planName'] ?? '';
-            $planName = in_array($planName, $valid_planNames) ? $planName : '';
+                $planName = $_POST['planName'] ?? '';
+                $planName = in_array($planName, $valid_planNames) ? $planName : '';
 
-            $groups = $_POST['groups'] ?? [];
+                $groups = $_POST['groups'] ?? [];
 
-            $csvdata = $_POST['csvdata'] ?? '';
-            $csvFormattedData = !empty($csvdata) ? explode("\n", $csvdata) : [];
+                $csvdata = $_POST['csvdata'] ?? '';
+                $csvFormattedData = !empty($csvdata) ? explode("\n", $csvdata) : [];
 
-            $simpleList = $_POST['simpleList'] ?? '';
-            $simpleListData = !empty($simpleList) ? explode("\n", $simpleList) : [];
+                $simpleList = $_POST['simpleList'] ?? '';
+                $simpleListData = !empty($simpleList) ? explode("\n", $simpleList) : [];
 
-            $enableportallogin = $_POST['enableportallogin'] ?? 'no';
-            $enableportallogin = ($enableportallogin === 'no') ? 0 : 1;
+                $enableportallogin = $_POST['enableportallogin'] ?? 'no';
+                $enableportallogin = ($enableportallogin === 'no') ? 0 : 1;
 
-            $generatepassword = (isset($_POST['generatepassword']) && $_POST['generatepassword'] === 'yes')
-                              ? 'yes' : 'no';
+                $generatepassword = (isset($_POST['generatepassword']) && $_POST['generatepassword'] === 'yes')
+                                  ? 'yes' : 'no';
 
-            $data = array();
-            $passwordType = "";
+                $data = array();
+                $passwordType = "";
 
-            if (count($csvFormattedData) > 0) {
+                if (count($csvFormattedData) > 0) {
 
-                $passwordType = (array_key_exists('passwordType', $_POST) && isset($_POST['passwordType']) &&
-                                 in_array($_POST['passwordType'], $valid_passwordTypes))
-                              ? $_POST['passwordType'] : $valid_passwordTypes[0];
+                    $passwordType = (array_key_exists('passwordType', $_POST) && isset($_POST['passwordType']) &&
+                                     in_array($_POST['passwordType'], $valid_passwordTypes))
+                                  ? $_POST['passwordType'] : $valid_passwordTypes[0];
 
-                foreach ($csvFormattedData as $csvLine) {
+                    foreach ($csvFormattedData as $csvLine) {
 
-                    $passwordGenerated = false;
-                    $arr = str_getcsv($csvLine, ",");
+                        if (trim($csvLine) === '') { continue; }
+                        $passwordGenerated = false;
+                        $arr = str_getcsv($csvLine, ",");
 
-                    // Support 5-20 fields:
-                    // Required (5): username, password, email, firstname, lastname
-                    // Optional (15): framedipaddress, expiration, department, company, mobilephone,
-                    //                workphone, homephone, address, city, state, country, zip,
-                    //                sessiontimeout, idletimeout, maxdailysession
-                    if (count($arr) < 5 || count($arr) > 20) {
-                        continue;
-                    }
-
-                    // Pad to 20 fields with empty strings
-                    list($username, $password, $email, $firstname, $lastname, $framedipaddress, $expiration,
-                         $department, $company, $mobilephone, $workphone, $homephone, $address, $city, $state,
-                         $country, $zip, $sessiontimeout, $idletimeout, $maxdailysession) = array_pad($arr, 20, '');
-
-                    $username = trim($username);
-                    $password = trim($password);
-                    $email = trim($email);
-                    $firstname = trim($firstname);
-                    $lastname = trim($lastname);
-                    $framedipaddress = trim($framedipaddress);
-                    $expiration = trim($expiration);
-                    $department = trim($department);
-                    $company = trim($company);
-                    $mobilephone = trim($mobilephone);
-                    $workphone = trim($workphone);
-                    $homephone = trim($homephone);
-                    $address = trim($address);
-                    $city = trim($city);
-                    $state = trim($state);
-                    $country = trim($country);
-                    $zip = trim($zip);
-                    $sessiontimeout = trim($sessiontimeout);
-                    $idletimeout = trim($idletimeout);
-                    $maxdailysession = trim($maxdailysession);
-
-                    if ($generatepassword === 'yes' && $password === '') {
-                        $password = createPassword(8, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] ?? '');
-                        $passwordGenerated = true;
-                    }
-
-                    // Validate IP address format if provided
-                    if (!empty($framedipaddress) && preg_match(IP_REGEX, $framedipaddress) !== 1) {
-                        continue; // Skip invalid IP
-                    }
-
-                    // Convert expiration date from Y-m-d to d M Y format (FreeRADIUS format)
-                    if (!empty($expiration)) {
-                        $expirationDate = DateTime::createFromFormat('Y-m-d', $expiration);
-                        $errors = DateTime::getLastErrors();
-
-                        // ensure strict parsing: no errors/warnings and no normalization
-                        if ($expirationDate === false
-                            || !empty($errors['warning_count'])
-                            || !empty($errors['error_count'])
-                            || $expirationDate->format('Y-m-d') !== $expiration) {
-                            continue; // Skip invalid date
+                        // Support 5-20 fields:
+                        // Required (5): username, password, email, firstname, lastname
+                        // Optional (15): framedipaddress, expiration, department, company, mobilephone,
+                        //                workphone, homephone, address, city, state, country, zip,
+                        //                sessiontimeout, idletimeout, maxdailysession
+                        if (count($arr) < 5 || count($arr) > 20) {
+                            throw new InvalidArgumentException('Invalid import row');
                         }
 
-                        $expiration = $expirationDate->format('d M Y');
-                    }
+                        // Pad to 20 fields with empty strings
+                        list($username, $password, $email, $firstname, $lastname, $framedipaddress, $expiration,
+                             $department, $company, $mobilephone, $workphone, $homephone, $address, $city, $state,
+                             $country, $zip, $sessiontimeout, $idletimeout, $maxdailysession) = array_pad($arr, 20, '');
 
-                    // Validate timeout fields (must be numeric if provided)
-                    if (!empty($sessiontimeout) && !is_numeric($sessiontimeout)) {
-                        continue;
-                    }
-                    if (!empty($idletimeout) && !is_numeric($idletimeout)) {
-                        continue;
-                    }
-                    if (!empty($maxdailysession) && !is_numeric($maxdailysession)) {
-                        continue;
-                    }
+                        $username = trim($username);
+                        $password = trim($password);
+                        $email = trim($email);
+                        $firstname = trim($firstname);
+                        $lastname = trim($lastname);
+                        $framedipaddress = trim($framedipaddress);
+                        $expiration = trim($expiration);
+                        $department = trim($department);
+                        $company = trim($company);
+                        $mobilephone = trim($mobilephone);
+                        $workphone = trim($workphone);
+                        $homephone = trim($homephone);
+                        $address = trim($address);
+                        $city = trim($city);
+                        $state = trim($state);
+                        $country = trim($country);
+                        $zip = trim($zip);
+                        $sessiontimeout = trim($sessiontimeout);
+                        $idletimeout = trim($idletimeout);
+                        $maxdailysession = trim($maxdailysession);
 
-                    if (preg_match(EMAIL_LIKE_USERNAME_REGEX, $username) === 1 &&
-                        preg_match(SAFE_PASSWORD_REGEX, $password) === 1 &&
-                        preg_match(FIRST_LAST_NAME_REGEX, $firstname) === 1 &&
-                        preg_match(FIRST_LAST_NAME_REGEX, $lastname) === 1 &&
-                        !array_key_exists($username, $data)) {
-                        $data[$username] = array( $password, $email, $firstname, $lastname, $framedipaddress, $expiration,
-                                                  $department, $company, $mobilephone, $workphone, $homephone,
-                                                  $address, $city, $state, $country, $zip,
-                                                  $sessiontimeout, $idletimeout, $maxdailysession );
+                        if ($generatepassword === 'yes' && $password === '') {
+                            $password = createPassword(8, $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] ?? '');
+                            $passwordGenerated = true;
+                        }
 
-                        if ($passwordGenerated) {
-                            $generatedPasswords[$username] = $password;
+                        // Validate IP address format if provided
+                        if (!empty($framedipaddress) && preg_match(IP_REGEX, $framedipaddress) !== 1) {
+                            throw new InvalidArgumentException('Invalid import row');
+                        }
+
+                        // Convert expiration date from Y-m-d to d M Y format (FreeRADIUS format)
+                        if (!empty($expiration)) {
+                            $expirationDate = DateTime::createFromFormat('Y-m-d', $expiration);
+                            $errors = DateTime::getLastErrors();
+
+                            // ensure strict parsing: no errors/warnings and no normalization
+                            if ($expirationDate === false
+                                || !empty($errors['warning_count'])
+                                || !empty($errors['error_count'])
+                                || $expirationDate->format('Y-m-d') !== $expiration) {
+                                throw new InvalidArgumentException('Invalid import row');
+                            }
+
+                            $expiration = $expirationDate->format('d M Y');
+                        }
+
+                        // Validate timeout fields (must be numeric if provided)
+                        if (!empty($sessiontimeout) && !is_numeric($sessiontimeout)) {
+                            throw new InvalidArgumentException('Invalid import row');
+                        }
+                        if (!empty($idletimeout) && !is_numeric($idletimeout)) {
+                            throw new InvalidArgumentException('Invalid import row');
+                        }
+                        if (!empty($maxdailysession) && !is_numeric($maxdailysession)) {
+                            throw new InvalidArgumentException('Invalid import row');
+                        }
+
+                        if (preg_match(EMAIL_LIKE_USERNAME_REGEX, $username) === 1 &&
+                            preg_match(SAFE_PASSWORD_REGEX, $password) === 1 &&
+                            preg_match(FIRST_LAST_NAME_REGEX, $firstname) === 1 &&
+                            preg_match(FIRST_LAST_NAME_REGEX, $lastname) === 1 &&
+                            !array_key_exists($username, $data)) {
+                            $data[$username] = array( $password, $email, $firstname, $lastname, $framedipaddress, $expiration,
+                                                      $department, $company, $mobilephone, $workphone, $homephone,
+                                                      $address, $city, $state, $country, $zip,
+                                                      $sessiontimeout, $idletimeout, $maxdailysession );
+
+                            if ($passwordGenerated) {
+                                $generatedPasswords[$username] = $password;
+                            }
+                        } else {
+                            throw new InvalidArgumentException('Invalid or duplicate import row');
                         }
                     }
+
+
+                } else if (count($simpleListData) > 0) {
+
+                    $passwordType = "Auth-Type";
+
+                    foreach ($simpleListData as $simpleLine) {
+                        if (trim($simpleLine) === '') { continue; }
+                        $arr = explode(",", $simpleLine);
+
+                        if (count($arr) != 4) {
+                            throw new InvalidArgumentException('Invalid simple import row');
+                        }
+
+                        list($username, $email, $firstname, $lastname) = $arr;
+                        $username = trim($username);
+                        $email = trim($email);
+                        $firstname = trim($firstname);
+                        $lastname = trim($lastname);
+
+                        // Validate username as MAC address or PIN code
+                        $isValidMacOrPin = (preg_match(MACADDR_REGEX, $username) === 1 ||
+                                            preg_match(PINCODE_REGEX, $username) === 1 ||
+                                            preg_match(IP_REGEX, $username) === 1);
+
+                        if ($isValidMacOrPin && !array_key_exists($username, $data)) {
+                            $data[$username] = array( "Accept", $email, $firstname, $lastname );
+                        } else {
+                            throw new InvalidArgumentException('Invalid or duplicate simple import row');
+                        }
+
+                    }
+
                 }
 
+                if (count($data) > 0 && !empty($passwordType)) {
 
-            } else if (count($simpleListData) > 0) {
+                    $current_datetime = date('Y-m-d H:i:s');
+                    $currBy = $_SESSION['operator_user'];
 
-                $passwordType = "Auth-Type";
-                
-                foreach ($simpleListData as $simpleLine) {
-                    $arr = explode(",", $simpleLine);
+                    $dbSocket = dalo_create_begin($configValues);
+                    include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
 
-                    if (count($arr) != 4) {
-                        continue;
-                    }
-                    
-                    list($username, $email, $firstname, $lastname) = $arr;
-                    $username = trim($username);
-                    $email = trim($email);
-                    $firstname = trim($firstname);
-                    $lastname = trim($lastname);
-                    
-                    // Validate username as MAC address or PIN code
-                    $isValidMacOrPin = (preg_match(MACADDR_REGEX, $username) === 1 || 
-                                        preg_match(PINCODE_REGEX, $username) === 1 ||
-                                        preg_match(IP_REGEX, $username) === 1);
-                    
-                    if ($isValidMacOrPin && !array_key_exists($username, $data)) {
-                        $data[$username] = array( "Accept", $email, $firstname, $lastname );
-                    }
+                    $counter = 0;
+                    foreach ($data as $subject => $arr) {
+                        $subject = (string)$subject;
+                        list( $value, $email, $firstname, $lastname, $framedipaddress, $expiration,
+                              $department, $company, $mobilephone, $workphone, $homephone,
+                              $address, $city, $state, $country, $zip,
+                              $sessiontimeout, $idletimeout, $maxdailysession ) = array_pad($arr, 19, '');
 
-                }
-
-            }
-
-            if (count($data) > 0 && !empty($passwordType)) {
-
-                $current_datetime = date('Y-m-d H:i:s');
-                $currBy = $_SESSION['operator_user'];
-
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_LIBRARY'], 'attributes.php' ]);
-
-                $counter = 0;
-                foreach ($data as $subject => $arr) {
-                    list( $value, $email, $firstname, $lastname, $framedipaddress, $expiration,
-                          $department, $company, $mobilephone, $workphone, $homephone,
-                          $address, $city, $state, $country, $zip,
-                          $sessiontimeout, $idletimeout, $maxdailysession ) = $arr;
-
-                    // skipping this user if it exists
-                    if (user_exists($dbSocket, $subject)) {
-                        continue;
-                    }
-
-                    // FORCE Auth-Type := Accept for Auth-Type passwordType (MAC/PIN)
-                    if ($passwordType === 'Auth-Type') {
-                        if (!insert_single_attribute($dbSocket, $subject, 'Auth-Type', ':=', 'Accept')) {
+                        // skipping this user if it exists
+                        dalo_create_name((string)$subject);
+                        if (dalo_create_collision($dbSocket, $configValues, (string)$subject)) {
                             continue;
                         }
+
+                        // FORCE Auth-Type := Accept for Auth-Type passwordType (MAC/PIN)
+                        if ($passwordType === 'Auth-Type') {
+                            if (!insert_single_attribute($dbSocket, $subject, 'Auth-Type', ':=', 'Accept')) {
+                                continue;
+                            }
+                        } else {
+                            $hashed_value = hashPasswordAttribute($passwordType, $value);
+                            if (!insert_single_attribute($dbSocket, $subject, $passwordType, ':=', $hashed_value)) {
+                                continue;
+                            }
+                        }
+
+                        // Insert Framed-IP-Address (radreply table)
+                        if (!empty($framedipaddress)) {
+                            insert_single_attribute($dbSocket, $subject, 'Framed-IP-Address', ':=', $framedipaddress, $configValues['CONFIG_DB_TBL_RADREPLY']);
+                        }
+
+                        // Insert Expiration (radcheck table)
+                        if (!empty($expiration)) {
+                            insert_single_attribute($dbSocket, $subject, 'Expiration', ':=', $expiration, $configValues['CONFIG_DB_TBL_RADCHECK']);
+                        }
+
+                        // Insert Session-Timeout (radreply table)
+                        if (!empty($sessiontimeout)) {
+                            insert_single_attribute($dbSocket, $subject, 'Session-Timeout', ':=', $sessiontimeout, $configValues['CONFIG_DB_TBL_RADREPLY']);
+                        }
+
+                        // Insert Idle-Timeout (radreply table)
+                        if (!empty($idletimeout)) {
+                            insert_single_attribute($dbSocket, $subject, 'Idle-Timeout', ':=', $idletimeout, $configValues['CONFIG_DB_TBL_RADREPLY']);
+                        }
+
+                        // Insert Max-Daily-Session (radcheck table)
+                        if (!empty($maxdailysession)) {
+                            insert_single_attribute($dbSocket, $subject, 'Max-Daily-Session', ':=', $maxdailysession, $configValues['CONFIG_DB_TBL_RADCHECK']);
+                        }
+
+                        // adding user info
+                        $params = array(
+                                            "creationdate" => $current_datetime,
+                                            "creationby" => $currBy,
+                                       );
+
+                        if ($authType == 'userAuth') {
+                            if ($enableportallogin === 1) {
+                                $params["portalloginpassword"] = $value;
+                            }
+                            $params["enableportallogin"] = $enableportallogin;
+                            $params["changeuserinfo"] = $enableportallogin;
+                        }
+
+                        if (!empty($firstname) && preg_match(FIRST_LAST_NAME_REGEX, $firstname)) {
+                            $params["firstname"] = $firstname;
+                        }
+
+                        if (!empty($lastname) && preg_match(FIRST_LAST_NAME_REGEX, $lastname)) {
+                            $params["lastname"] = $lastname;
+                        }
+
+                        if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            $params["email"] = $email;
+                        }
+
+                        // Priority 1: Additional user info fields
+                        if (!empty($department)) {
+                            $params["department"] = $department;
+                        }
+
+                        if (!empty($company)) {
+                            $params["company"] = $company;
+                        }
+
+                        if (!empty($mobilephone)) {
+                            $params["mobilephone"] = $mobilephone;
+                        }
+
+                        if (!empty($workphone)) {
+                            $params["workphone"] = $workphone;
+                        }
+
+                        if (!empty($homephone)) {
+                            $params["homephone"] = $homephone;
+                        }
+
+                        // Priority 4: Location info fields
+                        if (!empty($address)) {
+                            $params["address"] = $address;
+                        }
+
+                        if (!empty($city)) {
+                            $params["city"] = $city;
+                        }
+
+                        if (!empty($state)) {
+                            $params["state"] = $state;
+                        }
+
+                        if (!empty($country)) {
+                            $params["country"] = $country;
+                        }
+
+                        if (!empty($zip)) {
+                            $params["zip"] = $zip;
+                        }
+
+                        $addedUserInfo = add_user_info($dbSocket, $subject, $params);
+
+                        $groupsCount = insert_multiple_user_group_mappings($dbSocket, $subject, $groups);
+
+                        // adding billing info
+                        if (!empty($planName)) {
+                            $params["planName"] = $planName;
+
+                            $addedBillingInfo = add_user_billing_info($dbSocket, $subject, $params);
+                        }
+
+                        if (array_key_exists($subject, $generatedPasswords)) {
+                            $generatedCredentials[] = array($subject, $generatedPasswords[$subject]);
+                        }
+
+                        $counter++;
+                    }
+
+
+
+                    if ($counter > 0) {
+                        $successMsg = "Successfully imported a total of <b>$counter</b> users to database";
+                        $logAction .= "Successfully imported a total of <b>$counter</b> users to database on page: ";
                     } else {
-                        $hashed_value = hashPasswordAttribute($passwordType, $value);
-                        if (!insert_single_attribute($dbSocket, $subject, $passwordType, ':=', $hashed_value)) {
-                            continue;
-                        }
+                        $failureMsg = "No users have been imported to database";
+                        $logAction .= "No users have been imported to database on page: ";
                     }
 
-                    // Insert Framed-IP-Address (radreply table)
-                    if (!empty($framedipaddress)) {
-                        insert_single_attribute($dbSocket, $subject, 'Framed-IP-Address', ':=', $framedipaddress, $configValues['CONFIG_DB_TBL_RADREPLY']);
-                    }
-
-                    // Insert Expiration (radcheck table)
-                    if (!empty($expiration)) {
-                        insert_single_attribute($dbSocket, $subject, 'Expiration', ':=', $expiration, $configValues['CONFIG_DB_TBL_RADCHECK']);
-                    }
-
-                    // Insert Session-Timeout (radreply table)
-                    if (!empty($sessiontimeout)) {
-                        insert_single_attribute($dbSocket, $subject, 'Session-Timeout', ':=', $sessiontimeout, $configValues['CONFIG_DB_TBL_RADREPLY']);
-                    }
-
-                    // Insert Idle-Timeout (radreply table)
-                    if (!empty($idletimeout)) {
-                        insert_single_attribute($dbSocket, $subject, 'Idle-Timeout', ':=', $idletimeout, $configValues['CONFIG_DB_TBL_RADREPLY']);
-                    }
-
-                    // Insert Max-Daily-Session (radcheck table)
-                    if (!empty($maxdailysession)) {
-                        insert_single_attribute($dbSocket, $subject, 'Max-Daily-Session', ':=', $maxdailysession, $configValues['CONFIG_DB_TBL_RADCHECK']);
-                    }
-
-                    // adding user info
-                    $params = array(
-                                        "creationdate" => $current_datetime,
-                                        "creationby" => $currBy,
-                                   );
-
-                    if ($authType == 'userAuth') {
-                        if ($enableportallogin === 1) {
-                            $params["portalloginpassword"] = $value;
-                        }
-                        $params["enableportallogin"] = $enableportallogin;
-                        $params["changeuserinfo"] = $enableportallogin;
-                    }
-
-                    if (!empty($firstname) && preg_match(FIRST_LAST_NAME_REGEX, $firstname)) {
-                        $params["firstname"] = $firstname;
-                    }
-
-                    if (!empty($lastname) && preg_match(FIRST_LAST_NAME_REGEX, $lastname)) {
-                        $params["lastname"] = $lastname;
-                    }
-
-                    if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        $params["email"] = $email;
-                    }
-
-                    // Priority 1: Additional user info fields
-                    if (!empty($department)) {
-                        $params["department"] = $department;
-                    }
-
-                    if (!empty($company)) {
-                        $params["company"] = $company;
-                    }
-
-                    if (!empty($mobilephone)) {
-                        $params["mobilephone"] = $mobilephone;
-                    }
-
-                    if (!empty($workphone)) {
-                        $params["workphone"] = $workphone;
-                    }
-
-                    if (!empty($homephone)) {
-                        $params["homephone"] = $homephone;
-                    }
-
-                    // Priority 4: Location info fields
-                    if (!empty($address)) {
-                        $params["address"] = $address;
-                    }
-
-                    if (!empty($city)) {
-                        $params["city"] = $city;
-                    }
-
-                    if (!empty($state)) {
-                        $params["state"] = $state;
-                    }
-
-                    if (!empty($country)) {
-                        $params["country"] = $country;
-                    }
-
-                    if (!empty($zip)) {
-                        $params["zip"] = $zip;
-                    }
-
-                    $addedUserInfo = add_user_info($dbSocket, $subject, $params);
-
-                    $groupsCount = insert_multiple_user_group_mappings($dbSocket, $subject, $groups);
-
-                    // adding billing info
-                    if (!empty($planName)) {
-                        $params["planName"] = $planName;
-
-                        $addedBillingInfo = add_user_billing_info($dbSocket, $subject, $params);
-                    }
-
-                    if (array_key_exists($subject, $generatedPasswords)) {
-                        $generatedCredentials[] = array($subject, $generatedPasswords[$subject]);
-                    }
-
-                    $counter++;
-                }
-
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
-
-                if ($counter > 0) {
-                    $successMsg = "Successfully imported a total of <b>$counter</b> users to database";
-                    $logAction .= "Successfully imported a total of <b>$counter</b> users to database on page: ";
                 } else {
-                    $failureMsg = "No users have been imported to database";
-                    $logAction .= "No users have been imported to database on page: ";
+                    // invalid data
+                    $failureMsg = "Empty or invalid data provided";
+                    $logAction .= "Empty or invalid data provided on page: ";
                 }
 
-            } else {
-                // invalid data
-                $failureMsg = "Empty or invalid data provided";
-                $logAction .= "Empty or invalid data provided on page: ";
+                if ($dbSocket instanceof PDO && $dbSocket->inTransaction()) {
+                    if (!empty($successMsg)) {
+                        if (!$dbSocket->commit()) { throw new RuntimeException('Could not commit creation'); }
+                    }
+                    else { $dbSocket->rollBack(); }
+                }
+            } catch (Throwable $exception) {
+                if ($dbSocket instanceof PDO && $dbSocket->inTransaction()) { $dbSocket->rollBack(); }
+                unset($successMsg);
+                if ($previousNotification !== null) { $_SESSION['notification'] = $previousNotification; }
+                else { unset($_SESSION['notification']); }
+                $generatedCredentials = array();
+                $failureMsg = 'Unable to create or import users: invalid input or database operation failed';
+                $logAction = 'User creation/import failed on page: ';
+            } finally {
+                // Nonpersistent PDO teardown releases the advisory creation lock.
+                $dbSocket = null;
             }
-
         } else {
             // csrf
             $failureMsg = "CSRF token error";
@@ -579,7 +616,7 @@
         close_fieldset();
 
         $input_descriptors3 = array();
-        
+
         $input_descriptors3[] = array(
                                         "name" => "csrf_token",
                                         "type" => "hidden",

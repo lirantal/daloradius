@@ -32,7 +32,7 @@ include_once("../common/includes/validation.php");
 $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
                  strtolower($configValues['CONFIG_IFACE_AUTO_COMPLETE']) === "yes");
 
-global $startdate, $enddate, $valid_vendorTypes, $billing_paypal_vendor_type, $billing_paypal_payeremail,
+global $billing_paypal_paymentstatus, $startdate, $enddate, $valid_vendorTypes, $billing_paypal_vendor_type, $billing_paypal_payeremail,
        $valid_paymentStatus, $bill_merchant_transactions_options_all, $bill_merchant_transactions_options_default,
        $sqlfields, $orderBy, $orderType;
 

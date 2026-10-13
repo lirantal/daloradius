@@ -33,95 +33,36 @@
     $logDebugSQL = "";
 
     
-    include('../common/includes/db_open.php');
-
-    // load valid_ids
-    $sql = sprintf("SELECT id FROM %s", $configValues['CONFIG_DB_TBL_RADGROUPREPLY']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    $valid_ids = array();
-    while ($row = $res->fetchrow()) {
-        $valid_ids[] = intval($row[0]);
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            
-            $arr = (!is_array($_POST['record_id'])) ? array( trim($_POST['record_id']) ) : $_POST['record_id'];
-            
-            
-            if (count($arr) > 0) {
-                
-                $ids = array();
-                
-                // pre-validate
-                foreach ($arr as $id) {
-                    
-                    $m = array();
-                    if (preg_match("/^record-([0-9]+)$/", $id, $m) === false) {
-                        continue;
-                    }
-                    
-                    $id = intval($m[1]);
-                    if (in_array($id, $valid_ids) && !in_array($id, $ids)) {
-                        $ids[] = $id;
-                    }
-                }
-                
-                // execute delete
-                if (count($ids) > 0) {
-                    
-                    $sql = sprintf("DELETE FROM %s WHERE id IN (%s)",
-                                   $configValues['CONFIG_DB_TBL_RADGROUPREPLY'], implode(", ", $ids));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-                    
-                    if (!DB::isError($res)) {
-                        $successMsg = sprintf("Deleted %s groupreply record(s)", $res);
-                        $logAction .= "$successMsg on page: ";
-                    } else {
-                        // DB Error
-                        $successMsg = "Error when deleting groupreply record(s)";
-                        $logAction .= "$successMsg on page: ";
-                    }
-                    
-                } else {
-                    // invalid
-                    $failureMsg = "Empty or invalid groupreply elements list";
-                    $logAction .= sprintf("Failed deleting groupreply elements list [%s] on page: ", $failureMsg);
-                }
-                
-            } else {
-                // invalid
-                $failureMsg = "Empty or invalid groupreply elements list";
-                $logAction .= sprintf("Failed deleting groupreply elements list [%s] on page: ", $failureMsg);
-            }
-            
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
-        }
-    }
-
-
+    require_once __DIR__ . '/library/group_profiles_pdo.php';
+    $pdo = null;
     $options = array();
     $options_format = "%s: [%s %s %s]";
-
-    $sql = sprintf("SELECT id, groupname, attribute, op, value FROM %s ORDER BY groupname, attribute DESC",
-                   $configValues['CONFIG_DB_TBL_RADGROUPREPLY']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    
-    while ($row = $res->fetchrow()) {
-        list($id, $groupname, $attribute, $op, $value) = $row;
-        $key = "record-" . $id;
-        $options[$key] = sprintf($options_format, $groupname, $attribute, $op, $value);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!is_string($_POST['csrf_token'] ?? null) || !dalo_check_csrf_token($_POST['csrf_token'])) {
+            $failureMsg = 'CSRF token error';
+        } else {
+            try {
+                $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                $count = dalo_group_delete($pdo, $configValues, 'CONFIG_DB_TBL_RADGROUPREPLY', $_POST['record_id'] ?? null);
+                $successMsg = sprintf('Deleted %d groupreply record(s)', $count);
+                $logAction = 'Successfully deleted group attributes on page: ';
+            } catch (Throwable $error) {
+                $failureMsg = 'Unable to delete group attributes: invalid or stale selection or database operation failed';
+                $logAction = 'Group attribute deletion failed on page: ';
+            } finally { $pdo = null; }
+        }
     }
-    
-    include('../common/includes/db_close.php');
-    
+    try {
+        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $table = dalo_group_table($configValues, 'CONFIG_DB_TBL_RADGROUPREPLY');
+        $rows = dalo_group_query($pdo, "SELECT id,groupname,attribute,op,value FROM $table ORDER BY groupname,attribute DESC")->fetchAll(PDO::FETCH_NUM);
+        foreach ($rows as $row) {
+            list($id,$groupname,$attribute,$op,$value) = $row;
+            $options['record-' . $id] = sprintf($options_format, $groupname,$attribute,$op,$value);
+        }
+    } catch (Throwable $error) {
+        $failureMsg = 'Unable to load group attributes; please retry';
+    } finally { $pdo = null; }
 
     include_once("lang/main.php");
     

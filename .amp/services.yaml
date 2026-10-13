@@ -1,0 +1,14 @@
+services:
+  operators:
+    command: php -S 0.0.0.0:"$PORT" -t app/operators
+    health: /login.php
+    portal:
+      url: /
+      title: daloRADIUS operators
+      description: Sign in as administrator / radius (local dev seed).
+  users:
+    command: php -S 0.0.0.0:"$PORT" -t app/users
+    health: /login.php
+    portal:
+      url: /
+      title: daloRADIUS users portal

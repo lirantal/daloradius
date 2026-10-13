@@ -72,107 +72,126 @@
         }
     }
 
-    function has_password_like_attributes($dbSocket, $username) {
-        global $configValues, $logDebugSQL;
-        
-        $sql = sprintf("SELECT COUNT(id) FROM %s WHERE op=':=' AND username='%s' AND attribute LIKE '%%-Password'",
-                       $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($username));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-        
-        return intval($res->fetchrow()[0]) > 0;        
+    function dalo_auth_password_table(array $config) {
+        $name = $config['CONFIG_DB_TBL_RADCHECK'] ?? null;
+        if (!is_string($name) || !preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $name)) {
+            throw new InvalidArgumentException('Invalid RADIUS check table');
+        }
+        return '`' . $name . '`';
     }
 
+    function dalo_auth_password_innodb(PDO $pdo, $table) {
+        $check = $pdo->prepare('SELECT ENGINE FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?');
+        $check->execute(array(trim($table, '`')));
+        if (strcasecmp((string) $check->fetchColumn(), 'InnoDB') !== 0) {
+            throw new RuntimeException('RADIUS password change requires a transactional table');
+        }
+    }
+
+    function has_password_like_attributes(PDO $pdo, $table, $username) {
+        $stmt = $pdo->prepare("SELECT COUNT(id) FROM $table WHERE op=':=' AND username=? AND attribute LIKE '%-Password'");
+        $stmt->execute(array($username));
+        return (int) $stmt->fetchColumn() > 0;
+    }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-            
-            include('../common/includes/db_open.php');
-            
-            if (!has_password_like_attributes($dbSocket, $login_user)) {
-                // error
-            } else {
-                
-                $current_password = (isset($_POST['current_password']) && !empty(trim($_POST['current_password']))) ? trim($_POST['current_password']) : "";
-                
-                if (empty($current_password)) {
-                    // error
-                } else {
-                    $new_password1 = (isset($_POST['new_password1']) && !empty(trim($_POST['new_password1']))) ? trim($_POST['new_password1']) : "";
-                    $new_password2 = (isset($_POST['new_password2']) && !empty(trim($_POST['new_password2']))) ? trim($_POST['new_password2']) : "";
+        if (isset($_POST['csrf_token']) && is_string($_POST['csrf_token'])
+            && dalo_check_csrf_token($_POST['csrf_token'])) {
+            $current_password = (isset($_POST['current_password']) && is_string($_POST['current_password'])
+                && trim($_POST['current_password']) !== '') ? trim($_POST['current_password']) : '';
+            $new_password1 = (isset($_POST['new_password1']) && is_string($_POST['new_password1'])
+                && trim($_POST['new_password1']) !== '') ? trim($_POST['new_password1']) : '';
+            $new_password2 = (isset($_POST['new_password2']) && is_string($_POST['new_password2'])
+                && trim($_POST['new_password2']) !== '') ? trim($_POST['new_password2']) : '';
 
-                    $error = false;
-                    if (empty($new_password1)) {
-                        $error = true;
-                        $failureMsg = "The new password you provided is empty or invalid";
-                    } else if (empty($new_password2)) {
-                        $error = true;
-                        $failureMsg = "The new password (confirmation) you provided is empty or invalid";
-                    } else if ($new_password1 !== $new_password2) {
-                        $error = true;
-                        $failureMsg = "Password and password (confirmation) should match";
-                    }
-                    
-                    if (!$error) {
-                    
-                        // get all password like attributes
-                        $sql = sprintf("SELECT id, attribute, value FROM %s WHERE op=':=' AND username='%s' AND attribute LIKE '%%-Password'",
-                                       $configValues['CONFIG_DB_TBL_RADCHECK'], $dbSocket->escapeSimple($login_user));
-                        $res0 = $dbSocket->query($sql);
-                        $logDebugSQL .= "$sql;\n";
-                        
-                        $count = 0;
-                        while ($row = $res0->fetchRow()) {
-                            list($id, $password_type, $password_value) = $row;
-                            $id = intval($id);
-                            
-                            // For Crypt-Password, crypt() can read the salt from the stored hash.
-                            if ($password_type === "Crypt-Password") {
-                                $ok = hash_equals($password_value, crypt($current_password, $password_value));
-                            } else {
-                                $current_hashed_password = hashPasswordAttribute($password_type, $current_password);
-                                $ok = ($current_hashed_password !== false)
-                                    && hash_equals($password_value, (string) $current_hashed_password);
-                            }
-                            
-                            if (!$ok) {
-                                continue;
-                            }
-                            $new_hashed_password = hashPasswordAttribute($password_type, $new_password1);
-                            
-                            // we can procede
-                            $sql = sprintf("UPDATE %s SET value='%s' WHERE id=%d", $configValues['CONFIG_DB_TBL_RADCHECK'],
-                                          $dbSocket->escapeSimple($new_hashed_password), $id);
-                            $res1 = $dbSocket->query($sql);
-                            $logDebugSQL .= "$sql;\n";
-                            
-                            if (!DB::isError($res1)) {
-                                // success
+            // The legacy page does not mutate or display a message for a blank
+            // current password. Keep the same form behavior.
+            if ($current_password !== '' && $current_password !== '0') {
+                if ($new_password1 === '' || $new_password1 === '0') {
+                    $failureMsg = "The new password you provided is empty or invalid";
+                } else if ($new_password2 === '' || $new_password2 === '0') {
+                    $failureMsg = "The new password (confirmation) you provided is empty or invalid";
+                } else if ($new_password1 !== $new_password2) {
+                    $failureMsg = "Password and password (confirmation) should match";
+                } else {
+                    $pdo = null;
+                    try {
+                        require_once('../common/includes/pdo_connection.php');
+                        $table = dalo_auth_password_table($configValues);
+                        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+                        dalo_auth_password_innodb($pdo, $table);
+                        if (!$pdo->beginTransaction()) {
+                            throw new RuntimeException('RADIUS password transaction unavailable');
+                        }
+                        if (has_password_like_attributes($pdo, $table, $login_user)) {
+                            $stmt = $pdo->prepare("SELECT id,attribute,value FROM $table WHERE op=':=' "
+                                                . "AND username=? AND attribute LIKE '%-Password' ORDER BY id FOR UPDATE");
+                            $stmt->execute(array($login_user));
+                            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            $update = $pdo->prepare("UPDATE $table SET value=? WHERE id=? AND username=? "
+                                                  . "AND op=':=' AND attribute=? AND BINARY value=BINARY ?");
+                            $count = 0;
+                            foreach ($rows as $row) {
+                                $password_type = $row['attribute'];
+                                $password_value = $row['value'];
+                                if (!is_string($password_value)) {
+                                    continue;
+                                }
+                                if ($password_type === 'Crypt-Password') {
+                                    $verified = hash_equals($password_value,
+                                                            crypt($current_password, $password_value));
+                                } else {
+                                    $current_hash = hashPasswordAttribute($password_type, $current_password);
+                                    $verified = $current_hash !== false
+                                        && hash_equals($password_value, (string) $current_hash);
+                                }
+                                if (!$verified) {
+                                    continue;
+                                }
+                                $new_hash = hashPasswordAttribute($password_type, $new_password1);
+                                if (!is_string($new_hash)) {
+                                    throw new RuntimeException('RADIUS password hash failed');
+                                }
+                                if (!hash_equals($password_value, $new_hash)) {
+                                    $update->execute(array($new_hash, (int) $row['id'], $login_user,
+                                                           $password_type, $password_value));
+                                    if ($update->rowCount() !== 1) {
+                                        throw new RuntimeException('RADIUS password changed concurrently');
+                                    }
+                                }
                                 $count++;
                             }
-                        }
-                        
-                        if ($count > 0) {
-                            // success
-                            $successMsg = "$count auth password(s) have been changed";
-                            $logAction = "User $login_user has changed their auth password(s) [num. $count]";
+                            if ($count > 0) {
+                                if (!$pdo->commit()) {
+                                    throw new RuntimeException('RADIUS password commit failed');
+                                }
+                                $successMsg = "$count auth password(s) have been changed";
+                                $logAction = "User $login_user has changed their auth password(s) [num. $count]";
+                            } else {
+                                $pdo->rollBack();
+                                $failureMsg = "Something went wrong while attempting to change your auth password(s)";
+                                $logAction = "User $login_user failed to change their auth password(s)";
+                            }
                         } else {
-                            // failed
-                            $failureMsg = "Something went wrong while attempting to change your auth password(s)";
-                            $logAction = "User $login_user failed to change their auth password(s)";
+                            $pdo->rollBack();
                         }
+                    } catch (Throwable $exception) {
+                        if ($pdo instanceof PDO && $pdo->inTransaction()) {
+                            $pdo->rollBack();
+                        }
+                        // No SQL text, bound credential or driver message is logged.
+                        error_log('RADIUS password change failure: ' . get_class($exception));
+                        $failureMsg = "Something went wrong while attempting to change your auth password(s)";
+                        $logAction = "User $login_user failed to change their auth password(s) [db error]";
+                    } finally {
+                        $pdo = null;
                     }
                 }
             }
-            
-            include('../common/includes/db_close.php');
-            
         } else {
-            // csrf
             $failureMsg = "CSRF token error";
             $logAction .= "$failureMsg on page: ";
         }
-        
     }
 
     // print HTML prologue

@@ -53,11 +53,11 @@
 
     // whenever possible we use a whitelist approach
     $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
-                in_array($_GET['orderBy'], array_keys($param_cols)))
+                is_string($_GET['orderBy']) && in_array($_GET['orderBy'], array_keys($param_cols), true))
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array( "desc", "asc" ), true))
                ? strtolower($_GET['orderType']) : "asc";
 
 
@@ -70,35 +70,49 @@
     // start printing content
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
+    require_once __DIR__ . '/include/management/selectbox_read.php';
+    require_once __DIR__ . '/include/management/read_helpers_pdo.php';
     include('include/management/pages_common.php');
-
-    // we use this simplified query just to initialize $numrows
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-    $numrows = $res->fetchrow()[0];
-
-    if ($numrows > 0) {
-        /* START - Related to pages_numbering.php */
-
-        // when $numrows is set, $maxPage is calculated inside this include file
-        include('include/management/pages_numbering.php');    // must be included after opendb because it needs to read
-                                                              // the CONFIG_IFACE_TABLES_LISTING variable from the config file
-
-        // here we decide if page numbers should be shown
-        $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
-
-        /* END */
-
-        // we execute and log the actual query
-        $sql = sprintf("SELECT id, proxyname, creationdate, creationby, updatedate, updateby
-                          FROM %s", $configValues['CONFIG_DB_TBL_DALOPROXYS']);
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
+    $catalog_pdo = null;
+    $catalog_rows = array();
+    $numrows = 0;
+    $catalog_failed = false;
+    try {
+        $catalog_pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $table = dalo_selectbox_table($catalog_pdo, $configValues, 'CONFIG_DB_TBL_DALOPROXYS');
+        $sql = "SELECT COUNT(id) FROM $table";
+        $numrows = (int) $catalog_pdo->query($sql)->fetchColumn();
         $logDebugSQL .= "$sql;\n";
-
-        $per_page_numrows = $res->numRows();
+        if ($numrows > 0) {
+            $page_size = $configValues['CONFIG_IFACE_TABLES_LISTING'] ?? null;
+            if ((!is_int($page_size) && !is_string($page_size)) ||
+                !ctype_digit((string) $page_size) || (int) $page_size < 1 ||
+                (float) $page_size > PHP_INT_MAX) {
+                throw new InvalidArgumentException('Invalid catalog page size');
+            }
+            include('include/management/pages_numbering.php');
+            $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
+            $sort = dalo_read_identifier($catalog_pdo, $orderBy);
+            $sql = "SELECT id, proxyname, creationdate, creationby, updatedate, updateby FROM $table ORDER BY $sort $orderType LIMIT :limit OFFSET :offset";
+            $catalog_stmt = $catalog_pdo->prepare($sql);
+            $catalog_stmt->bindValue(':limit', (int) $rowsPerPage, PDO::PARAM_INT);
+            $catalog_stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+            $catalog_stmt->execute();
+            $catalog_rows = $catalog_stmt->fetchAll(PDO::FETCH_NUM);
+            $logDebugSQL .= "$sql;\n";
+        }
+    } catch (Throwable $error) {
+        $catalog_failed = true;
+        error_log('Catalog read failed: ' . get_class($error));
+    } finally {
+        $catalog_stmt = null;
+        $catalog_pdo = null;
+    }
+    if ($catalog_failed) {
+        $failureMsg = "Unable to load catalog";
+        include_once("include/management/actionMessages.php");
+    } elseif ($numrows > 0) {
+        $per_page_numrows = count($catalog_rows);
 
         // this can be passed as form attribute and
         // printTableFormControls function parameter
@@ -131,13 +145,13 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($catalog_rows as $row) {
 
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string) $row[$i], ENT_QUOTES, 'UTF-8');
             }
 
             list($id, $proxyname, $creationdate, $creationby, $updatedate, $updateby) = $row;
@@ -191,7 +205,7 @@
         include_once("include/management/actionMessages.php");
     }
 
-    include('../common/includes/db_close.php');
+    unset($catalog_rows);
 
     include('include/config/logging.php');
 

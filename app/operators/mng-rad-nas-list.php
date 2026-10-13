@@ -72,7 +72,7 @@
              ? $_GET['orderBy'] : array_keys($param_cols)[0];
 
     $orderType = (array_key_exists('orderType', $_GET) && isset($_GET['orderType']) &&
-                  in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
+                  is_string($_GET['orderType']) && in_array(strtolower($_GET['orderType']), array( "desc", "asc" )))
                ? strtolower($_GET['orderType']) : "asc";
 
 
@@ -86,12 +86,22 @@
     print_title_and_help($title, $help);
 
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'pages_common.php' ]);
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
+    require_once $configValues['COMMON_INCLUDES'] . '/pdo_connection.php';
+    require_once $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/read_helpers_pdo.php';
+    $pdo = null;
+    $nasReadFailed = false;
+    $numrows = 0;
+    try {
+        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $table = dalo_read_table($pdo, $configValues, 'CONFIG_DB_TBL_RADNAS');
 
     // compute total number of rows matching the query for pagination
-    $sql = sprintf("SELECT COUNT(id) FROM %s", $configValues['CONFIG_DB_TBL_RADNAS']);
-    $res = $dbSocket->query($sql);
-    $numrows = (!DB::isError($res)) ? $res->fetchrow()[0] : 0;
+    $sql = sprintf("SELECT COUNT(id) FROM %s", $table);
+    $numrows = (int)dalo_read_statement($pdo, $sql)->fetchColumn();
+    } catch (Throwable $exception) {
+        $nasReadFailed = true;
+        error_log('NAS list: ' . get_class($exception));
+    }
 
     $nas_import_export_controls = array(
         array(
@@ -121,12 +131,18 @@
 
         // we execute and log the actual query
         $sql = sprintf("SELECT id, nasname, shortname, type, ports, secret, server, community, description
-                          FROM %s ORDER BY %s %s LIMIT %s, %s", $configValues['CONFIG_DB_TBL_RADNAS'],
+                          FROM %s ORDER BY %s %s LIMIT %s, %s", $table,
                                                                 $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
+        try {
+            $nasRows = dalo_read_statement($pdo, $sql)->fetchAll(PDO::FETCH_NUM);
+        } catch (Throwable $exception) {
+            $nasRows = array();
+            $failureMsg = 'Unable to read the NAS list';
+            include $configValues['OPERATORS_INCLUDE_MANAGEMENT'] . '/actionMessages.php';
+        }
         $logDebugSQL = "$sql;\n";
 
-        $per_page_numrows = $res->numRows();
+        $per_page_numrows = count($nasRows);
 
         // this can be passed as form attribute and
         // printTableFormControls function parameter
@@ -168,12 +184,12 @@
 
         // table content
         $count = 0;
-        while ($row = $res->fetchRow()) {
+        foreach ($nasRows as $row) {
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)$row[$i], ENT_QUOTES, 'UTF-8');
             }
 
             list($id, $nasname, $shortname, $type, $ports, $secret, $server, $community, $description) = $row;
@@ -229,10 +245,10 @@
         $descriptors['end'] = $nas_import_export_controls;
         print_table_prologue($descriptors);
 
-        $failureMsg = "Nothing to display";
+        $failureMsg = $nasReadFailed ? 'Unable to read the NAS list' : 'Nothing to display';
         include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
     }
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    $pdo = null;
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_CONFIG'], 'logging.php' ]);
     print_footer_and_html_epilogue();

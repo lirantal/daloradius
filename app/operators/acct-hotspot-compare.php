@@ -29,6 +29,16 @@
 
     include_once("lang/main.php");
     include("../common/includes/layout.php");
+    require_once __DIR__ . '/library/accounting_pages_pdo.php';
+    unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    try {
+        dalo_accounting_validate_request($_GET);
+    } catch (Throwable $exception) {
+        http_response_code(400);
+        exit('Invalid accounting filters');
+    }
+    if (isset($_REQUEST['page']) && !is_string($_REQUEST['page'])) { $_REQUEST['page'] = '1'; }
+
 
     // init logging variables
     $log = "visited page: ";
@@ -79,21 +89,19 @@
 
     print_title_and_help($title, $help);
 
-    include('../common/includes/db_open.php');
     include('include/management/pages_common.php');
 
 
-    $sql = sprintf("SELECT hs.name AS hotspot, COUNT(DISTINCT(UserName)) AS uniqueusers, COUNT(radacctid) AS totalhits,
-                           AVG(AcctSessionTime) AS avgsessiontime, SUM(AcctSessionTime) AS totaltime,
-                           AVG(AcctInputOctets) AS avgInputOctets, SUM(AcctInputOctets) AS sumInputOctets,
-                           AVG(AcctOutputOctets) AS avgOutputOctets, SUM(AcctOutputOctets) AS sumOutputOctets
-                      FROM %s AS ra JOIN %s AS hs ON ra.calledstationid=hs.mac
-                     GROUP BY hotspot", $configValues['CONFIG_DB_TBL_RADACCT'],
-                                        $configValues['CONFIG_DB_TBL_DALOHOTSPOTS']);
-    $res = $dbSocket->query($sql);
-    $logDebugSQL .= "$sql;\n";
-
-    $numrows = $res->numRows();
+    $accountingPDO = null;
+    $accountingRows = array();
+    $numrows = 0;
+    try {
+        $accountingPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        list($accountingSQL, $accountingBindings) = dalo_accounting_query('acct-hotspot-compare', array(), $configValues);
+        $numrows = dalo_accounting_count($accountingPDO, $accountingSQL, $accountingBindings, $configValues);
+    } catch (Throwable $exception) {
+        dalo_accounting_failure($exception);
+    }
 
     if ($numrows > 0) {
         /* START - Related to pages_numbering.php */
@@ -108,11 +116,14 @@
         /* END */
 
         // we execute and log the actual query
-        $sql .= sprintf(" ORDER BY %s %s LIMIT %s, %s", $orderBy, $orderType, $offset, $rowsPerPage);
-        $res = $dbSocket->query($sql);
-        $logDebugSQL = "$sql;\n";
 
-        $per_page_numrows = $res->numRows();
+        try {
+            $accountingRows = dalo_accounting_rows($accountingPDO, $accountingSQL, $accountingBindings,
+                'acct-hotspot-compare', $orderBy, $orderType, $offset, $rowsPerPage);
+        } catch (Throwable $exception) {
+            dalo_accounting_failure($exception);
+        }
+        $per_page_numrows = count($accountingRows);
 
 
         // set navbar stuff
@@ -142,13 +153,13 @@
         // closes table header, opens table body
         print_table_middle();
 
-        while ($row = $res->fetchRow()) {
+        foreach ($accountingRows as $row) {
 
             $rowlen = count($row);
 
             // escape row elements
             for ($i = 0; $i < $rowlen; $i++) {
-                $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                $row[$i] = htmlspecialchars((string)($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
             }
 
             list($hotspot, $uniqueusers, $totalhits, $avgsessiontime, $totaltime,
@@ -208,13 +219,17 @@
         close_tab_wrapper();
 
     } else {
-        $failureMsg = "Nothing to display";
+        $failureMsg = $failureMsg ?? "Nothing to display";
         include_once("include/management/actionMessages.php");
     }
 
-    include('../common/includes/db_close.php');
 
     include('include/config/logging.php');
+    if (isset($failureMsg) && $numrows > 0) { include('include/management/actionMessages.php'); }
+    if (empty($numrows) || isset($failureMsg)) {
+        unset($_SESSION['reportExport'], $_SESSION['reportTable'], $_SESSION['reportQuery'], $_SESSION['reportType']);
+    }
+    unset($accountingRows, $accountingPDO);
     print_footer_and_html_epilogue();
 
 ?>

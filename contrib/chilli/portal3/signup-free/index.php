@@ -23,75 +23,21 @@
  */
 
 
-session_start();                                                // we keep a session to save the captcha key
-
-	$status = "firstload";
-
-        if (isset($_POST['submit'])) {
-
-                isset($_POST['firstname']) ? $firstname = $_POST['firstname'] : $firstname = "";
-                isset($_POST['lastname']) ? $lastname = $_POST['lastname'] : $lastname = "";
-                isset($_POST['email']) ? $email = $_POST['email'] : $email = "";
-
-                $captchaKey = substr($_SESSION['key'],0,5);
-                $formKey = $_POST['formKey'];
-                if ( $formKey == $captchaKey ) {
-
-                        if ( ($firstname) && ($lastname) ) {
-
-                                include('library/opendb.php');
-                                include('include/common/common.php');
-
-
-                                $firstname = $dbSocket->escapeSimple($firstname);
-                                $lastname = $dbSocket->escapeSimple($lastname);
-                                $email = $dbSocket->escapeSimple($email);
-
-
-                                /* let's generate a random username and password
-                                   of length 4 and with username prefix 'guest' */
-                                $rand = createPassword($configValues['CONFIG_USERNAME_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-                                $username = $configValues['CONFIG_USERNAME_PREFIX'] . $rand;
-
-                                $password = createPassword($configValues['CONFIG_PASSWORD_LENGTH'], $configValues['CONFIG_USER_ALLOWEDRANDOMCHARS']);
-
-                                /* adding the user to the radcheck table */
-                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADCHECK']." (id, Username, Attribute, op, Value) ".
-                                        " VALUES (0, '$username', 'User-Password', '==', '$password')";
-                                $res = $dbSocket->query($sql);
-
-                                /* adding user information to the userinfo table */
-                                $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_DALOUSERINFO']." (username, firstname, lastname, email) ".
-                                        " VALUES ('$username', '$firstname', '$lastname', '$email')";
-                                $res = $dbSocket->query($sql);
-
-
-                                /* adding the user to the default group defined */
-                                if (isset($configValues['CONFIG_GROUP_NAME']) && $configValues['CONFIG_GROUP_NAME'] != "") {
-                                        $sql = "INSERT INTO ".$configValues['CONFIG_DB_TBL_RADUSERGROUP']." (UserName, GroupName, priority) ".
-                                                " VALUES ('$username', '".$configValues['CONFIG_GROUP_NAME']."', '".$configValues['CONFIG_GROUP_PRIORITY']."')";
-                                        $res = $dbSocket->query($sql);
-                                }
-
-
-                                include('library/closedb.php');
-
-				$status = "success";
-                        } else {
-				$status = "fieldsFailure";
-                        } 
-
-                } else {
-			$status = "captchaFailure";
-                } 
-
-        } 
+header('Content-Type: text/html; charset=UTF-8');
+session_start();
+include __DIR__ . '/library/config_read.php';
+require_once dirname(__DIR__, 2) . '/common/freeSignup.php';
+$signup = dalo_chilli_signup_request($configValues);
+$status = $signup['status'];
+$username = htmlspecialchars($signup['username'], ENT_QUOTES, 'UTF-8');
+$password = htmlspecialchars($signup['password'], ENT_QUOTES, 'UTF-8');
+$signupFirstname = htmlspecialchars($signup['firstname'], ENT_QUOTES, 'UTF-8');
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>User Sign-Up</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
@@ -134,7 +80,7 @@ session_start();                                                // we keep a ses
 
 			echo "<b>".$configValues['CONFIG_SIGNUP_MSG_TITLE']."</b>
 				<br/><br/>
-				<form name='signup' action='".$_SERVER['PHP_SELF']."' method='post'>
+				<form name='signup' action='".htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8')."' method='post'>" . dalo_chilli_signup_csrf_field() . "
 
 				<ul>
 				        First name:<li> <input type='text' value='' name='firstname' /> <br/></li>
@@ -160,14 +106,19 @@ session_start();                                                // we keep a ses
 
 			case "success":
 				echo "<font color='blue'>Success</font><br/><br/>".
-					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_HEADER']."<b>".$_POST['firstname']."</b>,<br/><br/>".
+					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_HEADER']."<b>".$signupFirstname."</b>,<br/><br/>".
 					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_BODY'].
 					"<ul><li>Username: <b>$username</b></li><li>Password: <b>$password</b><br/></li></ul>".
 					$configValues['CONFIG_SIGNUP_SUCCESS_MSG_LOGIN_LINK'];
 				break;
 
 
-			case "fieldsFailure":
+			case "databaseFailure":
+                                echo "<font color='red'>Signup could not be completed</font>";
+                                showForm();
+                                break;
+
+                        case "fieldsFailure":
                                 echo "<font color='red'>".$configValues['CONFIG_SIGNUP_FAILURE_MSG_FIELDS']."</font><br/><br/>";
 				showForm();
 				break;

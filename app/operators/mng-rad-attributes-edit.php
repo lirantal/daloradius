@@ -35,113 +35,39 @@
     $logAction = "";
     $logDebugSQL = "";
 
-    // custom validation structures
-    $valid_tables = array("check", "reply");
-
-    function attribute_vendor_exist($dbSocket, $attribute, $vendor) {
-        global $configValues, $logDebugSQL;
-
-        $sql = sprintf("SELECT COUNT(DISTINCT(id)) FROM %s WHERE attribute='%s' AND vendor='%s'",
-                               $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                               $dbSocket->escapeSimple($attribute),
-                               $dbSocket->escapeSimple($vendor));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        return $res->fetchrow()[0] > 0;
-    }
-
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (array_key_exists('csrf_token', $_POST) && isset($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token'])) {
-
-            $vendor = (array_key_exists('vendor', $_POST) && !empty(str_replace("%", "", trim($_POST['vendor']))))
-                    ? str_replace("%", "", trim($_POST['vendor'])) : "";
-            $vendor_enc = (!empty($vendor)) ? htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8') : "";
-
-            $attribute = (array_key_exists('attribute', $_POST) && !empty(str_replace("%", "", trim($_POST['attribute']))))
-                       ? str_replace("%", "", trim($_POST['attribute'])) : "";
-            $attribute_enc = (!empty($attribute)) ? htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8') : "";
-
-            // Validate attribute type: compare the pure type (without encrypt= flags or # comments) but keep the original value
-            $rawType = array_key_exists('type', $_POST) ? trim($_POST['type']) : "";
-            $baseType = strtolower(strtok($rawType, " \t#"));
-            $type = (!empty($rawType) && in_array($baseType, $valid_attributeTypes, true)) ? $rawType : "";
-
-            $op = (array_key_exists('RecommendedOP', $_POST) && isset($_POST['RecommendedOP']) &&
-                   in_array($_POST['RecommendedOP'], $valid_ops))
-                ? $_POST['RecommendedOP'] : "";
-
-            $table = (array_key_exists('RecommendedTable', $_POST) && isset($_POST['RecommendedTable']) &&
-                      in_array($_POST['RecommendedTable'], $valid_tables))
-                   ? $_POST['RecommendedTable'] : "";
-
-            $helper = (array_key_exists('RecommendedHelper', $_POST) && isset($_POST['RecommendedHelper']) &&
-                       in_array($_POST['RecommendedHelper'], $valid_recommendedHelpers))
-                    ? $_POST['RecommendedHelper'] : "";
-
-            $tooltip = (array_key_exists('RecommendedTooltip', $_POST) &&
-                        !empty(str_replace("%", "", trim($_POST['RecommendedTooltip']))))
-                     ? str_replace("%", "", trim($_POST['RecommendedTooltip'])) : "";
-
-            if (empty($vendor) || empty($attribute)) {
-                // vendor and attribute are required
-                $failureMsg = "vendor and/or attribute are empty or invalid";
-                $logAction .= "Failed updating attribute [$attribute] (possible empty/invalid vendor and/or attribute) on page: ";
-            } else {
-
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-                $exists = attribute_vendor_exist($dbSocket, $attribute, $vendor);
-
-                if (!$exists) {
-                    // vendor and/or attribute invalid
-                    $failureMsg = "vendor and/or attribute are invalid";
-                    $logAction .= "Failed updating attribute [$attribute] (possible invalid vendor and/or attribute) on page: ";
-                } else {
-
-                    $sql = sprintf("UPDATE %s
-                                       SET Type='%s', RecommendedOP='%s', RecommendedTable='%s',
-                                           RecommendedTooltip='%s', RecommendedHelper='%s'
-                                     WHERE Vendor='%s' AND Attribute='%s'",
-                                   $configValues['CONFIG_DB_TBL_DALODICTIONARY'], $dbSocket->escapeSimple($type),
-                                   $dbSocket->escapeSimple($op), $dbSocket->escapeSimple($table),
-                                   $dbSocket->escapeSimple($tooltip), $dbSocket->escapeSimple($helper),
-                                   $dbSocket->escapeSimple($vendor), $dbSocket->escapeSimple($attribute));
-                    $res = $dbSocket->query($sql);
-                    $logDebugSQL .= "$sql;\n";
-
-                    if (!DB::isError($res)) {
-                        $format = "Attribute information has been updated in the dictionary (attribute: %s, vendor: %s)";
-                        $successMsg = sprintf($format, $attribute_enc, $vendor_enc);
-                        $logAction .= sprintf("$format on page: ", $attribute, $vendor);
-                    } else {
-                        $format = "An error occurred when updating attribute information in the dictionary (attribute: %s, vendor: %s)";
-                        $failureMsg = sprintf($format, $attribute_enc, $vendor_enc);
-                        $logAction .= sprintf("Failed to add an attribute [$format] on page: ", $attribute, $vendor);
-                    }
-                }
-
-                include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
+    require_once __DIR__ . '/library/dictionary_pages_pdo.php';
+    $exists = false;
+    $valid_tables = array('check', 'reply');
+    $vendor = $attribute = $type = $recommendedOP = $table = $recommendedHelper = $recommendedTooltip = '';
+    $is_post = ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+    $valid_csrf = isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) && dalo_check_csrf_token($_POST['csrf_token']);
+    try {
+        $source = $is_post ? $_POST : $_GET;
+        $vendor = dalo_dictionary_text(dalo_dictionary_request_field($source, 'vendor'), 32, true);
+        $attribute = dalo_dictionary_text(dalo_dictionary_request_field($source, 'attribute'), 64, true);
+        $vendor_enc=htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8');
+        $attribute_enc=htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8');
+        $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $dictionaryTable = dalo_dictionary_table($configValues);
+        if ($is_post) {
+            if (!$valid_csrf) { $failureMsg = 'CSRF token error'; }
+            else {
+                $fields = dalo_dictionary_fields($_POST, $valid_attributeTypes, $valid_ops, $valid_recommendedHelpers);
+                if (dalo_dictionary_edit($pdo, $configValues, $fields)) {
+                    $successMsg = sprintf('Attribute information has been updated in the dictionary (attribute: %s, vendor: %s)', $attribute_enc, $vendor_enc);
+                    $logAction .= 'Updated dictionary metadata on page: ';
+                    $logDebugSQL = 'UPDATE configured dictionary SET metadata (bound values);';
+                } else { $failureMsg = 'Dictionary attribute no longer exists'; }
             }
-
-        } else {
-            // csrf
-            $failureMsg = "CSRF token error";
-            $logAction .= "$failureMsg on page: ";
         }
-    } else {
-        // !POST
-
-        $vendor = (array_key_exists('vendor', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['vendor']))))
-                ? str_replace("%", "", trim($_REQUEST['vendor'])) : "";
-        $vendor_enc = (!empty($vendor)) ? htmlspecialchars($vendor, ENT_QUOTES, 'UTF-8') : "";
-
-        $attribute = (array_key_exists('attribute', $_REQUEST) && !empty(str_replace("%", "", trim($_REQUEST['attribute']))))
-                   ? str_replace("%", "", trim($_REQUEST['attribute'])) : "";
-        $attribute_enc = (!empty($attribute)) ? htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8') : "";
-    }
-
+        $rows = dalo_dictionary_read($pdo, $dictionaryTable, $vendor, $attribute);
+        $exists = count($rows)>0;
+        if ($exists) {
+            $row = $rows[0];
+            $type=$row['Type']; $recommendedOP=$row['RecommendedOP']; $table=$row['RecommendedTable'];
+            $recommendedHelper=$row['RecommendedHelper']; $recommendedTooltip=$row['RecommendedTooltip'];
+        } elseif (!isset($failureMsg)) { $failureMsg = 'Dictionary attribute not found'; }
+    } catch (Throwable $e) { $failureMsg = 'Could not load or update dictionary attribute'; }
 
     // print HTML prologue
     $title = t('Intro','mngradattributesedit.php');
@@ -151,33 +77,10 @@
 
     print_title_and_help($title, $help);
 
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_open.php' ]);
-
-    $exists = attribute_vendor_exist($dbSocket, $attribute, $vendor);
-
-    if (!$exists) {
-        // vendor and/or attribute invalid
-        $failureMsg = "vendor and/or attribute are invalid";
-        $logAction .= "Failed updating attribute [$attribute] (possible invalid vendor and/or attribute) on page: ";
-
-    } else {
-
-        $sql = sprintf("SELECT `type`, `value`, `format`, `recommendedOP`, `recommendedTable`, `recommendedHelper`, `recommendedTooltip`
-                          FROM %s WHERE `attribute`='%s' AND `vendor`='%s' LIMIT 1",
-                       $configValues['CONFIG_DB_TBL_DALODICTIONARY'],
-                       $dbSocket->escapeSimple($attribute),
-                       $dbSocket->escapeSimple($vendor));
-        $res = $dbSocket->query($sql);
-        $logDebugSQL .= "$sql;\n";
-
-        list($type, $value, $format, $recommendedOP, $table, $recommendedHelper, $recommendedTooltip) = $res->fetchrow();
-    }
-
-    include implode(DIRECTORY_SEPARATOR, [ $configValues['COMMON_INCLUDES'], 'db_close.php' ]);
     include implode(DIRECTORY_SEPARATOR, [ $configValues['OPERATORS_INCLUDE_MANAGEMENT'], 'actionMessages.php' ]);
 
 
-    if (!isset($successMsg) && !empty($vendor) && !empty($attribute)) {
+    if (!isset($successMsg) && $exists && $vendor !== '' && $attribute !== '') {
 
         $fieldset0_descriptor = array(
                                         "title" => t('title','VendorAttribute'),
