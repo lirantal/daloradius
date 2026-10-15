@@ -26,9 +26,34 @@ print_green() {
     :
 }
 
+# Keep cleanup paths in global variables so EXIT traps remain safe
+# when the test functions that registered them have returned.
+INSTALL_TEST_CONTAINER="daloradius-mysql-option-test-db"
+INSTALL_TEST_NETWORK="daloradius-mysql-option-test"
+
+PDO_TEST_NETWORK="daloradius-pdo-password-test"
+PDO_TEST_CONTAINER="daloradius-pdo-password-test-db"
+PDO_TEST_PHP_CONTAINER="daloradius-pdo-password-test-php"
+PDO_TEST_IMAGE="daloradius-pdo-password-test"
+PDO_TEST_CONFIG_FILE=
+
 cleanup() {
-    rm -f "${MYSQL_DEFAULTS_FILE:-}" "${MARIADB_CLIENT_FILENAME:-}"
+    rm -f "${MYSQL_DEFAULTS_FILE:-}" \
+          "${MARIADB_CLIENT_FILENAME:-}" \
+          "${PDO_TEST_CONFIG_FILE:-}"
+
+    docker rm -f \
+        "$INSTALL_TEST_CONTAINER" \
+        "$PDO_TEST_PHP_CONTAINER" \
+        "$PDO_TEST_CONTAINER" >/dev/null 2>&1 || true
+
+    docker network rm \
+        "$INSTALL_TEST_NETWORK" \
+        "$PDO_TEST_NETWORK" >/dev/null 2>&1 || true
+
+    docker image rm "$PDO_TEST_IMAGE" >/dev/null 2>&1 || true
 }
+
 trap cleanup EXIT
 
 test_option_file() {
@@ -41,7 +66,8 @@ test_option_file() {
         docker run --rm \
             -v "$option_file:/tmp/mysql-options.cnf:ro,Z" \
             mariadb:11.8 \
-            my_print_defaults --defaults-extra-file=/tmp/mysql-options.cnf client
+            my_print_defaults \
+            --defaults-extra-file=/tmp/mysql-options.cnf client
     )
 
     local expected=""
@@ -61,7 +87,7 @@ test_option_file() {
         cat "$option_file" >&2
         printf 'Expected parsed values:\n%s\n' "$expected" >&2
         printf 'Actual parsed values:\n%s\n' "$parsed" >&2
-        fail "password was not preserved by the MariaDB option-file parser"
+        fail "Password was not preserved by the MariaDB option-file parser"
     fi
 }
 
@@ -80,6 +106,8 @@ test_init_script() {
         capture && /^}/ { exit }
     ' "$init")"
 
+    local password
+
     for password in \
         'abc#123' \
         'abc;123' \
@@ -87,11 +115,13 @@ test_init_script() {
         ' pass ' \
         'abc"123' \
         'abc\123' \
+        'abc\n123' \
         $'abc\n123'
     do
         MYSQL_PASSWORD="$password"
         create_mysql_defaults_file
         test_option_file "$password" "$MYSQL_DEFAULTS_FILE"
+
         rm -f "$MYSQL_DEFAULTS_FILE"
         MYSQL_DEFAULTS_FILE=
     done
@@ -112,6 +142,8 @@ test_freeradius_script() {
         capture && /^}/ { exit }
     ' "$init")"
 
+    local password
+
     for password in \
         'abc#123' \
         'abc;123' \
@@ -119,11 +151,13 @@ test_freeradius_script() {
         ' pass ' \
         'abc"123' \
         'abc\123' \
+        'abc\n123' \
         $'abc\n123'
     do
         MYSQL_PASSWORD="$password"
         create_mysql_defaults_file
         test_option_file "$password" "$MYSQL_DEFAULTS_FILE"
+
         rm -f "$MYSQL_DEFAULTS_FILE"
         MYSQL_DEFAULTS_FILE=
     done
@@ -131,11 +165,13 @@ test_freeradius_script() {
 
 test_install_script() {
     local install="$ROOT/setup/install.sh"
-    local network="daloradius-mysql-option-test"
-    local container="daloradius-mysql-option-test-db"
+    local network="$INSTALL_TEST_NETWORK"
+    local container="$INSTALL_TEST_CONTAINER"
     local root_password="root-test-password"
     local escaped_sql_password
     local parsed
+    local password
+    local ready
 
     eval "$(awk '
         /^escape_mysql_option_value\(\) \{/ { capture=1 }
@@ -155,21 +191,39 @@ test_install_script() {
         capture && /^}/ { exit }
     ' "$install")"
 
-    cleanup_install_test() {
-        docker rm -f daloradius-mysql-option-test-db >/dev/null 2>&1 || true
-        docker network rm daloradius-mysql-option-test >/dev/null 2>&1 || true
-    }
-
-    cleanup_install_test
+    docker rm -f "$container" >/dev/null 2>&1 || true
+    docker network rm "$network" >/dev/null 2>&1 || true
 
     docker network create "$network" >/dev/null
-    trap cleanup_install_test EXIT
 
     docker run -d \
         --name "$container" \
         --network "$network" \
         -e MARIADB_ROOT_PASSWORD="$root_password" \
         mariadb:11.8 >/dev/null
+
+    ready=0
+
+    for _ in {1..30}; do
+        if docker run --rm \
+            --network "$network" \
+            mariadb:11.8 \
+            mariadb \
+            --host="$container" \
+            --user=root \
+            --password="$root_password" \
+            --execute="SELECT 1" >/dev/null 2>&1
+        then
+            ready=1
+            break
+        fi
+
+        sleep 1
+    done
+
+    if [ "$ready" -eq 0 ]; then
+        fail "MariaDB installer-test container did not become ready in time"
+    fi
 
     for password in \
         'abc#123' \
@@ -179,6 +233,7 @@ test_install_script() {
         'abc"123' \
         "abc'123" \
         'abc\123' \
+        'abc\n123' \
         $'abc\n123'
     do
         DB_HOST="$container"
@@ -188,26 +243,6 @@ test_install_script() {
         DB_PASS="$password"
 
         escaped_sql_password=$(escape_mysql_sql_string "$DB_PASS")
-
-        ready=0
-        for _ in {1..30}; do
-            if docker run --rm \
-                --network "$network" \
-                mariadb:11.8 \
-                mariadb \
-                --host="$container" \
-                --user=root \
-                --password="$root_password" \
-                --execute="SELECT 1" >/dev/null 2>&1
-            then
-                ready=1
-                break
-            fi
-            sleep 1
-        done
-        if [ "$ready" -eq 0 ]; then
-            fail "MariaDB test container did not become ready in time"
-        fi
 
         docker run --rm \
             --network "$network" \
@@ -247,32 +282,33 @@ FLUSH PRIVILEGES;" >/dev/null
         MARIADB_CLIENT_FILENAME=
     done
 
-    cleanup_install_test
-    trap cleanup EXIT
+    docker rm -f "$container" >/dev/null
+    docker network rm "$network" >/dev/null
 }
 
-test_db_open_password_escaping() {
-    local network="daloradius-db-open-password-test"
-    local container="daloradius-db-open-password-test-db"
-    local php_container="daloradius-db-open-password-test-php"
-    local image="daloradius-db-open-password-test"
+test_pdo_password_escaping() {
+    local network="$PDO_TEST_NETWORK"
+    local container="$PDO_TEST_CONTAINER"
+    local php_container="$PDO_TEST_PHP_CONTAINER"
+    local image="$PDO_TEST_IMAGE"
     local root_password="root-test-password"
-    local password='abc@#%123'
     local database="radius"
     local user="radius"
-    local config_file
+    local password
+    local escaped_sql_password
+    local ready
     local result
 
-    config_file=$(mktemp)
+    # The first four cases exercise ordinary special characters.
+    # The literal backslash-n case is critical: it is two characters,
+    # a backslash and the letter n, not an actual newline.
+    password='abc@#%123'
 
-    cleanup_db_open_test() {
-        rm -f "$config_file"
-        docker rm -f "$php_container" "$container" >/dev/null 2>&1 || true
-        docker network rm "$network" >/dev/null 2>&1 || true
-        docker image rm "$image" >/dev/null 2>&1 || true
-    }
+    docker rm -f "$php_container" "$container" >/dev/null 2>&1 || true
+    docker network rm "$network" >/dev/null 2>&1 || true
+    docker image rm "$image" >/dev/null 2>&1 || true
 
-    trap cleanup_db_open_test EXIT
+    PDO_TEST_CONFIG_FILE=$(mktemp)
 
     docker network create "$network" >/dev/null
 
@@ -287,6 +323,7 @@ test_db_open_password_escaping() {
         mariadb:11.8 >/dev/null
 
     ready=0
+
     for _ in {1..30}; do
         if docker run --rm \
             --network "$network" \
@@ -300,26 +337,45 @@ test_db_open_password_escaping() {
             ready=1
             break
         fi
+
         sleep 1
     done
 
     if [ "$ready" -eq 0 ]; then
-        fail "MariaDB test container did not become ready in time"
+        fail "MariaDB PDO-test container did not become ready in time"
     fi
 
-    docker run --rm \
-        --network "$network" \
-        mariadb:11.8 \
-        mariadb \
-        --host="$container" \
-        --user=root \
-        --password="$root_password" \
-        --execute="CREATE DATABASE ${database};
-CREATE USER '${user}'@'%' IDENTIFIED BY '${password}';
+    # Create a database account with a password containing DSN-sensitive
+    # characters. This test uses SQL escaping as used by the installer.
+    eval "$(awk '
+        /^escape_mysql_sql_string\(\) \{/ { capture=1 }
+        capture { print }
+        capture && /^}/ { exit }
+    ' "$ROOT/setup/install.sh")"
+
+    for password in \
+        'abc@#%123' \
+        'abc\123' \
+        'abc\n123' \
+        $'abc\n123'
+    do
+        escaped_sql_password=$(escape_mysql_sql_string "$password")
+
+        docker run --rm \
+            --network "$network" \
+            mariadb:11.8 \
+            mariadb \
+            --host="$container" \
+            --user=root \
+            --password="$root_password" \
+            --execute="SET SESSION sql_mode = REPLACE(@@SESSION.sql_mode, 'NO_BACKSLASH_ESCAPES', '');
+CREATE DATABASE IF NOT EXISTS ${database};
+CREATE USER IF NOT EXISTS '${user}'@'%' IDENTIFIED BY '${escaped_sql_password}';
+ALTER USER '${user}'@'%' IDENTIFIED BY '${escaped_sql_password}';
 GRANT ALL ON ${database}.* TO '${user}'@'%';
 FLUSH PRIVILEGES;" >/dev/null
 
-    cat > "$config_file" <<EOF
+        cat > "$PDO_TEST_CONFIG_FILE" <<EOF
 <?php
 \$configValues = [
     'CONFIG_DB_ENGINE' => 'mysqli',
@@ -332,57 +388,74 @@ FLUSH PRIVILEGES;" >/dev/null
 ];
 EOF
 
-    docker run -d \
-        --name "$php_container" \
-        --network "$network" \
-	--entrypoint sleep \
-        "$image" \
-        infinity >/dev/null
+        # Escape shell/PHP source interpolation concerns by passing the
+        # configured password through an environment variable instead of
+        # embedding it directly in the PHP command.
+        docker cp \
+            "$PDO_TEST_CONFIG_FILE" \
+            "$php_container:/tmp/pdo-test-config.php" 2>/dev/null || true
 
-    docker cp \
-        "$config_file" \
-        "$php_container:/var/www/daloradius/app/common/includes/daloradius.conf.php"
+        # Re-create the PHP test container on the first iteration only.
+        if ! docker container inspect "$php_container" >/dev/null 2>&1; then
+            docker run -d \
+                --name "$php_container" \
+                --network "$network" \
+                --entrypoint sleep \
+                "$image" \
+                infinity >/dev/null
+        fi
 
-    result=$(
-        docker exec "$php_container" \
-            php -r '
+        docker cp \
+            "$PDO_TEST_CONFIG_FILE" \
+            "$php_container:/tmp/pdo-test-config.php"
+
+        result=$(
+            docker exec \
+                -e TEST_DB_PASSWORD="$password" \
+                "$php_container" \
+                php -r '
 $_SERVER["PHP_SELF"] = "/test.php";
+require "/var/www/daloradius/app/common/includes/pdo_connection.php";
+require "/tmp/pdo-test-config.php";
 
-include "/var/www/daloradius/app/common/includes/db_open.php";
+$configValues["CONFIG_DB_PASS"] = getenv("TEST_DB_PASSWORD");
 
-if (DB::isError($dbSocket)) {
-    fwrite(STDERR, "DB connection failed\n");
+try {
+    $pdo = dalo_pdo_connect($configValues);
+    $result = $pdo->query("SELECT 1")->fetchColumn();
+
+    if ((string) $result !== "1") {
+        fwrite(STDERR, "Database query failed\n");
+        exit(1);
+    }
+
+    echo "DB connection OK\n";
+} catch (Throwable $exception) {
+    fwrite(STDERR, "PDO connection test failed: " . $exception->getMessage() . "\n");
     exit(1);
 }
-
-$result = $dbSocket->getOne("SELECT 1");
-
-if (DB::isError($result) || (string) $result !== "1") {
-    fwrite(STDERR, "Database query failed\n");
-    exit(1);
-}
-
-echo "DB connection OK\n";
 '
-    )
+        )
 
-    if [ "$result" != "DB connection OK" ]; then
-        printf 'Actual db_open.php result:\n%s\n' "$result" >&2
-        fail "db_open.php did not connect with a password containing DSN-sensitive characters"
-    fi
+        if [ "$result" != "DB connection OK" ]; then
+            printf 'Actual PDO connection result:\n%s\n' "$result" >&2
+            printf 'Password test case: ' >&2
+            printf '%q\n' "$password" >&2
+            fail "PDO connection failed for the configured password"
+        fi
+    done
 
     docker rm -f "$php_container" "$container" >/dev/null
     docker network rm "$network" >/dev/null
     docker image rm "$image" >/dev/null
 
-    rm -f "$config_file"
-
-    trap cleanup EXIT
+    rm -f "$PDO_TEST_CONFIG_FILE"
+    PDO_TEST_CONFIG_FILE=
 }
 
 test_init_script
 test_freeradius_script
 test_install_script
-test_db_open_password_escaping
+test_pdo_password_escaping
 
-printf 'PASS: MySQL option-file password escaping and MariaDB parsing\n'
+printf 'PASS: MySQL option-file password escaping and MariaDB authentication\n'
