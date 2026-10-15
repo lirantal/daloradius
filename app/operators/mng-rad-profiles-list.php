@@ -83,7 +83,15 @@
                  GROUP BY rgc.groupname";
         $sql = sprintf($sql, dalo_group_table($configValues, 'CONFIG_DB_TBL_RADGROUPREPLY'), dalo_group_table($configValues, 'CONFIG_DB_TBL_RADUSERGROUP'),
                              dalo_group_table($configValues, 'CONFIG_DB_TBL_RADGROUPCHECK'), dalo_group_table($configValues, 'CONFIG_DB_TBL_RADUSERGROUP'));
-        $numrows = (int)dalo_group_query($pdo, "SELECT COUNT(*) FROM ($sql) AS profiles")->fetchColumn();
+        // Pagination only needs profile names, not per-profile membership counts.
+        $countSql = sprintf("SELECT COUNT(*) FROM (
+                                SELECT groupname FROM %s
+                                UNION
+                                SELECT groupname FROM %s
+                             ) AS profiles",
+                            dalo_group_table($configValues, 'CONFIG_DB_TBL_RADGROUPREPLY'),
+                            dalo_group_table($configValues, 'CONFIG_DB_TBL_RADGROUPCHECK'));
+        $numrows = (int)dalo_group_query($pdo, $countSql)->fetchColumn();
 
         if ($numrows > 0) {
             /* START - Related to pages_numbering.php */
