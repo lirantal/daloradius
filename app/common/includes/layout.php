@@ -156,7 +156,7 @@ EOF;
     // opening main wrapper container
     echo <<<EOF
 
-        <div class="container-fluid app-shell">
+        <div class="container-fluid app-shell px-0">
             <div class="row g-0">
                 <aside id="sidebarOffcanvas" class="offcanvas-lg offcanvas-start app-sidebar col-lg-2 bg-light text-dark border-end"
                        tabindex="-1" aria-labelledby="sidebarOffcanvasLabel">
