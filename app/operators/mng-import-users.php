@@ -101,7 +101,7 @@
 
                         if (trim($csvLine) === '') { continue; }
                         $passwordGenerated = false;
-                        $arr = str_getcsv($csvLine, ",");
+                        $arr = str_getcsv($csvLine, ',', '"', '\\');
 
                         // Support 5-20 fields:
                         // Required (5): username, password, email, firstname, lastname
