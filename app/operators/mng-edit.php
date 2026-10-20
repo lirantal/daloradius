@@ -513,7 +513,7 @@ EOF;
             foreach ($attributeRows as $row) {
 
                 foreach ($row as $i => $v) {
-                    $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                    $row[$i] = htmlspecialchars((string) ($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
                 }
 
                 $id = $row[5];
@@ -563,7 +563,7 @@ EOF;
             foreach ($attributeRows as $row) {
 
                 foreach ($row as $i => $v) {
-                    $row[$i] = htmlspecialchars($row[$i], ENT_QUOTES, 'UTF-8');
+                    $row[$i] = htmlspecialchars((string) ($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
                 }
 
                 $id = $row[5];
