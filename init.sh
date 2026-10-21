@@ -75,15 +75,30 @@ function cleanup_mysql_defaults {
 }
 trap cleanup_mysql_defaults EXIT
 
+function escape_mysql_option_value {
+    local value="$1"
+
+    value=${value//\\/\\\\}
+    value=${value//\"/\\\"}
+    value=${value//$'\n'/\\n}
+
+    printf '%s' "$value"
+}
+
 function create_mysql_defaults_file {
+    local escaped_mysql_password
+
     MYSQL_DEFAULTS_FILE=$(mktemp)
     chmod 600 "$MYSQL_DEFAULTS_FILE"
+
+    escaped_mysql_password=$(escape_mysql_option_value "$MYSQL_PASSWORD")
+
     {
         printf '[client]\n'
         printf 'host=%s\n' "$MYSQL_HOST"
         printf 'port=%s\n' "$MYSQL_PORT"
         printf 'user=%s\n' "$MYSQL_USER"
-        printf 'password=%s\n' "$MYSQL_PASSWORD"
+        printf 'password="%s"\n' "$escaped_mysql_password"
     } > "$MYSQL_DEFAULTS_FILE"
 }
 
