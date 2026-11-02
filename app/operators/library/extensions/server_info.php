@@ -294,7 +294,8 @@ function get_mask_addr($ifname) {
         $command = sprintf($format, escapeshellarg($ifname), escapeshellarg($ifname));
         $output = array();
         exec($command, $output, $result_code);
-        if ($result_code === 0 && !empty($output)) {
+        // the first format always prints a leading "/", so a bare "/" means no IPv4 mask was found
+        if ($result_code === 0 && !empty($output) && $output[0] !== '' && $output[0] !== '/') {
             return $output[0];
         }
     }
