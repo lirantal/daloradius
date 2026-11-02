@@ -36,7 +36,7 @@ if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
 function get_system_name_and_version() {
     $command = "cat /etc/*release | grep ^NAME\= | cut -d'=' -f2- | tr -d '\"'";
     exec($command, $output, $result_code);
-    if ($result_code !== 0) {
+    if ($result_code !== 0 || empty($output)) {
         return "(n/d)";
     }
     
@@ -46,7 +46,7 @@ function get_system_name_and_version() {
     
     $command = "cat /etc/*release | grep ^VERSION\= | cut -d'=' -f2- | tr -d '\"'";
     exec($command, $output, $result_code);
-    if ($result_code === 0) {
+    if ($result_code === 0 && !empty($output)) {
         $result .= sprintf(", version %s", $output[0]);
     }
     
@@ -248,8 +248,9 @@ function get_ip_addr($ifname) {
 
     foreach ($command_formats as $format) {
         $command = sprintf($format, escapeshellarg($ifname), escapeshellarg($ifname));
+        $output = array();
         exec($command, $output, $result_code);
-        if ($result_code === 0) {
+        if ($result_code === 0 && !empty($output)) {
             return $output[0];
         }
     }
@@ -268,9 +269,10 @@ function get_mac_addr($ifname) {
 
     foreach ($command_formats as $format) {
         $command = sprintf($format, escapeshellarg($ifname), escapeshellarg($ifname));
+        $output = array();
         exec($command, $output, $result_code);
 
-        if ($result_code === 0 && preg_match("/^([0-9A-F]{2}\:){5}[0-9A-F]{2}$/i", $output[0])) {
+        if ($result_code === 0 && !empty($output) && preg_match("/^([0-9A-F]{2}\:){5}[0-9A-F]{2}$/i", $output[0])) {
             return $output[0];
         }
     }
@@ -290,8 +292,9 @@ function get_mask_addr($ifname) {
     
     foreach ($command_formats as $format) {
         $command = sprintf($format, escapeshellarg($ifname), escapeshellarg($ifname));
+        $output = array();
         exec($command, $output, $result_code);
-        if ($result_code === 0) {
+        if ($result_code === 0 && !empty($output)) {
             return $output[0];
         }
     }
