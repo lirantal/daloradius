@@ -132,7 +132,6 @@ if ($is_valid) {
                        "uploads" => "Uploads count in " . $size
                      );
         $colspan = count($cols);
-        $half_colspan = intval($colspan / 2);
 
         /* START - Related to pages_numbering.php */
 
@@ -144,14 +143,6 @@ if ($is_valid) {
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
 
         /* END */
-
-
-        $total_data = 0;
-        foreach ($res as $row) {
-            $total_data += intval($row[1]);
-        }
-
-        $total_data = number_format(floatval($total_data / $size_division[$size]), 1, ".", "");
 
         $sql .= sprintf(" LIMIT %s, %s", (int)$offset, (int)$rowsPerPage);
         $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
@@ -189,18 +180,14 @@ if ($is_valid) {
         // closes table header, opens table body
         print_table_middle();
         
-        $per_page_data = 0;
         foreach ($res as $row) {
             $data = intval($row[1]);
-            $per_page_data += $data;
 
             echo "<tr>"
                . "<td>" . htmlspecialchars((string)($row[0] ?? ''), ENT_QUOTES, 'UTF-8') . "</td>"
                . "<td>" . number_format(floatval($data / $size_division[$size]), 1, ".", "") . " " . $short_size[$size] . "</td>"
                . "</tr>";
-
         }
-        $per_page_data = number_format(floatval($per_page_data / $size_division[$size]), 1, ".", "");
 
         // close tbody,
         // print tfoot

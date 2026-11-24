@@ -50,8 +50,6 @@ try {
     $allRows = dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'upload', $type, $orderBy, $orderType);
     $numrows = count($allRows);
     include_once('include/management/pages_numbering.php');
-    $total_data = 0;
-    foreach ($allRows as $row) { $total_data += intval($row[1]); }
     $pageRows = $numrows ? dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'upload', $type, $orderBy, $orderType, (int) $offset, (int) $rowsPerPage) : array();
 } catch (Throwable $exception) {
     $numrows = 0;
@@ -65,11 +63,9 @@ if ($numrows > 0) {
                    "uploads" => "Uploads count in " . $size
                  );
     $colspan = count($cols);
-    $half_colspan = intval($colspan / 2);
 
     $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
     $per_page_numrows = count($pageRows);
-    $total_data = number_format(floatval($total_data / $size_division[$size]), 1, ".", "");
 
     // the partial query is built starting from user input
     // and for being passed to setupNumbering and setupLinks functions
@@ -101,18 +97,14 @@ if ($numrows > 0) {
     // closes table header, opens table body
     print_table_middle();
 
-    $per_page_data = 0;
     foreach ($pageRows as $row) {
         $data = intval($row[1]);
-        $per_page_data += $data;
 
         echo "<tr>"
            . "<td>" . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . "</td>"
            . "<td>" . number_format(floatval($data / $size_division[$size]), 1, ".", "") . " " . $short_size[$size] . "</td>"
            . "</tr>";
-
     }
-    $per_page_data = number_format(floatval($per_page_data / $size_division[$size]), 1, ".", "");
 
     // close tbody,
     // print tfoot

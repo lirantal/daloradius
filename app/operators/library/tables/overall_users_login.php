@@ -119,7 +119,6 @@ if ($is_valid) {
                        "logins" => "Logins/hits count"
                      );
         $colspan = count($cols);
-        $half_colspan = intval($colspan / 2);
 
         /* START - Related to pages_numbering.php */
 
@@ -131,12 +130,6 @@ if ($is_valid) {
         $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == "yes" && $maxPage > 1;
 
         /* END */
-
-
-        $total_data = 0;
-        foreach ($res as $row) {
-            $total_data += intval($row[1]);
-        }
 
         $sql .= sprintf(" LIMIT %s, %s", (int)$offset, (int)$rowsPerPage);
         $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
@@ -175,7 +168,6 @@ if ($is_valid) {
         print_table_middle();
 
         // table content
-        $per_page_data = 0;
         foreach ($res as $row) {
             $data = intval($row[1]);
 
@@ -183,7 +175,6 @@ if ($is_valid) {
                . "<td>" . htmlspecialchars((string)($row[0] ?? ''), ENT_QUOTES, 'UTF-8') . "</td>"
                . "<td>" . $data . "</td>"
                . "</tr>";
-            $per_page_data += $data;
         }
         
         // close tbody,
