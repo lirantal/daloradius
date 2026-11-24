@@ -33,7 +33,7 @@ $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
 global $planname, $username;
 
 include_once("include/management/populate_selectbox.php");
-$menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
+$has_users = has_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
 $menu_plannames = get_plans();
 
 // define descriptors
@@ -60,7 +60,7 @@ if (count($menu_plannames) > 0) {
                              'icon' => 'person-lines-fill', 'form_components' => $components, );
 }
 
-if (count($menu_usernames) > 0) {
+if ($has_users) {
     $components = array();
 
     $components[] = array(

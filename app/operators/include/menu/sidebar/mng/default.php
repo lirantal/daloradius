@@ -33,7 +33,7 @@ $autocomplete = (isset($configValues['CONFIG_IFACE_AUTO_COMPLETE']) &&
 global $username;
 
 include_once("include/management/populate_selectbox.php");
-$menu_users = get_users('CONFIG_DB_TBL_RADCHECK');
+$has_users = has_users('CONFIG_DB_TBL_RADCHECK');
 
 
 // define descriptors
@@ -44,7 +44,7 @@ $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUser'), 'hr
 $descriptors1[] = array( 'type' => 'link', 'label' => t('button','NewUserQuick'), 'href' =>'mng-new-quick.php',
                          'icon' => 'person-fill-add', 'img' => array( 'src' => 'static/images/icons/userNew.gif', ), );
 
-if (count($menu_users) > 0) {
+if ($has_users) {
     $descriptors1[] = array( 'type' => 'link', 'label' => t('button','ListUsers'), 'href' => 'mng-list-all.php',
                              'icon' => 'person-lines-fill', 'img' => array( 'src' => 'static/images/icons/userList.gif', ), );
 

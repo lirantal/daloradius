@@ -37,9 +37,6 @@ include_once("include/management/populate_selectbox.php");
 $menu_plannames = get_plans();
 array_unshift($menu_plannames, "");
 
-$menu_usernames = get_users();
-array_unshift($menu_usernames, "");
-
 // define descriptors
 $descriptors1 = array();
 
