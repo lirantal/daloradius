@@ -83,6 +83,9 @@ if ($is_valid) {
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "downloads", "year" )))
                      ? strtolower($_GET['orderBy']) : "downloads";
+            $orderClause = ($orderBy === 'year')
+                         ? "year $orderType"
+                         : "downloads $orderType, year ASC";
 
             $sql = "SELECT YEAR(AcctStartTime) AS year, SUM(AcctOutputOctets) AS downloads
                       FROM %s
@@ -95,12 +98,14 @@ if ($is_valid) {
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "downloads", "month" )))
                      ? strtolower($_GET['orderBy']) : "downloads";
+            $orderClause = ($orderBy === 'month')
+                         ? "YEAR(AcctStartTime) $orderType, MONTH(AcctStartTime) $orderType"
+                         : "downloads $orderType, YEAR(AcctStartTime) ASC, MONTH(AcctStartTime) ASC";
 
             $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
-                           SUM(AcctOutputOctets) AS downloads,
-                           CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
+                           SUM(AcctOutputOctets) AS downloads
                       FROM %s WHERE username=:widget_username AND AcctStopTime>0
-                     GROUP BY month";
+                     GROUP BY YEAR(AcctStartTime), MONTH(AcctStartTime)";
 
             break;
 
@@ -110,6 +115,9 @@ if ($is_valid) {
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "downloads", "day" )))
                      ? strtolower($_GET['orderBy']) : "downloads";
+            $orderClause = ($orderBy === 'day')
+                         ? "day $orderType"
+                         : "downloads $orderType, day ASC";
 
             $sql = "SELECT DATE(AcctStartTime) AS day, SUM(AcctOutputOctets) AS downloads
                       FROM %s
@@ -118,8 +126,8 @@ if ($is_valid) {
             break;
     }
 
-    $sql = sprintf($sql . " ORDER BY %s %s", dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'),
-                                             $orderBy, $orderType);
+    $sql = sprintf($sql . " ORDER BY %s", dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'),
+                                         $orderClause);
 
     $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
 
@@ -144,10 +152,7 @@ if ($is_valid) {
 
         /* END */
 
-        $sql .= sprintf(" LIMIT %s, %s", (int)$offset, (int)$rowsPerPage);
-        $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
-        $logDebugSQL = "$sql;\n";
-
+        $res = array_slice($res, (int)$offset, (int)$rowsPerPage);
         $per_page_numrows = count($res);
 
         // the partial query is built starting from user input

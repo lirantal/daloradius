@@ -84,6 +84,9 @@ if ($is_valid) {
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "uploads", "year" )))
                      ? strtolower($_GET['orderBy']) : "uploads";
+            $orderClause = ($orderBy === 'year')
+                         ? "year $orderType"
+                         : "uploads $orderType, year ASC";
 
             $sql = "SELECT YEAR(AcctStartTime) AS year, SUM(AcctInputOctets) AS uploads
                       FROM %s
@@ -96,12 +99,14 @@ if ($is_valid) {
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "uploads", "month" )))
                      ? strtolower($_GET['orderBy']) : "uploads";
+            $orderClause = ($orderBy === 'month')
+                         ? "YEAR(AcctStartTime) $orderType, MONTH(AcctStartTime) $orderType"
+                         : "uploads $orderType, YEAR(AcctStartTime) ASC, MONTH(AcctStartTime) ASC";
 
             $sql = "SELECT CONCAT(LEFT(MONTHNAME(AcctStartTime), 3), ' (', YEAR(AcctStartTime), ')'),
-                           SUM(AcctInputOctets) AS uploads,
-                           CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
+                           SUM(AcctInputOctets) AS uploads
                       FROM %s WHERE username=:widget_username AND AcctStopTime>0
-                     GROUP BY month";
+                     GROUP BY YEAR(AcctStartTime), MONTH(AcctStartTime)";
             break;
 
         default:
@@ -110,6 +115,9 @@ if ($is_valid) {
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "uploads", "day" )))
                      ? strtolower($_GET['orderBy']) : "uploads";
+            $orderClause = ($orderBy === 'day')
+                         ? "day $orderType"
+                         : "uploads $orderType, day ASC";
 
             $sql = "SELECT DATE(AcctStartTime) AS day, SUM(AcctInputOctets) AS uploads
                       FROM %s
@@ -118,8 +126,8 @@ if ($is_valid) {
             break;
     }
 
-    $sql = sprintf($sql . " ORDER BY %s %s", dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'),
-                                             $orderBy, $orderType);
+    $sql = sprintf($sql . " ORDER BY %s", dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'),
+                                         $orderClause);
 
     $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
 
@@ -144,10 +152,7 @@ if ($is_valid) {
 
         /* END */
 
-        $sql .= sprintf(" LIMIT %s, %s", (int)$offset, (int)$rowsPerPage);
-        $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
-        $logDebugSQL = "$sql;\n";
-
+        $res = array_slice($res, (int)$offset, (int)$rowsPerPage);
         $per_page_numrows = count($res);
 
         // the partial query is built starting from user input

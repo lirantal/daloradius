@@ -58,8 +58,11 @@ switch ($type) {
         $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                     in_array(strtolower($_GET['orderBy']), array( "logins", "year" )))
                  ? strtolower($_GET['orderBy']) : "year";
+        $orderClause = ($orderBy === 'year')
+                     ? "year $orderType"
+                     : "logins $orderType, year ASC";
         $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(username) AS logins
-                 FROM %s GROUP BY year ORDER BY %s %s";
+                 FROM %s GROUP BY year ORDER BY %s";
         break;
 
     case "monthly":
@@ -67,10 +70,12 @@ switch ($type) {
         $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                     in_array(strtolower($_GET['orderBy']), array( "logins", "month" )))
                  ? strtolower($_GET['orderBy']) : "month";
+        $orderClause = ($orderBy === 'month')
+                     ? "YEAR(AcctStartTime) $orderType, MONTH(AcctStartTime) $orderType"
+                     : "logins $orderType, YEAR(AcctStartTime) ASC, MONTH(AcctStartTime) ASC";
         $sql = "SELECT CONCAT(MONTHNAME(AcctStartTime), ' (', YEAR(AcctStartTime), ')'),
-                       COUNT(username) AS logins,
-                       CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
-                  FROM %s GROUP BY month ORDER BY %s %s";
+                       COUNT(username) AS logins
+                  FROM %s GROUP BY YEAR(AcctStartTime), MONTH(AcctStartTime) ORDER BY %s";
         break;
 
     default:
@@ -79,12 +84,15 @@ switch ($type) {
         $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                     in_array(strtolower($_GET['orderBy']), array( "logins", "day" )))
                  ? strtolower($_GET['orderBy']) : "day";
+        $orderClause = ($orderBy === 'day')
+                     ? "day $orderType"
+                     : "logins $orderType, day ASC";
         $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(username) AS logins
-                FROM %s GROUP BY day ORDER BY %s %s";
+                FROM %s GROUP BY day ORDER BY %s";
         break;
 }
 
-$sql = sprintf($sql, dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'), $orderBy, $orderType);
+$sql = sprintf($sql, dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'), $orderClause);
 $res = dalo_widget_rows($widgetPDO,$sql,array());
 
 $numrows = count($res);
@@ -108,10 +116,7 @@ if ($numrows > 0) {
 
     /* END */
 
-    $sql .= sprintf(" LIMIT %s, %s", (int)$offset, (int)$rowsPerPage);
-    $res = dalo_widget_rows($widgetPDO,$sql,array());
-    $logDebugSQL = "$sql;\n";
-
+    $res = array_slice($res, (int)$offset, (int)$rowsPerPage);
     $per_page_numrows = count($res);
 
     // the partial query is built starting from user input

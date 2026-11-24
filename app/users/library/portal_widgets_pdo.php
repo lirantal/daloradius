@@ -50,16 +50,21 @@ function dalo_portal_widget_statistics(PDO $pdo, $config, $username, $category, 
         ($category === 'upload' ? 'SUM(AcctInputOctets)' : 'SUM(AcctOutputOctets)');
     if ($type === 'monthly') {
         $monthName = $category === 'login' ? 'MONTHNAME(AcctStartTime)' : 'LEFT(MONTHNAME(AcctStartTime),3)';
-        $columns = "CONCAT($monthName, ' (', YEAR(AcctStartTime), ')'), $aggregate AS $metric,
-            CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month";
+        $columns = "CONCAT($monthName, ' (', YEAR(AcctStartTime), ')'), $aggregate AS $metric";
+        $groupBy = 'YEAR(AcctStartTime), MONTH(AcctStartTime)';
+        $orderClause = ($orderBy === 'month')
+            ? "YEAR(AcctStartTime) $orderType, MONTH(AcctStartTime) $orderType"
+            : "$metric $orderType, YEAR(AcctStartTime) asc, MONTH(AcctStartTime) asc";
     } else {
         $expression = $type === 'yearly' ? 'YEAR(AcctStartTime)' : 'DATE(AcctStartTime)';
         $columns = "$expression AS $period, $aggregate AS $metric";
+        $groupBy = $period;
+        $orderClause = ($orderBy === $period)
+            ? "$period $orderType"
+            : "$metric $orderType, $period asc";
     }
     $table = dalo_portal_widget_table($pdo, $config, 'CONFIG_DB_TBL_RADACCT');
-    $sql = "SELECT $columns FROM $table WHERE username=:username AND AcctStopTime>0 GROUP BY $period ORDER BY $orderBy $orderType";
-    // The group key breaks metric ties consistently across LIMIT requests.
-    if ($orderBy !== $period) { $sql .= ", $period asc"; }
+    $sql = "SELECT $columns FROM $table WHERE username=:username AND AcctStopTime>0 GROUP BY $groupBy ORDER BY $orderClause";
     $bindings = array(':username' => $username);
     if ($offset !== null || $limit !== null) {
         if (!is_int($offset) || $offset < 0 || !is_int($limit) || $limit < 1) {
