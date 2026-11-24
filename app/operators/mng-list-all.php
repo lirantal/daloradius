@@ -118,8 +118,7 @@
     $numrows = 0;
     try {
         $reportPDO = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
-        list($reportSQL, $reportBindings) = dalo_operator_query('mng-list-all', array(), $configValues);
-        $numrows = dalo_accounting_count($reportPDO, $reportSQL, $reportBindings, $configValues);
+        $numrows = dalo_operator_user_count($reportPDO, 'mng-list-all', array(), $configValues);
     } catch (Throwable $exception) { dalo_accounting_failure($exception); }
 
     if ($numrows > 0) {
@@ -136,8 +135,8 @@
         /* END */
 
         try {
-            $reportRows = dalo_operator_rows($reportPDO, $reportSQL, $reportBindings, 'mng-list-all',
-                $orderBy, $orderType, (int)$offset, (int)$rowsPerPage, true);
+            $reportRows = dalo_operator_user_rows($reportPDO, 'mng-list-all', array(), $configValues,
+                $orderBy, $orderType, (int)$offset, (int)$rowsPerPage);
         } catch (Throwable $exception) { dalo_accounting_failure($exception); }
         $per_page_numrows = count($reportRows);
 
