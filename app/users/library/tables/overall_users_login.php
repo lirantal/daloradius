@@ -33,15 +33,11 @@ if (strpos($_SERVER['PHP_SELF'], $extension_file) !== false) {
 
 require_once __DIR__ . '/../portal_widgets_pdo.php';
 $username = $_SESSION['login_user'];
-$username_enc = htmlspecialchars((string) $username, ENT_QUOTES, 'UTF-8');
 $type = dalo_portal_widget_choice($_GET, 'type', array('daily', 'monthly', 'yearly'), 'daily');
-$size = dalo_portal_widget_choice($_GET, 'size', array('gigabytes', 'megabytes'), 'megabytes');
 $orderType = dalo_portal_widget_choice($_GET, 'orderType', array('desc', 'asc'), 'asc', true);
 $selected_param = array('daily' => 'day', 'monthly' => 'month', 'yearly' => 'year')[$type];
 $orderBy = dalo_portal_widget_choice($_GET, 'orderBy', array('logins', $selected_param), $selected_param);
 $label_param = array('day' => 'Day of month', 'month' => 'Month of year', 'year' => 'Year');
-$size_division = array('gigabytes' => 1073741824, 'megabytes' => 1048576);
-$short_size = array('gigabytes' => 'GBs', 'megabytes' => 'MBs');
 include_once('include/management/pages_common.php');
 $widgetPdo = null;
 $numrows = 0;
@@ -50,8 +46,6 @@ try {
     $allRows = dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'login', $type, $orderBy, $orderType);
     $numrows = count($allRows);
     include_once('include/management/pages_numbering.php');
-    $total_data = 0;
-    foreach ($allRows as $row) { $total_data += intval($row[1]); }
     $pageRows = $numrows ? dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'login', $type, $orderBy, $orderType, (int) $offset, (int) $rowsPerPage) : array();
 } catch (Throwable $exception) {
     $numrows = 0;
@@ -65,7 +59,6 @@ if ($numrows > 0) {
                    "logins" => "Logins/hits count"
                  );
     $colspan = count($cols);
-    $half_colspan = intval($colspan / 2);
 
     $drawNumberLinks = strtolower($configValues['CONFIG_IFACE_TABLES_LISTING_NUM']) == 'yes' && $maxPage > 1;
     $per_page_numrows = count($pageRows);
@@ -101,7 +94,6 @@ if ($numrows > 0) {
     print_table_middle();
 
     // table content
-    $per_page_data = 0;
     foreach ($pageRows as $row) {
         $data = intval($row[1]);
 
@@ -109,7 +101,6 @@ if ($numrows > 0) {
            . "<td>" . htmlspecialchars($row[0], ENT_QUOTES, 'UTF-8') . "</td>"
            . "<td>" . $data . "</td>"
            . "</tr>";
-        $per_page_data += $data;
     }
 
     // close tbody,
