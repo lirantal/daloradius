@@ -40,32 +40,6 @@ function dalo_operator_user_count(PDO $pdo, $source, $filters, $config) {
     return (int)dalo_accounting_execute($pdo, "SELECT COUNT(DISTINCT rc.username) FROM $from WHERE $where", $bindings)->fetchColumn();
 }
 
-function dalo_operator_user_enrich(PDO $pdo, array &$rows, array $usernames, $column, $sql) {
-    $tokens = array();
-    $bindings = array();
-    foreach ($usernames as $i => $name) {
-        $token = ':enrich_user_'.$i;
-        $tokens[] = $token;
-        $bindings[$token] = $name;
-    }
-    $fetched = dalo_accounting_execute($pdo, sprintf($sql, implode(',', $tokens)), $bindings)->fetchAll(PDO::FETCH_ASSOC);
-    $exact = array();
-    $ci = array();
-    foreach ($fetched as $entry) {
-        $key = (string)$entry['username'];
-        $exact[$key] = $entry[$column];
-        $lower = strtolower($key);
-        if (!array_key_exists($lower, $ci)) {
-            $ci[$lower] = $entry[$column];
-        }
-    }
-    foreach ($rows as &$row) {
-        $key = (string)$row['username'];
-        $row[$column] = array_key_exists($key, $exact) ? $exact[$key] : ($ci[strtolower($key)] ?? null);
-    }
-    unset($row);
-}
-
 function dalo_operator_user_rows(PDO $pdo, $source, $filters, $config, $order, $direction, $offset, $limit) {
     $allowed = array('id','fullname','username','auth','framedipaddress','lastlogin');
     if (!in_array($source, array('mng-list-all', 'mng-search'), true) ||
@@ -76,41 +50,38 @@ function dalo_operator_user_rows(PDO $pdo, $source, $filters, $config, $order, $
     $rr = dalo_export_table($config, 'CONFIG_DB_TBL_RADREPLY');
     $ra = dalo_export_table($config, 'CONFIG_DB_TBL_RADACCT');
     list($from, $where, $bindings) = dalo_operator_users_from_where($source, $filters, $config);
-    $select = "ui.id AS id,rc.username AS username,rc.value AS auth,rc.attribute,
+    $innerSelect = "ui.id AS id,rc.username AS username,rc.value AS auth,rc.attribute,
                   CONCAT(COALESCE(ui.firstname,''),' ',COALESCE(ui.lastname,'')) AS fullname";
     if ($order === 'framedipaddress') {
-        $select .= ",\n                  (SELECT MAX(value) FROM $rr WHERE username=rc.username AND attribute='Framed-IP-Address') AS framedipaddress";
+        $innerSelect .= ",\n                  (SELECT MAX(value) FROM $rr WHERE username=rc.username AND attribute='Framed-IP-Address') AS framedipaddress";
+        $framedIpExpr = 'page.framedipaddress AS framedipaddress';
+    } else {
+        $framedIpExpr = "(SELECT MAX(value) FROM $rr WHERE username=page.username AND attribute='Framed-IP-Address') AS framedipaddress";
     }
     if ($order === 'lastlogin') {
-        $select .= ",\n                  (SELECT MAX(acctstarttime) FROM $ra WHERE username=rc.username) AS lastlogin";
+        $innerSelect .= ",\n                  (SELECT MAX(acctstarttime) FROM $ra WHERE username=rc.username) AS lastlogin";
+        $lastLoginExpr = 'page.lastlogin AS lastlogin';
+    } else {
+        $lastLoginExpr = "(SELECT MAX(acctstarttime) FROM $ra WHERE username=page.username) AS lastlogin";
     }
     $bindings[':operator_offset'] = $offset;
     $bindings[':operator_limit'] = $limit;
-    $sql = "SELECT $select FROM $from WHERE $where GROUP BY rc.username ORDER BY `$order` $direction LIMIT :operator_offset, :operator_limit";
-    $rows = dalo_accounting_execute($pdo, $sql, $bindings)->fetchAll(PDO::FETCH_ASSOC);
-    if (!$rows) {
-        return array();
-    }
-    $usernames = array_values(array_unique(array_map('strval', array_column($rows, 'username'))));
-    if ($order !== 'framedipaddress') {
-        dalo_operator_user_enrich(
-            $pdo,
-            $rows,
-            $usernames,
-            'framedipaddress',
-            "SELECT username, MAX(value) AS framedipaddress FROM $rr WHERE attribute='Framed-IP-Address' AND username IN (%s) GROUP BY username"
-        );
-    }
-    if ($order !== 'lastlogin') {
-        dalo_operator_user_enrich(
-            $pdo,
-            $rows,
-            $usernames,
-            'lastlogin',
-            "SELECT username, MAX(acctstarttime) AS lastlogin FROM $ra WHERE username IN (%s) GROUP BY username"
-        );
-    }
-    return $rows;
+    // Materialize the paginated slice first, then look up framedipaddress/lastlogin in SQL
+    // so MariaDB preserves exact column collation semantics (e.g. accent/case equivalence).
+    $sql = "SELECT page.id AS id,page.username AS username,page.auth AS auth,page.attribute AS attribute,
+                   page.fullname AS fullname,
+                   $framedIpExpr,
+                   $lastLoginExpr
+              FROM (
+                  SELECT $innerSelect
+                    FROM $from
+                   WHERE $where
+                   GROUP BY rc.username
+                   ORDER BY `$order` $direction
+                   LIMIT :operator_offset, :operator_limit
+              ) AS page
+             ORDER BY page.`$order` $direction";
+    return dalo_accounting_execute($pdo, $sql, $bindings)->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function dalo_operator_query($source, $filters, $config) {
