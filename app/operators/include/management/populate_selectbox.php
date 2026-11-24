@@ -191,6 +191,18 @@ function get_users($TBL_KEY='CONFIG_DB_TBL_RADCHECK') {
     return array_map(function ($row) { return $row[0]; }, $rows);
 }
 
+function has_users($TBL_KEY='CONFIG_DB_TBL_RADCHECK') {
+    $rows = dalo_selectbox_rows(function (PDO $pdo, $config) use ($TBL_KEY) {
+        if (!in_array($TBL_KEY, array('CONFIG_DB_TBL_RADCHECK', 'CONFIG_DB_TBL_RADACCT',
+                                    'CONFIG_DB_TBL_DALOUSERINFO', 'CONFIG_DB_TBL_DALOUSERBILLINFO'), true)) {
+            throw new InvalidArgumentException('Invalid username selector');
+        }
+
+        return sprintf("SELECT 1 FROM %s LIMIT 1", dalo_selectbox_table($pdo, $config, $TBL_KEY));
+    });
+    return count($rows) > 0;
+}
+
 
 function get_nas_names() {
     $rows = dalo_selectbox_rows(function (PDO $pdo, $config) {

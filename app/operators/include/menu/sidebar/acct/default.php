@@ -33,9 +33,7 @@ global $username, $startdate, $enddate, $ipaddress, $nasipaddress;
 
 
 include_once("include/management/populate_selectbox.php");
-$menu_usernames = get_users('CONFIG_DB_TBL_RADACCT');
-$show = count($menu_usernames) > 0;
-array_unshift($menu_usernames, "");
+$show = has_users('CONFIG_DB_TBL_RADACCT');
 
 // define descriptors
 $descriptors1 = array();

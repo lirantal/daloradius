@@ -34,7 +34,6 @@ global $ratename, $username, $startdate, $enddate;
 
 
 include_once("include/management/populate_selectbox.php");
-$menu_usernames = get_users('CONFIG_DB_TBL_DALOUSERBILLINFO');
 $menu_ratenames = get_ratenames();
 
 $ratename_select = array(
