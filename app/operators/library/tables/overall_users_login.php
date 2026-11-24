@@ -77,6 +77,9 @@ if ($is_valid) {
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "logins", "year" )))
                      ? strtolower($_GET['orderBy']) : "year";
+            $orderClause = ($orderBy === 'year')
+                         ? "year $orderType"
+                         : "logins $orderType, year ASC";
 
             $sql = "SELECT YEAR(AcctStartTime) AS year, COUNT(AcctStartTime) AS logins
                       FROM %s WHERE username=:widget_username AND AcctStopTime>0 GROUP BY year";
@@ -87,11 +90,14 @@ if ($is_valid) {
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "logins", "month" )))
                      ? strtolower($_GET['orderBy']) : "month";
+            $orderClause = ($orderBy === 'month')
+                         ? "YEAR(AcctStartTime) $orderType, MONTH(AcctStartTime) $orderType"
+                         : "logins $orderType, YEAR(AcctStartTime) ASC, MONTH(AcctStartTime) ASC";
 
             $sql = "SELECT CONCAT(MONTHNAME(AcctStartTime), ' (', YEAR(AcctStartTime), ')'),
-                           COUNT(AcctStartTime) AS logins,
-                           CAST(CONCAT(YEAR(AcctStartTime), '-', MONTH(AcctStartTime), '-01') AS DATE) AS month
-                      FROM %s WHERE username=:widget_username AND AcctStopTime>0 GROUP BY month";
+                           COUNT(AcctStartTime) AS logins
+                      FROM %s WHERE username=:widget_username AND AcctStopTime>0
+                     GROUP BY YEAR(AcctStartTime), MONTH(AcctStartTime)";
             break;
 
         default:
@@ -100,14 +106,17 @@ if ($is_valid) {
             $orderBy = (array_key_exists('orderBy', $_GET) && isset($_GET['orderBy']) &&
                         in_array(strtolower($_GET['orderBy']), array( "logins", "day" )))
                      ? strtolower($_GET['orderBy']) : "day";
+            $orderClause = ($orderBy === 'day')
+                         ? "day $orderType"
+                         : "logins $orderType, day ASC";
             $sql = "SELECT DATE(AcctStartTime) AS day, COUNT(AcctStartTime) AS logins
                       FROM %s WHERE username=:widget_username AND AcctStopTime>0
                      GROUP BY day";
             break;
     }
 
-    $sql = sprintf($sql . " ORDER BY %s %s", dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'),
-                                             $orderBy, $orderType);
+    $sql = sprintf($sql . " ORDER BY %s", dalo_widget_table($configValues,'CONFIG_DB_TBL_RADACCT'),
+                                         $orderClause);
     $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
 
     $numrows = count($res);
@@ -131,10 +140,7 @@ if ($is_valid) {
 
         /* END */
 
-        $sql .= sprintf(" LIMIT %s, %s", (int)$offset, (int)$rowsPerPage);
-        $res = dalo_widget_rows($widgetPDO,$sql,array(':widget_username'=>$username));
-        $logDebugSQL = "$sql;\n";
-
+        $res = array_slice($res, (int)$offset, (int)$rowsPerPage);
         $per_page_numrows = count($res);
 
         // the partial query is built starting from user input

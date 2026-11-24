@@ -46,7 +46,7 @@ try {
     $allRows = dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'login', $type, $orderBy, $orderType);
     $numrows = count($allRows);
     include_once('include/management/pages_numbering.php');
-    $pageRows = $numrows ? dalo_portal_widget_statistics($widgetPdo, $configValues, $username, 'login', $type, $orderBy, $orderType, (int) $offset, (int) $rowsPerPage) : array();
+    $pageRows = $numrows > 0 ? array_slice($allRows, (int) $offset, (int) $rowsPerPage) : array();
 } catch (Throwable $exception) {
     $numrows = 0;
     $failureMsg = 'Portal statistics unavailable';
