@@ -33,6 +33,11 @@ php -m | grep -i '^ldap$'
 
 ## Database migration
 
+For releases containing the tracked migration runner, use the
+[new upgrade method](upgrade.md), which includes the LDAP migration. The manual
+SQL below is retained for legacy releases without that runner; use a verified
+backup and stop application writers before applying it.
+
 Fresh installations already include the required columns. For an existing
 installation, run this command from the repository root:
 

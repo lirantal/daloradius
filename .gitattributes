@@ -6,3 +6,7 @@ docker-compose.yml text eol=lf
 init.sh text eol=lf
 init-freeradius.sh text eol=lf
 contrib/docker/*.conf text eol=lf
+contrib/db/migrations/*.sql text eol=lf
+contrib/db/migrations/*.php text eol=lf
+contrib/scripts/maintenance/migrate-db.php text eol=lf
+setup/upgrade.sh text eol=lf

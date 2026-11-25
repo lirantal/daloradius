@@ -97,6 +97,20 @@ provisioning, and rollout guidance, is documented in
 
 ## Database migrations for upgrades
 
+For current releases, use the [upgrade guide](doc/setup/upgrade.md). It covers
+the Debian upgrade helper, manual installations and Docker Compose, with a
+shared migration history. Backups and recovery remain the administrator's
+responsibility; the upgrade tools do not create backups automatically.
+
+### Legacy/manual SQL migrations
+
+The instructions below are retained for older releases without the tracked
+migration runner. For a release containing the runner, follow the
+[new upgrade method](doc/setup/upgrade.md#docker-compose-installations) instead
+of mixing direct SQL imports and the tracked procedure in the same upgrade.
+Schedule a maintenance window, stop application writers and verify a backup
+before applying legacy SQL.
+
 Fresh Docker deployments initialize the database from the bundled schema. When upgrading an existing Docker deployment, check `contrib/db/migrations/` in the updated source tree and apply the relevant SQL migrations before using newly added features.
 
 Operator LDAP authentication requires

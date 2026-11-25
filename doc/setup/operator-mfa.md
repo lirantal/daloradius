@@ -29,6 +29,11 @@ If your installation uses different values, replace the example database name an
 
 ## Upgrading an existing installation
 
+For releases containing the tracked migration runner, use the
+[new upgrade method](upgrade.md), which includes this schema migration.
+The manual SQL examples below remain available for legacy releases without
+the runner; back up and stop application writers before using them.
+
 Fresh installations already include the operator MFA schema in `contrib/db/mariadb-daloradius.sql`. Existing installations must apply the database migration before operators enable MFA or use the MFA recovery page.
 
 Back up the database first, then run the migration script from the daloRADIUS source tree.

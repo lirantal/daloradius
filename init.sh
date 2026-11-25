@@ -3,6 +3,13 @@
 # GitHub: git@github.com:lirantal/daloradius.git
 set -euo pipefail
 
+MIGRATE_ONLY=false
+case "${1:-}" in
+    "") [[ $# -eq 0 ]] || { echo "Unexpected arguments." >&2; exit 2; } ;;
+    --migrate-only) [[ $# -eq 1 ]] || { echo "Unexpected arguments." >&2; exit 2; }; MIGRATE_ONLY=true ;;
+    *) echo "Usage: init.sh [--migrate-only]" >&2; exit 2 ;;
+esac
+
 DALORADIUS_PATH=/var/www/daloradius
 DALORADIUS_CONF_PATH=/var/www/daloradius/app/common/includes/daloradius.conf.php
 
@@ -220,6 +227,11 @@ function refresh_operator_auth_config {
     chmod 0600 "$DALORADIUS_CONF_PATH"
 }
 
+function init_freeradius_database {
+    mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" < "$DALORADIUS_PATH/contrib/db/fr3-mariadb-freeradius.sql"
+    echo "Database initialization for FreeRADIUS base schema completed."
+}
+
 function init_database {
     # The official MariaDB container creates MYSQL_DATABASE/MYSQL_USER during startup.
     # Import the daloRADIUS schema with the application user instead of trying to
@@ -245,12 +257,26 @@ EOSQL
     test "$count" -gt 0
 }
 
-function tables_exist {
+function count_existing_tables {
     local table_name
+    local in_list=""
+    local escaped_table_name
 
     for table_name in "$@"; do
-        table_exists "$table_name" || return 1
+        escaped_table_name=$(printf '%s' "$table_name" | sed -e "s/'/''/g")
+        if [ -n "$in_list" ]; then
+            in_list="${in_list},'${escaped_table_name}'"
+        else
+            in_list="'${escaped_table_name}'"
+        fi
     done
+
+    mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<EOSQL
+SELECT COUNT(*)
+FROM information_schema.tables
+WHERE table_schema = DATABASE()
+  AND table_name IN ($in_list);
+EOSQL
 }
 
 function ensure_dictionary {
@@ -267,126 +293,17 @@ function ensure_dictionary {
     echo "daloRADIUS dictionary initialization completed."
 }
 
-function ensure_operator_password_column {
-    local column_metadata
-
-    if ! table_exists "operators"; then
-        return
+function run_schema_migrations {
+    # One database-scoped ledger for Docker, the upgrader and manual installs.
+    # On a freshly seeded database, mariadb-daloradius.sql already includes the
+    # bundled schema changes, so baseline the ledger without replaying old SQL.
+    # A failure exits before Apache starts; do not mark or hide failed SQL.
+    local migrate_flag="--apply"
+    if [[ "${FRESH_DB_INIT:-false}" == true ]]; then
+        migrate_flag="--baseline-fresh"
     fi
-
-    column_metadata=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
-SELECT CONCAT(CHARACTER_MAXIMUM_LENGTH, ':', IS_NULLABLE)
-FROM information_schema.columns
-WHERE table_schema = DATABASE()
-  AND table_name = 'operators'
-  AND column_name = 'password';
-EOSQL
-)
-
-    case "$column_metadata" in
-        ""|*[!0-9:Y]*)
-            return
-            ;;
-    esac
-
-    if [ "${column_metadata%%:*}" -lt 95 ] || [ "${column_metadata##*:}" != "YES" ]; then
-        echo "Updating operators.password column length for password hashes."
-        mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
-ALTER TABLE operators MODIFY password VARCHAR(95) DEFAULT NULL;
-EOSQL
-    fi
-}
-
-OPERATOR_LDAP_MIGRATION_MARKER=/data/.migration_2026-09-operator-ldap.done
-
-function operator_ldap_schema_ready {
-    local schema_state
-
-    schema_state=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
-SELECT CONCAT(
-    (SELECT COUNT(*) FROM information_schema.columns
-     WHERE table_schema = DATABASE() AND table_name = 'operators'
-       AND column_name = 'auth_source' AND data_type = 'varchar'
-       AND character_maximum_length = 16 AND is_nullable = 'NO'
-       AND REPLACE(column_default, CHAR(39), '') = 'local'),
-    ':',
-    (SELECT COUNT(*) FROM information_schema.columns
-     WHERE table_schema = DATABASE() AND table_name = 'operators'
-       AND column_name = 'external_id' AND data_type = 'varchar'
-       AND character_maximum_length = 255 AND is_nullable = 'YES'),
-    ':',
-    (SELECT COUNT(*) FROM information_schema.columns
-     WHERE table_schema = DATABASE() AND table_name = 'operators'
-       AND column_name = 'password' AND data_type = 'varchar'
-       AND character_maximum_length >= 95 AND is_nullable = 'YES'),
-    ':',
-    (SELECT COUNT(*) FROM information_schema.statistics
-     WHERE table_schema = DATABASE() AND table_name = 'operators'
-       AND index_name = 'operators_external_id_uq' AND non_unique = 0
-       AND seq_in_index = 1 AND column_name = 'external_id'),
-    ':',
-    (SELECT COUNT(*) FROM information_schema.statistics
-     WHERE table_schema = DATABASE() AND table_name = 'operators'
-       AND index_name = 'operators_external_id_uq')
-);
-EOSQL
-    )
-
-    test "$schema_state" = "1:1:1:1:1"
-}
-
-function run_operator_ldap_migration {
-    if ! table_exists "operators"; then
-        return
-    fi
-
-    if test -f "$OPERATOR_LDAP_MIGRATION_MARKER" && operator_ldap_schema_ready; then
-        echo "Operator LDAP authentication migration already applied, skipping."
-        return
-    fi
-
-    echo "Applying operator LDAP authentication migration."
-    mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" \
-        < "$DALORADIUS_PATH/contrib/db/migrations/2026-09-operator-ldap.sql"
-    date > "$OPERATOR_LDAP_MIGRATION_MARKER"
-}
-
-function ensure_operator_totp_columns {
-    if ! table_exists "operators"; then
-        return
-    fi
-
-    local missing_columns
-    missing_columns=$(mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" --batch --skip-column-names "$MYSQL_DATABASE" <<'EOSQL'
-SELECT COUNT(*)
-FROM information_schema.columns
-WHERE table_schema = DATABASE()
-  AND table_name = 'operators'
-  AND column_name IN ('totp_enabled', 'totp_secret', 'totp_last_counter', 'totp_confirmed_at', 'totp_recovery_codes');
-EOSQL
-)
-
-    if [ "$missing_columns" -lt 5 ]; then
-        echo "Adding operator TOTP columns."
-        mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
-ALTER TABLE operators
-  ADD COLUMN IF NOT EXISTS totp_enabled TINYINT(1) NOT NULL DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS totp_secret VARCHAR(64) DEFAULT NULL,
-  ADD COLUMN IF NOT EXISTS totp_last_counter BIGINT DEFAULT NULL,
-  ADD COLUMN IF NOT EXISTS totp_confirmed_at DATETIME DEFAULT NULL,
-  ADD COLUMN IF NOT EXISTS totp_recovery_codes TEXT DEFAULT NULL;
-EOSQL
-    fi
-
-    mysql --defaults-extra-file="$MYSQL_DEFAULTS_FILE" "$MYSQL_DATABASE" <<'EOSQL'
-INSERT IGNORE INTO operators_acl_files (file, category, section)
-VALUES ('config_operator_2fa', 'Configuration', 'Operators');
-
-INSERT IGNORE INTO operators_acl (operator_id, file, access)
-SELECT id, 'config_operator_2fa', 1
-FROM operators
-WHERE username = 'administrator';
-EOSQL
+    runuser -u www-data -- php "$DALORADIUS_PATH/contrib/scripts/maintenance/migrate-db.php" \
+        --config="$DALORADIUS_CONF_PATH" "$migrate_flag"
 }
 
 function wait_for_mysql {
@@ -416,14 +333,63 @@ fi
 refresh_operator_auth_config
 wait_for_mysql
 
+FRESH_DB_INIT=false
 DB_LOCK=/data/.db_init_done
 if test -f "$DB_LOCK"; then
     echo "Database lock file exists, skipping initial setup of mysql database."
 else
-    if tables_exist "operators" "operators_acl" "operators_acl_files"; then
+    # All non-migration base tables created by mariadb-daloradius.sql.
+    # Migration-created tables (chilli_paypal_events), the migration ledger
+    # (daloradius_schema_migrations), and the separately loaded dictionary table
+    # are allowed to be absent on pre-migration existing databases.
+    REQUIRED_DALO_TABLES=(
+        batch_history billing_history billing_merchant billing_paypal
+        billing_plans billing_plans_profiles billing_rates hotspots invoice
+        invoice_items invoice_status invoice_type messages node operators
+        operators_acl operators_acl_files payment payment_type proxys rates
+        realms userbillinfo userinfo
+    )
+    ALL_DALO_TABLES=(
+        "${REQUIRED_DALO_TABLES[@]}"
+        chilli_paypal_events daloradius_schema_migrations dictionary
+    )
+    CORE_FREERADIUS_TABLES=(
+        radacct radcheck radgroupcheck radgroupreply radreply radusergroup
+        radpostauth nas
+    )
+    ALL_FREERADIUS_TABLES=(
+        "${CORE_FREERADIUS_TABLES[@]}"
+        nasreload radippool wimax cui radhuntgroup
+    )
+    EXISTING_REQUIRED_DALO=$(count_existing_tables "${REQUIRED_DALO_TABLES[@]}")
+    EXISTING_ANY_DALO=$(count_existing_tables "${ALL_DALO_TABLES[@]}")
+
+    if [ "$EXISTING_REQUIRED_DALO" -eq "${#REQUIRED_DALO_TABLES[@]}" ]; then
         echo "Existing daloRADIUS database schema detected, skipping initial setup of mysql database."
+    elif [ "$EXISTING_ANY_DALO" -gt 0 ]; then
+        echo "ERROR: Partial daloRADIUS database schema detected (${EXISTING_REQUIRED_DALO}/${#REQUIRED_DALO_TABLES[@]} required base tables, ${EXISTING_ANY_DALO} total daloRADIUS tables)." >&2
+        echo "ERROR: Refusing to import mariadb-daloradius.sql (which drops tables). Inspect or restore the database manually." >&2
+        exit 1
     else
+        # mariadb-daloradius.sql inserts into radgroupcheck and indexes radacct/radpostauth/radcheck.
+        # Only skip fr3-mariadb-freeradius.sql when all 13 declared FreeRADIUS tables exist.
+        # Because fr3-mariadb-freeradius.sql uses CREATE TABLE IF NOT EXISTS exclusively, it is
+        # safe to run on a truly empty DB or on an existing standard FreeRADIUS DB that has all
+        # 8 core tables but lacks optional tables (e.g. wimax/cui/radhuntgroup). Refuse truly
+        # partial FreeRADIUS schemas with missing core tables.
+        EXISTING_ALL_FR=$(count_existing_tables "${ALL_FREERADIUS_TABLES[@]}")
+        EXISTING_CORE_FR=$(count_existing_tables "${CORE_FREERADIUS_TABLES[@]}")
+        if [ "$EXISTING_ALL_FR" -eq "${#ALL_FREERADIUS_TABLES[@]}" ]; then
+            echo "Existing FreeRADIUS database schema detected, skipping FreeRADIUS base schema import."
+        elif [ "$EXISTING_ALL_FR" -eq 0 ] || [ "$EXISTING_CORE_FR" -eq "${#CORE_FREERADIUS_TABLES[@]}" ]; then
+            init_freeradius_database
+        else
+            echo "ERROR: Partial FreeRADIUS database schema detected (${EXISTING_CORE_FR}/${#CORE_FREERADIUS_TABLES[@]} core tables, ${EXISTING_ALL_FR}/${#ALL_FREERADIUS_TABLES[@]} total FreeRADIUS tables)." >&2
+            echo "ERROR: Refusing to run initial database import over a partial schema. Inspect or restore the database manually." >&2
+            exit 1
+        fi
         init_database
+        FRESH_DB_INIT=true
     fi
     date > "$DB_LOCK"
 fi
@@ -431,9 +397,11 @@ fi
 # Check outside DB_LOCK so already-initialized deployments missing the
 # dictionary are repaired without reimporting the application schema.
 ensure_dictionary
-ensure_operator_password_column
-run_operator_ldap_migration
-ensure_operator_totp_columns
+run_schema_migrations
+if [[ "$MIGRATE_ONLY" == true ]]; then
+    echo "Schema migration completed; application services were not started."
+    exit 0
+fi
 
 # Start Apache2 in the foreground
 cleanup_mysql_defaults

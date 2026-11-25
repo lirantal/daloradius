@@ -60,10 +60,9 @@ CREATE TABLE IF NOT EXISTS orb_setup.applied_sql (
 );
 SQL
 
-  # Each file is recorded only after it imports successfully, so an
-  # interrupted run resumes at the failed file and migrations added after a
-  # snapshot are applied when setup reruns on it. Forget the record if raddb
-  # was emptied.
+  # Track each base schema file individually so an interrupted seed resumes at
+  # the failed file instead of skipping remaining imports. Forget the record if
+  # raddb was emptied.
   if [ "$(sudo mariadb -N -B -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='raddb'")" -eq 0 ]; then
     sudo mariadb -e "DELETE FROM orb_setup.applied_sql"
   fi
@@ -72,8 +71,9 @@ SQL
 
   # Same import order as setup/install.sh (daloradius_load_sql_schema).
   local db=contrib/db
+  local seeded_base=false
   for f in "$db/fr3-mariadb-freeradius.sql" "$db/mariadb-daloradius.sql" \
-           "$db/mariadb-daloradius-dictionaries.sql" "$db"/migrations/*.sql \
+           "$db/mariadb-daloradius-dictionaries.sql" \
            "$db/update-performance-indexes.sql"; do
     if grep -Fqx -- "$f" <<<"$applied"; then
       continue
@@ -81,7 +81,18 @@ SQL
     echo "    importing $f"
     sudo mariadb raddb < "$f"
     sudo mariadb -e "INSERT INTO orb_setup.applied_sql (file) VALUES ('$f')"
+    seeded_base=true
   done
+
+  local ledger_exists
+  ledger_exists="$(sudo mariadb -N -B -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='raddb' AND table_name='daloradius_schema_migrations'")"
+  if [ "$seeded_base" = true ] && [ "$ledger_exists" -eq 0 ]; then
+    echo "    baselining schema migrations"
+    php contrib/scripts/maintenance/migrate-db.php --baseline-fresh
+  else
+    echo "    applying pending schema migrations"
+    php contrib/scripts/maintenance/migrate-db.php --apply
+  fi
 }
 
 write_config() {
@@ -99,8 +110,8 @@ write_config() {
 
 step "Installing PHP and MariaDB packages"; timed install_packages
 step "Starting MariaDB"; timed start_mariadb
-step "Seeding raddb"; timed seed_database
 step "Writing local daloradius.conf.php"; timed write_config
+step "Seeding raddb"; timed seed_database
 step "Toolchain"
 php -v | head -n 1
 php -r 'exit(in_array("mysql", PDO::getAvailableDrivers(), true) ? 0 : 1);'

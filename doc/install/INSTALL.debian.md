@@ -363,29 +363,19 @@ chown -R www-data:www-data var
 chmod -R 775 var
 ```
 
-The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to load the schemas in the correct order: the FreeRADIUS base schema first, then the daloRADIUS base schema, then every migration (in alphabetical order, since they are named `year-month-...`), and finally the performance indexes. This can be accomplished by executing the following commands:
+The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to load the schemas in the correct order: the FreeRADIUS base schema first, then the daloRADIUS base schema and dictionaries, then the performance indexes, and finally record the bundled migrations in the migration ledger. This can be accomplished by executing the following commands:
 ```bash
 cd /var/www/daloradius/contrib/db
 
 # Set the database password
 export MYSQL_PWD='radpass'
 
-# Load FreeRADIUS base schema
-mariadb -u raduser raddb < fr3-mariadb-freeradius.sql
-
-# Load daloRADIUS base schema
-mariadb -u raduser raddb < mariadb-daloradius.sql
-
-# Load daloRADIUS dictionaries
-mariadb -u raduser raddb < mariadb-daloradius-dictionaries.sql
-
-# Load daloRADIUS migration schemas
-for f in $(ls -1 migrations/*.sql); do
-    mariadb -u raduser raddb < "$f"
-done
-
-# Load daloRADIUS performance indexes
-mariadb -u raduser raddb < update-performance-indexes.sql
+# Load base schemas, dictionaries and performance indexes (stop on any error before baselining)
+mariadb -u raduser raddb < fr3-mariadb-freeradius.sql && \
+mariadb -u raduser raddb < mariadb-daloradius.sql && \
+mariadb -u raduser raddb < mariadb-daloradius-dictionaries.sql && \
+mariadb -u raduser raddb < update-performance-indexes.sql && \
+runuser -u www-data -- php /var/www/daloradius/contrib/scripts/maintenance/migrate-db.php --baseline-fresh
 
 # Clean up
 unset MYSQL_PWD

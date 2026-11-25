@@ -203,7 +203,7 @@ cd /var/www
 git clone https://github.com/lirantal/daloradius.git
 ```
 
-The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to load the schemas in the correct order: the FreeRADIUS base schema first, then the daloRADIUS base schema, then every migration in alphabetical order, and finally the performance indexes. This can be accomplished by executing the following commands:
+The Architecture overview section specifies that daloRADIUS shares certain database tables with FreeRADIUS. Therefore, it is essential to load the schemas in the correct order: the FreeRADIUS base schema first, then the daloRADIUS base schema and dictionaries, and finally the performance indexes (the bundled migrations ledger is baselined once `daloradius.conf.php` is configured below). This can be accomplished by executing the following commands:
 
 ```bash
 cd /var/www/daloradius/contrib/db
@@ -211,25 +211,15 @@ cd /var/www/daloradius/contrib/db
 # Set the database password
 export MYSQL_PWD='radpass'
 
-# Load FreeRADIUS base schema
-mariadb -u raduser raddb < fr3-mariadb-freeradius.sql
-
-# Load daloRADIUS base schema
-mariadb -u raduser raddb < mariadb-daloradius.sql
-
-# Load daloRADIUS dictionaries
-mariadb -u raduser raddb < mariadb-daloradius-dictionaries.sql
-
-# Load daloRADIUS migration schemas
-for f in $(ls -1 migrations/*.sql); do
-    mariadb -u raduser raddb < "$f"
-done
-
-# Load daloRADIUS performance indexes
+# Load base schemas, dictionaries and performance indexes (stop on any error)
+mariadb -u raduser raddb < fr3-mariadb-freeradius.sql && \
+mariadb -u raduser raddb < mariadb-daloradius.sql && \
+mariadb -u raduser raddb < mariadb-daloradius-dictionaries.sql && \
 mariadb -u raduser raddb < update-performance-indexes.sql
 
 # Clean up
 unset MYSQL_PWD
+```
 
 Afterwards, it is necessary to create the log directories for `daloradius/operators` and `daloradius/users`:
 
@@ -331,6 +321,12 @@ cd /var/www/daloradius/
 mkdir -p var/{log,backup}
 chown -R apache:apache var /var/log/httpd/daloradius
 chmod -R 775 var
+```
+
+Finally, record the bundled migrations in the migration ledger for this freshly initialized schema (so future upgrades using `migrate-db.php --apply` only execute new migrations):
+
+```bash
+runuser -u apache -- php /var/www/daloradius/contrib/scripts/maintenance/migrate-db.php --baseline-fresh
 ```
 
 # SELinux and firewalld

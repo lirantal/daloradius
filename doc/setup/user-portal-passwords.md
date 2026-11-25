@@ -8,6 +8,12 @@ The `$dalo$portal$v1$` namespace is reserved for daloRADIUS-generated values. Be
 
 ## Upgrading an existing installation
 
+For releases containing the tracked migration runner, use the
+[new upgrade method](upgrade.md) for the schema/application update. The manual
+SQL examples below are retained for legacy releases without that runner.
+Password-value conversion remains a separate step: continue with the
+`hash-user-portal-passwords.php` commands after the schema/application upgrade.
+
 Back up the database before upgrading. Apply the schema migration before deploying the updated application:
 
 ```sh

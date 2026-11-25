@@ -23,6 +23,29 @@ services:
       retries: 10
       start_period: ${MYSQL_HEALTH_START_PERIOD:-10m}
 
+  radius-migrate:
+    image: lirantal/daloradius
+    build: .
+    container_name: radius-migrate
+    restart: "no"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
+    depends_on:
+      radius-mysql:
+        condition: service_healthy
+    environment:
+      - TZ=${TZ:-Europe/Vienna}
+      - MYSQL_HOST=radius-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=radius
+      - MYSQL_USER=radius
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+    volumes:
+      - ./data/daloradius:/data
+    command: ["/bin/bash", "/var/www/daloradius/init.sh", "--migrate-only"]
+
   radius:
     image: lirantal/dalofreeradius
     container_name: radius
@@ -37,6 +60,8 @@ services:
     depends_on:
       radius-mysql:
         condition: service_healthy
+      radius-migrate:
+        condition: service_completed_successfully
     ports:
       - '1812:1812/udp'
       - '1813:1813/udp'
@@ -73,6 +98,8 @@ services:
     depends_on:
       radius-mysql:
         condition: service_healthy
+      radius-migrate:
+        condition: service_completed_successfully
       radius:
         condition: service_healthy
     ports:
