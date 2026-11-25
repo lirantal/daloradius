@@ -183,6 +183,17 @@ daloRADIUS supports Operators for complete management of the entire platform. Di
 
 ### Database migrations
 
+For releases containing the tracked migration runner, start with the
+[upgrade guide](doc/setup/upgrade.md). It explains the recommended Debian,
+manual-install and Docker paths, including administrator-managed backups,
+maintenance and recovery. The upgrader does not create backups automatically.
+
+#### Legacy/manual procedure
+
+The guidance below and the linked wiki guide remain available for older
+releases. When upgrading to a release containing the runner, prefer the
+[new method](doc/setup/upgrade.md) rather than mixing the two procedures.
+
 For new installations, use the schemas found in `contrib/db/mariadb-daloradius*.sql`. If you're upgrading an existing daloRADIUS setup, review `contrib/db/migrations/` and apply the relevant SQL migrations before using any newly introduced features. See the [upgrade notes](../../wiki/daloRADIUS-upgrade-notes-(Debian)) in the wiki for details.
 
 User portal passwords are separate from FreeRADIUS password attributes. Newly created or changed portal credentials are stored using PHP's `password_hash()`; existing installations should follow the [user portal password upgrade guide](doc/setup/user-portal-passwords.md) to migrate legacy plaintext values.

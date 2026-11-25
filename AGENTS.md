@@ -21,7 +21,7 @@ daloRADIUS is a PHP web UI for FreeRADIUS. It has no framework, no Composer root
 
 `.agents/setup` prepares a Debian 12 machine (including Amp orbs): PHP 8.2 CLI with the extensions from the `Dockerfile`, a local MariaDB with `raddb` seeded from `contrib/db`, and a local `daloradius.conf.php`. It is idempotent; rerun it after pulling new migrations.
 
-- DB: `raddb` on `localhost:3306`, user `raduser` / `radpass` (the sample config defaults). Inspect with `sudo mariadb raddb`. Setup records imported SQL files in `orb_setup.applied_sql` and imports new migrations on rerun; to reseed from scratch, `DROP DATABASE raddb` and rerun setup.
+- DB: `raddb` on `localhost:3306`, user `raduser` / `radpass` (the sample config defaults). Inspect with `sudo mariadb raddb`. Setup tracks base schema imports in `orb_setup.applied_sql`, baselines `daloradius_schema_migrations` on fresh seeds, and runs `contrib/scripts/maintenance/migrate-db.php --apply` on reruns; to reseed from scratch, `DROP DATABASE raddb` and rerun setup.
 - Operators login: `administrator` / `radius` (local dev seed only).
 - Web: `.amp/services.yaml` serves `app/operators` and `app/users` with `php -S`. In an orb, run `amp orb services ensure`; elsewhere run `php -S 127.0.0.1:8000 -t app/operators`.
 - App log: `var/log/daloradius.log`.
@@ -39,7 +39,7 @@ There is no automated test suite or CI in this repository. Verify by:
 - Use PDO prepared statements for all SQL; never interpolate request data into queries.
 - Escape HTML output with `htmlspecialchars($value, ENT_QUOTES, 'UTF-8')`, as neighboring pages do.
 - Operator pages are gated by ACL entries in `operators_acl_files` / `operators_acl`. A new page needs ACL rows in the base schema and in a migration.
-- Schema changes need a new file in `contrib/db/migrations/`, the matching change in `contrib/db/mariadb-daloradius.sql`, and, when existing Docker deployments must be upgraded, an idempotent step in `init.sh`.
+- Schema changes need a new file in `contrib/db/migrations/` (`.sql`, or `.php` returning a callable or `['apply' => callable, 'is_applied' => callable|null]` when conditional logic or prerequisite-table deferral is needed) and the matching change in `contrib/db/mariadb-daloradius.sql`. Both `setup/upgrade.sh` and Docker's `init.sh` (via the `radius-migrate` init container) run `contrib/scripts/maintenance/migrate-db.php` automatically; no bespoke Bash migration function is needed in `init.sh`.
 - `contrib/db/mariadb-daloradius.sql` has mixed CRLF/LF line endings; preserve them when editing.
 - New user-facing strings go in `app/operators/lang/en.php`; other languages fall back to English.
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/), e.g. `fix(users): ...`.
