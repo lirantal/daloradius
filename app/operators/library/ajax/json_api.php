@@ -66,7 +66,7 @@ if (isset($_GET['datatype']) && is_string($_GET['datatype']) && in_array(strtolo
                                      ? strtoupper(trim($_GET['table'])) : $allowed_tables[0];
                             
                                 $table = dalo_read_table($pdo, $configValues, $key);
-                                $stmt = $pdo->prepare("SELECT DISTINCT(username) FROM $table WHERE username LIKE ? ORDER BY username ASC");
+                                $stmt = $pdo->prepare("SELECT DISTINCT(username) FROM $table WHERE username LIKE ? ORDER BY username ASC LIMIT 50");
                                 $stmt->execute(array('%' . $username . '%'));
                                 $data = $stmt->fetchAll(PDO::FETCH_COLUMN);
                                 $pdo = null;

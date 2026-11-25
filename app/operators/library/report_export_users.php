@@ -82,15 +82,6 @@ function dalo_export_users_query($source, $type, $filters, $configValues) {
         );
         $where[] = 'rug.groupname = :groupname';
         $params[':groupname'] = $groupname;
-    } elseif ($source === 'mng-search') {
-        $radacct = dalo_export_table($configValues, 'CONFIG_DB_TBL_RADACCT');
-        $from = sprintf(
-            '%s AS rc LEFT JOIN %s AS ra ON ra.username=rc.username LEFT JOIN %s AS rr ON rr.username=rc.username INNER JOIN %s AS ui ON ui.username=rc.username',
-            $radcheck,
-            $radacct,
-            $radreply,
-            $userinfo
-        );
     } else {
         $from = sprintf('%s AS rc INNER JOIN %s AS ui ON rc.username = ui.username', $radcheck, $userinfo);
     }
@@ -107,7 +98,10 @@ function dalo_export_users_query($source, $type, $filters, $configValues) {
             $searchConditions[] = 'ui.' . $field . ' LIKE :' . $parameter;
             $params[':' . $parameter] = '%' . $username . '%';
         }
-        $searchConditions[] = 'rr.value LIKE :search_reply_value';
+        $searchConditions[] = sprintf(
+            'EXISTS (SELECT 1 FROM %s AS rr WHERE rr.username=rc.username AND rr.value LIKE :search_reply_value)',
+            $radreply
+        );
         // The legacy mng-search query used a trailing-only wildcard for the
         // reply value; keep that behavior for export compatibility.
         $params[':search_reply_value'] = '%' . $username;
@@ -138,7 +132,9 @@ function dalo_export_users_query($source, $type, $filters, $configValues) {
                 COALESCE(MAX(CASE WHEN rc_export.attribute='Max-Daily-Session' THEN rc_export.value END), '') AS maxdailysession
            FROM %s
            LEFT JOIN %s AS rc_export ON rc_export.username=rc.username
+            AND (rc_export.attribute LIKE '%%-Password' OR rc_export.attribute IN ('Auth-Type', 'Expiration', 'Max-Daily-Session'))
            LEFT JOIN %s AS rr_export ON rr_export.username=rc.username
+            AND rr_export.attribute IN ('Framed-IP-Address', 'Session-Timeout', 'Idle-Timeout')
           WHERE %s
           GROUP BY rc.username
           ORDER BY rc.username ASC",

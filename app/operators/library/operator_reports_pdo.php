@@ -8,27 +8,88 @@ require_once __DIR__ . '/report_export_users.php';
 require_once __DIR__ . '/report_export_batch.php';
 require_once __DIR__ . '/report_export_reports.php';
 
+function dalo_operator_users_from_where($source, $filters, $config) {
+    $rc = dalo_export_table($config, 'CONFIG_DB_TBL_RADCHECK');
+    $ui = dalo_export_table($config, 'CONFIG_DB_TBL_DALOUSERINFO');
+    $from = "$rc AS rc INNER JOIN $ui AS ui ON rc.username=ui.username";
+    $where = "(rc.attribute='Auth-Type' OR rc.attribute LIKE '%-Password')";
+    $bindings = array();
+    if ($source === 'mng-search' && ($filters['username'] ?? '') !== '') {
+        $rr = dalo_export_table($config, 'CONFIG_DB_TBL_RADREPLY');
+        $conditions = array();
+        foreach (array('username','firstname','lastname','homephone','workphone','mobilephone') as $field) {
+            $conditions[] = "ui.$field LIKE :search_$field";
+            $bindings[':search_'.$field] = '%'.$filters['username'].'%';
+        }
+        $conditions[] = "EXISTS (SELECT 1 FROM $rr AS rr WHERE rr.username=rc.username AND rr.value LIKE :search_reply)";
+        $bindings[':search_reply'] = '%'.$filters['username']; // historical suffix match
+        $where .= ' AND ('.implode(' OR ', $conditions).')';
+    }
+    return array($from, $where, $bindings);
+}
+
+function dalo_operator_user_count(PDO $pdo, $source, $filters, $config) {
+    if (!in_array($source, array('mng-list-all', 'mng-search'), true)) {
+        throw new InvalidArgumentException('Unsupported user count source');
+    }
+    $limit = $config['CONFIG_IFACE_TABLES_LISTING'] ?? null;
+    if (!is_scalar($limit) || !ctype_digit((string)$limit) || (int)$limit < 1 || (int)$limit > 10000) {
+        throw new InvalidArgumentException('Invalid accounting pagination');
+    }
+    list($from, $where, $bindings) = dalo_operator_users_from_where($source, $filters, $config);
+    return (int)dalo_accounting_execute($pdo, "SELECT COUNT(DISTINCT rc.username) FROM $from WHERE $where", $bindings)->fetchColumn();
+}
+
+function dalo_operator_user_rows(PDO $pdo, $source, $filters, $config, $order, $direction, $offset, $limit) {
+    $allowed = array('id','fullname','username','auth','framedipaddress','lastlogin');
+    if (!in_array($source, array('mng-list-all', 'mng-search'), true) ||
+        !in_array($order, $allowed, true) || !in_array($direction, array('asc','desc'), true) ||
+        !is_int($offset) || $offset < 0 || !is_int($limit) || $limit < 1 || $limit > 10000) {
+        throw new InvalidArgumentException('Invalid operator report pagination');
+    }
+    $rr = dalo_export_table($config, 'CONFIG_DB_TBL_RADREPLY');
+    $ra = dalo_export_table($config, 'CONFIG_DB_TBL_RADACCT');
+    list($from, $where, $bindings) = dalo_operator_users_from_where($source, $filters, $config);
+    $innerSelect = "ui.id AS id,rc.username AS username,rc.value AS auth,rc.attribute,
+                  CONCAT(COALESCE(ui.firstname,''),' ',COALESCE(ui.lastname,'')) AS fullname";
+    if ($order === 'framedipaddress') {
+        $innerSelect .= ",\n                  (SELECT MAX(value) FROM $rr WHERE username=rc.username AND attribute='Framed-IP-Address') AS framedipaddress";
+        $framedIpExpr = 'page.framedipaddress AS framedipaddress';
+    } else {
+        $framedIpExpr = "(SELECT MAX(value) FROM $rr WHERE username=page.username AND attribute='Framed-IP-Address') AS framedipaddress";
+    }
+    if ($order === 'lastlogin') {
+        $innerSelect .= ",\n                  (SELECT MAX(acctstarttime) FROM $ra WHERE username=rc.username) AS lastlogin";
+        $lastLoginExpr = 'page.lastlogin AS lastlogin';
+    } else {
+        $lastLoginExpr = "(SELECT MAX(acctstarttime) FROM $ra WHERE username=page.username) AS lastlogin";
+    }
+    $bindings[':operator_offset'] = $offset;
+    $bindings[':operator_limit'] = $limit;
+    // Materialize the paginated slice first, then look up framedipaddress/lastlogin in SQL
+    // so MariaDB preserves exact column collation semantics (e.g. accent/case equivalence).
+    $sql = "SELECT page.id AS id,page.username AS username,page.auth AS auth,page.attribute AS attribute,
+                   page.fullname AS fullname,
+                   $framedIpExpr,
+                   $lastLoginExpr
+              FROM (
+                  SELECT $innerSelect
+                    FROM $from
+                   WHERE $where
+                   GROUP BY rc.username
+                   ORDER BY `$order` $direction
+                   LIMIT :operator_offset, :operator_limit
+              ) AS page
+             ORDER BY page.`$order` $direction";
+    return dalo_accounting_execute($pdo, $sql, $bindings)->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function dalo_operator_query($source, $filters, $config) {
     $table = static function ($key) use ($config) { return dalo_export_table($config, $key); };
     $bindings = array();
     if ($source === 'mng-list-all' || $source === 'mng-search') {
-        $rc=$table('CONFIG_DB_TBL_RADCHECK'); $ui=$table('CONFIG_DB_TBL_DALOUSERINFO');
         $rr=$table('CONFIG_DB_TBL_RADREPLY'); $ra=$table('CONFIG_DB_TBL_RADACCT');
-        $from="$rc AS rc INNER JOIN $ui AS ui ON rc.username=ui.username";
-        $where="(rc.attribute='Auth-Type' OR rc.attribute LIKE '%-Password')";
-        if ($source === 'mng-search') {
-            $from="$rc AS rc LEFT JOIN $ra AS ra ON ra.username=rc.username LEFT JOIN $rr AS rr ON rr.username=rc.username INNER JOIN $ui AS ui ON ui.username=rc.username";
-            if (($filters['username'] ?? '') !== '') {
-                $conditions=array();
-                foreach (array('username','firstname','lastname','homephone','workphone','mobilephone') as $field) {
-                    $conditions[]="ui.$field LIKE :search_$field";
-                    $bindings[':search_'.$field]='%'.$filters['username'].'%';
-                }
-                $conditions[]='rr.value LIKE :search_reply';
-                $bindings[':search_reply']='%'.$filters['username']; // historical suffix match
-                $where.=' AND ('.implode(' OR ', $conditions).')';
-            }
-        }
+        list($from, $where, $bindings) = dalo_operator_users_from_where($source, $filters, $config);
         return array("SELECT ui.id AS id,rc.username AS username,rc.value AS auth,rc.attribute,
                   CONCAT(COALESCE(ui.firstname,''),' ',COALESCE(ui.lastname,'')) AS fullname,
                   (SELECT MAX(value) FROM $rr WHERE username=rc.username AND attribute='Framed-IP-Address') AS framedipaddress,
