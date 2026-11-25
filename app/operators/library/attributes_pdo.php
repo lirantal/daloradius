@@ -119,21 +119,47 @@ function dalo_attribute_pdo_parse($post, $skip, $config, $ops, $insertOnly, $use
 }
 
 function dalo_attribute_pdo_require_innodb(PDO $pdo, $tables) {
+    static $verifiedCache = null;
     $names = array_values(array_unique(array_map(function ($table) {
         return trim($table, '`');
     }, $tables)));
     if (!$names) {
         return;
     }
-    $marks = implode(',', array_fill(0, count($names), '?'));
+    $inTx = $pdo->inTransaction();
+    $toCheck = $names;
+    if (class_exists('WeakMap')) {
+        if ($verifiedCache === null) {
+            $verifiedCache = new WeakMap();
+        }
+        if (!$inTx) {
+            unset($verifiedCache[$pdo]);
+        } elseif (isset($verifiedCache[$pdo])) {
+            $known = $verifiedCache[$pdo];
+            $toCheck = array_values(array_filter($names, function ($name) use ($known) {
+                return !isset($known[$name]);
+            }));
+            if (!$toCheck) {
+                return;
+            }
+        }
+    }
+    $marks = implode(',', array_fill(0, count($toCheck), '?'));
     $stmt = $pdo->prepare("SELECT TABLE_NAME,ENGINE FROM INFORMATION_SCHEMA.TABLES
                             WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ($marks)");
-    $stmt->execute($names);
+    $stmt->execute($toCheck);
     $engines = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
-    foreach ($names as $name) {
+    foreach ($toCheck as $name) {
         if (!isset($engines[$name]) || strcasecmp($engines[$name], 'InnoDB') !== 0) {
             throw new RuntimeException('Attribute writes require InnoDB');
         }
+    }
+    if ($inTx && $verifiedCache !== null) {
+        $known = isset($verifiedCache[$pdo]) ? $verifiedCache[$pdo] : array();
+        foreach ($toCheck as $name) {
+            $known[$name] = true;
+        }
+        $verifiedCache[$pdo] = $known;
     }
 }
 
