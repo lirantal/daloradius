@@ -9,10 +9,9 @@ invoice_preview.html
 data/
 internal_data/
 
-var/log/*.log
-var/backup/*.sql
-var/backup/*.sql.gz
+var/log/*
+var/backup/*
 app/common/includes/daloradius.conf.php
-app/common/library/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/HTML/*
+app/common/library/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/*/*
 
 .amp/portals/
