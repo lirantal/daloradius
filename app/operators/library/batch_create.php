@@ -105,10 +105,12 @@ function dalo_create_user_batch(PDO $pdo, $config, $name, $description, $hotspot
         if ($group !== '') {
             dalo_validate_plan_profiles($pdo, $config, array($group));
         }
+        $batchUsernames = array_column($users, 'username');
         foreach (array($checkTable, $infoTable, $billingTable) as $table) {
-            $select = $pdo->prepare("SELECT id FROM $table WHERE username=:username LIMIT 1 FOR UPDATE");
-            foreach ($users as $record) {
-                $select->execute(array(':username' => $record['username']));
+            foreach (array_chunk($batchUsernames, 500) as $chunk) {
+                $slots = implode(',', array_fill(0, count($chunk), '?'));
+                $select = $pdo->prepare("SELECT id FROM $table WHERE username IN ($slots) LIMIT 1 FOR UPDATE");
+                $select->execute($chunk);
                 $exists = $select->fetchColumn() !== false;
                 $select->closeCursor();
                 if ($exists) {
@@ -132,38 +134,60 @@ function dalo_create_user_batch(PDO $pdo, $config, $name, $description, $hotspot
             VALUES (:username,:attribute,:op,:value)");
         $groupInsert = $pdo->prepare("INSERT INTO $groupsTable (username,groupname,priority)
             VALUES (:username,:group,:priority)");
+        $hasPortalPassword = $userInfo['portalloginpassword'] !== '';
+        $infoColumns = array_merge(
+            $hasPortalPassword ? $userFields : array_values(array_diff($userFields, array('portalloginpassword'))),
+            array('username', 'creationdate', 'creationby')
+        );
+        $infoInsert = $pdo->prepare("INSERT INTO $infoTable (" .
+            implode(', ', array_map(function ($col) { return '`' . $col . '`'; }, $infoColumns)) .
+            ') VALUES (' .
+            implode(', ', array_map(function ($col) { return ':' . $col; }, $infoColumns)) . ')');
+        $billingInsertColumns = array_merge($billingFields,
+            array('username', 'planName', 'hotspot_id', 'batch_id', 'creationdate', 'creationby'));
+        $billingInsert = $pdo->prepare("INSERT INTO $billingTable (" .
+            implode(', ', array_map(function ($col) { return '`' . $col . '`'; }, $billingInsertColumns)) .
+            ') VALUES (' .
+            implode(', ', array_map(function ($col) { return ':' . $col; }, $billingInsertColumns)) . ')');
+        $baseInfoParams = array(':creationdate' => $created, ':creationby' => $operator);
+        foreach ($userFields as $field) {
+            if ($field === 'portalloginpassword' && !$hasPortalPassword) {
+                continue;
+            }
+            $baseInfoParams[':' . $field] = $userInfo[$field];
+        }
+        $baseBillParams = array(
+            ':planName' => $planName,
+            ':hotspot_id' => (string) $hotspotId,
+            ':batch_id' => (string) $batchId,
+            ':creationdate' => $created,
+            ':creationby' => $operator,
+        );
+        foreach ($billingFields as $field) {
+            $baseBillParams[':' . $field] = $billing[$field];
+        }
+        $normalizedPriority = $group !== '' ? normalize_user_group_priority($group, $priority) : 0;
         foreach ($users as $record) {
             $username = $record['username'];
             $checkInsert->execute(array(':username' => $username,
                 ':attribute' => $record['attribute'], ':op' => ':=', ':value' => $record['value']));
             if ($group !== '') {
                 $groupInsert->execute(array(':username' => $username, ':group' => $group,
-                    ':priority' => normalize_user_group_priority($group, $priority)));
+                    ':priority' => $normalizedPriority));
             }
-            $info = $userInfo;
-            if ($info['portalloginpassword'] !== '') {
-                $info['portalloginpassword'] = dalo_portal_password_hash($info['portalloginpassword']);
-                if (!is_string($info['portalloginpassword'])) {
+            $infoParams = $baseInfoParams;
+            if ($hasPortalPassword) {
+                $hashedPortalPassword = dalo_portal_password_hash($userInfo['portalloginpassword']);
+                if (!is_string($hashedPortalPassword)) {
                     throw new RuntimeException('Could not hash portal password');
                 }
-            } else {
-                unset($info['portalloginpassword']);
+                $infoParams[':portalloginpassword'] = $hashedPortalPassword;
             }
-            $info['username'] = $username;
-            $info['creationdate'] = $created;
-            $info['creationby'] = $operator;
-            dalo_pos_insert($pdo, $infoTable, $info,
-                array_merge($userFields, array('username','creationdate','creationby')));
-            $bill = $billing;
-            $bill['username'] = $username;
-            $bill['planName'] = $planName;
-            $bill['hotspot_id'] = (string) $hotspotId;
-            $bill['batch_id'] = (string) $batchId;
-            $bill['creationdate'] = $created;
-            $bill['creationby'] = $operator;
-            dalo_pos_insert($pdo, $billingTable, $bill,
-                array_merge($billingFields, array('username','planName','hotspot_id','batch_id',
-                                                  'creationdate','creationby')));
+            $infoParams[':username'] = $username;
+            $infoInsert->execute($infoParams);
+            $billParams = $baseBillParams;
+            $billParams[':username'] = $username;
+            $billingInsert->execute($billParams);
             foreach ($attributes as $attr) {
                 $statement = $attr['table'] === 'CONFIG_DB_TBL_RADREPLY' ? $replyInsert : $checkInsert;
                 $statement->execute(array(':username' => $username,

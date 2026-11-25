@@ -118,23 +118,25 @@ function dalo_user_delete_accounts(PDO $pdo, $config, $users, $deleteAccounting)
         $billingIds = $select->fetchAll(PDO::FETCH_COLUMN);
         $select->closeCursor();
         $invoiceIds = array();
-        $select = $pdo->prepare("SELECT id FROM $invoices WHERE user_id=:id ORDER BY id FOR UPDATE");
-        foreach ($billingIds as $id) {
-            $select->execute(array(':id' => $id));
-            foreach ($select->fetchAll(PDO::FETCH_COLUMN) as $invoiceId) {
-                $invoiceIds[(int) $invoiceId] = (int) $invoiceId;
+        if ($billingIds) {
+            foreach (array_chunk(array_map('intval', $billingIds), 500) as $chunk) {
+                $slots = implode(',', array_fill(0, count($chunk), '?'));
+                $select = $pdo->prepare("SELECT id FROM $invoices WHERE user_id IN ($slots) ORDER BY id FOR UPDATE");
+                $select->execute($chunk);
+                foreach ($select->fetchAll(PDO::FETCH_COLUMN) as $invoiceId) {
+                    $invoiceIds[(int) $invoiceId] = (int) $invoiceId;
+                }
+                $select->closeCursor();
             }
-            $select->closeCursor();
         }
         ksort($invoiceIds, SORT_NUMERIC);
-        $deletePayments = $pdo->prepare("DELETE FROM $payments WHERE invoice_id=:id");
-        $deleteItems = $pdo->prepare("DELETE FROM $items WHERE invoice_id=:id");
-        $deleteInvoice = $pdo->prepare("DELETE FROM $invoices WHERE id=:id");
-        foreach ($invoiceIds as $id) {
-            $params = array(':id' => $id);
-            $deletePayments->execute($params);
-            $deleteItems->execute($params);
-            $deleteInvoice->execute($params);
+        if ($invoiceIds) {
+            foreach (array_chunk(array_values($invoiceIds), 500) as $chunk) {
+                $slots = implode(',', array_fill(0, count($chunk), '?'));
+                $pdo->prepare("DELETE FROM $payments WHERE invoice_id IN ($slots)")->execute($chunk);
+                $pdo->prepare("DELETE FROM $items WHERE invoice_id IN ($slots)")->execute($chunk);
+                $pdo->prepare("DELETE FROM $invoices WHERE id IN ($slots)")->execute($chunk);
+            }
         }
         $postWhere = dalo_user_delete_where($postauthKey, count($users));
         $delete = $pdo->prepare("DELETE FROM $postauth WHERE $postWhere");
@@ -277,9 +279,9 @@ function dalo_user_delete_sessions(PDO $pdo, $config, $selection) {
             }
         }
         ksort($ids, SORT_NUMERIC);
-        $delete = $pdo->prepare("DELETE FROM $accounting WHERE radacctid=:id");
-        foreach ($ids as $id) {
-            $delete->execute(array(':id' => $id));
+        foreach (array_chunk(array_values($ids), 500) as $chunk) {
+            $slots = implode(',', array_fill(0, count($chunk), '?'));
+            $pdo->prepare("DELETE FROM $accounting WHERE radacctid IN ($slots)")->execute($chunk);
         }
         if (!$pdo->commit()) {
             throw new RuntimeException('Could not commit session cleanup');

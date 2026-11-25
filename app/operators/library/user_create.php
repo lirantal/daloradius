@@ -88,8 +88,25 @@ function dalo_create_info(PDO $pdo, $config, $username, $params, $allowed, $skip
     }
     if (!$fields) { return null; }
     // Match actual configured schema lengths even with permissive application SQL mode.
-    $meta = $pdo->prepare('SELECT COLUMN_NAME,CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?');
-    $meta->execute(array(trim($table, '`'))); $lengths = $meta->fetchAll(PDO::FETCH_KEY_PAIR);
+    // Cache per live PDO connection to avoid repeated INFORMATION_SCHEMA lookups in bulk imports.
+    static $lengthCache = null;
+    $tableName = trim($table, '`');
+    $lengths = null;
+    if (class_exists('WeakMap')) {
+        if ($lengthCache === null) { $lengthCache = new WeakMap(); }
+        if (isset($lengthCache[$pdo]) && isset($lengthCache[$pdo][$tableName])) {
+            $lengths = $lengthCache[$pdo][$tableName];
+        }
+    }
+    if ($lengths === null) {
+        $meta = $pdo->prepare('SELECT COLUMN_NAME,CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?');
+        $meta->execute(array($tableName)); $lengths = $meta->fetchAll(PDO::FETCH_KEY_PAIR);
+        if ($lengthCache !== null) {
+            $entry = isset($lengthCache[$pdo]) ? $lengthCache[$pdo] : array();
+            $entry[$tableName] = $lengths;
+            $lengthCache[$pdo] = $entry;
+        }
+    }
     foreach ($fields as $i => $field) {
         $name = trim($field, '`');
         if (!array_key_exists($name, $lengths) || ($lengths[$name] !== null && dalo_attribute_pdo_length($values[$i]) > (int)$lengths[$name])) {

@@ -77,10 +77,6 @@ function dalo_user_action_toggle(PDO $pdo, $config, $names, $disabledGroup, $dis
         sort($sorted, SORT_STRING);
         $existing = $pdo->prepare("SELECT id FROM $table WHERE username=:username
                                    AND groupname=:groupname ORDER BY id FOR UPDATE");
-        $remove = $pdo->prepare("DELETE FROM $table WHERE username=:username
-                                 AND groupname=:groupname");
-        $insert = $pdo->prepare("INSERT INTO $table (username,groupname,priority)
-                                 VALUES (:username,:groupname,-1)");
         $missing = array();
         foreach ($sorted as $name) {
             $values = array(':username' => $name, ':groupname' => $disabledGroup);
@@ -92,14 +88,21 @@ function dalo_user_action_toggle(PDO $pdo, $config, $names, $disabledGroup, $dis
             }
         }
         if ($disable) {
-            foreach ($sorted as $name) {
-                if (isset($missing[$name])) {
-                    $insert->execute(array(':username' => $name, ':groupname' => $disabledGroup));
+            $toInsert = array_map('strval', array_keys($missing));
+            foreach (array_chunk($toInsert, 500) as $chunk) {
+                $placeholders = implode(',', array_fill(0, count($chunk), '(?,?,-1)'));
+                $params = array();
+                foreach ($chunk as $name) {
+                    $params[] = $name;
+                    $params[] = $disabledGroup;
                 }
+                $pdo->prepare("INSERT INTO $table (username,groupname,priority) VALUES $placeholders")->execute($params);
             }
         } else {
-            foreach ($sorted as $name) {
-                $remove->execute(array(':username' => $name, ':groupname' => $disabledGroup));
+            foreach (array_chunk($sorted, 500) as $chunk) {
+                $slots = implode(',', array_fill(0, count($chunk), '?'));
+                $params = array_merge(array($disabledGroup), $chunk);
+                $pdo->prepare("DELETE FROM $table WHERE groupname=? AND username IN ($slots)")->execute($params);
             }
         }
         if (!$pdo->commit()) {

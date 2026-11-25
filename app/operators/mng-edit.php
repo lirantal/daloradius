@@ -230,8 +230,7 @@
                                );
 
                 try {
-                    $pdoEdit = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
-                    dalo_user_edit($pdoEdit, $configValues, $username, $planName, $oldplanName,
+                    dalo_user_edit($dbSocket, $configValues, $username, $planName, $oldplanName,
                                    $groups, $_POST, $skipList, $valid_ops, $userParams,
                                    $billingParams, $current_datetime, $currBy);
                     $successMsg = sprintf("Successfully updated user <strong>%s</strong>", $username_enc);
@@ -258,12 +257,13 @@
     }
 
 
+    $pdoDisplay = null;
     if (empty($username)) {
         $failureMsg = "You have specified an empty or invalid username";
         $inline_extra_js = "";
     } else {
 
-        $pdoDisplay = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
+        $pdoDisplay = $dbSocket;
         $passwordRow = dalo_user_edit_read($pdoDisplay, $configValues,
             'CONFIG_DB_TBL_RADCHECK', $username, 'value',
             "AND attribute LIKE '%-Password' ORDER BY id DESC LIMIT 1");
@@ -496,6 +496,7 @@ EOF;
 
         include_once('include/management/pages_common.php');
 
+        $deleteFormAttributes = array('radcheck' => array(), 'radreply' => array());
         $radTable = dalo_user_edit_table($configValues, 'CONFIG_DB_TBL_RADCHECK');
         $dictTable = dalo_user_edit_table($configValues, 'CONFIG_DB_TBL_DALODICTIONARY');
         $attributeStmt = $pdoDisplay->prepare("SELECT rad.attribute,rad.op,rad.value,
@@ -511,6 +512,10 @@ EOF;
             printf('<div class="alert alert-info" role="alert">%s</div>', t('messages','noCheckAttributesForUser'));
         } else {
             foreach ($attributeRows as $row) {
+                $rawId = (int) $row[5];
+                if (!isset($deleteFormAttributes['radcheck'][$rawId])) {
+                    $deleteFormAttributes['radcheck'][$rawId] = (string) ($row[0] ?? '');
+                }
 
                 foreach ($row as $i => $v) {
                     $row[$i] = htmlspecialchars((string) ($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
@@ -561,6 +566,10 @@ EOF;
             printf('<div class="alert alert-info" role="alert">%s</div>', t('messages','noReplyAttributesForUser'));
         } else {
             foreach ($attributeRows as $row) {
+                $rawId = (int) $row[5];
+                if (!isset($deleteFormAttributes['radreply'][$rawId])) {
+                    $deleteFormAttributes['radreply'][$rawId] = (string) ($row[0] ?? '');
+                }
 
                 foreach ($row as $i => $v) {
                     $row[$i] = htmlspecialchars((string) ($row[$i] ?? ''), ENT_QUOTES, 'UTF-8');
@@ -620,10 +629,11 @@ EOF;
         // accordion
         echo '<div class="accordion m-2" id="accordion-parent">';
         include_once('include/management/userReports.php');
-        userPlanInformation($username, 1);
-        userSubscriptionAnalysis($username, 1);                 // userSubscriptionAnalysis with argument set to 1 for drawing the table
-        userConnectionStatus($username, 1);                     // userConnectionStatus (same as above)
+        userPlanInformation($username, 1, $pdoDisplay);
+        userSubscriptionAnalysis($username, 1, $pdoDisplay);    // userSubscriptionAnalysis with argument set to 1 for drawing the table
+        userConnectionStatus($username, 1, $pdoDisplay);        // userConnectionStatus (same as above)
         echo '</div>';
+        $pdoDisplay = null;
 
         close_tab($navkeys, 7);
 
@@ -634,16 +644,9 @@ EOF;
 
         close_form();
 
-        // print hidden delete forms from the same read-only PDO view.
-        foreach (array('radcheck' => 'CONFIG_DB_TBL_RADCHECK',
-                       'radreply' => 'CONFIG_DB_TBL_RADREPLY') as $table_value => $key) {
-            $table = dalo_user_edit_table($configValues, $key);
-            $stmt = $pdoDisplay->prepare("SELECT id,attribute,value FROM $table
-                                          WHERE username=:username ORDER BY id ASC");
-            $stmt->execute(array(':username' => $username));
-            foreach ($stmt->fetchAll(PDO::FETCH_NUM) as $row) {
-                list($id, $attribute, $value) = $row;
-                $id = intval($id);
+        // print hidden delete forms from the already-fetched check/reply rows.
+        foreach ($deleteFormAttributes as $table_value => $attributes) {
+            foreach ($attributes as $id => $attribute) {
                 $formId = sprintf("form-%d-%s", $id, $table_value);
                 $id__attribute = sprintf("%d__%s", $id, htmlspecialchars($attribute, ENT_QUOTES, 'UTF-8'));
                 printf('<form id="%s" style="display: none" method="POST" action="mng-del.php">', $formId);
