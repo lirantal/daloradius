@@ -356,9 +356,11 @@ function get_memory_summary() {
         $available = max(0.0, min($total, $freeRaw + $buffers + $cached + $reclaimable));
     }
 
+    // Partition MemTotal into Used, Reclaimable (cache/buffers/reclaimable slab), and Free
+    // so that Used + Reclaimable + Free == MemTotal and Reclaimable + Free == MemAvailable.
     $used = max(0.0, $total - $available);
     $free = max(0.0, min($freeRaw, $available));
-    $buffersCache = max(0.0, $available - $free);
+    $reclaimable = max(0.0, $available - $free);
 
     $swapTotal = isset($raw['SwapTotal']) ? (float)$raw['SwapTotal'] : 0.0;
     $swapFree = isset($raw['SwapFree']) ? (float)$raw['SwapFree'] : 0.0;
@@ -367,11 +369,11 @@ function get_memory_summary() {
     return array(
         'total' => $total,
         'used' => $used,
-        'buffers_cache' => $buffersCache,
+        'reclaimable' => $reclaimable,
         'free' => $free,
         'available' => $available,
         'used_pct' => server_info_percent($used, $total),
-        'cache_pct' => server_info_percent($buffersCache, $total),
+        'reclaimable_pct' => server_info_percent($reclaimable, $total),
         'swap_total' => $swapTotal,
         'swap_used' => $swapUsed,
         'swap_free' => $swapFree,
@@ -581,8 +583,24 @@ function get_mask_addr($ifname) {
     return server_info_na();
 }
 
+// Detect virtual network devices via sysfs (/sys/class/net/<name>), with name-pattern fallback
 function server_info_is_virtual_interface($ifname) {
-    return (bool) preg_match('/^(docker\d*|veth[a-z0-9@._-]+|br-[a-z0-9]+|virbr\d*|cni\d*|flannel[a-z0-9._-]*|cali[a-z0-9._-]*|kube-[a-z0-9._-]+)$/i', $ifname);
+    $safeBase = basename($ifname);
+    if ($safeBase !== '' && $safeBase !== '.' && $safeBase !== '..') {
+        $sysPath = '/sys/class/net/' . $safeBase;
+        if (@file_exists($sysPath)) {
+            $realPath = @realpath($sysPath);
+            if (is_string($realPath) && $realPath !== '') {
+                return strpos($realPath, '/sys/devices/virtual/') === 0;
+            }
+            return !@file_exists($sysPath . '/device');
+        }
+    }
+
+    return (bool) preg_match(
+        '/^(docker\d*|veth[a-z0-9@._-]+|br-[a-z0-9]+|virbr\d*|cni\d*|flannel[a-z0-9._-]*|cali[a-z0-9._-]*|kube-[a-z0-9._-]+|tun\d*|tap\d*|wg\d*|bond\d*|dummy\d*)$/i',
+        $ifname
+    );
 }
 
 // Collect full structured network interface diagnostics
@@ -703,8 +721,9 @@ function get_database_status($configValues) {
     try {
         $start = microtime(true);
         $pdo = dalo_pdo_connect($configValues, $_SESSION['location_name'] ?? 'default');
-        $stmt = $pdo->query('SELECT VERSION()');
-        $version = ($stmt !== false) ? $stmt->fetchColumn() : null;
+        $stmt = $pdo->prepare('SELECT VERSION()');
+        $stmt->execute();
+        $version = $stmt->fetchColumn();
         $elapsed = (microtime(true) - $start) * 1000.0;
 
         $status['connected'] = true;
@@ -713,10 +732,23 @@ function get_database_status($configValues) {
 
         $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driver === 'mysql') {
-            $uptimeStmt = $pdo->query("SHOW GLOBAL STATUS LIKE 'Uptime'");
-            $uptimeRow = ($uptimeStmt !== false) ? $uptimeStmt->fetch(PDO::FETCH_ASSOC) : false;
-            if (is_array($uptimeRow) && isset($uptimeRow['Value']) && is_numeric($uptimeRow['Value'])) {
-                $status['uptime'] = (int)$uptimeRow['Value'];
+            // Use natively preparable SELECT queries (SHOW STATUS is not preparable when ATTR_EMULATE_PREPARES is false)
+            $uptimeQueries = array(
+                'SELECT VARIABLE_VALUE FROM information_schema.GLOBAL_STATUS WHERE VARIABLE_NAME = :metric',
+                'SELECT VARIABLE_VALUE FROM performance_schema.global_status WHERE VARIABLE_NAME = :metric',
+            );
+            foreach ($uptimeQueries as $uptimeSql) {
+                try {
+                    $uptimeStmt = $pdo->prepare($uptimeSql);
+                    $uptimeStmt->execute(array(':metric' => 'Uptime'));
+                    $uptimeVal = $uptimeStmt->fetchColumn();
+                    if (is_numeric($uptimeVal)) {
+                        $status['uptime'] = (int)$uptimeVal;
+                        break;
+                    }
+                } catch (Throwable $uptimeException) {
+                    // Fall back to the next status view (e.g. performance_schema on MySQL 8+)
+                }
             }
         }
     } catch (Throwable $exception) {
@@ -1065,13 +1097,13 @@ $daloVersionText = ($daloDate !== '') ? sprintf('%s (%s)', $daloVersion, $daloDa
                     <?php
                         $usedBarClass = ($memVariant === 'success') ? 'bg-primary' : 'bg-' . $memVariant;
                         $usedPctVal = (float)($memSummary['used_pct'] ?? 0);
-                        $cachePctVal = min(max(0.0, 100.0 - $usedPctVal), (float)($memSummary['cache_pct'] ?? 0));
+                        $reclaimablePctVal = min(max(0.0, 100.0 - $usedPctVal), (float)($memSummary['reclaimable_pct'] ?? 0));
                     ?>
                     <div class="progress-stacked mb-3" style="--bs-progress-height: 14px;">
                         <div class="progress" role="progressbar" aria-label="<?= server_info_escape(t('serverStatus', 'memUsed')) ?>" aria-valuenow="<?= server_info_escape($usedPctVal) ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= server_info_escape($usedPctVal) ?>%">
                             <div class="progress-bar <?= server_info_escape($usedBarClass) ?>"></div>
                         </div>
-                        <div class="progress" role="progressbar" aria-label="<?= server_info_escape(t('serverStatus', 'memBuffersCache')) ?>" aria-valuenow="<?= server_info_escape($cachePctVal) ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= server_info_escape($cachePctVal) ?>%">
+                        <div class="progress" role="progressbar" aria-label="<?= server_info_escape(t('serverStatus', 'memReclaimable')) ?>" aria-valuenow="<?= server_info_escape($reclaimablePctVal) ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= server_info_escape($reclaimablePctVal) ?>%">
                             <div class="progress-bar bg-info bg-opacity-75"></div>
                         </div>
                     </div>
@@ -1087,9 +1119,9 @@ $daloVersionText = ($daloDate !== '') ? sprintf('%s (%s)', $daloVersion, $daloDa
                         <div class="col-6 col-sm-3">
                             <div class="d-flex align-items-center gap-1 text-muted">
                                 <span class="server-legend-dot bg-info bg-opacity-75"></span>
-                                <?= server_info_escape(t('serverStatus', 'memBuffersCache')) ?>
+                                <?= server_info_escape(t('serverStatus', 'memReclaimable')) ?>
                             </div>
-                            <div class="fw-semibold"><?= server_info_escape(convert_ToMB($memSummary['buffers_cache'])) ?></div>
+                            <div class="fw-semibold"><?= server_info_escape(convert_ToMB($memSummary['reclaimable'])) ?></div>
                         </div>
                         <div class="col-6 col-sm-3">
                             <div class="d-flex align-items-center gap-1 text-muted">
