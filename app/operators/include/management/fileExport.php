@@ -40,7 +40,8 @@ try {
     $res = dalo_export_fetch($pdo, $descriptor, $configValues);
     $type = $descriptor['type'];
     $output = '';
-    $streamed = false;
+    $csvStream = null;
+    $csvSize = 0;
 
     switch ($type) {
         case 'accountingGeneric':
@@ -88,23 +89,24 @@ try {
             break;
 
         case 'reportsLastConnectionAttempts':
-            $csv = fopen('php://output', 'w');
+            $csv = fopen('php://temp', 'r+');
             if ($csv === false) {
-                throw new RuntimeException('Unable to open CSV output stream');
+                throw new RuntimeException('Unable to open temporary CSV stream');
             }
-            header('Content-Type: text/csv; charset=utf-8');
-            header('X-Content-Type-Options: nosniff');
-            header(sprintf('Content-Disposition: attachment; filename="daloradius__%s.csv"',
-                           date('Ymd')));
             try {
                 dalo_export_csv_row($csv, ['Username', 'Fullname', 'Start Time', 'RADIUS Reply'], false);
                 while ($row = $res->fetch(PDO::FETCH_NUM)) {
                     dalo_export_csv_row($csv, $row);
                 }
-            } finally {
+                $csvSize = ftell($csv);
+                if ($csvSize === false || !rewind($csv)) {
+                    throw new RuntimeException('Unable to finalize temporary CSV stream');
+                }
+            } catch (Throwable $exception) {
                 fclose($csv);
+                throw $exception;
             }
-            $streamed = true;
+            $csvStream = $csv;
             break;
 
         case 'TopUsers':
@@ -195,7 +197,14 @@ try {
     exit;
 }
 
-if (!$streamed && $output !== '') {
+if ($csvStream !== null) {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    header(sprintf('Content-Disposition: attachment; filename="daloradius__%s.csv"; size=%d',
+                   date('Ymd'), $csvSize));
+    fpassthru($csvStream);
+    fclose($csvStream);
+} elseif ($output !== '') {
     header('Content-Type: text/csv; charset=utf-8');
     header('X-Content-Type-Options: nosniff');
     header(sprintf('Content-Disposition: attachment; filename="daloradius__%s.csv"; size=%d',
