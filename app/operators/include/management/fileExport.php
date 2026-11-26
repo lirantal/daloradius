@@ -40,6 +40,7 @@ try {
     $res = dalo_export_fetch($pdo, $descriptor, $configValues);
     $type = $descriptor['type'];
     $output = '';
+    $streamed = false;
 
     switch ($type) {
         case 'accountingGeneric':
@@ -87,10 +88,23 @@ try {
             break;
 
         case 'reportsLastConnectionAttempts':
-            $output = "Username,Fullname,Start Time,RADIUS Reply\n";
-            while ($row = $res->fetch(PDO::FETCH_NUM)) {
-                $output .= implode(',', $row) . "\n";
+            $csv = fopen('php://output', 'w');
+            if ($csv === false) {
+                throw new RuntimeException('Unable to open CSV output stream');
             }
+            header('Content-Type: text/csv; charset=utf-8');
+            header('X-Content-Type-Options: nosniff');
+            header(sprintf('Content-Disposition: attachment; filename="daloradius__%s.csv"',
+                           date('Ymd')));
+            try {
+                dalo_export_csv_row($csv, ['Username', 'Fullname', 'Start Time', 'RADIUS Reply'], false);
+                while ($row = $res->fetch(PDO::FETCH_NUM)) {
+                    dalo_export_csv_row($csv, $row);
+                }
+            } finally {
+                fclose($csv);
+            }
+            $streamed = true;
             break;
 
         case 'TopUsers':
@@ -181,9 +195,10 @@ try {
     exit;
 }
 
-if ($output !== '') {
-    header('Content-type: text/csv');
-    header(sprintf('Content-disposition: attachment; filename=daloradius__%s.csv; size=%s',
+if (!$streamed && $output !== '') {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    header(sprintf('Content-Disposition: attachment; filename="daloradius__%s.csv"; size=%d',
                    date('Ymd'), strlen($output)));
     print $output;
 }

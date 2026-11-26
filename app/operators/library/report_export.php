@@ -87,3 +87,34 @@ function dalo_export_fetch(PDO $pdo, $descriptor, $configValues) {
     $statement->execute();
     return $statement;
 }
+
+/**
+ * Neutralize spreadsheet formula triggers (CWE-1236) in a single CSV cell.
+ *
+ * Prefixes values starting with =, +, -, @, tab, or carriage return (including
+ * after leading whitespace/control characters) with a single quote so
+ * spreadsheet applications treat them as literal text.
+ */
+function dalo_export_csv_cell($value) {
+    $cell = ($value === null) ? '' : (string) $value;
+    if ($cell !== '' && preg_match('/\A(?:[\t\r]|[\s\x00-\x1F]*[=+\-@])/', $cell) === 1) {
+        return "'" . $cell;
+    }
+    return $cell;
+}
+
+/**
+ * Write a single RFC 4180 CSV row to a stream, optionally neutralizing
+ * spreadsheet formula triggers in each cell.
+ */
+function dalo_export_csv_row($stream, array $row, $neutralizeFormulas = true) {
+    $values = [];
+    foreach ($row as $value) {
+        $values[] = $neutralizeFormulas
+            ? dalo_export_csv_cell($value)
+            : (($value === null) ? '' : (string) $value);
+    }
+    if (fputcsv($stream, $values, ',', '"', '') === false) {
+        throw new RuntimeException('Unable to write CSV row');
+    }
+}
