@@ -32,16 +32,49 @@
 
     $log = "visited page: ";
 
-
     // print HTML prologue
-    $title = t('Intro','repstatserver.php');
-    $help = t('helpPage','repstatserver');
+    $title = t('Intro', 'repstatserver.php');
+    $help = t('helpPage', 'repstatserver');
 
     print_html_prologue($title, $langCode);
 
+    $collectedAt = htmlspecialchars(date('Y-m-d H:i:s'), ENT_QUOTES, 'UTF-8');
+    $collectedLabel = htmlspecialchars(t('serverStatus', 'collectedAt'), ENT_QUOTES, 'UTF-8');
+    $refreshLabel = htmlspecialchars(t('serverStatus', 'refresh'), ENT_QUOTES, 'UTF-8');
+
+    echo '<div class="server-status-header d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">';
+    echo '<div>';
     print_title_and_help($title, $help);
+    echo '</div>';
+    echo <<<HTML
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="text-muted small">
+            <i class="bi bi-clock me-1" aria-hidden="true"></i>{$collectedLabel}: {$collectedAt}
+        </span>
+        <a href="rep-stat-server.php" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>{$refreshLabel}
+        </a>
+    </div>
+</div>
+
+HTML;
 
     include('library/extensions/server_info.php');
 
     include('include/config/logging.php');
-    print_footer_and_html_epilogue();
+
+    $inline_extra_js = <<<'JS'
+(function () {
+    var toggle = document.getElementById('toggleVirtualInterfaces');
+    if (!toggle) {
+        return;
+    }
+    toggle.addEventListener('change', function () {
+        document.querySelectorAll('tr[data-virtual-iface="1"]').forEach(function (row) {
+            row.classList.toggle('d-none', !toggle.checked);
+        });
+    });
+}());
+JS;
+
+    print_footer_and_html_epilogue($inline_extra_js);
