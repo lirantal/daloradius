@@ -2061,7 +2061,6 @@ EOF;
 // Server Status page (rep-stat-server.php)
 $l['serverStatus'] = [
     'refresh' => 'Refresh',
-    'collectedAt' => 'Collected',
     'notAvailable' => 'N/A',
     'cpuLoad' => 'CPU Load',
     'load1m' => '1 min',
@@ -2094,14 +2093,7 @@ $l['serverStatus'] = [
     'daemonRunningLocal' => 'Running (local)',
     'daemonNotDetectedLocal' => 'Not detected locally',
     'daemonRemoteHint' => 'FreeRADIUS may be running on a separate host or container.',
-    'cpuAndProcesses' => 'CPU & Processes',
     'loadAverage' => 'Load Average',
-    'processes' => 'Processes',
-    'procTotal' => 'Total',
-    'procRunning' => 'Running',
-    'procSleeping' => 'Sleeping',
-    'procStopped' => 'Stopped',
-    'procZombie' => 'Zombie',
     'memoryBreakdown' => 'Memory Breakdown',
     'memUsed' => 'Used',
     'memBuffersCache' => 'Buffers / Cache',

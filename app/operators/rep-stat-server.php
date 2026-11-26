@@ -36,10 +36,61 @@
     $title = t('Intro', 'repstatserver.php');
     $help = t('helpPage', 'repstatserver');
 
-    print_html_prologue($title, $langCode);
+    $inline_extra_css = <<<'CSS'
+.server-status-header h3 {
+    margin-bottom: 0;
+}
 
-    $collectedAt = htmlspecialchars(date('Y-m-d H:i:s'), ENT_QUOTES, 'UTF-8');
-    $collectedLabel = htmlspecialchars(t('serverStatus', 'collectedAt'), ENT_QUOTES, 'UTF-8');
+.server-kpi-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.server-kpi-icon .bi {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.server-kpi-icon .bi::before {
+    vertical-align: 0;
+}
+
+.server-kv-table th {
+    width: 38%;
+    color: var(--bs-secondary-color, #6c757d);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.server-kv-table td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.server-legend-dot {
+    display: inline-block;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.server-usage-cell {
+    min-width: 8.5rem;
+}
+
+.server-net-table td.server-net-wrap {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+CSS;
+
+    print_html_prologue($title, $langCode, array(), array(), $inline_extra_css);
+
     $refreshLabel = htmlspecialchars(t('serverStatus', 'refresh'), ENT_QUOTES, 'UTF-8');
 
     echo '<div class="server-status-header d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">';
@@ -47,10 +98,7 @@
     print_title_and_help($title, $help);
     echo '</div>';
     echo <<<HTML
-    <div class="d-flex flex-wrap align-items-center gap-2">
-        <span class="text-muted small">
-            <i class="bi bi-clock me-1" aria-hidden="true"></i>{$collectedLabel}: {$collectedAt}
-        </span>
+    <div>
         <a href="rep-stat-server.php" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>{$refreshLabel}
         </a>

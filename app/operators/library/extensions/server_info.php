@@ -286,83 +286,25 @@ function get_load_average() {
     return null;
 }
 
-// Scan /proc once to gather process counts and detect local FreeRADIUS daemon
-function get_process_and_daemon_stats() {
-    $stats = array(
-        'total' => 0,
-        'running' => 0,
-        'sleeping' => 0,
-        'stopped' => 0,
-        'zombie' => 0,
-        'freeradius_local' => false,
-        'available' => false,
-    );
-
-    $statFiles = @glob('/proc/[0-9]*/stat', GLOB_NOSORT);
-    if (is_array($statFiles) && count($statFiles) > 0) {
-        $stats['available'] = true;
-
-        foreach ($statFiles as $statFile) {
-            $content = @file_get_contents($statFile);
-            if ($content === false || $content === '') {
-                continue;
-            }
-
-            $openPos = strpos($content, '(');
-            $closePos = strrpos($content, ')');
-            if ($openPos === false || $closePos === false || $closePos <= $openPos) {
-                continue;
-            }
-
-            $comm = strtolower(substr($content, $openPos + 1, $closePos - $openPos - 1));
-            if ($comm === 'freeradius' || $comm === 'radiusd') {
-                $stats['freeradius_local'] = true;
-            }
-
-            $after = ltrim(substr($content, $closePos + 1));
-            if ($after === '') {
-                continue;
-            }
-
-            $state = $after[0];
-            $stats['total']++;
-
-            switch ($state) {
-                case 'R':
-                    $stats['running']++;
-                    break;
-                case 'T':
-                case 't':
-                    $stats['stopped']++;
-                    break;
-                case 'Z':
-                    $stats['zombie']++;
-                    break;
-                default:
-                    $stats['sleeping']++;
-                    break;
-            }
-        }
-
-        return $stats;
+// Detect whether FreeRADIUS daemon is running locally via /proc
+function is_freeradius_running_locally() {
+    $commFiles = @glob('/proc/[0-9]*/comm', GLOB_NOSORT);
+    if (!is_array($commFiles)) {
+        return false;
     }
 
-    // Fallback to /proc/loadavg running/total field if process stat globbing is restricted
-    $loadavg = server_info_read_file('/proc/loadavg');
-    if ($loadavg !== null) {
-        $parts = preg_split('/\s+/', trim($loadavg));
-        if (isset($parts[3]) && strpos($parts[3], '/') !== false) {
-            list($running, $total) = explode('/', $parts[3], 2);
-            if (ctype_digit($running) && ctype_digit($total)) {
-                $stats['available'] = true;
-                $stats['running'] = (int)$running;
-                $stats['total'] = (int)$total;
-                $stats['sleeping'] = max(0, $stats['total'] - $stats['running']);
-            }
+    foreach ($commFiles as $commFile) {
+        $comm = @file_get_contents($commFile);
+        if ($comm === false) {
+            continue;
+        }
+        $name = strtolower(trim($comm));
+        if ($name === 'freeradius' || $name === 'radiusd') {
+            return true;
         }
     }
 
-    return $stats;
+    return false;
 }
 
 // Get Memory System info from /proc/meminfo
@@ -801,7 +743,7 @@ $uptimeStr = ($uptimeSec !== null) ? server_info_format_duration($uptimeSec) : s
 
 $cpuInfo = get_cpu_info();
 $loadAvg = get_load_average();
-$procStats = get_process_and_daemon_stats();
+$freeradiusLocal = is_freeradius_running_locally();
 $memSummary = get_memory_summary();
 $filesystems = get_filesystems();
 $rootFs = (!empty($filesystems) && $filesystems[0]['mount'] === '/') ? $filesystems[0] : null;
@@ -850,7 +792,7 @@ $naEsc = server_info_escape(server_info_na());
                             <?php endif; ?>
                         </div>
                     </div>
-                    <div class="server-kpi-icon rounded-3 d-flex align-items-center justify-content-center bg-<?= server_info_escape($cpuVariant) ?> bg-opacity-10 text-<?= server_info_escape($cpuVariant) ?>">
+                    <div class="server-kpi-icon rounded-3 d-flex align-items-center justify-content-center bg-<?= server_info_escape($cpuVariant) ?>-subtle text-<?= server_info_escape($cpuVariant) ?>">
                         <i class="bi bi-cpu fs-4" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -884,7 +826,7 @@ $naEsc = server_info_escape(server_info_na());
                             <?= ($memPct !== null) ? server_info_escape(number_format($memPct, 1) . '%') : $naEsc ?>
                         </div>
                     </div>
-                    <div class="server-kpi-icon rounded-3 d-flex align-items-center justify-content-center bg-<?= server_info_escape($memVariant) ?> bg-opacity-10 text-<?= server_info_escape($memVariant) ?>">
+                    <div class="server-kpi-icon rounded-3 d-flex align-items-center justify-content-center bg-<?= server_info_escape($memVariant) ?>-subtle text-<?= server_info_escape($memVariant) ?>">
                         <i class="bi bi-memory fs-4" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -916,7 +858,7 @@ $naEsc = server_info_escape(server_info_na());
                             <?= ($diskPct !== null) ? server_info_escape(number_format($diskPct, 1) . '%') : $naEsc ?>
                         </div>
                     </div>
-                    <div class="server-kpi-icon rounded-3 d-flex align-items-center justify-content-center bg-<?= server_info_escape($diskVariant) ?> bg-opacity-10 text-<?= server_info_escape($diskVariant) ?>">
+                    <div class="server-kpi-icon rounded-3 d-flex align-items-center justify-content-center bg-<?= server_info_escape($diskVariant) ?>-subtle text-<?= server_info_escape($diskVariant) ?>">
                         <i class="bi bi-hdd fs-4" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -945,7 +887,7 @@ $naEsc = server_info_escape(server_info_na());
                         <div class="text-muted small text-uppercase fw-semibold"><?= server_info_escape(t('serverStatus', 'systemUptime')) ?></div>
                         <div class="fs-4 fw-bold mt-1"><?= server_info_escape($uptimeStr) ?></div>
                     </div>
-                    <div class="server-kpi-icon rounded-3 d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary">
+                    <div class="server-kpi-icon rounded-3 d-flex align-items-center justify-content-center bg-primary-subtle text-primary">
                         <i class="bi bi-clock-history fs-4" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -1049,7 +991,7 @@ $daloVersionText = ($daloDate !== '') ? sprintf('%s (%s)', $daloVersion, $daloDa
                         <tr>
                             <th scope="row" class="ps-3"><?= server_info_escape(t('serverStatus', 'freeradiusDaemon')) ?></th>
                             <td class="pe-3">
-                                <?php if ($procStats['freeradius_local']): ?>
+                                <?php if ($freeradiusLocal): ?>
                                     <span class="badge text-bg-success">
                                         <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i><?= server_info_escape(t('serverStatus', 'daemonRunningLocal')) ?>
                                     </span>
@@ -1066,64 +1008,44 @@ $daloVersionText = ($daloDate !== '') ? sprintf('%s (%s)', $daloVersion, $daloDa
         </div>
     </div>
 
-    <!-- Right Column: CPU/Processes + Memory Breakdown + Storage -->
+    <!-- Right Column: Load Average + Memory Breakdown + Storage -->
     <div class="col-12 col-xl-6 d-flex flex-column gap-3">
-        <!-- CPU & Processes Card -->
+        <!-- Load Average Card -->
         <div class="card shadow-sm">
-            <div class="card-header bg-light d-flex align-items-center gap-2">
-                <i class="bi bi-activity text-primary" aria-hidden="true"></i>
-                <h5 class="card-title mb-0 fs-6 fw-semibold"><?= server_info_escape(t('serverStatus', 'cpuAndProcesses')) ?></h5>
+            <div class="card-header bg-light d-flex align-items-center justify-content-between gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-activity text-primary" aria-hidden="true"></i>
+                    <h5 class="card-title mb-0 fs-6 fw-semibold"><?= server_info_escape(t('serverStatus', 'loadAverage')) ?></h5>
+                </div>
+                <?php if ($cpuInfo['cores'] !== null): ?>
+                    <span class="text-muted small"><?= (int)$cpuInfo['cores'] ?> <?= server_info_escape($cpuInfo['cores'] === 1 ? t('serverStatus', 'core') : t('serverStatus', 'cores')) ?></span>
+                <?php endif; ?>
             </div>
             <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-12 col-md-5">
-                        <div class="text-muted small fw-semibold mb-2"><?= server_info_escape(t('serverStatus', 'loadAverage')) ?></div>
-                        <?php if ($loadAvg !== null): ?>
-                            <div class="d-flex flex-wrap gap-2">
-                                <div class="border rounded px-2 py-1 text-center flex-fill">
-                                    <div class="fw-bold"><?= server_info_escape(number_format($loadAvg['1m'], 2)) ?></div>
-                                    <div class="text-muted small"><?= server_info_escape(t('serverStatus', 'load1m')) ?></div>
-                                </div>
-                                <div class="border rounded px-2 py-1 text-center flex-fill">
-                                    <div class="fw-bold"><?= server_info_escape(number_format($loadAvg['5m'], 2)) ?></div>
-                                    <div class="text-muted small"><?= server_info_escape(t('serverStatus', 'load5m')) ?></div>
-                                </div>
-                                <div class="border rounded px-2 py-1 text-center flex-fill">
-                                    <div class="fw-bold"><?= server_info_escape(number_format($loadAvg['15m'], 2)) ?></div>
-                                    <div class="text-muted small"><?= server_info_escape(t('serverStatus', 'load15m')) ?></div>
-                                </div>
+                <?php if ($loadAvg !== null): ?>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <div class="border rounded px-2 py-2 text-center">
+                                <div class="fs-5 fw-bold"><?= server_info_escape(number_format($loadAvg['1m'], 2)) ?></div>
+                                <div class="text-muted small"><?= server_info_escape(t('serverStatus', 'load1m')) ?></div>
                             </div>
-                        <?php else: ?>
-                            <span class="text-muted small"><?= $naEsc ?></span>
-                        <?php endif; ?>
-                    </div>
-                    <div class="col-12 col-md-7">
-                        <div class="text-muted small fw-semibold mb-2"><?= server_info_escape(t('serverStatus', 'processes')) ?></div>
-                        <?php if ($procStats['available']): ?>
-                            <div class="d-flex flex-wrap gap-2">
-                                <span class="badge text-bg-light border text-dark fw-normal py-2 px-2">
-                                    <?= server_info_escape(t('serverStatus', 'procTotal')) ?>: <strong><?= (int)$procStats['total'] ?></strong>
-                                </span>
-                                <span class="badge text-bg-success bg-opacity-75 fw-normal py-2 px-2">
-                                    <?= server_info_escape(t('serverStatus', 'procRunning')) ?>: <strong><?= (int)$procStats['running'] ?></strong>
-                                </span>
-                                <span class="badge text-bg-light border text-dark fw-normal py-2 px-2">
-                                    <?= server_info_escape(t('serverStatus', 'procSleeping')) ?>: <strong><?= (int)$procStats['sleeping'] ?></strong>
-                                </span>
-                                <?php if ($procStats['stopped'] > 0): ?>
-                                    <span class="badge text-bg-warning fw-normal py-2 px-2">
-                                        <?= server_info_escape(t('serverStatus', 'procStopped')) ?>: <strong><?= (int)$procStats['stopped'] ?></strong>
-                                    </span>
-                                <?php endif; ?>
-                                <span class="badge <?= ($procStats['zombie'] > 0) ? 'text-bg-danger' : 'text-bg-light border text-muted' ?> fw-normal py-2 px-2">
-                                    <?= server_info_escape(t('serverStatus', 'procZombie')) ?>: <strong><?= (int)$procStats['zombie'] ?></strong>
-                                </span>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded px-2 py-2 text-center">
+                                <div class="fs-5 fw-bold"><?= server_info_escape(number_format($loadAvg['5m'], 2)) ?></div>
+                                <div class="text-muted small"><?= server_info_escape(t('serverStatus', 'load5m')) ?></div>
                             </div>
-                        <?php else: ?>
-                            <span class="text-muted small"><?= $naEsc ?></span>
-                        <?php endif; ?>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded px-2 py-2 text-center">
+                                <div class="fs-5 fw-bold"><?= server_info_escape(number_format($loadAvg['15m'], 2)) ?></div>
+                                <div class="text-muted small"><?= server_info_escape(t('serverStatus', 'load15m')) ?></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                <?php else: ?>
+                    <span class="text-muted small"><?= $naEsc ?></span>
+                <?php endif; ?>
             </div>
         </div>
 
