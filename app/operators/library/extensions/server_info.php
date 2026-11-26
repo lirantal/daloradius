@@ -750,6 +750,19 @@ function get_database_status($configValues) {
                     // Fall back to the next status view (e.g. performance_schema on MySQL 8+)
                 }
             }
+
+            if ($status['uptime'] === null) {
+                try {
+                    // Constant administrative fallback when status views are disabled or inaccessible
+                    $uptimeStmt = $pdo->query("SHOW GLOBAL STATUS LIKE 'Uptime'");
+                    $uptimeRow = ($uptimeStmt !== false) ? $uptimeStmt->fetch(PDO::FETCH_ASSOC) : false;
+                    if (is_array($uptimeRow) && isset($uptimeRow['Value']) && is_numeric($uptimeRow['Value'])) {
+                        $status['uptime'] = (int)$uptimeRow['Value'];
+                    }
+                } catch (Throwable $uptimeException) {
+                    // Leave uptime as null if status queries are restricted
+                }
+            }
         }
     } catch (Throwable $exception) {
         $status['connected'] = false;
